@@ -57,6 +57,7 @@ int main(void){
         exit(1);
     }
 
+    puts("test_read success");
     free(slurped_results);
     return 0;
 }
