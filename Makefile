@@ -2,7 +2,7 @@
 
 include config.mk
 
-SRC =
+SRC = src/lexer.c
 OBJ = ${SRC:.c=.o}
 
 EXTRAFLAGS =
