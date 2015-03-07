@@ -1,10 +1,12 @@
 #include <stdio.h> /* puts */
-#include <stdlib.h> /* exit */
+#include <stdlib.h> /* exit, free */
 
-#include "lexer.h"
+#include "read.h" /* read_slurp */
+#include "lexer.h" /* lex */
 
 int main(int argc, char **argv){
-    char *filename;
+    char *filename=0, *source=0;
+    icarus_token *tokens;
 
     if( argc < 2 ){
         puts("No source file specified");
@@ -16,6 +18,20 @@ int main(int argc, char **argv){
 
     filename = argv[1];
 
-    lex(filename);
+    source = read_slurp(filename);
+    if( ! source ){
+        puts("slurping failed");
+        exit(1);
+    }
+
+    tokens = lex(source);
+    if( ! tokens ){
+        puts("lexing failed");
+        exit(1);
+    }
+
+    free(source);
+    free(tokens);
+
 }
 
