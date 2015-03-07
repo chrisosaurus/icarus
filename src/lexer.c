@@ -2,7 +2,8 @@
 
 /* ignore unused parameter warnings */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
-void lex(char *filename){
-    return;
+
+icarus_token * lex(char *filename){
+    return 0;
 }
 
