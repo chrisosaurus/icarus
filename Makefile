@@ -32,6 +32,9 @@ clean: cleanobj
 	@rm -f icarus
 	@rm -f test_read
 
+example: icarus
+	./icarus example/simple.ic
+
 test: run_tests
 
 run_tests: compile_tests
@@ -43,5 +46,5 @@ compile_tests: clean ${OBJ}
 	@${CC} t/unit/test_read.c -o test_read ${LDFLAGS} ${OBJ}
 	@make -s cleanobj
 
-.PHONY: all clean cleanobj icarus test
+.PHONY: all clean cleanobj icarus test example
 
