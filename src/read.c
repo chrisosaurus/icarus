@@ -3,9 +3,6 @@
 
 #include "read.h"
 
-/* ignore unused parameter warnings */
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-
 /* slurp entire file into single alloc-ed buffer
  * return this buffer on success
  * return 0 on error
