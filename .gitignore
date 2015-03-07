@@ -1,3 +1,4 @@
 icarus
 src/*.o
 *.out
+test_read

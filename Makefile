@@ -30,6 +30,18 @@ cleanobj:
 clean: cleanobj
 	@echo cleaning executables
 	@rm -f icarus
+	@rm -f test_read
 
-.PHONY: all clean cleanobj icarus
+test: run_tests
+
+run_tests: compile_tests
+	@echo "running test_read"
+	./test_read
+
+compile_tests: clean ${OBJ}
+	@echo "compiling tests"
+	@${CC} t/unit/test_read.c -o test_read ${LDFLAGS} ${OBJ}
+	@make -s cleanobj
+
+.PHONY: all clean cleanobj icarus test
 
