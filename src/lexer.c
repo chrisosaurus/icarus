@@ -1,5 +1,5 @@
 #include <stdlib.h> /* calloc, realloc */
-#include <stdio.h> /* puts */
+#include <stdio.h> /* puts, printf */
 #include <string.h> /* strlen, memset */
 
 #include "lexer.h"
@@ -227,6 +227,15 @@ static icarus_tokens * consume_word(icarus_tokens *tokens, char *source, int *i)
 
         /* invalid character */
         break;
+    }
+
+    if( len == 0 ){
+        /* stuck on a non-word character
+         * this most likely means the body in lex()
+         * is missing a *_symbol case
+         */
+        printf("consume_word: stuck on a non-word character '%c', raising error\n", source[*i]);
+        return 0;
     }
 
     tokens = add_token(tokens, &(source[*i]), len);
