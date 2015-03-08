@@ -32,7 +32,7 @@ Plans
 Work so far
 ===========
 
-So far all Icarus can do it lex it's `example/simple.ic`
+So far all Icarus can do is lex it's `example/simple.ic`
 
     make example
 
