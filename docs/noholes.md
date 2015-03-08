@@ -15,7 +15,7 @@ In Icarus we plan to have `Maybe` type - derived form Haskell's `Maybe`, Julia's
 
 A `Maybe` is just a built-in Union type
 
-example syntax:
+example syntax (work in progress):
 
     # defaults to Empty
     let m::Maybe<Int>
@@ -32,6 +32,32 @@ example syntax:
         end
         case Empty
             print("Got nothing")
+        end
+    end
+
+example syntax (work in progress):
+
+    # returns position of needle within haystack on success
+    # reutrns Empty on failure
+    function search(haystack::String needle::Char) :: Maybe<Int>
+
+        for (char pos) in iterate(haystack)
+            if char == needle
+                return pos
+            end
+        end
+
+        # failure case
+        return Empty
+    end
+
+    let res::Maybe<Int> = search("hello" 'e')
+    switch res
+        case Int
+            print("character found")
+        end
+        case Empty
+            print("character not found")
         end
     end
 
