@@ -11,8 +11,7 @@ typedef struct icarus_tokens {
 } icarus_tokens;
 
 /* takes a character array of the source code as text
- * returns an icarus_tokens * containing the output
- * from lexing
+ * returns an icarus_tokens * containing the output from lexing
  *
  * returns 0 on error
  */
