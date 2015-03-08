@@ -11,17 +11,17 @@ EXTRAFLAGS =
 all: icarus
 
 %.o: %.c
-	@echo COMPILING CC $<
+	@echo COMPILING CC $< with extra flags \"${EXTRAFLAGS}\"
 	@${CC} -g -c ${CFLAGS} $< ${EXTRAFLAGS} -o $@
 
 icarus: ${OBJ}
-	@echo more compiling CC -o $@
-	@${CC} src/main.c -o $@ ${LDFLAGS} ${OBJ}
+	@echo more compiling CC -o $@ with extra flags \"${EXTRAFLAGS}\"
+	@${CC} src/main.c -o $@ ${LDFLAGS} ${EXTRAFLAGS} ${OBJ}
 	@make -s cleanobj
 
 # build icarus with debug output
 debug:
-	@make -s EXTRAFLAGS="-DICARUS_DEBUG" icarus
+	@make -s EXTRAFLAGS="${DEBUGFLAGS}" icarus
 
 cleanobj:
 	@echo cleaning objects and temporary files
