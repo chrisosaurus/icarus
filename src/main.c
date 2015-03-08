@@ -1,5 +1,6 @@
-#include <stdio.h> /* puts */
+#include <stdio.h> /* puts, printf */
 #include <stdlib.h> /* exit, free */
+#include <string.h>
 
 #include "read.h" /* read_slurp */
 #include "lexer.h" /* lex */
@@ -30,6 +31,7 @@ int main(int argc, char **argv){
         exit(1);
     }
 
+    printf("size of str '%d', size of tokens '%d'\n", strlen(source), tokens->len);
     printf("lexer output:\n%s\n", tokens->tokens);
 
     free(source);

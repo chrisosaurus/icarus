@@ -4,6 +4,8 @@
 
 #include "lexer.h"
 
+#define DEBUG_LEXER 0
+
 /* expand supplied tokens to the specified new capacity
  * makes sure the new area is memset to 0
  *
@@ -128,6 +130,10 @@ static icarus_tokens * expand_tokens(icarus_tokens *tokens, int new_cap){
         return tokens;
     }
 
+#if DEBUG_LEXER
+    printf("expanding tokens from '%d' to '%d'\n\n", tokens->cap, new_cap);
+#endif
+
     tokens->cap = new_cap;
 
     /* resize tokens char[] */
@@ -154,11 +160,15 @@ static icarus_tokens * expand_tokens(icarus_tokens *tokens, int new_cap){
  * return 0 on failure
  */
 static icarus_tokens * add_token(icarus_tokens *tokens, char *start, int len){
-    int cap = 0;
+    int required_len = len + 2;
 
     if( tokens ){
-        cap = tokens->cap;
+        required_len += tokens->len;
     }
+
+#if DEBUG_LEXER
+    printf("add_token calling with '%d' (len '%d') \n", required_len, len);
+#endif
 
     /* ensure tokens has sufficient room for:
      *  it's existing data
@@ -166,7 +176,7 @@ static icarus_tokens * add_token(icarus_tokens *tokens, char *start, int len){
      *  + 1 for space to separate tokens
      *  + 1 for the null string terminator
      */
-    tokens = expand_tokens(tokens, cap + len + 2);
+    tokens = expand_tokens(tokens, required_len);
     if( ! tokens ){
         puts("add_token: failed call to expand_tokens");
         return 0;
@@ -238,6 +248,10 @@ static icarus_tokens * consume_word(icarus_tokens *tokens, char *source, int *i)
         return 0;
     }
 
+#if DEBUG_LEXER
+    printf("consume_word: calling add_token with len '%d'\n", len);
+#endif
+
     tokens = add_token(tokens, &(source[*i]), len);
 
     *i += len;
@@ -256,6 +270,10 @@ static icarus_tokens * consume_single_symbol(icarus_tokens *tokens, char *source
         puts("consume_single_symbol: null source or i provided");
         return 0;
     }
+
+#if DEBUG_LEXER
+    printf("consume_single_symbol: calling add_token with len '%d'\n", 1);
+#endif
 
     tokens = add_token(tokens, &(source[*i]), 1);
     ++ *i;
@@ -281,6 +299,10 @@ static icarus_tokens * consume_repeated_symbol(icarus_tokens *tokens, char *sour
          ++len ){
         /* skip over very repeat of the symbol sym */
     }
+
+#if DEBUG_LEXER
+    printf("consume_repeated_symbol: calling add_token with len '%d'\n", len);
+#endif
 
     tokens =  add_token(tokens, &(source[*i]), len);
     *i += len;
