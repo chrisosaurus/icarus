@@ -6,7 +6,7 @@
 
 int main(int argc, char **argv){
     char *filename=0, *source=0;
-    icarus_token *tokens;
+    icarus_tokens *tokens;
 
     if( argc < 2 ){
         puts("No source file specified");
@@ -30,7 +30,10 @@ int main(int argc, char **argv){
         exit(1);
     }
 
+    printf("lexer output:\n%s\n", tokens->tokens);
+
     free(source);
+    free(tokens->tokens);
     free(tokens);
 
 }
