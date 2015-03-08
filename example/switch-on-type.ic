@@ -1,0 +1,47 @@
+# A more complex example showing switching on type
+# and suggesting how the compiler verifies these checks
+# before allowing unboxing of Union types
+
+# defaults to Empty
+let m::Maybe<Int>
+
+if ...
+    m = 32
+
+if ...
+    m = 16
+
+switch m
+    case Int
+        print("Got number " m.contents)
+    end
+    case Empty
+        print("Got nothing")
+    end
+end
+
+union Container
+    i::Int
+    s::String
+    f::Foo
+end
+
+function bar(c::Container)
+    # unwrap Container and perform action based on type
+    # compiler to enforce that *all* possible types are handled
+    # compiler also enforces that any 'unwrapping' is safe
+    switch c
+        case Int
+            # can only unwrap c.i as we know we must be an Int
+            c.i += 14
+        end
+        case String
+            # can only unwrap c.s as we know we must be a String
+            print(c.s)
+        end
+        case Foo
+            # can only unwrap c.f as we know we must be a Foo
+            do-something-with-foo(c.f)
+        end
+end
+
