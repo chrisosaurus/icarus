@@ -1,18 +1,32 @@
 Icarus
 ======
 
-Icarus is a toy typed language with static type checking
+Icarus is a toy language with static type checking
 
+Inspiration has been drawn from (in alphabetical order):
+
+* C
+* Go
+* Haskell
+* Julia
+* Python
+* Rust
+* Scheme
 
 Plans
 =====
 
+* no undefined behavior
 * strong statically checked type system
-* no 'holes' in the type system (null pointers be gone!)
-* garbage collected
+* no 'holes' in the type system (nulls and null pointers be gone!)
+* managed memory (automatic garbage collection)
 * multiple dispatch (dispatch to functions is based on function name and type of arguments passed)
-* parametrized types
-* union types (syntactic sugar for tagged enums, staticly checked before being taken apart)
+* operator overloading
+* parametrized types (derived from C++ and Julia)
+* union types (tagged enums, staticly checked before being taken apart)
+    * like Rust's enums
+    * like haskell's ADTs (Algebraic Data Types)
+* including both an interpreter and compiler (currently considering both C and LLVM bitcode as compiler backend outputs) - see `docs/components.md`
 
 Work so far
 ===========
