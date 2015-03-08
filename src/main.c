@@ -31,7 +31,7 @@ int main(int argc, char **argv){
         exit(1);
     }
 
-    printf("size of str '%d', size of tokens '%d'\n", strlen(source), tokens->len);
+    printf("len of str '%d', len of tokens '%d', cap of tokens '%d'\n", strlen(source), tokens->len, tokens->cap);
     printf("lexer output:\n%s\n", tokens->tokens);
 
     free(source);
