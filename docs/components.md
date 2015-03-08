@@ -21,17 +21,17 @@ Frontend
 ========
 The job of the front-end is to build an abstract syntax tree (AST)
 
-Read : filename -> source []
+Read : filename -> source
 
-Lex : source[] -> tokens[]
+Lex : source -> tokens
 
-Parse : tokens[] -> AST
+Parse : tokens -> AST
 
 Middleware
 ==========
 The role of the middleware is to perform any verification and modifications to this AST
 
-Verify : AST -> errors[]
+Verify : AST -> warnings and errors
 
 Backends
 ========
