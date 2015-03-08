@@ -38,5 +38,5 @@ So far all Icarus can do is lex it's `example/simple.ic`
 
 outputs:
 
-    type Foo a :: int b :: string end function d ( i :: Int ) print ( i ) end function d ( s :: String ) print ( s ) end function d ( f :: Foo ) d ( f . a ) d ( f . b ) end function main ( ) let f :: Foo = Foo ( 1 " hello " ) d ( f ) end 
+    type Foo a :: Int b :: String end function d ( i :: Int ) print ( i ) end function d ( s :: String ) print ( s ) end function d ( f :: Foo ) d ( f . a ) d ( f . b ) end function main ( ) let f :: Foo = Foo ( 1 " hello " ) d ( f ) end 
 
