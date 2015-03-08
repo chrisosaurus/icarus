@@ -11,8 +11,9 @@ Inspiration has been drawn from (in alphabetical order):
 * Haskell
 * Julia
 * Python
+* Racket
 * Rust
-* Scheme
+* Scheme (r7rs-small, chicken)
 
 Plans
 =====
@@ -24,7 +25,7 @@ Plans
 * multiple dispatch (dispatch to functions is based on function name and type of arguments passed)
 * operator overloading
 * parametrized types (derived from C++ and Julia)
-* union types (tagged enums, staticly checked before being taken apart)
+* union types (tagged enums, statically checked before being taken apart)
     * like Rust's enums
     * like haskell's ADTs (Algebraic Data Types)
 * including both an interpreter and compiler (currently considering both C and LLVM bitcode as compiler backend outputs) - see `docs/components.md`
