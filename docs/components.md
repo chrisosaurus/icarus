@@ -22,7 +22,9 @@ Frontend
 The job of the front-end is to build an abstract syntax tree (AST)
 
 Read : filename -> source []
+
 Lex : source[] -> tokens[]
+
 Parse : tokens[] -> AST
 
 Middleware
