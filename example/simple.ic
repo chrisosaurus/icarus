@@ -1,6 +1,6 @@
 type Foo
-    a::int
-    b::string
+    a::Int
+    b::String
 end
 
 function d(i::Int)
