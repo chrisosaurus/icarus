@@ -6,6 +6,7 @@ Icarus is a toy language with static type checking
 Inspiration has been drawn from (in alphabetical order):
 
 * C
+* C++
 * Go
 * Haskell
 * Julia
@@ -18,7 +19,7 @@ Plans
 
 * no undefined behavior
 * strong statically checked type system
-* no 'holes' in the type system (nulls and null pointers be gone!)
+* no 'holes' in the type system (null and void pointer type are all banished) - see `docs/noholes.md`
 * managed memory (automatic garbage collection)
 * multiple dispatch (dispatch to functions is based on function name and type of arguments passed)
 * operator overloading
