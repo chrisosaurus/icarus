@@ -4,8 +4,6 @@
 
 #include "lexer.h"
 
-#define DEBUG_LEXER 0
-
 /* expand supplied tokens to the specified new capacity
  * makes sure the new area is memset to 0
  *
@@ -130,7 +128,7 @@ static icarus_tokens * expand_tokens(icarus_tokens *tokens, int new_cap){
         return tokens;
     }
 
-#if DEBUG_LEXER
+#ifdef DEBUG_LEXER
     printf("expanding tokens from '%d' to '%d'\n\n", tokens->cap, new_cap);
 #endif
 
@@ -166,7 +164,7 @@ static icarus_tokens * add_token(icarus_tokens *tokens, char *start, int len){
         required_len += tokens->len;
     }
 
-#if DEBUG_LEXER
+#ifdef DEBUG_LEXER
     printf("add_token calling with '%d' (len '%d') \n", required_len, len);
 #endif
 
@@ -248,7 +246,7 @@ static icarus_tokens * consume_word(icarus_tokens *tokens, char *source, int *i)
         return 0;
     }
 
-#if DEBUG_LEXER
+#ifdef DEBUG_LEXER
     printf("consume_word: calling add_token with len '%d'\n", len);
 #endif
 
@@ -271,7 +269,7 @@ static icarus_tokens * consume_single_symbol(icarus_tokens *tokens, char *source
         return 0;
     }
 
-#if DEBUG_LEXER
+#ifdef DEBUG_LEXER
     printf("consume_single_symbol: calling add_token with len '%d'\n", 1);
 #endif
 
@@ -300,7 +298,7 @@ static icarus_tokens * consume_repeated_symbol(icarus_tokens *tokens, char *sour
         /* skip over very repeat of the symbol sym */
     }
 
-#if DEBUG_LEXER
+#ifdef DEBUG_LEXER
     printf("consume_repeated_symbol: calling add_token with len '%d'\n", len);
 #endif
 

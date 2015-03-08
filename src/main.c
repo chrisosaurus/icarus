@@ -31,7 +31,10 @@ int main(int argc, char **argv){
         exit(1);
     }
 
+#ifdef DEBUG_LEXER
     printf("len of str '%d', len of tokens '%d', cap of tokens '%d'\n", strlen(source), tokens->len, tokens->cap);
+#endif
+
     printf("lexer output:\n%s\n", tokens->tokens);
 
     free(source);
