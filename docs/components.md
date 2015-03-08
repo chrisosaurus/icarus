@@ -8,6 +8,8 @@ Icarus Components
                       |
                     Parse
                       |
+                   Rewrite
+                      |
                     Verify
                       |
                Select backend
@@ -30,6 +32,8 @@ Parse : tokens -> AST
 Middleware
 ==========
 The role of the middleware is to perform any verification and modifications to this AST
+
+Rewrite : AST -> AST
 
 Verify : AST -> warnings and errors
 
