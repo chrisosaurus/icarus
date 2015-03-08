@@ -80,6 +80,7 @@ icarus_tokens * lex(char *source){
             case '=':
             case '.':
             case '"':
+            case '#':
                 tokens = consume_single_symbol(tokens, source, &i);
                 break;
 
