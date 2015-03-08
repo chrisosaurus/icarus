@@ -37,7 +37,7 @@ Backends
 ========
 The backend then takes this AST and does *something* with it
 
-Icarus then plans to support multiple backends:
+Icarus has plans to support multiple backends, some possible ones include:
 
 * Interpreter : AST -> side effects
 * Icarus -> C compiler : AST -> C source code
