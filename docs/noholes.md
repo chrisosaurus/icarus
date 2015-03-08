@@ -40,6 +40,8 @@ example syntax (work in progress):
     # returns position of needle within haystack on success
     # reutrns Empty on failure
     function search(haystack::String needle::Char) :: Maybe<Int>
+        let char::Char
+        let pos::Int
 
         for (char pos) in iterate(haystack)
             if char == needle
