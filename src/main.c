@@ -2,8 +2,9 @@
 #include <stdlib.h> /* exit, free */
 #include <string.h>
 
-#include "read.h" /* read_slurp */
-#include "lexer.h" /* lex */
+#include "read.h" /* ic_read_slurp */
+#include "lexer.h" /* ic_lex */
+#include "parse.h" /* ic_parse */
 
 int main(int argc, char **argv){
     char *filename=0, *source=0;
