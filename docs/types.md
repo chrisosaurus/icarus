@@ -3,7 +3,7 @@ User defined types
 
 Record types
 ============
-a record type is like a c struct, a set of names for data locations and their types
+A record type is like a c struct, a set of names for data locations and their types
 
     type Foo
         a::Int
@@ -17,7 +17,7 @@ a record type is like a c struct, a set of names for data locations and their ty
 
 Enum types
 ==========
-an enum type is a label and introduces no data storage
+An enum type is a label and introduces no data storage
 
     enum Which
         Foo
@@ -41,7 +41,7 @@ an enum type is a label and introduces no data storage
 
 Union types
 ===========
-a tagged enum, this is a combination of both Record and Types
+A tagged enum, this is a combination of both Record and Enum
 
 Like records it can store data and you specify multiple names and types
 
