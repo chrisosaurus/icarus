@@ -70,7 +70,6 @@ However like an Enum it can only ever hold *one* value at a time
 The above is roughly equivalent to the following C:
 
     struct Foo {
-
         enum {
             Foo_String,
             Foo_Int
