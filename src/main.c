@@ -7,7 +7,7 @@
 
 int main(int argc, char **argv){
     char *filename=0, *source=0;
-    icarus_tokens *tokens;
+    struct ic_tokens *tokens;
 
     if( argc < 2 ){
         puts("No source file specified");
@@ -19,13 +19,13 @@ int main(int argc, char **argv){
 
     filename = argv[1];
 
-    source = read_slurp(filename);
+    source = ic_read_slurp(filename);
     if( ! source ){
         puts("slurping failed");
         exit(1);
     }
 
-    tokens = lex(source);
+    tokens = ic_lex(source);
     if( ! tokens ){
         puts("lexing failed");
         exit(1);

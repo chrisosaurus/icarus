@@ -13,7 +13,7 @@
  * returns pointer to tokens on success (which may have a different value)
  * returns 0 on error
  */
-static icarus_tokens * expand_tokens(icarus_tokens *tokens, int new_cap);
+static struct ic_tokens * expand_tokens(struct ic_tokens *tokens, int new_cap);
 
 /* consumes one word (alpha, numbers, -, and _)
  * adds this consumed unit as a token
@@ -21,7 +21,7 @@ static icarus_tokens * expand_tokens(icarus_tokens *tokens, int new_cap);
  * returns *tokens on success
  * returns 0 on error
  */
-static icarus_tokens * consume_word(icarus_tokens *tokens, char *source, int *i);
+static struct ic_tokens * consume_word(struct ic_tokens *tokens, char *source, int *i);
 
 /* consumes one symbol at current position
  * adds this consumed unit as a token
@@ -29,7 +29,7 @@ static icarus_tokens * consume_word(icarus_tokens *tokens, char *source, int *i)
  * returns *tokens on success
  * returns 0 on error
  */
-static icarus_tokens * consume_single_symbol(icarus_tokens *tokens, char *source, int *i);
+static struct ic_tokens * consume_single_symbol(struct ic_tokens *tokens, char *source, int *i);
 
 /* consumes as many of the specified symbol `sym` in a row
  * adds this consumed unit as a token
@@ -37,17 +37,17 @@ static icarus_tokens * consume_single_symbol(icarus_tokens *tokens, char *source
  * returns *tokens on success
  * returns 0 on error
  */
-static icarus_tokens * consume_repeated_symbol(icarus_tokens *tokens, char *source, int *i, char sym);
+static struct ic_tokens * consume_repeated_symbol(struct ic_tokens *tokens, char *source, int *i, char sym);
 
 /* takes a character array of the source code as text
- * returns an icarus_tokens * containing the output from lexing
+ * returns an struct ic_tokens * containing the output from lexing
  *
  * returns 0 on error
  */
-icarus_tokens * lex(char *source){
+struct ic_tokens * ic_lex(char *source){
     int i = 0;
     int len = 0;
-    icarus_tokens *tokens = 0;
+    struct ic_tokens *tokens = 0;
 
     if( ! source ){
         puts("lex: provided source was null");
@@ -112,12 +112,12 @@ icarus_tokens * lex(char *source){
  * returns pointer to tokens on success (which may have a different value)
  * returns 0 on error
  */
-static icarus_tokens * expand_tokens(icarus_tokens *tokens, int new_cap){
+static struct ic_tokens * expand_tokens(struct ic_tokens *tokens, int new_cap){
     /* if null was provided we must behave like realloc
-     * and correctly allocate the new icarus_tokens
+     * and correctly allocate the new struct ic_tokens
      */
     if( ! tokens ){
-        tokens = calloc(1, sizeof(icarus_tokens));
+        tokens = calloc(1, sizeof(struct ic_tokens));
         if( ! tokens ){
             puts("expand_tokens: alloc failed");
             return 0;
@@ -149,7 +149,7 @@ static icarus_tokens * expand_tokens(icarus_tokens *tokens, int new_cap){
 }
 
 /* given the pointer to a start of a token and a len
- * will add to the end of icarus_tokens
+ * will add to the end of struct ic_tokens
  *
  * will call expand_tokens to ensure sufficient room
  *
@@ -158,7 +158,7 @@ static icarus_tokens * expand_tokens(icarus_tokens *tokens, int new_cap){
  *
  * return 0 on failure
  */
-static icarus_tokens * add_token(icarus_tokens *tokens, char *start, int len){
+static struct ic_tokens * add_token(struct ic_tokens *tokens, char *start, int len){
     int required_len = len + 2;
 
     if( tokens ){
@@ -204,7 +204,7 @@ static icarus_tokens * add_token(icarus_tokens *tokens, char *start, int len){
  * returns *tokens on success
  * returns 0 on error
  */
-static icarus_tokens * consume_word(icarus_tokens *tokens, char *source, int *i){
+static struct ic_tokens * consume_word(struct ic_tokens *tokens, char *source, int *i){
     int len=0;
     char ch=0;
 
@@ -264,7 +264,7 @@ static icarus_tokens * consume_word(icarus_tokens *tokens, char *source, int *i)
  * returns *tokens on success
  * returns 0 on error
  */
-static icarus_tokens * consume_single_symbol(icarus_tokens *tokens, char *source, int *i){
+static struct ic_tokens * consume_single_symbol(struct ic_tokens *tokens, char *source, int *i){
     if( ! i || ! source ){
         puts("consume_single_symbol: null source or i provided");
         return 0;
@@ -285,7 +285,7 @@ static icarus_tokens * consume_single_symbol(icarus_tokens *tokens, char *source
  * returns *tokens on success
  * returns 0 on error
  */
-static icarus_tokens * consume_repeated_symbol(icarus_tokens *tokens, char *source, int *i, char sym){
+static struct ic_tokens * consume_repeated_symbol(struct ic_tokens *tokens, char *source, int *i, char sym){
     int len = 0;
 
     if( ! i || ! source ){

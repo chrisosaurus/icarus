@@ -7,7 +7,7 @@
  * return this buffer on success
  * return 0 on error
  */
-char * read_slurp(char *filename){
+char * ic_read_slurp(char *filename){
     /* file object */
     FILE *f;
     /* size of file (from ftell) */
