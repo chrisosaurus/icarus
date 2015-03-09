@@ -24,7 +24,7 @@ Plans
 * managed memory (automatic garbage collection)
 * multiple dispatch (dispatch to functions is based on function name and type of arguments passed)
 * operator overloading
-* parametrized types (derived from C++ and Julia)
+* parametrized types (derived from C++, Julia, and Rust)
 * union types (tagged enums, statically checked before being taken apart)
     * like Rust's enums
     * like haskell's ADTs (Algebraic Data Types)
