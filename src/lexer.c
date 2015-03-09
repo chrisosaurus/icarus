@@ -13,7 +13,7 @@
  * returns pointer to tokens on success (which may have a different value)
  * returns 0 on error
  */
-static struct ic_tokens * expand_tokens(struct ic_tokens *tokens, int new_cap);
+static struct ic_tokens * ic_expand_tokens(struct ic_tokens *tokens, int new_cap);
 
 /* consumes one word (alpha, numbers, -, and _)
  * adds this consumed unit as a token
@@ -21,7 +21,7 @@ static struct ic_tokens * expand_tokens(struct ic_tokens *tokens, int new_cap);
  * returns *tokens on success
  * returns 0 on error
  */
-static struct ic_tokens * consume_word(struct ic_tokens *tokens, char *source, int *i);
+static struct ic_tokens * ic_consume_word(struct ic_tokens *tokens, char *source, int *i);
 
 /* consumes one symbol at current position
  * adds this consumed unit as a token
@@ -29,7 +29,7 @@ static struct ic_tokens * consume_word(struct ic_tokens *tokens, char *source, i
  * returns *tokens on success
  * returns 0 on error
  */
-static struct ic_tokens * consume_single_symbol(struct ic_tokens *tokens, char *source, int *i);
+static struct ic_tokens * ic_consume_single_symbol(struct ic_tokens *tokens, char *source, int *i);
 
 /* consumes as many of the specified symbol `sym` in a row
  * adds this consumed unit as a token
@@ -37,7 +37,7 @@ static struct ic_tokens * consume_single_symbol(struct ic_tokens *tokens, char *
  * returns *tokens on success
  * returns 0 on error
  */
-static struct ic_tokens * consume_repeated_symbol(struct ic_tokens *tokens, char *source, int *i, char sym);
+static struct ic_tokens * ic_consume_repeated_symbol(struct ic_tokens *tokens, char *source, int *i, char sym);
 
 /* takes a character array of the source code as text
  * returns an struct ic_tokens * containing the output from lexing
@@ -57,7 +57,7 @@ struct ic_tokens * ic_lex(char *source){
     len = strlen(source);
 
     /* set initial capacity to strlen of source */
-    tokens = expand_tokens(tokens, len);
+    tokens = ic_expand_tokens(tokens, len);
     if( ! tokens ){
         puts("lex icarus token expansion failed");
         return 0;
@@ -81,16 +81,16 @@ struct ic_tokens * ic_lex(char *source){
             case '.':
             case '"':
             case '#':
-                tokens = consume_single_symbol(tokens, source, &i);
+                tokens = ic_consume_single_symbol(tokens, source, &i);
                 break;
 
             case ':':
-                tokens = consume_repeated_symbol(tokens, source, &i, source[i]);
+                tokens = ic_consume_repeated_symbol(tokens, source, &i, source[i]);
                 break;
 
             default:
                 /* assume this is a word */
-                tokens = consume_word(tokens, source, &i);
+                tokens = ic_consume_word(tokens, source, &i);
                 break;
         }
 
@@ -112,14 +112,14 @@ struct ic_tokens * ic_lex(char *source){
  * returns pointer to tokens on success (which may have a different value)
  * returns 0 on error
  */
-static struct ic_tokens * expand_tokens(struct ic_tokens *tokens, int new_cap){
+static struct ic_tokens * ic_expand_tokens(struct ic_tokens *tokens, int new_cap){
     /* if null was provided we must behave like realloc
      * and correctly allocate the new struct ic_tokens
      */
     if( ! tokens ){
         tokens = calloc(1, sizeof(struct ic_tokens));
         if( ! tokens ){
-            puts("expand_tokens: alloc failed");
+            puts("ic_expand_tokens: alloc failed");
             return 0;
         }
     }
@@ -138,7 +138,7 @@ static struct ic_tokens * expand_tokens(struct ic_tokens *tokens, int new_cap){
     /* resize tokens char[] */
     tokens->tokens = realloc(tokens->tokens, sizeof(char) * new_cap);
     if( ! tokens->tokens ){
-        puts("expand_tokens: realloc failed");
+        puts("ic_expand_tokens: realloc failed");
         return 0;
     }
 
@@ -151,10 +151,10 @@ static struct ic_tokens * expand_tokens(struct ic_tokens *tokens, int new_cap){
 /* given the pointer to a start of a token and a len
  * will add to the end of struct ic_tokens
  *
- * will call expand_tokens to ensure sufficient room
+ * will call ic_expand_tokens to ensure sufficient room
  *
  * returns the pointer to tokens (which may have changed)
- * behaves correctly when handed a null *tokens (will pass to expand_tokens)
+ * behaves correctly when handed a null *tokens (will pass to ic_expand_tokens)
  *
  * return 0 on failure
  */
@@ -175,9 +175,9 @@ static struct ic_tokens * add_token(struct ic_tokens *tokens, char *start, int l
      *  + 1 for space to separate tokens
      *  + 1 for the null string terminator
      */
-    tokens = expand_tokens(tokens, required_len);
+    tokens = ic_expand_tokens(tokens, required_len);
     if( ! tokens ){
-        puts("add_token: failed call to expand_tokens");
+        puts("add_token: failed call to ic_expand_tokens");
         return 0;
     }
 
@@ -204,7 +204,7 @@ static struct ic_tokens * add_token(struct ic_tokens *tokens, char *start, int l
  * returns *tokens on success
  * returns 0 on error
  */
-static struct ic_tokens * consume_word(struct ic_tokens *tokens, char *source, int *i){
+static struct ic_tokens * ic_consume_word(struct ic_tokens *tokens, char *source, int *i){
     int len=0;
     char ch=0;
 
@@ -243,12 +243,12 @@ static struct ic_tokens * consume_word(struct ic_tokens *tokens, char *source, i
          * this most likely means the body in lex()
          * is missing a *_symbol case
          */
-        printf("consume_word: stuck on a non-word character '%c', raising error\n", source[*i]);
+        printf("ic_consume_word: stuck on a non-word character '%c', raising error\n", source[*i]);
         return 0;
     }
 
 #ifdef DEBUG_LEXER
-    printf("consume_word: calling add_token with len '%d'\n", len);
+    printf("ic_consume_word: calling add_token with len '%d'\n", len);
 #endif
 
     tokens = add_token(tokens, &(source[*i]), len);
@@ -264,14 +264,14 @@ static struct ic_tokens * consume_word(struct ic_tokens *tokens, char *source, i
  * returns *tokens on success
  * returns 0 on error
  */
-static struct ic_tokens * consume_single_symbol(struct ic_tokens *tokens, char *source, int *i){
+static struct ic_tokens * ic_consume_single_symbol(struct ic_tokens *tokens, char *source, int *i){
     if( ! i || ! source ){
-        puts("consume_single_symbol: null source or i provided");
+        puts("ic_consume_single_symbol: null source or i provided");
         return 0;
     }
 
 #ifdef DEBUG_LEXER
-    printf("consume_single_symbol: calling add_token with len '%d'\n", 1);
+    printf("ic_consume_single_symbol: calling add_token with len '%d'\n", 1);
 #endif
 
     tokens = add_token(tokens, &(source[*i]), 1);
@@ -285,11 +285,11 @@ static struct ic_tokens * consume_single_symbol(struct ic_tokens *tokens, char *
  * returns *tokens on success
  * returns 0 on error
  */
-static struct ic_tokens * consume_repeated_symbol(struct ic_tokens *tokens, char *source, int *i, char sym){
+static struct ic_tokens * ic_consume_repeated_symbol(struct ic_tokens *tokens, char *source, int *i, char sym){
     int len = 0;
 
     if( ! i || ! source ){
-        puts("consume_repeated_symbol: null source or i provided");
+        puts("ic_consume_repeated_symbol: null source or i provided");
         return 0;
     }
 
@@ -300,7 +300,7 @@ static struct ic_tokens * consume_repeated_symbol(struct ic_tokens *tokens, char
     }
 
 #ifdef DEBUG_LEXER
-    printf("consume_repeated_symbol: calling add_token with len '%d'\n", len);
+    printf("ic_consume_repeated_symbol: calling add_token with len '%d'\n", len);
 #endif
 
     tokens =  add_token(tokens, &(source[*i]), len);
