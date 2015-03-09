@@ -5,8 +5,8 @@
 #include "../../src/read.h"
 
 static char *expected = "type Foo\n\
-    a::int\n\
-    b::string\n\
+    a::Int\n\
+    b::String\n\
 end\n\
 \n\
 function d(i::Int)\n\
