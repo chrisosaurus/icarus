@@ -5,12 +5,18 @@ Record types
 ============
 A record type is like a c struct, a set of names for data locations and their types
 
+A record type introduces a default constructor which takes every field as an argument
+
+A user can additionally define new constructors (to be described later)
+
     type Foo
         a::Int
         s::String
     end
 
+    # use of default constructor Foo(a::Int s::String)
     let f::Foo = Foo(14 "hello")
+
     print(f.a) # 14
     print(f.b) # "hello
 
