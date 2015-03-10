@@ -13,6 +13,6 @@ struct ic_decl * ic_parse_union_decl(struct ic_tokens *tokens, unsigned int *i);
 
 struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i);
 
-void * ic_parse(struct ic_tokens *tokens);
+struct ic_ast * ic_parse(struct ic_tokens *tokens);
 
 #endif

@@ -49,7 +49,7 @@ struct ic_parse_table_entry {
     {  8,     "function", ic_parse_func_decl  }
 };
 
-void * ic_parse(struct ic_tokens *tokens){
+struct ic_ast * ic_parse(struct ic_tokens *tokens){
     /* offset into tokens */
     unsigned int i = 0;
     /* position of next space in tokens */
