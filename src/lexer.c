@@ -380,6 +380,9 @@ static struct ic_tokens * ic_strip_comment(struct ic_tokens *tokens, char *sourc
 
 COMMENT_END:
 
+    /* we could instead leave the comments in adding them as a token
+     * following by the lexer inserting another token to signify comment end
+     */
     return tokens;
 }
 
