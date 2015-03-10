@@ -60,6 +60,9 @@ void * ic_parse(struct ic_tokens *tokens){
     /* offset into ic_parse_table */
     unsigned int pt_offset = 0;
 
+    /* function to dispatch to */
+    struct ic_expression * (*func)(struct ic_tokens *tokens, unsigned int *i) = 0;
+
     /* possible leading tokens:
      * type
      * enum
@@ -99,6 +102,17 @@ void * ic_parse(struct ic_tokens *tokens){
 #ifdef DEBUG_PARSE
                 printf( "match found! token '%.*s' with parse_table entry '%.*s'\n", dist, &(tokens->tokens[i]), ic_parse_table[pt_offset].len, ic_parse_table[pt_offset].token );
 #endif
+
+                func = ic_parse_table[pt_offset].func;
+                if( ! func ){
+                    printf( "ic_parse: Error matched with '%.*s' but parse table function was null, bailing\n", ic_parse_table[pt_offset].len, ic_parse_table[pt_offset].token );
+                    return 0;
+                }
+
+                /* FIXME call function
+                 * figure out what to do with result
+                 * do that
+                 */
                 return 0;
             }
 
