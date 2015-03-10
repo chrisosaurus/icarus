@@ -3,9 +3,9 @@
 
 struct ic_tokens {
     /* length of char *tokens used */
-    int len;
+    unsigned int len;
     /* length of char *tokens allocated */
-    int cap;
+    unsigned int cap;
     /* spare separated char array of tokens */
     char *tokens;
 };

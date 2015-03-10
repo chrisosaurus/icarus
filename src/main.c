@@ -38,6 +38,8 @@ int main(int argc, char **argv){
 
     printf("lexer output:\n%s\n", tokens->tokens);
 
+    ic_parse(tokens);
+
     free(source);
     free(tokens->tokens);
     free(tokens);
