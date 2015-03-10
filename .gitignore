@@ -2,3 +2,4 @@ icarus
 src/*.o
 *.out
 test_read
+test_array

@@ -30,7 +30,8 @@ cleanobj:
 clean: cleanobj
 	@echo cleaning executables
 	@rm -f icarus
-	@rm -f test_read
+	@echo cleaning tests
+	@rm -f test_read test_array
 
 example: icarus
 	./icarus example/simple.ic
@@ -40,10 +41,13 @@ test: run_tests
 run_tests: compile_tests
 	@echo "running test_read"
 	./test_read
+	@echo "running test_array"
+	./test_array
 
 compile_tests: clean ${OBJ}
 	@echo "compiling tests"
 	@${CC} t/unit/test_read.c -o test_read ${LDFLAGS} ${OBJ}
+	@${CC} t/unit/test_array.c -o test_array ${LDFLAGS} ${OBJ}
 	@make -s cleanobj
 
 .PHONY: all clean cleanobj icarus test example

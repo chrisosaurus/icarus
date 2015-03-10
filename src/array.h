@@ -3,7 +3,6 @@
 
 struct ic_array {
     unsigned int len;
-    unsigned int cap;
     void ** contents;
 };
 
@@ -27,5 +26,11 @@ void * ic_array_get(struct ic_array *arr, unsigned int pos);
  * bounds checked
  */
 int ic_array_set(struct ic_array *arr, unsigned int pos, void *val);
+
+/* ensure array is at least as big as `new_cap`
+ * returns 0 on success
+ * return 1 on failure
+ */
+int ic_array_ensure(struct ic_array *arr, unsigned int new_len);
 
 #endif
