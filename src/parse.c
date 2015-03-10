@@ -6,7 +6,7 @@
 #include "ast.h"
 #include "parse.h"
 
-#define DEBUG_PARSE 1
+#define DEBUG_PARSE
 
 #define LENGTH(x) (sizeof(x) / sizeof(x[0]))
 
@@ -77,12 +77,12 @@ void * ic_parse(struct ic_tokens *tokens){
          */
         dist = space - &(tokens->tokens[i]);
 
-#if DEBUG_PARSE
+#ifdef DEBUG_PARSE
         printf( "considering token '%.*s' with distance '%u'\n", dist, &(tokens->tokens[i]), dist );
 #endif
 
         for( pt_offset=0; pt_offset < LENGTH(ic_parse_table); ++pt_offset ){
-#if DEBUG_PARSE
+#ifdef DEBUG_PARSE
             printf( "comparing token token '%.*s' (%u) with parse_table entry '%.*s' (%u)\n",
                     dist,
                     &(tokens->tokens[i]),
@@ -96,7 +96,7 @@ void * ic_parse(struct ic_tokens *tokens){
             if( dist == ic_parse_table[pt_offset].len
                 && ! strncmp( &(tokens->tokens[i]), ic_parse_table[pt_offset].token, dist )
               ){
-#if DEBUG_PARSE
+#ifdef DEBUG_PARSE
                 printf( "match found! token '%.*s' with parse_table entry '%.*s'\n", dist, &(tokens->tokens[i]), ic_parse_table[pt_offset].len, ic_parse_table[pt_offset].token );
 #endif
                 return 0;
