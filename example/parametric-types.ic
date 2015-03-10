@@ -1,0 +1,17 @@
+
+# unsure about the syntax or semantics here
+
+type Foo<T>
+    a::T
+    b::Int
+
+    function Foo(t::T)
+        return new(t 10)
+    end
+end
+
+function main()
+    let f::Foo<String> = Foo<String>("hello")
+
+end
+

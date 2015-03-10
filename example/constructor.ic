@@ -1,0 +1,28 @@
+
+type Foo
+    a::Int
+    b::Int
+    c::String
+
+    function Foo(s::String)
+        return new(1 2 s)
+    end
+
+    function Foo(i::Int s::String)
+        return new (i 2 s)
+    end
+end
+
+function main()
+    # we now have 3 construcotrs on Foo
+
+    # the default 3 arg
+    let a::Foo = Foo(3 4 "hello")
+
+    # the defined 1 arg
+    let b::Foo = Foo("goodbye")
+
+    # and the defined 2 arg
+    let c::Foo = Foo(4 "why hellooo there")
+
+end
