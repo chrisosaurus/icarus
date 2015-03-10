@@ -1,3 +1,4 @@
+# user defined type with 2 fields, an Int and a String
 type Foo
     a::Int
     b::String
@@ -11,11 +12,13 @@ function d(s::String)
     print(s)
 end
 
+# break apart a Foo and call d on each field
 function d(f::Foo)
     d(f.a)
     d(f.b)
 end
 
+# entry point for program
 function main()
     let f::Foo = Foo(1 "hello")
 
