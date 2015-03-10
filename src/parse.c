@@ -18,6 +18,16 @@ struct ic_expression * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int
     return 0;
 }
 
+struct ic_expression * ic_parse_enum_decl(struct ic_tokens *tokens, unsigned int *i){
+    /* FIXME */
+    return 0;
+}
+
+struct ic_expression * ic_parse_union_decl(struct ic_tokens *tokens, unsigned int *i){
+    /* FIXME */
+    return 0;
+}
+
 struct ic_expression * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
     /* FIXME */
     return 0;
@@ -33,6 +43,8 @@ struct ic_parse_table_entry {
     struct ic_expression * (*func)(struct ic_tokens *tokens, unsigned int *i);
 } ic_parse_table [] = {
     {4, "type", ic_parse_type_decl},
+    {4, "enum", ic_parse_enum_decl},
+    {5, "union", ic_parse_union_decl},
     {8, "function", ic_parse_func_decl}
 };
 
