@@ -13,22 +13,22 @@
 /* ignore unused parameter warnings */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
-struct ic_expression * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
+struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
     /* FIXME */
     return 0;
 }
 
-struct ic_expression * ic_parse_enum_decl(struct ic_tokens *tokens, unsigned int *i){
+struct ic_decl * ic_parse_enum_decl(struct ic_tokens *tokens, unsigned int *i){
     /* FIXME */
     return 0;
 }
 
-struct ic_expression * ic_parse_union_decl(struct ic_tokens *tokens, unsigned int *i){
+struct ic_decl * ic_parse_union_decl(struct ic_tokens *tokens, unsigned int *i){
     /* FIXME */
     return 0;
 }
 
-struct ic_expression * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
+struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
     /* FIXME */
     return 0;
 }
@@ -40,7 +40,7 @@ struct ic_expression * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int
 struct ic_parse_table_entry {
     unsigned int len;
     char *token;
-    struct ic_expression * (*func)(struct ic_tokens *tokens, unsigned int *i);
+    struct ic_decl * (*func)(struct ic_tokens *tokens, unsigned int *i);
 } ic_parse_table [] = {
     /* len    token       function    */
     {  4,     "type",     ic_parse_type_decl  },
@@ -61,7 +61,7 @@ void * ic_parse(struct ic_tokens *tokens){
     unsigned int pt_offset = 0;
 
     /* function to dispatch to */
-    struct ic_expression * (*func)(struct ic_tokens *tokens, unsigned int *i) = 0;
+    struct ic_decl * (*func)(struct ic_tokens *tokens, unsigned int *i) = 0;
 
     /* possible leading tokens:
      * type

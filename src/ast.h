@@ -4,27 +4,13 @@
 #include "types.h"
 #include "array.h"
 
-/* predeclare to allow recursive types */
-struct ic_expression;
-
-/* a collection of expressions */
-struct ic_begin {
-    int len;
-    struct ic_expression *expr;
-};
-
-struct ic_func_call {
-    struct ic_symbol name;
-    int nargs;
-    struct ic_value * args;
-};
-
 struct ic_func_decl {
     struct ic_symbol name;
     int nargs;
     struct ic_array arg_names;
     struct ic_array arg_types;
-    struct ic_begin body;
+    /* FIXME how do we store a body ? */
+    char *body;
 };
 
 struct ic_type_decl {
@@ -34,42 +20,21 @@ struct ic_type_decl {
     struct ic_array field_types;
 };
 
-enum ic_value_type {
-    symbol,
-    string,
-    integer,
-    array
-#if 0
-    function
-#endif
-};
-
-struct ic_value {
-    enum ic_value_type type;
-    union {
-        struct ic_symbol sym;
-        struct ic_string str;
-        struct ic_int integer;
-        struct ic_array array;
-    } u;
-};
-
-
-enum ic_expr_type {
-    value,
-    func_call,
+enum ic_decl_type {
     func_decl,
     type_decl
 };
 
-struct ic_expression {
-    enum ic_expr_type type;
+struct ic_decl {
+    enum ic_decl_type type;
     union {
-        struct ic_value value;
-        struct ic_func_call fcall;
         struct ic_func_decl fdecl;
         struct ic_type_decl tdecl;
     } u;
+};
+
+struct ic_ast {
+    struct ic_array decls;
 };
 
 #endif
