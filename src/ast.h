@@ -2,6 +2,7 @@
 #define ICARUS_AST_H
 
 #include "types.h"
+#include "array.h"
 
 /* predeclare to allow recursive types */
 struct ic_expression;
