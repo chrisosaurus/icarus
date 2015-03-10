@@ -115,54 +115,6 @@ struct ic_tokens * ic_lex(char *source){
     return tokens;
 }
 
-/* consume comment
- * this checks for a beginning # (comment character) and will raise an error if not found
- * this will consume everything from current character up to first \n or EOF
- *
- * returns token passes in on success
- * returns 0 on failure
- */
-static struct ic_tokens * ic_consume_comment(struct ic_tokens *tokens, char *source, unsigned int *i){
-    if( ! tokens ){
-        puts("ic_consume_comment: no tokens supplied");
-        return 0;
-    }
-
-    if( ! source ){
-        puts("ic_consume_comment: no source provided");
-        return 0;
-    }
-
-    if( ! i ){
-        puts("ic_consume_comment: no i provided");
-        return 0;
-    }
-
-    if( source[*i] != '#' ){
-        printf("ic_consume_comment: this does not look like a comment;\n expected '#'\n got '%c'\n", source[*i]);
-        return 0;
-    }
-
-    for( ; ; ++*i ){
-        switch( source[*i] ){
-            case '\n':
-            case '\0':
-                /* end of comment */
-                goto COMMENT_END;
-                break;
-
-            default:
-                /* keep going */
-                break;
-        }
-    }
-
-COMMENT_END:
-
-    return tokens;
-}
-
-
 /* expand supplied tokens to the specified new capacity
  * makes sure the new area is memset to 0
  *
@@ -368,4 +320,52 @@ static struct ic_tokens * ic_consume_repeated_symbol(struct ic_tokens *tokens, c
 
     return tokens;
 }
+
+/* consume comment
+ * this checks for a beginning # (comment character) and will raise an error if not found
+ * this will consume everything from current character up to first \n or EOF
+ *
+ * returns token passes in on success
+ * returns 0 on failure
+ */
+static struct ic_tokens * ic_consume_comment(struct ic_tokens *tokens, char *source, unsigned int *i){
+    if( ! tokens ){
+        puts("ic_consume_comment: no tokens supplied");
+        return 0;
+    }
+
+    if( ! source ){
+        puts("ic_consume_comment: no source provided");
+        return 0;
+    }
+
+    if( ! i ){
+        puts("ic_consume_comment: no i provided");
+        return 0;
+    }
+
+    if( source[*i] != '#' ){
+        printf("ic_consume_comment: this does not look like a comment;\n expected '#'\n got '%c'\n", source[*i]);
+        return 0;
+    }
+
+    for( ; ; ++*i ){
+        switch( source[*i] ){
+            case '\n':
+            case '\0':
+                /* end of comment */
+                goto COMMENT_END;
+                break;
+
+            default:
+                /* keep going */
+                break;
+        }
+    }
+
+COMMENT_END:
+
+    return tokens;
+}
+
 
