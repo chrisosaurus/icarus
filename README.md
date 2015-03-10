@@ -29,6 +29,8 @@ Plans
     * like Rust's enums
     * like haskell's ADTs (Algebraic Data Types)
 * including both an interpreter and compiler (currently considering both C and LLVM bitcode as compiler backend outputs) - see `docs/components.md`
+* whitespace insensitive (except using \n to terminate a comment, but comments are stripped by the lexer)
+* no commas (hail to the lisp)
 
 Work so far
 ===========
