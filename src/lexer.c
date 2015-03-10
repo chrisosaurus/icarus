@@ -43,6 +43,9 @@ static struct ic_tokens * ic_consume_repeated_symbol(struct ic_tokens *tokens, c
  * this checks for a beginning # (comment character) and will raise an error if not found
  * this will consume everything from current character up to first \n or EOF
  *
+ * NB: ic_consume_comment is one of the few ic_consume_* functions that will throw an error
+ * when a null tokens is provided
+ *
  * returns token passes in on success
  * returns 0 on failure
  */
@@ -177,6 +180,11 @@ static struct ic_tokens * add_token(struct ic_tokens *tokens, char *start, unsig
         required_len += tokens->len;
     }
 
+    if( ! start ){
+        puts("add_tokens: null start provided");
+        return 0;
+    }
+
 #ifdef DEBUG_LEXER
     printf("add_token calling with '%d' (len '%d') \n", required_len, len);
 #endif
@@ -219,6 +227,11 @@ static struct ic_tokens * add_token(struct ic_tokens *tokens, char *start, unsig
 static struct ic_tokens * ic_consume_word(struct ic_tokens *tokens, char *source, unsigned int *i){
     unsigned int len=0;
     char ch=0;
+
+    if( ! i || ! source ){
+        puts("ic_consume_word: null source or i provided");
+        return 0;
+    }
 
     for( len=0;
          ;
@@ -325,22 +338,24 @@ static struct ic_tokens * ic_consume_repeated_symbol(struct ic_tokens *tokens, c
  * this checks for a beginning # (comment character) and will raise an error if not found
  * this will consume everything from current character up to first \n or EOF
  *
+ * NB: ic_consume_comment is one of the few ic_consume_* functions that will throw an error
+ * when a null tokens is provided
+ *
  * returns token passes in on success
  * returns 0 on failure
  */
 static struct ic_tokens * ic_consume_comment(struct ic_tokens *tokens, char *source, unsigned int *i){
+    /* we cannot return a 0 tokens as that is how we indicate error
+     * for now we will raise an error
+     * consider later on instead creating a new tokens when this happens and returning that
+     */
     if( ! tokens ){
         puts("ic_consume_comment: no tokens supplied");
         return 0;
     }
 
-    if( ! source ){
-        puts("ic_consume_comment: no source provided");
-        return 0;
-    }
-
-    if( ! i ){
-        puts("ic_consume_comment: no i provided");
+    if( ! i || ! source ){
+        puts("ic_consume_comment: null source or i provided");
         return 0;
     }
 
