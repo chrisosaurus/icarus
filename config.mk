@@ -10,6 +10,6 @@ CFLAGS = -std=c99 -pedantic -Werror -Wall -Wextra -Wstrict-prototypes -Wmissing-
 
 LDFLAGS = ${LIBS}
 
-DEBUGFLAGS = -DDEBUG_ICARUS -DDEBUG_LEXER
+DEBUGFLAGS = -DDEBUG_ICARUS -DDEBUG_LEXER -DDEBUG_PARSE
 
 CC = cc
