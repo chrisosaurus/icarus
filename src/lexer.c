@@ -43,13 +43,13 @@ static struct ic_tokens * ic_consume_repeated_symbol(struct ic_tokens *tokens, c
  * this checks for a beginning # (comment character) and will raise an error if not found
  * this will consume everything from current character up to first \n or EOF
  *
- * NB: ic_consume_comment is one of the few ic_consume_* functions that will throw an error
+ * NB: ic_strip_comment is one of the few ic_consume_* functions that will throw an error
  * when a null tokens is provided
  *
  * returns token passes in on success
  * returns 0 on failure
  */
-static struct ic_tokens * ic_consume_comment(struct ic_tokens *tokens, char *source, unsigned int *i);
+static struct ic_tokens * ic_strip_comment(struct ic_tokens *tokens, char *source, unsigned int *i);
 
 /* takes a character array of the source code as text
  * returns an struct ic_tokens * containing the output from lexing
@@ -96,7 +96,7 @@ struct ic_tokens * ic_lex(char *source){
                 break;
 
             case '#':
-                tokens = ic_consume_comment(tokens, source, &i);
+                tokens = ic_strip_comment(tokens, source, &i);
                 break;
 
             case ':':
@@ -338,29 +338,29 @@ static struct ic_tokens * ic_consume_repeated_symbol(struct ic_tokens *tokens, c
  * this checks for a beginning # (comment character) and will raise an error if not found
  * this will consume everything from current character up to first \n or EOF
  *
- * NB: ic_consume_comment is one of the few ic_consume_* functions that will throw an error
+ * NB: ic_strip_comment is one of the few ic_consume_* functions that will throw an error
  * when a null tokens is provided
  *
  * returns token passes in on success
  * returns 0 on failure
  */
-static struct ic_tokens * ic_consume_comment(struct ic_tokens *tokens, char *source, unsigned int *i){
+static struct ic_tokens * ic_strip_comment(struct ic_tokens *tokens, char *source, unsigned int *i){
     /* we cannot return a 0 tokens as that is how we indicate error
      * for now we will raise an error
      * consider later on instead creating a new tokens when this happens and returning that
      */
     if( ! tokens ){
-        puts("ic_consume_comment: no tokens supplied");
+        puts("ic_strip_comment: no tokens supplied");
         return 0;
     }
 
     if( ! i || ! source ){
-        puts("ic_consume_comment: null source or i provided");
+        puts("ic_strip_comment: null source or i provided");
         return 0;
     }
 
     if( source[*i] != '#' ){
-        printf("ic_consume_comment: this does not look like a comment;\n expected '#'\n got '%c'\n", source[*i]);
+        printf("ic_strip_comment: this does not look like a comment;\n expected '#'\n got '%c'\n", source[*i]);
         return 0;
     }
 
