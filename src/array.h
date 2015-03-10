@@ -3,6 +3,9 @@
 
 struct ic_array {
     unsigned int len;
+    /* note that we store an array of void*
+     * so we must be careful what we actually store here
+     */
     void ** contents;
 };
 
@@ -27,7 +30,7 @@ void * ic_array_get(struct ic_array *arr, unsigned int pos);
  */
 int ic_array_set(struct ic_array *arr, unsigned int pos, void *val);
 
-/* ensure array is at least as big as `new_cap`
+/* ensure array is at least as big as `new_len`
  * returns 0 on success
  * return 1 on failure
  */

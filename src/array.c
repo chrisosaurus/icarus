@@ -80,6 +80,10 @@ int ic_array_ensure(struct ic_array *arr, unsigned int new_len){
         return 0;
     }
 
+    /* perform actual resizing
+     * note that we only allocated enough room to store a void*
+     * so we have to be careful about what we actually store here
+     */
     arr->contents = realloc(arr->contents, sizeof(void*) * new_len);
     if( ! arr->contents ){
         puts("ic_array_ensure: realloc failed");
