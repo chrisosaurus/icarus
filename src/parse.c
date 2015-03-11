@@ -129,7 +129,13 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
         printf( "considering token '%.*s' with distance '%u'\n", dist, &(tokens->tokens[i]), dist );
 #endif
 
+        /* we clear func each time so at loop exit we can
+         * check if func is set, and if so we know we made a match
+         * if func is still 0 at end of loop we know we did not
+         * match the token and should signal an error
+         */
         func = 0;
+
         for( pt_offset=0; pt_offset < LENGTH(ic_parse_table); ++pt_offset ){
 #ifdef DEBUG_PARSE
             printf( "comparing token token '%.*s' (%u) with parse_table entry '%.*s' (%u)\n",
@@ -175,6 +181,7 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
              */
         }
 
+        /* if func is set then it means we had a match */
         if( func ){
             continue;
         }
