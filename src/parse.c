@@ -13,6 +13,9 @@
 /* ignore unused parameter warnings */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
+/* return length of token starting at source[i] */
+static unsigned int ic_parse_token_len(char *source, unsigned int i);
+
 struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
     /* FIXME */
     return 0;
@@ -52,8 +55,6 @@ struct ic_parse_table_entry {
 struct ic_ast * ic_parse(struct ic_tokens *tokens){
     /* offset into tokens */
     unsigned int i = 0;
-    /* position of next space in tokens */
-    char *space = 0;
     /* length of current token */
     unsigned int dist = 0;
 
@@ -73,12 +74,8 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
 
     /* step through tokens until consumed */
     for( i=0; i < tokens->len; ){
-        /* find next space in string */
-        space = strchr( &(tokens->tokens[i]), ' ' );
-        /* find length of token
-         * which is the distance from the start to the space
-         */
-        dist = space - &(tokens->tokens[i]);
+        /* find length of token */
+        dist = ic_parse_token_len(tokens->tokens, i);
 
 #ifdef DEBUG_PARSE
         printf( "considering token '%.*s' with distance '%u'\n", dist, &(tokens->tokens[i]), dist );
@@ -131,4 +128,24 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
     puts("ic_parse finished, bailing");
     return 0;
 }
+
+/* return length of token starting at source[i] */
+static unsigned int ic_parse_token_len(char *source, unsigned int i){
+    /* position of next space in tokens */
+    char *space = 0;
+
+    /* length of current token */
+    unsigned int dist = 0;
+
+    /* find next space */
+    space = strchr( &(source[i]), ' ' );
+
+    /* find length of token
+     * which is the distance from the start to the space
+     */
+    dist = space - &(source[i]);
+
+    return dist;
+}
+
 
