@@ -57,5 +57,13 @@ int main(void){
     assert(arr->used == 12);
     assert(arr->cap == 16);
 
+    for( i=12; i<18; ++i ){
+        assert(ic_pvector_append(arr, arr) == i);
+        assert(ic_pvector_get(arr, i) == arr);
+    }
+
+    assert(arr->used == 18);
+    assert(arr->cap == 32);
+
     return 0;
 }
