@@ -38,6 +38,10 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
         dist = ic_parse_token_len(tokens->tokens, j);
         printf("ic_parse_token_type_decl: inspecting token '%.*s'\n", dist, &(tokens->tokens[j]) );
 
+        /* FIXME
+         * for now we just skip along to the end token
+         */
+
         if( dist == 3 &&
             ! strncmp( &(tokens->tokens[j]), "end", 3) ){
             printf("ic_parse_token_type_decl: found end of string token '%.*s'\n", dist, &(tokens->tokens[j]) );
