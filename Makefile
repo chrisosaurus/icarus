@@ -31,7 +31,7 @@ clean: cleanobj
 	@echo cleaning executables
 	@rm -f icarus
 	@echo cleaning tests
-	@rm -f test_read test_parray
+	@rm -f test_read test_parray test_carray
 
 example: icarus
 	./icarus example/simple.ic
@@ -43,11 +43,14 @@ run_tests: compile_tests
 	./test_read
 	@echo "running test_parray"
 	./test_parray
+	@echo "running test_carray"
+	./test_carray
 
 compile_tests: clean ${OBJ}
 	@echo "compiling tests"
 	@${CC} t/unit/test_read.c -o test_read ${LDFLAGS} ${OBJ}
 	@${CC} t/unit/test_parray.c -o test_parray ${LDFLAGS} ${OBJ}
+	@${CC} t/unit/test_carray.c -o test_carray ${LDFLAGS} ${OBJ}
 	@make -s cleanobj
 
 .PHONY: all clean cleanobj icarus test example

@@ -3,3 +3,4 @@ src/*.o
 *.out
 test_read
 test_parray
+test_carray

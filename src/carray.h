@@ -1,0 +1,42 @@
+#ifndef ICARUS_carray_H
+#define ICARUS_carray_H
+
+/* character array
+ * a dynamic bounds checked array
+ * stores an array of char pointers
+ * caller is responsible for managing the contents
+ */
+struct ic_carray {
+    unsigned int len;
+    char *contents;
+};
+
+/* allocate a new array of length len
+ *
+ * returns array on success
+ * returns 0 on failure
+ */
+struct ic_carray * ic_carray_new(unsigned int len);
+
+/* get item at pos
+ * bounds checked
+ *
+ * returns item on success
+ * return 0 on failure
+ */
+char ic_carray_get(struct ic_carray *arr, unsigned int pos);
+
+/* returns 0 on successful set
+ * returns 1 on failure
+ *
+ * bounds checked
+ */
+int ic_carray_set(struct ic_carray *arr, unsigned int pos, char val);
+
+/* ensure array is at least as big as `new_len`
+ * returns 0 on success
+ * return 1 on failure
+ */
+int ic_carray_ensure(struct ic_carray *arr, unsigned int new_len);
+
+#endif
