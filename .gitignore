@@ -4,3 +4,4 @@ src/*.o
 test_read
 test_parray
 test_carray
+test_pvector

@@ -45,12 +45,15 @@ run_tests: compile_tests
 	./test_parray
 	@echo "running test_carray"
 	./test_carray
+	@echo "running test_pvector"
+	./test_pvector
 
 compile_tests: clean ${OBJ}
 	@echo "compiling tests"
 	@${CC} t/unit/test_read.c -o test_read ${LDFLAGS} ${OBJ}
 	@${CC} t/unit/test_parray.c -o test_parray ${LDFLAGS} ${OBJ}
 	@${CC} t/unit/test_carray.c -o test_carray ${LDFLAGS} ${OBJ}
+	@${CC} t/unit/test_pvector.c -o test_pvector ${LDFLAGS} ${OBJ}
 	@make -s cleanobj
 
 .PHONY: all clean cleanobj icarus test example
