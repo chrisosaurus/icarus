@@ -16,7 +16,10 @@ int main(void){
     /* check that fetching out of range is an error */
     assert(ic_pvector_get(arr, 0) == 0);
 
-    /* a pvector should grow on append */
+    /* a pvector should grow on append
+     * since our starting size is 5 the next growth should be
+     * to 10
+     */
     for(i=0; i<10; ++i){
         assert(ic_pvector_append(arr, arr) == i);
         assert(ic_pvector_get(arr, i) == arr);
@@ -34,13 +37,19 @@ int main(void){
     assert(arr->cap == 20);
 
 
-    /* also test default growth pattern */
+    /* also test default growth pattern
+     * if we do not set an initial size then growth is based on
+     * DEFAULT_PVECTOR_GROWTH
+     */
     arr = ic_pvector_new(0);
 
     assert(arr);
     assert(arr->used == 0);
     assert(arr->cap == 0);
 
+    /* push over current 0 capacity
+     * this will cause our first resize
+     */
     for( i=0; i<8; ++i ){
         assert(ic_pvector_append(arr, arr) == i);
         assert(ic_pvector_get(arr, i) == arr);
@@ -49,6 +58,7 @@ int main(void){
     assert(arr->used == 8);
     assert(arr->cap == 8);
 
+    /* push over current 8 capacity */
     for( i=8; i<12; ++i ){
         assert(ic_pvector_append(arr, arr) == i);
         assert(ic_pvector_get(arr, i) == arr);
@@ -57,6 +67,7 @@ int main(void){
     assert(arr->used == 12);
     assert(arr->cap == 16);
 
+    /* push over current 16 capacity */
     for( i=12; i<18; ++i ){
         assert(ic_pvector_append(arr, arr) == i);
         assert(ic_pvector_get(arr, i) == arr);
