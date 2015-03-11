@@ -2,13 +2,13 @@
 #define ICARUS_AST_H
 
 #include "types.h"
-#include "array.h"
+#include "parray.h"
 
 struct ic_func_decl {
     struct ic_symbol name;
     int nargs;
-    struct ic_array arg_names;
-    struct ic_array arg_types;
+    struct ic_parray arg_names;
+    struct ic_parray arg_types;
     /* FIXME how do we store a body ? */
     char *body;
 };
@@ -16,8 +16,8 @@ struct ic_func_decl {
 struct ic_type_decl {
     struct ic_symbol name;
     int nfields;
-    struct ic_array field_names;
-    struct ic_array field_types;
+    struct ic_parray field_names;
+    struct ic_parray field_types;
 };
 
 enum ic_decl_type {
@@ -34,7 +34,7 @@ struct ic_decl {
 };
 
 struct ic_ast {
-    struct ic_array decls;
+    struct ic_parray decls;
 };
 
 #endif

@@ -2,19 +2,19 @@
 #include <stdlib.h> /* calloc */
 #include <string.h> /* memset*/
 
-#include "array.h"
+#include "parray.h"
 
 /* allocate a new array of length len
  *
  * returns array on success
  * returns 0 on failure
  */
-struct ic_array * ic_array_new(unsigned int len){
-    struct ic_array *arr;
+struct ic_parray * ic_parray_new(unsigned int len){
+    struct ic_parray *arr;
 
-    arr = calloc(1, sizeof(struct ic_array));
+    arr = calloc(1, sizeof(struct ic_parray));
     if( ! arr ){
-        puts("ic_array_new: calloc of struct failed");
+        puts("ic_parray_new: calloc of struct failed");
         return 0;
     }
 
@@ -22,7 +22,7 @@ struct ic_array * ic_array_new(unsigned int len){
 
     arr->contents = calloc(len, sizeof(void*));
     if( ! arr->contents ){
-        puts("ic_array_new: calloc of contents failed");
+        puts("ic_parray_new: calloc of contents failed");
         return 0;
     }
 
@@ -35,7 +35,7 @@ struct ic_array * ic_array_new(unsigned int len){
  * returns item on success
  * return 0 on failure
  */
-void * ic_array_get(struct ic_array *arr, unsigned int pos){
+void * ic_parray_get(struct ic_parray *arr, unsigned int pos){
     if( ! arr ){
         return 0;
     }
@@ -51,7 +51,7 @@ void * ic_array_get(struct ic_array *arr, unsigned int pos){
 /* returns 0 on successful set
  * returns 1 on failure
  */
-int ic_array_set(struct ic_array *arr, unsigned int pos, void *val){
+int ic_parray_set(struct ic_parray *arr, unsigned int pos, void *val){
     if( ! arr ){
         return 1;
     }
@@ -69,9 +69,9 @@ int ic_array_set(struct ic_array *arr, unsigned int pos, void *val){
  * returns 0 on success
  * return 1 on failure
  */
-int ic_array_ensure(struct ic_array *arr, unsigned int new_len){
+int ic_parray_ensure(struct ic_parray *arr, unsigned int new_len){
     if( ! arr ){
-        puts("ic_array_ensure: supplied array was null");
+        puts("ic_parray_ensure: supplied array was null");
         return 1;
     }
 
@@ -86,7 +86,7 @@ int ic_array_ensure(struct ic_array *arr, unsigned int new_len){
      */
     arr->contents = realloc(arr->contents, sizeof(void*) * new_len);
     if( ! arr->contents ){
-        puts("ic_array_ensure: realloc failed");
+        puts("ic_parray_ensure: realloc failed");
         return 1;
     }
 

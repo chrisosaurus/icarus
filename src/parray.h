@@ -1,7 +1,12 @@
-#ifndef ICARUS_ARRAY_H
-#define ICARUS_ARRAY_H
+#ifndef ICARUS_PARRAY_H
+#define ICARUS_PARRAY_H
 
-struct ic_array {
+/* pointer array
+ * a dynamic bounds checked array
+ * stores an array of void pointers
+ * caller is responsible for managing the contents
+ */
+struct ic_parray {
     unsigned int len;
     /* note that we store an array of void*
      * so we must be careful what we actually store here
@@ -14,7 +19,7 @@ struct ic_array {
  * returns array on success
  * returns 0 on failure
  */
-struct ic_array * ic_array_new(unsigned int len);
+struct ic_parray * ic_parray_new(unsigned int len);
 
 /* get item at pos
  * bounds checked
@@ -22,18 +27,18 @@ struct ic_array * ic_array_new(unsigned int len);
  * returns item on success
  * return 0 on failure
  */
-void * ic_array_get(struct ic_array *arr, unsigned int pos);
+void * ic_parray_get(struct ic_parray *arr, unsigned int pos);
 /* returns 0 on successful set
  * returns 1 on failure
  *
  * bounds checked
  */
-int ic_array_set(struct ic_array *arr, unsigned int pos, void *val);
+int ic_parray_set(struct ic_parray *arr, unsigned int pos, void *val);
 
 /* ensure array is at least as big as `new_len`
  * returns 0 on success
  * return 1 on failure
  */
-int ic_array_ensure(struct ic_array *arr, unsigned int new_len);
+int ic_parray_ensure(struct ic_parray *arr, unsigned int new_len);
 
 #endif
