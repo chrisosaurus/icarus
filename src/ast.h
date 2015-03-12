@@ -2,14 +2,11 @@
 #define ICARUS_AST_H
 
 #include "symbol.h"
-#include "parray.h"
 #include "pvector.h"
 
 struct ic_func_decl {
     struct ic_symbol name;
-    int nargs;
-    struct ic_parray arg_names;
-    struct ic_parray arg_types;
+    struct ic_pvector args;
     /* FIXME how do we store a body ? */
     char *body;
 };
@@ -83,7 +80,7 @@ struct ic_decl {
 };
 
 struct ic_ast {
-    struct ic_parray decls;
+    struct ic_pvector decls;
 };
 
 #endif
