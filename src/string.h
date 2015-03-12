@@ -21,7 +21,7 @@ struct ic_string {
  */
 struct ic_string * ic_string_new(char *source, unsigned int len);
 
-/* initalise an existing string
+/* initialise an existing symbol from a char* and a length
  * returns 0 on success
  * returns 1 on error
  */

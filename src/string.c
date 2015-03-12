@@ -26,7 +26,7 @@ struct ic_string * ic_string_new(char *source, unsigned int len){
     return str;
 }
 
-/* initalise an existing string
+/* initalise an existing string from a char* and len
  * returns 0 on success
  * returns 1 on error
  */
