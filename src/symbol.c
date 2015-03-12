@@ -21,13 +21,32 @@ struct ic_symbol * ic_symbol_new(char *source, unsigned int len){
         return 0;
     }
 
-    /* dispatch to handle initialisation of internal */
-    if( ic_string_init( &(sym->internal), source, len ) ){
-        puts("ic_symbol_new: error in call to ic_string_init");
+    if( ic_symbol_init(sym, source, len) ){
+        puts("ic_symbol_new: error in call to ic_symbol_init");
         return 0;
     }
 
     return sym;
+}
+
+/* initialise an existing symbol from a char* and a length
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+int ic_symbol_init(struct ic_symbol *sym, char *source, unsigned int len){
+    if( ! sym ){
+        puts("ic_symbol_init: passed in sym was null");
+        return 1;
+    }
+
+    /* dispatch to handle initialisation of internal */
+    if( ic_string_init( &(sym->internal), source, len ) ){
+        puts("ic_symbol_new: error in call to ic_string_init");
+        return 1;
+    }
+
+    return 0;
 }
 
 /* return backing character array

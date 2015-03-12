@@ -19,6 +19,14 @@ struct ic_symbol {
  */
 struct ic_symbol * ic_symbol_new(char *source, unsigned int len);
 
+/* initialise an existing symbol from a char* and a length
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+int ic_symbol_init(struct ic_symbol *sym, char *source, unsigned int len);
+
+
 /* return backing character array
  * the caller is NOT allowed to mutate this character array directly
  *
