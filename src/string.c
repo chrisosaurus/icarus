@@ -18,17 +18,35 @@ struct ic_string * ic_string_new(char *source, unsigned int len){
         return 0;
     }
 
-    /* our len does not include the null terminator
-     * but carray must take this into account
-     */
-    if( ic_carray_init( &(str->backing), (len + 1) ) ){
-        puts("ic_string_new: call to ic_carray_init failed");
+    if( ic_string_init(str, source, len) ){
+        puts("ic_string_new: error in call to ic_string_init");
         return 0;
     }
 
+    return str;
+}
+
+/* initalise an existing string
+ * returns 0 on success
+ * returns 1 on error
+ */
+int ic_string_init(struct ic_string *str, char *source, unsigned int len){
+    if( ! str ){
+        puts("ic_string_init: pass in string was null");
+        return 1;
+    }
+
+    /* our passed in len does not include the null terminator
+     * but carray must take this into account
+     */
+    if( ic_carray_init( &(str->backing), (len + 1) ) ){
+        puts("ic_string_init: call to ic_carray_init failed");
+        return 1;
+    }
+
     if( ! str->backing.contents ){
-        puts("ic_string_new: results of ic_carray_init were suspicious");
-        return 0;
+        puts("ic_string_init: results of ic_carray_init were suspicious");
+        return 1;
     }
 
     /* strncpy source into string */
@@ -37,8 +55,11 @@ struct ic_string * ic_string_new(char *source, unsigned int len){
     /* insert null terminator */
     str->backing.contents[len+1] = '\0';
 
-    return str;
+    return 0;
+
 }
+
+
 
 /* return backing character array
  * the caller is NOT allowed to mutate this character array directly

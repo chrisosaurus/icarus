@@ -21,6 +21,12 @@ struct ic_string {
  */
 struct ic_string * ic_string_new(char *source, unsigned int len);
 
+/* initalise an existing string
+ * returns 0 on success
+ * returns 1 on error
+ */
+int ic_string_init(struct ic_string *string, char *source, unsigned int len);
+
 /* return backing character array
  * the caller is NOT allowed to mutate this character array directly
  *
