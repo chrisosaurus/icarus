@@ -2,7 +2,6 @@
 #define ICARUS_PARSE_H
 
 #include "lexer.h"
-#include "types.h"
 #include "ast.h"
 
 struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i);

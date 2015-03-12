@@ -2,7 +2,6 @@
 #include <string.h> /* strchr, strncmp */
 
 #include "lexer.h"
-#include "types.h"
 #include "ast.h"
 #include "parse.h"
 
