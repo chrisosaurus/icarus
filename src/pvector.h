@@ -25,6 +25,12 @@ struct ic_pvector {
  */
 struct ic_pvector * ic_pvector_new(unsigned int cap);
 
+/* initialise existing pvector
+ * returns 0 on success
+ * returns 1 on failure
+ */
+int ic_pvector_init(struct ic_pvector *vec, unsigned int cap);
+
 /* get item at pos
  * bounds checked
  *
@@ -48,5 +54,11 @@ int ic_pvector_append(struct ic_pvector *arr, void *data);
  * return 1 on failure
  */
 int ic_pvector_ensure(struct ic_pvector *arr, unsigned int new_cap);
+
+/* return the length of the used section of the vector
+ *
+ * returns 0 on error
+ */
+unsigned int ic_pvector_length(struct ic_pvector *arr);
 
 #endif

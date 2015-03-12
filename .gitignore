@@ -8,4 +8,5 @@ test_carray
 test_pvector
 test_string
 test_symbol
+test_ast
 

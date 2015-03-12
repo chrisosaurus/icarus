@@ -20,16 +20,34 @@ struct ic_pvector * ic_pvector_new(unsigned int cap){
         return 0;
     }
 
-    arr->used = 0;
-    arr->cap = cap;
-
-    arr->contents = calloc(cap, sizeof(void*));
-    if( ! arr->contents ){
-        puts("ic_pvector_new: calloc of contents failed");
+    if( ic_pvector_init(arr, cap) ){
+        puts("ic_pvector_new: call to ic_pvector_init failed");
         return 0;
     }
 
     return arr;
+}
+
+/* initialise existing pvector
+ * returns 0 on success
+ * returns 1 on failure
+ */
+int ic_pvector_init(struct ic_pvector *vec, unsigned int cap){
+    if( ! vec ){
+        puts("ic_pvector_init: vec was null");
+        return 1;
+    }
+
+    vec->used = 0;
+    vec->cap = cap;
+
+    vec->contents = calloc(cap, sizeof(void*));
+    if( ! vec->contents ){
+        puts("ic_pvector_init: calloc of contents failed");
+        return 1;
+    }
+
+    return 0;
 }
 
 /* get item at pos
@@ -125,6 +143,19 @@ int ic_pvector_ensure(struct ic_pvector *arr, unsigned int new_cap){
 
     arr->cap = new_cap;
     return 0;
+}
+
+/* return the length of the used section of the vector
+ *
+ * returns 0 on error
+ */
+unsigned int ic_pvector_length(struct ic_pvector *arr){
+    if( ! arr ){
+        puts("ic_pvector_length: arr was null");
+        return 0;
+    }
+
+    return arr->used;
 }
 
 
