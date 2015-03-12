@@ -49,6 +49,8 @@ run_tests: compile_tests
 	./test_pvector
 	@echo "running test_string"
 	./test_string
+	@echo "running test_symbol"
+	./test_symbol
 
 compile_tests: clean ${OBJ}
 	@echo "compiling tests"
@@ -57,6 +59,7 @@ compile_tests: clean ${OBJ}
 	@${CC} t/unit/test_carray.c -o test_carray ${LDFLAGS} ${OBJ}
 	@${CC} t/unit/test_pvector.c -o test_pvector ${LDFLAGS} ${OBJ}
 	@${CC} t/unit/test_string.c -o test_string ${LDFLAGS} ${OBJ}
+	@${CC} t/unit/test_symbol.c -o test_symbol ${LDFLAGS} ${OBJ}
 	@make -s cleanobj
 
 .PHONY: all clean cleanobj icarus test example
