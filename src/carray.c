@@ -18,15 +18,34 @@ struct ic_carray * ic_carray_new(unsigned int len){
         return 0;
     }
 
-    arr->len = len;
-
-    arr->contents = calloc(len, sizeof(void*));
-    if( ! arr->contents ){
-        puts("ic_carray_new: calloc of contents failed");
+    if( ic_carray_init(arr, len) ){
+        puts("ic_array_new: call to ic_array_init failed");
         return 0;
     }
 
     return arr;
+}
+
+/* initialise an existing array to the specified len
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+int ic_carray_init(struct ic_carray *arr, unsigned int len){
+    if( ! arr ){
+        puts("ic_carray_init: called with null array");
+        return 1;
+    }
+
+    arr->len = len;
+
+    arr->contents = calloc(len, sizeof(void*));
+    if( ! arr->contents ){
+        puts("ic_carray_init: calloc of contents failed");
+        return 1;
+    }
+
+    return 0;
 }
 
 /* get item at pos

@@ -18,6 +18,13 @@ struct ic_carray {
  */
 struct ic_carray * ic_carray_new(unsigned int len);
 
+/* initialise an existing array to the specified len
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+int ic_carray_init(struct ic_carray *arr, unsigned int len);
+
 /* get item at pos
  * bounds checked
  *
