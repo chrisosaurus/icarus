@@ -1,6 +1,3 @@
-#include <stdio.h> /* fopen, puts */
-#include <stdlib.h> /* exit */
-#include <string.h> /* strcmp */
 #include <assert.h> /* assert */
 
 #include "../../src/parray.h"
