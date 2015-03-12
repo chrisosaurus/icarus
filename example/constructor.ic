@@ -1,4 +1,9 @@
 
+# all declared types are given a default constructor
+# taking all of the fields as arguments
+# you may also define additional constructors
+# a call to new is equiv. to a call to the default constructor
+
 type Foo
     a::Int
     b::Int
@@ -14,7 +19,7 @@ type Foo
 end
 
 function main()
-    # we now have 3 construcotrs on Foo
+    # we now have 3 constructors on Foo
 
     # the default 3 arg
     let a::Foo = Foo(3 4 "hello")
