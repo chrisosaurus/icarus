@@ -21,6 +21,7 @@ int main(void){
     assert(ic_string_get(str, 4) == 'o');
 
     /* check for out of bounds access */
+    assert(ic_string_get(str, 5) == 0);
     assert(ic_string_get(str, 6) == 0);
     assert(ic_string_get(str, 7) == 0);
 

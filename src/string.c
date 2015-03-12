@@ -110,7 +110,7 @@ char ic_string_get(struct ic_string *string, unsigned int offset){
      * so we must subtract one before using it to bounds check
      */
     if( offset >= (string->backing.len - 1) ){
-        printf("ic_string_get: offset '%d' out of range '%d'\n", offset, string->backing.len);
+        printf("ic_string_get: offset '%d' out of range '%d'\n", offset, ( string->backing.len - 1) );
         return 0;
     }
 
