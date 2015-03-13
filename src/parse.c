@@ -232,13 +232,155 @@ struct ic_decl * ic_parse_union_decl(struct ic_tokens *tokens, unsigned int *i){
 }
 
 struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
+    unsigned int dist = 0;
+    /* our argument */
+    struct ic_field *arg = 0;
+    /* our resulting ic_decl */
+    struct ic_decl *decl = 0;
+    /* our tdecl within the decl */
+    struct ic_func_decl *fdecl = 0;
+
 #ifdef DEBUG_PARSE
     puts("ic_parse_func_decl called");
 #endif
 
-    puts("ic_parse_func_decl: UNIMPLEMENTED");
+    if( ! tokens ){
+        puts("ic_parse_func_decl: tokens was null");
+        return 0;
+    }
 
-    /* FIXME */
+    /* check we really are at a `function` token */
+    dist = ic_parse_token_len(tokens->tokens, *i);
+    if( dist != 8 || strncmp("function", &(tokens->tokens[*i]), 4) ){
+        printf("ic_parse_func_decl: expected 'function', encountered '%.*s'\n",
+                dist,
+                &(tokens->tokens[*i]));
+        return 0;
+    }
+
+    /* step over `function` keyword */
+    ic_parse_token_advance(i, dist);
+
+    /* allocate and init our decl */
+    decl = ic_decl_new(func_decl);
+    if( ! decl ){
+        puts("ic_parse_func_decl: call to ic_decl_new failed");
+        return 0;
+    }
+
+    /* fetch our fdecl from within decl */
+    fdecl = ic_decl_get_fdecl(decl);
+    if( ! fdecl ){
+        puts("ic_parse_func_decl: call to ic_decl_get_fdecl failed");
+        return 0;
+    }
+
+    /* get our function name dist */
+    dist = ic_parse_token_len(tokens->tokens, *i);
+    /* initialise our fdecl */
+    if( ic_func_decl_init(fdecl, &(tokens->tokens[*i]), dist) ){
+        puts("ic_parse_func_decl: call to ic_func_decl_init failed");
+        return 0;
+    }
+
+#ifdef DEBUG_PARSE
+    printf("ic_parse_func_decl: our name is '%.*s'\n",
+            dist,
+            &(tokens->tokens[*i]));
+#endif
+
+    /* step over name */
+    ic_parse_token_advance(i, dist);
+
+
+    /* parse arguments */
+    /* opening bracket */
+    dist = ic_parse_token_len(tokens->tokens, *i);
+    if( dist != 1 ||
+        strncmp("(", &(tokens->tokens[*i]), 1) ){
+        printf("ic_parse_func_decl: expected '(', found '%.*s'\n",
+                dist,
+                &(tokens->tokens[*i]) );
+        return 0;
+    }
+    /* step over opening bracket */
+    ic_parse_token_advance(i, dist);
+
+    /* iterate until closing bracket
+     * parsing arguments
+     */
+    for( ; tokens->tokens[*i] != '\0' && *i < tokens->len ; ){
+        /* get dist */
+        dist = ic_parse_token_len(tokens->tokens, *i);
+
+        /* check for closing brace */
+        if( dist == 1 && ! strncmp(")", &(tokens->tokens[*i]), 1) ){
+            /* if we have found our closing bracket then
+             * argument parsing is complete
+             */
+            break;
+        }
+
+        /* parse argument */
+        arg = ic_parse_field(tokens, i);
+        if( ! arg ){
+            puts("ic_parse_func_decl: call to ic_parse_field failed");
+            return 0;
+        }
+
+        /* save it */
+        if( ic_func_decl_add_arg(fdecl, arg) ){
+            puts("ic_parse_func_decl: call to if_func_decl_add_arg failed");
+            return 0;
+        }
+    }
+
+    /* step over closing bracket */
+    ic_parse_token_advance(i, dist);
+
+
+    /* FIXME parse body */
+
+    /* iterate through all tokens
+     * until `end`
+     */
+    for( ; tokens->tokens[*i] != '\0' && *i < tokens->len ; ){
+        dist = ic_parse_token_len(tokens->tokens, *i);
+
+#ifdef DEBUG_PARSE
+        printf("ic_parse_token_func_decl: inspecting token '%.*s'\n",
+                dist,
+                &(tokens->tokens[*i]) );
+#endif
+
+        /* we keep stepping through loop until we find an
+         * `end` token
+         * note that this means `end` is a reserved word
+         */
+        if( dist == 3 &&
+            ! strncmp( &(tokens->tokens[*i]), "end", 3) ){
+            printf("ic_parse_token_func_decl: found end of string token '%.*s'\n",
+                    dist,
+                    &(tokens->tokens[*i]) );
+
+            /* step over `end` token */
+            ic_parse_token_advance(i, dist);
+
+            /* return our result */
+            return decl;
+        }
+
+        /* FIXME
+         * for now we just skip merrily over function body
+         */
+        ic_parse_token_advance(i, dist);
+    }
+
+    /* this means we ran out of tokens
+     * this is an error case as `end` should cause the
+     * successful return
+     */
+    puts("ic_parse_func_decl: ran out of tokens");
     return 0;
 }
 
