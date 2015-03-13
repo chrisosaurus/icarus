@@ -15,7 +15,7 @@
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
 /* return length of token starting at source[i] */
-static unsigned int ic_parse_token_len(char *source, unsigned int i);
+static unsigned int ic_parse_token_length(char *source, unsigned int i);
 
 /* advance i by one token with token length dist */
 static void ic_parse_token_advance(unsigned int *i, unsigned int dist);
@@ -47,7 +47,7 @@ struct ic_field * ic_parse_field(struct ic_tokens *tokens, unsigned int *i){
      * `a` is the name
      */
     name = &(tokens->tokens[*i]);
-    name_len = ic_parse_token_len(tokens->tokens, *i);
+    name_len = ic_parse_token_length(tokens->tokens, *i);
     if( ! name_len ){
         puts("ic_parse_field: no name token found");
         return 0;
@@ -58,7 +58,7 @@ struct ic_field * ic_parse_field(struct ic_tokens *tokens, unsigned int *i){
 
 
     /* check for separator `::` */
-    sep_len = ic_parse_token_len(tokens->tokens, *i);
+    sep_len = ic_parse_token_length(tokens->tokens, *i);
     if( ! sep_len ){
         puts("ic_parse_field: no sep (::) token len found");
         return 0;
@@ -77,7 +77,7 @@ struct ic_field * ic_parse_field(struct ic_tokens *tokens, unsigned int *i){
      * `Int` is the type
      */
     type = &(tokens->tokens[*i]);
-    type_len = ic_parse_token_len(tokens->tokens, *i);
+    type_len = ic_parse_token_length(tokens->tokens, *i);
     if( ! type_len ){
         puts("ic_parse_field: no type token found");
         return 0;
@@ -115,7 +115,7 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
     }
 
     /* check we really are at a `type` token */
-    dist = ic_parse_token_len(tokens->tokens, *i);
+    dist = ic_parse_token_length(tokens->tokens, *i);
     if( dist != 4 || strncmp("type", &(tokens->tokens[*i]), 4) ){
         printf("ic_parse_type_decl: expected 'type', encountered '%.*s'\n",
                 dist,
@@ -141,7 +141,7 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
     }
 
     /* get our type name dist */
-    dist = ic_parse_token_len(tokens->tokens, *i);
+    dist = ic_parse_token_length(tokens->tokens, *i);
     /* initialise our tdecl */
     if( ic_type_decl_init(tdecl, &(tokens->tokens[*i]), dist) ){
         puts("ic_parse_type_decl: call to ic_type_decl_init failed");
@@ -159,7 +159,7 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
 
     /* iterate through all tokens */
     for( ; tokens->tokens[*i] != '\0' && *i < tokens->len ; ){
-        dist = ic_parse_token_len(tokens->tokens, *i);
+        dist = ic_parse_token_length(tokens->tokens, *i);
 
 #ifdef DEBUG_PARSE
         printf("ic_parse_token_type_decl: inspecting token '%.*s'\n",
@@ -250,7 +250,7 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
     }
 
     /* check we really are at a `function` token */
-    dist = ic_parse_token_len(tokens->tokens, *i);
+    dist = ic_parse_token_length(tokens->tokens, *i);
     if( dist != 8 || strncmp("function", &(tokens->tokens[*i]), 4) ){
         printf("ic_parse_func_decl: expected 'function', encountered '%.*s'\n",
                 dist,
@@ -276,7 +276,7 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
     }
 
     /* get our function name dist */
-    dist = ic_parse_token_len(tokens->tokens, *i);
+    dist = ic_parse_token_length(tokens->tokens, *i);
     /* initialise our fdecl */
     if( ic_func_decl_init(fdecl, &(tokens->tokens[*i]), dist) ){
         puts("ic_parse_func_decl: call to ic_func_decl_init failed");
@@ -295,7 +295,7 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
 
     /* parse arguments */
     /* opening bracket */
-    dist = ic_parse_token_len(tokens->tokens, *i);
+    dist = ic_parse_token_length(tokens->tokens, *i);
     if( dist != 1 ||
         strncmp("(", &(tokens->tokens[*i]), 1) ){
         printf("ic_parse_func_decl: expected '(', found '%.*s'\n",
@@ -311,7 +311,7 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
      */
     for( ; tokens->tokens[*i] != '\0' && *i < tokens->len ; ){
         /* get dist */
-        dist = ic_parse_token_len(tokens->tokens, *i);
+        dist = ic_parse_token_length(tokens->tokens, *i);
 
         /* check for closing brace */
         if( dist == 1 && ! strncmp(")", &(tokens->tokens[*i]), 1) ){
@@ -345,7 +345,7 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
      * until `end`
      */
     for( ; tokens->tokens[*i] != '\0' && *i < tokens->len ; ){
-        dist = ic_parse_token_len(tokens->tokens, *i);
+        dist = ic_parse_token_length(tokens->tokens, *i);
 
 #ifdef DEBUG_PARSE
         printf("ic_parse_token_func_decl: inspecting token '%.*s'\n",
@@ -435,7 +435,7 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
     /* step through tokens until consumed */
     for( i=0; i < tokens->len; ){
         /* find length of token */
-        dist = ic_parse_token_len(tokens->tokens, i);
+        dist = ic_parse_token_length(tokens->tokens, i);
 
 #ifdef DEBUG_PARSE
         printf( "considering token '%.*s' with distance '%u'\n",
@@ -526,7 +526,7 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
 }
 
 /* return length of token starting at source[i] */
-static unsigned int ic_parse_token_len(char *source, unsigned int i){
+static unsigned int ic_parse_token_length(char *source, unsigned int i){
     /* position of next space in tokens */
     char *space = 0;
 
