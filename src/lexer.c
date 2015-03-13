@@ -81,9 +81,10 @@ struct ic_tokens * ic_lex(char *source){
                 return tokens;
                 break;
 
+            case '\t':
+                puts("warning: tab found, continuing but spaces are preferred");
             case ' ':
             case '\n':
-            case '\t':
                 ++i;
                 break;
 
