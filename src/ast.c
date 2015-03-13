@@ -535,7 +535,7 @@ void ic_ast_print(struct ic_ast *ast){
 
     /* get length */
     len = ic_ast_length(ast);
-    if( len < 0 ){
+    if( len <= 0 ){
         puts("ic_ast_print: call to ic_ast_length failed");
         return;
     }
