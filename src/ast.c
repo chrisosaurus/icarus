@@ -286,6 +286,26 @@ struct ic_type_decl * ic_decl_get_tdecl(struct ic_decl *decl){
     return &(decl->u.tdecl);
 }
 
+/* print contents of ic_decl */
+void ic_decl_print(struct ic_decl *decl){
+    if( ! decl ){
+        puts("ic_decl_print: decl was null");
+        return;
+    }
+
+    switch( decl->type ){
+        case func_decl:
+            puts("ic_decl_print: func_decl not yet supported");
+            break;
+        case type_decl:
+            ic_type_decl_print( ic_decl_get_tdecl(decl) );
+            break;
+        default:
+            puts("ic_decl_print: impossible type!");
+            break;
+    }
+}
+
 /* allocate and initialise a new ast
  *
  * returns pointer to new ast on success
@@ -377,6 +397,41 @@ int ic_ast_length(struct ic_ast *ast){
 
     /* dispatch to pvector */
     return ic_pvector_length( &(ast->decls) );
+}
+
+/* calls print on all elements within ast */
+void ic_ast_print(struct ic_ast *ast){
+    /* current offset into pvector */
+    unsigned int i = 0;
+    /* length of ast pvector */
+    int len = 0;
+    /* current decl */
+    struct ic_decl *decl = 0;
+
+    if( ! ast ){
+        puts("ic_ast_print: ast was null");
+        return ;
+    }
+
+    /* get length */
+    len = ic_ast_length(ast);
+    if( len < 0 ){
+        puts("ic_ast_print: call to ic_ast_length failed");
+        return;
+    }
+
+    /* iterate through each element of ast */
+    for( i=0; i < (unsigned int) len; ++i ){
+        /* get decl */
+        decl = ic_ast_get(ast, i);
+        if( ! decl ){
+            puts("ic_ast_pring: call to ic_ast_get failed");
+            return;
+        }
+
+        /* call print on it*/
+        ic_decl_print(decl);
+    }
 }
 
 

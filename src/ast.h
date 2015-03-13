@@ -132,6 +132,9 @@ struct ic_func_decl * ic_decl_get_fdecl(struct ic_decl *decl);
  */
 struct ic_type_decl * ic_decl_get_tdecl(struct ic_decl *decl);
 
+/* print contents of ic_decl */
+void ic_decl_print(struct ic_decl *decl);
+
 struct ic_ast {
     struct ic_pvector decls;
 };
@@ -169,5 +172,8 @@ int ic_ast_append(struct ic_ast *ast, struct ic_decl *decl);
  * returns -1 on failure
  */
 int ic_ast_length(struct ic_ast *ast);
+
+/* calls print on all elements within ast */
+void ic_ast_print(struct ic_ast *ast);
 
 #endif
