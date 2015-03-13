@@ -70,15 +70,15 @@ We can see what Icarus makes of this by running:
 
 Hidden in the output we see the lexer output:
 
-    ----------------
     lexer output:
+    ----------------
     type Foo a :: Int b :: String end function d ( i :: Int ) print ( i ) end function d ( s :: String ) print ( s ) end function d ( f :: Foo ) d ( f . a ) d ( f . b ) end function main ( ) let f :: Foo = Foo ( 1 " hello " ) d ( f ) end 
     ----------------
 
 Hidden elsewhere in the output we can see a visual representation of the parser output (notice the lack of function bodies):
 
-    ----------------
     parser output:
+    ----------------
     type Foo
       a::Int
       b::String
