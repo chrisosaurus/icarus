@@ -411,7 +411,7 @@ void ic_decl_print(struct ic_decl *decl){
 
     switch( decl->type ){
         case func_decl:
-            puts("ic_decl_print: func_decl not yet supported");
+            ic_func_decl_print( ic_decl_get_fdecl(decl) );
             break;
         case type_decl:
             ic_type_decl_print( ic_decl_get_tdecl(decl) );
