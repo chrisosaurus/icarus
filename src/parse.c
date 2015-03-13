@@ -270,6 +270,16 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
     /* return from call to func */
     struct ic_decl *ret = 0;
 
+    /* our eventual return value */
+    struct ic_ast *ast = 0;
+
+    /* allocate and initialise our ast */
+    ast = ic_ast_new();
+    if( ! ast ){
+        puts("ic_parse: call to ic_ast_new failed");
+        return 0;
+    }
+
     /* possible leading tokens:
      * type
      * enum
@@ -327,16 +337,20 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
                     return 0;
                 }
 
-                /* FIXME call function
-                 * figure out what to do with result
-                 * do that
-                 */
+                /* call found function and store result to save */
                 ret = func(tokens, &i);
                 if( ! ret ){
                     /* presume parsing failed */
                     puts("ic_parse: error when calling parsing function");
                     return 0;
                 }
+
+                /* store ret in our ast */
+                if( ic_ast_append(ast, ret) != -1 ){
+                    puts("ic_parse: call to ic_ast_append failed");
+                    return 0;
+                }
+
                 /* exit inner for loop as this token is done */
                 break;
             }
@@ -359,9 +373,11 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
         return 0;
     }
 
-    /* FIXME */
+#ifdef DEBUG_PARSE
     puts("ic_parse finished, bailing");
-    return 0;
+#endif
+
+    return ast;
 }
 
 /* return length of token starting at source[i] */
