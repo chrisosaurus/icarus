@@ -543,6 +543,9 @@ void ic_ast_print(struct ic_ast *ast){
 
         /* call print on it*/
         ic_decl_print(decl);
+
+        /* pad with newlines between them */
+        puts("");
     }
 }
 
