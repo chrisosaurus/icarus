@@ -57,6 +57,11 @@ int main(int argc, char **argv){
     ic_ast_print(ast);
     puts("----------------\n");
 
+    /* FIXME currently we do not free ast
+     * as ast is built form many compound objects
+     * we need to have some mechanism for this
+     */
+
     free(source);
     free(tokens->tokens);
     free(tokens);
