@@ -554,8 +554,12 @@ void ic_ast_print(struct ic_ast *ast){
         /* call print on it*/
         ic_decl_print(decl);
 
-        /* pad with newlines between them */
-        puts("");
+        /* pad with newlines between them
+         * unless we are the last item
+         */
+        if( i < (len - 1) ){
+            puts("");
+        }
     }
 }
 
