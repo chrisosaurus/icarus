@@ -117,11 +117,11 @@ void ic_type_decl_print(struct ic_type_decl *tdecl){
     printf ("type %s\n", ic_symbol_contents(&(tdecl->name)) );
 
     /* iterate through pvector fields
-     * prefix each field with a tab and postfix each with a \n
+     * prefix each field with a 2 spaces  and postfix each with a \n
      */
     for( i=0; i< ic_pvector_length(&(tdecl->fields)); ++i ){
-        /* prefix tab */
-        printf("\t");
+        /* prefix 2 spaces */
+        printf("  ");
 
         /* print field contents */
         ic_field_print( ic_pvector_get( &(tdecl->fields), i ) );

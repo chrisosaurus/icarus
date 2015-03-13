@@ -24,7 +24,7 @@ int main(void){
     field = ic_field_new("b", 1, "String", 6);
     assert( ic_type_decl_add_field(tdecl, field) == 0 );
 
-    printf("Should see:\ntype Foo\n\ta::Int\n\tb::String\nend\n");
+    printf("Should see:\ntype Foo\n  a::Int\n  b::String\nend\n");
 
     /* output type */
     ic_type_decl_print(tdecl);
