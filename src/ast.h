@@ -29,6 +29,14 @@ struct ic_field {
  */
 struct ic_field * ic_field_new(char *name_src, unsigned int name_len, char *type_src, unsigned int type_len);
 
+/* initialise an existing field
+ * takes 2 tokens as char * and len pairs
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+int ic_field_init(struct ic_field *field, char *name_src, unsigned int name_len, char *type_src, unsigned int type_len);
+
 /* print the field to stdout */
 void ic_field_print(struct ic_field *field);
 
