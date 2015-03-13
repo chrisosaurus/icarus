@@ -33,6 +33,8 @@ Some examples of statements:
         body
     end
 
+    expr
+
 Some examples of expressions:
 
     function_call(args...)
