@@ -275,7 +275,6 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
      * enum
      * union
      * function
-     * #
      */
 
     /* step through tokens until consumed */
