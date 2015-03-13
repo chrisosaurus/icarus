@@ -35,11 +35,43 @@ Plans
 Work so far
 ===========
 
-So far all Icarus can do is lex it's `example/simple.ic`
+We have the contents of `example/simple.ic`:
+
+    # user defined type with 2 fields, an Int and a String
+    type Foo
+        a::Int
+        b::String
+    end
+
+    function d(i::Int)
+        print(i)
+    end
+
+    function d(s::String)
+        print(s)
+    end
+
+    # break apart a Foo and call d on each field
+    function d(f::Foo)
+        d(f.a)
+        d(f.b)
+    end
+
+    # entry point for program
+    function main()
+        let f::Foo = Foo(1 "hello")
+
+        d(f)
+    end
+
+We can see what Icarus makes of this by running:
 
     make example
 
-outputs:
+Hidden in the output we see the lexer output:
 
+    ----------------
+    lexer output:
     type Foo a :: Int b :: String end function d ( i :: Int ) print ( i ) end function d ( s :: String ) print ( s ) end function d ( f :: Foo ) d ( f . a ) d ( f . b ) end function main ( ) let f :: Foo = Foo ( 1 " hello " ) d ( f ) end 
+    ----------------
 
