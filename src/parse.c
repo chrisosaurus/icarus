@@ -151,7 +151,9 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
     }
 
 #ifdef DEBUG_PARSE
-    printf("ic_parse_type_decl: our name is '%.*s'\n", dist, &(tokens->tokens[*i]));
+    printf("ic_parse_type_decl: our name is '%.*s'\n",
+            dist,
+            &(tokens->tokens[*i]));
 #endif
 
     /* step over name */
@@ -162,7 +164,9 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
         dist = ic_parse_token_len(tokens->tokens, j);
 
 #ifdef DEBUG_PARSE
-        printf("ic_parse_token_type_decl: inspecting token '%.*s'\n", dist, &(tokens->tokens[j]) );
+        printf("ic_parse_token_type_decl: inspecting token '%.*s'\n",
+                dist,
+                &(tokens->tokens[j]) );
 #endif
 
         /* we keep stepping through loop until we find an
@@ -171,7 +175,9 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
          */
         if( dist == 3 &&
             ! strncmp( &(tokens->tokens[j]), "end", 3) ){
-            printf("ic_parse_token_type_decl: found end of string token '%.*s'\n", dist, &(tokens->tokens[j]) );
+            printf("ic_parse_token_type_decl: found end of string token '%.*s'\n",
+                    dist,
+                    &(tokens->tokens[j]) );
 
             /* step over `end` token */
             ic_parse_token_advance(&j, dist);
@@ -278,7 +284,10 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
         dist = ic_parse_token_len(tokens->tokens, i);
 
 #ifdef DEBUG_PARSE
-        printf( "considering token '%.*s' with distance '%u'\n", dist, &(tokens->tokens[i]), dist );
+        printf( "considering token '%.*s' with distance '%u'\n",
+                dist,
+                &(tokens->tokens[i]),
+                dist );
 #endif
 
         /* we clear func each time so at loop exit we can
@@ -304,12 +313,18 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
                 && ! strncmp( &(tokens->tokens[i]), ic_parse_table[pt_offset].token, dist )
               ){
 #ifdef DEBUG_PARSE
-                printf( "match found! token '%.*s' with parse_table entry '%.*s'\n", dist, &(tokens->tokens[i]), ic_parse_table[pt_offset].len, ic_parse_table[pt_offset].token );
+                printf( "match found! token '%.*s' with parse_table entry '%.*s'\n",
+                        dist,
+                        &(tokens->tokens[i]),
+                        ic_parse_table[pt_offset].len,
+                        ic_parse_table[pt_offset].token );
 #endif
 
                 func = ic_parse_table[pt_offset].func;
                 if( ! func ){
-                    printf( "ic_parse: Error matched with '%.*s' but parse table function was null, bailing\n", ic_parse_table[pt_offset].len, ic_parse_table[pt_offset].token );
+                    printf( "ic_parse: Error matched with '%.*s' but parse table function was null, bailing\n",
+                            ic_parse_table[pt_offset].len,
+                            ic_parse_table[pt_offset].token );
                     return 0;
                 }
 
@@ -339,7 +354,9 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
         }
 
         /* no match found */
-        printf("ic_parse: unsupported string '%.*s' found, bailing\n", dist, &(tokens->tokens[i]) );
+        printf("ic_parse: unsupported string '%.*s' found, bailing\n",
+                dist,
+                &(tokens->tokens[i]) );
         return 0;
     }
 
