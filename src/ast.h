@@ -8,7 +8,6 @@ struct ic_func_decl {
     struct ic_symbol name;
     struct ic_pvector args;
     /* FIXME how do we store a body ? */
-    char *body;
 };
 
 /* a field is a combination of a symbol and a type
