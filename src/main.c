@@ -47,6 +47,15 @@ int main(int argc, char **argv){
      * no currently implemented interface supports this
      */
     ast = ic_parse(tokens);
+    if( ! ast ){
+        puts("parsing failed");
+        exit(1);
+    }
+
+    puts("\n----------------");
+    puts("parser output:");
+    ic_ast_print(ast);
+    puts("----------------\n");
 
     free(source);
     free(tokens->tokens);
