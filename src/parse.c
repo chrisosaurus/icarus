@@ -214,6 +214,8 @@ struct ic_decl * ic_parse_enum_decl(struct ic_tokens *tokens, unsigned int *i){
     puts("ic_parse_enum_decl called");
 #endif
 
+    puts("ic_parse_enum_decl: UNIMPLEMENTED");
+
     /* FIXME */
     return 0;
 }
@@ -223,6 +225,8 @@ struct ic_decl * ic_parse_union_decl(struct ic_tokens *tokens, unsigned int *i){
     puts("ic_parse_union_decl called");
 #endif
 
+    puts("ic_parse_union_decl: UNIMPLEMENTED");
+
     /* FIXME */
     return 0;
 }
@@ -231,6 +235,8 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
 #ifdef DEBUG_PARSE
     puts("ic_parse_func_decl called");
 #endif
+
+    puts("ic_parse_func_decl: UNIMPLEMENTED");
 
     /* FIXME */
     return 0;
