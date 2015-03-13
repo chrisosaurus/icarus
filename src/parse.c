@@ -102,30 +102,83 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
     unsigned int dist = 0;
     /* parsed field */
     struct ic_field *field = 0;
-    /* our resulting ic_type_decl */
+    /* our resulting ic_decl */
+    struct ic_decl *decl = 0;
+    /* our tdecl within the decl */
     struct ic_type_decl *tdecl = 0;
-
-    if( ! tokens ){
-        return 0;
-    }
 
 #ifdef DEBUG_PARSE
     puts("ic_parse_type_decl called");
 #endif
 
+    if( ! tokens ){
+        puts("ic_parse_type_decl: tokens was null");
+        return 0;
+    }
+
+    /* check we really are at a `type` token */
+    dist = ic_parse_token_len(tokens->tokens, *i);
+    if( dist != 4 || strncmp("type", &(tokens->tokens[*i]), 4) ){
+        printf("ic_parse_type_decl: expected 'type', encountered '%.*s'\n",
+                dist,
+                &(tokens->tokens[*i]));
+        return 0;
+    }
+
+    /* step over `type` keyword */
+    ic_parse_token_advance(i, dist);
+
+    /* allocate and init our decl */
+    decl = ic_decl_new(type_decl);
+    if( ! decl ){
+        puts("ic_parse_type_decl: call to ic_decl_new failed");
+        return 0;
+    }
+
+    /* fetch our tdecl from within decl */
+    tdecl = ic_decl_get_tdecl(decl);
+    if( ! tdecl ){
+        puts("ic_parse_type_decl: call to ic_decl_get_tdecl failed");
+        return 0;
+    }
+
+    /* get our type name dist */
+    dist = ic_parse_token_len(tokens->tokens, *i);
+    /* initialise our tdecl */
+    if( ic_type_decl_init(tdecl, &(tokens->tokens[*i]), dist) ){
+        puts("ic_parse_type_decl: call to ic_type_decl_init failed");
+        return 0;
+    }
+
+#ifdef DEBUG_PARSE
+    printf("ic_parse_type_decl: our name is '%.*s'\n", dist, &(tokens->tokens[*i]));
+#endif
+
+    /* step over name */
+    ic_parse_token_advance(i, dist);
+
+    /* iterate through all tokens */
     for( j=*i; tokens->tokens[j] != '\0' && j < tokens->len ; ){
         dist = ic_parse_token_len(tokens->tokens, j);
-        printf("ic_parse_token_type_decl: inspecting token '%.*s'\n", dist, &(tokens->tokens[j]) );
 
+#ifdef DEBUG_PARSE
+        printf("ic_parse_token_type_decl: inspecting token '%.*s'\n", dist, &(tokens->tokens[j]) );
+#endif
+
+        /* we keep stepping through loop until we find an
+         * `end` token
+         * note that this means `end` is a reserved word
+         */
         if( dist == 3 &&
             ! strncmp( &(tokens->tokens[j]), "end", 3) ){
             printf("ic_parse_token_type_decl: found end of string token '%.*s'\n", dist, &(tokens->tokens[j]) );
 
+            /* step over `end` token */
             ic_parse_token_advance(&j, dist);
             *i = j;
 
-            /* FIXME need to return an eventual ic_decl */
-            return 0;
+            /* return our result */
+            return decl;
         }
 
         /* otherwise this is a field
