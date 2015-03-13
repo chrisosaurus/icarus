@@ -18,15 +18,36 @@ struct ic_parray * ic_parray_new(unsigned int len){
         return 0;
     }
 
-    arr->len = len;
-
-    arr->contents = calloc(len, sizeof(void*));
-    if( ! arr->contents ){
-        puts("ic_parray_new: calloc of contents failed");
+    if( ic_parray_init(arr, len) ){
+        puts("ic_parray_new: clal to ic_parray_init failed");
         return 0;
     }
 
     return arr;
+}
+
+/* initialise an existing array to the specified len
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+int ic_parray_init(struct ic_parray *arr, unsigned int len){
+    if( ! arr ){
+        puts("ic_parray_init: called with null array");
+        return 1;
+    }
+
+    /* set length */
+    arr->len = len;
+
+    /* allocate contents */
+    arr->contents = calloc(len, sizeof(void*));
+    if( ! arr->contents ){
+        puts("ic_parray_init: calloc of contents failed");
+        return 1;
+    }
+
+    return 0;
 }
 
 /* get item at pos

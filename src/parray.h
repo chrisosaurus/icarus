@@ -21,6 +21,13 @@ struct ic_parray {
  */
 struct ic_parray * ic_parray_new(unsigned int len);
 
+/* initialise an existing array to the specified len
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+int ic_parray_init(struct ic_parray *arr, unsigned int len);
+
 /* get item at pos
  * bounds checked
  *
