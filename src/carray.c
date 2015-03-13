@@ -19,7 +19,7 @@ struct ic_carray * ic_carray_new(unsigned int len){
     }
 
     if( ic_carray_init(arr, len) ){
-        puts("ic_array_new: call to ic_array_init failed");
+        puts("ic_array_new: call to ic_carray_init failed");
         return 0;
     }
 
