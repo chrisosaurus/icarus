@@ -192,6 +192,9 @@ void ic_func_decl_print(struct ic_func_decl *fdecl){
     /* closing bracket */
     puts(")");
 
+    /* FIXME filler body */
+    puts("  # function bodies not yet implemented");
+
     /* print end\n */
     puts("end");
 }
