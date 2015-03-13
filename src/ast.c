@@ -193,6 +193,9 @@ void ic_type_decl_print(struct ic_type_decl *tdecl){
 
 /* allocate and initialise a new ic_decl
  *
+ * NOTE: this call will NOT initialise the contents of the union
+ * this is left up to the caller
+ *
  * returns new ic_decl on success
  * returns 0 on error
  */
@@ -217,6 +220,9 @@ struct ic_decl * ic_decl_new(enum ic_decl_type type){
 
 /* initialise an existing ic_decl
  *
+ * NOTE: this call will NOT initialise the contents of the union
+ * this is left up to the caller
+ *
  * returns 0 on sucess
  * returns 1 on error
  */
@@ -226,7 +232,15 @@ int ic_decl_init(struct ic_decl *decl, enum ic_decl_type type){
         return 1;
     }
 
+    /* set type */
     decl->type = type;
+
+    /* NOTE we do NOT initialise the contents
+     * it is up to the caller
+     *
+     * FIXME: reconsider this interface
+     */
+
     return 0;
 }
 
