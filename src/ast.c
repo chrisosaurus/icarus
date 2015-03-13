@@ -172,7 +172,7 @@ void ic_func_decl_print(struct ic_func_decl *fdecl){
     /* offset into args */
     unsigned int i = 0;
     /* len of args */
-    int len = 0;
+    unsigned int len = 0;
 
     if( ! fdecl ){
         puts("ic_func_decl_print: fdecl was null");
@@ -184,12 +184,8 @@ void ic_func_decl_print(struct ic_func_decl *fdecl){
 
     len = ic_pvector_length( &(fdecl->args) );
 
-    if( len <= 0 ){
-        return;
-    }
-
     /* print arguments */
-    for( i=0; i < (unsigned int) len; ++i ){
+    for( i=0; i < len; ++i ){
         ic_field_print( ic_pvector_get( &(fdecl->args), i ) );
     }
 
