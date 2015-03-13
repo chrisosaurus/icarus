@@ -191,6 +191,87 @@ void ic_type_decl_print(struct ic_type_decl *tdecl){
     puts("end");
 }
 
+/* allocate and initialise a new ic_decl
+ *
+ * returns new ic_decl on success
+ * returns 0 on error
+ */
+struct ic_decl * ic_decl_new(enum ic_decl_type type){
+    struct ic_decl *decl = 0;
+
+    /* allocate space */
+    decl = calloc(1, sizeof(struct ic_decl));
+    if( ! decl ){
+        puts("ic_decl_new: call to calloc failed");
+        return 0;
+    }
+
+    /* initialise */
+    if( ic_decl_init(decl, type) ){
+        puts("ic_decl_new: call to ic_decl_init failed");
+        return 0;
+    }
+
+    return decl;
+}
+
+/* initialise an existing ic_decl
+ *
+ * returns 0 on sucess
+ * returns 1 on error
+ */
+int ic_decl_init(struct ic_decl *decl, enum ic_decl_type type){
+    if( ! decl ){
+        puts("ic_decl_init: decl was null");
+        return 1;
+    }
+
+    decl->type = type;
+    return 0;
+}
+
+/* return pointer to ic_func_decl element
+ * this function will only success if the decl is of type func_decl
+ *
+ * returns pointer on success
+ * return 0 on failure
+ */
+struct ic_func_decl * ic_decl_get_fdecl(struct ic_decl *decl){
+    if( ! decl ){
+        puts("ic_decl_get_fdecl: decl was null");
+        return 0;
+    }
+
+    /* check we are the right type */
+    if( decl->type != type_decl ){
+        return 0;
+    }
+
+    /* unbox */
+    return &(decl->u.fdecl);
+}
+
+/* return pointer to cf_type_decl element
+ * this function will only success if the decl is of type type_decl
+ *
+ * returns pointer on success
+ * return 0 on failure
+ */
+struct ic_type_decl * ic_decl_get_tdecl(struct ic_decl *decl){
+    if( ! decl ){
+        puts("ic_decl_get_tdecl: decl was null");
+        return 0;
+    }
+
+    /* check we are the right type */
+    if( decl->type != type_decl ){
+        return 0;
+    }
+
+    /* unbox */
+    return &(decl->u.tdecl);
+}
+
 /* allocate and initialise a new ast
  *
  * returns pointer to new ast on success

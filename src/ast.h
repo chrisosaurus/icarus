@@ -96,6 +96,36 @@ struct ic_decl {
     } u;
 };
 
+/* allocate and initialise a new ic_decl
+ *
+ * returns new ic_decl on success
+ * returns 0 on error
+ */
+struct ic_decl * ic_decl_new(enum ic_decl_type type);
+
+/* initialise an existing ic_decl
+ *
+ * returns 0 on sucess
+ * returns 1 on error
+ */
+int ic_decl_init(struct ic_decl *decl, enum ic_decl_type type);
+
+/* return pointer to ic_func_decl element
+ * this function will only success if the decl is of type func_decl
+ *
+ * returns pointer on success
+ * return 0 on failure
+ */
+struct ic_func_decl * ic_decl_get_fdecl(struct ic_decl *decl);
+
+/* return pointer to ic_type_decl element
+ * this function will only success if the decl is of type type_decl
+ *
+ * returns pointer on success
+ * return 0 on failure
+ */
+struct ic_type_decl * ic_decl_get_tdecl(struct ic_decl *decl);
+
 struct ic_ast {
     struct ic_pvector decls;
 };
