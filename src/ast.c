@@ -187,6 +187,13 @@ void ic_func_decl_print(struct ic_func_decl *fdecl){
     /* print arguments */
     for( i=0; i < len; ++i ){
         ic_field_print( ic_pvector_get( &(fdecl->args), i ) );
+
+        /* print a space between each arg
+         * but only if we are not the last arg
+         */
+        if( i < (len - 1) ){
+            printf(" ");
+        }
     }
 
     /* closing bracket */
