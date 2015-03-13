@@ -503,12 +503,12 @@ int ic_ast_append(struct ic_ast *ast, struct ic_decl *decl){
 }
 
 /* returns length on success
- * returns -1 on failure
+ * returns 0 on failure
  */
-int ic_ast_length(struct ic_ast *ast){
+unsigned int ic_ast_length(struct ic_ast *ast){
     if( ! ast ){
         puts("ic_ast_length: ast was null");
-        return -1;
+        return 0;
     }
 
     /* dispatch to pvector */
@@ -520,7 +520,7 @@ void ic_ast_print(struct ic_ast *ast){
     /* current offset into pvector */
     unsigned int i = 0;
     /* length of ast pvector */
-    int len = 0;
+    unsigned int len = 0;
     /* current decl */
     struct ic_decl *decl = 0;
 
@@ -531,13 +531,9 @@ void ic_ast_print(struct ic_ast *ast){
 
     /* get length */
     len = ic_ast_length(ast);
-    if( len <= 0 ){
-        puts("ic_ast_print: call to ic_ast_length failed");
-        return;
-    }
 
     /* iterate through each element of ast */
-    for( i=0; i < (unsigned int) len; ++i ){
+    for( i=0; i < len; ++i ){
         /* get decl */
         decl = ic_ast_get(ast, i);
         if( ! decl ){

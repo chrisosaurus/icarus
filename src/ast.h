@@ -192,9 +192,9 @@ struct ic_decl * ic_ast_get(struct ic_ast *ast, unsigned int i);
 int ic_ast_append(struct ic_ast *ast, struct ic_decl *decl);
 
 /* returns length on success
- * returns -1 on failure
+ * returns 0 on failure
  */
-int ic_ast_length(struct ic_ast *ast);
+unsigned int ic_ast_length(struct ic_ast *ast);
 
 /* calls print on all elements within ast */
 void ic_ast_print(struct ic_ast *ast);
