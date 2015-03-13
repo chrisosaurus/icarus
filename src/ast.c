@@ -373,7 +373,7 @@ struct ic_func_decl * ic_decl_get_fdecl(struct ic_decl *decl){
     }
 
     /* check we are the right type */
-    if( decl->type != type_decl ){
+    if( decl->type != func_decl ){
         return 0;
     }
 
