@@ -97,8 +97,6 @@ struct ic_field * ic_parse_field(struct ic_tokens *tokens, unsigned int *i){
 }
 
 struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
-    /* use j as internal iterator to find the end token */
-    unsigned int j = 0;
     unsigned int dist = 0;
     /* parsed field */
     struct ic_field *field = 0;
@@ -160,13 +158,13 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
     ic_parse_token_advance(i, dist);
 
     /* iterate through all tokens */
-    for( j=*i; tokens->tokens[j] != '\0' && j < tokens->len ; ){
-        dist = ic_parse_token_len(tokens->tokens, j);
+    for( ; tokens->tokens[*i] != '\0' && *i < tokens->len ; ){
+        dist = ic_parse_token_len(tokens->tokens, *i);
 
 #ifdef DEBUG_PARSE
         printf("ic_parse_token_type_decl: inspecting token '%.*s'\n",
                 dist,
-                &(tokens->tokens[j]) );
+                &(tokens->tokens[*i]) );
 #endif
 
         /* we keep stepping through loop until we find an
@@ -174,19 +172,19 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
          * note that this means `end` is a reserved word
          */
         if( dist == 3 &&
-            ! strncmp( &(tokens->tokens[j]), "end", 3) ){
+            ! strncmp( &(tokens->tokens[*i]), "end", 3) ){
             printf("ic_parse_token_type_decl: found end of string token '%.*s'\n",
                     dist,
-                    &(tokens->tokens[j]) );
+                    &(tokens->tokens[*i]) );
 
             /* step over `end` token */
-            ic_parse_token_advance(&j, dist);
-            *i = j;
+            ic_parse_token_advance(i, dist);
 
             /* return our result */
             return decl;
         }
 
+        puts("GOING IN");
         /* otherwise this is a field
          * parse it
          */
@@ -202,7 +200,7 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
             return 0;
         }
 
-        ic_parse_token_advance(&j, dist);
+        ic_parse_token_advance(i, dist);
     }
 
     /* this means we ran out of tokens
