@@ -4,12 +4,6 @@
 #include "symbol.h"
 #include "pvector.h"
 
-struct ic_func_decl {
-    struct ic_symbol name;
-    struct ic_pvector args;
-    /* FIXME how do we store a body ? */
-};
-
 /* a field is a combination of a symbol and a type
  *  foo::Int
  * the symbol is `foo`
@@ -38,6 +32,36 @@ int ic_field_init(struct ic_field *field, char *name_src, unsigned int name_len,
 
 /* print the field to stdout */
 void ic_field_print(struct ic_field *field);
+
+struct ic_func_decl {
+    struct ic_symbol name;
+    struct ic_pvector args;
+    /* FIXME how do we store a body ? */
+};
+
+/* allocate and initialise a new func_decl
+ *
+ * returns new func_decl on success
+ * returns 0 on error
+ */
+struct ic_func_decl * ic_func_decl_new(char *name, unsigned int name_len);
+
+/* initialise an existing func_decl
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned int name_len);
+
+/* add new arg field to func_decl
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+int ic_func_decl_add_arg(struct ic_func_decl *fdecl, struct ic_field *field);
+
+/* print func_decl */
+void ic_func_decl_print(struct ic_func_decl *fdecl);
 
 /* a func declaration is a symbol and then a collection of fields
  *  type Foo
