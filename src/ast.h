@@ -64,6 +64,15 @@ struct ic_type_decl {
  */
 struct ic_type_decl * ic_type_decl_new(char *name_src, unsigned int name_len);
 
+/* initialise an existing type_decl
+ * only needs name and len
+ * will also allocate an empty pvector for fields
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+int ic_type_decl_init(struct ic_type_decl *tdecl, char *name_src, unsigned int name_len);
+
 /* add a new field to types list of fields
  *
  * returns 0 on success

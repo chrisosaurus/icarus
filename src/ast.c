@@ -97,19 +97,45 @@ struct ic_type_decl * ic_type_decl_new(char *name_src, unsigned int name_len){
         return 0;
     }
 
-    /* initialise name */
-    if( ic_symbol_init( &(tdecl->name), name_src, name_len ) ){
-        puts("ic_type_decl_new: call to ic_symbol_init for name failed");
-        return 0;
-    }
-
-    /* init fields pvector */
-    if( ic_pvector_init( &(tdecl->fields), 0 ) ){
-        puts("ic_type_decl_new: call to ic_pvector_init for fields failed");
+    if( ic_type_decl_init(tdecl, name_src, name_len) ){
+        puts("ic_type_decl_new: call to ic_type_decl_init failed");
         return 0;
     }
 
     return tdecl;
+}
+
+/* initialise an existing type_decl
+ * only needs name and len
+ * will also allocate an empty pvector for fields
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+int ic_type_decl_init(struct ic_type_decl *tdecl, char *name_src, unsigned int name_len){
+    if( ! tdecl ){
+        puts("ic_type_decl_init: tdecl was null");
+        return 1;
+    }
+
+    if( ! name_src ){
+        puts("ic_type_decl_init: name_src was null");
+        return 1;
+    }
+
+    /* initialise name */
+    if( ic_symbol_init( &(tdecl->name), name_src, name_len ) ){
+        puts("ic_type_decl_init: call to ic_symbol_init for name failed");
+        return 1;
+    }
+
+    /* init fields pvector */
+    if( ic_pvector_init( &(tdecl->fields), 0 ) ){
+        puts("ic_type_decl_init: call to ic_pvector_init for fields failed");
+        return 1;
+    }
+
+    return 0;
 }
 
 /* add a new field to types list of fields
