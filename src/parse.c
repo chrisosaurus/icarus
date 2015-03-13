@@ -100,6 +100,10 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
     /* use j as internal iterator to find the end token */
     unsigned int j = 0;
     unsigned int dist = 0;
+    /* parsed field */
+    struct ic_field *field = 0;
+    /* our resulting ic_type_decl */
+    struct ic_type_decl *tdecl = 0;
 
     if( ! tokens ){
         return 0;
@@ -113,23 +117,39 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
         dist = ic_parse_token_len(tokens->tokens, j);
         printf("ic_parse_token_type_decl: inspecting token '%.*s'\n", dist, &(tokens->tokens[j]) );
 
-        /* FIXME
-         * for now we just skip along to the end token
-         */
-
         if( dist == 3 &&
             ! strncmp( &(tokens->tokens[j]), "end", 3) ){
             printf("ic_parse_token_type_decl: found end of string token '%.*s'\n", dist, &(tokens->tokens[j]) );
 
             ic_parse_token_advance(&j, dist);
             *i = j;
+
+            /* FIXME need to return an eventual ic_decl */
+            return 0;
+        }
+
+        /* otherwise this is a field
+         * parse it
+         */
+        field = ic_parse_field(tokens, i);
+        if( ! field ){
+            puts("ic_parse_type_decl: call to ic_parse_field failed");
+            return 0;
+        }
+
+        /* and store it */
+        if( ic_type_decl_add_field(tdecl, field) ){
+            puts("ic_parse_type_decl: call to ic_type_decl_add_field failed");
             return 0;
         }
 
         ic_parse_token_advance(&j, dist);
     }
 
-    /* this means we ran out of tokens */
+    /* this means we ran out of tokens
+     * this is an error case as `end` should cause the
+     * successful return
+     */
     return 0;
 }
 
