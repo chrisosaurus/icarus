@@ -1,0 +1,27 @@
+
+# once again this is all early days, syntax and semantics not set in stone
+
+# we want to be able specify functions for converting between types
+
+type FOo
+    a::Int
+end
+
+# this requires being able to pass a Type as a value
+# and be able to match on it for dispatch
+
+function convert(f::F00 Int) :: Int
+    return f.a
+end
+
+function convert(f::Foo String) :: string
+    return convert(f.a String)
+end
+
+function main()
+    let f::Foo = Foo(14)
+
+    print(convert(f String))
+end
+
+
