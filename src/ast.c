@@ -191,4 +191,97 @@ void ic_type_decl_print(struct ic_type_decl *tdecl){
     puts("end");
 }
 
+/* allocate and initialise a new ast
+ *
+ * returns pointer to new ast on success
+ * returns 0 on failure
+ */
+struct ic_ast * ic_ast_new(void){
+    struct ic_ast *ast = 0;
+
+    /* allocate new ast */
+    ast = calloc(1, sizeof(struct ic_ast));
+    if( ! ast ){
+        puts("ic_ast_new: call to calloc failed");
+        return 0;
+    }
+
+    /* initialise ast */
+    if( ic_ast_init(ast) ){
+        puts("ic_ast_new: call to ic_ast_init fialed");
+        return 0;
+    }
+
+    return ast;
+}
+
+/* initialise a pre-existing ast
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+int ic_ast_init(struct ic_ast *ast){
+    if( ! ast ){
+        puts("ic_ast_init: ast was null");
+        return 1;
+    }
+
+    /* initialise pvector decls to 0 cap */
+    if( ic_pvector_init( &(ast->decls), 0 ) ){
+        puts("ic_ast_init: call to ic_pvector_init failed");
+        return 1;
+    }
+
+    return 0;
+}
+
+/* get item stores at index i
+ *
+ * returns pointer to item on success
+ * returns 0 on failure
+ */
+struct ic_decl * ic_ast_get(struct ic_ast *ast, unsigned int i){
+    if( ! ast ){
+        puts("ic_ast_get: ast was null");
+        return 0;
+    }
+
+    /* dispatch to pvector */
+    return ic_pvector_get( &(ast->decls), i );
+}
+
+/* append decl to ast
+ * ast will resize to make room
+ *
+ * returns index of item on success
+ * returns -1 on failure
+ */
+int ic_ast_append(struct ic_ast *ast, struct ic_decl *decl){
+    if( ! ast ){
+        puts("ic_ast_append: ast was null");
+        return -1;
+    }
+
+    if( ! decl ){
+        puts("ic_ast_append: decl was null");
+        return -1;
+    }
+
+    /* dispatch to pvector */
+    return ic_pvector_append( &(ast->decls), decl );
+}
+
+/* returns length on success
+ * returns -1 on failure
+ */
+int ic_ast_length(struct ic_ast *ast){
+    if( ! ast ){
+        puts("ic_ast_length: ast was null");
+        return -1;
+    }
+
+    /* dispatch to pvector */
+    return ic_pvector_length( &(ast->decls) );
+}
+
 
