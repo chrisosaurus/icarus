@@ -38,7 +38,9 @@ int main(int argc, char **argv){
     printf("len of str '%d', len of tokens '%d', cap of tokens '%d'\n", strlen(source), tokens->len, tokens->cap);
 #endif
 
+    puts("\n----------------");
     printf("lexer output:\n%s\n", tokens->tokens);
+    puts("----------------\n");
 
     /* FIXME eventually need to free ast
      * note that ast itself will need a deeper free
