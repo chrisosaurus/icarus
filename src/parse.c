@@ -214,6 +214,11 @@ static unsigned int ic_parse_token_len(char *source, unsigned int i){
     /* find next space */
     space = strchr( &(source[i]), ' ' );
 
+    if( ! space ){
+        /* character not found */
+        return 0;
+    }
+
     /* find length of token
      * which is the distance from the start to the space
      */
