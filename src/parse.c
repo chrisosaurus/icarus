@@ -184,7 +184,6 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
             return decl;
         }
 
-        puts("GOING IN");
         /* otherwise this is a field
          * parse it
          */
@@ -200,7 +199,7 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
             return 0;
         }
 
-        ic_parse_token_advance(i, dist);
+        /* increment of i is handled by ic_parse_field */
     }
 
     /* this means we ran out of tokens
