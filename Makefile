@@ -31,7 +31,9 @@ clean: cleanobj
 	@echo cleaning executables
 	@rm -f icarus
 	@echo cleaning tests
-	@rm -f test_read test_parray test_carray
+	@rm -f test_read test_parray test_carray test_pvector test_symbol test_ast test_string
+	@echo removing gcov files
+	@rm -f *.gcda *.gcov src/*.gcno src/*.gcda
 
 example: icarus
 	./icarus example/simple.ic

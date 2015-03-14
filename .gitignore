@@ -10,3 +10,7 @@ test_string
 test_symbol
 test_ast
 
+*.gcov
+*.gcno
+*.gcda
+
