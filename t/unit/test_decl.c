@@ -11,7 +11,6 @@ int main(void){
     struct ic_func_decl *fdecl = 0;
 
 
-
     /* test type decl */
     decl = ic_decl_new(type_decl);
     assert(decl);
@@ -38,7 +37,9 @@ int main(void){
     puts("Output:");
     ic_decl_print(decl);
 
+
     puts("");
+
 
     /* test func decl */
     decl = ic_decl_new(func_decl);
@@ -65,7 +66,6 @@ int main(void){
     /* print it out */
     puts("Output:");
     ic_decl_print(decl);
-
 
 
     return 0;
