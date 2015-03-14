@@ -120,6 +120,14 @@ struct ic_tokens * ic_lex(char *source){
                 tokens = ic_consume_repeated_symbol(tokens, source, &i, source[i]);
                 break;
 
+            /* a word must start with a letter or _
+             * but can then include any combination of
+             *  a-z
+             *  A-Z
+             *  0-9
+             *  -
+             *  _
+             */
             default:
                 /* assume this is a word */
                 tokens = ic_consume_word(tokens, source, &i);
@@ -249,6 +257,18 @@ static struct ic_tokens * ic_consume_word(struct ic_tokens *tokens, char *source
         puts("ic_consume_word: null source or i provided");
         return 0;
     }
+
+    /* a word must start with a letter or _
+     * but can then include any combination of
+     *  a-z
+     *  A-Z
+     *  0-9
+     *  -
+     *  _
+     *
+     * we do not currently enforce this constraint at
+     * the lexer level
+     */
 
     for( len=0;
          ;
