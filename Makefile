@@ -41,18 +41,34 @@ example: icarus
 test: run_tests
 
 run_tests: compile_tests
+	@echo ""
 	@echo "running test_read"
 	./bin/test_read
+	@echo ""
 	@echo "running test_parray"
 	./bin/test_parray
+	@echo ""
 	@echo "running test_carray"
 	./bin/test_carray
+	@echo ""
 	@echo "running test_pvector"
 	./bin/test_pvector
+	@echo ""
 	@echo "running test_string"
 	./bin/test_string
+	@echo ""
 	@echo "running test_symbol"
 	./bin/test_symbol
+	@echo ""
+	@echo "running test_field"
+	./bin/test_field
+	@echo ""
+	@echo "running test_tdecl"
+	./bin/test_tdecl
+	@echo ""
+	@echo "running test_fdecl"
+	./bin/test_fdecl
+	@echo ""
 	@echo "running test_ast"
 	./bin/test_ast
 
@@ -66,6 +82,9 @@ compile_tests: clean ${OBJ}
 	@${CC} t/unit/test_pvector.c -o bin/test_pvector ${LDFLAGS} ${OBJ}
 	@${CC} t/unit/test_string.c -o bin/test_string ${LDFLAGS} ${OBJ}
 	@${CC} t/unit/test_symbol.c -o bin/test_symbol ${LDFLAGS} ${OBJ}
+	@${CC} t/unit/test_field.c -o bin/test_field ${LDFLAGS} ${OBJ}
+	@${CC} t/unit/test_tdecl.c -o bin/test_tdecl ${LDFLAGS} ${OBJ}
+	@${CC} t/unit/test_fdecl.c -o bin/test_fdecl ${LDFLAGS} ${OBJ}
 	@${CC} t/unit/test_ast.c -o bin/test_ast ${LDFLAGS} ${OBJ}
 	@make -s cleanobj
 

@@ -2,13 +2,7 @@ icarus
 src/*.o
 *.out
 
-test_read
-test_parray
-test_carray
-test_pvector
-test_string
-test_symbol
-test_ast
+bin/*
 
 *.gcov
 *.gcno
