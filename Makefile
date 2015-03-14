@@ -31,7 +31,7 @@ clean: cleanobj
 	@echo cleaning executables
 	@rm -f icarus
 	@echo cleaning tests
-	@rm -f test_read test_parray test_carray test_pvector test_symbol test_ast test_string
+	@rm -rf bin
 	@echo removing gcov files
 	@rm -f *.gcda *.gcov src/*.gcno src/*.gcda
 
@@ -42,29 +42,31 @@ test: run_tests
 
 run_tests: compile_tests
 	@echo "running test_read"
-	./test_read
+	./bin/test_read
 	@echo "running test_parray"
-	./test_parray
+	./bin/test_parray
 	@echo "running test_carray"
-	./test_carray
+	./bin/test_carray
 	@echo "running test_pvector"
-	./test_pvector
+	./bin/test_pvector
 	@echo "running test_string"
-	./test_string
+	./bin/test_string
 	@echo "running test_symbol"
-	./test_symbol
+	./bin/test_symbol
 	@echo "running test_ast"
-	./test_ast
+	./bin/test_ast
 
 compile_tests: clean ${OBJ}
+	@echo "making bin directory for testing binaries"
+	@mkdir bin
 	@echo "compiling tests"
-	@${CC} t/unit/test_read.c -o test_read ${LDFLAGS} ${OBJ}
-	@${CC} t/unit/test_parray.c -o test_parray ${LDFLAGS} ${OBJ}
-	@${CC} t/unit/test_carray.c -o test_carray ${LDFLAGS} ${OBJ}
-	@${CC} t/unit/test_pvector.c -o test_pvector ${LDFLAGS} ${OBJ}
-	@${CC} t/unit/test_string.c -o test_string ${LDFLAGS} ${OBJ}
-	@${CC} t/unit/test_symbol.c -o test_symbol ${LDFLAGS} ${OBJ}
-	@${CC} t/unit/test_ast.c -o test_ast ${LDFLAGS} ${OBJ}
+	@${CC} t/unit/test_read.c -o bin/test_read ${LDFLAGS} ${OBJ}
+	@${CC} t/unit/test_parray.c -o bin/test_parray ${LDFLAGS} ${OBJ}
+	@${CC} t/unit/test_carray.c -o bin/test_carray ${LDFLAGS} ${OBJ}
+	@${CC} t/unit/test_pvector.c -o bin/test_pvector ${LDFLAGS} ${OBJ}
+	@${CC} t/unit/test_string.c -o bin/test_string ${LDFLAGS} ${OBJ}
+	@${CC} t/unit/test_symbol.c -o bin/test_symbol ${LDFLAGS} ${OBJ}
+	@${CC} t/unit/test_ast.c -o bin/test_ast ${LDFLAGS} ${OBJ}
 	@make -s cleanobj
 
 .PHONY: all clean cleanobj icarus test example
