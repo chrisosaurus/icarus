@@ -81,6 +81,10 @@ struct ic_tokens * ic_lex(char *source){
                 return tokens;
                 break;
 
+            /* whitespace is only significant in Icarus in terms
+             * of terminating a comment, the lexer strips out comments
+             * so at the parser level whitespace is insignificant
+             */
             case '\t':
                 puts("warning: tab found, continuing but spaces are preferred");
             case ' ':
@@ -88,6 +92,11 @@ struct ic_tokens * ic_lex(char *source){
                 ++i;
                 break;
 
+            /* (...)
+             * a = b
+             * a.b
+             * "hello"
+             */
             case '(':
             case ')':
             case '=':
@@ -96,10 +105,17 @@ struct ic_tokens * ic_lex(char *source){
                 tokens = ic_consume_single_symbol(tokens, source, &i);
                 break;
 
+            /* # is only used to denote a comment
+             * comments are stripped by the lexer
+             * and so do not exist at the parse level
+             */
             case '#':
                 tokens = ic_strip_comment(tokens, source, &i);
                 break;
 
+            /* currently we only use : in field declarations
+             *      a::Int
+             */
             case ':':
                 tokens = ic_consume_repeated_symbol(tokens, source, &i, source[i]);
                 break;
