@@ -69,6 +69,9 @@ run_tests: compile_tests
 	@echo "running test_fdecl"
 	./bin/test_fdecl
 	@echo ""
+	@echo "running test_decl"
+	./bin/test_decl
+	@echo ""
 	@echo "running test_ast"
 	./bin/test_ast
 
@@ -85,6 +88,7 @@ compile_tests: clean ${OBJ}
 	@${CC} t/unit/test_field.c -o bin/test_field ${LDFLAGS} ${OBJ}
 	@${CC} t/unit/test_tdecl.c -o bin/test_tdecl ${LDFLAGS} ${OBJ}
 	@${CC} t/unit/test_fdecl.c -o bin/test_fdecl ${LDFLAGS} ${OBJ}
+	@${CC} t/unit/test_decl.c -o bin/test_decl ${LDFLAGS} ${OBJ}
 	@${CC} t/unit/test_ast.c -o bin/test_ast ${LDFLAGS} ${OBJ}
 	@make -s cleanobj
 
