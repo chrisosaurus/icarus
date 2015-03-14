@@ -23,6 +23,14 @@ static struct ic_tokens * ic_expand_tokens(struct ic_tokens *tokens, unsigned in
  */
 static struct ic_tokens * ic_consume_word(struct ic_tokens *tokens, char *source, unsigned int *i);
 
+/* consume a number
+ * adds this consumed unit as a token
+ *
+ * returns *tokens on success
+ * returns 0 on failure
+ */
+static struct ic_tokens * ic_consume_number(struct ic_tokens *tokens, char *source, unsigned int *i);
+
 /* consumes one symbol at current position
  * adds this consumed unit as a token
  *
@@ -118,6 +126,20 @@ struct ic_tokens * ic_lex(char *source){
              */
             case ':':
                 tokens = ic_consume_repeated_symbol(tokens, source, &i, source[i]);
+                break;
+
+            /* a number must begin with a digit */
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                tokens = ic_consume_number(tokens, source, &i);
                 break;
 
             /* a word must start with a letter or _
@@ -311,6 +333,82 @@ static struct ic_tokens * ic_consume_word(struct ic_tokens *tokens, char *source
 
 #ifdef DEBUG_LEXER
     printf("ic_consume_word: calling add_token with len '%d'\n", len);
+#endif
+
+    tokens = add_token(tokens, &(source[*i]), len);
+
+    *i += len;
+
+    return tokens;
+}
+
+/* consume a number
+ * adds this consumed unit as a token
+ *
+ * returns *tokens on success
+ * returns 0 on failure
+ */
+static struct ic_tokens * ic_consume_number(struct ic_tokens *tokens, char *source, unsigned int *i){
+    unsigned int len=0;
+
+    if( ! i || ! source ){
+        puts("ic_consume_number: null source or i provided");
+        return 0;
+    }
+
+    /* a word must start with a letter or _
+     * but can then include any combination of
+     *  a-z
+     *  A-Z
+     *  0-9
+     *  -
+     *  _
+     *
+     * we do not currently enforce this constraint at
+     * the lexer level
+     */
+
+    for( len=0;
+         ;
+         ++len ){
+
+        switch( source[(*i) + len] ){
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                /* valid character, continue */
+                continue;
+                break;
+
+            default:
+                /* invalid character
+                 * for now the lexer only supports integer numbers
+                 */
+                goto NUMBER_LOOP_EXIT;
+                break;
+        }
+    }
+
+NUMBER_LOOP_EXIT:
+
+    if( len == 0 ){
+        /* stuck on a non-number character
+         * this most likely means the body in lex()
+         * is missing a *_symbol case
+         */
+        printf("ic_consume_number: stuck on a non-number character '%c', raising error\n", source[*i]);
+        return 0;
+    }
+
+#ifdef DEBUG_LEXER
+    printf("ic_consume_number: calling add_token with len '%d'\n", len);
 #endif
 
     tokens = add_token(tokens, &(source[*i]), len);
