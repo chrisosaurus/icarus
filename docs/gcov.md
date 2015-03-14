@@ -14,7 +14,7 @@ Example:
 
     make clean
     make test
-    ./test_pvector
+    ./bin/test_pvector
     gvoc src/pvector
 
 
