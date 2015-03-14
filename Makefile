@@ -41,39 +41,29 @@ example: icarus
 test: run_tests
 
 run_tests: compile_tests
-	@echo ""
-	@echo "running test_read"
+	@echo "\n\nrunning test_read"
 	./bin/test_read
-	@echo ""
-	@echo "running test_parray"
+	@echo "\n\nrunning test_parray"
 	./bin/test_parray
-	@echo ""
-	@echo "running test_carray"
+	@echo "\n\nrunning test_carray"
 	./bin/test_carray
-	@echo ""
-	@echo "running test_pvector"
+	@echo "\n\nrunning test_pvector"
 	./bin/test_pvector
-	@echo ""
-	@echo "running test_string"
+	@echo "\n\nrunning test_string"
 	./bin/test_string
-	@echo ""
-	@echo "running test_symbol"
+	@echo "\n\nrunning test_symbol"
 	./bin/test_symbol
-	@echo ""
-	@echo "running test_field"
+	@echo "\n\nrunning test_field"
 	./bin/test_field
-	@echo ""
-	@echo "running test_tdecl"
+	@echo "\n\nrunning test_tdecl"
 	./bin/test_tdecl
-	@echo ""
-	@echo "running test_fdecl"
+	@echo "\n\nrunning test_fdecl"
 	./bin/test_fdecl
-	@echo ""
-	@echo "running test_decl"
+	@echo "\n\nrunning test_decl"
 	./bin/test_decl
-	@echo ""
-	@echo "running test_ast"
+	@echo "\n\nrunning test_ast"
 	./bin/test_ast
+	@echo "\n"
 
 compile_tests: clean ${OBJ}
 	@echo "making bin directory for testing binaries"
