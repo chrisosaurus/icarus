@@ -309,7 +309,7 @@ struct ic_func_decl * ic_decl_get_fdecl(struct ic_decl *decl){
     }
 
     /* check we are the right type */
-    if( decl->type != func_decl ){
+    if( decl->type != ic_decl_func_decl ){
         return 0;
     }
 
@@ -330,7 +330,7 @@ struct ic_type_decl * ic_decl_get_tdecl(struct ic_decl *decl){
     }
 
     /* check we are the right type */
-    if( decl->type != type_decl ){
+    if( decl->type != ic_decl_type_decl ){
         return 0;
     }
 
@@ -346,10 +346,10 @@ void ic_decl_print(struct ic_decl *decl){
     }
 
     switch( decl->type ){
-        case func_decl:
+        case ic_decl_func_decl:
             ic_func_decl_print( ic_decl_get_fdecl(decl) );
             break;
-        case type_decl:
+        case ic_decl_type_decl:
             ic_type_decl_print( ic_decl_get_tdecl(decl) );
             break;
         default:

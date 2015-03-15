@@ -79,8 +79,8 @@ int ic_type_decl_add_field(struct ic_type_decl *tdecl, struct ic_field *field);
 void ic_type_decl_print(struct ic_type_decl *tdecl);
 
 enum ic_decl_type {
-    func_decl,
-    type_decl
+    ic_decl_func_decl,
+    ic_decl_type_decl
 };
 
 struct ic_decl {

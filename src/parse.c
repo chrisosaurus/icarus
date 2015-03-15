@@ -127,7 +127,7 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
     ic_parse_token_advance(i, dist);
 
     /* allocate and init our decl */
-    decl = ic_decl_new(type_decl);
+    decl = ic_decl_new(ic_decl_type_decl);
     if( ! decl ){
         puts("ic_parse_type_decl: call to ic_decl_new failed");
         return 0;
@@ -262,7 +262,7 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
     ic_parse_token_advance(i, dist);
 
     /* allocate and init our decl */
-    decl = ic_decl_new(func_decl);
+    decl = ic_decl_new(ic_decl_func_decl);
     if( ! decl ){
         puts("ic_parse_func_decl: call to ic_decl_new failed");
         return 0;
