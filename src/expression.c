@@ -164,4 +164,86 @@ unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, cha
     return 0;
 }
 
+/* allocate and initialise a new op
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr_operator * ic_expr_operator_new(struct ic_expr *lexpr, struct ic_expr *rexpr, char *op, unsigned int op_len){
+    struct ic_expr_operator *operator = 0;
+
+    if( ! lexpr ){
+        puts("ic_expr_operator_new: lexpr was null");
+        return 0;
+    }
+
+    if( ! rexpr ){
+        puts("ic_expr_operator_new: rexpr was null");
+        return 0;
+    }
+
+    if( ! op ){
+        puts("ic_expr_operator_new: op char* was null");
+        return 0;
+    }
+
+    /* allocate */
+    operator = calloc(1, sizeof(struct ic_expr_operator));
+    if( ! operator ){
+        puts("ic_expr_operator_new: calloc failed");
+        return 0;
+    }
+
+    /* initialise */
+    if( ic_expr_operator_init(operator, lexpr, rexpr, op, op_len) ){
+        puts("ic_expr_operator_new: call to ic_expr_operator_init failed");
+        return 0;
+    }
+
+    /* success */
+    return operator;
+}
+
+/* initialise an existing op
+ *
+ * returns 0 on sucess
+ * returns 1 on failure
+ */
+unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, struct ic_expr *lexpr, struct ic_expr *rexpr, char *op, unsigned int op_len){
+
+    if( ! operator ){
+        puts("ic_expr_operator_init: operator was null");
+        return 1;
+    }
+
+    if( ! lexpr ){
+        puts("ic_expr_operator_init: lexpr was null");
+        return 1;
+    }
+
+    if( ! rexpr ){
+        puts("ic_expr_operator_init: rexpr was null");
+        return 1;
+    }
+
+    if( ! op ){
+        puts("ic_expr_operator_init: op char* was null");
+        return 1;
+    }
+
+
+    /* initialise symbol op */
+    if( ic_symbol_init( &(operator->op), op, op_len ) ){
+        puts("ic_expr_operator_init: call to ic_symbol_init failed");
+        return 1;
+    }
+
+    /* assign sub expressions */
+    operator->lexpr = lexpr;
+    operator->rexpr = rexpr;
+
+    /* success */
+    return 0;
+}
+
 

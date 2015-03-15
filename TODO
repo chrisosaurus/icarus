@@ -5,6 +5,5 @@ TODO:
 * ic_stmt methods
 * ic_stmt_* methods
 * ic_expr_constant needs love
-* ic_expr_operator
 * ic_expr methods
 

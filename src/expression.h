@@ -87,6 +87,20 @@ struct ic_expr_operator {
     struct ic_symbol op;
 };
 
+/* allocate and initialise a new op
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr_operator * ic_expr_operator_new(struct ic_expr *lexpr, struct ic_expr *rexpr, char *op, unsigned int op_len);
+
+/* initialise an existing op
+ *
+ * returns 0 on sucess
+ * returns 1 on failure
+ */
+unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, struct ic_expr *lexpr, struct ic_expr *rexpr, char *op, unsigned int op_len);
+
 
 enum ic_expr_type {
     ic_expr_type_func_call,
