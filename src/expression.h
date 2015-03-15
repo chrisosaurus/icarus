@@ -55,6 +55,20 @@ struct ic_expr_identifier{
     struct ic_symbol identifier;
 };
 
+/* allocate and initialise a new identifier
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr_identifier * ic_expr_identifier_new(char *id, unsigned int id_len);
+
+/* initialise an existing identifier
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, char *id, unsigned int id_len);
+
+
 /* a constant
  */
 struct ic_expr_constant {

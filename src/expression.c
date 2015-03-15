@@ -111,3 +111,57 @@ unsigned int ic_expr_func_call_length(struct ic_expr_func_call *fcall){
     return ic_pvector_length( &(fcall->args) );
 }
 
+/* allocate and initialise a new identifier
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr_identifier * ic_expr_identifier_new(char *id, unsigned int id_len){
+    struct ic_expr_identifier * identifier = 0;
+
+    if( ! id ){
+        puts("ic_expr_identifier_new: id was null");
+        return 0;
+    }
+
+    /* allocate */
+    identifier = calloc(1, sizeof(struct ic_expr_identifier));
+    if( ! identifier ){
+        puts("ic_expr_identifier_new: calloc failed");
+        return 0;
+    }
+
+    /* initialise */
+    if( ic_expr_identifier_init(identifier, id, id_len) ){
+        puts("ic_expr_identifier_new: call to ic_expr_identifier_init failed");
+        return 0;
+    }
+
+    /*return */
+    return identifier;
+}
+
+/* initialise an existing identifier
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, char *id, unsigned int id_len){
+    if( ! identifier ){
+        puts("ic_expr_identifier_init: identifier was null");
+    }
+
+    if( ! id ){
+        puts("ic_expr_identifier_init: id was null");
+        return 1;
+    }
+
+    /* init our symbol name */
+    if( ic_symbol_init( &(identifier->identifier), id, id_len ) ){
+        puts("ic_expr_identifier_init: call to ic_symbol_init failed");
+        return 1;
+    }
+
+    return 0;
+}
+
+
