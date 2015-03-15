@@ -3,6 +3,11 @@
 
 #include "pvector.h"
 
+/* predeclare ic_statement to allow use of ic_statement *
+ * as type
+ */
+struct ic_statement;
+
 /* the body of a function or statement
  * (such as the body of an if-statement)
  * a body is collection of statements
@@ -27,18 +32,15 @@ int ic_body_init(struct ic_body *body);
 
 /* returns item at offset i on sucess
  * returns 0 on failure
- *
- * FIXME return type is void * as we don't yet have a statement type
  */
-void * ic_body_get(struct ic_body *body, unsigned int i);
+struct ic_statement * ic_body_get(struct ic_body *body, unsigned int i);
 
 /* append data to body
- * FIXME data is void * as we don't yet have a statement type
  *
  * returns index of item on success
  * returns -1 on failure
  */
-int ic_body_append(struct ic_body *body, void * data);
+int ic_body_append(struct ic_body *body, struct ic_statement * data);
 
 /* returns length on success
  * returns 0 on failure

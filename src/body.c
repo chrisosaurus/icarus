@@ -3,6 +3,7 @@
 
 #include "body.h"
 #include "pvector.h"
+#include "statement.h"
 
 /* allocate and initialise a new ic_body
  *
@@ -51,10 +52,8 @@ int ic_body_init(struct ic_body *body){
 
 /* returns item at offset i on sucess
  * returns 0 on failure
- *
- * FIXME return type is void * as we don't yet have a statement type
  */
-void * ic_body_get(struct ic_body *body, unsigned int i){
+struct ic_statement * ic_body_get(struct ic_body *body, unsigned int i){
     if( ! body ){
         puts("ic_body_get: body was null");
         return 0;
@@ -65,12 +64,11 @@ void * ic_body_get(struct ic_body *body, unsigned int i){
 }
 
 /* append data to body
- * FIXME data is void * as we don't yet have a statement type
  *
  * returns index of item on success
  * returns -1 on failure
  */
-int ic_body_append(struct ic_body *body, void * data){
+int ic_body_append(struct ic_body *body, struct ic_statement * data){
     if( ! body ){
         puts("ic_body_append: body was null");
         return -1;
