@@ -4,6 +4,12 @@
 #include "lexer.h"
 #include "ast.h"
 
+/* return length of token starting at source[i] */
+unsigned int ic_parse_token_length(char *source, unsigned int i);
+
+/* advance i by one token with token length dist */
+void ic_parse_token_advance(unsigned int *i, unsigned int dist);
+
 struct ic_field * ic_parse_field(struct ic_tokens *tokens, unsigned int *i);
 
 struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i);

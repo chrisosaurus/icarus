@@ -1,5 +1,5 @@
 icarus
-src/*.o
+*.o
 *.out
 
 bin/*
