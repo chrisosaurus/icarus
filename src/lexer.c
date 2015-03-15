@@ -356,6 +356,17 @@ static struct ic_tokens * ic_consume_number(struct ic_tokens *tokens, char *sour
         return 0;
     }
 
+    /* error if leading 0
+     * as we do not yet support:
+     *  octal
+     *  hex
+     *  fractions / floating points
+     */
+    if( source[*i] == '0' ){
+        puts("WARNING: ic_consume_number currently only accepts base ten integers");
+        return 0;
+    }
+
     /* a word must start with a letter or _
      * but can then include any combination of
      *  a-z
@@ -385,6 +396,16 @@ static struct ic_tokens * ic_consume_number(struct ic_tokens *tokens, char *sour
             case '9':
                 /* valid character, continue */
                 continue;
+                break;
+
+
+            case '.':
+            case 'x':
+            case 'b':
+                /* we do not support hex, octal or floating point yet
+                 * adding explicit cases for completeness
+                 */
+                goto NUMBER_LOOP_EXIT;
                 break;
 
             default:
