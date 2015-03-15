@@ -33,7 +33,9 @@ clean: cleanobj
 	@echo cleaning tests
 	@rm -rf bin
 	@echo removing gcov files
-	@rm -f *.gcda *.gcov src/*.gcno src/*.gcda
+	@find . -iname '*.gcda' -delete
+	@find . -iname '*.gcov' -delete
+	@find . -iname '*.gcno' -delete
 
 example: icarus
 	./icarus example/simple.ic
