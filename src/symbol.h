@@ -24,14 +24,14 @@ struct ic_symbol * ic_symbol_new(char *source, unsigned int len);
  * returns 0 on success
  * returns 1 on failure
  */
-int ic_symbol_init(struct ic_symbol *sym, char *source, unsigned int len);
+unsigned int ic_symbol_init(struct ic_symbol *sym, char *source, unsigned int len);
 
 
-/* return backing character array
+/* returns backing character array
  * the caller is NOT allowed to mutate this character array directly
  *
  * returns a char * on success
- * return 0 on error
+ * returns 0 on error
  */
 char * ic_symbol_contents(struct ic_symbol *symbol);
 

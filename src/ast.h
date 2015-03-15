@@ -21,7 +21,7 @@ struct ic_ast * ic_ast_new(void);
  * returns 0 on success
  * returns 1 on failure
  */
-int ic_ast_init(struct ic_ast *ast);
+unsigned int ic_ast_init(struct ic_ast *ast);
 
 /* get item stores at index i
  *

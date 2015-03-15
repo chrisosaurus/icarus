@@ -31,7 +31,7 @@ struct ic_carray * ic_carray_new(unsigned int len){
  * returns 0 on success
  * returns 1 on error
  */
-int ic_carray_init(struct ic_carray *arr, unsigned int len){
+unsigned int ic_carray_init(struct ic_carray *arr, unsigned int len){
     if( ! arr ){
         puts("ic_carray_init: called with null array");
         return 1;
@@ -52,7 +52,7 @@ int ic_carray_init(struct ic_carray *arr, unsigned int len){
  * bounds checked
  *
  * returns item on success
- * return 0 on failure
+ * returns 0 on failure
  */
 char ic_carray_get(struct ic_carray *arr, unsigned int pos){
     if( ! arr ){
@@ -70,7 +70,7 @@ char ic_carray_get(struct ic_carray *arr, unsigned int pos){
 /* returns 0 on successful set
  * returns 1 on failure
  */
-int ic_carray_set(struct ic_carray *arr, unsigned int pos, char val){
+unsigned int ic_carray_set(struct ic_carray *arr, unsigned int pos, char val){
     if( ! arr ){
         return 1;
     }
@@ -86,9 +86,9 @@ int ic_carray_set(struct ic_carray *arr, unsigned int pos, char val){
 
 /* ensure array is at least as big as `new_cap`
  * returns 0 on success
- * return 1 on failure
+ * returns 1 on failure
  */
-int ic_carray_ensure(struct ic_carray *arr, unsigned int new_len){
+unsigned int ic_carray_ensure(struct ic_carray *arr, unsigned int new_len){
     if( ! arr ){
         puts("ic_carray_ensure: supplied array was null");
         return 1;

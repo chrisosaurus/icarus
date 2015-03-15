@@ -40,7 +40,7 @@ struct ic_func_decl * ic_func_decl_new(char *name, unsigned int name_len){
  * returns 0 on success
  * returns 1 on error
  */
-int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned int name_len){
+unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned int name_len){
     if( ! fdecl ){
         puts("ic_func_decl_init: fdecl was null");
         return 1;
@@ -71,7 +71,7 @@ int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned int name_
  * returns 0 on success
  * returns 1 on error
  */
-int ic_func_decl_add_arg(struct ic_func_decl *fdecl, struct ic_field *field){
+unsigned int ic_func_decl_add_arg(struct ic_func_decl *fdecl, struct ic_field *field){
     if( ! fdecl ){
         puts("ic_func_decl_add_arg: fdecl was null");
         return 1;
@@ -164,7 +164,7 @@ struct ic_type_decl * ic_type_decl_new(char *name_src, unsigned int name_len){
  * returns 0 on success
  * returns 1 on error
  */
-int ic_type_decl_init(struct ic_type_decl *tdecl, char *name_src, unsigned int name_len){
+unsigned int ic_type_decl_init(struct ic_type_decl *tdecl, char *name_src, unsigned int name_len){
     if( ! tdecl ){
         puts("ic_type_decl_init: tdecl was null");
         return 1;
@@ -195,7 +195,7 @@ int ic_type_decl_init(struct ic_type_decl *tdecl, char *name_src, unsigned int n
  * returns 0 on success
  * returns 1 on error
  */
-int ic_type_decl_add_field(struct ic_type_decl *tdecl, struct ic_field *field){
+unsigned int ic_type_decl_add_field(struct ic_type_decl *tdecl, struct ic_field *field){
     if( ! tdecl ){
         puts("ic_type_decl_add_field: tdecl was null");
         return 1;
@@ -278,7 +278,7 @@ struct ic_decl * ic_decl_new(enum ic_decl_type type){
  * returns 0 on sucess
  * returns 1 on error
  */
-int ic_decl_init(struct ic_decl *decl, enum ic_decl_type type){
+unsigned int ic_decl_init(struct ic_decl *decl, enum ic_decl_type type){
     if( ! decl ){
         puts("ic_decl_init: decl was null");
         return 1;
@@ -296,11 +296,11 @@ int ic_decl_init(struct ic_decl *decl, enum ic_decl_type type){
     return 0;
 }
 
-/* return pointer to ic_func_decl element
+/* returns pointer to ic_func_decl element
  * this function will only success if the decl is of type func_decl
  *
  * returns pointer on success
- * return 0 on failure
+ * returns 0 on failure
  */
 struct ic_func_decl * ic_decl_get_fdecl(struct ic_decl *decl){
     if( ! decl ){
@@ -317,11 +317,11 @@ struct ic_func_decl * ic_decl_get_fdecl(struct ic_decl *decl){
     return &(decl->u.fdecl);
 }
 
-/* return pointer to cf_type_decl element
+/* returns pointer to cf_type_decl element
  * this function will only success if the decl is of type type_decl
  *
  * returns pointer on success
- * return 0 on failure
+ * returns 0 on failure
  */
 struct ic_type_decl * ic_decl_get_tdecl(struct ic_decl *decl){
     if( ! decl ){

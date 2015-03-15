@@ -218,7 +218,7 @@ static struct ic_tokens * ic_expand_tokens(struct ic_tokens *tokens, unsigned in
  * returns the pointer to tokens (which may have changed)
  * behaves correctly when handed a null *tokens (will pass to ic_expand_tokens)
  *
- * return 0 on failure
+ * returns 0 on failure
  */
 static struct ic_tokens * add_token(struct ic_tokens *tokens, char *start, unsigned int len){
     unsigned int required_len = len + 2;

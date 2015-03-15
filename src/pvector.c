@@ -32,7 +32,7 @@ struct ic_pvector * ic_pvector_new(unsigned int cap){
  * returns 0 on success
  * returns 1 on failure
  */
-int ic_pvector_init(struct ic_pvector *vec, unsigned int cap){
+unsigned int ic_pvector_init(struct ic_pvector *vec, unsigned int cap){
     if( ! vec ){
         puts("ic_pvector_init: vec was null");
         return 1;
@@ -54,7 +54,7 @@ int ic_pvector_init(struct ic_pvector *vec, unsigned int cap){
  * bounds checked
  *
  * returns item on success
- * return 0 on failure
+ * returns 0 on failure
  */
 void * ic_pvector_get(struct ic_pvector *arr, unsigned int pos){
     if( ! arr ){
@@ -111,9 +111,9 @@ int ic_pvector_append(struct ic_pvector *arr, void *data){
 * this will not shrink the pvector
 *
 * returns 0 on success
-* return 1 on failure
+* returns 1 on failure
 */
-int ic_pvector_ensure(struct ic_pvector *arr, unsigned int new_cap){
+unsigned int ic_pvector_ensure(struct ic_pvector *arr, unsigned int new_cap){
     if( ! arr ){
         puts("ic_pvector_ensure: supplied array was null");
         return 1;
@@ -145,7 +145,7 @@ int ic_pvector_ensure(struct ic_pvector *arr, unsigned int new_cap){
     return 0;
 }
 
-/* return the length of the used section of the vector
+/* returns the length of the used section of the vector
  *
  * returns 0 on error
  */

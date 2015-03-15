@@ -26,13 +26,13 @@ struct ic_parray * ic_parray_new(unsigned int len);
  * returns 0 on success
  * returns 1 on error
  */
-int ic_parray_init(struct ic_parray *arr, unsigned int len);
+unsigned int ic_parray_init(struct ic_parray *arr, unsigned int len);
 
 /* get item at pos
  * bounds checked
  *
  * returns item on success
- * return 0 on failure
+ * returns 0 on failure
  */
 void * ic_parray_get(struct ic_parray *arr, unsigned int pos);
 /* returns 0 on successful set
@@ -40,12 +40,12 @@ void * ic_parray_get(struct ic_parray *arr, unsigned int pos);
  *
  * bounds checked
  */
-int ic_parray_set(struct ic_parray *arr, unsigned int pos, void *val);
+unsigned int ic_parray_set(struct ic_parray *arr, unsigned int pos, void *val);
 
 /* ensure array is at least as big as `new_len`
  * returns 0 on success
- * return 1 on failure
+ * returns 1 on failure
  */
-int ic_parray_ensure(struct ic_parray *arr, unsigned int new_len);
+unsigned int ic_parray_ensure(struct ic_parray *arr, unsigned int new_len);
 
 #endif

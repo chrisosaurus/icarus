@@ -34,7 +34,7 @@ struct ic_body * ic_body_new(void){
  * returns 0 on sucess
  * returns 1 on failure
  */
-int ic_body_init(struct ic_body *body){
+unsigned int ic_body_init(struct ic_body *body){
     if( ! body ){
         puts("ic_body_init: body was null");
         return 1;

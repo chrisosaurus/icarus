@@ -10,7 +10,9 @@
  * based on their return types
  */
 
-/* return length of token starting at source[i] */
+/* returns length of token starting at source[i]
+ * returns 0 on error
+ */
 unsigned int ic_parse_token_length(char *source, unsigned int i);
 
 /* advance i by one token with token length dist */

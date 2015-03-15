@@ -33,7 +33,7 @@ struct ic_field * ic_field_new(char *name_src, unsigned int name_len, char *type
  * returns 0 on success
  * returns 1 on error
  */
-int ic_field_init(struct ic_field *field, char *name_src, unsigned int name_len, char *type_src, unsigned int type_len){
+unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int name_len, char *type_src, unsigned int type_len){
     if( ! field ){
         puts("ic_filed_init: field was null");
         return 1;

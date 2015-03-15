@@ -25,13 +25,13 @@ struct ic_string * ic_string_new(char *source, unsigned int len);
  * returns 0 on success
  * returns 1 on error
  */
-int ic_string_init(struct ic_string *string, char *source, unsigned int len);
+unsigned int ic_string_init(struct ic_string *string, char *source, unsigned int len);
 
-/* return backing character array
+/* returns backing character array
  * the caller is NOT allowed to mutate this character array directly
  *
  * returns a char * on success
- * return 0 on error
+ * returns 0 on error
  */
 char * ic_string_contents(struct ic_string *string);
 

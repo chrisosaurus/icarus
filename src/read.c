@@ -4,8 +4,8 @@
 #include "read.h"
 
 /* slurp entire file into single alloc-ed buffer
- * return this buffer on success
- * return 0 on error
+ * returns this buffer on success
+ * returns 0 on error
  */
 char * ic_read_slurp(char *filename){
     /* file object */

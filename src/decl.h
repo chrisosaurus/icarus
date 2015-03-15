@@ -24,14 +24,14 @@ struct ic_func_decl * ic_func_decl_new(char *name, unsigned int name_len);
  * returns 0 on success
  * returns 1 on error
  */
-int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned int name_len);
+unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned int name_len);
 
 /* add new arg field to func_decl
  *
  * returns 0 on success
  * returns 1 on error
  */
-int ic_func_decl_add_arg(struct ic_func_decl *fdecl, struct ic_field *field);
+unsigned int ic_func_decl_add_arg(struct ic_func_decl *fdecl, struct ic_field *field);
 
 /* print func_decl */
 void ic_func_decl_print(struct ic_func_decl *fdecl);
@@ -67,14 +67,14 @@ struct ic_type_decl * ic_type_decl_new(char *name_src, unsigned int name_len);
  * returns 0 on success
  * returns 1 on error
  */
-int ic_type_decl_init(struct ic_type_decl *tdecl, char *name_src, unsigned int name_len);
+unsigned int ic_type_decl_init(struct ic_type_decl *tdecl, char *name_src, unsigned int name_len);
 
 /* add a new field to types list of fields
  *
  * returns 0 on success
  * returns 1 on error
  */
-int ic_type_decl_add_field(struct ic_type_decl *tdecl, struct ic_field *field);
+unsigned int ic_type_decl_add_field(struct ic_type_decl *tdecl, struct ic_field *field);
 
 /* print the type_decl to stdout */
 void ic_type_decl_print(struct ic_type_decl *tdecl);
@@ -110,21 +110,21 @@ struct ic_decl * ic_decl_new(enum ic_decl_type type);
  * returns 0 on sucess
  * returns 1 on error
  */
-int ic_decl_init(struct ic_decl *decl, enum ic_decl_type type);
+unsigned int ic_decl_init(struct ic_decl *decl, enum ic_decl_type type);
 
-/* return pointer to ic_func_decl element
+/* returns pointer to ic_func_decl element
  * this function will only success if the decl is of type func_decl
  *
  * returns pointer on success
- * return 0 on failure
+ * returns 0 on failure
  */
 struct ic_func_decl * ic_decl_get_fdecl(struct ic_decl *decl);
 
-/* return pointer to ic_type_decl element
+/* returns pointer to ic_type_decl element
  * this function will only success if the decl is of type type_decl
  *
  * returns pointer on success
- * return 0 on failure
+ * returns 0 on failure
  */
 struct ic_type_decl * ic_decl_get_tdecl(struct ic_decl *decl);
 

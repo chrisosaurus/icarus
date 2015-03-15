@@ -158,7 +158,9 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
     return ast;
 }
 
-/* return length of token starting at source[i] */
+/* returns length of token starting at source[i]
+ * returns 0 on error
+ */
 unsigned int ic_parse_token_length(char *source, unsigned int i){
     /* position of next space in tokens */
     char *space = 0;
