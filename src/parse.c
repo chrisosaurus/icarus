@@ -152,7 +152,7 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
     }
 
 #ifdef DEBUG_PARSE
-    puts("ic_parse finished, bailing");
+    puts("ic_parse finished");
 #endif
 
     return ast;
