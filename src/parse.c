@@ -5,6 +5,12 @@
 #include "ast.h"
 #include "parse.h"
 
+/* please note that only a small subset of ic_parse_* is implemented
+ * here, many of the ic_parse_* functions are not implemented in parse.c
+ * and have instead been moved into src/parse/ source files
+ * based on their return types
+ */
+
 #ifndef DEBUG_PARSE
 #define DEBUG_PARSE
 #endif

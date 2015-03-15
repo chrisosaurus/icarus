@@ -4,6 +4,12 @@
 #include "lexer.h"
 #include "ast.h"
 
+/* this is a shared header for all parse files
+ * many of the following functions are not implemented in parse.c
+ * and have instead been moved into src/parse/ source files
+ * based on their return types
+ */
+
 /* return length of token starting at source[i] */
 unsigned int ic_parse_token_length(char *source, unsigned int i);
 
@@ -23,3 +29,4 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i);
 struct ic_ast * ic_parse(struct ic_tokens *tokens);
 
 #endif
+
