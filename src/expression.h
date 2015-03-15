@@ -40,10 +40,10 @@ struct ic_expr_operator {
 
 
 enum ic_expr_type {
-    ic_expr_func_call,
-    ic_expr_identifier_use,
-    ic_expr_constant,
-    ic_expr_operator_application
+    ic_expr_type_func_call,
+    ic_expr_type_identifier,
+    ic_expr_type_constant,
+    ic_expr_type_operator
 };
 
 struct ic_expr{
