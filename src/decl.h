@@ -1,6 +1,7 @@
 #ifndef ICARUS_DECL_H
 #define ICARUS_DECL_H
 
+#include "body.h"
 #include "field.h"
 #include "symbol.h"
 #include "pvector.h"
@@ -8,7 +9,7 @@
 struct ic_func_decl {
     struct ic_symbol name;
     struct ic_pvector args;
-    /* FIXME how do we store a body ? */
+    struct ic_body body;
 };
 
 /* allocate and initialise a new func_decl
