@@ -25,7 +25,7 @@ debug:
 
 cleanobj:
 	@echo cleaning objects and temporary files
-	@rm -f src/*.o src/*.to t/*.o t/component/*.o src/*.su test
+	@find . -iname '*.o' -delete
 
 clean: cleanobj
 	@echo cleaning executables
