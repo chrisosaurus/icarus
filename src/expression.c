@@ -246,4 +246,138 @@ unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, struct ic_
     return 0;
 }
 
+/* allocate and initialise a new ic_expr
+ * will not initialise union members
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr * ic_expr_new(enum ic_expr_type type){
+    struct ic_expr *expr = 0;
+
+    /* alloc */
+    expr = calloc(1, sizeof(struct ic_expr));
+    if( ! expr ){
+        puts("ic_expr_new: calloc failed");
+        return 0;
+    }
+
+    /* init */
+    if( ic_expr_init(expr, type) ){
+        puts("ic_expr_new: call to ic_expr_init failed");
+        return 0;
+    }
+
+    return expr;
+}
+
+/* initialise an existing ic_expr
+ * will not initialise union members
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+int ic_expr_init(struct ic_expr *expr, enum ic_expr_type type){
+    if( ! expr ){
+        puts("ic_expr_init: expr was null");
+        return 1;
+    }
+
+    /* we only initialise the type */
+    expr->type = type;
+
+    /* we do NOT initialise the union members */
+
+    return 0;
+}
+
+/* return pointer to fcall within,
+ * will only succeed if expr is of the correct type
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_expr_func_call * ic_expr_get_fcall(struct ic_expr *expr){
+    if( ! expr ){
+        puts("ic_expr_get_fcall: expr was null");
+        return 0;
+    }
+
+    /* check type before breaking into union */
+    if( expr->type != ic_expr_type_func_call ){
+        puts("ic_expr_get_fcall: type was incorrect");
+        return 0;
+    }
+
+    /* all is clear, give them what they want */
+    return &(expr->u.fcall);
+}
+
+/* return pointer to identifier within,
+ * will only succeed if expr is of the correct type
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_expr_identifier * ic_expr_get_identifier(struct ic_expr *expr){
+    if( ! expr ){
+        puts("ic_expr_get_identifier: expr was null");
+        return 0;
+    }
+
+    /* check type before breaking into union */
+    if( expr->type != ic_expr_type_identifier ){
+        puts("ic_expr_get_identifier: type was incorrect");
+        return 0;
+    }
+
+    /* all is clear, give them what they want */
+    return &(expr->u.id);
+}
+
+/* return pointer to constant within,
+ * will only succeed if expr is of the correct type
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_expr_constant * ic_expr_get_constant(struct ic_expr *expr){
+    if( ! expr ){
+        puts("ic_expr_get_constant: expr was null");
+        return 0;
+    }
+
+    /* check type before breaking into union */
+    if( expr->type != ic_expr_type_constant ){
+        puts("ic_expr_get_constant: type was incorrect");
+        return 0;
+    }
+
+    /* all is clear, give them what they want */
+    return &(expr->u.cons);
+}
+
+/* return pointer to operator within,
+ * will only succeed if expr is of the correct type
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_expr_operator * ic_expr_get_operator(struct ic_expr *expr){
+    if( ! expr ){
+        puts("ic_expr_get_operator: expr was null");
+        return 0;
+    }
+
+    /* check type before breaking into union */
+    if( expr->type != ic_expr_type_operator ){
+        puts("ic_expr_get_operator: type was incorrect");
+        return 0;
+    }
+
+    /* all is clear, give them what they want */
+    return &(expr->u.op);
+}
+
+
 

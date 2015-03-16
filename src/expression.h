@@ -70,6 +70,7 @@ unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, cha
 
 
 /* a constant
+ * FIXME no ability to create a constant yet
  */
 struct ic_expr_constant {
     /* FIXME need a value type */
@@ -118,5 +119,54 @@ struct ic_expr{
         struct ic_expr_operator op;
     } u;
 };
+
+/* allocate and initialise a new ic_expr
+ * will not initialise union members
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr * ic_expr_new(enum ic_expr_type type);
+
+/* initialise an existing ic_expr
+ * will not initialise union members
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+int ic_expr_init(struct ic_expr *expr, enum ic_expr_type type);
+
+/* return pointer to fcall within,
+ * will only succeed if expr is of the correct type
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_expr_func_call * ic_expr_get_fcall(struct ic_expr *expr);
+
+/* return pointer to identifier within,
+ * will only succeed if expr is of the correct type
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_expr_identifier * ic_expr_get_identifier(struct ic_expr *expr);
+
+/* return pointer to constant within,
+ * will only succeed if expr is of the correct type
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_expr_constant * ic_expr_get_constant(struct ic_expr *expr);
+
+/* return pointer to operator within,
+ * will only succeed if expr is of the correct type
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_expr_operator * ic_expr_get_operator(struct ic_expr *expr);
+
 
 #endif
