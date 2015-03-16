@@ -2,6 +2,9 @@ TODO:
 
 * test_ast needs to be beefed up
 * create test_parse
+* test ic_expr_*
+* test ic_stmt_*
+* test ic_body_*
 * ic_stmt methods
 * ic_stmt_* methods
 * ic_expr_constant needs love
