@@ -16,6 +16,30 @@ struct ic_stmt_let {
     struct ic_expr init;
 };
 
+/* allocate and initialise a new let
+ * does not touch init ic_expr
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *type_src, unsigned int type_len);
+
+/* initialise an existing let
+ * does not touch the init expression
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned int id_len, char *type_src, unsigned int type_len);
+
+/* get the ic_expr * contained within
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr * ic_stmt_let_get_expr(struct ic_stmt_let *let);
+
+
 /* an if statement
  *  if expr
  *      body

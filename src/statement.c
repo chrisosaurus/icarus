@@ -2,6 +2,87 @@
 #include <stdlib.h> /* calloc */
 
 #include "statement.h"
+#include "symbol.h"
+
+/* allocate and initialise a new let
+ * does not touch init ic_expr
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *type_src, unsigned int type_len){
+    struct ic_stmt_let *let = 0;
+
+    /* alloc */
+    let = calloc(1, sizeof(struct ic_stmt_let));
+    if( ! let ){
+        puts("ic_stmt_let_new: calloc failed");
+        return 0;
+    }
+
+    /* hand over for init
+     * NB: we leave arg checking up to init
+     */
+    if( ic_stmt_let_init(let, id_src, id_len, type_src, type_len) ){
+        puts("ic_stmt_let_new: call to ic_stmt_let_init failed");
+        return 0;
+    }
+
+    return let;
+}
+
+/* initialise an existing let
+ * does not touch the init expression
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned int id_len, char *type_src, unsigned int type_len){
+    if( ! let ){
+        puts("ic_stmt_let_init: let was null");
+        return 1;
+    }
+
+    if( ! id_src ){
+        puts("ic_stmt_let_init: id_src was null");
+        return 1;
+    }
+
+    if( ! type_src ){
+        puts("ic_stmt_let_init: type_src was null");
+        return 1;
+    }
+
+    /* dispatch to symbol init for id */
+    if( ic_symbol_init( &(let->identifier), id_src, id_len ) ){
+        puts("ic_smtm_let_init: call to ic_symbol_init for id failed");
+        return 1;
+    }
+
+    /* dispatch to symbol init for type */
+    if( ic_symbol_init( &(let->type), type_src, type_len ) ){
+        puts("ic_smtm_let_init: call to ic_symbol_init for type failed");
+        return 1;
+    }
+
+    return 0;
+}
+
+/* get the ic_expr * contained within
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr * ic_stmt_let_get_expr(struct ic_stmt_let *let){
+    if( ! let ){
+        puts("ic_stmt_let_get_expr: let was null");
+        return 0;
+    }
+
+    /* return what they want */
+    return &(let->init);
+}
+
 
 /* allocate and initialise anew ic_stmt
  * will not initialise union members
