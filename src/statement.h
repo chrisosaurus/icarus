@@ -4,7 +4,6 @@
 #include "body.h"
 #include "expression.h"
 #include "symbol.h"
-#include "pvector.h"
 
 struct ic_stmt;
 
