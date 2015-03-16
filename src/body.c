@@ -53,7 +53,7 @@ unsigned int ic_body_init(struct ic_body *body){
 /* returns item at offset i on sucess
  * returns 0 on failure
  */
-struct ic_statement * ic_body_get(struct ic_body *body, unsigned int i){
+struct ic_stmt * ic_body_get(struct ic_body *body, unsigned int i){
     if( ! body ){
         puts("ic_body_get: body was null");
         return 0;
@@ -68,7 +68,7 @@ struct ic_statement * ic_body_get(struct ic_body *body, unsigned int i){
  * returns index of item on success
  * returns -1 on failure
  */
-int ic_body_append(struct ic_body *body, struct ic_statement * data){
+int ic_body_append(struct ic_body *body, struct ic_stmt * data){
     if( ! body ){
         puts("ic_body_append: body was null");
         return -1;

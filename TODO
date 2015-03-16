@@ -5,6 +5,5 @@ TODO:
 * test ic_expr_*
 * test ic_stmt_*
 * test ic_body_*
-* ic_stmt_* methods
 * ic_expr_constant needs love
 

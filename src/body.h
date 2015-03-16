@@ -3,10 +3,10 @@
 
 #include "pvector.h"
 
-/* predeclare ic_statement to allow use of ic_statement *
+/* predeclare ic_stmt to allow use of ic_stmt *
  * as type
  */
-struct ic_statement;
+struct ic_stmt;
 
 /* the body of a function or statement
  * (such as the body of an if-statement)
@@ -33,14 +33,14 @@ unsigned int ic_body_init(struct ic_body *body);
 /* returns item at offset i on sucess
  * returns 0 on failure
  */
-struct ic_statement * ic_body_get(struct ic_body *body, unsigned int i);
+struct ic_stmt * ic_body_get(struct ic_body *body, unsigned int i);
 
 /* append data to body
  *
  * returns index of item on success
  * returns -1 on failure
  */
-int ic_body_append(struct ic_body *body, struct ic_statement * data);
+int ic_body_append(struct ic_body *body, struct ic_stmt * data);
 
 /* returns length on success
  * returns 0 on failure

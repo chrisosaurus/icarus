@@ -84,6 +84,101 @@ struct ic_expr * ic_stmt_let_get_expr(struct ic_stmt_let *let){
 }
 
 
+/* allocate and initialise a new ic_stmtm_if
+ * this will initialise the body
+ * but will NOT initialise the expression
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_stmt_if * ic_stmt_if_new(void){
+    struct ic_stmt_if *sif = 0;
+
+    /* alloc */
+    sif = calloc(1, sizeof(struct ic_stmt_if));
+    if( ! sif ){
+        puts("ic_stmt_if_new: calloc failed");
+        return 0;
+    }
+
+    /* init */
+    if( ic_stmt_if_init(sif) ){
+        puts("ic_stmt_if_new: call to ic_stmt_if_init failed");
+        return 0;
+    }
+
+    return sif;
+}
+
+/* initialise an existing new ic_stmtm_if
+ * this will initialise the body
+ * but will NOT initialise the expression
+ *
+ * returns 0 on sucess
+ * returns 1 on failure
+ */
+unsigned int ic_stmt_if_init(struct ic_stmt_if *sif){
+    if( ! sif ){
+        puts("ic_stmt_if_init: sif was null");
+        return 1;
+    }
+
+    /* let body_init handle the work */
+    if( ic_body_init( &(sif->body) ) ){
+        puts("ic_stmt_if_init: call ot ic_body_init failed");
+        return 1;
+    }
+
+    /* we do not init expr */
+
+    /* return success */
+    return 0;
+}
+
+/* returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr * ic_stmt_if_get_expr(struct ic_stmt_if *sif){
+    if( ! sif ){
+        puts("ic_stmt_if_get_expr: sif was null");
+        return 0;
+    }
+
+    /* return our expr innards */
+    return &(sif->expr);
+}
+
+/* get statement of offset i within the body
+ *
+ * returns pointer to element on success
+ * returns 0 on error
+ */
+struct ic_stmt * ic_stmt_if_get_stmt(struct ic_stmt_if *sif, unsigned int i){
+    if( ! sif ){
+        puts("ic_stmt_if_get_stmt: sif was null");
+        return 0;
+    }
+
+    /* let body do the lifting */
+    return ic_body_get( &(sif->body), i );
+}
+
+/* get length of body
+ *
+ * returns length on sucess
+ * returns 0 on failure
+ */
+unsigned int ic_stmtm_if_length(struct ic_stmt_if *sif){
+    if( ! sif ){
+        puts("ic_stmt_if_length: sif was null");
+        return 0;
+    }
+
+    /* let body do the lifting */
+    return ic_body_length( &(sif->body) );
+}
+
+
 /* allocate and initialise anew ic_stmt
  * will not initialise union members
  *
