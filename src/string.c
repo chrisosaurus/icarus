@@ -55,6 +55,11 @@ unsigned int ic_string_init(struct ic_string *str, char *source, unsigned int le
     /* insert null terminator */
     str->backing.contents[len+1] = '\0';
 
+    /* set the number of used chars
+     * NB: this does not include the null terminator
+     */
+    str->used = len;
+
     return 0;
 
 }
@@ -88,11 +93,11 @@ int ic_string_length(struct ic_string *string){
         return 0;
     }
 
-    /* backing.len includes the null terminator
-     * so we have to subtract it's length before
-     * returning
+    /* string->used is the strlen of the underlying string
+     * this is the number of character slots used in the array
+     * and does NOT include the null terminator
      */
-    return string->backing.len - 1;
+    return string->used;
 }
 
 /* get a character from the string

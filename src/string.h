@@ -4,6 +4,14 @@
 #include "carray.h"
 
 struct ic_string {
+    /* the number of characters slots used within the carray
+     * this is useful if we start mutating the string
+     *
+     * this does NOT include the null terminator
+     * so this 'used' is equiv to strlen(ic_string_contents(self));
+     */
+    unsigned int used;
+
     /* internally use a character array
      * ic_string must additional enforce string-characteristics
      * such as being null terminated
@@ -12,7 +20,7 @@ struct ic_string {
 };
 
 /* build a new string from a char* and a length
- * this will allocate a new buffer and strncpy n
+ * this will allocate a new buffer and strncpy len
  * chars from source into the string
  * then it will add the null terminator
  *
@@ -35,7 +43,7 @@ unsigned int ic_string_init(struct ic_string *string, char *source, unsigned int
  */
 char * ic_string_contents(struct ic_string *string);
 
-/* get the strlen of the stores string
+/* get the strlen of the used slots in the string
  * this length does NOT include the null terminator
  *
  * returns numbers of characters in string on success
