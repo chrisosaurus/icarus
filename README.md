@@ -19,19 +19,21 @@ Inspiration has been drawn from (in alphabetical order):
 Plans
 =====
 
-* no undefined behavior
+* explicit function interface contracts around mutability of arguments - `example/mutability.ic`
 * strong statically checked type system
 * no 'holes' in the type system (null and void pointer type are all banished) - see `docs/noholes.md`
-* managed memory (automatic garbage collection)
+* no undefined behavior
 * multiple dispatch (dispatch to functions is based on function name and type of arguments passed)
 * operator overloading
+* managed memory (automatic garbage collection)
 * parametrized types (derived from C++, Julia, and Rust)
 * union types (tagged enums, statically checked before being taken apart)
     * like Rust's enums
     * like haskell's ADTs (Algebraic Data Types)
-* including both an interpreter and compiler (currently considering both C and LLVM bitcode as compiler backend outputs) - see `docs/components.md`
+* including both an interpreter and compiler(s) (currently considering both C and LLVM bitcode as compiler backend outputs) - see `docs/components.md`
 * whitespace insensitive (except using \n to terminate a comment, but comments are stripped by the lexer for now)
 * no commas (hail to the lisp)
+* no semicolons
 
 Work so far
 ===========

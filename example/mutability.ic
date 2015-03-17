@@ -23,21 +23,36 @@ function bar(&a::Int)
   a = 14
 end
 
+# function bar takes an immutable string reference
+function bar(s::String)
+    s.append(" world") # compile time error, trying to mutate through an immutable reference
+end
+
 function main()
   let x::Foo = Foo(0)
 
-  bar(&x) # one - function can mutate x
+  # one - function can mutate x
+  bar(&x)
 
-  bar(&x.a) # two - function can mutate x.a
+  # two - function can mutate x.a
+  bar(&x.a)
 
+  # three - ERROR cannot pass constant as mutable ref
+  bar(14)
 
-  bar(14) # three - ERROR cannot pass constant as mutable ref
-  bar(x.a) # ERROR passing an immutable reference, function wants mutable
+  # ERROR passing an immutable reference, function wants mutable
+  bar(x.a)
 
 
   let i::Int = 0;
 
-  bar(&i) # four - function can mutate i
+  # four - function can mutate i
+  bar(&i)
+
+  # five - no error here as we are correctly respecting the contract
+  # however function bar(String) will not compile as it is trying
+  # to mutate through an immutable reference
+  bar("hello")
 
 end
 
