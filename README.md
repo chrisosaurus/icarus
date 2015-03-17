@@ -7,6 +7,7 @@ Inspiration has been drawn from (in alphabetical order):
 
 * C
 * C++
+* C#
 * Go
 * Haskell
 * Julia
