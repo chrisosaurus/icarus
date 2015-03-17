@@ -28,7 +28,10 @@ struct ic_pvector * ic_pvector_new(unsigned int cap){
     return arr;
 }
 
-/* initialise existing pvector
+/* initialise existing pvector to specified cap
+ *
+ * will use a default cap of PVECTOR_DEFAULT_GROWTH is no cap is supplied
+ *
  * returns 0 on success
  * returns 1 on failure
  */
@@ -36,6 +39,12 @@ unsigned int ic_pvector_init(struct ic_pvector *vec, unsigned int cap){
     if( ! vec ){
         puts("ic_pvector_init: vec was null");
         return 1;
+    }
+
+    /* default to PVECTOR_DEFAULT_GROWTH if no cap is specified
+     */
+    if( ! cap ){
+        cap = PVECTOR_DEFAULT_GROWTH;
     }
 
     vec->used = 0;

@@ -16,9 +16,10 @@ int main(void){
     /* check type name is correct */
     assert( ! strncmp( ic_symbol_contents(&(tdecl->name)), "Foo", 3) );
 
-    /* check vector is zero used and cap */
+    /* check vector is zero used
+     * FIXME expose lenght methods
+     */
     assert( tdecl->fields.used == 0 );
-    assert( tdecl->fields.cap == 0 );
 
 
     /* add some fields */

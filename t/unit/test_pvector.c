@@ -39,13 +39,13 @@ int main(void){
 
     /* also test default growth pattern
      * if we do not set an initial size then growth is based on
-     * DEFAULT_PVECTOR_GROWTH
+     * PVECTOR_DEFAULT_GROWTH
      */
     arr = ic_pvector_new(0);
 
     assert(arr);
     assert(arr->used == 0);
-    assert(arr->cap == 0);
+    assert(arr->cap == 8);
 
     /* push over current 0 capacity
      * this will cause our first resize
