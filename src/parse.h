@@ -1,8 +1,11 @@
 #ifndef ICARUS_PARSE_H
 #define ICARUS_PARSE_H
 
-#include "lexer.h"
 #include "ast.h"
+#include "body.h"
+#include "expression.h"
+#include "lexer.h"
+#include "statement.h"
 
 /* this is a shared header for all parse files
  * many of the following functions are not implemented in parse.c
@@ -25,6 +28,21 @@ void ic_parse_token_advance(unsigned int *i, unsigned int dist);
 /**** parse/field.c ****/
 
 struct ic_field * ic_parse_field(struct ic_tokens *tokens, unsigned int *i);
+
+
+/**** parse/expr.c ****/
+
+struct ic_expr * ic_parse_expr(struct ic_tokens *tokens, unsigned int *i);
+
+
+/**** parse/stmt.c ****/
+
+struct ic_stmt * ic_parse_stmt(struct ic_tokens *tokens, unsigned int *i);
+
+
+/**** parse/body.c ****/
+
+struct ic_body * ic_parse_body(struct ic_tokens *tokens, unsigned int *i);
 
 
 /**** parse/decl.c ****/
