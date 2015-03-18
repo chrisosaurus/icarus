@@ -145,6 +145,8 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
     struct ic_decl *decl = 0;
     /* our tdecl within the decl */
     struct ic_func_decl *fdecl = 0;
+    /* return of this_is_not_the_end */
+    int ret  = 0;
 
 #ifdef DEBUG_PARSE
     puts("ic_parse_func_decl called");
@@ -250,7 +252,7 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
     /* iterate through all tokens
      * until `end`
      */
-    for( ; tokens->tokens[*i] != '\0' && *i < tokens->len ; ){
+    while( (ret = ic_parse_this_is_not_the_end(tokens, i)) > 0 ){
         dist = ic_parse_token_length(tokens->tokens, *i);
 
 #ifdef DEBUG_PARSE
@@ -259,34 +261,25 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
                 &(tokens->tokens[*i]) );
 #endif
 
-        /* we keep stepping through loop until we find an
-         * `end` token
-         * note that this means `end` is a reserved word
-         */
-        if( dist == 3 &&
-            ! strncmp( &(tokens->tokens[*i]), "end", 3) ){
-            printf("ic_parse_token_func_decl: found end of string token '%.*s'\n",
-                    dist,
-                    &(tokens->tokens[*i]) );
-
-            /* step over `end` token */
-            ic_parse_token_advance(i, dist);
-
-            /* return our result */
-            return decl;
-        }
-
         /* FIXME
          * for now we just skip merrily over function body
          */
         ic_parse_token_advance(i, dist);
     }
 
+    /* if ret is 0 then we found an `end` token */
+    if( ! ret ){
+        /* victory ! */
+        return decl;
+    }
+
     /* this means we ran out of tokens
+     * or that some other error occured
+     *
      * this is an error case as `end` should cause the
      * successful return
      */
-    puts("ic_parse_func_decl: ran out of tokens");
+    puts("ic_parse_func_decl: error occurred in ic_parse_this_is_not_the_end");
     return 0;
 }
 
