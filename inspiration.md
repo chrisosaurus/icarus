@@ -25,6 +25,10 @@ C#:
 * 'out' semantics
 
 
+Go:
+
+* message passing
+
 Haskell:
 
 * type safety
