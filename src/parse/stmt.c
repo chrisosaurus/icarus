@@ -17,7 +17,7 @@
 
 
 /* consume token
- * returns ic_expr* on success
+ * returns ic_stmt* on success
  * returns 0 on failure
  */
 static struct ic_stmt * ic_parse_stmt_let(struct ic_tokens *tokens, unsigned int *i){
@@ -26,7 +26,7 @@ static struct ic_stmt * ic_parse_stmt_let(struct ic_tokens *tokens, unsigned int
 }
 
 /* consume token
- * returns ic_expr* on success
+ * returns ic_stmt* on success
  * returns 0 on failure
  */
 static struct ic_stmt * ic_parse_stmt_if(struct ic_tokens *tokens, unsigned int *i){
@@ -35,7 +35,7 @@ static struct ic_stmt * ic_parse_stmt_if(struct ic_tokens *tokens, unsigned int 
 }
 
 /* consume token
- * returns ic_expr* on success
+ * returns ic_stmt* on success
  * returns 0 on failure
  */
 static struct ic_stmt * ic_parse_stmt_expr(struct ic_tokens *tokens, unsigned int *i){
