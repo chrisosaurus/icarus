@@ -68,8 +68,9 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens);
  *
  * returns 1 if this is NOT an `end` token
  * returns 0 if this is an `end` token
+ * returns -1 if an error occurs (if \0 is hit for example)
  */
-unsigned int ic_parse_this_is_not_the_end(struct ic_tokens *tokens, unsigned int *i);
+int ic_parse_this_is_not_the_end(struct ic_tokens *tokens, unsigned int *i);
 
 
 #endif
