@@ -25,7 +25,7 @@ end
 
 # function bar takes an immutable string reference
 function bar(s::String)
-    s.append(" world") # compile time error, trying to mutate through an immutable reference
+    append(s, " world") # compile time error, trying to mutate through an immutable reference
 end
 
 function main()
