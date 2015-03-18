@@ -15,8 +15,6 @@
 #define DEBUG_PARSE
 #endif
 
-#define LENGTH(x) (sizeof(x) / sizeof(x[0]))
-
 /* an entry in the parse table showing the
  * length and token string that must be match
  * and if a match is found, the function to dispatch to
@@ -97,7 +95,10 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
 #endif
 
             if( dist == ic_parse_table[pt_offset].len
-                && ! strncmp( &(tokens->tokens[i]), ic_parse_table[pt_offset].token, dist )
+                && ! strncmp(
+                            &(tokens->tokens[i]),
+                            ic_parse_table[pt_offset].token,
+                            dist )
               ){
 #ifdef DEBUG_PARSE
                 printf( "match found! token '%.*s' with parse_table entry '%.*s'\n",

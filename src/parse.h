@@ -7,6 +7,8 @@
 #include "lexer.h"
 #include "statement.h"
 
+#define LENGTH(x) (sizeof(x) / sizeof(x[0]))
+
 /* this is a shared header for all parse files
  * many of the following functions are not implemented in parse.c
  * and have instead been moved into src/parse/ source files
