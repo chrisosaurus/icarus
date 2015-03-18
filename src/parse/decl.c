@@ -14,6 +14,8 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
     struct ic_decl *decl = 0;
     /* our tdecl within the decl */
     struct ic_type_decl *tdecl = 0;
+    /* integer for ic_parse_this_is_not_the_end */
+    int ret = 0;
 
 #ifdef DEBUG_PARSE
     puts("ic_parse_type_decl called");
@@ -68,7 +70,8 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
     ic_parse_token_advance(i, dist);
 
     /* iterate through all tokens */
-    for( ; tokens->tokens[*i] != '\0' && *i < tokens->len ; ){
+    /* keep iterating through all the tokens until we find an unexpected 'end' */
+    while( (ret = ic_parse_this_is_not_the_end(tokens, i)) > 0 ){
         dist = ic_parse_token_length(tokens->tokens, *i);
 
 #ifdef DEBUG_PARSE
@@ -76,23 +79,6 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
                 dist,
                 &(tokens->tokens[*i]) );
 #endif
-
-        /* we keep stepping through loop until we find an
-         * `end` token
-         * note that this means `end` is a reserved word
-         */
-        if( dist == 3 &&
-            ! strncmp( &(tokens->tokens[*i]), "end", 3) ){
-            printf("ic_parse_token_type_decl: found end of string token '%.*s'\n",
-                    dist,
-                    &(tokens->tokens[*i]) );
-
-            /* step over `end` token */
-            ic_parse_token_advance(i, dist);
-
-            /* return our result */
-            return decl;
-        }
 
         /* otherwise this is a field
          * parse it
@@ -112,10 +98,20 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
         /* increment of i is handled by ic_parse_field */
     }
 
-    /* this means we ran out of tokens
+    /* if ret is 0 then this means we hit `end` as
+     * we expected and our type decl is finished
+     */
+    if( ! ret ){
+        /* victory ! */
+        return decl;
+    }
+
+    /* if ret is not 0 then
+     * this means we ran out of tokens
      * this is an error case as `end` should cause the
      * successful return
      */
+    puts("ic_parse_type_decl: call to ic_parse_this_is_not_the_end encountered an error");
     return 0;
 }
 
