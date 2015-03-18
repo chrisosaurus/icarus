@@ -21,7 +21,7 @@
  * length and token string that must be match
  * and if a match is found, the function to dispatch to
  */
-struct ic_parse_table_entry {
+static struct ic_parse_table_entry {
     unsigned int len;
     char *token;
     struct ic_decl * (*func)(struct ic_tokens *tokens, unsigned int *i);
