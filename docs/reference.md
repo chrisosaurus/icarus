@@ -122,13 +122,13 @@ Let's look at an example of how this looks:
     let a = 15
     baz(&a a)
 
-    function baz(&i::Int o::Int) ...
+    function baz(&m::Int i::Int) ...
 
 
 The view of the world is now during the function call to baz is now:
 
       +-var-----+  +-var-----+  +-var-----+
-      | a       |  | i       |  | i       |
+      | a       |  | m       |  | i       |
       | ::Int   |  | ::Int   |  | ::Int   |
       | mutable |  | mutable |  |immutable|
       +---------+  +---------+  +---------+
@@ -144,7 +144,7 @@ The view of the world is now during the function call to baz is now:
                 +---------+
 
 
-This value can be mutated only through `a` (from outside the function) or from `i` within the function,
+This value can be mutated only through `a` (from outside the function) or from `m` within the function,
 any mutations to this value will be observable through all 3 variables,
 this value can not be mutated via `i` though as `i` is immutable.
 
