@@ -60,5 +60,17 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i);
 
 struct ic_ast * ic_parse(struct ic_tokens *tokens);
 
+/* check if we are looking at an `end` token
+ *
+ * DOES NOT advance i
+ *
+ * useful for continually iterating through tokens until we find `end
+ *
+ * returns 1 if this is NOT an `end` token
+ * returns 0 if this is an `end` token
+ */
+unsigned int ic_parse_this_is_not_the_end(struct ic_tokens *tokens, unsigned int *i);
+
+
 #endif
 

@@ -198,4 +198,41 @@ void ic_parse_token_advance(unsigned int *i, unsigned int dist){
     *i += (dist + 1);
 }
 
+/* check if we are looking at an `end` token
+ *
+ *
+ * useful for continually iterating through tokens until we find `end
+ *
+ * DOES NOT advance i
+ *
+ * returns 0 if this is an `end` token
+ * returns 1 if this is NOT an `end` token
+ */
+unsigned int ic_parse_this_is_not_the_end(struct ic_tokens *tokens, unsigned int *i){
+    unsigned int dist = 0;
+
+    if( ! tokens ){
+        puts("ic_parse_is_this_the_end: tokens was null");
+        return 0;
+    }
+
+    if( ! i ){
+        puts("ic_parse_is_this_the_end: i was null");
+        return 0;
+    }
+
+    /* get the distance of the token */
+    dist = ic_parse_token_length(tokens->tokens, *i);
+
+    /* if our token is 3 long and looks like end */
+    if( dist == 3 && ! strncmp("end", &(tokens->tokens[*i]), 3) ){
+        /* then this is the end */
+        return 0;
+    }
+
+    /* otherwise this is not the end */
+    return 1;
+}
+
+
 
