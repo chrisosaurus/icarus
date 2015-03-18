@@ -11,6 +11,8 @@ struct ic_body * ic_parse_body(struct ic_tokens *tokens, unsigned int *i){
     struct ic_body *body = 0;
     /* each intermediate statement that we add to the body */
     struct ic_stmt * stmt = 0;
+    /* used for return code of ic_parse_this_is_not_the_end */
+    int ret = 0;
 
     if( ! tokens ){
         puts("ic_parse_body: tokens was null");
@@ -29,7 +31,7 @@ struct ic_body * ic_parse_body(struct ic_tokens *tokens, unsigned int *i){
     }
 
     /* keep going until we see an unexpected end */
-    while( ic_parse_this_is_not_the_end(tokens, i) ){
+    while( (ret = ic_parse_this_is_not_the_end(tokens, i)) > 0 ){
         /* parse a single statement */
         stmt = ic_parse_stmt(tokens, i);
         if( ! stmt ){
@@ -44,7 +46,15 @@ struct ic_body * ic_parse_body(struct ic_tokens *tokens, unsigned int *i){
         }
     }
 
-    return body;
+    /* if ret is 0 then we hit an end token */
+    if( ! ret ){
+        /* victory */
+        return body;
+    }
+
+    /* otherwise another error occurred */
+    puts("ic_parse_body: call to ic_parse_this_is_not_the_end encountered an error");
+    return 0;
 }
 
 
