@@ -230,6 +230,28 @@ unsigned int ic_parse_this_is_not_the_end(struct ic_tokens *tokens, unsigned int
         return 0;
     }
 
+    /* if our dist is '0' that means there are no tokens left
+     * so this also qualifies as the end/
+     */
+    if( ! dist ){
+        return 0;
+    }
+
+    /* if we are looking at the null terminator then
+     * this is also the end
+     * adding an explicit check JUST in case
+     */
+    if( tokens->tokens[*i] == '\0' ){
+        return 0;
+    }
+
+    /* and finally if we are off the end of tokens
+     * then this is also the end
+     */
+    if( *i >= tokens->len ){
+        return 0;
+    }
+
     /* otherwise this is not the end */
     return 1;
 }
