@@ -104,12 +104,14 @@ struct ic_tokens * ic_lex(char *source){
              * a = b
              * a.b
              * "hello"
+             * &a::Int
              */
             case '(':
             case ')':
             case '=':
             case '.':
             case '"':
+            case '&':
                 tokens = ic_consume_single_symbol(tokens, source, &i);
                 break;
 
