@@ -125,7 +125,7 @@ Let's look at an example of how this looks:
     function baz(&m::Int i::Int) ...
 
 
-The view of the world is now during the function call to baz is now:
+The view of the world during the function call to baz:
 
       +-var-----+  +-var-----+  +-var-----+
       | a       |  | m       |  | i       |
