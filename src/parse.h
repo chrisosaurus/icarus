@@ -66,6 +66,18 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens);
  *
  * useful for continually iterating through tokens until we find `end
  *
+ * example:
+ *
+ *      int ret = 0;
+ *
+ *      while( (ret = ic_parse_this_is_not_the_end(tokens, i)) > 0 ){
+ *          ...
+ *      }
+ *
+ *      if( ! ret )
+ *          return true; // success, end token found
+ *      return false; // other error occurred in this_is_not_the_end
+ *
  * returns 1 if this is NOT an `end` token
  * returns 0 if this is an `end` token
  * returns -1 if an error occurs (if \0 is hit for example)
