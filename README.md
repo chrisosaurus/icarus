@@ -19,7 +19,9 @@ Inspiration has been drawn from (in alphabetical order):
 Plans
 =====
 
+* arguments are passed as immutable reference by default, have to explicitly specify mutable reference - see `docs/reference.md`
 * explicit function interface contracts around mutability of arguments - `example/mutability.ic`
+* mutable values
 * strong statically checked type system
 * no 'holes' in the type system (null and void pointer type are all banished) - see `docs/noholes.md`
 * no undefined behavior
