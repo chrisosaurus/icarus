@@ -62,7 +62,7 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens);
 
 /* check if we are looking at an `end` token
  *
- * DOES NOT advance i
+ * this will also advance i past the token
  *
  * useful for continually iterating through tokens until we find `end
  *

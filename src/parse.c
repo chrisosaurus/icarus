@@ -203,7 +203,7 @@ void ic_parse_token_advance(unsigned int *i, unsigned int dist){
  *
  * useful for continually iterating through tokens until we find `end
  *
- * DOES NOT advance i
+ * this will also advance i past the token
  *
  * returns 0 if this is an `end` token
  * returns 1 if this is NOT an `end` token
@@ -224,9 +224,14 @@ unsigned int ic_parse_this_is_not_the_end(struct ic_tokens *tokens, unsigned int
     /* get the distance of the token */
     dist = ic_parse_token_length(tokens->tokens, *i);
 
-    /* if our token is 3 long and looks like end */
+    /* if our token is 3 long and looks like end
+     * then this is the end
+     */
     if( dist == 3 && ! strncmp("end", &(tokens->tokens[*i]), 3) ){
-        /* then this is the end */
+        /* step over the token */
+        ic_parse_token_advance(i, dist);
+
+        /* signal the end of days */
         return 0;
     }
 
