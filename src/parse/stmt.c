@@ -68,10 +68,21 @@ static struct ic_stmt * ic_parse_stmt_expr(struct ic_tokens *tokens, unsigned in
     /* out eventual return value */
     struct ic_stmt *stmt = 0;
 
-    /* here we really just wrap ic_parse_expr */
+    /* allocate and initialise */
+    stmt = ic_stmt_new(ic_stmt_type_expr);
+    if( ! stmt ){
+        puts("ic_parse_stmt_expr: call to ic_stmt_new failed");
+        return 0;
+    }
 
-    puts("ic_parse_stmt_expr: unimplemented");
-    return 0;
+    /* here we really just wrap ic_parse_expr */
+    stmt->u.expr = ic_parse_expr(tokens, i);
+    if( ! stmt->u.expr ){
+        puts("ic_parse_stmt_expr: call to ic_parse_expr failed");
+        return 0;
+    }
+
+    return stmt;
 }
 
 /* an entry in the parse table showing the
