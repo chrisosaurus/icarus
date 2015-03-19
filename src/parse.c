@@ -275,5 +275,61 @@ int ic_parse_this_is_not_the_end(struct ic_tokens *tokens, unsigned int *i){
     return 1;
 }
 
+/* compare and consume un-important token
+ *
+ * this function will take an expected token-string
+ * and compare it to the current token
+ *
+ * if they are equal then this function will consume that token
+ * and return 0
+ *
+ * if thy are non-equal then this function will NOT consume that token
+ * and just return 1
+ *
+ * returns 0 if token is as expected
+ * returns 1 if token is not as expected
+ */
+unsigned int ic_parse_check_token(char *expected, unsigned int exp_len, char *source, unsigned int *i){
+    unsigned int dist = 0;
 
+    /* get arg checking out of the way */
+    if( ! expected ){
+        puts("ic_parse_check_token: null expected");
+        return 1;
+    }
+
+    if( ! source ){
+        puts("ic_parse_check_token: null source");
+        return 1;
+    }
+
+    if( ! i ){
+        puts("ic_parse_check_token: null i");
+        return 1;
+    }
+
+    /* get our distance */
+    dist = ic_parse_token_length(source, *i);
+    if( ! dist ){
+        return 1;
+    }
+
+    /* compare len */
+    if( dist != exp_len ){
+        return 1;
+    }
+
+    /* compare string */
+    if( strncmp(expected, &(source[*i]), exp_len) ){
+        return 1;
+    }
+
+    /* otherwise they are equal
+     * consume token
+     */
+    ic_parse_token_advance(i, dist);
+
+    /* signal success */
+    return 0;
+}
 

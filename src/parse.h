@@ -26,6 +26,22 @@ unsigned int ic_parse_token_length(char *source, unsigned int i);
 /* advance i by one token with token length dist */
 void ic_parse_token_advance(unsigned int *i, unsigned int dist);
 
+/* compare and consume un-important token
+ *
+ * this function will take an expected token-string
+ * and compare it to the current token
+ *
+ * if they are equal then this function will consume that token
+ * and return 0
+ *
+ * if thy are non-equal then this function will NOT consume that token
+ * and just return 1
+ *
+ * returns 0 if token is as expected
+ * returns 1 if token is not as expected
+ */
+unsigned int ic_parse_check_token(char *expected, unsigned int exp_len, char *source, unsigned int *i);
+
 
 /**** parse/field.c ****/
 
