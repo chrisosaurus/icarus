@@ -17,6 +17,8 @@
 /* ignore unused functions */
 #pragma GCC diagnostic ignored "-Wunused-function"
 
+/* ignore unused variable */
+#pragma GCC diagnostic ignored "-Wunused-variable"
 
 /* there are currently 3 types of statements
  *  let
@@ -30,6 +32,18 @@
  * returns 0 on failure
  */
 static struct ic_stmt * ic_parse_stmt_let(struct ic_tokens *tokens, unsigned int *i){
+    /* current let forms
+     *      let identifier::type = expression
+     *
+     * in the future we may expand to
+     *      let identifier
+     *      let identifier::type
+     *      let identifier = expression
+     */
+
+    /* out eventual return value */
+    struct ic_stmt *stmt = 0;
+
     puts("ic_parse_stmt_let: unimplemented");
     return 0;
 }
@@ -39,6 +53,9 @@ static struct ic_stmt * ic_parse_stmt_let(struct ic_tokens *tokens, unsigned int
  * returns 0 on failure
  */
 static struct ic_stmt * ic_parse_stmt_if(struct ic_tokens *tokens, unsigned int *i){
+    /* out eventual return value */
+    struct ic_stmt *stmt = 0;
+
     puts("ic_parse_stmt_if: unimplemented");
     return 0;
 }
@@ -48,6 +65,11 @@ static struct ic_stmt * ic_parse_stmt_if(struct ic_tokens *tokens, unsigned int 
  * returns 0 on failure
  */
 static struct ic_stmt * ic_parse_stmt_expr(struct ic_tokens *tokens, unsigned int *i){
+    /* out eventual return value */
+    struct ic_stmt *stmt = 0;
+
+    /* here we really just wrap ic_parse_expr */
+
     puts("ic_parse_stmt_expr: unimplemented");
     return 0;
 }
