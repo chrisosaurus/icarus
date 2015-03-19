@@ -27,7 +27,8 @@ Plans
 * no undefined behavior
 * multiple dispatch (dispatch to functions is based on function name and type of arguments passed)
 * operator overloading
-* managed memory (automatic garbage collection)
+* per-task managed memory (automatic garbage collection)
+* concurrent message passing
 * parametrized types (derived from C++, Julia, and Rust)
 * union types (tagged enums, statically checked before being taken apart)
     * like Rust's enums
