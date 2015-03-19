@@ -43,9 +43,70 @@ static struct ic_stmt * ic_parse_stmt_let(struct ic_tokens *tokens, unsigned int
 
     /* out eventual return value */
     struct ic_stmt *stmt = 0;
+    /* our internal let value */
+    struct ic_stmt_let *let = 0;
 
-    puts("ic_parse_stmt_let: unimplemented");
-    return 0;
+    /* pointer and length for our identifier */
+    char *id_start = 0;
+    unsigned int id_len= 0;
+
+    /* pointer and length for our type */
+    char *type_start = 0;
+    unsigned int type_len = 0;
+
+    /* allocate and initialise */
+    stmt = ic_stmt_new(ic_stmt_type_let);
+    if( ! stmt ){
+        puts("ic_parse_stmt_let: call to ic_stmt_new failed");
+        return 0;
+    }
+
+    /* fetch and store out let to make things easier */
+    let = ic_stmt_get_let(stmt);
+
+    /* check for `let` */
+    if( ic_parse_check_token("let", 3, tokens->tokens, i) ){
+        puts("ic_parse_stmt_let: Failed to find `let` token");
+        return 0;
+    }
+
+    /* consume identifier */
+    id_start = &(tokens->tokens[*i]);
+    id_len = ic_parse_token_length(tokens->tokens, *i);
+    ic_parse_token_advance(i, id_len);
+
+    /* check for `::` */
+    if( ic_parse_check_token("::", 2, tokens->tokens, i) ){
+        puts("ic_parse_stmt_let: Failed to find `::` token");
+        return 0;
+    }
+
+    /* consume type */
+    type_start = &(tokens->tokens[*i]);
+    type_len = ic_parse_token_length(tokens->tokens, *i);
+    ic_parse_token_advance(i, type_len);
+
+    /* initialise our let */
+    if( ic_stmt_let_init(let, id_start, id_len, type_start, type_len) ){
+        puts("ic_parse_stmt_let: call to ic_stmt_let_init failed");
+        return 0;
+    }
+
+    /* check for `=` */
+    if( ic_parse_check_token("=", 1, tokens->tokens, i) ){
+        puts("ic_parse_stmt_let: Failed to find `=` token");
+        return 0;
+    }
+
+    /* consume initialisation expression */
+    let->init = ic_parse_expr(tokens, i);
+    if( ! let->init ){
+        puts("ic_parse_stmt_let: call to ic_parse_expr failed");
+        return 0;
+    }
+
+    /* victory */
+    return stmt;
 }
 
 /* consume token
