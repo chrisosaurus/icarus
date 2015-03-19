@@ -13,7 +13,11 @@ struct ic_stmt;
 struct ic_stmt_let {
     struct ic_symbol identifier;
     struct ic_symbol type;
-    struct ic_expr init;
+    /* FIXME making this an ic_expr *
+     * to simplify interface between
+     * parse stmt and parse expr
+     */
+    struct ic_expr *init;
 };
 
 /* allocate and initialise a new let
@@ -46,7 +50,11 @@ struct ic_expr * ic_stmt_let_get_expr(struct ic_stmt_let *let);
  *  end
  */
 struct ic_stmt_if {
-    struct ic_expr expr;
+    /* FIXME making this an ic_expr *
+     * to simplify interface between
+     * parse stmt and parse expr
+     */
+    struct ic_expr *expr;
     struct ic_body body;
 };
 
@@ -102,8 +110,12 @@ struct ic_stmt {
         /* a statement can just be an expression in
          * void context
          *  foo(bar)
+         *
+         * FIXME making this an ic_expr *
+         * to simplify interface between
+         * parse stmt and parse expr
          */
-        struct ic_expr expr;
+        struct ic_expr *expr;
     } u;
 };
 

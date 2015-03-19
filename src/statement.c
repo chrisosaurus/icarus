@@ -65,6 +65,9 @@ unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned in
         return 1;
     }
 
+    /* zero out init */
+    let->init = 0;
+
     return 0;
 }
 
@@ -80,7 +83,7 @@ struct ic_expr * ic_stmt_let_get_expr(struct ic_stmt_let *let){
     }
 
     /* return what they want */
-    return &(let->init);
+    return let->init;
 }
 
 
@@ -129,7 +132,8 @@ unsigned int ic_stmt_if_init(struct ic_stmt_if *sif){
         return 1;
     }
 
-    /* we do not init expr */
+    /* just zero out expr */
+    sif->expr = 0;
 
     /* return success */
     return 0;
@@ -145,7 +149,7 @@ struct ic_expr * ic_stmt_if_get_expr(struct ic_stmt_if *sif){
     }
 
     /* return our expr innards */
-    return &(sif->expr);
+    return sif->expr;
 }
 
 /* get statement of offset i within the body
@@ -286,7 +290,7 @@ struct ic_expr * ic_stmt_get_expr(struct ic_stmt *stmt){
     }
 
     /* otherwise give them what they asked for */
-    return &(stmt->u.expr);
+    return stmt->u.expr;
 }
 
 
