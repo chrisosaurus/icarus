@@ -43,11 +43,11 @@ struct ic_field * ic_parse_field(struct ic_tokens *tokens, unsigned int *i){
     /* check for separator `::` */
     sep_len = ic_parse_token_length(tokens->tokens, *i);
     if( ! sep_len ){
-        puts("ic_parse_field: no sep (::) token len found");
+        puts("ic_parse_field: call ot ic_parse_token_length failed");
         return 0;
     }
     if( sep_len != 2 || strncmp("::", &(tokens->tokens[*i]), sep_len) ){
-        puts("ic_parse_field: no sep (::) token found");
+        printf("ic_parse_field: expected sep '::', found '%.*s'\n", sep_len, &(tokens->tokens[*i]));
         return 0;
     }
 
