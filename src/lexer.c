@@ -104,7 +104,7 @@ struct ic_tokens * ic_lex(char *source){
              * a = b
              * a.b
              * "hello"
-             * &a::Int
+             * &a::Int and &f
              */
             case '(':
             case ')':
