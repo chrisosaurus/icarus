@@ -15,6 +15,8 @@ a list of arguments and their types, and a body
         body
     end
 
+Args... is a list of expressions
+
 A body is a collection of statements
 
 Some examples of statements:
@@ -42,7 +44,9 @@ Some examples of expressions:
     expr + expr
     (expr)
     identifier
+    &identifier
     ifentifier.field
+    &ifentifier.field
     literals ("string literal", 0, 1, 132)
 
 
