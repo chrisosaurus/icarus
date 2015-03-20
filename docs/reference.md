@@ -42,7 +42,7 @@ this allocated an integer value `5` and created a mutable variable `a` referenci
                +---------+
 
 
-we can mutate this freely
+we can rebind the variable to new values
 
     a = 14
 
@@ -90,7 +90,7 @@ we now have
                |  ::Int  |
                +---------+
 
-however mutation will create a new value
+however any use of `=` creates a new value
 
     b += 3
 
