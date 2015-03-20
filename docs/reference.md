@@ -5,7 +5,7 @@ This is all theoretical at this point and still requires much discussion.
 local mutation
 ==============
 
-Local variables are mutable and their values can be mutated
+Local variables are mutable and they can be reassigned new values
 
     let a = 5
 
