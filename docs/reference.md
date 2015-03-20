@@ -260,7 +260,7 @@ we then get this view of the world
            |                 |
            v                 v
       +-value---+       +-value---+
-      |  15     |       |  15     |
+      |  123    |       |  15     |
       |  ::Int  |       |  ::Int  |
       +---------+       +---------+
 
