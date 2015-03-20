@@ -9,11 +9,11 @@ quick summary of rules
 
 Some example of application:
 
-# `let a = 5` creates a new variable `a` and a new value `5` and binds them
-# `a = 15` creates a new value `15` and rebinds a to this
-# `a += 3` is really `a = a + 3`, so no mutation occurs here
-# `f.a` is considered a variable, so `f.a = 4` will change the field `a` of `f` to the new value `4`, this will not otherwise mutate `f`
-# `&a` is considered a variable, this is mutating the variable referenced to from `a`
+1. `let a = 5` creates a new variable `a` and a new value `5` and binds them
+2. `a = 15` creates a new value `15` and rebinds a to this
+3. `a += 3` is really `a = a + 3`, so no mutation occurs here
+4. `f.a` is considered a variable, so `f.a = 4` will change the field `a` of `f` to the new value `4`, this will not otherwise mutate `f`
+5. `&a` is considered a variable, this is mutating the variable referenced to from `a`
 
 
 local mutation
