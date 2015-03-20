@@ -14,6 +14,7 @@ Some examples:
 3. `a += 3` is really `a = a + 3`, so no mutation occurs here
 4. `f.a` is considered a variable, so `f.a = 4` will change the field `a` of `f` to the new value `4`, this will not otherwise mutate `f`
 5. `&a` is considered a variable, this is mutating the variable referenced to from `a`
+6. '&f.a' is also considered a variable, a combination of 4. and 5.
 
 
 local mutation
@@ -116,6 +117,10 @@ yields:
 
 function arguments
 ==================
+
+Intro
+-----------
+
 Arguments passed to function by default pass an immutable reference
 
     function foo(a::Int) ...
@@ -156,6 +161,9 @@ Conversely trying to call pass a mutable argument when a function is expecting a
     foo(&x) # compile time error, foo wanted an immutable reference
 
 
+
+Simple example
+--------------
 
 Let's look at an example of how this looks:
 
@@ -225,6 +233,101 @@ we then get this view of the world
       |  ::Int  |       |  ::Int  |
       +---------+       +---------+
 
+More complex example
+--------------------
+
+Within a function body any assignment across `functional boundaries` has to use the `&` reference operator
+
+Here we consider how this works when we involve instances of types containing fields:
+
+    type Foo
+        a::Int
+    end
+
+    fn bar(&x::Foo y::Foo) ...
+
+    let f = Foo(1)
+    bar(&f f)
+
+we now have
+
+      +-var-----+
+      | x       |
+      | ::Foo   |
+      | mutable |
+      +---------+
+           |
+           v
+      +-var-----+          +-var-----+
+      | f       |          | y       |
+      | ::Foo   |          | ::Foo   |
+      | mutable |          |immutable|
+      +---------+          +---------+
+           \                   /
+            \                 /
+             \               /
+              \             /
+               \           /
+                v         v
+                +-value---+      +-value---+
+                |  a ----------->|  1      |
+                |  ::Foo  |      |  ::Int  |
+                +---------+      +---------+
+
+we can then assign across functional boundary using the `&` operator
+
+    &x.a = 5
+
+we now have
+
+      +-var-----+
+      | x       |
+      | ::Foo   |
+      | mutable |
+      +---------+
+           |
+           v
+      +-var-----+          +-var-----+
+      | f       |          | y       |
+      | ::Foo   |          | ::Foo   |
+      | mutable |          |immutable|
+      +---------+          +---------+
+           \                   /
+            \                 /
+             \               /
+              \             /
+               \           /
+                v         v
+                +-value---+      +-value---+
+                |  a ----------->|  5      |
+                |  ::Foo  |      |  ::Int  |
+                +---------+      +---------+
+
+if we create a new Foo
+
+    &x = Foo(14)
+
+we would now have
+
+      +-var-----+         +-var-----+
+      | x       |         | y       |
+      | ::Foo   |         | ::Foo   |
+      | mutable |         |immutable|
+      +---------+         +---------+
+           |                  |
+           v                  v
+      +-var-----+         +-value---+      +-value---+
+      | f       |         |  a ----------->|  5      |
+      | ::Foo   |         |  ::Foo  |      |  ::Int  |
+      | mutable |         +---------+      +---------+
+      +---------+
+          |
+          v
+      +-value---+      +-value---+
+      |  a ----------->|  14     |
+      |  ::Foo  |      |  ::Int  |
+      +---------+      +---------+
+
 
 Further considerations
 ======================
@@ -232,7 +335,6 @@ Further considerations
 Some food for further thought
 
 * I quite like the idea of of the mutability contract where both caller and function have to explicitly agree on mutability of arguments
-* I am not quite sure about mutability of values
 
 
 One possible consideration is to make it illegal to pass a mutable and immutable reference
