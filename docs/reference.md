@@ -2,10 +2,10 @@ A quick overview of icarus' planned reference semantics
 
 This is all theoretical at this point and still requires much discussion.
 
-local aliasing
+local mutation
 ==============
 
-Local variables are mutable and their values can be aliased and mutated
+Local variables are mutable and their values can be mutated
 
     let a = 5
 
@@ -28,8 +28,39 @@ this allocated an integer value `5` and created a mutable variable `a` referenci
                +---------+
 
 
-we can then create an alias to this
+we can mutate this freely
 
+    a = 14
+
+      +-var-----+
+      | a       |
+      | ::Int   |
+      | mutable |
+      +---------+
+           \
+            \
+             \
+              \
+               \
+                v
+               +-value---+
+               |  14     |
+               |  ::Int  |
+               +---------+
+
+
+
+local aliasing
+==============
+
+this section is still TO BE DECIDED
+
+option 1
+---------
+
+we can then create aliases
+
+    let a = 5
     let b = a
 
 we now have
@@ -71,6 +102,54 @@ yields:
                |  8      |
                |  ::Int  |
                +---------+
+
+option 2
+--------
+
+we can then create aliases
+
+    let a = 5
+    let b = a
+
+we now have
+
+      +-var-----+     +-var-----+
+      | a       |     | b       |
+      | ::Int   |     | ::Int   |
+      | mutable |     | mutable |
+      +---------+     +---------+
+           \           |
+            \          |
+             \         |
+              \        |
+               \       |
+                v      v
+               +-value---+
+               |  5      |
+               |  ::Int  |
+               +---------+
+
+however mutation will create a new value
+
+    b += 3
+
+yields:
+
+      +-var-----+     +-var-----+
+      | a       |     | b       |
+      | ::Int   |     | ::Int   |
+      | mutable |     | mutable |
+      +---------+     +---------+
+          |               |
+          |               |
+          |               |
+          |               |
+          |               |
+          v               v
+     +-value---+        +-value---+
+     |  5      |        |  8      |
+     |  ::Int  |        |  ::Int  |
+     +---------+        +---------+
 
 
 
@@ -127,27 +206,74 @@ Let's look at an example of how this looks:
 
 The view of the world during the function call to baz:
 
-      +-var-----+  +-var-----+  +-var-----+
-      | a       |  | m       |  | i       |
-      | ::Int   |  | ::Int   |  | ::Int   |
-      | mutable |  | mutable |  |immutable|
-      +---------+  +---------+  +---------+
-           \        |          /
-            \       |         /
-             \      |        /
-              \     |       /
-               \    |      /
-                v   v     v
+
+      +-var-----+
+      | m       |
+      | ::int   |
+      | mutable |
+      +---------+
+           |
+           v
+      +-var-----+          +-var-----+
+      | a       |          | i       |
+      | ::int   |          | ::int   |
+      | mutable |          |immutable|
+      +---------+          +---------+
+           \                   /
+            \                 /
+             \               /
+              \             /
+               \           /
+                v         v
                 +-value---+
                 |  15     |
-                |  ::Int  |
+                |  ::int  |
                 +---------+
 
 
-This value can be mutated only through `a` (from outside the function) or from `m` within the function,
-any mutations to this value will be observable through all 3 variables,
-this value can not be mutated via `i` though as `i` is immutable.
 
+If inside our function baz we mutate through m
+
+    let a = 15
+    baz(&a a)
+
+    function baz(&m::Int i::Int)
+        &m = 123
+    end
+
+we then get this view of the world
+
+      +-var-----+
+      | m       |
+      | ::Int   |
+      | mutable |
+      +---------+
+           |
+           V
+      +-var-----+       +-var-----+
+      | a       |       | i       |
+      | ::Int   |       | ::Int   |
+      | mutable |       |immutable|
+      +---------+       +---------+
+           |                 |
+           |                 |
+           |                 |
+           v                 v
+      +-value---+       +-value---+
+      |  15     |       |  15     |
+      |  ::Int  |       |  ::Int  |
+      +---------+       +---------+
+
+unsolved cases
+--------------
+
+The above is currently not solved for composite types (user defined structs)
+
+One possible solution is to make it illegal to pass a mutable and immutable reference
+of the same object to the same function
+
+    # potential: ILLEGAL cannot pass both mutable nad immutable reference of same value
+    bar(&a a)
 
 
 Further considerations
@@ -156,6 +282,7 @@ Further considerations
 Some food for further thought
 
 * I quite like the idea of of the mutability contract where both caller and function have to explicitly agree on mutability of arguments
-* I am not quite sure about all values being mutable
-* I am also unsure about how assignments to variables are always writing through the variable to the value, what about variable reuse say in iterators?
+* I am not quite sure about mutability of values
+* what about references to instances of types
+
 
