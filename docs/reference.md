@@ -7,7 +7,7 @@ quick summary of rules
 
     `=` always creates a new value and binds the variable on the left to it
 
-Some example of application:
+Some examples:
 
 1. `let a = 5` creates a new variable `a` and a new value `5` and binds them
 2. `a = 15` creates a new value `15` and rebinds a to this
