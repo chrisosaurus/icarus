@@ -15,17 +15,19 @@ end
 
 # function bar takes a mutable reference to a Foo
 function bar(&f::Foo)
-  f.a = 14
+  &f.a = 14
 end
 
 # function bar takes a mutable reference to an Int
 function bar(&a::Int)
-  a = 14
+  &a = 14
 end
 
 # function bar takes an immutable string reference
 function bar(s::String)
-    append(s, " world") # compile time error, trying to mutate through an immutable reference
+    # compile time error, trying to mutate through an immutable reference
+    # append takes a &String and s is an immutable String reference
+    append(s, " world")
 end
 
 function main()
