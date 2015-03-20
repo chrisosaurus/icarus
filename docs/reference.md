@@ -2,6 +2,20 @@ A quick overview of icarus' planned reference semantics
 
 This is all theoretical at this point and still requires much discussion.
 
+quick summary of rules
+======================
+
+    `=` always creates a new value and binds the variable on the left to it
+
+Some example of application:
+
+# `let a = 5` creates a new variable `a` and a new value `5` and binds them
+# `a = 15` creates a new value `15` and rebinds a to this
+# `a += 3` is really `a = a + 3`, so no mutation occurs here
+# `f.a` is considered a variable, so `f.a = 4` will change the field `a` of `f` to the new value `4`, this will not otherwise mutate `f`
+# `&a` is considered a variable, this is mutating the variable referenced to from `a`
+
+
 local mutation
 ==============
 
@@ -52,59 +66,6 @@ we can mutate this freely
 
 local aliasing
 ==============
-
-this section is still TO BE DECIDED
-
-option 1
----------
-
-we can then create aliases
-
-    let a = 5
-    let b = a
-
-we now have
-
-      +-var-----+     +-var-----+
-      | a       |     | b       |
-      | ::Int   |     | ::Int   |
-      | mutable |     | mutable |
-      +---------+     +---------+
-           \           |
-            \          |
-             \         |
-              \        |
-               \       |
-                v      v
-               +-value---+
-               |  5      |
-               |  ::Int  |
-               +---------+
-
-mutation either variable will be reflected in the other
-
-    b += 3
-
-yields:
-
-      +-var-----+     +-var-----+
-      | a       |     | b       |
-      | ::Int   |     | ::Int   |
-      | mutable |     | mutable |
-      +---------+     +---------+
-           \           |
-            \          |
-             \         |
-              \        |
-               \       |
-                v      v
-               +-value---+
-               |  8      |
-               |  ::Int  |
-               +---------+
-
-option 2
---------
 
 we can then create aliases
 
@@ -264,17 +225,6 @@ we then get this view of the world
       |  ::Int  |       |  ::Int  |
       +---------+       +---------+
 
-unsolved cases
---------------
-
-The above is currently not solved for composite types (user defined structs)
-
-One possible solution is to make it illegal to pass a mutable and immutable reference
-of the same object to the same function
-
-    # potential: ILLEGAL cannot pass both mutable nad immutable reference of same value
-    bar(&a a)
-
 
 Further considerations
 ======================
@@ -283,6 +233,12 @@ Some food for further thought
 
 * I quite like the idea of of the mutability contract where both caller and function have to explicitly agree on mutability of arguments
 * I am not quite sure about mutability of values
-* what about references to instances of types
+
+
+One possible consideration is to make it illegal to pass a mutable and immutable reference
+of the same object to the same function
+
+    # potential: ILLEGAL cannot pass both mutable nad immutable reference of same value
+    bar(&a a)
 
 
