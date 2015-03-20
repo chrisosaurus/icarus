@@ -10,12 +10,11 @@ quick summary of rules
 Some examples:
 
 1. `let a = 5` creates a new variable `a` and a new value `5` and binds them
-2. `a = 15` creates a new value `15` and rebinds a to this
-3. `a += 3` is really `a = a + 3`, so no mutation occurs here
-4. `f.a` is considered a variable, so `f.a = 4` will change the field `a` of `f` to the new value `4`, this will not otherwise mutate `f`
-5. `&a` is considered a variable, this is mutating the variable referenced to from `a`
-6. '&f.a' is also considered a variable, a combination of 4. and 5.
-
+2. `a = 15` creates a new value `15` and rebinds the existing `a` to this
+3. `a += 3` is really `a = a + 3`, this creates a new value containing the result of `a + 3` and rebinds the existing `a` to this new value. No mutation occurs here.
+4. `f.a = 4` will change the field `a` of the instance `f` to the new value `4`. This will not otherwise mutate `f`.
+5. `&a = 5` is rebinding the variable referenced by `a` to the new value `5`
+6. `&f.a = 14` is rebinding the field `a` within the instance references by `f` to the new value `14`. This will not otherwise mutate `f`.
 
 local mutation
 ==============
