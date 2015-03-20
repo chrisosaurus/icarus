@@ -1,4 +1,4 @@
-A quick overview of icarus' planned reference semantics
+A quick overview of icarus' planned reference and assignment semantics
 
 This is all theoretical at this point and still requires much discussion.
 
