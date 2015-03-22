@@ -86,6 +86,17 @@ struct ic_expr * ic_stmt_let_get_expr(struct ic_stmt_let *let){
     return let->init;
 }
 
+/* print this let */
+void ic_stmt_let_print(struct ic_stmt_let *let){
+    if( ! let ){
+        puts("ic_stmt_let_print: let was null");
+        return;
+    }
+
+    /* FIXME PRINT */
+    puts("ic_stmt_let_print: unsupported");
+}
+
 
 /* allocate and initialise a new ic_stmtm_if
  * this will initialise the body
@@ -172,7 +183,7 @@ struct ic_stmt * ic_stmt_if_get_stmt(struct ic_stmt_if *sif, unsigned int i){
  * returns length on sucess
  * returns 0 on failure
  */
-unsigned int ic_stmtm_if_length(struct ic_stmt_if *sif){
+unsigned int ic_stmt_if_length(struct ic_stmt_if *sif){
     if( ! sif ){
         puts("ic_stmt_if_length: sif was null");
         return 0;
@@ -180,6 +191,17 @@ unsigned int ic_stmtm_if_length(struct ic_stmt_if *sif){
 
     /* let body do the lifting */
     return ic_body_length( &(sif->body) );
+}
+
+/* print this if */
+void ic_stmt_if_print(struct ic_stmt_if *sif){
+    if( ! sif ){
+        puts("ic_stmt_if_print: sif was null");
+        return;
+    }
+
+    /* FIXME PRINT */
+    puts("ic_stmt_if_print: unsupported");
 }
 
 
@@ -291,6 +313,32 @@ struct ic_expr * ic_stmt_get_expr(struct ic_stmt *stmt){
 
     /* otherwise give them what they asked for */
     return stmt->u.expr;
+}
+
+/* print this stmt */
+void ic_stmt_print(struct ic_stmt *stmt){
+    if( ! stmt ){
+        puts("ic_stmt_print: stmt was null");
+        return;
+    }
+
+    switch( stmt->type ){
+        case ic_stmt_type_let:
+            ic_stmt_let_print( &(stmt->u.let) );
+            break;
+
+        case ic_stmt_type_if:
+            ic_stmt_if_print( &(stmt->u.sif) );
+            break;
+
+        case ic_stmt_type_expr:
+            ic_expr_print( stmt->u.expr );
+            break;
+
+        default:
+            puts("ic_stmt_print: unknown type");
+            return;
+    }
 }
 
 
