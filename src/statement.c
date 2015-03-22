@@ -93,8 +93,21 @@ void ic_stmt_let_print(struct ic_stmt_let *let){
         return;
     }
 
-    /* FIXME PRINT */
-    puts("ic_stmt_let_print: unsupported");
+    /* want to output
+     * let identifier::type = init
+     */
+
+    fputs("let ", stdout);
+
+    ic_symbol_print( &(let->identifier) );
+    fputs("::", stdout);
+    ic_symbol_print( &(let->type) );
+
+    fputs(" = ", stdout);
+
+    ic_expr_print(let->init);
+
+    /* \n up to caller */
 }
 
 
