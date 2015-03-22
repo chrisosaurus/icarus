@@ -4,6 +4,7 @@
 #include "decl.h"
 #include "field.h"
 #include "pvector.h"
+#include "statement.h"
 #include "symbol.h"
 
 /* allocate and initialise a new func_decl
@@ -95,10 +96,16 @@ unsigned int ic_func_decl_add_arg(struct ic_func_decl *fdecl, struct ic_field *f
 
 /* print func_decl */
 void ic_func_decl_print(struct ic_func_decl *fdecl){
-    /* offset into args */
+    /* offset into args
+     * re-used as offset into body
+     * */
     unsigned int i = 0;
-    /* len of args */
+    /* len of args
+     * re-used as len of body
+     */
     unsigned int len = 0;
+    /* pointer to stmt as we iterate through body to print */
+    struct ic_stmt * stmt = 0;
 
     if( ! fdecl ){
         puts("ic_func_decl_print: fdecl was null");
@@ -125,8 +132,27 @@ void ic_func_decl_print(struct ic_func_decl *fdecl){
     /* closing bracket */
     puts(")");
 
-    /* FIXME filler body */
-    puts("  # function bodies not yet implemented");
+    /* get length of body */
+    len = ic_body_length( &(fdecl->body) );
+
+    /* iterate through statements in body
+     * calling print on each
+     */
+    for( i=0; i<len; ++i ){
+        stmt = ic_body_get( &(fdecl->body), i );
+
+        if( ! stmt ){
+            puts("ic_func_decl_print: call to ic_body_get failed");
+            continue;
+        }
+
+        ic_stmt_print(stmt);
+    }
+
+    /* filler body */
+    if( len == 0 ){
+        puts("  # function bodies not yet implemented");
+    }
 
     /* print end\n */
     puts("end");
