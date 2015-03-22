@@ -3,6 +3,7 @@
 
 #include "statement.h"
 #include "symbol.h"
+#include "body.h"
 
 /* allocate and initialise a new let
  * does not touch init ic_expr
@@ -223,8 +224,8 @@ void ic_stmt_if_print(struct ic_stmt_if *sif){
     ic_expr_print( sif->expr );
     puts("");
 
-    /* FIXME need ic_body_print */
-    puts("# body goes here");
+    /* print body */
+    ic_body_print( &(sif->body) );
 
     /* statements are displayed on their own line */
     puts("end");
