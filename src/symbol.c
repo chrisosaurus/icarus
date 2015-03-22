@@ -90,3 +90,22 @@ char ic_symbol_get(struct ic_symbol *symbol, unsigned int offset){
     return ic_string_get( &(symbol->internal), offset );
 }
 
+/* print this symbol */
+void ic_symbol_print(struct ic_symbol *symbol){
+    char *con;
+
+    if( ! symbol ){
+        puts("ic_symbol_print: symbol was null");
+        return;
+    }
+
+    con = ic_symbol_contents(symbol);
+    if( ! con ){
+        puts("ic_symbol_print: call to ic_symbol_contents failed");
+        return;
+    }
+
+    printf("%s", con);
+}
+
+
