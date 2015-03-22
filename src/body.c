@@ -91,3 +91,28 @@ unsigned int ic_body_length(struct ic_body *body){
     return ic_pvector_length( &(body->contents) );
 }
 
+/* print this body */
+void ic_body_print(struct ic_body *body){
+    struct ic_stmt *stmt = 0;
+    unsigned int i = 0;
+    unsigned int len = 0;
+
+    if( ! body ){
+        puts("ic_body_print: body was null");
+        return;
+    }
+
+    len = ic_pvector_length(&(body->contents));
+    for( i=0; i<len; ++i ){
+        stmt = ic_pvector_get( &(body->contents), i );
+
+        if( ! stmt ){
+            puts("ic_body_print: ic_pvector_get call failed");
+            continue;
+        }
+
+        ic_stmt_print(stmt);
+    }
+}
+
+

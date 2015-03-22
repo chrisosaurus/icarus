@@ -47,4 +47,7 @@ int ic_body_append(struct ic_body *body, struct ic_stmt * data);
  */
 unsigned int ic_body_length(struct ic_body *body);
 
+/* print this body */
+void ic_body_print(struct ic_body *body);
+
 #endif
