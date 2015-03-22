@@ -151,7 +151,7 @@ void ic_func_decl_print(struct ic_func_decl *fdecl){
 
     /* filler body */
     if( len == 0 ){
-        puts("  # function bodies not yet implemented");
+        puts("  # no function body found");
     }
 
     /* print end\n */
