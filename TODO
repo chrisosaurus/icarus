@@ -8,4 +8,9 @@ TODO:
 * ic_expr_constant needs love
 * document parse function interfaces
 * write remaining parse code
+* ic_stmt_let_print
+* ic_stmt_if_print
+* ic_body_print (and subtypes)
+* parse_expr *
+* call parse_body from fcall, if, etc.
 
