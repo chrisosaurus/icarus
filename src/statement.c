@@ -107,7 +107,8 @@ void ic_stmt_let_print(struct ic_stmt_let *let){
 
     ic_expr_print(let->init);
 
-    /* \n up to caller */
+    /* statements are displayed on their own line */
+    puts("");
 }
 
 
@@ -225,8 +226,7 @@ void ic_stmt_if_print(struct ic_stmt_if *sif){
     /* FIXME need ic_body_print */
     puts("# body goes here");
 
-    /* FIXME may want to leave \n
-     * up to caller */
+    /* statements are displayed on their own line */
     puts("end");
 }
 
@@ -359,6 +359,8 @@ void ic_stmt_print(struct ic_stmt *stmt){
 
         case ic_stmt_type_expr:
             ic_expr_print( stmt->u.expr );
+            /* statements are displayed on their own line */
+            puts("");
             break;
 
         default:
