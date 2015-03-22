@@ -111,6 +111,43 @@ unsigned int ic_expr_func_call_length(struct ic_expr_func_call *fcall){
     return ic_pvector_length( &(fcall->args) );
 }
 
+/* print this func call */
+void ic_expr_func_call_print(struct ic_expr_func_call *fcall){
+    struct ic_expr *arg = 0;
+    unsigned int i = 0;
+    unsigned int len = 0;
+
+    if( ! fcall ){
+        puts("ic_expr_func_call_print: fcall was null");
+        return;
+    }
+
+    len = ic_pvector_length(&(fcall->args));
+
+    /* print function name */
+    ic_symbol_print(&(fcall->fname));
+
+    /* print bracket */
+    fputs("(", stdout);
+
+    /* print args */
+    for( i=0; i<len; ++i ){
+        arg = ic_pvector_get( &(fcall->args), i );
+        if( ! arg ){
+            puts("ic_expr_func_call_print: call to ic_pvector_get failed");
+            continue;
+        }
+
+        ic_expr_print(arg);
+    }
+
+    /* closing bracket */
+    fputs(")", stdout);
+
+    /* up to caller to work out \n placement */
+}
+
+
 /* allocate and initialise a new identifier
  *
  * returns pointer on success
@@ -246,6 +283,23 @@ unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, struct ic_
     return 0;
 }
 
+/* print this operator */
+void ic_expr_operator_print(struct ic_expr_operator *op){
+    if( ! op ){
+        puts("ic_expr_operator_print: op was null");
+        return;
+    }
+
+    /* assuming infix
+     * print:
+     *  left op right
+     */
+    ic_expr_print(op->lexpr);
+    ic_symbol_print(&(op->op));
+    ic_expr_print(op->rexpr);
+}
+
+
 /* allocate and initialise a new ic_expr
  * will not initialise union members
  *
@@ -335,6 +389,17 @@ struct ic_expr_identifier * ic_expr_get_identifier(struct ic_expr *expr){
     return &(expr->u.id);
 }
 
+/* print this identifier */
+void ic_expr_identifier_print(struct ic_expr_identifier * identifier){
+    if( ! identifier ){
+        puts("ic_expr_identifier_print: identifier was null");
+        return;
+    }
+
+    ic_symbol_print(&(identifier->identifier));
+}
+
+
 /* return pointer to constant within,
  * will only succeed if expr is of the correct type
  *
@@ -379,5 +444,35 @@ struct ic_expr_operator * ic_expr_get_operator(struct ic_expr *expr){
     return &(expr->u.op);
 }
 
+/* print this expr */
+void ic_expr_print(struct ic_expr *expr){
+    if( ! expr ){
+        puts("ic_expr_print: called with null expr");
+        return;
+    }
+
+    switch( expr->type ){
+
+        case ic_expr_type_func_call:
+            ic_expr_func_call_print(&(expr->u.fcall));
+            break;
+
+        case ic_expr_type_identifier:
+            ic_expr_identifier_print(&(expr->u.id));
+            break;
+
+        case ic_expr_type_constant:
+            puts("ic_expr_print: printing constants is not yet supported");
+            break;
+
+        case ic_expr_type_operator:
+            ic_expr_operator_print(&(expr->u.op));
+            break;
+
+        default:
+            puts("ic_expr_print: unsupported type");
+            break;
+    }
+}
 
 

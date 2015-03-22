@@ -48,6 +48,9 @@ struct ic_field * ic_expr_func_call_get_arg(struct ic_expr_func_call *fcall, uns
  */
 unsigned int ic_expr_func_call_length(struct ic_expr_func_call *fcall);
 
+/* print this func call */
+void ic_expr_func_call_print(struct ic_expr_func_call *fcall);
+
 
 /* a use of an identifier (variable)
  */
@@ -67,6 +70,9 @@ struct ic_expr_identifier * ic_expr_identifier_new(char *id, unsigned int id_len
  * returns 1 on failure
  */
 unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, char *id, unsigned int id_len);
+
+/* print this identifier */
+void ic_expr_identifier_print(struct ic_expr_identifier * identifier);
 
 
 /* a constant
@@ -101,6 +107,9 @@ struct ic_expr_operator * ic_expr_operator_new(struct ic_expr *lexpr, struct ic_
  * returns 1 on failure
  */
 unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, struct ic_expr *lexpr, struct ic_expr *rexpr, char *op, unsigned int op_len);
+
+/* print this operator */
+void ic_expr_operator_print(struct ic_expr_operator *op);
 
 
 enum ic_expr_type {
@@ -167,6 +176,9 @@ struct ic_expr_constant * ic_expr_get_constant(struct ic_expr *expr);
  * returns 0 on failure
  */
 struct ic_expr_operator * ic_expr_get_operator(struct ic_expr *expr);
+
+/* print this expr */
+void ic_expr_print(struct ic_expr *expr);
 
 
 #endif
