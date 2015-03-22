@@ -213,8 +213,21 @@ void ic_stmt_if_print(struct ic_stmt_if *sif){
         return;
     }
 
-    /* FIXME PRINT */
-    puts("ic_stmt_if_print: unsupported");
+    /* we want to print
+     *  if expr
+     *      body
+     *  end
+     */
+    fputs("if ", stdout);
+    ic_expr_print( sif->expr );
+    puts("");
+
+    /* FIXME need ic_body_print */
+    puts("# body goes here");
+
+    /* FIXME may want to leave \n
+     * up to caller */
+    puts("end");
 }
 
 

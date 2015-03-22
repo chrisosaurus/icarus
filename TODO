@@ -8,8 +8,8 @@ TODO:
 * ic_expr_constant needs love
 * document parse function interfaces
 * write remaining parse code
-* ic_stmt_if_print
 * ic_body_print (and subtypes)
+* ic_stmt_if_print ic_body_print integration
 * parse_expr *
 * call parse_body from fcall, if, etc.
 * need to be able to print with indentation levels
