@@ -434,11 +434,13 @@ char * ic_parse_peek_next(struct ic_tokens *tokens, unsigned int *i){
     /* plus 1 to get past space */
     offset = dist + 1;
 
-    if( offset > tokens->len ){
+    /* check we are still within bounds */
+    if( offset >= tokens->len ){
         puts("ic_parse_peek_next: no next token, out of tokens");
         return 0;
     }
 
+    /* return pointer to start of next token */
     return &(tokens->tokens[offset]);
 }
 
