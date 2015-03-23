@@ -11,4 +11,5 @@ TODO:
 * parse_expr *
 * call parse_body from fcall, if, etc.
 * need to be able to print with indentation levels
+* it will be useful for callers of ic_parse_check_token to be able to distinguish between error (null tokens, dist failed) and comparison failures (the token was not as expected)
 
