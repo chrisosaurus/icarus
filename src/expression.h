@@ -74,14 +74,22 @@ unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, cha
 /* print this identifier */
 void ic_expr_identifier_print(struct ic_expr_identifier * identifier);
 
+enum ic_expr_constant_type {
+    ic_expr_constant_type_int,
+    ic_expr_constant_type_string
+};
 
 /* a constant
- * FIXME no ability to create a constant yet
+ * either a string or an int
  */
 struct ic_expr_constant {
-    /* FIXME need a value type */
-    void * value;
+    enum ic_expr_constant_type type;
+    union {
+        int integer;
+        struct ic_string string;
+    } u;
 };
+
 
 /* an application of an operator to 2
  * sub expressions
