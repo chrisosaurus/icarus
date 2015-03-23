@@ -8,6 +8,9 @@
 /* ignore unused functions */
 #pragma GCC diagnostic ignored "-Wunused-function"
 
+/* ignore unused functions */
+#pragma GCC diagnostic ignored "-Wunused-variable"
+
 /* current supported expression types:
  *  func call
  *  identifier
@@ -21,6 +24,17 @@
  * returns 0 on failure
  */
 static struct ic_expr * ic_parse_expr_fcall(struct ic_tokens *tokens, unsigned int *i){
+    struct ic_expr * expr = 0;
+
+    if( ! tokens ){
+        puts("ic_parse_expr_fcall: tokens was null");
+        return 0;
+    }
+    if( ! i ){
+        puts("ic_parse_expr_fcall: tokens was null");
+        return 0;
+    }
+
     puts("ic_parse_expr_fcall: unimplemented");
     return 0;
 }
@@ -30,6 +44,17 @@ static struct ic_expr * ic_parse_expr_fcall(struct ic_tokens *tokens, unsigned i
  * returns 0 on failure
  */
 static struct ic_expr * ic_parse_expr_identifier(struct ic_tokens *tokens, unsigned int *i){
+    struct ic_expr * expr = 0;
+
+    if( ! tokens ){
+        puts("ic_parse_expr_identifier: tokens was null");
+        return 0;
+    }
+    if( ! i ){
+        puts("ic_parse_expr_identifier: tokens was null");
+        return 0;
+    }
+
     puts("ic_parse_expr_identifier: unimplemented");
     return 0;
 }
@@ -39,6 +64,17 @@ static struct ic_expr * ic_parse_expr_identifier(struct ic_tokens *tokens, unsig
  * returns 0 on failure
  */
 static struct ic_expr * ic_parse_expr_constant(struct ic_tokens *tokens, unsigned int *i){
+    struct ic_expr * expr = 0;
+
+    if( ! tokens ){
+        puts("ic_parse_expr_constant: tokens was null");
+        return 0;
+    }
+    if( ! i ){
+        puts("ic_parse_expr_constant: tokens was null");
+        return 0;
+    }
+
     puts("ic_parse_expr_constant: unimplemented");
     return 0;
 }
