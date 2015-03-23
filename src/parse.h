@@ -26,6 +26,26 @@ unsigned int ic_parse_token_length(char *source, unsigned int i);
 /* advance i by one token with token length dist */
 void ic_parse_token_advance(unsigned int *i, unsigned int dist);
 
+/* check if the current token looks like a string
+ * returns 1 if yes
+ * returns 0 if no
+ */
+int ic_parse_stringish(struct ic_tokens *tokens, unsigned int *i);
+
+/* check if the current token looks like a number
+ * returns 1 if yes
+ * returns 0 if no
+ */
+int ic_parse_numberish(struct ic_tokens *tokens, unsigned int *i);
+
+/* peek at token after current one
+ * returns a char* pointing to the start of the next
+ * token
+ *
+ * returns 0 on error
+ */
+char * ic_parse_peek_next(struct ic_tokens *tokens, unsigned int *i);
+
 /* compare and consume un-important token
  *
  * this function will take an expected token-string
