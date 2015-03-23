@@ -91,19 +91,19 @@ Hidden elsewhere in the output we can see the parser reconstructing the program 
     end
 
     function d(i::Int)
-      # function bodies not yet implemented
+      # no function body found
     end
 
     function d(s::String)
-      # function bodies not yet implemented
+      # no function body found
     end
 
     function d(f::Foo)
-      # function bodies not yet implemented
+      # no function body found
     end
 
     function main()
-      # function bodies not yet implemented
+      # no function body found
     end
     ----------------
 
