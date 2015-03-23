@@ -31,7 +31,7 @@ static struct ic_expr * ic_parse_expr_fcall(struct ic_tokens *tokens, unsigned i
         return 0;
     }
     if( ! i ){
-        puts("ic_parse_expr_fcall: tokens was null");
+        puts("ic_parse_expr_fcall: i was null");
         return 0;
     }
 
@@ -51,7 +51,7 @@ static struct ic_expr * ic_parse_expr_identifier(struct ic_tokens *tokens, unsig
         return 0;
     }
     if( ! i ){
-        puts("ic_parse_expr_identifier: tokens was null");
+        puts("ic_parse_expr_identifier: i was null");
         return 0;
     }
 
@@ -71,7 +71,7 @@ static struct ic_expr * ic_parse_expr_constant(struct ic_tokens *tokens, unsigne
         return 0;
     }
     if( ! i ){
-        puts("ic_parse_expr_constant: tokens was null");
+        puts("ic_parse_expr_constant: i was null");
         return 0;
     }
 
@@ -90,6 +90,16 @@ static struct ic_expr * ic_parse_expr_operator(struct ic_tokens *tokens, unsigne
 
 
 struct ic_expr * ic_parse_expr(struct ic_tokens *tokens, unsigned int *i){
+    if( ! tokens ){
+        puts("ic_parse_expr: tokens was null");
+        return 0;
+    }
+    if( ! i ){
+        puts("ic_parse_expr: i was null");
+        return 0;
+    }
+
+
     puts("ic_parse_expr: unimplemented");
     return 0;
 }
