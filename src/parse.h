@@ -38,6 +38,14 @@ int ic_parse_stringish(struct ic_tokens *tokens, unsigned int *i);
  */
 int ic_parse_numberish(struct ic_tokens *tokens, unsigned int *i);
 
+/* check if the current token looks like an operator
+ * this take a char* and will currently only dereference it
+ *
+ * returns 1 for true
+ * returns 0 for false
+ */
+int ic_parse_operatorish(char *cursor);
+
 /* peek at token after current one
  * returns a char* pointing to the start of the next
  * token

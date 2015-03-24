@@ -128,7 +128,7 @@ struct ic_expr * ic_parse_expr(struct ic_tokens *tokens, unsigned int *i){
      * we see a number as the first char -> int value
      * we see a symbol, need to inspect next token
      *      ( -> func call
-     *      {+ - * ...} -> operator - FIXME UNSUPPORTED
+     *      {+ - * ...} -> operator
      *      else -> identifier
      */
     if( ic_parse_stringish(tokens, i) ){
@@ -150,12 +150,21 @@ struct ic_expr * ic_parse_expr(struct ic_tokens *tokens, unsigned int *i){
         return 0;
     }
 
+    /* basic support for operators
+     * this will only support:
+     *  identifier operator ...
+     * as any numbers or strings are caught above
+     *
+     * FIXME reconsider this
+     */
+    if( ic_parse_operatorish(next) ){
+        return ic_parse_expr_operator(tokens, i);
+    }
+
     /* if we see an open bracket this is a function call */
     if( *next == '(' ){
         return ic_parse_expr_fcall(tokens, i);
     }
-
-    /* FIXME no support for operations yet */
 
     /* otherwise assume this is just an identifier */
     return ic_parse_expr_identifier(tokens, i);

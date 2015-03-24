@@ -444,4 +444,35 @@ char * ic_parse_peek_next(struct ic_tokens *tokens, unsigned int *i){
     return &(tokens->tokens[offset]);
 }
 
+/* check if the current token looks like an operator
+ * this take a char* and will currently only dereference it
+ *
+ * returns 1 for true
+ * returns 0 for false
+ */
+int ic_parse_operatorish(char *cursor){
+    if( ! cursor ){
+        puts("ic_parse_operatorish: cursor was null");
+        return 0;
+    }
+
+    /* check if the current character is one of the recognised
+     * operators
+     */
+    switch( *cursor ){
+        case '+':
+        case '-':
+        case '/':
+        case '*':
+            return 1;
+            break;
+
+        default:
+            return 0;
+            break;
+    }
+
+    return 0;
+}
+
 
