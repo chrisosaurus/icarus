@@ -8,8 +8,11 @@
 /* ignore unused functions */
 #pragma GCC diagnostic ignored "-Wunused-function"
 
-/* ignore unused functions */
+/* ignore unused variables */
 #pragma GCC diagnostic ignored "-Wunused-variable"
+
+/* ignore unused variables that are set */
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 
 /* current supported expression types:
  *  func call
@@ -64,7 +67,16 @@ static struct ic_expr * ic_parse_expr_identifier(struct ic_tokens *tokens, unsig
  * returns 0 on failure
  */
 static struct ic_expr * ic_parse_expr_constant_string(struct ic_tokens *tokens, unsigned int *i){
+    /* our eventual return value */
     struct ic_expr * expr = 0;
+    /* the i value that marks the beginning of our string
+     * this is the offset *after* the opening " is read
+     */
+    unsigned int start = 0;
+    /* used to record distance of tokens */
+    unsigned int dist = 0;
+    /* sum of all the distances of tokens in this string */
+    unsigned int dist_sum = 0;
 
     if( ! tokens ){
         puts("ic_parse_expr_constant_string: tokens was null");
@@ -74,6 +86,36 @@ static struct ic_expr * ic_parse_expr_constant_string(struct ic_tokens *tokens, 
         puts("ic_parse_expr_constant_string: i was null");
         return 0;
     }
+
+    /* check for opening quote */
+    if( ic_parse_check_token("\"", 1, tokens->tokens, i) ){
+        puts("ic_parse_expr_constant_string: failed to find opening quote (\")");
+        return 0;
+    }
+
+    /* record our starting value */
+    start = *i;
+
+    /* consume string
+     * we just iterate over it until we see the closing "
+     * recording the distances to sum them up
+     */
+    while( ! ic_parse_check_token("\"", 1, tokens->tokens, i) ){
+        dist = ic_parse_token_length(tokens->tokens, *i);
+        if( ! dist ){
+            puts("ic_parse_expr_constant_string: ran out of tokens while looking for closing quote (\")");
+            return 0;
+        }
+
+        dist_sum += dist;
+    }
+
+    /* FIXME build string
+     * we have the start of the string (start)
+     * and the total length (dist_sum)
+     */
+
+    /* FIXME return value */
 
     puts("ic_parse_expr_constant_string: unimplemented");
     return 0;
