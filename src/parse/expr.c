@@ -111,11 +111,14 @@ static struct ic_expr * ic_parse_expr_constant_string(struct ic_tokens *tokens, 
     /* the i value that marks the beginning of our string
      * this is the offset *after* the opening " is read
      */
-    unsigned int start = 0;
-    /* used to record distance of tokens */
-    unsigned int dist = 0;
-    /* sum of all the distances of tokens in this string */
-    unsigned int dist_sum = 0;
+    char *start = 0;
+    /* length of string */
+    unsigned int length = 0;
+
+    /* pointer to our constant */
+    struct ic_expr_constant *cons = 0;
+    /* pointer to our ic_string */
+    struct ic_string *string = 0;
 
     if( ! tokens ){
         puts("ic_parse_expr_constant_string: tokens was null");
@@ -127,37 +130,66 @@ static struct ic_expr * ic_parse_expr_constant_string(struct ic_tokens *tokens, 
     }
 
     /* check for opening quote */
-    if( ic_parse_check_token("\"", 1, tokens->tokens, i) ){
+    if( tokens->tokens[*i] != '"' ){
         puts("ic_parse_expr_constant_string: failed to find opening quote (\")");
         return 0;
     }
 
-    /* record our starting value */
-    start = *i;
-
-    /* consume string
-     * we just iterate over it until we see the closing "
-     * recording the distances to sum them up
-     */
-    while( ! ic_parse_check_token("\"", 1, tokens->tokens, i) ){
-        dist = ic_parse_token_length(tokens->tokens, *i);
-        if( ! dist ){
-            puts("ic_parse_expr_constant_string: ran out of tokens while looking for closing quote (\")");
-            return 0;
-        }
-
-        dist_sum += dist;
+    /* build our return expr */
+    expr = ic_expr_new(ic_expr_type_constant);
+    if( ! expr ){
+        puts("ic_parse_expr_constant_string: call to ic_expr_new failed");
+        return 0;
     }
 
-    /* FIXME build string
+    /* unpack our constant */
+    cons = ic_expr_get_constant(expr);
+    if( ! cons ){
+        puts("ic_parse_expr_constant_string: call to ic_expr_get_constant failed");
+        return 0;
+    }
+
+    /* initialise our constant */
+    if( ic_expr_constant_init(cons, ic_expr_constant_type_string) ){
+        puts("ic_parse_expr_constant_string: call to ic_expr_constant_init failed");
+        return 0;
+    }
+
+    /* get out our ic_string */
+    string = ic_expr_constant_get_string(cons);
+    if( ! string ){
+        puts("ic_parse_expr_constant_string: call to ic_expr_constant_get_string failed");
+        return 0;
+    }
+
+    /* skip over opening " */
+    ++*i;
+
+    /* record our starting value */
+    start = &(tokens->tokens[*i]);
+
+    /* find length of string
+     * FIXME naive
+     */
+    for( length=0; tokens->tokens[*i + length] != '"'; ++length ) ;
+
+    /* also skip over closing " */
+    ++ *i;
+
+    /* skip over inter-token delim */
+    ++ *i;
+
+    /* initialise our ic_string
      * we have the start of the string (start)
      * and the total length (dist_sum)
      */
+    if( ic_string_init(string, start, length) ){
+        puts("ic_parse_expr_constant_string: call to ic_string_init failed");
+        return 0;
+    }
 
-    /* FIXME return value */
-
-    puts("ic_parse_expr_constant_string: unimplemented");
-    return 0;
+    /* victory */
+    return expr;
 }
 
 /* consume token and make an int
