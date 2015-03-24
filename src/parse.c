@@ -352,9 +352,16 @@ int ic_parse_stringish(struct ic_tokens *tokens, unsigned int *i){
      */
     switch( tokens->tokens[*i] ){
         case '"':
+            return 1;
+            break;
+
+        /* FIXME not yet supporting
+         * single quote (') as string delim
+         *
         case '\'':
             return 1;
             break;
+         */
 
         default:
             return 0;
