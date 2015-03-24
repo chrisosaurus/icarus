@@ -5,7 +5,7 @@ TODO:
 * test ic_expr_*
 * test ic_stmt_*
 * test ic_body_*
-* ic_expr_constant needs love
+* ic_expr_constant needs love (print, new, gets)
 * document parse function interfaces
 * write remaining parse code
 * parse_expr *
