@@ -69,18 +69,19 @@ unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, char *name,
  * returns offset of arg on success
  * returns -1 on failure
  */
-int ic_expr_func_call_add_arg(struct ic_expr_func_call *fcall, struct ic_field *field){
+int ic_expr_func_call_add_arg(struct ic_expr_func_call *fcall, struct ic_expr *expr){
+
     if( ! fcall ){
         puts("ic_expr_func_call_add_arg: fcall was null");
         return -1;
     }
-    if( ! field ){
+    if( ! expr ){
         puts("ic_expr_func_call_add_arg: field was null");
         return -1;
     }
 
     /* let pvector do al the work */
-    return ic_pvector_append( &(fcall->args), field );
+    return ic_pvector_append( &(fcall->args), expr );
 }
 
 /* get argument
@@ -88,7 +89,7 @@ int ic_expr_func_call_add_arg(struct ic_expr_func_call *fcall, struct ic_field *
  * returns field at offset on success
  * returns 0 on failure
  */
-struct ic_field * ic_expr_func_call_get_arg(struct ic_expr_func_call *fcall, unsigned int i){
+struct ic_expr * ic_expr_func_call_get_arg(struct ic_expr_func_call *fcall, unsigned int i){
     if( ! fcall ){
         puts("ic_expr_func_call_get_arg: fcall was null");
         return 0;

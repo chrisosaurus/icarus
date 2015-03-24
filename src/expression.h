@@ -11,7 +11,9 @@ struct ic_expr;
  */
 struct ic_expr_func_call {
     struct ic_symbol fname;
-    /* FIXME may want to change from pvector */
+    /* FIXME may want to change from pvector
+     * this is a pvector of ic_expr *
+     */
     struct ic_pvector args;
 };
 
@@ -34,14 +36,14 @@ unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, char *name,
  * returns offset of arg on success
  * returns -1 on failure
  */
-int ic_expr_func_call_add_arg(struct ic_expr_func_call *fcall, struct ic_field *field);
+int ic_expr_func_call_add_arg(struct ic_expr_func_call *fcall, struct ic_expr *expr);
 
 /* get argument
  *
  * returns field at offset on success
  * returns 0 on failure
  */
-struct ic_field * ic_expr_func_call_get_arg(struct ic_expr_func_call *fcall, unsigned int i);
+struct ic_expr * ic_expr_func_call_get_arg(struct ic_expr_func_call *fcall, unsigned int i);
 
 /* returns number of arguments on success
  * returns 0 on failure
