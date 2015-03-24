@@ -31,6 +31,14 @@ static struct ic_tokens * ic_consume_word(struct ic_tokens *tokens, char *source
  */
 static struct ic_tokens * ic_consume_number(struct ic_tokens *tokens, char *source, unsigned int *i);
 
+/* consumes a string denoted by double quote characters
+ * adds this consumed unit as a token
+ *
+ * returns *tokens on success
+ * returns 0 on error
+ */
+static struct ic_tokens * ic_consume_string(struct ic_tokens *tokens, char *source, unsigned int *i);
+
 /* consumes one symbol at current position
  * adds this consumed unit as a token
  *
@@ -103,16 +111,19 @@ struct ic_tokens * ic_lex(char *source){
             /* (...)
              * a = b
              * a.b
-             * "hello"
              * &a::Int and &f
              */
             case '(':
             case ')':
             case '=':
             case '.':
-            case '"':
             case '&':
                 tokens = ic_consume_single_symbol(tokens, source, &i);
+                break;
+
+            /* "hello" */
+            case '"':
+                tokens = ic_consume_string(tokens, source, &i);
                 break;
 
             /* # is only used to denote a comment
@@ -434,6 +445,79 @@ NUMBER_LOOP_EXIT:
     printf("ic_consume_number: calling add_token with len '%d'\n", len);
 #endif
 
+    tokens = add_token(tokens, &(source[*i]), len);
+
+    *i += len;
+
+    return tokens;
+}
+
+/* consumes a string denoted by double quote characters
+ * adds this consumed unit as a token
+ *
+ * returns *tokens on success
+ * returns 0 on error
+ */
+static struct ic_tokens * ic_consume_string(struct ic_tokens *tokens, char *source, unsigned int *i){
+    unsigned int len=0;
+
+    if( ! i || ! source ){
+        puts("ic_consume_string: null source or i provided");
+        return 0;
+    }
+
+    /* error if leading 0
+     * as we do not yet support:
+     *  octal
+     *  hex
+     *  fractions / floating points
+     */
+    if( source[*i] != '"' ){
+        puts("ic_consume_string: failed to find starting \" token");
+        printf("I see %s\n", &(source[*i]));
+        return 0;
+    }
+
+    /* step over opening " */
+    ++ len;
+
+    for( ;
+         ;
+         ++len ){
+
+        /* FIXME currently no ability to escape the double quote
+         * e.g. unable to "this is a double quote \" but it is inside this string"
+         */
+        switch( source[(*i) + len] ){
+            case '"':
+                /* end of a string */
+                goto STRING_LOOP_EXIT;
+                break;
+
+            default:
+                /* valid character, continue */
+                continue;
+                break;
+
+        }
+    }
+
+STRING_LOOP_EXIT:
+
+    /* step over closing " */
+    ++len;
+
+    /* error if we failed to consume anything */
+    if( len == 0 ){
+        puts("ic_consume_string: failed to parse string");
+        return 0;
+    }
+
+#ifdef DEBUG_LEXER
+    printf("ic_consume_string: calling add_token with len '%d'\n", len);
+#endif
+
+    /* save our new token */
     tokens = add_token(tokens, &(source[*i]), len);
 
     *i += len;
