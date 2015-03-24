@@ -27,7 +27,12 @@
  * returns 0 on failure
  */
 static struct ic_expr * ic_parse_expr_fcall(struct ic_tokens *tokens, unsigned int *i){
+    /* our eventual return value */
     struct ic_expr * expr = 0;
+    /* used for getting the distance of our function name */
+    unsigned int dist = 0;
+    /* temporary used for capturing the argument expression */
+    struct ic_expr * arg = 0;
 
     if( ! tokens ){
         puts("ic_parse_expr_fcall: tokens was null");
@@ -38,8 +43,42 @@ static struct ic_expr * ic_parse_expr_fcall(struct ic_tokens *tokens, unsigned i
         return 0;
     }
 
-    puts("ic_parse_expr_fcall: unimplemented");
-    return 0;
+    /* build our return expr */
+    expr = ic_expr_new(ic_expr_type_func_call);
+    if( ! expr ){
+        puts("ic_parse_expr_fcall: call to ic_expr_new failed");
+        return 0;
+    }
+
+    /* find our function name */
+    dist = ic_parse_token_length(tokens->tokens, *i);
+    if( ! dist ){
+        puts("ic_parse_expr_fcall: failed to get distance of function name");
+        return 0;
+    }
+
+    /* build our function */
+    if( ic_expr_func_call_init( &(expr->u.fcall), &(tokens->tokens[*i]), dist ) ){
+        puts("ic_parse_expr_fcall: call to ic_expr_func_call_init failed");
+        return 0;
+    }
+
+    /* keep consuming arguments until we see the closing ) */
+    while( ! ic_parse_check_token(")", 1, tokens->tokens, i) ){
+        /* parse this argument */
+        arg = ic_parse_expr(tokens, i);
+        if( ! arg ){
+            puts("ic_parse_expr_fcall: parsing arg error, call to ic_parse_expr failed");
+        }
+
+        /* store it inside our function */
+        ic_expr_func_call_add_arg( &(expr->u.fcall), arg );
+    }
+
+    /* ic_parse_check_token will skip over the closing ) for us */
+
+    /* victory */
+    return expr;
 }
 
 /* consume token
