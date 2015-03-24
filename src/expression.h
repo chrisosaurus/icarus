@@ -11,8 +11,7 @@ struct ic_expr;
  */
 struct ic_expr_func_call {
     struct ic_symbol fname;
-    /* FIXME may want to change from pvector
-     * this is a pvector of ic_expr *
+    /* this is a pvector of ic_expr *
      */
     struct ic_pvector args;
 };
