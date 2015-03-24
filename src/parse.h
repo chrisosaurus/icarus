@@ -70,6 +70,30 @@ char * ic_parse_peek_next(struct ic_tokens *tokens, unsigned int *i);
  */
 unsigned int ic_parse_check_token(char *expected, unsigned int exp_len, char *source, unsigned int *i);
 
+/* check if we are looking at an `end` token
+ *
+ * this will also advance i past the token
+ *
+ * useful for continually iterating through tokens until we find `end
+ *
+ * example:
+ *
+ *      int ret = 0;
+ *
+ *      while( (ret = ic_parse_this_is_not_the_end(tokens, i)) > 0 ){
+ *          ...
+ *      }
+ *
+ *      if( ! ret )
+ *          return true; // success, end token found
+ *      return false; // other error occurred in this_is_not_the_end
+ *
+ * returns 1 if this is NOT an `end` token
+ * returns 0 if this is an `end` token
+ * returns -1 if an error occurs (if \0 is hit for example)
+ */
+int ic_parse_this_is_not_the_end(struct ic_tokens *tokens, unsigned int *i);
+
 
 /**** parse/field.c ****/
 
@@ -105,31 +129,6 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i);
 /**** parse.c ****/
 
 struct ic_ast * ic_parse(struct ic_tokens *tokens);
-
-/* check if we are looking at an `end` token
- *
- * this will also advance i past the token
- *
- * useful for continually iterating through tokens until we find `end
- *
- * example:
- *
- *      int ret = 0;
- *
- *      while( (ret = ic_parse_this_is_not_the_end(tokens, i)) > 0 ){
- *          ...
- *      }
- *
- *      if( ! ret )
- *          return true; // success, end token found
- *      return false; // other error occurred in this_is_not_the_end
- *
- * returns 1 if this is NOT an `end` token
- * returns 0 if this is an `end` token
- * returns -1 if an error occurs (if \0 is hit for example)
- */
-int ic_parse_this_is_not_the_end(struct ic_tokens *tokens, unsigned int *i);
-
 
 #endif
 
