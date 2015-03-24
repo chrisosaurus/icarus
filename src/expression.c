@@ -5,6 +5,9 @@
 #include "symbol.h"
 #include "pvector.h"
 
+/* ignore unused parameter */
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 /* allocate and initialise a new func call
  *
  * returns pointer on success
@@ -201,6 +204,100 @@ unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, cha
 
     return 0;
 }
+
+/* allocate and init a new constant
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr_constant * ic_expr_constant_new(enum ic_expr_constant_type type){
+    struct ic_expr_constant * constant = 0;
+
+    /* alloc */
+    constant = calloc(1, sizeof(struct ic_expr_constant));
+    if( ! constant ){
+        puts("ic_expr_constant_new: call to calloc failed");
+        return 0;
+    }
+
+    /* init */
+    if( ic_expr_constant_init(constant, type) ){
+        puts("ic_expr_constant_new: call to ic_expr_constant_init failed");
+        return 0;
+    }
+
+    /* return */
+    return constant;
+}
+
+/* initialise an existing constant
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+int ic_expr_constant_init(struct ic_expr_constant *constant, enum ic_expr_constant_type type){
+    if( ! constant ){
+        puts("ic_expr_constant_init: constant was null");
+        return 1;
+    }
+
+    /* for now our only job is to set the type */
+    constant->type = type;
+
+    /* victory */
+    return 0;
+}
+
+/* return pointer to integer within,
+ * will only succeed if constant is of the correct type
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+int * ic_expr_constant_get_integer(struct ic_expr_constant *constant){
+    if( ! constant ){
+        puts("ic_expr_constant_get_integer: constant was null");
+        return 0;
+    }
+
+    /* check type before handing out pointer */
+    if( constant->type != ic_expr_constant_type_int ){
+        puts("ic_expr_constant_get_integer: not an integer");
+        return 0;
+    }
+
+    /* give them what they want */
+    return &(constant->u.integer);
+}
+
+/* return pointer to ic_string within,
+ * will only succeed if constant is of the correct type
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_string * ic_expr_constant_get_string(struct ic_expr_constant *constant){
+    if( ! constant ){
+        puts("ic_expr_constant_get_string: constant was null");
+        return 0;
+    }
+
+    /* check type before handing out pointer */
+    if( constant->type != ic_expr_constant_type_string ){
+        puts("ic_expr_constant_get_string: not an string");
+        return 0;
+    }
+
+    /* give them what they want */
+    return &(constant->u.string);
+}
+
+
+/* print this constant */
+void ic_expr_constant_print(struct ic_expr_constant *constant){
+    /* FIXME */
+    puts("ic_expr_constant_print: currently unsupported");
+}
+
 
 /* allocate and initialise a new op
  *
@@ -463,7 +560,7 @@ void ic_expr_print(struct ic_expr *expr){
             break;
 
         case ic_expr_type_constant:
-            puts("ic_expr_print: printing constants is not yet supported");
+            ic_expr_constant_print(&(expr->u.cons));
             break;
 
         case ic_expr_type_operator:

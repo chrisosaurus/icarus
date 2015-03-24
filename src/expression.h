@@ -92,6 +92,37 @@ struct ic_expr_constant {
     } u;
 };
 
+/* allocate and init a new constant
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr_constant * ic_expr_constant_new(enum ic_expr_constant_type type);
+
+/* initialise an existing constant
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+int ic_expr_constant_init(struct ic_expr_constant *constant, enum ic_expr_constant_type type);
+
+/* return pointer to integer within,
+ * will only succeed if constant is of the correct type
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+int * ic_expr_constant_get_integer(struct ic_expr_constant *constant);
+
+/* return pointer to ic_string within,
+ * will only succeed if constant is of the correct type
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_string * ic_expr_constant_get_string(struct ic_expr_constant *constant);
+
+/* print this constant */
+void ic_expr_constant_print(struct ic_expr_constant *constant);
 
 /* an application of an operator to 2
  * sub expressions
