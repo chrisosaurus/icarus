@@ -5,6 +5,9 @@
 #include "ast.h"
 #include "parse.h"
 
+/* indent level defined as 4 spaces */
+#define INDENT_LEVEL "    "
+
 /* please note that only a small subset of ic_parse_* is implemented
  * here, many of the ic_parse_* functions are not implemented in parse.c
  * and have instead been moved into src/parse/ source files
@@ -480,6 +483,16 @@ int ic_parse_operatorish(char *cursor){
     }
 
     return 0;
+}
+
+/* print levels worth of indent levels
+ * an indent level is defined in parse.c
+ */
+void ic_parse_print_indent(unsigned int levels){
+    unsigned int i = 0;
+    for( i = 0; i<levels; ++i ){
+        fputs(INDENT_LEVEL, stdout);
+    }
 }
 
 

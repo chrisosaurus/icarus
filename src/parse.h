@@ -18,6 +18,11 @@
 
 /**** shared helper methods (parse.c) ****/
 
+/* print levels worth of indent levels
+ * an indent level is defined in parse.c
+ */
+void ic_parse_print_indent(unsigned int levels);
+
 /* returns length of token starting at source[i]
  * returns 0 on error
  */
