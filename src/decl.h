@@ -41,7 +41,7 @@ unsigned int ic_func_decl_add_arg(struct ic_func_decl *fdecl, struct ic_field *f
 unsigned int ic_func_decl_add_stmt(struct ic_func_decl *fdecl, struct ic_stmt *stmt);
 
 /* print func_decl */
-void ic_func_decl_print(struct ic_func_decl *fdecl);
+void ic_func_decl_print(struct ic_func_decl *fdecl, unsigned int *indent_level);
 
 /* a func declaration is a symbol and then a collection of fields
  *  type Foo
@@ -84,7 +84,7 @@ unsigned int ic_type_decl_init(struct ic_type_decl *tdecl, char *name_src, unsig
 unsigned int ic_type_decl_add_field(struct ic_type_decl *tdecl, struct ic_field *field);
 
 /* print the type_decl to stdout */
-void ic_type_decl_print(struct ic_type_decl *tdecl);
+void ic_type_decl_print(struct ic_type_decl *tdecl, unsigned int *indent_level);
 
 enum ic_decl_type {
     ic_decl_func_decl,
@@ -136,6 +136,6 @@ struct ic_func_decl * ic_decl_get_fdecl(struct ic_decl *decl);
 struct ic_type_decl * ic_decl_get_tdecl(struct ic_decl *decl);
 
 /* print contents of ic_decl */
-void ic_decl_print(struct ic_decl *decl);
+void ic_decl_print(struct ic_decl *decl, unsigned int *indent_level);
 
 #endif

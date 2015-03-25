@@ -89,24 +89,24 @@ Hidden elsewhere in the output we can see the parser reconstructing the program 
     parser output:
     ----------------
     type Foo
-      a::Int
-      b::String
+        a::Int
+        b::String
     end
 
     function d(i::Int)
-    print(i)
+        print(i)
     end
 
     function d(s::String)
-    print(s)
+        print(s)
     end
 
     function d(f::Foo)
-      # no function body found
     end
 
     function main()
-    let f::Foo = Foo("hello")
-    d(f)
+        let f::Foo = Foo("hello")
+        d(f)
     end
     ----------------
+

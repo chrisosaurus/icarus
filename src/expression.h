@@ -50,7 +50,7 @@ struct ic_expr * ic_expr_func_call_get_arg(struct ic_expr_func_call *fcall, unsi
 unsigned int ic_expr_func_call_length(struct ic_expr_func_call *fcall);
 
 /* print this func call */
-void ic_expr_func_call_print(struct ic_expr_func_call *fcall);
+void ic_expr_func_call_print(struct ic_expr_func_call *fcall, unsigned int *indent_level);
 
 
 /* a use of an identifier (variable)
@@ -73,7 +73,7 @@ struct ic_expr_identifier * ic_expr_identifier_new(char *id, unsigned int id_len
 unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, char *id, unsigned int id_len);
 
 /* print this identifier */
-void ic_expr_identifier_print(struct ic_expr_identifier * identifier);
+void ic_expr_identifier_print(struct ic_expr_identifier * identifier, unsigned int *indent_level);
 
 enum ic_expr_constant_type {
     ic_expr_constant_type_int,
@@ -121,7 +121,7 @@ long int * ic_expr_constant_get_integer(struct ic_expr_constant *constant);
 struct ic_string * ic_expr_constant_get_string(struct ic_expr_constant *constant);
 
 /* print this constant */
-void ic_expr_constant_print(struct ic_expr_constant *constant);
+void ic_expr_constant_print(struct ic_expr_constant *constant, unsigned int *indent_level);
 
 /* an application of an operator to 2
  * sub expressions
@@ -149,7 +149,7 @@ struct ic_expr_operator * ic_expr_operator_new(struct ic_expr *lexpr, struct ic_
 unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, struct ic_expr *lexpr, struct ic_expr *rexpr, char *op, unsigned int op_len);
 
 /* print this operator */
-void ic_expr_operator_print(struct ic_expr_operator *op);
+void ic_expr_operator_print(struct ic_expr_operator *op, unsigned int *indent_level);
 
 
 enum ic_expr_type {
@@ -218,7 +218,7 @@ struct ic_expr_constant * ic_expr_get_constant(struct ic_expr *expr);
 struct ic_expr_operator * ic_expr_get_operator(struct ic_expr *expr);
 
 /* print this expr */
-void ic_expr_print(struct ic_expr *expr);
+void ic_expr_print(struct ic_expr *expr, unsigned int *indent_level);
 
 
 #endif

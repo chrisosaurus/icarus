@@ -4,6 +4,7 @@
 #include "statement.h"
 #include "symbol.h"
 #include "body.h"
+#include "parse.h"
 
 /* allocate and initialise a new let
  * does not touch init ic_expr
@@ -88,11 +89,21 @@ struct ic_expr * ic_stmt_let_get_expr(struct ic_stmt_let *let){
 }
 
 /* print this let */
-void ic_stmt_let_print(struct ic_stmt_let *let){
+void ic_stmt_let_print(struct ic_stmt_let *let, unsigned int *indent_level){
+    /* our fake indent for our subexpr */
+    unsigned int fake_indent = 0;
+
     if( ! let ){
         puts("ic_stmt_let_print: let was null");
         return;
     }
+    if( ! indent_level ){
+        puts("ic_stmt_let_print: indent_level was null");
+        return;
+    }
+
+    /* output indent */
+    ic_parse_print_indent(*indent_level);
 
     /* want to output
      * let identifier::type = init
@@ -106,7 +117,7 @@ void ic_stmt_let_print(struct ic_stmt_let *let){
 
     fputs(" = ", stdout);
 
-    ic_expr_print(let->init);
+    ic_expr_print(let->init, &fake_indent);
 
     /* statements are displayed on their own line */
     puts("");
@@ -209,11 +220,21 @@ unsigned int ic_stmt_if_length(struct ic_stmt_if *sif){
 }
 
 /* print this if */
-void ic_stmt_if_print(struct ic_stmt_if *sif){
+void ic_stmt_if_print(struct ic_stmt_if *sif, unsigned int *indent_level){
+    /* our fake indent for our subexpr */
+    unsigned int fake_indent = 0;
+
     if( ! sif ){
         puts("ic_stmt_if_print: sif was null");
         return;
     }
+    if( ! indent_level ){
+        puts("ic_stmt_if_print: indent_level was null");
+        return;
+    }
+
+    /* print indent */
+    ic_parse_print_indent(*indent_level);
 
     /* we want to print
      *  if expr
@@ -221,11 +242,13 @@ void ic_stmt_if_print(struct ic_stmt_if *sif){
      *  end
      */
     fputs("if ", stdout);
-    ic_expr_print( sif->expr );
+    ic_expr_print( sif->expr, &fake_indent );
     puts("");
 
-    /* print body */
-    ic_body_print( &(sif->body) );
+    /* print body
+     * body will handle incr and decr of the indent level
+     */
+    ic_body_print( &(sif->body), indent_level );
 
     /* statements are displayed on their own line */
     puts("end");
@@ -343,23 +366,27 @@ struct ic_expr * ic_stmt_get_expr(struct ic_stmt *stmt){
 }
 
 /* print this stmt */
-void ic_stmt_print(struct ic_stmt *stmt){
+void ic_stmt_print(struct ic_stmt *stmt, unsigned int *indent_level){
     if( ! stmt ){
         puts("ic_stmt_print: stmt was null");
+        return;
+    }
+    if( ! indent_level ){
+        puts("ic_stmt_print: indent_level was null");
         return;
     }
 
     switch( stmt->type ){
         case ic_stmt_type_let:
-            ic_stmt_let_print( &(stmt->u.let) );
+            ic_stmt_let_print( &(stmt->u.let), indent_level );
             break;
 
         case ic_stmt_type_if:
-            ic_stmt_if_print( &(stmt->u.sif) );
+            ic_stmt_if_print( &(stmt->u.sif), indent_level );
             break;
 
         case ic_stmt_type_expr:
-            ic_expr_print( stmt->u.expr );
+            ic_expr_print( stmt->u.expr, indent_level );
             /* statements are displayed on their own line */
             puts("");
             break;

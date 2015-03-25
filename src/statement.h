@@ -44,7 +44,7 @@ unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned in
 struct ic_expr * ic_stmt_let_get_expr(struct ic_stmt_let *let);
 
 /* print this let */
-void ic_stmt_let_print(struct ic_stmt_let *let);
+void ic_stmt_let_print(struct ic_stmt_let *let, unsigned int *indent_level);
 
 /* an if statement
  *  if expr
@@ -98,7 +98,7 @@ struct ic_stmt * ic_stmt_if_get_stmt(struct ic_stmt_if *sif, unsigned int i);
 unsigned int ic_stmt_if_length(struct ic_stmt_if *sif);
 
 /* print this if */
-void ic_stmt_if_print(struct ic_stmt_if *sif);
+void ic_stmt_if_print(struct ic_stmt_if *sif, unsigned int *indent_level);
 
 
 enum ic_stmt_type {
@@ -164,6 +164,6 @@ struct ic_stmt_if * ic_stmt_get_sif(struct ic_stmt *stmt);
 struct ic_expr * ic_stmt_get_expr(struct ic_stmt *stmt);
 
 /* print this stmt */
-void ic_stmt_print(struct ic_stmt *stmt);
+void ic_stmt_print(struct ic_stmt *stmt, unsigned int *indent_level);
 
 #endif

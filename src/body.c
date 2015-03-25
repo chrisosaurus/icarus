@@ -92,7 +92,7 @@ unsigned int ic_body_length(struct ic_body *body){
 }
 
 /* print this body */
-void ic_body_print(struct ic_body *body){
+void ic_body_print(struct ic_body *body, unsigned int *indent_level){
     struct ic_stmt *stmt = 0;
     unsigned int i = 0;
     unsigned int len = 0;
@@ -101,6 +101,13 @@ void ic_body_print(struct ic_body *body){
         puts("ic_body_print: body was null");
         return;
     }
+    if( ! indent_level ){
+        puts("ic_body_print: indent_level was null");
+        return;
+    }
+
+    /* incr indent level before body */
+    ++ *indent_level;
 
     len = ic_pvector_length(&(body->contents));
     for( i=0; i<len; ++i ){
@@ -111,8 +118,11 @@ void ic_body_print(struct ic_body *body){
             continue;
         }
 
-        ic_stmt_print(stmt);
+        ic_stmt_print(stmt, indent_level);
     }
+
+    /* decr indent level after body */
+    -- *indent_level;
 }
 
 

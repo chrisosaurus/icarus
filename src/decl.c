@@ -6,6 +6,7 @@
 #include "pvector.h"
 #include "statement.h"
 #include "symbol.h"
+#include "parse.h"
 
 /* allocate and initialise a new func_decl
  *
@@ -125,7 +126,7 @@ unsigned int ic_func_decl_add_stmt(struct ic_func_decl *fdecl, struct ic_stmt *s
 }
 
 /* print func_decl */
-void ic_func_decl_print(struct ic_func_decl *fdecl){
+void ic_func_decl_print(struct ic_func_decl *fdecl, unsigned int *indent_level){
     /* offset into args
      * re-used as offset into body
      * */
@@ -134,11 +135,14 @@ void ic_func_decl_print(struct ic_func_decl *fdecl){
      * re-used as len of body
      */
     unsigned int len = 0;
-    /* pointer to stmt as we iterate through body to print */
-    struct ic_stmt * stmt = 0;
 
     if( ! fdecl ){
         puts("ic_func_decl_print: fdecl was null");
+        return;
+    }
+
+    if( ! indent_level ){
+        puts("ic_func_decl_print: indent_level was null");
         return;
     }
 
@@ -165,24 +169,11 @@ void ic_func_decl_print(struct ic_func_decl *fdecl){
     /* get length of body */
     len = ic_body_length( &(fdecl->body) );
 
-    /* iterate through statements in body
-     * calling print on each
+
+    /* print body
+     * body will handle indent_level incr and decr for us
      */
-    for( i=0; i<len; ++i ){
-        stmt = ic_body_get( &(fdecl->body), i );
-
-        if( ! stmt ){
-            puts("ic_func_decl_print: call to ic_body_get failed");
-            continue;
-        }
-
-        ic_stmt_print(stmt);
-    }
-
-    /* filler body */
-    if( len == 0 ){
-        puts("  # no function body found");
-    }
+    ic_body_print( &(fdecl->body), indent_level);
 
     /* print end\n */
     puts("end");
@@ -271,23 +262,30 @@ unsigned int ic_type_decl_add_field(struct ic_type_decl *tdecl, struct ic_field 
 }
 
 /* print the type_decl to stdout */
-void ic_type_decl_print(struct ic_type_decl *tdecl){
+void ic_type_decl_print(struct ic_type_decl *tdecl, unsigned int *indent_level){
     unsigned int i = 0;
 
     if( ! tdecl ){
         puts("ic_type_decl_print: tdecl was null");
         return;
     }
+    if( ! indent_level ){
+        puts("ic_type_decl_print: indent_level was null");
+        return;
+    }
 
     /* print type and name */
     printf ("type %s\n", ic_symbol_contents(&(tdecl->name)) );
+
+    /* increment indent level before body */
+    ++ *indent_level;
 
     /* iterate through pvector fields
      * prefix each field with a 2 spaces  and postfix each with a \n
      */
     for( i=0; i< ic_pvector_length(&(tdecl->fields)); ++i ){
-        /* prefix 2 spaces */
-        printf("  ");
+        /* print indent */
+        ic_parse_print_indent(*indent_level);
 
         /* print field contents */
         ic_field_print( ic_pvector_get( &(tdecl->fields), i ) );
@@ -295,6 +293,9 @@ void ic_type_decl_print(struct ic_type_decl *tdecl){
         /* postfix newline */
         puts("");
     }
+
+    /* decrement indent level after body */
+    -- *indent_level;
 
     puts("end");
 }
@@ -395,18 +396,22 @@ struct ic_type_decl * ic_decl_get_tdecl(struct ic_decl *decl){
 }
 
 /* print contents of ic_decl */
-void ic_decl_print(struct ic_decl *decl){
+void ic_decl_print(struct ic_decl *decl, unsigned int *indent_level){
     if( ! decl ){
         puts("ic_decl_print: decl was null");
+        return;
+    }
+    if( ! indent_level ){
+        puts("ic_decl_print: indent_level was null");
         return;
     }
 
     switch( decl->type ){
         case ic_decl_func_decl:
-            ic_func_decl_print( ic_decl_get_fdecl(decl) );
+            ic_func_decl_print( ic_decl_get_fdecl(decl), indent_level );
             break;
         case ic_decl_type_decl:
-            ic_type_decl_print( ic_decl_get_tdecl(decl) );
+            ic_type_decl_print( ic_decl_get_tdecl(decl), indent_level );
             break;
         default:
             puts("ic_decl_print: impossible type!");

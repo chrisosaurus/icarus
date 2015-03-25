@@ -4,6 +4,7 @@
 #include "expression.h"
 #include "symbol.h"
 #include "pvector.h"
+#include "parse.h"
 
 /* ignore unused parameter */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -116,17 +117,31 @@ unsigned int ic_expr_func_call_length(struct ic_expr_func_call *fcall){
 }
 
 /* print this func call */
-void ic_expr_func_call_print(struct ic_expr_func_call *fcall){
+void ic_expr_func_call_print(struct ic_expr_func_call *fcall, unsigned int *indent_level){
+    /* our eventual return value */
     struct ic_expr *arg = 0;
+    /* out iterator through args */
     unsigned int i = 0;
+    /* cached length of vector */
     unsigned int len = 0;
+    /* our fake indent level we use
+     * as args do not need to be indented
+     */
+    unsigned int fake_indent = 0;
 
     if( ! fcall ){
         puts("ic_expr_func_call_print: fcall was null");
         return;
     }
+    if( ! indent_level ){
+        puts("ic_expr_func_call_print: fcall was indent_level");
+        return;
+    }
 
     len = ic_pvector_length(&(fcall->args));
+
+    /* print indent */
+    ic_parse_print_indent(*indent_level);
 
     /* print function name */
     ic_symbol_print(&(fcall->fname));
@@ -142,7 +157,7 @@ void ic_expr_func_call_print(struct ic_expr_func_call *fcall){
             continue;
         }
 
-        ic_expr_print(arg);
+        ic_expr_print(arg, &fake_indent);
     }
 
     /* closing bracket */
@@ -293,7 +308,7 @@ struct ic_string * ic_expr_constant_get_string(struct ic_expr_constant *constant
 
 
 /* print this constant */
-void ic_expr_constant_print(struct ic_expr_constant *constant){
+void ic_expr_constant_print(struct ic_expr_constant *constant, unsigned int *indent_level){
     /* pointer to string if we need it */
     struct ic_string *string = 0;
     /* pointer to long int if we need it */
@@ -301,6 +316,10 @@ void ic_expr_constant_print(struct ic_expr_constant *constant){
 
     if( ! constant ){
         puts("ic_expr_constant_print: constant was null");
+        return;
+    }
+    if( ! indent_level ){
+        puts("ic_expr_constant_print: indent_level was null");
         return;
     }
 
@@ -313,11 +332,17 @@ void ic_expr_constant_print(struct ic_expr_constant *constant){
                 return;
             }
 
+            /* print indent */
+            ic_parse_print_indent(*indent_level);
+
             /* print out the backing string surrounded by double quotes */
             printf("\"%s\"", ic_string_contents(string));
             break;
 
         case ic_expr_constant_type_int:
+            /* print indent */
+            ic_parse_print_indent(*indent_level);
+
             /* pull out our integer */
             integer = ic_expr_constant_get_integer(constant);
             if( ! integer ){
@@ -419,19 +444,29 @@ unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, struct ic_
 }
 
 /* print this operator */
-void ic_expr_operator_print(struct ic_expr_operator *op){
+void ic_expr_operator_print(struct ic_expr_operator *op, unsigned int *indent_level){
+    /* fake indent we pass into sub expr */
+    unsigned int fake_indent = 0;
+
     if( ! op ){
         puts("ic_expr_operator_print: op was null");
         return;
     }
+    if( ! indent_level ){
+        puts("ic_expr_operator_print: indent_level was null");
+        return;
+    }
+
+    /* print indent before expr */
+    ic_parse_print_indent(*indent_level);
 
     /* assuming infix
      * print:
      *  left op right
      */
-    ic_expr_print(op->lexpr);
+    ic_expr_print(op->lexpr, &fake_indent);
     ic_symbol_print(&(op->op));
-    ic_expr_print(op->rexpr);
+    ic_expr_print(op->rexpr, &fake_indent);
 }
 
 
@@ -525,12 +560,20 @@ struct ic_expr_identifier * ic_expr_get_identifier(struct ic_expr *expr){
 }
 
 /* print this identifier */
-void ic_expr_identifier_print(struct ic_expr_identifier * identifier){
+void ic_expr_identifier_print(struct ic_expr_identifier * identifier, unsigned int *indent_level){
     if( ! identifier ){
         puts("ic_expr_identifier_print: identifier was null");
         return;
     }
+    if( ! indent_level ){
+        puts("ic_expr_identifier_print: indent_level was null");
+        return;
+    }
 
+    /* print out indent */
+    ic_parse_print_indent(*indent_level);
+
+    /* print our identifier */
     ic_symbol_print(&(identifier->identifier));
 }
 
@@ -580,28 +623,32 @@ struct ic_expr_operator * ic_expr_get_operator(struct ic_expr *expr){
 }
 
 /* print this expr */
-void ic_expr_print(struct ic_expr *expr){
+void ic_expr_print(struct ic_expr *expr, unsigned int *indent_level){
     if( ! expr ){
         puts("ic_expr_print: called with null expr");
+        return;
+    }
+    if( ! indent_level ){
+        puts("ic_expr_print: called with indent_level expr");
         return;
     }
 
     switch( expr->type ){
 
         case ic_expr_type_func_call:
-            ic_expr_func_call_print(&(expr->u.fcall));
+            ic_expr_func_call_print(&(expr->u.fcall), indent_level);
             break;
 
         case ic_expr_type_identifier:
-            ic_expr_identifier_print(&(expr->u.id));
+            ic_expr_identifier_print(&(expr->u.id), indent_level);
             break;
 
         case ic_expr_type_constant:
-            ic_expr_constant_print(&(expr->u.cons));
+            ic_expr_constant_print(&(expr->u.cons), indent_level);
             break;
 
         case ic_expr_type_operator:
-            ic_expr_operator_print(&(expr->u.op));
+            ic_expr_operator_print(&(expr->u.op), indent_level);
             break;
 
         default:

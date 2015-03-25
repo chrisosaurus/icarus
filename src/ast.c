@@ -107,6 +107,11 @@ void ic_ast_print(struct ic_ast *ast){
     /* current decl */
     struct ic_decl *decl = 0;
 
+    /* current indent level
+     * this is passed through the chain of print functions
+     */
+    unsigned int indent_level = 0;
+
     if( ! ast ){
         puts("ic_ast_print: ast was null");
         return ;
@@ -125,7 +130,7 @@ void ic_ast_print(struct ic_ast *ast){
         }
 
         /* call print on it*/
-        ic_decl_print(decl);
+        ic_decl_print(decl, &indent_level);
 
         /* pad with newlines between them
          * unless we are the last item
