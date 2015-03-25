@@ -78,7 +78,7 @@ Hidden in the output we see the lexer output:
 
     lexer output:
     ----------------
-    type Foo a :: Int b :: String end function d ( i :: Int ) print ( i ) end function d ( s :: String ) print ( s ) end function d ( f :: Foo ) end function main ( ) let f :: Foo = Foo ( "hello" ) d ( f ) end 
+    type Foo a :: Int b :: String end function d ( i :: Int ) print ( i ) end function d ( s :: String ) print ( s ) end function d ( f :: Foo ) end function main ( ) let f :: Foo = Foo ( 1 "hello" ) d ( f ) end 
     ----------------
 
 Hidden elsewhere in the output we can see the parser reconstructing the program from it's current understanding (the current parser implementation is only partial):
@@ -102,7 +102,7 @@ Hidden elsewhere in the output we can see the parser reconstructing the program 
     end
 
     function main()
-        let f::Foo = Foo("hello")
+        let f::Foo = Foo(1 "hello")
         d(f)
     end
     ----------------
