@@ -4,6 +4,10 @@ type Foo
     b::String
 end
 
+function d(s::String)
+    print(s)
+end
+
 # entry point for program
 function main()
     let f::Foo = Foo("hello")

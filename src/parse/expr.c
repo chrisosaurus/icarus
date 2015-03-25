@@ -103,7 +103,12 @@ static struct ic_expr * ic_parse_expr_fcall(struct ic_tokens *tokens, unsigned i
  * returns 0 on failure
  */
 static struct ic_expr * ic_parse_expr_identifier(struct ic_tokens *tokens, unsigned int *i){
+    /* our final return expr */
     struct ic_expr * expr = 0;
+    /* pointer to our internal id */
+    struct ic_expr_identifier *id = 0;
+    /* dist of our identifier */
+    unsigned int dist = 0;
 
     if( ! tokens ){
         puts("ic_parse_expr_identifier: tokens was null");
@@ -114,8 +119,38 @@ static struct ic_expr * ic_parse_expr_identifier(struct ic_tokens *tokens, unsig
         return 0;
     }
 
-    puts("ic_parse_expr_identifier: unimplemented");
-    return 0;
+    /* build our new expr */
+    expr = ic_expr_new(ic_expr_type_identifier);
+    if( ! expr ){
+        puts("ic_parse_expr_identifier: call to ic_expr_new failed");
+        return 0;
+    }
+
+    /* fetch our internal id */
+    id = ic_expr_get_identifier(expr);
+    if( ! id ){
+        puts("ic_parse_expr_identifier: call to ic_expr_get_identifier failed");
+        return 0;
+    }
+
+    /* find the distance for our token */
+    dist = ic_parse_token_length(tokens->tokens, *i);
+    if( ! dist ){
+        puts("ic_parse_expr_identifier: call to ic_parse_token_length failed");
+        return 0;
+    }
+
+    /* initialise our id */
+    if( ic_expr_identifier_init(id, &(tokens->tokens[*i]), dist) ){
+        puts("ic_parse_expr_identifier: call to ic_expr_identifier_init failed");
+        return 0;
+    }
+
+    /* advance past identifier */
+    ic_parse_token_advance(i, dist);
+
+    /* victory */
+    return expr;
 }
 
 /* consume token and make a string
