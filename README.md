@@ -43,7 +43,6 @@ Work so far
 
 We have the contents of `example/simple.ic`:
 
-    # user defined type with 2 fields, an Int and a String
     type Foo
         a::Int
         b::String
@@ -66,9 +65,7 @@ We have the contents of `example/simple.ic`:
 
     # entry point for program
     function main()
-        # parser does not yet support numbers
-        #let f::Foo = Foo(1 "hello")
-        let f::Foo = Foo("hello")
+        let f::Foo = Foo(1 "hello")
 
         d(f)
     end

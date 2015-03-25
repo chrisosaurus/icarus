@@ -1,4 +1,7 @@
 #include <stdio.h> /* puts */
+#include <stdlib.h> /* strtol */
+#include <errno.h> /* errno */
+#include <limits.h> /* LONG_MIN, LONG_MAX */
 
 #include "../parse.h"
 
@@ -255,7 +258,18 @@ static struct ic_expr * ic_parse_expr_constant_string(struct ic_tokens *tokens, 
  * returns 0 on failure
  */
 static struct ic_expr * ic_parse_expr_constant_integer(struct ic_tokens *tokens, unsigned int *i){
+    /* our eventual return value */
     struct ic_expr * expr = 0;
+    /* iterator through string to check all characters are numeric */
+    unsigned int iter = 0;
+    /* distance of token */
+    unsigned int dist = 0;
+    /* our constant */
+    struct ic_expr_constant *cons = 0;
+    /* pointer to our integer value */
+    long int *integer = 0;
+    /* end pointer from strtol */
+    char *endptr;
 
     if( ! tokens ){
         puts("ic_parse_expr_constant_integer: tokens was null");
@@ -266,8 +280,103 @@ static struct ic_expr * ic_parse_expr_constant_integer(struct ic_tokens *tokens,
         return 0;
     }
 
-    puts("ic_parse_expr_constant_integer: unimplemented");
-    return 0;
+    /* build our return expr */
+    expr = ic_expr_new(ic_expr_type_constant);
+    if( ! expr ){
+        puts("ic_parse_expr_constant_integer: call to ic_expr_new failed");
+        return 0;
+    }
+
+    /* unpack our constant */
+    cons = ic_expr_get_constant(expr);
+    if( ! cons ){
+        puts("ic_parse_expr_constant_integer: call to ic_expr_get_constant failed");
+        return 0;
+    }
+
+    /* initialise our constant */
+    if( ic_expr_constant_init(cons, ic_expr_constant_type_integer) ){
+        puts("ic_parse_expr_constant_integer: call to ic_expr_constant_init failed");
+        return 0;
+    }
+
+    /* get out our ic_integer */
+    integer = ic_expr_constant_get_integer(cons);
+    if( ! integer ){
+        puts("ic_parse_expr_constant_integer: call to ic_expr_constant_get_integer failed");
+        return 0;
+    }
+
+    /* get distance */
+    dist = ic_parse_token_length(tokens->tokens, *i);
+    if( ! dist ){
+        puts("ic_parse_expr_constant_integer: call to ic_parse_token_length failed");
+        return 0;
+    }
+
+    /* iterate through and check all characters are numeric */
+    for( iter=0; iter<dist; ++iter ){
+        switch( tokens->tokens[*i + iter] ){
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                /* valid integer, continue */
+                break;
+            default:
+                /* invalid character found, bail */
+                printf("ic_parse_expr_constant_integer: invalid integer found '%c'\n",
+                       tokens->tokens[*i + iter]);
+                return 0;
+                break;
+        }
+    }
+
+    /* set error value to clear */
+    errno = 0;
+
+    /* strtol */
+    *integer = strtol(&(tokens->tokens[*i]), &endptr, 10);
+
+    /* check the strtol was a success */
+    if( errno == ERANGE ){
+        puts("ic_parse_expr_constant_integer: call to strtol failed");
+        if( *integer == LONG_MIN ){
+            puts("-> underflow occured");
+        } else if( *integer == LONG_MAX){
+            puts("-> overflow occured");
+        } else {
+            puts("-> unknown ERANGE occured");
+        }
+        perror("strtol");
+        return 0;
+    }
+
+    if( errno != 0 && *integer == 0 ){
+        puts("ic_parse_expr_constant_integer: call to strtol failed, unknown error");
+        perror("strtol");
+        return 0;
+    }
+
+    /* check endptr */
+    if( &(tokens->tokens[*i + dist]) != endptr ){
+        printf("ic_parse_expr_constant_integer: endptr ('%c') was not as expected ('%c')\n",
+               *endptr,
+               tokens->tokens[*i + dist]);
+        return 0;
+    }
+
+    /* skip over token */
+    ic_parse_token_advance(i, dist);
+
+    /* victory */
+    return expr;
 }
 
 

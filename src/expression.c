@@ -275,7 +275,7 @@ long int * ic_expr_constant_get_integer(struct ic_expr_constant *constant){
     }
 
     /* check type before handing out pointer */
-    if( constant->type != ic_expr_constant_type_int ){
+    if( constant->type != ic_expr_constant_type_integer ){
         puts("ic_expr_constant_get_integer: not an integer");
         return 0;
     }
@@ -339,7 +339,7 @@ void ic_expr_constant_print(struct ic_expr_constant *constant, unsigned int *ind
             printf("\"%s\"", ic_string_contents(string));
             break;
 
-        case ic_expr_constant_type_int:
+        case ic_expr_constant_type_integer:
             /* print indent */
             ic_parse_print_indent(*indent_level);
 

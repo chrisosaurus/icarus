@@ -21,9 +21,7 @@ end
 
 # entry point for program
 function main()
-    # parser does not yet support numbers
-    #let f::Foo = Foo(1 "hello")
-    let f::Foo = Foo("hello")
+    let f::Foo = Foo(1 "hello")
 
     d(f)
 end

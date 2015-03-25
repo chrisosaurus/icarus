@@ -76,7 +76,7 @@ unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, cha
 void ic_expr_identifier_print(struct ic_expr_identifier * identifier, unsigned int *indent_level);
 
 enum ic_expr_constant_type {
-    ic_expr_constant_type_int,
+    ic_expr_constant_type_integer,
     ic_expr_constant_type_string
 };
 
