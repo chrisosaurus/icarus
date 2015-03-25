@@ -313,8 +313,8 @@ void ic_expr_constant_print(struct ic_expr_constant *constant){
                 return;
             }
 
-            /* print out the backing string */
-            printf("%s", ic_string_contents(string));
+            /* print out the backing string surrounded by double quotes */
+            printf("\"%s\"", ic_string_contents(string));
             break;
 
         case ic_expr_constant_type_int:
