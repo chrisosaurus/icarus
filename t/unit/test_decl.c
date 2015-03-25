@@ -9,6 +9,8 @@ int main(void){
     struct ic_decl *decl = 0;
     struct ic_type_decl *tdecl = 0;
     struct ic_func_decl *fdecl = 0;
+    /* fake indent level */
+    unsigned int fake_indent = 0;
 
 
     /* test type decl */
@@ -35,7 +37,7 @@ int main(void){
     printf("Expected:\ntype Foo\n  bar::Baz\nend\n");
     /* print it out */
     puts("Output:");
-    ic_decl_print(decl);
+    ic_decl_print(decl, &fake_indent);
 
 
     puts("");
@@ -65,7 +67,7 @@ int main(void){
     printf("Expected:\nfunction Foo(bar::Baz)\n  #function bodies not yet implemeneted\nend\n");
     /* print it out */
     puts("Output:");
-    ic_decl_print(decl);
+    ic_decl_print(decl, &fake_indent);
 
 
     return 0;

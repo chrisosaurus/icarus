@@ -8,6 +8,8 @@ int main(void){
     struct ic_field *field = 0;
     struct ic_type_decl *tdecl = 0;
     struct ic_ast *ast;
+    /* fake indent level */
+    unsigned int fake_indent = 0;
 
 
     /* test type_decl */
@@ -35,7 +37,7 @@ int main(void){
     printf("Should see:\ntype Foo\n  a::Int\n  b::String\nend\n");
 
     /* output type */
-    ic_type_decl_print(tdecl);
+    ic_type_decl_print(tdecl, &fake_indent);
 
 
     /* test ast itself */

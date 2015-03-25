@@ -7,6 +7,8 @@
 int main(void){
     struct ic_field *field = 0;
     struct ic_type_decl *tdecl = 0;
+    /* fake indent level */
+    unsigned int fake_indent = 0;
 
 
     /* test type_decl */
@@ -35,7 +37,7 @@ int main(void){
 
     /* output type */
     puts("Output:");
-    ic_type_decl_print(tdecl);
+    ic_type_decl_print(tdecl, &fake_indent);
 
     return 0;
 }
