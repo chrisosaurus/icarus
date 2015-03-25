@@ -5,7 +5,6 @@ TODO:
 * test ic_expr_*
 * test ic_stmt_*
 * test ic_body_*
-* need to work on ic constant print
 * document parse function interfaces
 * write remaining parse code
 * parse_expr *

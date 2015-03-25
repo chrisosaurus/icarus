@@ -294,8 +294,45 @@ struct ic_string * ic_expr_constant_get_string(struct ic_expr_constant *constant
 
 /* print this constant */
 void ic_expr_constant_print(struct ic_expr_constant *constant){
-    /* FIXME */
-    puts("ic_expr_constant_print: currently unsupported");
+    /* pointer to string if we need it */
+    struct ic_string *string = 0;
+    /* pointer to long int if we need it */
+    long int *integer = 0;
+
+    if( ! constant ){
+        puts("ic_expr_constant_print: constant was null");
+        return;
+    }
+
+    switch( constant->type ){
+        case ic_expr_constant_type_string:
+            /* pull out our string */
+            string = ic_expr_constant_get_string(constant);
+            if( ! string ){
+                puts("ic_expr_constant_print: call to ic_expr_constant_get_string failed");
+                return;
+            }
+
+            /* print out the backing string */
+            printf("%s", ic_string_contents(string));
+            break;
+
+        case ic_expr_constant_type_int:
+            /* pull out our integer */
+            integer = ic_expr_constant_get_integer(constant);
+            if( ! integer ){
+                puts("ic_expr_constant_print: call to ic_expr_constant_get_integer failed");
+                return;
+            }
+
+            /* print out long integer */
+            printf("%ld", *integer);
+            break;
+
+        default:
+            puts("ic_expr_constant_print: unsupported type");
+            break;
+    }
 }
 
 
