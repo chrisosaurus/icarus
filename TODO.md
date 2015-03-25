@@ -13,4 +13,5 @@ TODO:
 * bring example/simple.ic back to it's former glory
 * implement number parsing
 * implement operator parsing
+* need to check for operator before dispatching to string or number (say "hello" + or 1 " )
 
