@@ -14,9 +14,8 @@ end
 
 # break apart a Foo and call d on each field
 function d(f::Foo)
-    # commenting out as parser does not yet support operators
-    #d(f.a)
-    #d(f.b)
+    d(f.a)
+    d(f.b)
 end
 
 # entry point for program
@@ -25,3 +24,4 @@ function main()
 
     d(f)
 end
+
