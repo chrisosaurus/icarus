@@ -11,5 +11,4 @@ TODO:
 * add escaping support to lexing string (escaping " with \)
 * bring example/simple.ic back to it's former glory
 * implement operator parsing
-* need to check for operator before dispatching to string or number (say "hello" + or 1 " )
 

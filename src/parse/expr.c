@@ -389,6 +389,41 @@ static struct ic_expr * ic_parse_expr_operator(struct ic_tokens *tokens, unsigne
     return 0;
 }
 
+/* used to parse an expression that is not made up off more than one token:
+ *  number
+ *  string
+ *  identifier
+ *
+ * this is useful if we know the next thing is say an operator but we want
+ * to constraint parsing up until it
+ */
+static struct ic_expr * ic_parse_expr_single_token(struct ic_tokens *tokens, unsigned int *i){
+    if( ! tokens ){
+        puts("ic_parse_expr_single_token: tokens was null");
+        return 0;
+    }
+    if( ! i ){
+        puts("ic_parse_expr_single_token: i was null");
+        return 0;
+    }
+
+    /* rules:
+     *  we see a " token -> string value
+     *  we see a number as the first char -> int value
+     *  else -> identifier
+     */
+
+    if( ic_parse_stringish(tokens, i) ){
+        return ic_parse_expr_constant_string(tokens, i);
+    }
+
+    if( ic_parse_numberish(tokens, i) ){
+        return ic_parse_expr_constant_integer(tokens, i);
+    }
+    /* otherwise assume this is just an identifier */
+    return ic_parse_expr_identifier(tokens, i);
+}
+
 struct ic_expr * ic_parse_expr(struct ic_tokens *tokens, unsigned int *i){
     /* pointer used to peek at start of next token */
     char *next = 0;
@@ -422,15 +457,14 @@ struct ic_expr * ic_parse_expr(struct ic_tokens *tokens, unsigned int *i){
      *      {+ - * ...} -> operator
      *      else -> identifier
      */
-    if( ic_parse_stringish(tokens, i) ){
-        puts("ic_parse_expr: calling string");
-        return ic_parse_expr_constant_string(tokens, i);
-    }
 
-    if( ic_parse_numberish(tokens, i) ){
-        puts("ic_parse_expr: calling number");
-        return ic_parse_expr_constant_integer(tokens, i);
-    }
+    /* rules:
+     *  peek at next token and check for
+     *  ( -> function call
+     *  operator -> operator
+     *
+     * otherwise call single token
+     */
 
     next = ic_parse_peek_next(tokens, i);
     if( ! next ){
@@ -448,13 +482,7 @@ struct ic_expr * ic_parse_expr(struct ic_tokens *tokens, unsigned int *i){
     printf("context : '%s'\n", next);
 #endif
 
-    /* basic support for operators
-     * this will only support:
-     *  identifier operator ...
-     * as any numbers or strings are caught above
-     *
-     * FIXME reconsider this
-     */
+    /* if we see an operator then go for it */
     if( ic_parse_operatorish(next) ){
         return ic_parse_expr_operator(tokens, i);
     }
@@ -464,7 +492,7 @@ struct ic_expr * ic_parse_expr(struct ic_tokens *tokens, unsigned int *i){
         return ic_parse_expr_fcall(tokens, i);
     }
 
-    /* otherwise assume this is just an identifier */
-    return ic_parse_expr_identifier(tokens, i);
+    /* otherwise default to next token */
+    return ic_parse_expr_single_token(tokens, i);
 }
 
