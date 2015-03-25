@@ -70,22 +70,27 @@ unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, char *name,
 
 /* add a new argument to this function call
  *
- * returns offset of arg on success
- * returns -1 on failure
+ * returns 0 on success
+ * returns 1 on error
  */
 int ic_expr_func_call_add_arg(struct ic_expr_func_call *fcall, struct ic_expr *expr){
 
     if( ! fcall ){
         puts("ic_expr_func_call_add_arg: fcall was null");
-        return -1;
+        return 0;
     }
     if( ! expr ){
         puts("ic_expr_func_call_add_arg: field was null");
-        return -1;
+        return 0;
     }
 
     /* let pvector do al the work */
-    return ic_pvector_append( &(fcall->args), expr );
+    if( ic_pvector_append( &(fcall->args), expr ) == -1 ){
+        puts("ic_expr_func_call_add_arg: call to ic_pvector_append failed");
+        return 1;
+    }
+
+    return 0;
 }
 
 /* get argument
@@ -158,6 +163,11 @@ void ic_expr_func_call_print(struct ic_expr_func_call *fcall, unsigned int *inde
         }
 
         ic_expr_print(arg, &fake_indent);
+
+        /* if we are not the last argument then print a space */
+        if( i < (len - 1) ){
+            fputs(" ", stdout);
+        }
     }
 
     /* closing bracket */

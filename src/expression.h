@@ -32,8 +32,8 @@ unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, char *name,
 
 /* add a new argument to this function call
  *
- * returns offset of arg on success
- * returns -1 on failure
+ * returns 0 on success
+ * returns 1 on error
  */
 int ic_expr_func_call_add_arg(struct ic_expr_func_call *fcall, struct ic_expr *expr);
 
