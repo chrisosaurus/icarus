@@ -26,14 +26,14 @@ union Container
     f::Foo
 end
 
-function bar(c::Container)
+function bar(&c::Container)
     # unwrap Container and perform action based on type
     # compiler to enforce that *all* possible types are handled
     # compiler also enforces that any 'unwrapping' is safe
     switch c
         case Int
             # can only unwrap c.i as we know we must be an Int
-            c.i += 14
+            &c.i += 14
         end
         case String
             # can only unwrap c.s as we know we must be a String
