@@ -456,24 +456,15 @@ struct ic_expr * ic_parse_expr(struct ic_tokens *tokens, unsigned int *i){
      * FIXME reconsider this
      */
     if( ic_parse_operatorish(next) ){
-#ifdef DEBUG_PARSE_EXPR
-        puts("ic_parse_expr: calling operator");
-#endif
         return ic_parse_expr_operator(tokens, i);
     }
 
     /* if we see an open bracket this is a function call */
     if( *next == '(' ){
-#ifdef DEBUG_PARSE_EXPR
-        puts("ic_parse_expr: calling fcall");
-#endif
         return ic_parse_expr_fcall(tokens, i);
     }
 
     /* otherwise assume this is just an identifier */
-#ifdef DEBUG_PARSE_EXPR
-    puts("ic_parse_expr: calling identifier");
-#endif
     return ic_parse_expr_identifier(tokens, i);
 }
 
