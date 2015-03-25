@@ -379,16 +379,6 @@ static struct ic_expr * ic_parse_expr_constant_integer(struct ic_tokens *tokens,
     return expr;
 }
 
-
-/* consume token
- * returns ic_expr* on success
- * returns 0 on failure
- */
-static struct ic_expr * ic_parse_expr_operator(struct ic_tokens *tokens, unsigned int *i){
-    puts("ic_parse_expr_operator: unimplemented");
-    return 0;
-}
-
 /* used to parse an expression that is not made up off more than one token:
  *  number
  *  string
@@ -422,6 +412,88 @@ static struct ic_expr * ic_parse_expr_single_token(struct ic_tokens *tokens, uns
     }
     /* otherwise assume this is just an identifier */
     return ic_parse_expr_identifier(tokens, i);
+}
+
+/* consume token
+ * returns ic_expr* on success
+ * returns 0 on failure
+ */
+static struct ic_expr * ic_parse_expr_operator(struct ic_tokens *tokens, unsigned int *i){
+    /* our eventual return value */
+    struct ic_expr *expr = 0;
+    /* our internal operator */
+    struct ic_expr_operator *operator = 0;
+
+    /* an operator is made up of
+     *  single-token operator expr
+     */
+    /* our left child */
+    struct ic_expr *left = 0;
+    /* our operator char* and len */
+    char *op_start = 0;
+    unsigned int op_len = 0;
+    /* our right child */
+    struct ic_expr *right = 0;
+
+    if( ! tokens ){
+        puts("ic_parse_expr_operator: tokens was null");
+        return 0;
+    }
+    if( ! i ){
+        puts("ic_parse_expr_operator: i was null");
+        return 0;
+    }
+
+    /* build our new expr */
+    expr = ic_expr_new(ic_expr_type_operator);
+    if( ! expr ){
+        puts("ic_parse_expr_operator: call to ic_expr_new failed");
+        return 0;
+    }
+
+    /* fetch our internal operator */
+    operator = ic_expr_get_operator(expr);
+    if( ! operator ){
+        puts("ic_parse_expr_operator: call to ic_expr_get_operator failed");
+        return 0;
+    }
+
+    /* grab our left token */
+    left = ic_parse_expr_single_token(tokens, i);
+    if( ! left ){
+        puts("ic_parse_expr_operator: left call to ic_parse_expr_single_token failed");
+        return 0;
+    }
+
+    /* op handling */
+    op_start = &(tokens->tokens[*i]);
+    op_len = ic_parse_token_length(tokens->tokens, *i);
+    if( ! op_len ){
+        puts("ic_parse_expr_operator: op call to ic_parse_token_length failed");
+        return 0;
+    }
+
+    /* skip past operator */
+    ic_parse_token_advance(i, op_len);
+
+    /* our right expr can be more complex */
+    right = ic_parse_expr(tokens, i);
+    if( ! right ){
+        puts("ic_parse_expr_operator: right call to ic_parse_exprfailed");
+        return 0;
+    }
+
+    /* initialise our operator */
+    if( ic_expr_operator_init(operator, left, right, op_start, op_len) ){
+        puts("ic_parse_expr_operator: call to ic_expr_operator_init failed");
+        return 0;    /* an operator is made up of
+     *  single-token operator expr
+     */
+
+
+    }
+
+    return expr;
 }
 
 struct ic_expr * ic_parse_expr(struct ic_tokens *tokens, unsigned int *i){
