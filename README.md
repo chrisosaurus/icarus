@@ -59,13 +59,16 @@ We have the contents of `example/simple.ic`:
 
     # break apart a Foo and call d on each field
     function d(f::Foo)
-        d(f.a)
-        d(f.b)
+        # commenting out as parser does not yet support operators
+        #d(f.a)
+        #d(f.b)
     end
 
     # entry point for program
     function main()
-        let f::Foo = Foo(1 "hello")
+        # parser does not yet support numbers
+        #let f::Foo = Foo(1 "hello")
+        let f::Foo = Foo("hello")
 
         d(f)
     end
