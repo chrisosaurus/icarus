@@ -81,7 +81,7 @@ Hidden in the output we see the lexer output:
     type Foo a :: Int b :: String end function d ( i :: Int ) print ( i ) end function d ( s :: String ) print ( s ) end function d ( f :: Foo ) d ( f . a ) d ( f . b ) end function main ( ) let f :: Foo = Foo ( 1 "hello" ) d ( f ) end 
     ----------------
 
-Hidden elsewhere in the output we can see the parser reconstructing the program from it's current understanding (notice the current lack of function bodies):
+Hidden elsewhere in the output we can see the parser reconstructing the program from it's current understanding (the current parser implementation is only partial):
 
     parser output:
     ----------------
@@ -91,11 +91,11 @@ Hidden elsewhere in the output we can see the parser reconstructing the program 
     end
 
     function d(i::Int)
-      # no function body found
+    print(i)
     end
 
     function d(s::String)
-      # no function body found
+    print(s)
     end
 
     function d(f::Foo)
@@ -103,7 +103,7 @@ Hidden elsewhere in the output we can see the parser reconstructing the program 
     end
 
     function main()
-      # no function body found
+    let f::Foo = Foo("hello")
+    d(f)
     end
     ----------------
-
