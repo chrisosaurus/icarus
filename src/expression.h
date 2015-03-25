@@ -86,7 +86,7 @@ enum ic_expr_constant_type {
 struct ic_expr_constant {
     enum ic_expr_constant_type type;
     union {
-        int integer;
+        long int integer;
         struct ic_string string;
     } u;
 };
@@ -110,7 +110,7 @@ int ic_expr_constant_init(struct ic_expr_constant *constant, enum ic_expr_consta
  * returns pointers on success
  * returns 0 on failure
  */
-int * ic_expr_constant_get_integer(struct ic_expr_constant *constant);
+long int * ic_expr_constant_get_integer(struct ic_expr_constant *constant);
 
 /* return pointer to ic_string within,
  * will only succeed if constant is of the correct type

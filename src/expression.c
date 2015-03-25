@@ -253,7 +253,7 @@ int ic_expr_constant_init(struct ic_expr_constant *constant, enum ic_expr_consta
  * returns pointers on success
  * returns 0 on failure
  */
-int * ic_expr_constant_get_integer(struct ic_expr_constant *constant){
+long int * ic_expr_constant_get_integer(struct ic_expr_constant *constant){
     if( ! constant ){
         puts("ic_expr_constant_get_integer: constant was null");
         return 0;
