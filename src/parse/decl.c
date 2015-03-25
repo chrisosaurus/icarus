@@ -147,6 +147,8 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
     struct ic_func_decl *fdecl = 0;
     /* return of this_is_not_the_end */
     int ret  = 0;
+    /* pointer used for each stmt within body */
+    struct ic_stmt *stmt = 0;
 
 #ifdef DEBUG_PARSE
     puts("ic_parse_func_decl called");
@@ -185,6 +187,7 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
 
     /* get our function name dist */
     dist = ic_parse_token_length(tokens->tokens, *i);
+
     /* initialise our fdecl */
     if( ic_func_decl_init(fdecl, &(tokens->tokens[*i]), dist) ){
         puts("ic_parse_func_decl: call to ic_func_decl_init failed");
@@ -247,7 +250,7 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
     ic_parse_token_advance(i, dist);
 
 
-    /* FIXME parse body */
+    /* parse body */
 
     /* iterate through all tokens
      * until `end`
@@ -261,10 +264,19 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
                 &(tokens->tokens[*i]) );
 #endif
 
-        /* FIXME
-         * for now we just skip merrily over function body
-         */
-        ic_parse_token_advance(i, dist);
+        /* leave stmt parsing up to the experts */
+        stmt = ic_parse_stmt(tokens, i);
+        if( ! stmt ){
+            puts("ic_parse_func_decl: call to ic_parse_stmt failed");
+            return 0;
+        }
+
+        /* save to our body */
+        if( ic_func_decl_add_stmt(fdecl, stmt) ){
+            puts("ic_parse_func_decl: call to ic_func_call_add_stmt failed");
+            return 0;
+        }
+
     }
 
     /* if ret is 0 then we found an `end` token */

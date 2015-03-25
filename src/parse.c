@@ -439,7 +439,7 @@ char * ic_parse_peek_next(struct ic_tokens *tokens, unsigned int *i){
     }
 
     /* plus 1 to get past space */
-    offset = dist + 1;
+    offset = *i + dist + 1;
 
     /* check we are still within bounds */
     if( offset >= tokens->len ){

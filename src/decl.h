@@ -33,6 +33,13 @@ unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned 
  */
 unsigned int ic_func_decl_add_arg(struct ic_func_decl *fdecl, struct ic_field *field);
 
+/* add new stmt to the body
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+unsigned int ic_func_decl_add_stmt(struct ic_func_decl *fdecl, struct ic_stmt *stmt);
+
 /* print func_decl */
 void ic_func_decl_print(struct ic_func_decl *fdecl);
 

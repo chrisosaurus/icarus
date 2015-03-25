@@ -64,6 +64,12 @@ unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned 
         return 1;
     }
 
+    /* initialise our empty body */
+    if( ic_body_init( &(fdecl->body) ) ){
+        puts("ic_func_decl_init: call to ic_body_init failed");
+        return 1;
+    }
+
     return 0;
 }
 
@@ -88,6 +94,30 @@ unsigned int ic_func_decl_add_arg(struct ic_func_decl *fdecl, struct ic_field *f
      */
     if( ic_pvector_append( &(fdecl->args), field ) == -1 ){
         puts("ic_func_decl_add_arg: call to ic_pvector_append failed");
+        return 1;
+    }
+
+    return 0;
+}
+
+/* add new stmt to the body
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+unsigned int ic_func_decl_add_stmt(struct ic_func_decl *fdecl, struct ic_stmt *stmt){
+    if( ! fdecl ){
+        puts("ic_func_decl_add_stmt: fdecl was null");
+        return 1;
+    }
+    if( ! stmt ){
+        puts("ic_func_decl_add_stmt: stmt was null");
+        return 1;
+    }
+
+    /* add our element */
+    if( ic_body_append( &(fdecl->body), stmt ) == -1 ){
+        puts("ic_func_decl_add_stmt: call to ic_body_append failed");
         return 1;
     }
 

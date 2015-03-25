@@ -14,6 +14,10 @@
 /* ignore unused variables that are set */
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 
+#ifndef DEBUG_PARSE_EXPR
+#define DEBUG_PARSE_EXPR
+#endif
+
 /* current supported expression types:
  *  func call
  *  identifier
@@ -63,16 +67,29 @@ static struct ic_expr * ic_parse_expr_fcall(struct ic_tokens *tokens, unsigned i
         return 0;
     }
 
+    /* skip over function name */
+    ic_parse_token_advance(i, dist);
+
+    /* skip over opening ( */
+    if( ic_parse_check_token("(", 1, tokens->tokens, i) ){
+        puts("ic_parse_expr_fcall: failed to find opening bracket '('");
+        return 0;
+    }
+
     /* keep consuming arguments until we see the closing ) */
-    while( ! ic_parse_check_token(")", 1, tokens->tokens, i) ){
+    while( ic_parse_check_token(")", 1, tokens->tokens, i) ){
         /* parse this argument */
         arg = ic_parse_expr(tokens, i);
         if( ! arg ){
             puts("ic_parse_expr_fcall: parsing arg error, call to ic_parse_expr failed");
+            return 0;
         }
 
         /* store it inside our function */
-        ic_expr_func_call_add_arg( &(expr->u.fcall), arg );
+        if( ic_expr_func_call_add_arg( &(expr->u.fcall), arg ) ){
+            puts("ic_parse_expr_fcall: call to ic_expr_func_call_add_arg failed");
+            return 0;
+        }
     }
 
     /* ic_parse_check_token will skip over the closing ) for us */
@@ -168,10 +185,15 @@ static struct ic_expr * ic_parse_expr_constant_string(struct ic_tokens *tokens, 
     /* record our starting value */
     start = &(tokens->tokens[*i]);
 
+    printf("parse_string looking at '%s'\n'", &(tokens->tokens[*i + length]));
+
     /* find length of string
      * FIXME naive
      */
     for( length=0; tokens->tokens[*i + length] != '"'; ++length ) ;
+
+    /* skip over string */
+    *i += length;
 
     /* also skip over closing " */
     ++ *i;
@@ -187,6 +209,7 @@ static struct ic_expr * ic_parse_expr_constant_string(struct ic_tokens *tokens, 
         puts("ic_parse_expr_constant_string: call to ic_string_init failed");
         return 0;
     }
+
 
     /* victory */
     return expr;
@@ -226,6 +249,11 @@ struct ic_expr * ic_parse_expr(struct ic_tokens *tokens, unsigned int *i){
     /* pointer used to peek at start of next token */
     char *next = 0;
 
+#ifdef DEBUG_PARSE_EXPR
+    /* used for debugging */
+    unsigned int dist = 0;
+#endif
+
     if( ! tokens ){
         puts("ic_parse_expr: tokens was null");
         return 0;
@@ -234,6 +262,12 @@ struct ic_expr * ic_parse_expr(struct ic_tokens *tokens, unsigned int *i){
         puts("ic_parse_expr: i was null");
         return 0;
     }
+
+#ifdef DEBUG_PARSE_EXPR
+    dist = ic_parse_token_length(tokens->tokens, *i);
+    printf("\nic_parse_expr: considering token '%.*s'\n", dist, &(tokens->tokens[*i]));
+    printf("context : '%s'\n", &(tokens->tokens[*i]));
+#endif
 
     /* rules
      *
@@ -245,10 +279,12 @@ struct ic_expr * ic_parse_expr(struct ic_tokens *tokens, unsigned int *i){
      *      else -> identifier
      */
     if( ic_parse_stringish(tokens, i) ){
+        puts("ic_parse_expr: calling string");
         return ic_parse_expr_constant_string(tokens, i);
     }
 
     if( ic_parse_numberish(tokens, i) ){
+        puts("ic_parse_expr: calling number");
         return ic_parse_expr_constant_integer(tokens, i);
     }
 
@@ -263,6 +299,11 @@ struct ic_expr * ic_parse_expr(struct ic_tokens *tokens, unsigned int *i){
         return 0;
     }
 
+#ifdef DEBUG_PARSE_EXPR
+    printf("ic_parse_expr: peeking at next token '%c'\n", *next);
+    printf("context : '%s'\n", next);
+#endif
+
     /* basic support for operators
      * this will only support:
      *  identifier operator ...
@@ -271,15 +312,24 @@ struct ic_expr * ic_parse_expr(struct ic_tokens *tokens, unsigned int *i){
      * FIXME reconsider this
      */
     if( ic_parse_operatorish(next) ){
+#ifdef DEBUG_PARSE_EXPR
+        puts("ic_parse_expr: calling operator");
+#endif
         return ic_parse_expr_operator(tokens, i);
     }
 
     /* if we see an open bracket this is a function call */
     if( *next == '(' ){
+#ifdef DEBUG_PARSE_EXPR
+        puts("ic_parse_expr: calling fcall");
+#endif
         return ic_parse_expr_fcall(tokens, i);
     }
 
     /* otherwise assume this is just an identifier */
+#ifdef DEBUG_PARSE_EXPR
+    puts("ic_parse_expr: calling identifier");
+#endif
     return ic_parse_expr_identifier(tokens, i);
 }
 
