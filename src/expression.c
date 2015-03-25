@@ -475,7 +475,9 @@ void ic_expr_operator_print(struct ic_expr_operator *op, unsigned int *indent_le
      *  left op right
      */
     ic_expr_print(op->lexpr, &fake_indent);
+    fputs(" ", stdout);
     ic_symbol_print(&(op->op));
+    fputs(" ", stdout);
     ic_expr_print(op->rexpr, &fake_indent);
 }
 
