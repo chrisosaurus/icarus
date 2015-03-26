@@ -9,16 +9,16 @@ type Foo
     b::Int
     c::String
 
-    function Foo(s::String)
-        return new(1 2 s)
+    fn Foo(s::String) -> Foo
+        return Foo(1 2 s)
     end
 
-    function Foo(i::Int s::String)
-        return new (i 2 s)
+    fn Foo(i::Int s::String) -> Foo
+        return Foo(i 2 s)
     end
 end
 
-function main()
+fn main()
     # we now have 3 constructors on Foo
 
     # the default 3 arg
