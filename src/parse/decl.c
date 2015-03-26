@@ -161,8 +161,9 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
 
     /* check we really are at a `function` token */
     dist = ic_parse_token_length(tokens->tokens, *i);
-    if( dist != 8 || strncmp("function", &(tokens->tokens[*i]), 4) ){
-        printf("ic_parse_func_decl: expected 'function', encountered '%.*s'\n",
+    if( (dist != 8 || strncmp("function", &(tokens->tokens[*i]), 8)) &&
+        (dist != 2 || strncmp("fn",       &(tokens->tokens[*i]), 2)) ){
+        printf("ic_parse_func_decl: expected 'function' or 'fn', encountered '%.*s'\n",
                 dist,
                 &(tokens->tokens[*i]));
         return 0;

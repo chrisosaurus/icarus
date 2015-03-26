@@ -28,6 +28,7 @@ static struct ic_parse_table_entry {
     struct ic_decl * (*func)(struct ic_tokens *tokens, unsigned int *i);
 } ic_parse_table [] = {
     /* len    token       function    */
+    {  2,     "fn",       ic_parse_func_decl  },
     {  4,     "type",     ic_parse_type_decl  },
     {  4,     "enum",     ic_parse_enum_decl  },
     {  5,     "union",    ic_parse_union_decl },

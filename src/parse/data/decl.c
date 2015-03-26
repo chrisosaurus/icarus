@@ -147,7 +147,7 @@ void ic_func_decl_print(struct ic_func_decl *fdecl, unsigned int *indent_level){
     }
 
     /* print `function`, name, and opening bracket */
-    printf("function %s(", ic_symbol_contents( &(fdecl->name) ));
+    printf("fn %s(", ic_symbol_contents( &(fdecl->name) ));
 
     len = ic_pvector_length( &(fdecl->args) );
 

@@ -4,22 +4,22 @@ type Foo
     b::String
 end
 
-function d(i::Int)
+fn d(i::Int)
     print(i)
 end
 
-function d(s::String)
+fn d(s::String)
     print(s)
 end
 
 # break apart a Foo and call d on each field
-function d(f::Foo)
+fn d(f::Foo)
     d(f.a)
     d(f.b)
 end
 
 # entry point for program
-function main()
+fn main()
     let f::Foo = Foo(1 "hello")
 
     d(f)

@@ -56,22 +56,22 @@ We have the contents of `example/simple.ic`:
         b::String
     end
 
-    function d(i::Int)
+    fn d(i::Int)
         print(i)
     end
 
-    function d(s::String)
+    fn d(s::String)
         print(s)
     end
 
     # break apart a Foo and call d on each field
-    function d(f::Foo)
+    fn d(f::Foo)
         d(f.a)
         d(f.b)
     end
 
     # entry point for program
-    function main()
+    fn main()
         let f::Foo = Foo(1 "hello")
 
         d(f)
@@ -85,7 +85,7 @@ Hidden in the output we see the lexer output:
 
     lexer output:
     ----------------
-    type Foo a :: Int b :: String end function d ( i :: Int ) print ( i ) end function d ( s :: String ) print ( s ) end function d ( f :: Foo ) d ( f . a ) d ( f . b ) end function main ( ) let f :: Foo = Foo ( 1 "hello" ) d ( f ) end 
+    type Foo a :: Int b :: String end fn d ( i :: Int ) print ( i ) end fn d ( s :: String ) print ( s ) end fn d ( f :: Foo ) d ( f . a ) d ( f . b ) end fn main ( ) let f :: Foo = Foo ( 1 "hello" ) d ( f ) end 
     ----------------
 
 Hidden elsewhere in the output we can see the parser reconstructing the program from it's current understanding (the current parser implementation is only partial):
@@ -97,20 +97,20 @@ Hidden elsewhere in the output we can see the parser reconstructing the program 
         b::String
     end
 
-    function d(i::Int)
+    fn d(i::Int)
         print(i)
     end
 
-    function d(s::String)
+    fn d(s::String)
         print(s)
     end
 
-    function d(f::Foo)
+    fn d(f::Foo)
         d(f . a)
         d(f . b)
     end
 
-    function main()
+    fn main()
         let f::Foo = Foo(1 "hello")
         d(f)
     end
