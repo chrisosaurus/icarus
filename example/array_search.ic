@@ -1,0 +1,24 @@
+# need to clarify mutability rules
+
+fn main()
+  let arr = ["hello" "world" "hello" "world" "hello" "world"]
+  let ref = find_last_hello(arr)
+end
+
+fn find_last_hello(arr::Array<1,String>) -> String
+  # this means last is a mutable variable reference to an immutable string value
+  let last::String
+
+  for str in arr
+    if str == "hello"
+
+      # here we are storing an immutable reference to str in the mutable variable last
+      last = str
+
+     end
+  end
+
+  # the reference we hand back is also immutable
+  return last
+end
+
