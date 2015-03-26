@@ -1,8 +1,10 @@
-# need to clarify mutability rules
 
 fn main()
   let arr = ["hello" "world" "hello" "world" "hello" "world"]
+
   let ref = find_last_hello(arr)
+
+  # do something with (immutable reference) ref
 end
 
 fn find_last_hello(arr::Array<1,String>) -> String

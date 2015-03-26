@@ -3,22 +3,22 @@
 
 # we want to be able specify functions for converting between types
 
-type FOo
+type Foo
     a::Int
 end
 
 # this requires being able to pass a Type as a value
 # and be able to match on it for dispatch
 
-function convert(f::F00 Int) :: Int
+fn convert(f::Foo Int) :: Int
     return f.a
 end
 
-function convert(f::Foo String) :: string
+fn convert(f::Foo String) :: string
     return convert(f.a String)
 end
 
-function main()
+fn main()
     let f::Foo = Foo(14)
 
     print(convert(f String))

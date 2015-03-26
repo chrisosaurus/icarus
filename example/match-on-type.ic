@@ -26,7 +26,7 @@ union Container
     f::Foo
 end
 
-function bar(&c::Container)
+fn bar(&c::Container)
     # unwrap Container and perform action based on type
     # compiler to enforce that *all* possible types are handled
     # compiler also enforces that any 'unwrapping' is safe
