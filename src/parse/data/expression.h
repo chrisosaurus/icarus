@@ -2,8 +2,8 @@
 #define ICARUS_EXPRESSION_H
 
 #include "field.h"
-#include "symbol.h"
-#include "pvector.h"
+#include "../../data/symbol.h"
+#include "../../data/pvector.h"
 
 struct ic_expr;
 

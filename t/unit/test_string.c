@@ -1,7 +1,7 @@
 #include <string.h> /* strncmp */
 #include <assert.h> /* assert */
 
-#include "../../src/string.h"
+#include "../../src/data/string.h"
 
 int main(void){
     int i;

@@ -1,7 +1,7 @@
 #include <stdio.h> /* puts */
 
-#include "../body.h"
-#include "../parse.h"
+#include "data/body.h"
+#include "parse.h"
 
 /* ignore unused parameter warnings */
 #pragma GCC diagnostic ignored "-Wunused-parameter"

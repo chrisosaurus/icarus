@@ -2,9 +2,9 @@
 #include <stdlib.h> /* calloc */
 
 #include "statement.h"
-#include "symbol.h"
+#include "../../data/symbol.h"
 #include "body.h"
-#include "parse.h"
+#include "../parse.h"
 
 /* allocate and initialise a new let
  * does not touch init ic_expr

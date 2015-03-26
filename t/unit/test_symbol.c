@@ -1,7 +1,7 @@
 #include <string.h> /* strncmp */
 #include <assert.h> /* assert */
 
-#include "../../src/symbol.h"
+#include "../../src/data/symbol.h"
 
 int main(void){
     int i;

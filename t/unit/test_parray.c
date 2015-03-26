@@ -1,6 +1,6 @@
 #include <assert.h> /* assert */
 
-#include "../../src/parray.h"
+#include "../../src/data/parray.h"
 
 int main(void){
     int i;

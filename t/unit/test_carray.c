@@ -1,6 +1,6 @@
 #include <assert.h> /* assert */
 
-#include "../../src/carray.h"
+#include "../../src/data/carray.h"
 
 int main(void){
     int i;

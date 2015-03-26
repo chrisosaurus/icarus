@@ -1,7 +1,7 @@
 #ifndef ICARU_BODY_H
 #define ICARU_BODY_H
 
-#include "pvector.h"
+#include "../../data/pvector.h"
 
 /* predeclare ic_stmt to allow use of ic_stmt *
  * as type

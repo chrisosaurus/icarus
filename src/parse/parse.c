@@ -1,8 +1,8 @@
 #include <stdio.h> /* puts, printf */
 #include <string.h> /* strchr, strncmp */
 
-#include "lexer.h"
-#include "ast.h"
+#include "../lex/lexer.h"
+#include "data/ast.h"
 #include "parse.h"
 
 /* indent level defined as 4 spaces */

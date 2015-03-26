@@ -1,7 +1,7 @@
 #include <stdio.h> /* puts, printf */
 #include <string.h> /* strncmp */
 
-#include "../parse.h"
+#include "parse.h"
 
 struct ic_field * ic_parse_field(struct ic_tokens *tokens, unsigned int *i){
     /* the field we build and return */

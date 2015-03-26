@@ -2,8 +2,8 @@
 #include <stdlib.h> /* calloc*/
 
 #include "ast.h"
-#include "pvector.h"
-#include "symbol.h"
+#include "../../data/pvector.h"
+#include "../../data/symbol.h"
 
 /* allocate and initialise a new ast
  *

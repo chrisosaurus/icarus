@@ -2,7 +2,7 @@
 #include <stdlib.h> /* calloc */
 
 #include "body.h"
-#include "pvector.h"
+#include "../../data/pvector.h"
 #include "statement.h"
 
 /* allocate and initialise a new ic_body

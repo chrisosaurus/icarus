@@ -1,8 +1,8 @@
 #ifndef ICARUS_FIELD_H
 #define ICARUS_FIELD_H
 
-#include "symbol.h"
-#include "pvector.h"
+#include "../../data/symbol.h"
+#include "../../data/pvector.h"
 
 /* a field is a combination of a symbol and a type
  *  foo::Int

@@ -2,7 +2,7 @@
 #include <assert.h> /* assert */
 #include <stdio.h> /* printf */
 
-#include "../../src/decl.h"
+#include "../../src/parse/data/decl.h"
 
 int main(void){
     struct ic_field *field = 0;

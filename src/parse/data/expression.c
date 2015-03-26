@@ -2,9 +2,9 @@
 #include <stdlib.h> /* calloc */
 
 #include "expression.h"
-#include "symbol.h"
-#include "pvector.h"
-#include "parse.h"
+#include "../../data/symbol.h"
+#include "../../data/pvector.h"
+#include "../parse.h"
 
 /* ignore unused parameter */
 #pragma GCC diagnostic ignored "-Wunused-parameter"

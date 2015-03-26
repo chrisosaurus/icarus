@@ -3,7 +3,7 @@
 #include <string.h> /* strcmp */
 #include <assert.h> /* assert */
 
-#include "../../src/pvector.h"
+#include "../../src/data/pvector.h"
 
 int main(void){
     int i;

@@ -3,10 +3,10 @@
 
 #include "decl.h"
 #include "field.h"
-#include "pvector.h"
+#include "../../data/pvector.h"
 #include "statement.h"
-#include "symbol.h"
-#include "parse.h"
+#include "../../data/symbol.h"
+#include "../parse.h"
 
 /* allocate and initialise a new func_decl
  *

@@ -3,7 +3,7 @@
 
 #include "body.h"
 #include "expression.h"
-#include "symbol.h"
+#include "../../data/symbol.h"
 
 struct ic_stmt;
 

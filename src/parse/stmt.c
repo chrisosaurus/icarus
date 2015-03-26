@@ -1,10 +1,10 @@
 #include <stdio.h> /* puts */
 #include <string.h> /* strncmp */
 
-#include "../ast.h"
-#include "../parse.h"
-#include "../statement.h"
-#include "../lexer.h"
+#include "data/ast.h"
+#include "parse.h"
+#include "data/statement.h"
+#include "../lex/lexer.h"
 
 /* enable by default for now */
 #ifndef DEBUG_PARSE_STMT

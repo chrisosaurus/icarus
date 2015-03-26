@@ -3,7 +3,7 @@
 #include <errno.h> /* errno */
 #include <limits.h> /* LONG_MIN, LONG_MAX */
 
-#include "../parse.h"
+#include "parse.h"
 
 /* ignore unused parameter warnings */
 #pragma GCC diagnostic ignored "-Wunused-parameter"

@@ -1,8 +1,8 @@
 #ifndef ICARUS_AST_H
 #define ICARUS_AST_H
 
-#include "symbol.h"
-#include "pvector.h"
+#include "../../data/symbol.h"
+#include "../../data/pvector.h"
 #include "decl.h"
 
 struct ic_ast {
