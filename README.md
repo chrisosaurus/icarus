@@ -16,6 +16,13 @@ Inspiration has been drawn from (in alphabetical order):
 * Rust
 * Scheme (r7rs-small, chicken)
 
+Goals
+=====
+
+* Obvious and statically verified mutability
+* Strong statically verified type system
+* Runtime memory safety (no pointer arithmetic, arrays are bounds checked)
+
 Plans
 =====
 
