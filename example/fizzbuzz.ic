@@ -1,0 +1,29 @@
+
+fn is_div(a::Int b::Int) -> Bool
+    return not(a % b)
+end
+
+fn fizzbuzz(from::Int to::Int)
+    for num in range(from to)
+        let &arr = []
+
+        if is_div(num 3)
+            append(&arr "Fizz")
+        end
+
+        if is_div(num 5)
+            append(&arr "Buzz")
+        end
+
+        if length(arr) == 0
+            append(&arr num)
+        end
+
+        print(join(" " arr))
+    end
+end
+
+fn main()
+    fizzbuzz(1 100)
+end
+
