@@ -10,22 +10,22 @@ type Foo\n\
     b::String\n\
 end\n\
 \n\
-function d(i::Int)\n\
+fn d(i::Int)\n\
     print(i)\n\
 end\n\
 \n\
-function d(s::String)\n\
+fn d(s::String)\n\
     print(s)\n\
 end\n\
 \n\
 # break apart a Foo and call d on each field\n\
-function d(f::Foo)\n\
+fn d(f::Foo)\n\
     d(f.a)\n\
     d(f.b)\n\
 end\n\
 \n\
 # entry point for program\n\
-function main()\n\
+fn main()\n\
     let f::Foo = Foo(1 \"hello\")\n\
 \n\
     d(f)\n\
