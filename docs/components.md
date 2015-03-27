@@ -8,9 +8,7 @@ Icarus Components
                       |
                     Parse
                       |
-                   Rewrite
-                      |
-                    Verify
+                   Analyse
                       |
                Select backend
                     / | \
@@ -31,11 +29,9 @@ Parse : tokens -> AST
 
 Middleware
 ==========
-The role of the middleware is to perform any verification and modifications to this AST
+The role of the middleware is to perform any verification and modifications to the AST
 
-Rewrite : AST -> AST
-
-Verify : AST -> warnings and errors
+Analyze : AST -> Kludge
 
 Backends
 ========
@@ -43,7 +39,7 @@ The backend then takes this AST and does *something* with it
 
 Icarus has plans to support multiple backends, some possible ones include:
 
-* Interpreter : AST -> side effects
-* Icarus -> C compiler : AST -> C source code
-* Icarus -> LLVM compiler : AST -> LLVM bitcode
+* Interpreter : Kludge -> side effects
+* Icarus -> C compiler : Kludge -> C source code
+* Icarus -> LLVM compiler : Kludge -> LLVM bitcode
 
