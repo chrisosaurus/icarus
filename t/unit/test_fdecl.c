@@ -33,7 +33,7 @@ int main(void){
     assert(field);
     assert( ic_func_decl_add_arg(fdecl, field) == 0 );
 
-    printf("Should see:\nfunction Foo(a::Int b::String)\n  #function bodies not yet implemented\nend\n");
+    printf("Should see:\nfn Foo(a::Int b::String)\nend\n");
 
     /* output type */
     puts("Output:");

@@ -34,7 +34,7 @@ int main(void){
     assert( ic_type_decl_add_field(tdecl, field) == 0 );
 
     /* test display */
-    printf("Expected:\ntype Foo\n  bar::Baz\nend\n");
+    printf("Expected:\ntype Foo\n    bar::Baz\nend\n");
     /* print it out */
     puts("Output:");
     ic_decl_print(decl, &fake_indent);
@@ -64,7 +64,7 @@ int main(void){
     assert( ic_func_decl_add_arg(fdecl, field) == 0 );
 
     /* test display */
-    printf("Expected:\nfunction Foo(bar::Baz)\n  #function bodies not yet implemeneted\nend\n");
+    printf("Expected:\nfn Foo(bar::Baz)\nend\n");
     /* print it out */
     puts("Output:");
     ic_decl_print(decl, &fake_indent);

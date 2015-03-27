@@ -34,7 +34,7 @@ int main(void){
     assert(field);
     assert( ic_type_decl_add_field(tdecl, field) == 0 );
 
-    printf("Should see:\ntype Foo\n  a::Int\n  b::String\nend\n");
+    printf("Should see:\ntype Foo\n    a::Int\n    b::String\nend\n");
 
     /* output type */
     ic_type_decl_print(tdecl, &fake_indent);
