@@ -6,6 +6,91 @@
 #include "body.h"
 #include "../parse.h"
 
+/* allocate and initialise a new return
+ * does not touch init ic_expr
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_stmt_ret * ic_stmt_ret_new(void){
+    struct ic_stmt_ret *ret = 0;
+
+    /* alloc */
+    ret = calloc(1, sizeof(struct ic_stmt_ret));
+    if( ! ret ){
+        puts("ic_stmt_ret: call to calloc failed");
+        return 0;
+    }
+
+    /* init */
+    if( ic_stmt_ret_init(ret) ){
+        puts("ic_stmt_ret: call to ic_stmt_ret_init failed");
+        return 0;
+    }
+
+    /* success */
+    return ret;
+}
+
+/* initialise an existing return
+ * does not touch the init expression
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_stmt_ret_init(struct ic_stmt_ret *ret){
+    if( ! ret ){
+        puts("ic_stmt_ret_init: ret was null ");
+        return 1;
+    }
+
+    /* only work to do is to ensure our ic_expr is zerod */
+    ret->ret = 0;
+
+    return 0;
+}
+
+/* get the ic_expr * contained within
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr * ic_stmt_ret_get_expr(struct ic_stmt_ret *ret){
+    if( ! ret ){
+        puts("ic_stmt_ret_get_expr: ret was null");
+        return 0;
+    }
+
+    /* give the caller what they want */
+    return ret->ret;
+}
+
+/* print this return */
+void ic_stmt_ret_print(struct ic_stmt_ret *ret, unsigned int *indent_level){
+    /* our fake indent for our expr */
+    unsigned int fake_indent = 0;
+
+    if( ! ret ){
+        return;
+    }
+    if( ! indent_level ){
+        return;
+    }
+
+    /* indent */
+    ic_parse_print_indent(*indent_level);
+
+    /* print out 'return ' */
+    fputs("return ", stdout);
+
+    /* dispatch to expr print */
+    ic_expr_print(ret->ret, &fake_indent);
+
+    /* print out trailing '\n' */
+    puts("");
+}
+
+
 /* allocate and initialise a new let
  * does not touch init ic_expr
  *
@@ -299,6 +384,28 @@ int ic_stmt_init(struct ic_stmt *stmt, enum ic_stmt_type type){
     return 0;
 }
 
+/* get a pointer to the return within
+ * will only succeed if ic_stmt is of the correct type
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_stmt_ret * ic_stmt_get_ret(struct ic_stmt *stmt){
+    if( ! stmt ){
+        puts("ic_stmt_get_ret: stmt was null");
+        return 0;
+    }
+
+    /* check type before giving out */
+    if( stmt->type != ic_stmt_type_ret ){
+        puts("ic_stmt_get_ret: not of the correct type");
+        return 0;
+    }
+
+    /* otherwise give them what they asked for */
+    return &(stmt->u.ret);
+}
+
 /* get a pointer to the let within
  * will only succeed if ic_stmt is of the correct type
  *
@@ -377,6 +484,10 @@ void ic_stmt_print(struct ic_stmt *stmt, unsigned int *indent_level){
     }
 
     switch( stmt->type ){
+        case ic_stmt_type_ret:
+            ic_stmt_ret_print( &(stmt->u.ret), indent_level );
+            break;
+
         case ic_stmt_type_let:
             ic_stmt_let_print( &(stmt->u.let), indent_level );
             break;

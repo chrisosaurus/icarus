@@ -5,6 +5,40 @@
 #include "expression.h"
 #include "../../data/symbol.h"
 
+/* a return statement
+ *  return expr
+ */
+struct ic_stmt_ret {
+    struct ic_expr *ret;
+};
+
+/* allocate and initialise a new return
+ * does not touch init ic_expr
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_stmt_ret * ic_stmt_ret_new(void);
+
+/* initialise an existing return
+ * does not touch the init expression
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_stmt_ret_init(struct ic_stmt_ret *ret);
+
+/* get the ic_expr * contained within
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr * ic_stmt_ret_get_expr(struct ic_stmt_ret *ret);
+
+/* print this return */
+void ic_stmt_ret_print(struct ic_stmt_ret *ret, unsigned int *indent_level);
+
+
 /* a let statement
  *  let identifier::type = init
  */
@@ -100,6 +134,7 @@ void ic_stmt_if_print(struct ic_stmt_if *sif, unsigned int *indent_level);
 
 
 enum ic_stmt_type {
+    ic_stmt_type_ret,
     ic_stmt_type_let,
     ic_stmt_type_if,
     ic_stmt_type_expr
@@ -108,6 +143,7 @@ enum ic_stmt_type {
 struct ic_stmt {
     enum ic_stmt_type type;
     union {
+        struct ic_stmt_ret ret;
         struct ic_stmt_let let;
         struct ic_stmt_if sif;
         /* a statement can just be an expression in
@@ -136,6 +172,14 @@ struct ic_stmt * ic_stmt_new(enum ic_stmt_type type);
  * returns 1 on failure
  */
 int ic_stmt_init(struct ic_stmt *stmt, enum ic_stmt_type type);
+
+/* get a pointer to the return within
+ * will only succeed if ic_stmt is of the correct type
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_stmt_ret * ic_stmt_get_ret(struct ic_stmt *stmt);
 
 /* get a pointer to the let within
  * will only succeed if ic_stmt is of the correct type

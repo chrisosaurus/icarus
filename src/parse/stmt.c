@@ -26,6 +26,52 @@
  *  expr (void context)
  */
 
+/* consume token
+ * returns ic_stmt* on success
+ * returns 0 on failure
+ */
+static struct ic_stmt * ic_parse_stmt_ret(struct ic_tokens *tokens, unsigned int *i){
+    /* return form
+     *      return expr
+     */
+
+    /* out eventual return value */
+    struct ic_stmt *stmt = 0;
+    /* our internal ret value */
+    struct ic_stmt_ret *ret = 0;
+
+    /* allocate and initialise */
+    stmt = ic_stmt_new(ic_stmt_type_ret);
+    if( ! stmt ){
+        puts("ic_parse_stmt_ret: call to ic_stmt_new failed");
+        return 0;
+    }
+
+    /* fetch and store out ret to make things easier */
+    ret = ic_stmt_get_ret(stmt);
+
+    /* check for `return` */
+    if( ic_parse_check_token("return", 6, tokens->tokens, i) ){
+        puts("ic_parse_stmt_ret: Failed to find `return` token");
+        return 0;
+    }
+    /* initialise our ret */
+    if( ic_stmt_ret_init(ret) ){
+        puts("ic_parse_stmt_ret: call to ic_stmt_ret_init failed");
+        return 0;
+    }
+
+    /* consume initialisation expression */
+    ret->ret = ic_parse_expr(tokens, i);
+    if( ! ret->ret ){
+        puts("ic_parse_stmt_ret: call to ic_parse_expr failed");
+        return 0;
+    }
+
+    /* victory */
+    return stmt;
+}
+
 
 /* consume token
  * returns ic_stmt* on success
@@ -157,7 +203,8 @@ static struct ic_parse_table_entry {
 } ic_parse_table [] = {
     /* len    token       function    */
     {  2,     "if",       ic_parse_stmt_if  },
-    {  3,     "let",      ic_parse_stmt_let }
+    {  3,     "let",      ic_parse_stmt_let },
+    {  6,     "return",   ic_parse_stmt_ret }
     /* otherwise we default to ic_parse_stmt_expr */
 };
 
