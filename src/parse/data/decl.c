@@ -55,7 +55,7 @@ unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned 
 
     /* initialise name symbol */
     if( ic_symbol_init( &(fdecl->name), name, name_len ) ){
-        puts("ic_func_decl_init: call to ic_symbol_init failed");
+        puts("ic_func_decl_init: call to ic_symbol_init for name failed");
         return 1;
     }
 
@@ -64,6 +64,9 @@ unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned 
         puts("ic_func_decl_init: call to ic_pvector_init failed");
         return 1;
     }
+
+    /* initialise return type to 0 (void) */
+    fdecl->ret_type = 0;
 
     /* initialise our empty body */
     if( ic_body_init( &(fdecl->body) ) ){
@@ -98,6 +101,45 @@ unsigned int ic_func_decl_add_arg(struct ic_func_decl *fdecl, struct ic_field *f
         return 1;
     }
 
+    return 0;
+}
+
+/* set return type
+ *
+ * this function will fail if the return type is already set
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+unsigned int ic_func_decl_set_return(struct ic_func_decl *fdecl, char *type, unsigned int type_len){
+    if( ! fdecl ){
+        puts("ic_func_decl_set_return: fdecl was null");
+        return 1;
+    }
+    if( ! type ){
+        puts("ic_func_decl_set_return: type was null");
+        return 1;
+    }
+    if( ! type_len ){
+        puts("ic_func_decl_set_return: type_len was 0");
+        return 1;
+    }
+
+    /* check we haven't already set */
+    if( fdecl->ret_type ){
+        /* it is an error to re-set the return type */
+        puts("ic_func_decl_set_return: attempt to re-set return type");
+        return 1;
+    }
+
+    /* create our return type */
+    fdecl->ret_type = ic_symbol_new(type, type_len);
+    if( ! fdecl->ret_type ){
+        puts("ic_func_decl_set_return: call to ic_symbol_new failed");
+        return 1;
+    }
+
+    /* success */
     return 0;
 }
 
@@ -163,8 +205,18 @@ void ic_func_decl_print(struct ic_func_decl *fdecl, unsigned int *indent_level){
         }
     }
 
-    /* closing bracket */
-    puts(")");
+    /* closing bracket and return type arrow */
+    fputs(") -> ", stdout);
+
+    /* print return type if we have one */
+    if( fdecl->ret_type ){
+        ic_symbol_print(fdecl->ret_type);
+        /* trailing \n */
+        puts("");
+    } else {
+        /* otherwise print Void */
+        puts("Void");
+    }
 
     /* get length of body */
     len = ic_body_length( &(fdecl->body) );

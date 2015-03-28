@@ -7,8 +7,22 @@
 #include "../../data/pvector.h"
 
 struct ic_func_decl {
+    /* fn name(args...) -> ret_type
+     *      body ...
+     * end
+     *
+     * fn name(args...)
+     *      body ...
+     * end
+     *
+     */
     struct ic_symbol name;
     struct ic_pvector args;
+    /* return type is optional
+     *  0    -> void
+     *  else -> symbol for type
+     */
+    struct ic_symbol *ret_type;
     struct ic_body body;
 };
 
@@ -32,6 +46,15 @@ unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned 
  * returns 1 on error
  */
 unsigned int ic_func_decl_add_arg(struct ic_func_decl *fdecl, struct ic_field *field);
+
+/* set return type
+ *
+ * this function will fail if the return type is already set
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+unsigned int ic_func_decl_set_return(struct ic_func_decl *fdecl, char *type, unsigned int type_len);
 
 /* add new stmt to the body
  *
