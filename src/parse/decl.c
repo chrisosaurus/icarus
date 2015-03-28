@@ -150,6 +150,16 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
     /* pointer used for each stmt within body */
     struct ic_stmt *stmt = 0;
 
+    /* fn name(args...) -> return_type
+     *      body...
+     * end
+     *
+     * # default to void return type
+     * fn name(args...)
+     *      body...
+     * end
+     */
+
 #ifdef DEBUG_PARSE
     puts("ic_parse_func_decl called");
 #endif
@@ -250,6 +260,33 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
     /* step over closing bracket */
     ic_parse_token_advance(i, dist);
 
+    /* parse return type
+     * check if we have a return type arrow ->
+     *
+     * if we do, consume it, and then parse return type
+     *
+     * if we do not, then there is no argument and we skip this
+     * and begin parsing the body
+     */
+    if( ! ic_parse_check_token("->", 2, tokens->tokens, i) ){
+        /* we found a type arrow and have skipped over it
+         * parse return type
+         */
+        dist = ic_parse_token_length(tokens->tokens, *i);
+        if( ! dist ) {
+            puts("ic_parse_func_decl: call to if_parse_token_length failed when looking for arg type");
+            return 0;
+        }
+
+        /* add to our fdecl */
+        if( ic_func_decl_set_return( fdecl, &(tokens->tokens[*i]), dist ) ){
+            puts("ic_parse_func_decl: call to ic_func_decl_set_return failed");
+            return 0;
+        }
+
+        /* advance over our type */
+        ic_parse_token_advance(i, dist);
+    }
 
     /* parse body */
 
