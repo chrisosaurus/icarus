@@ -23,6 +23,14 @@ static struct ic_tokens * ic_expand_tokens(struct ic_tokens *tokens, unsigned in
  */
 static struct ic_tokens * ic_consume_word(struct ic_tokens *tokens, char *source, unsigned int *i);
 
+/* consumes one arrow `->`
+ * adds this consumed unit as a token
+ *
+ * returns *tokens on success
+ * returns 0 on error
+ */
+static struct ic_tokens * ic_consume_arrow(struct ic_tokens *tokens, char *source, unsigned int *i);
+
 /* consume a number
  * adds this consumed unit as a token
  *
@@ -112,17 +120,31 @@ struct ic_tokens * ic_lex(char *source){
              * a = b
              * a.b
              * &a::Int and &f
-             * ->
              */
             case '(':
             case ')':
             case '=':
             case '.':
             case '&':
-            case '-':
-            case '>':
             case '+':
                 tokens = ic_consume_single_symbol(tokens, source, &i);
+                break;
+
+            /* if we see `-` check if the next token is a `>`
+             * in which case consume an arrow
+             * otherwise consume as a single symbol
+             */
+            case '-':
+                /* check we have another char left
+                 * and if so see if it is a `>`
+                 */
+                if( len > (i+1) && source[i+1] == '>' ){
+                    /* we have an arrow, consume */
+                    tokens = ic_consume_arrow(tokens, source, &i);
+                } else {
+                    /* otherwise this is just a symbol `-` */
+                    tokens = ic_consume_single_symbol(tokens, source, &i);
+                }
                 break;
 
             /* "hello" */
@@ -358,6 +380,44 @@ static struct ic_tokens * ic_consume_word(struct ic_tokens *tokens, char *source
 
     return tokens;
 }
+
+/* consumes one arrow `->`
+ * adds this consumed unit as a token
+ *
+ * returns *tokens on success
+ * returns 0 on error
+ */
+static struct ic_tokens * ic_consume_arrow(struct ic_tokens *tokens, char *source, unsigned int *i){
+    if( ! i || ! source ){
+        puts("ic_consume_arrow: null source or i provided");
+        return 0;
+    }
+
+    /* we have to see a `-` */
+    if( source[*i] != '-' ){
+        printf("ic_consume_arrow: expected hyphen '-', got '%c'\n", source[*i]);
+        return 0;
+    }
+
+    /* we have to see a `>`
+     * we know *i + 1 is safe as
+     *  a) our caller should check
+     *  b) there will be a \0 terminator
+     */
+    if( source[(*i) +1 ] != '>' ){
+        printf("ic_consume_arrow: expected greater than '>', got '%c'\n", source[(*i) + 1]);
+        return 0;
+    }
+
+
+    tokens = add_token(tokens, &(source[*i]), 2);
+
+    *i += 2;
+
+    return tokens;
+}
+
+
 
 /* consume a number
  * adds this consumed unit as a token
