@@ -112,12 +112,16 @@ struct ic_tokens * ic_lex(char *source){
              * a = b
              * a.b
              * &a::Int and &f
+             * ->
              */
             case '(':
             case ')':
             case '=':
             case '.':
             case '&':
+            case '-':
+            case '>':
+            case '+':
                 tokens = ic_consume_single_symbol(tokens, source, &i);
                 break;
 
