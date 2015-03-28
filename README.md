@@ -100,7 +100,7 @@ Hidden in the output we see the lexer output:
     type Foo a :: Int b :: String end fn d ( i :: Int ) print ( i ) end fn d ( s :: String ) print ( s ) end fn d ( f :: Foo ) d ( f . a ) d ( f . b ) end fn add_one ( i :: Int ) -> Int return i + 1 end fn main ( ) let f :: Foo = Foo ( add_one ( 1 ) "hello" ) d ( f ) end 
     ----------------
 
-Hidden elsewhere in the output we can see the parser reconstructing the program from it's current understanding (the current parser implementation is only partial):
+Hidden elsewhere in the output we can see the parser reconstructing the program from it's current understanding:
 
     parser output:
     ----------------
