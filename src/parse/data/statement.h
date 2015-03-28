@@ -5,8 +5,6 @@
 #include "expression.h"
 #include "../../data/symbol.h"
 
-struct ic_stmt;
-
 /* a let statement
  *  let identifier::type = init
  */
