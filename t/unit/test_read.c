@@ -24,9 +24,14 @@ fn d(f::Foo)\n\
     d(f.b)\n\
 end\n\
 \n\
+# simple function to test return values\n\
+fn add_one(i::Int) -> Int\n\
+    return i + 1\n\
+end\n\
+\n\
 # entry point for program\n\
 fn main()\n\
-    let f::Foo = Foo(1 \"hello\")\n\
+    let f::Foo = Foo(add_one(1) \"hello\")\n\
 \n\
     d(f)\n\
 end\n\
