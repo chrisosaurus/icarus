@@ -39,7 +39,49 @@ struct ic_kludge {
     struct ic_pvector errors;
 
     /* annotated AST */
-    struct ic_ast aast;
+    struct ic_ast *aast;
 };
+
+/* alloc and init a new kludge
+ *
+ * returns pointer on success
+ * returns 0 on error
+ */
+struct ic_kludge * ic_kludge_new(struct ic_ast *ast);
+
+/* init an existing kludge
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast);
+
+/* add a new type decl to this kludge
+ * this will insert into dict_tname and also
+ * into tdecls
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_klude_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *tdecl);
+
+/* add a new func decl to this kludge
+ * this will insert into dict_fname and also
+ * into fsigs
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_klude_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *fdecl);
+
+/* add a new error to error list
+ *
+ * FIXME no error type
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_klude_add_error(struct ic_kludge *kludge, void *error);
+
 
 #endif
