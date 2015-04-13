@@ -136,8 +136,13 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *
         return 1;
     }
 
-
-    /* FIXME need to insert into hash */
+    /* insert into dict tname
+     * returns 0 on failure
+     */
+    if( ! ic_dict_insert(&(kludge->dict_fsig), ic_func_decl_str(fdecl), fdecl) ){
+        puts("ic_kludge_add_fdecl: call to ic_dict_insert failed");
+        return 1;
+    }
 
     /* insert into list of fdecls */
     if( ic_pvector_append( &(kludge->fdecls), fdecl ) == -1 ){

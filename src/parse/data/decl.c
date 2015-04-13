@@ -9,6 +9,9 @@
 #include "../../data/symbol.h"
 #include "../parse.h"
 
+/* FIXME crutch for unused param */
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 /* allocate and initialise a new func_decl
  *
  * returns new func_decl on success
@@ -230,6 +233,23 @@ void ic_func_decl_print(struct ic_func_decl *fdecl, unsigned int *indent_level){
 
     /* print end\n */
     puts("end");
+}
+
+/* return a string representation of this function signature
+ *
+ * for a function signature
+ *      fn foo(a::Int b::Int) -> Int
+ *
+ * this function will return
+ *      foo(Int Int)
+ *
+ * returns char* on success
+ * returns 0 on failure
+ */
+char * ic_func_decl_str(struct ic_func_decl *fdecl){
+    /* FIXME */
+    puts("ic_fund_decl_str: unimplemented");
+    return 0;
 }
 
 /* allocate and return a new type_decl

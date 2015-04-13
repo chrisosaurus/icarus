@@ -66,6 +66,19 @@ unsigned int ic_func_decl_add_stmt(struct ic_func_decl *fdecl, struct ic_stmt *s
 /* print func_decl */
 void ic_func_decl_print(struct ic_func_decl *fdecl, unsigned int *indent_level);
 
+/* return a string representation of this function signature
+ *
+ * for a function signature
+ *      fn foo(a::Int b::Int) -> Int
+ *
+ * this function will return
+ *      foo(Int Int)
+ *
+ * returns char* on success
+ * returns 0 on failure
+ */
+char * ic_func_decl_str(struct ic_func_decl *fdecl);
+
 /* a func declaration is a symbol and then a collection of fields
  *  type Foo
  *   a::Int
