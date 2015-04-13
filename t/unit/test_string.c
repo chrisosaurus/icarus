@@ -1,11 +1,14 @@
 #include <string.h> /* strncmp */
 #include <assert.h> /* assert */
+#include <stdio.h> /* puts */
 
 #include "../../src/data/string.h"
 
 int main(void){
     int i;
     struct ic_string *str = ic_string_new("hello", 5);
+
+    puts("ignore any text output, testing error cases");
 
     assert(str);
     assert(ic_string_length(str) == 5);

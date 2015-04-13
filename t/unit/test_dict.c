@@ -10,7 +10,6 @@ int main(void){
     int data_1 = 1;
     int data_2 = 2;
 
-    puts("testing ic_dict implementation");;
     puts("ignore any text output, testing error cases");
 
     assert(dict);
