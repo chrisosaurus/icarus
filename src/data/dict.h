@@ -20,8 +20,8 @@ struct ic_dict * ic_dict_new(void);
 
 /* init an existing ic_dict
  *
- * return 1 on success
- * return 0 on error
+ * return 0 on success
+ * return 1 on error
  */
 unsigned int ic_dict_init(struct ic_dict *dict);
 
