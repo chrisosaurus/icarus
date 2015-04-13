@@ -49,9 +49,17 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast){
         return 1;
     }
 
-    /* FIXME dict_tname hash */
+    /* dict_tname hash */
+    if( ic_dict_init(&(kludge->dict_tname)) ){
+        puts("ic_kludge_init: dict_tname: call to ic_dict_init failed");
+        return 1;
+    }
 
-    /* FIXME dict_fsig hash */
+    /* dict_fsig hash */
+    if( ic_dict_init(&(kludge->dict_fsig)) ){
+        puts("ic_kludge_init: dict_fsig: call to ic_dict_init failed");
+        return 1;
+    }
 
     /* pvector tdecls */
     if( ic_pvector_init( &(kludge->tdecls), 0 ) ){

@@ -3,6 +3,7 @@
 
 #include "../../parse/data/ast.h"
 #include "../../data/pvector.h"
+#include "../../data/dict.h"
 
 /* a Kludge is the output from the analyse stage of icarus
  *
@@ -15,17 +16,11 @@
  *      AAST - annotated AST
  */
 struct ic_kludge {
-    /* dict Type name -> Type decl
-     * FIXME no dict type
-     * FIXME no type name type
-     */
-    void * dict_tname;
+    /* dict Type name (char *) -> Type decl */
+    struct ic_dict dict_tname;
 
-    /* dict Func sig  -> Func decl
-     * FIXME no dict type
-     * FIXME no func sig type
-     */
-    void * dict_fsig;
+    /* dict Func sig (char *)  -> Func decl */
+    struct ic_dict dict_fsig;
 
     /* list of Type decls */
     struct ic_pvector tdecls;
