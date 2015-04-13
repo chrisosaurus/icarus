@@ -56,6 +56,8 @@ run_tests: compile_tests
 	./bin/test_string
 	@echo "\n\nrunning test_symbol"
 	./bin/test_symbol
+	@echo "\n\nrunning test_dict"
+	./bin/test_dict
 	@echo "\n\nrunning test_field"
 	./bin/test_field
 	@echo "\n\nrunning test_tdecl"
@@ -83,6 +85,7 @@ compile_tests: clean ${OBJ}
 	@${CC} t/unit/test_fdecl.c -o bin/test_fdecl ${LDFLAGS} ${OBJ}
 	@${CC} t/unit/test_decl.c -o bin/test_decl ${LDFLAGS} ${OBJ}
 	@${CC} t/unit/test_ast.c -o bin/test_ast ${LDFLAGS} ${OBJ}
+	@${CC} t/unit/test_dict.c -o bin/test_dict ${LDFLAGS} ${OBJ}
 	@make -s cleanobj
 
 .PHONY: all clean cleanobj icarus test example
