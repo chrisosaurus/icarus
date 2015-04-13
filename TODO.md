@@ -10,3 +10,7 @@ TODO:
 * it will be useful for callers of ic_parse_check_token to be able to distinguish between error (null tokens, dist failed) and comparison failures (the token was not as expected)
 * add escaping support to lexing string (escaping " with \)
 
+technical debt:
+
+* function return value on failure, need to standardise
+
