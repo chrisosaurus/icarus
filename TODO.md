@@ -13,4 +13,5 @@ TODO:
 technical debt:
 
 * function return value on failure, need to standardise
+* consider const-correctness on read only args
 
