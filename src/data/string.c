@@ -4,6 +4,9 @@
 
 #include "string.h"
 
+/* FIXME crutch for unused param */
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 /* build a new string from a char* and a length
  * this will allocate a new buffer and strncpy n
  * chars from source into the string
@@ -120,6 +123,35 @@ char ic_string_get(struct ic_string *string, unsigned int offset){
     }
 
     return string->backing.contents[offset];
+}
+
+/* append the contents of `from` to `to`
+ * this will resize `to` to guarantee there is enough space
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+unsigned int ic_string_append(struct ic_string *to, struct ic_string *from){
+    /* FIXME */
+    puts("ic_string_append: unimplemented");
+    return 1;
+}
+
+/* append the contents of `from` to `to`
+ * copying over a maximum of from_len
+ *
+ * this will resize `to` to guarantee there is enough space
+ *
+ * this will also make sure the final character internally is a \0
+ * even if the character at from[from_len - 1] != '\0'
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+unsigned int ic_string_append_char(struct ic_string *to, char *from, unsigned int from_len){
+    /* FIXME */
+    puts("ic_string_append_char: unimplemented");
+    return 1;
 }
 
 
