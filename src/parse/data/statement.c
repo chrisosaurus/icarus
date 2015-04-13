@@ -115,6 +115,9 @@ struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *ty
         return 0;
     }
 
+    /* for now we are always immut */
+    let->mut = 0;
+
     return let;
 }
 

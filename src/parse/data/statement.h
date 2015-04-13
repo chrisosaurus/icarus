@@ -43,6 +43,11 @@ void ic_stmt_ret_print(struct ic_stmt_ret *ret, unsigned int *indent_level);
  *  let identifier::type = init
  */
 struct ic_stmt_let {
+    /* flag specifying if we have let a mutable variable
+     *  let &a::Int = expr # mutable
+     *  let b::Int = expr # immutable
+     */
+    unsigned int mut;
     struct ic_symbol identifier;
     struct ic_symbol type;
     /* FIXME making this an ic_expr *
