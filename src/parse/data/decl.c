@@ -1,5 +1,6 @@
-#include "stdlib.h" /* calloc */
-#include "stdio.h" /* puts, printf */
+#include <stdlib.h> /* calloc */
+#include <stdio.h> /* puts, printf */
+#include <string.h> /* strncpy */
 
 #include "decl.h"
 #include "field.h"
@@ -351,6 +352,21 @@ void ic_type_decl_print(struct ic_type_decl *tdecl, unsigned int *indent_level){
 
     puts("end");
 }
+
+/* get the char * contents of the name
+ *
+ * returns char * on success
+ * returns 0 on failure
+ */
+char * ic_type_decl_str(struct ic_type_decl *tdecl){
+    if( ! tdecl ){
+        puts("ic_type_decl_str: tdecl was null");
+        return 0;
+    }
+
+    return ic_symbol_contents(&(tdecl->name));
+}
+
 
 /* allocate and initialise a new ic_decl
  *

@@ -58,7 +58,7 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast);
  * returns 0 on success
  * returns 1 on failure
  */
-unsigned int ic_klude_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *tdecl);
+unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *tdecl);
 
 /* add a new func decl to this kludge
  * this will insert into dict_fname and also
@@ -67,7 +67,7 @@ unsigned int ic_klude_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *t
  * returns 0 on success
  * returns 1 on failure
  */
-unsigned int ic_klude_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *fdecl);
+unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *fdecl);
 
 /* add a new error to error list
  *
@@ -76,7 +76,7 @@ unsigned int ic_klude_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *f
  * returns 0 on success
  * returns 1 on failure
  */
-unsigned int ic_klude_add_error(struct ic_kludge *kludge, void *error);
+unsigned int ic_kludge_add_error(struct ic_kludge *kludge, void *error);
 
 
 #endif

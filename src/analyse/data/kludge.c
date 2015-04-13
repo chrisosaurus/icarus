@@ -26,7 +26,7 @@ struct ic_kludge * ic_kludge_new(struct ic_ast *ast){
 
     /* init */
     if( ic_kludge_init(kludge, ast) ){
-        puts("ic_kludge_new: call to ic_klude_init failed");
+        puts("ic_kludge_new: call to ic_kludge_init failed");
         return 0;
     }
 
@@ -92,7 +92,7 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast){
  * returns 0 on success
  * returns 1 on failure
  */
-unsigned int ic_klude_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *tdecl){
+unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *tdecl){
     if( ! kludge ){
         puts("ic_kludge_add_tdecl: kludge was null");
         return 1;
@@ -102,7 +102,13 @@ unsigned int ic_klude_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *t
         return 1;
     }
 
-    /* FIXME need to insert into hash */
+    /* insert into dict tname
+     * returns 0 on failure
+     */
+    if( ! ic_dict_insert(&(kludge->dict_tname), ic_type_decl_str(tdecl), tdecl) ){
+        puts("ic_kludge_add_tdecl: call to ic_dict_insert failed");
+        return 1;
+    }
 
     /* insert into list of tdecls */
     if( ic_pvector_append( &(kludge->tdecls), tdecl ) == -1 ){
@@ -120,7 +126,7 @@ unsigned int ic_klude_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *t
  * returns 0 on success
  * returns 1 on failure
  */
-unsigned int ic_klude_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *fdecl){
+unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *fdecl){
     if( ! kludge ){
         puts("ic_kludge_add_fdecl: kludge was null");
         return 1;
@@ -149,7 +155,7 @@ unsigned int ic_klude_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *f
  * returns 0 on success
  * returns 1 on failure
  */
-unsigned int ic_klude_add_error(struct ic_kludge *kludge, void *error){
+unsigned int ic_kludge_add_error(struct ic_kludge *kludge, void *error){
     if( ! kludge ){
         puts("ic_kludge_add_error: kludge was null");
         return 1;

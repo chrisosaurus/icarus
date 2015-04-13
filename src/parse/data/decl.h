@@ -109,6 +109,13 @@ unsigned int ic_type_decl_add_field(struct ic_type_decl *tdecl, struct ic_field 
 /* print the type_decl to stdout */
 void ic_type_decl_print(struct ic_type_decl *tdecl, unsigned int *indent_level);
 
+/* get the char * contents of the name
+ *
+ * returns char * on success
+ * returns 0 on failure
+ */
+char * ic_type_decl_str(struct ic_type_decl *tdecl);
+
 enum ic_decl_type {
     ic_decl_func_decl,
     ic_decl_type_decl
