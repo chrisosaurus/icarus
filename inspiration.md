@@ -18,11 +18,12 @@ C++:
 * operator overloading
 * function overloading
 * generics
+* namespaces
 
 
 C#:
 
-* 'out' semantics
+* `out` semantics
 
 
 Go:
@@ -60,7 +61,7 @@ Julia:
 
 Perl:
 
-* `obj->method` => `namespace_of(obj)::method(obj)` shorthand
+* `obj->method()` => `namespace_of(obj)::method(obj)` shorthand
 
 
 Python:
