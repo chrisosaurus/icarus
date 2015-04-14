@@ -31,6 +31,7 @@ Go:
 * message passing
 * separation of functions from type
 * interfaces
+* type inference
 
 
 Haskell:
@@ -43,6 +44,7 @@ Haskell:
 * pattern matching
 * Maybe
 * Either
+* type inference
 
 
 Java:
@@ -53,9 +55,7 @@ Java:
 Julia:
 
 * general inspiration
-* syntax of types and constructors
-* separation of functions from type
-* multiple dispatch and function overloading
+* syntax of types and constructors * separation of functions from type * multiple dispatch and function overloading
 * Nullable
 
 
@@ -81,6 +81,7 @@ Rust:
 * generics
 * Option
 * macros (specifically in a statically typed language)
+* type inference
 
 
 Scheme:
