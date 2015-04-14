@@ -28,6 +28,9 @@ C#:
 Go:
 
 * message passing
+* separation of functions from type
+* interfaces
+
 
 Haskell:
 
@@ -41,6 +44,11 @@ Haskell:
 * Either
 
 
+Java:
+
+* interfaces
+
+
 Julia:
 
 * general inspiration
@@ -50,10 +58,16 @@ Julia:
 * Nullable
 
 
+Perl:
+
+* `obj->method` => `namespace_of(obj)::method(obj)` shorthand
+
+
 Python:
 
 * value / variable reference semantics ('pass by reference')
 * operator overloading
+* module system
 
 
 Rust:
@@ -65,11 +79,13 @@ Rust:
 * boxing
 * generics
 * Option
+* macros (specifically in a statically typed language)
 
 
 Scheme:
 
 * lack of commas
+* macros
 
 
 

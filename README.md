@@ -10,7 +10,9 @@ Inspiration has been drawn from (in alphabetical order):
 * C#
 * Go
 * Haskell
+* Java
 * Julia
+* Perl
 * Python
 * Racket
 * Rust
