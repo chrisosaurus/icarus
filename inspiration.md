@@ -19,6 +19,7 @@ C++:
 * function overloading
 * generics
 * namespaces
+* c+11 lambda functions
 
 
 C#:
