@@ -1,4 +1,4 @@
-Icarus
+Icarus [![Build Status](https://travis-ci.org/mkfifo/icarus.svg)](https://travis-ci.org/mkfifo/icarus)
 ======
 
 Icarus is a toy language with static type checking
