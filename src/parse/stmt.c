@@ -1,5 +1,6 @@
 #include <stdio.h> /* puts */
 #include <string.h> /* strncmp */
+#include <stdlib.h> /* free */
 
 #include "data/ast.h"
 #include "parse.h"
@@ -135,12 +136,14 @@ static struct ic_stmt * ic_parse_stmt_let(struct ic_tokens *tokens, unsigned int
     /* initialise our let */
     if( ic_stmt_let_init(let, id_start, id_len, type_start, type_len) ){
         puts("ic_parse_stmt_let: call to ic_stmt_let_init failed");
+        free(stmt);
         return 0;
     }
 
     /* check for `=` */
     if( ic_parse_check_token("=", 1, tokens->tokens, i) ){
         puts("ic_parse_stmt_let: Failed to find `=` token");
+        free(stmt);
         return 0;
     }
 
@@ -148,6 +151,7 @@ static struct ic_stmt * ic_parse_stmt_let(struct ic_tokens *tokens, unsigned int
     let->init = ic_parse_expr(tokens, i);
     if( ! let->init ){
         puts("ic_parse_stmt_let: call to ic_parse_expr failed");
+        free(stmt);
         return 0;
     }
 
