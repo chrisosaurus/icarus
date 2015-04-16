@@ -1,5 +1,6 @@
 #include <stdio.h> /* puts, printf */
 #include <string.h> /* strchr, strncmp */
+#include <stdlib.h> /* free */
 
 #include "../lex/lexer.h"
 #include "data/ast.h"
@@ -125,6 +126,7 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
                 if( ! ret ){
                     /* presume parsing failed */
                     puts("ic_parse: error when calling parsing function");
+                    free(ast);
                     return 0;
                 }
 
