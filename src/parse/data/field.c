@@ -21,6 +21,7 @@ struct ic_field * ic_field_new(char *name_src, unsigned int name_len, char *type
 
     if( ic_field_init(field, name_src, name_len, type_src, type_len) ){
         puts("ic_field_new: call to ic_field_init failed");
+        free(field);
         return 0;
     }
 
