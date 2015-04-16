@@ -467,7 +467,8 @@ static struct ic_expr * ic_parse_expr_operator(struct ic_tokens *tokens, unsigne
     /* fetch our internal operator */
     operator = ic_expr_get_operator(expr);
     if( ! operator ){
-        puts("ic_parse_expr_operator: call to ic_expr_get_operator failed");
+        puts("ic_parse_nameexpr_operator: call to ic_expr_get_operator failed");
+        free (expr);
         return 0;
     }
 
@@ -475,6 +476,7 @@ static struct ic_expr * ic_parse_expr_operator(struct ic_tokens *tokens, unsigne
     left = ic_parse_expr_single_token(tokens, i);
     if( ! left ){
         puts("ic_parse_expr_operator: left call to ic_parse_expr_single_token failed");
+        free(expr);
         return 0;
     }
 
@@ -483,6 +485,8 @@ static struct ic_expr * ic_parse_expr_operator(struct ic_tokens *tokens, unsigne
     op_len = ic_parse_token_length(tokens->tokens, *i);
     if( ! op_len ){
         puts("ic_parse_expr_operator: op call to ic_parse_token_length failed");
+        free(expr);
+        free(left);
         return 0;
     }
 
@@ -493,12 +497,17 @@ static struct ic_expr * ic_parse_expr_operator(struct ic_tokens *tokens, unsigne
     right = ic_parse_expr(tokens, i);
     if( ! right ){
         puts("ic_parse_expr_operator: right call to ic_parse_exprfailed");
+        free(expr);
+        free(left);
         return 0;
     }
 
     /* initialise our operator */
     if( ic_expr_operator_init(operator, left, right, op_start, op_len) ){
         puts("ic_parse_expr_operator: call to ic_expr_operator_init failed");
+        free(expr);
+        free(left);
+        free(right);
         return 0;    /* an operator is made up of
      *  single-token operator expr
      */
