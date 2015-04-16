@@ -233,6 +233,7 @@ struct ic_stmt_if * ic_stmt_if_new(void){
     /* init */
     if( ic_stmt_if_init(sif) ){
         puts("ic_stmt_if_new: call to ic_stmt_if_init failed");
+        free(sif);
         return 0;
     }
 
