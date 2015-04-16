@@ -61,12 +61,14 @@ static struct ic_expr * ic_parse_expr_fcall(struct ic_tokens *tokens, unsigned i
     dist = ic_parse_token_length(tokens->tokens, *i);
     if( ! dist ){
         puts("ic_parse_expr_fcall: failed to get distance of function name");
+        free(expr);
         return 0;
     }
 
     /* build our function */
     if( ic_expr_func_call_init( &(expr->u.fcall), &(tokens->tokens[*i]), dist ) ){
         puts("ic_parse_expr_fcall: call to ic_expr_func_call_init failed");
+        free(expr);
         return 0;
     }
 
@@ -76,6 +78,7 @@ static struct ic_expr * ic_parse_expr_fcall(struct ic_tokens *tokens, unsigned i
     /* skip over opening ( */
     if( ic_parse_check_token("(", 1, tokens->tokens, i) ){
         puts("ic_parse_expr_fcall: failed to find opening bracket '('");
+        free(expr);
         return 0;
     }
 
@@ -85,12 +88,14 @@ static struct ic_expr * ic_parse_expr_fcall(struct ic_tokens *tokens, unsigned i
         arg = ic_parse_expr(tokens, i);
         if( ! arg ){
             puts("ic_parse_expr_fcall: parsing arg error, call to ic_parse_expr failed");
+            free(expr);
             return 0;
         }
 
         /* store it inside our function */
         if( ic_expr_func_call_add_arg( &(expr->u.fcall), arg ) ){
             puts("ic_parse_expr_fcall: call to ic_expr_func_call_add_arg failed");
+            free(expr);
             return 0;
         }
     }
