@@ -35,6 +35,7 @@ struct ic_func_decl * ic_func_decl_new(char *name, unsigned int name_len){
     /* initialise */
     if( ic_func_decl_init(fdecl, name, name_len) ){
         puts("ic_func_decl_new: call to ic_func_decl_init failed");
+        free(fdecl);
         return 0;
     }
 
