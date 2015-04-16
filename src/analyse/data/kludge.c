@@ -27,6 +27,7 @@ struct ic_kludge * ic_kludge_new(struct ic_ast *ast){
     /* init */
     if( ic_kludge_init(kludge, ast) ){
         puts("ic_kludge_new: call to ic_kludge_init failed");
+        free(kludge);
         return 0;
     }
 
