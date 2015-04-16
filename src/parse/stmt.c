@@ -190,6 +190,7 @@ static struct ic_stmt * ic_parse_stmt_expr(struct ic_tokens *tokens, unsigned in
     stmt->u.expr = ic_parse_expr(tokens, i);
     if( ! stmt->u.expr ){
         puts("ic_parse_stmt_expr: call to ic_parse_expr failed");
+        free(stmt);
         return 0;
     }
 
