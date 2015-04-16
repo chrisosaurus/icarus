@@ -209,12 +209,14 @@ static struct ic_expr * ic_parse_expr_constant_string(struct ic_tokens *tokens, 
     cons = ic_expr_get_constant(expr);
     if( ! cons ){
         puts("ic_parse_expr_constant_string: call to ic_expr_get_constant failed");
+        free(expr);
         return 0;
     }
 
     /* initialise our constant */
     if( ic_expr_constant_init(cons, ic_expr_constant_type_string) ){
         puts("ic_parse_expr_constant_string: call to ic_expr_constant_init failed");
+        free(expr);
         return 0;
     }
 
@@ -222,6 +224,7 @@ static struct ic_expr * ic_parse_expr_constant_string(struct ic_tokens *tokens, 
     string = ic_expr_constant_get_string(cons);
     if( ! string ){
         puts("ic_parse_expr_constant_string: call to ic_expr_constant_get_string failed");
+        free(expr);
         return 0;
     }
 
@@ -253,6 +256,7 @@ static struct ic_expr * ic_parse_expr_constant_string(struct ic_tokens *tokens, 
      */
     if( ic_string_init(string, start, length) ){
         puts("ic_parse_expr_constant_string: call to ic_string_init failed");
+        free(expr);
         return 0;
     }
 
