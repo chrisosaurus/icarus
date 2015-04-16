@@ -25,11 +25,12 @@
 
 /* extracted from
     https://github.com/mkfifo/linear_hash
-    commit 0777a43015c2ba867912dc81e5469a615a599fe9
-    Author: Chris Hall <followingthepath@gmail.com>
-    Date:   Fri Apr 3 12:22:01 2015 +1300
 
-        changing semantics around threshold to be a bit more sa
+    commit 0488d3e69922362619bd363d3bee87c23a37928b
+    Author: Chris Hall <followingthepath@gmail.com>
+    Date:   Thu Apr 16 18:04:21 2015 +1200
+
+        fixing memory leak in lh_resize error case
  */
 
 #include <stdio.h> /* puts, printf */
@@ -43,8 +44,10 @@
 
 /* default number of slots */
 #define LH_DEFAULT_SIZE  32
+
 /* factor we grow the number of slots by each resize */
 #define LH_SCALING_FACTOR 2
+
 /* default loading factor we resize after in base 10
  * 0 through to 10
  *
@@ -137,10 +140,7 @@ LH_INTERNAL char * lh_strdupn(char *str, size_t len){
     }
 
     /* perform copy */
-    if( ! strncpy(new_str, str, len) ){
-        puts("lh_strdupn: call to strncpy failed");
-        return 0;
-    }
+    strncpy(new_str, str, len);
 
     /* ensure null terminator
      * do not rely on calloc as we may switch
@@ -479,6 +479,8 @@ struct lh_table * lh_new(void){
     /* init */
     if( ! lh_init(sht, LH_DEFAULT_SIZE) ){
         puts("lh_new: call to lh_init failed");
+        /* make sure to free our allocate lh_table */
+        free(sht);
         return 0;
     }
 
@@ -625,6 +627,8 @@ unsigned int lh_resize(struct lh_table *table, size_t new_size){
         }
 
         puts("lh_resize: failed to find spot for new element!");
+        /* make sure to free our new_entries since we don't store them*/
+        free(new_entries);
         return 0;
 
 LH_RESIZE_FOUND:

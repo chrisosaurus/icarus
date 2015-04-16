@@ -25,11 +25,12 @@
 
 /* extracted from
     https://github.com/mkfifo/linear_hash
-    commit 0777a43015c2ba867912dc81e5469a615a599fe9
-    Author: Chris Hall <followingthepath@gmail.com>
-    Date:   Fri Apr 3 12:22:01 2015 +1300
 
-        changing semantics around threshold to be a bit more sa
+    commit 0488d3e69922362619bd363d3bee87c23a37928b
+    Author: Chris Hall <followingthepath@gmail.com>
+    Date:   Thu Apr 16 18:04:21 2015 +1200
+
+        fixing memory leak in lh_resize error case
  */
 
 #ifndef linear_halh_H
