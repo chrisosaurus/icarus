@@ -405,6 +405,7 @@ struct ic_expr_operator * ic_expr_operator_new(struct ic_expr *lexpr, struct ic_
     /* initialise */
     if( ic_expr_operator_init(operator, lexpr, rexpr, op, op_len) ){
         puts("ic_expr_operator_new: call to ic_expr_operator_init failed");
+        free(operator);
         return 0;
     }
 
