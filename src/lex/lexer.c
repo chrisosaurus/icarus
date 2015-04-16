@@ -568,14 +568,14 @@ static struct ic_tokens * ic_consume_string(struct ic_tokens *tokens, char *sour
 
 STRING_LOOP_EXIT:
 
-    /* step over closing " */
-    ++len;
-
     /* error if we failed to consume anything */
     if( len == 0 ){
         puts("ic_consume_string: failed to parse string");
         return 0;
     }
+
+    /* step over closing " */
+    ++len;
 
 #ifdef DEBUG_LEXER
     printf("ic_consume_string: calling add_token with len '%d'\n", len);
