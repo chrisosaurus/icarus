@@ -240,6 +240,7 @@ static struct ic_tokens * ic_expand_tokens(struct ic_tokens *tokens, unsigned in
     tokens->tokens = realloc(tokens->tokens, sizeof(char) * new_cap);
     if( ! tokens->tokens ){
         puts("ic_expand_tokens: realloc failed");
+        free(tokens);
         return 0;
     }
 
