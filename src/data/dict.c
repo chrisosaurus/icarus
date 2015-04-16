@@ -21,6 +21,7 @@ struct ic_dict * ic_dict_new(void){
 
     if( ic_dict_init(dict) ){
         puts("ic_dict_new: call to ic_dict_init failed");
+        free(dict);
         return 0;
     }
 
