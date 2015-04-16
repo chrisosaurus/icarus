@@ -20,6 +20,7 @@ struct ic_parray * ic_parray_new(unsigned int len){
 
     if( ic_parray_init(arr, len) ){
         puts("ic_parray_new: clal to ic_parray_init failed");
+        free(arr);
         return 0;
     }
 
