@@ -290,6 +290,7 @@ static struct ic_tokens * add_token(struct ic_tokens *tokens, char *start, unsig
 
     if( ! tokens->tokens ){
         puts("add_token: tokens->tokens null");
+        free(tokens);
         return 0;
     }
 
