@@ -30,6 +30,7 @@ struct ic_expr_func_call * ic_expr_func_call_new(char *name, unsigned int name_l
 
     if( ic_expr_func_call_init(fcall, name, name_len) ){
         puts("ic_expr_func_call_init: call to ic_expr_func_call_init failed");
+        free(fcall);
         return 0;
     }
 
