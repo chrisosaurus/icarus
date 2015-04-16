@@ -1,5 +1,5 @@
 #include <stdio.h> /* puts */
-#include <stdlib.h> /* strtol */
+#include <stdlib.h> /* strtol, free */
 #include <errno.h> /* errno */
 #include <limits.h> /* LONG_MIN, LONG_MAX */
 
@@ -291,12 +291,14 @@ static struct ic_expr * ic_parse_expr_constant_integer(struct ic_tokens *tokens,
     cons = ic_expr_get_constant(expr);
     if( ! cons ){
         puts("ic_parse_expr_constant_integer: call to ic_expr_get_constant failed");
+        free(expr);
         return 0;
     }
 
     /* initialise our constant */
     if( ic_expr_constant_init(cons, ic_expr_constant_type_integer) ){
         puts("ic_parse_expr_constant_integer: call to ic_expr_constant_init failed");
+        free(expr);
         return 0;
     }
 
@@ -304,6 +306,7 @@ static struct ic_expr * ic_parse_expr_constant_integer(struct ic_tokens *tokens,
     integer = ic_expr_constant_get_integer(cons);
     if( ! integer ){
         puts("ic_parse_expr_constant_integer: call to ic_expr_constant_get_integer failed");
+        free(expr);
         return 0;
     }
 
@@ -311,6 +314,7 @@ static struct ic_expr * ic_parse_expr_constant_integer(struct ic_tokens *tokens,
     dist = ic_parse_token_length(tokens->tokens, *i);
     if( ! dist ){
         puts("ic_parse_expr_constant_integer: call to ic_parse_token_length failed");
+        free(expr);
         return 0;
     }
 
@@ -333,6 +337,7 @@ static struct ic_expr * ic_parse_expr_constant_integer(struct ic_tokens *tokens,
                 /* invalid character found, bail */
                 printf("ic_parse_expr_constant_integer: invalid integer found '%c'\n",
                        tokens->tokens[*i + iter]);
+                free(expr);
                 return 0;
                 break;
         }
@@ -355,12 +360,14 @@ static struct ic_expr * ic_parse_expr_constant_integer(struct ic_tokens *tokens,
             puts("-> unknown ERANGE occured");
         }
         perror("strtol");
+        free(expr);
         return 0;
     }
 
     if( errno != 0 && *integer == 0 ){
         puts("ic_parse_expr_constant_integer: call to strtol failed, unknown error");
         perror("strtol");
+        free(expr);
         return 0;
     }
 
@@ -369,6 +376,7 @@ static struct ic_expr * ic_parse_expr_constant_integer(struct ic_tokens *tokens,
         printf("ic_parse_expr_constant_integer: endptr ('%c') was not as expected ('%c')\n",
                *endptr,
                tokens->tokens[*i + dist]);
+        free(expr);
         return 0;
     }
 
