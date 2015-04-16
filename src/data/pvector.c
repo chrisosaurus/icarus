@@ -1,5 +1,5 @@
 #include <stdio.h> /* puts */
-#include <stdlib.h> /* calloc */
+#include <stdlib.h> /* calloc, free */
 #include <string.h> /* memset*/
 
 #include "pvector.h"
@@ -22,6 +22,7 @@ struct ic_pvector * ic_pvector_new(unsigned int cap){
 
     if( ic_pvector_init(arr, cap) ){
         puts("ic_pvector_new: call to ic_pvector_init failed");
+        free(arr);
         return 0;
     }
 
