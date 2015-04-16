@@ -23,6 +23,7 @@ struct ic_string * ic_string_new(char *source, unsigned int len){
 
     if( ic_string_init(str, source, len) ){
         puts("ic_string_new: error in call to ic_string_init");
+        free(str);
         return 0;
     }
 
