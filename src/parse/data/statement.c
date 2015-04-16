@@ -112,6 +112,7 @@ struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *ty
      */
     if( ic_stmt_let_init(let, id_src, id_len, type_src, type_len) ){
         puts("ic_stmt_let_new: call to ic_stmt_let_init failed");
+        free(let);
         return 0;
     }
 
