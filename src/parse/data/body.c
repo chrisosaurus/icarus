@@ -1,5 +1,5 @@
 #include <stdio.h> /* puts, printf */
-#include <stdlib.h> /* calloc */
+#include <stdlib.h> /* calloc, free */
 
 #include "body.h"
 #include "../../data/pvector.h"
@@ -23,6 +23,7 @@ struct ic_body * ic_body_new(void){
     /* init */
     if( ic_body_init(body) ){
         puts("ic_body_new: call to ic_body_init failed");
+        free(body);
         return 0;
     }
 
