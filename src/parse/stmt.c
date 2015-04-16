@@ -54,11 +54,13 @@ static struct ic_stmt * ic_parse_stmt_ret(struct ic_tokens *tokens, unsigned int
     /* check for `return` */
     if( ic_parse_check_token("return", 6, tokens->tokens, i) ){
         puts("ic_parse_stmt_ret: Failed to find `return` token");
+        free(stmt);
         return 0;
     }
     /* initialise our ret */
     if( ic_stmt_ret_init(ret) ){
         puts("ic_parse_stmt_ret: call to ic_stmt_ret_init failed");
+        free(stmt);
         return 0;
     }
 
@@ -66,6 +68,7 @@ static struct ic_stmt * ic_parse_stmt_ret(struct ic_tokens *tokens, unsigned int
     ret->ret = ic_parse_expr(tokens, i);
     if( ! ret->ret ){
         puts("ic_parse_stmt_ret: call to ic_parse_expr failed");
+        free(stmt);
         return 0;
     }
 
