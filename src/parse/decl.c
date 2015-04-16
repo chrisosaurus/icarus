@@ -50,6 +50,7 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
     tdecl = ic_decl_get_tdecl(decl);
     if( ! tdecl ){
         puts("ic_parse_type_decl: call to ic_decl_get_tdecl failed");
+        free(decl);
         return 0;
     }
 
@@ -58,6 +59,7 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
     /* initialise our tdecl */
     if( ic_type_decl_init(tdecl, &(tokens->tokens[*i]), dist) ){
         puts("ic_parse_type_decl: call to ic_type_decl_init failed");
+        free(decl);
         return 0;
     }
 
@@ -87,12 +89,17 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
         field = ic_parse_field(tokens, i);
         if( ! field ){
             puts("ic_parse_type_decl: call to ic_parse_field failed");
+            free(decl);
+            /* FIXME this leaks any previously stored field(s) */
             return 0;
         }
 
         /* and store it */
         if( ic_type_decl_add_field(tdecl, field) ){
             puts("ic_parse_type_decl: call to ic_type_decl_add_field failed");
+            free(decl);
+            /* FIXME this leaks any previously stored field(s) */
+            free(field);
             return 0;
         }
 
@@ -113,6 +120,8 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
      * successful return
      */
     puts("ic_parse_type_decl: call to ic_parse_this_is_not_the_end encountered an error");
+    /* FIXME this leaks any previously stored field(s) */
+    free(decl);
     return 0;
 }
 
