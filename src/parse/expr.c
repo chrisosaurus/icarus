@@ -138,6 +138,7 @@ static struct ic_expr * ic_parse_expr_identifier(struct ic_tokens *tokens, unsig
     id = ic_expr_get_identifier(expr);
     if( ! id ){
         puts("ic_parse_expr_identifier: call to ic_expr_get_identifier failed");
+        free(expr);
         return 0;
     }
 
@@ -145,12 +146,14 @@ static struct ic_expr * ic_parse_expr_identifier(struct ic_tokens *tokens, unsig
     dist = ic_parse_token_length(tokens->tokens, *i);
     if( ! dist ){
         puts("ic_parse_expr_identifier: call to ic_parse_token_length failed");
+        free(expr);
         return 0;
     }
 
     /* initialise our id */
     if( ic_expr_identifier_init(id, &(tokens->tokens[*i]), dist) ){
         puts("ic_parse_expr_identifier: call to ic_expr_identifier_init failed");
+        free(expr);
         return 0;
     }
 
