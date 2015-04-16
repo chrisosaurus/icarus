@@ -23,6 +23,7 @@ struct ic_symbol * ic_symbol_new(char *source, unsigned int len){
 
     if( ic_symbol_init(sym, source, len) ){
         puts("ic_symbol_new: error in call to ic_symbol_init");
+        free(sym);
         return 0;
     }
 
