@@ -1,5 +1,4 @@
-Icarus [![Build Status](https://travis-ci.org/mkfifo/icarus.svg)](https://travis-ci.org/mkfifo/icarus)
-======
+# Icarus [![Build Status](https://travis-ci.org/mkfifo/icarus.svg)](https://travis-ci.org/mkfifo/icarus) <a href="https://scan.coverity.com/projects/4854"> <img alt="Coverity Scan Build Status" src="https://scan.coverity.com/projects/4854/badge.svg"/> </a>
 
 Icarus is a toy language with static type checking
 
