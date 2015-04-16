@@ -272,6 +272,7 @@ struct ic_type_decl * ic_type_decl_new(char *name_src, unsigned int name_len){
 
     if( ic_type_decl_init(tdecl, name_src, name_len) ){
         puts("ic_type_decl_new: call to ic_type_decl_init failed");
+        free(tdecl);
         return 0;
     }
 
