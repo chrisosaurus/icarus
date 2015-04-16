@@ -23,6 +23,7 @@ struct ic_ast * ic_ast_new(void){
     /* initialise ast */
     if( ic_ast_init(ast) ){
         puts("ic_ast_new: call to ic_ast_init fialed");
+        free(ast);
         return 0;
     }
 
