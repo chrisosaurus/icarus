@@ -1,5 +1,6 @@
 #include <stdio.h> /* puts, printf */
 #include <string.h> /* strncmp */
+#include <stdlib.h> /* free */
 
 #include "parse.h"
 
@@ -193,6 +194,7 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
     fdecl = ic_decl_get_fdecl(decl);
     if( ! fdecl ){
         puts("ic_parse_func_decl: call to ic_decl_get_fdecl failed");
+        free(decl);
         return 0;
     }
 
@@ -202,6 +204,7 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
     /* initialise our fdecl */
     if( ic_func_decl_init(fdecl, &(tokens->tokens[*i]), dist) ){
         puts("ic_parse_func_decl: call to ic_func_decl_init failed");
+        free(decl);
         return 0;
     }
 
@@ -223,6 +226,7 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
         printf("ic_parse_func_decl: expected '(', found '%.*s'\n",
                 dist,
                 &(tokens->tokens[*i]) );
+        free(decl);
         return 0;
     }
     /* step over opening bracket */
@@ -247,12 +251,14 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
         arg = ic_parse_field(tokens, i);
         if( ! arg ){
             puts("ic_parse_func_decl: call to ic_parse_field failed");
+            free(decl);
             return 0;
         }
 
         /* save it */
         if( ic_func_decl_add_arg(fdecl, arg) ){
             puts("ic_parse_func_decl: call to if_func_decl_add_arg failed");
+            free(decl);
             return 0;
         }
     }
@@ -275,12 +281,14 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
         dist = ic_parse_token_length(tokens->tokens, *i);
         if( ! dist ) {
             puts("ic_parse_func_decl: call to if_parse_token_length failed when looking for arg type");
+            free(decl);
             return 0;
         }
 
         /* add to our fdecl */
         if( ic_func_decl_set_return( fdecl, &(tokens->tokens[*i]), dist ) ){
             puts("ic_parse_func_decl: call to ic_func_decl_set_return failed");
+            free(decl);
             return 0;
         }
 
@@ -306,12 +314,14 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
         stmt = ic_parse_stmt(tokens, i);
         if( ! stmt ){
             puts("ic_parse_func_decl: call to ic_parse_stmt failed");
+            free(decl);
             return 0;
         }
 
         /* save to our body */
         if( ic_func_decl_add_stmt(fdecl, stmt) ){
             puts("ic_parse_func_decl: call to ic_func_call_add_stmt failed");
+            free(decl);
             return 0;
         }
 
@@ -330,6 +340,7 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
      * successful return
      */
     puts("ic_parse_func_decl: error occurred in ic_parse_this_is_not_the_end");
+    free(decl);
     return 0;
 }
 
