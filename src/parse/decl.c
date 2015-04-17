@@ -89,16 +89,16 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
         field = ic_parse_field(tokens, i);
         if( ! field ){
             puts("ic_parse_type_decl: call to ic_parse_field failed");
-            free(decl);
             /* FIXME this leaks any previously stored field(s) */
+            free(decl);
             return 0;
         }
 
         /* and store it */
         if( ic_type_decl_add_field(tdecl, field) ){
             puts("ic_parse_type_decl: call to ic_type_decl_add_field failed");
-            free(decl);
             /* FIXME this leaks any previously stored field(s) */
+            free(decl);
             free(field);
             return 0;
         }
