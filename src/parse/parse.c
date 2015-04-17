@@ -118,9 +118,8 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
                     printf( "ic_parse: Error matched with '%.*s' but parse table function was null, bailing\n",
                             ic_parse_table[pt_offset].len,
                             ic_parse_table[pt_offset].token );
-                    /* FIXME this is leaking the items stored in ast
-                     * as well as ast
-                     */
+                    /* FIXME this is leaking the items stored in ast */
+                    free(ast);
                     return 0;
                 }
 
@@ -129,18 +128,16 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
                 if( ! ret ){
                     /* presume parsing failed */
                     puts("ic_parse: error when calling parsing function");
-                    /* FIXME this is leaking the items stored in ast
-                     * as well as ast
-                     */
+                    /* FIXME this is leaking the items stored in ast */
+                    free(ast);
                     return 0;
                 }
 
                 /* store ret in our ast */
                 if( ic_ast_append(ast, ret) == -1 ){
                     puts("ic_parse: call to ic_ast_append failed");
-                    /* FIXME this is leaking the items stored in ast
-                     * as well as ast
-                     */
+                    /* FIXME this is leaking the items stored in ast */
+                    free(ast);
                     return 0;
                 }
 
@@ -164,9 +161,8 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
                 dist,
                 &(tokens->tokens[i]) );
 
-        /* FIXME this is leaking the items stored in ast
-         * as well as ast
-         */
+        /* FIXME this is leaking the items stored in ast */
+        free(ast);
         return 0;
     }
 
