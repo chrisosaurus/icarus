@@ -117,6 +117,7 @@ static struct ic_stmt * ic_parse_stmt_let(struct ic_tokens *tokens, unsigned int
     /* check for `let` */
     if( ic_parse_check_token("let", 3, tokens->tokens, i) ){
         puts("ic_parse_stmt_let: Failed to find `let` token");
+        free(stmt);
         return 0;
     }
 
@@ -128,6 +129,7 @@ static struct ic_stmt * ic_parse_stmt_let(struct ic_tokens *tokens, unsigned int
     /* check for `::` */
     if( ic_parse_check_token("::", 2, tokens->tokens, i) ){
         puts("ic_parse_stmt_let: Failed to find `::` token");
+        free(stmt);
         return 0;
     }
 
