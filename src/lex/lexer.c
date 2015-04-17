@@ -547,6 +547,9 @@ static struct ic_tokens * ic_consume_string(struct ic_tokens *tokens, char *sour
     /* step over opening " */
     ++ len;
 
+    /* FIXME we are not currently handling the case of an unclosed string
+     * as we are not checking that len is a valid index into source
+     */
     for( ;
          ;
          ++len ){
@@ -570,7 +573,22 @@ static struct ic_tokens * ic_consume_string(struct ic_tokens *tokens, char *sour
 
 STRING_LOOP_EXIT:
 
-    /* error if we failed to consume anything */
+    /* NB: len is guaranteed to always be at least 1 in the current
+     * configuration of the code as the `++len` (for the opening '"')
+     * is always hit if we get here
+     *
+     * if we are here then we have also seen a closing '"' as this
+     * is the only way to exit the for loop,
+     * a len of 1 therefore means our string contained no content
+     * which is fine (empty string is valid)
+     *
+     */
+
+    /* error if we failed to consume anything
+     *
+     * due to the above this is impossible so this
+     * code is left here purely defensively
+     */
     if( len == 0 ){
         puts("ic_consume_string: failed to parse string");
         return 0;
