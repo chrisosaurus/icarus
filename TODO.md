@@ -15,4 +15,5 @@ technical debt:
 * function return value on failure, need to standardise
 * consider const-correctness on read only args
 * memory leak on error cases in ic_parse loop, ast and contents are leaked on return 0 (src/parse/parse.c:121)
+* memory leak on error cases in ic_parse_type_decl loop, decl and contents are leaked on return 0 (src/parse/parse.c:121)
 
