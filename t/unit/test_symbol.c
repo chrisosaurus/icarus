@@ -37,6 +37,7 @@ void abnormal(void){
     assert( 1 == ic_symbol_init(0, 0, 0) );
     assert( 0 == ic_symbol_contents(0) );
     assert( 0 == ic_symbol_get(0, 0) );
+    assert( -1 == ic_symbol_length(0) );
     /* cannot test output */
     ic_symbol_print(0);
 }
