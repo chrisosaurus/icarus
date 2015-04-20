@@ -6,15 +6,23 @@ include config.mk
 SRC = $(shell find src libs -name '*.c' | grep -v src/main.c)
 OBJ = ${SRC:.c=.o}
 
+# tests live in t/
+TESTS = $(shell find t -name '*.c' )
+# output location for tests
+TESTOUT = bin
+TESTO = $(patsubst %.c, $(TESTOUT)/%, $(TESTS))
+
 EXTRAFLAGS =
 
 # default to compiling without debug symbols
 all: icarus
 
+# compile each component, linking is handled by `icarus` rule
 %.o: %.c
 	@echo COMPILING CC $< with extra flags \"${EXTRAFLAGS}\"
 	@${CC} -g -c ${CFLAGS} $< ${EXTRAFLAGS} -o $@
 
+# compile and link main executable
 icarus: ${OBJ}
 	@echo more compiling CC -o $@ with extra flags \"${EXTRAFLAGS}\"
 	@${CC} src/main.c -o $@ ${LDFLAGS} ${EXTRAFLAGS} ${OBJ}
@@ -24,69 +32,44 @@ icarus: ${OBJ}
 debug:
 	@make -s EXTRAFLAGS="${DEBUGFLAGS}" icarus
 
+# only clean up temporary files (.o)
 cleanobj:
 	@echo cleaning objects and temporary files
 	@find . -iname '*.o' -delete
 
+# clean up everything managed by make
 clean: cleanobj
 	@echo cleaning executables
 	@rm -f icarus
 	@echo cleaning tests
-	@rm -rf bin
+	@rm -rf $(TESTOUT)
 	@echo removing gcov files
 	@find . -iname '*.gcda' -delete
 	@find . -iname '*.gcov' -delete
 	@find . -iname '*.gcno' -delete
 
+# run icarus over our simple example
 example: icarus
 	./icarus example/simple.ic
 
-test: run_tests
+# build all OBJ
+# run all TESTO
+# cleanup all temp objects
+# 	relying on OBJ first and calling cleanobj last
+# 	ensure that we do a fresh build every time
+test: $(OBJ) $(TESTO) test_success cleanobj
 
-run_tests: compile_tests
-	@echo "\n\nrunning test_read"
-	./bin/test_read
-	@echo "\n\nrunning test_parray"
-	./bin/test_parray
-	@echo "\n\nrunning test_carray"
-	./bin/test_carray
-	@echo "\n\nrunning test_pvector"
-	./bin/test_pvector
-	@echo "\n\nrunning test_string"
-	./bin/test_string
-	@echo "\n\nrunning test_symbol"
-	./bin/test_symbol
-	@echo "\n\nrunning test_dict"
-	./bin/test_dict
-	@echo "\n\nrunning test_field"
-	./bin/test_field
-	@echo "\n\nrunning test_tdecl"
-	./bin/test_tdecl
-	@echo "\n\nrunning test_fdecl"
-	./bin/test_fdecl
-	@echo "\n\nrunning test_decl"
-	./bin/test_decl
-	@echo "\n\nrunning test_ast"
-	./bin/test_ast
-	@echo "\n"
+# compile and run each test
+$(TESTO) : $(TESTOUT)/% : %.c
+	@echo "\n\ncompiling $< to $@"
+	@mkdir -p `dirname $@`
+	@${CC} $< -o $@ ${LDFLAGS} ${OBJ}
+	@echo running test
+	$@
 
-compile_tests: clean ${OBJ}
-	@echo "making bin directory for testing binaries"
-	@mkdir bin
-	@echo "compiling tests"
-	@${CC} t/unit/test_read.c -o bin/test_read ${LDFLAGS} ${OBJ}
-	@${CC} t/unit/test_parray.c -o bin/test_parray ${LDFLAGS} ${OBJ}
-	@${CC} t/unit/test_carray.c -o bin/test_carray ${LDFLAGS} ${OBJ}
-	@${CC} t/unit/test_pvector.c -o bin/test_pvector ${LDFLAGS} ${OBJ}
-	@${CC} t/unit/test_string.c -o bin/test_string ${LDFLAGS} ${OBJ}
-	@${CC} t/unit/test_symbol.c -o bin/test_symbol ${LDFLAGS} ${OBJ}
-	@${CC} t/unit/test_field.c -o bin/test_field ${LDFLAGS} ${OBJ}
-	@${CC} t/unit/test_tdecl.c -o bin/test_tdecl ${LDFLAGS} ${OBJ}
-	@${CC} t/unit/test_fdecl.c -o bin/test_fdecl ${LDFLAGS} ${OBJ}
-	@${CC} t/unit/test_decl.c -o bin/test_decl ${LDFLAGS} ${OBJ}
-	@${CC} t/unit/test_ast.c -o bin/test_ast ${LDFLAGS} ${OBJ}
-	@${CC} t/unit/test_dict.c -o bin/test_dict ${LDFLAGS} ${OBJ}
-	@make -s cleanobj
+# signal test success
+test_success:
+	@echo "\n\ntesting success\n"
 
 .PHONY: all clean cleanobj icarus test example
 
