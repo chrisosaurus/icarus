@@ -12,6 +12,7 @@ TESTS = $(shell find t -name '*.c' )
 TESTOUT = bin
 TESTO = $(patsubst %.c, $(TESTOUT)/%, $(TESTS))
 
+# only defined when `make debug`
 EXTRAFLAGS =
 
 # default to compiling without debug symbols
