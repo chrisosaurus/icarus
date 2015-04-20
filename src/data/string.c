@@ -94,7 +94,7 @@ char * ic_string_contents(struct ic_string *string){
 int ic_string_length(struct ic_string *string){
     if( ! string ){
         puts("ic_string_contents: null string passed in");
-        return 0;
+        return -1;
     }
 
     /* string->used is the strlen of the underlying string
