@@ -26,11 +26,13 @@
 /* extracted from
     https://github.com/mkfifo/linear_hash
 
-    commit 0488d3e69922362619bd363d3bee87c23a37928b
-    Author: Chris Hall <followingthepath@gmail.com>
-    Date:   Thu Apr 16 18:04:21 2015 +1200
 
-        fixing memory leak in lh_resize error case
+    commit 8a9882492c9c30e1b66f61d2cc839c9d206ec96f
+    Author: Chris Hall <followingthepath@gmail.com>
+    Date:   Mon Apr 20 20:16:49 2015 +1200
+
+        removing ugly LH_INTERNAL
+
  */
 
 #include <stdio.h> /* puts, printf */
@@ -55,21 +57,7 @@
  */
 #define LH_DEFAULT_THRESHOLD 6
 
-#ifdef LH_TEST
-/* when lh_TEST is defined we want our internal functions to be
- * exposed so that our testing code can access them
- * otherwise (when ifndef lh_TEST) we want them to be static
- */
-
-/* ignore missing prototype  warnings
- * but only during testing mode
- */
 #pragma GCC diagnostic ignored "-Wmissing-prototypes"
-#define LH_INTERNAL
-#else
-#define LH_INTERNAL static
-#endif
-
 
 /**********************************************
  **********************************************
@@ -79,11 +67,15 @@
  **********************************************
  ***********************************************/
 
+/* NOTE these helper functions are not exposed in our header
+ * but are not static so as to allow easy unit testing
+ */
+
 /* logic for testing if the current entry is eq to the
  * provided hash, key_len and key
  * this is to centralise the once scattered logic
  */
-LH_INTERNAL unsigned int lh_entry_eq(struct lh_entry *cur, unsigned long int hash, unsigned long int key_len, char *key){
+unsigned int lh_entry_eq(struct lh_entry *cur, unsigned long int hash, unsigned long int key_len, char *key){
     if( ! cur ){
         puts("lh_entry_eq: cur was null");
         return 0;
@@ -113,7 +105,7 @@ LH_INTERNAL unsigned int lh_entry_eq(struct lh_entry *cur, unsigned long int has
  * returns char* to new memory containing a strcpy on success
  * returns 0 on error
  */
-LH_INTERNAL char * lh_strdupn(char *str, size_t len){
+char * lh_strdupn(char *str, size_t len){
     /* our new string */
     char *new_str = 0;
 
@@ -156,7 +148,7 @@ LH_INTERNAL char * lh_strdupn(char *str, size_t len){
  * returns 1 on success
  * returns 0 on error
  */
-LH_INTERNAL unsigned int lh_entry_init(struct lh_entry *entry,
+unsigned int lh_entry_init(struct lh_entry *entry,
                                        unsigned long int hash,
                                        char *key,
                                        size_t key_len,
@@ -214,7 +206,7 @@ LH_INTERNAL unsigned int lh_entry_init(struct lh_entry *entry,
  * returns 1 on success
  * returns 0 on error
  */
-LH_INTERNAL unsigned int lh_entry_destroy(struct lh_entry *entry, unsigned int free_data){
+unsigned int lh_entry_destroy(struct lh_entry *entry, unsigned int free_data){
     if( ! entry ){
         puts("lh_entry_destroy: entry undef");
         return 0;
@@ -236,7 +228,7 @@ LH_INTERNAL unsigned int lh_entry_destroy(struct lh_entry *entry, unsigned int f
  * returns a pointer to it on success
  * return 0 on failure
  */
-LH_INTERNAL struct lh_entry * lh_find_entry(struct lh_table *table, char *key){
+struct lh_entry * lh_find_entry(struct lh_table *table, char *key){
     /* our cur entry */
     struct lh_entry *cur = 0;
 

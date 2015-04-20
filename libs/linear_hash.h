@@ -26,11 +26,13 @@
 /* extracted from
     https://github.com/mkfifo/linear_hash
 
-    commit 0488d3e69922362619bd363d3bee87c23a37928b
-    Author: Chris Hall <followingthepath@gmail.com>
-    Date:   Thu Apr 16 18:04:21 2015 +1200
 
-        fixing memory leak in lh_resize error case
+    commit 8a9882492c9c30e1b66f61d2cc839c9d206ec96f
+    Author: Chris Hall <followingthepath@gmail.com>
+    Date:   Mon Apr 20 20:16:49 2015 +1200
+
+        removing ugly LH_INTERNAL
+
  */
 
 #ifndef linear_halh_H
