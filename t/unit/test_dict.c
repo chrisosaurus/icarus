@@ -4,7 +4,7 @@
 
 #include "../../src/data/dict.h"
 
-int main(void){
+void normal(void){
     struct ic_dict *dict = ic_dict_new();
 
     int data_1 = 1;
@@ -23,6 +23,12 @@ int main(void){
     /* add something */
     assert( ic_dict_insert(dict, "hello", &data_1) );
 
+    /* check it exists */
+    assert( ic_dict_exists(dict, "hello") );
+
+    /* check something doesn't exist */
+    assert( 0 == ic_dict_exists(dict, "world") );
+
     /* play around a bit */
     assert( &data_1 == ic_dict_get(dict, "hello") );
     assert( &data_1 == ic_dict_set(dict, "hello", &data_2) );
@@ -38,6 +44,22 @@ int main(void){
     assert( ic_dict_destroy(dict, 1, 0) );
 
     puts("success");
+}
+
+void abnormal(void){
+    /* check all the dict null cases */
+    assert( 0 == ic_dict_init(0) );
+    assert( 0 == ic_dict_get(0, 0) );
+    assert( 0 == ic_dict_set(0, 0, 0) );
+    assert( 0 == ic_dict_insert(0, 0, 0) );
+    assert( 0 == ic_dict_exists(0, 0) );
+    assert( 0 == ic_dict_delete(0, 0) );
+    assert( 0 == ic_dict_destroy(0, 0, 0) );
+}
+
+int main(void){
+    normal();
+    abnormal();
 
     return 0;
 }
