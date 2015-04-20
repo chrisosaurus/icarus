@@ -2,7 +2,7 @@
 
 #include "../../src/data/carray.h"
 
-int main(void){
+void normal(void){
     int i;
     struct ic_carray *arr = ic_carray_new(0);
 
@@ -19,6 +19,14 @@ int main(void){
     assert(ic_carray_ensure(arr, 10) == 0);
     assert(arr->len == 10);
 
+    /* try to resize to a size that isn't bigger, will do nothing */
+    assert(ic_carray_ensure(arr, 10) == 0);
+    assert(arr->len == 10);
+
+    /* same with smaller size */
+    assert(ic_carray_ensure(arr, 4) == 0);
+    assert(arr->len == 10);
+
     /* check everything within range is settable and gettable */
     for(i=0; i<10; ++i){
         assert(ic_carray_set(arr, i, 'a') == 0);
@@ -28,6 +36,19 @@ int main(void){
     /* and check that out of range get and set are still errors */
     assert(ic_carray_get(arr, 10) == 0);
     assert(ic_carray_set(arr, 10, 'a') == 1);
+}
+
+void abnormal(void){
+    /* test null carry args */
+    assert( 1 == ic_carray_init(0, 0) );
+    assert( 0 == ic_carray_get(0, 0) );
+    assert( 1 == ic_carray_set(0, 0, 0) );
+    assert( 1 == ic_carray_ensure(0, 0) );
+}
+
+int main(void){
+    normal();
+    abnormal();
 
     return 0;
 }
