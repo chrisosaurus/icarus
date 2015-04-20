@@ -5,7 +5,7 @@
 
 #include "../../src/data/pvector.h"
 
-int main(void){
+void normal(void){
     int i;
     struct ic_pvector *arr = ic_pvector_new(5);
 
@@ -47,6 +47,14 @@ int main(void){
     assert(arr->used == 0);
     assert(arr->cap == 8);
 
+    /* ensure to same or less size should do nothing */
+    assert( 0 == ic_pvector_ensure(arr, 8) );
+    assert(arr->used == 0);
+    assert(arr->cap == 8);
+    assert( 0 == ic_pvector_ensure(arr, 4) );
+    assert(arr->used == 0);
+    assert(arr->cap == 8);
+
     /* push over current 0 capacity
      * this will cause our first resize
      */
@@ -75,6 +83,20 @@ int main(void){
 
     assert(arr->used == 18);
     assert(arr->cap == 32);
+}
+
+void abnormal(void){
+    /* test null pvector args */
+    assert( 1 == ic_pvector_init(0, 0) );
+    assert( 0 == ic_pvector_get(0, 0) );
+    assert( -1 == ic_pvector_append(0, 0) );
+    assert( 1 == ic_pvector_ensure(0, 0) );
+    assert( 0 == ic_pvector_length(0) );
+}
+
+int main(void){
+    normal();
+    abnormal();
 
     return 0;
 }
