@@ -53,6 +53,8 @@ int ic_string_length(struct ic_string *string);
 
 /* get a character from the string
  *
+ * you may get any character up to and including the '\0'
+ *
  * bounds checked
  *
  * returns character on success

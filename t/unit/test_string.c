@@ -23,9 +23,9 @@ void normal(void){
     assert(ic_string_get(str, 2) == 'l');
     assert(ic_string_get(str, 3) == 'l');
     assert(ic_string_get(str, 4) == 'o');
+    assert(ic_string_get(str, 5) == '\0');
 
     /* check for out of bounds access */
-    assert(ic_string_get(str, 5) == 0);
     assert(ic_string_get(str, 6) == 0);
     assert(ic_string_get(str, 7) == 0);
 
@@ -51,8 +51,9 @@ void normal(void){
     assert(ic_string_get(str,  8) == 'r');
     assert(ic_string_get(str,  9) == 'l');
     assert(ic_string_get(str, 10) == 'd');
+    assert(ic_string_get(str, 11) == '\0');
 
-    assert(ic_string_get(str, 11) == 0);
+    /* out of bound */
     assert(ic_string_get(str, 12) == 0);
 
     /* test append by char */

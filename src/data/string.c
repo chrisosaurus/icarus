@@ -106,6 +106,8 @@ int ic_string_length(struct ic_string *string){
 
 /* get a character from the string
  *
+ * you may get any character up to and including the '\0'
+ *
  * bounds checked
  *
  * returns character on success
@@ -117,15 +119,16 @@ char ic_string_get(struct ic_string *string, unsigned int offset){
         return 0;
     }
 
-    /* backing.len includes the null terminator
-     * so we must subtract one before using it to bounds check
+    /* used does not include null terminator
+     * here we allow for equality as we allow the user
+     * to fetch the null terminator
      */
-    if( offset >= (string->backing.len - 1) ){
-        printf("ic_string_get: offset '%d' out of range '%d'\n", offset, ( string->backing.len - 1) );
+    if( offset > string->used ){
+        printf("ic_string_get: offset '%d' out of range '%d'\n", offset, string->used );
         return 0;
     }
 
-    return string->backing.contents[offset];
+    return ic_carray_get(&(string->backing), offset);
 }
 
 /* set character at [pos] to val
