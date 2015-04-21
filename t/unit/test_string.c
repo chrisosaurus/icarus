@@ -63,6 +63,8 @@ void normal(void){
 }
 
 void abnormal(void){
+    struct ic_string *str = ic_string_new("hello", 5);
+
     /* testing null string cases */
     assert( 1 == ic_string_init(0, 0, 0) );
     assert( 0 == ic_string_contents(0) );
@@ -70,6 +72,12 @@ void abnormal(void){
     assert( -1 == ic_string_length(0) );
     assert( 1 == ic_string_append(0, 0) );
     assert( 1 == ic_string_append_char(0, 0, 0) );
+
+    /* testing cases with non-null string but other
+     * null required arguments
+     */
+    assert( 1 == ic_string_append(str, 0) );
+    assert( 1 == ic_string_append_char(str, 0, 0) );
 }
 
 int main(void){
