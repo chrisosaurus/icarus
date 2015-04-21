@@ -45,6 +45,7 @@ Plans
 * whitespace insensitive (except using \n to terminate a comment, but comments are stripped by the lexer for now)
 * no commas (hail to the lisp)
 * no semicolons
+* type safety - no casting; explicit conversion functions between builtin types will be provided but only when they make sense, composite types can then build on these
 
 Work so far
 ===========
