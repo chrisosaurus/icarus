@@ -133,9 +133,46 @@ char ic_string_get(struct ic_string *string, unsigned int offset){
  * returns 1 on error
  */
 unsigned int ic_string_append(struct ic_string *to, struct ic_string *from){
-    /* FIXME */
-    puts("ic_string_append: unimplemented");
-    return 1;
+    unsigned int len = 0;
+    unsigned int from_len = 0;
+
+    if( ! to ){
+        puts("ic_string_append: to string was null");
+        return 1;
+    }
+    if( ! from ){
+        puts("ic_string_append: from string was null");
+        return 1;
+    }
+
+    /* cache the result */
+    from_len = ic_string_length(from);
+
+    /* calculate our desired length */
+    len = 1; /* null pointer */
+    len += ic_string_length(to);
+    len += from_len;
+
+    /* make sure our carray is large enough */
+    if( ic_carray_ensure(&(to->backing), len) ){
+        puts("ic_string_append: call to ic_carray_ensure failed");
+        return 1;
+    }
+
+    /* store our string, note that we do not include the null terminator here */
+    to->used = (len - 1);
+
+    /* concat the strings together */
+    strncat( ic_string_contents(to), ic_string_contents(from), ic_string_length(from) );
+
+    /* ensure string */
+    if( ic_carray_set( &(to->backing), to->used, '\0') ){
+        puts("ic_string_append: call to ic_carray_set failed");
+        return 1;
+    }
+
+    /* success */
+    return 0;
 }
 
 /* append the contents of `from` to `to`
@@ -150,9 +187,43 @@ unsigned int ic_string_append(struct ic_string *to, struct ic_string *from){
  * returns 1 on error
  */
 unsigned int ic_string_append_char(struct ic_string *to, char *from, unsigned int from_len){
-    /* FIXME */
-    puts("ic_string_append_char: unimplemented");
-    return 1;
+    unsigned int len = 0;
+
+    if( ! to ){
+        puts("ic_string_append_char: to string was null");
+        return 1;
+    }
+    if( ! from ){
+        puts("ic_string_append_char: from string was null");
+        return 1;
+    }
+
+    /* calculate our desired length */
+    len = 1; /* null pointer */
+    len += ic_string_length(to);
+    len += from_len;
+
+    /* make sure our carray is large enough */
+    if( ic_carray_ensure(&(to->backing), len) ){
+        puts("ic_string_append_char: call to ic_carray_ensure failed");
+        return 1;
+    }
+
+    /* store our string, note that we do not include the null terminator here */
+    to->used = (len - 1);
+
+    /* concat the strings together */
+    strncat( ic_string_contents(to), from, from_len );
+
+    /* ensure string */
+    if( ic_carray_set( &(to->backing), to->used, '\0') ){
+        puts("ic_string_append_char: call to ic_carray_set failed");
+        return 1;
+    }
+
+    /* success */
+    return 0;
+
 }
 
 
