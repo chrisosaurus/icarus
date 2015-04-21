@@ -25,7 +25,10 @@ struct ic_pvector {
  */
 struct ic_pvector * ic_pvector_new(unsigned int cap);
 
-/* initialise existing pvector
+/* initialise existing pvector to specified cap
+ *
+ * will use a default cap of PVECTOR_DEFAULT_SIZE is no cap is supplied
+ *
  * returns 0 on success
  * returns 1 on failure
  */
