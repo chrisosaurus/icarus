@@ -50,6 +50,7 @@ unsigned int ic_carray_init(struct ic_carray *arr, unsigned int len){
 }
 
 /* get item at pos
+ * `
  * bounds checked
  *
  * returns item on success
@@ -70,7 +71,11 @@ char ic_carray_get(struct ic_carray *arr, unsigned int pos){
     return arr->contents[pos];
 }
 
-/* returns 0 on successful set
+/* set element at [pos] to val
+ *
+ * bounds checked
+ *
+ * returns 0 on successful set
  * returns 1 on failure
  */
 unsigned int ic_carray_set(struct ic_carray *arr, unsigned int pos, char val){
@@ -89,7 +94,8 @@ unsigned int ic_carray_set(struct ic_carray *arr, unsigned int pos, char val){
     return 0;
 }
 
-/* ensure array is at least as big as `new_cap`
+/* ensure array is at least as big as `new_len`
+ *
  * returns 0 on success
  * returns 1 on failure
  */
