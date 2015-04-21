@@ -29,20 +29,25 @@ struct ic_parray * ic_parray_new(unsigned int len);
 unsigned int ic_parray_init(struct ic_parray *arr, unsigned int len);
 
 /* get item at pos
+ *
  * bounds checked
  *
  * returns item on success
  * returns 0 on failure
  */
 void * ic_parray_get(struct ic_parray *arr, unsigned int pos);
-/* returns 0 on successful set
- * returns 1 on failure
+
+/* set element at [pos] to val
  *
  * bounds checked
+ *
+ * returns 0 on success
+ * returns 1 on failure
  */
 unsigned int ic_parray_set(struct ic_parray *arr, unsigned int pos, void *val);
 
 /* ensure array is at least as big as `new_len`
+ *
  * returns 0 on success
  * returns 1 on failure
  */

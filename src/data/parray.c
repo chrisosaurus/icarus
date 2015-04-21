@@ -52,6 +52,7 @@ unsigned int ic_parray_init(struct ic_parray *arr, unsigned int len){
 }
 
 /* get item at pos
+ *
  * bounds checked
  *
  * returns item on success
@@ -70,7 +71,11 @@ void * ic_parray_get(struct ic_parray *arr, unsigned int pos){
     return arr->contents[pos];
 }
 
-/* returns 0 on successful set
+/* set element at [pos] to val
+ *
+ * bounds checked
+ *
+ * returns 0 on success
  * returns 1 on failure
  */
 unsigned int ic_parray_set(struct ic_parray *arr, unsigned int pos, void *val){
@@ -88,6 +93,7 @@ unsigned int ic_parray_set(struct ic_parray *arr, unsigned int pos, void *val){
 }
 
 /* ensure array is at least as big as `new_cap`
+ *
  * returns 0 on success
  * returns 1 on failure
  */
