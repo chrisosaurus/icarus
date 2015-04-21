@@ -118,11 +118,11 @@ int ic_pvector_append(struct ic_pvector *arr, void *data){
 
 
 /* ensure pvector is at least as big as `new_cap`
-* this will not shrink the pvector
-*
-* returns 0 on success
-* returns 1 on failure
-*/
+ * this will not shrink the pvector
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
 unsigned int ic_pvector_ensure(struct ic_pvector *arr, unsigned int new_cap){
     if( ! arr ){
         puts("ic_pvector_ensure: supplied array was null");
