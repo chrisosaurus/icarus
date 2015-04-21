@@ -57,11 +57,13 @@ unsigned int ic_carray_init(struct ic_carray *arr, unsigned int len){
  */
 char ic_carray_get(struct ic_carray *arr, unsigned int pos){
     if( ! arr ){
+        puts("ic_carray_get: arr was null");
         return 0;
     }
 
     if( pos >= arr->len ){
         /* out of bounds */
+        puts("ic_carray_get: requested pos is out of bounds");
         return 0;
     }
 
@@ -73,11 +75,13 @@ char ic_carray_get(struct ic_carray *arr, unsigned int pos){
  */
 unsigned int ic_carray_set(struct ic_carray *arr, unsigned int pos, char val){
     if( ! arr ){
+        puts("ic_carray_set: arr was null");
         return 1;
     }
 
     if( pos >= arr->len ){
         /* out of bounds */
+        puts("ic_carray_set: requested pos is out of bounds");
         return 1;
     }
 
