@@ -109,6 +109,13 @@ unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_
     /* free pvector contents but do not free pvector itself
      * since it is an element on fdecl
      */
+    /* FIXME cannot rely on generic pvector
+     * as pvector has no idea of it's contents
+     *
+     * can either
+     *  a) iterate through manually
+     *  b) pvector_destroy takes a function pointer for destroying elements
+     */
     if( ic_pvector_destroy(&(fdecl->args), 0) ){
         puts("ic_type_decl_destroy: for args call to ic_pvector_destroy failed");
         return 1;
