@@ -106,6 +106,8 @@ int ic_string_length(struct ic_string *string){
 
 /* get a character from the string
  *
+ * bounds checked
+ *
  * returns character on success
  * returns 0 on failure
  */
