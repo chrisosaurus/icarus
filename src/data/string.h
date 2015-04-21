@@ -60,6 +60,20 @@ int ic_string_length(struct ic_string *string);
  */
 char ic_string_get(struct ic_string *string, unsigned int offset);
 
+/* set character at [pos] to val
+ *
+ * pos must not be the null terminator
+ * pos must be < used
+ *
+ * val must not be '\0'
+ *
+ * bounds checked
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+char ic_string_set(struct ic_string *string, unsigned int pos, char val);
+
 /* append the contents of `from` to `to`
  * this will resize `to` to guarantee there is enough space
  *

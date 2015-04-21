@@ -128,6 +128,48 @@ char ic_string_get(struct ic_string *string, unsigned int offset){
     return string->backing.contents[offset];
 }
 
+/* set character at [pos] to val
+ *
+ * pos must not be the null terminator
+ * pos must be < used
+ *
+ * val must not be '\0'
+ *
+ * bounds checked
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+char ic_string_set(struct ic_string *string, unsigned int pos, char val){
+    if( ! string ){
+        puts("ic_string_set: null string passed in");
+        return 1;
+    }
+
+    /* check we are within range
+     * we do NOT allow the null terminator to be fiddled with through this */
+    if( pos >= string->used ){
+        puts("ic_string_set: requested pos was out of range");
+        return 1;
+    }
+
+    /* we do also not allow val to be the null terminator
+     * as this would screw with out string constraint
+     */
+    if( val == '\0' ){
+        puts("ic_string_set: provided val was null terminator");
+        return 1;
+    }
+
+    if( ic_carray_set(&(string->backing), pos, val) ){
+        puts("ic_string_set: call to ic_carray_set failed");
+        return 1;
+    }
+
+    return 0;
+
+}
+
 /* append the contents of `from` to `to`
  * this will resize `to` to guarantee there is enough space
  *

@@ -60,6 +60,11 @@ void normal(void){
     assert(ic_string_length(str2) == 8);
     assert( ! strncmp(" worldly", ic_string_contents(str2), 9) );
 
+    /* testing set */
+    assert( 0 ==  ic_string_set(str2, 0, '_') );
+    assert( '_' ==  ic_string_get(str2, 0) );
+    assert(ic_string_length(str2) == 8);
+    assert( ! strncmp("_worldly", ic_string_contents(str2), 9) );
 }
 
 void abnormal(void){
@@ -69,6 +74,7 @@ void abnormal(void){
     assert( 1 == ic_string_init(0, 0, 0) );
     assert( 0 == ic_string_contents(0) );
     assert( 0 == ic_string_get(0, 0) );
+    assert( 1 == ic_string_set(0, 0, 0) );
     assert( -1 == ic_string_length(0) );
     assert( 1 == ic_string_append(0, 0) );
     assert( 1 == ic_string_append_char(0, 0, 0) );
@@ -78,6 +84,11 @@ void abnormal(void){
      */
     assert( 1 == ic_string_append(str, 0) );
     assert( 1 == ic_string_append_char(str, 0, 0) );
+
+    /* for string set we also do not allow for the pos to be out of range */
+    assert( 1 == ic_string_set(str, 5, 'c') );
+    /* we also do not allow for val to be the '\0' */
+    assert( 1 == ic_string_set(str, 0, '\0') );
 }
 
 int main(void){
