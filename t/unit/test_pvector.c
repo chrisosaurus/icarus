@@ -40,7 +40,7 @@ void normal(void){
 
     /* also test default growth pattern
      * if we do not set an initial size then growth is based on
-     * PVECTOR_DEFAULT_GROWTH
+     * PVECTOR_DEFAULT_SIZE
      */
     arr = ic_pvector_new(0);
 
@@ -92,11 +92,11 @@ void normal(void){
     assert(arr2->cap == 1);
 
     /* here the ensure of 0 will default
-     * to an ensure of PVECTOR_DEFAULT_GROWTH
+     * to an ensure of PVECTOR_DEFAULT_SIZE
      */
     assert( 0 == ic_pvector_ensure(arr2, 0) );
     assert(arr2->used == 0);
-    /* PVECTOR_DEFAULT_GROWTH is 8 */
+    /* PVECTOR_DEFAULT_SIZE is 8 */
     assert(arr2->cap == 8);
 
 

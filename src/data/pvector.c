@@ -4,7 +4,7 @@
 
 #include "pvector.h"
 
-#define PVECTOR_DEFAULT_GROWTH 8
+#define PVECTOR_DEFAULT_SIZE 8
 
 /* allocate a new pvector of capacity cap
  *
@@ -31,7 +31,7 @@ struct ic_pvector * ic_pvector_new(unsigned int cap){
 
 /* initialise existing pvector to specified cap
  *
- * will use a default cap of PVECTOR_DEFAULT_GROWTH is no cap is supplied
+ * will use a default cap of PVECTOR_DEFAULT_SIZE is no cap is supplied
  *
  * returns 0 on success
  * returns 1 on failure
@@ -42,10 +42,10 @@ unsigned int ic_pvector_init(struct ic_pvector *vec, unsigned int cap){
         return 1;
     }
 
-    /* default to PVECTOR_DEFAULT_GROWTH if no cap is specified
+    /* default to PVECTOR_DEFAULT_SIZE if no cap is specified
      */
     if( ! cap ){
-        cap = PVECTOR_DEFAULT_GROWTH;
+        cap = PVECTOR_DEFAULT_SIZE;
     }
 
     vec->used = 0;
@@ -130,7 +130,7 @@ unsigned int ic_pvector_ensure(struct ic_pvector *arr, unsigned int new_cap){
     }
 
     if( ! new_cap ){
-        new_cap = PVECTOR_DEFAULT_GROWTH;
+        new_cap = PVECTOR_DEFAULT_SIZE;
     }
 
     if( arr->cap >= new_cap ){
