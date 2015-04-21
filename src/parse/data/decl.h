@@ -40,6 +40,18 @@ struct ic_func_decl * ic_func_decl_new(char *name, unsigned int name_len);
  */
 unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned int name_len);
 
+/* calls destroy on every element within
+ *
+ * this will only free the fdecl if `free_fdecl` is truthy
+ *
+ * the caller must determine if it is appropriate
+ * or not to call free(decl)
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_fdecl);
+
 /* add new arg field to func_decl
  *
  * returns 0 on success
@@ -112,6 +124,18 @@ struct ic_type_decl * ic_type_decl_new(char *name_src, unsigned int name_len);
  */
 unsigned int ic_type_decl_init(struct ic_type_decl *tdecl, char *name_src, unsigned int name_len);
 
+/* calls destroy on every element within
+ *
+ * this will only free the tdecl if `free_tdecl` is truthy
+ *
+ * the caller must determine if it is appropriate
+ * or not to call free(decl)
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_type_decl_destroy(struct ic_type_decl *tdecl, unsigned int free_tdecl);
+
 /* add a new field to types list of fields
  *
  * returns 0 on success
@@ -161,6 +185,18 @@ struct ic_decl * ic_decl_new(enum ic_decl_type type);
  * returns 1 on error
  */
 unsigned int ic_decl_init(struct ic_decl *decl, enum ic_decl_type type);
+
+/* calls destroy on every element within
+ *
+ * this will only free the decl if `free_decl` is truthy
+ *
+ * the caller must determine if it is appropriate
+ * or not to call free(decl)
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl);
 
 /* returns pointer to ic_func_decl element
  * this function will only success if the decl is of type func_decl

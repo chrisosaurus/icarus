@@ -50,6 +50,59 @@ unsigned int ic_ast_init(struct ic_ast *ast){
     return 0;
 }
 
+/* calls destroy on all elements within
+ *
+ * this will only free the ast if `free_ast` is truthy
+ *
+ * the caller must determine if it is appropriate
+ * or not to call free(ast)
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_ast_destroy(struct ic_ast *ast, unsigned int free_ast){
+    /* iterator through contained decls */
+    unsigned int i = 0;
+    /* number of contained decls */
+    unsigned int len = 0;
+    /* pointer to current decl */
+    struct ic_decl *decl = 0;
+
+    if( ! ast ){
+        puts("ic_ast_destroy");
+        return 1;
+    }
+
+    /* get length */
+    len = ic_ast_length(ast);
+
+    /* iterate through each element of ast */
+    for( i=0; i < len; ++i ){
+        /* get decl */
+        decl = ic_ast_get(ast, i);
+        if( ! decl ){
+            puts("ic_ast_destroy: call to ic_ast_get failed");
+            return 1;
+        }
+
+        /* destroy everything contained within decl
+         * and free the decl itself
+         */
+        if( ic_decl_destroy(decl, 1) ){
+            puts("ic_ast_destroy: call to ic_decl_destroy failed");
+            return 1;
+        }
+    }
+
+    /* caller must decide if *ast is to be freed or not */
+    if( free_ast ){
+        free(ast);
+    }
+
+    /* success */
+    return 0;
+}
+
 /* get item stores at index i
  *
  * returns pointer to item on success
@@ -126,7 +179,7 @@ void ic_ast_print(struct ic_ast *ast){
         /* get decl */
         decl = ic_ast_get(ast, i);
         if( ! decl ){
-            puts("ic_ast_pring: call to ic_ast_get failed");
+            puts("ic_ast_print: call to ic_ast_get failed");
             return;
         }
 

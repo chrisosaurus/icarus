@@ -23,6 +23,18 @@ struct ic_ast * ic_ast_new(void);
  */
 unsigned int ic_ast_init(struct ic_ast *ast);
 
+/* calls destroy on all elements within
+ *
+ * this will only free the ast if `free_ast` is truthy
+ *
+ * the caller must determine if it is appropriate
+ * or not to call free(ast)
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_ast_destroy(struct ic_ast *ast, unsigned int free_ast);
+
 /* get item stores at index i
  *
  * returns pointer to item on success

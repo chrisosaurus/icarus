@@ -82,6 +82,69 @@ unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned 
     return 0;
 }
 
+/* calls destroy on every element within
+ *
+ * this will only free the fdecl if `free_fdecl` is truthy
+ *
+ * the caller must determine if it is appropriate
+ * or not to call free(decl)
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_fdecl){
+    if( ! fdecl ){
+        puts("ic_type_decl_destroy: fdecl was null");
+        return 1;
+    }
+
+    /* free symbol contents but do not free symbol itself
+     * since it is an element on fdecl
+     */
+    if( ic_symbol_destroy(&(fdecl->name), 0) ){
+        puts("ic_type_decl_destroy: for name call to ic_symbol_destroy failed");
+        return 1;
+    }
+
+    /* free pvector contents but do not free pvector itself
+     * since it is an element on fdecl
+     */
+    if( ic_pvector_destroy(&(fdecl->args), 0) ){
+        puts("ic_type_decl_destroy: for args call to ic_pvector_destroy failed");
+        return 1;
+    }
+
+    /* only need to free if we have a ret_type */
+    if( fdecl->ret_type ){
+        /* free symbol contents and free symbol
+         * as our ret type is always allocated
+         *
+         *    // ic_func_decl_set_return :
+         *    fdecl->ret_type = ic_symbol_new(type, type_len);
+         */
+        if( ic_symbol_destroy(fdecl->ret_type, 1) ){
+            puts("ic_type_decl_destroy: for ret_type call to ic_symbol_destroy failed");
+            return 1;
+        }
+    }
+
+    /* free body contents but do not free body itself
+     * since it is an element on fdecl
+     */
+    if( ic_body_destroy(&(fdecl->body), 0) ){
+        puts("ic_type_decl_destroy: for body call to ic_body_destroy failed");
+        return 1;
+    }
+
+    /* only free if caller asked */
+    if( free_fdecl ){
+        free(fdecl);
+    }
+
+    /* success */
+    return 0;
+}
+
 /* add new arg field to func_decl
  *
  * returns 0 on success
@@ -312,6 +375,47 @@ unsigned int ic_type_decl_init(struct ic_type_decl *tdecl, char *name_src, unsig
     return 0;
 }
 
+/* calls destroy on every element within
+ *
+ * this will only free the tdecl if `free_tdecl` is truthy
+ *
+ * the caller must determine if it is appropriate
+ * or not to call free(decl)
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_type_decl_destroy(struct ic_type_decl *tdecl, unsigned int free_tdecl){
+    if( ! tdecl ){
+        puts("ic_type_decl_destroy: tdecl was null");
+        return 1;
+    }
+
+    /* free symbol contents but do not free symbol itself
+     * since it is an element on tdecl
+     */
+    if( ic_symbol_destroy(&(tdecl->name), 0) ){
+        puts("ic_type_decl_destroy: call to ic_symbol_destroy failed");
+        return 1;
+    }
+
+    /* free pvector contents but do not free pvector itself
+     * since it is an element on tdecl
+     */
+    if( ic_pvector_destroy(&(tdecl->fields), 0) ){
+        puts("ic_type_decl_destroy: call to ic_pvector_destroy failed");
+        return 1;
+    }
+
+    /* only free if caller asked */
+    if( free_tdecl ){
+        free(tdecl);
+    }
+
+    /* success */
+    return 0;
+}
+
 /* add a new field to types list of fields
  *
  * returns 0 on success
@@ -440,6 +544,60 @@ unsigned int ic_decl_init(struct ic_decl *decl, enum ic_decl_type type){
      * FIXME: reconsider this interface
      */
 
+    return 0;
+}
+
+/* calls destroy on every element within
+ *
+ * this will only free the decl if `free_decl` is truthy
+ *
+ * the caller must determine if it is appropriate
+ * or not to call free(decl)
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl){
+    if( ! decl ){
+        puts("ic_decl_destroy: decl was null");
+        return 1;
+    }
+
+    /* dispatch based on type
+     *
+     * note that in both calls to _destroy we set the second arg to 0
+     * as both the fdecl and tdecl are elements on this ic_decl
+     * so we have to handle the free bewlo
+     */
+    switch( decl->type ){
+        case ic_decl_func_decl:
+            /* destroy all elements but not not (0) free fdecl itself */
+            if( ic_func_decl_destroy(&(decl->u.fdecl), 0) ){
+                puts("ic_decl_destroy: call to ic_func_decl_destroy failed");
+                return 1;
+            }
+            break;
+
+        case ic_decl_type_decl:
+            /* destroy all elements but not not (0) free tdecl itself */
+            if( ic_type_decl_destroy(&(decl->u.tdecl), 0) ){
+                puts("ic_decl_destroy: call to ic_type_decl_destroy failed");
+                return 1;
+            }
+            break;
+
+        default:
+            puts("ic_decl_destroy: impossible decl type, aborting");
+            return 1;
+            break;
+    }
+
+    /* caller must determine if we are to free decl itself */
+    if( free_decl ){
+        free(decl);
+    }
+
+    /* success */
     return 0;
 }
 
