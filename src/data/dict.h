@@ -62,6 +62,7 @@ unsigned int ic_dict_exists(struct ic_dict *dict, char *key);
  * returns 0 on error
  */
 void * ic_dict_delete(struct ic_dict *dict, char *key);
+
 /* free an existing ic_dict
  * this will free all memory internal to the hash
  *
