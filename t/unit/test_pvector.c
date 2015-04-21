@@ -8,6 +8,7 @@
 void normal(void){
     int i;
     struct ic_pvector *arr = ic_pvector_new(5);
+    struct ic_pvector *arr2 = 0;
 
     assert(arr);
     assert(arr->used == 0);
@@ -83,6 +84,22 @@ void normal(void){
 
     assert(arr->used == 18);
     assert(arr->cap == 32);
+
+
+    /* force a small size */
+    arr2 = ic_pvector_new(1);
+    assert(arr2->used == 0);
+    assert(arr2->cap == 1);
+
+    /* here the ensure of 0 will default
+     * to an ensure of PVECTOR_DEFAULT_GROWTH
+     */
+    assert( 0 == ic_pvector_ensure(arr2, 0) );
+    assert(arr2->used == 0);
+    /* PVECTOR_DEFAULT_GROWTH is 8 */
+    assert(arr2->cap == 8);
+
+
 }
 
 void abnormal(void){
