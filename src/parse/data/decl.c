@@ -93,6 +93,11 @@ unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned 
  * returns 1 on failure
  */
 unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_fdecl){
+    int i = 0;
+    int len = 0;
+
+    struct ic_field *field = 0;
+
     if( ! fdecl ){
         puts("ic_type_decl_destroy: fdecl was null");
         return 1;
@@ -106,19 +111,26 @@ unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_
         return 1;
     }
 
-    /* free pvector contents but do not free pvector itself
-     * since it is an element on fdecl
-     */
-    /* FIXME cannot rely on generic pvector
-     * as pvector has no idea of it's contents
-     *
-     * can either
-     *  a) iterate through manually
-     *  b) pvector_destroy takes a function pointer for destroying elements
-     */
-    if( ic_pvector_destroy(&(fdecl->args), 0) ){
-        puts("ic_type_decl_destroy: for args call to ic_pvector_destroy failed");
+    len = ic_pvector_length( &(fdecl->args) );
+    if( ! len ){
+        puts("ic_type_decl_destroy: call to ic_pvector_length failed");
         return 1;
+    }
+
+    for( i=0; i<len; ++i ){
+        field = ic_pvector_get( &(fdecl->args), i );
+        if( ! field ){
+            puts("ic_type_decl_destroy: call to ic_pvector_get failed");
+            return 1;
+        }
+
+        /* dispatch to field destroy
+         * free_field set to 1
+         */
+        if( ic_field_destroy(field, 1) ){
+            puts("ic_type_decl_destroy: call to ic_field_destroy failed");
+            return 1;
+        }
     }
 
     /* only need to free if we have a ret_type */
@@ -393,6 +405,10 @@ unsigned int ic_type_decl_init(struct ic_type_decl *tdecl, char *name_src, unsig
  * returns 1 on failure
  */
 unsigned int ic_type_decl_destroy(struct ic_type_decl *tdecl, unsigned int free_tdecl){
+    int i = 0;
+    int len = 0;
+    struct ic_field *field = 0;
+
     if( ! tdecl ){
         puts("ic_type_decl_destroy: tdecl was null");
         return 1;
@@ -406,12 +422,27 @@ unsigned int ic_type_decl_destroy(struct ic_type_decl *tdecl, unsigned int free_
         return 1;
     }
 
-    /* free pvector contents but do not free pvector itself
-     * since it is an element on tdecl
-     */
-    if( ic_pvector_destroy(&(tdecl->fields), 0) ){
-        puts("ic_type_decl_destroy: call to ic_pvector_destroy failed");
+    len = ic_pvector_length( &(tdecl->fields) );
+    if( len == -1 ){
+        puts("ic_type_decl_destroy: call to ic_body_length failed");
         return 1;
+    }
+
+    /* loop through each item destroying */
+    for( i=0; i<len; ++i ){
+        field = ic_pvector_get( &(tdecl->fields), i );
+        if( ! field ){
+            puts("ic_type_type_destroy: call to ic_pvector_get failed");
+            return 1;
+        }
+
+        /* dispatch to field destroy
+         * free_field set to 1
+         */
+        if( ic_field_destroy(field, 1) ){
+            puts("ic_type_type_destroy: call to ic_field_destroy failed");
+            return 1;
+        }
     }
 
     /* only free if caller asked */

@@ -17,6 +17,7 @@ struct ic_func_decl {
      *
      */
     struct ic_symbol name;
+    /* a pointer vector of fields */
     struct ic_pvector args;
     /* return type is optional
      *  0    -> void
