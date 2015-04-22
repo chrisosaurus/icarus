@@ -51,6 +51,57 @@ unsigned int ic_body_init(struct ic_body *body){
     return 0;
 }
 
+/* destroy body
+ *
+ * will only free body if `free_body` is truthy
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_body_destroy(struct ic_body *body, unsigned int free_body){
+    int i = 0;
+    int len = 0;
+    struct ic_stmt *stmt = 0;
+
+    if( ! body ){
+        puts("ic_body_destroy: body was null");
+        return 1;
+    };
+
+    len = ic_body_length(body);
+    if( len == -1 ){
+        puts("ic_body_destroy: call to ic_body_length failed");
+        return 1;
+    }
+
+    /* we cannot dispatch to pvector as it has no idea what it contains
+     * instead we must iterate through it manually calling the appropriate
+     * constructor - in this case statement
+     */
+    for( i=0; i<len; ++i ){
+        stmt = ic_body_get(body, i);
+        if( ! stmt ){
+            puts("ic_body_destroy: call to ic_body_get failed");
+            return 1;
+        }
+
+        /* dispatch to stmt destroy
+         * set free_stmt
+         */
+        if( ic_stmt_destroy(stmt, 1) ){
+            puts("ic_body_destroy: call to ic_stmt_destroy failed");
+            return 1;
+        }
+    }
+
+    /* free if asked nicely */
+    if( free_body ){
+        free(body);
+    }
+
+    return 0;
+}
+
 /* returns item at offset i on sucess
  * returns 0 on failure
  */

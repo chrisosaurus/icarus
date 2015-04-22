@@ -30,6 +30,15 @@ struct ic_body * ic_body_new(void);
  */
 unsigned int ic_body_init(struct ic_body *body);
 
+/* destroy body
+ *
+ * will only free body if `free_body` is truthy
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_body_destroy(struct ic_body *body, unsigned int free_body);
+
 /* returns item at offset i on sucess
  * returns 0 on failure
  */
