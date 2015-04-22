@@ -30,6 +30,15 @@ struct ic_field * ic_field_new(char *name_src, unsigned int name_len, char *type
  */
 unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int name_len, char *type_src, unsigned int type_len);
 
+/* destroy field
+ *
+ * will free field if `free_field` is truhty
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_field_destroy(struct ic_field *field, unsigned int free_field);
+
 /* print the field to stdout */
 void ic_field_print(struct ic_field *field);
 

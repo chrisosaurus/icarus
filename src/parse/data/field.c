@@ -36,17 +36,17 @@ struct ic_field * ic_field_new(char *name_src, unsigned int name_len, char *type
  */
 unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int name_len, char *type_src, unsigned int type_len){
     if( ! field ){
-        puts("ic_filed_init: field was null");
+        puts("ic_field_init: field was null");
         return 1;
     }
 
     if( ! name_src ){
-        puts("ic_filed_init: name_src was null");
+        puts("ic_field_init: name_src was null");
         return 1;
     }
 
     if( ! type_src ){
-        puts("ic_filed_init: type_src was null");
+        puts("ic_field_init: type_src was null");
         return 1;
     }
 
@@ -65,6 +65,44 @@ unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int 
     return 0;
 }
 
+/* destroy field
+ *
+ * will free field if `free_field` is truhty
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_field_destroy(struct ic_field *field, unsigned int free_field){
+    if( ! field ){
+        puts("ic_field_destroy: field was null");
+        return 1;
+    }
+
+    /* dispatch to symbol destroy for name
+     * note we do not ask it to destroy_symbol
+     * as it is a member
+     */
+    if( ic_symbol_destroy( &(field->name), 0 ) ){
+        puts("ic_field_destroy: name: call to ic_symbol_destroy failed");
+        return 1;
+    }
+
+    /* dispatch to symbol destroy for type
+     * note we do not ask it to destroy_symbol
+     * as it is a member
+     */
+    if( ic_symbol_destroy( &(field->type), 0 ) ){
+        puts("ic_field_destroy: type: call to ic_symbol_destroy failed");
+        return 1;
+    }
+
+    /* free field if we are asked nicely */
+    if( free_field ){
+        free(field);
+    }
+
+    return 0;
+}
 
 
 /* print the field to stdout */
