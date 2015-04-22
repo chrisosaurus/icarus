@@ -49,6 +49,33 @@ unsigned int ic_carray_init(struct ic_carray *arr, unsigned int len){
     return 0;
 }
 
+/* destroy carray
+ *
+ * this will only free this carray is `free_arr` is true
+ *
+ * the caller must determine if it is appropriate or not
+ * to not to call free(arr)
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_carray_destroy(struct ic_carray *arr, unsigned int free_arr){
+    if( ! arr ){
+        puts("ic_carray_init: called with null array");
+        return 1;
+    }
+
+    /* free our contents */
+    free(arr->contents);
+
+    /* free is asked */
+    if( free_arr ){
+        free(arr);
+    }
+
+    return 0;
+}
+
 /* get item at pos
  * `
  * bounds checked

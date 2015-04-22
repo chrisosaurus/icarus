@@ -68,7 +68,38 @@ unsigned int ic_string_init(struct ic_string *str, char *source, unsigned int le
 
 }
 
+/* destroy string
+ *
+ * this will only free this string is `free_str` is true
+ *
+ * the caller must determine if it is appropriate or not
+ * to not to call free(str)
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_string_destroy(struct ic_string *str, unsigned int free_str){
+    if( ! str ){
+        puts("ic_string_destroy: passed in string was null");
+        return 1;
+    }
 
+    /* dispatch to carray for dirty work
+     * note we do not set free_carray as
+     * it is an element on us
+     */
+    if( ic_carray_destroy( &(str->backing), 0 ) ){
+        puts("ic_string_destroy: call to ic_carray_destroy failed");
+        return 1;
+    }
+
+    /* free string if asked */
+    if( free_str ){
+        free(str);
+    }
+
+    return 0;
+}
 
 /* returns backing character array
  * the caller is NOT allowed to mutate this character array directly

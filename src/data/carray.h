@@ -25,6 +25,18 @@ struct ic_carray * ic_carray_new(unsigned int len);
  */
 unsigned int ic_carray_init(struct ic_carray *arr, unsigned int len);
 
+/* destroy carray
+ *
+ * this will only free this carray is `free_arr` is true
+ *
+ * the caller must determine if it is appropriate or not
+ * to not to call free(arr)
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_carray_destroy(struct ic_carray *arr, unsigned int free_arr);
+
 /* get item at pos
  *
  * bounds checked

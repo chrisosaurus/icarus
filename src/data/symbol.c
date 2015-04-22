@@ -50,6 +50,41 @@ unsigned int ic_symbol_init(struct ic_symbol *sym, char *source, unsigned int le
     return 0;
 }
 
+/* destroy symbol
+ *
+ * this will only free this symbol is `free_sym` is true
+ *
+ * the caller must determine if it is appropriate or not
+ * to not to call free(sym)
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_symbol_destroy(struct ic_symbol *sym, unsigned int free_sym){
+    if( ! sym ){
+        puts("ic_symbol_destroy: passed in sym was null");
+        return 1;
+    }
+
+    /* dispatch to string destroy for work
+     * note that we do NOT ask it to free_str
+     * as internal is an element on sym
+     */
+    if( ic_string_destroy( &(sym->internal), 0 ) ){
+        puts("ic_symbol_destroy: call to ic_string_destroy failed");
+        return 1;
+    }
+
+    /* free symbol if asked */
+    if( free_sym ){
+        free(sym);
+    }
+
+    /* success */
+    return 0;
+}
+
+
 /* returns backing character array
  * the caller is NOT allowed to mutate this character array directly
  *

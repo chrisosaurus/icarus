@@ -26,6 +26,17 @@ struct ic_symbol * ic_symbol_new(char *source, unsigned int len);
  */
 unsigned int ic_symbol_init(struct ic_symbol *sym, char *source, unsigned int len);
 
+/* destroy symbol
+ *
+ * this will only free this symbol is `free_sym` is true
+ *
+ * the caller must determine if it is appropriate or not
+ * to not to call free(sym)
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_symbol_destroy(struct ic_symbol *sym, unsigned int free_sym);
 
 /* returns backing character array
  * the caller is NOT allowed to mutate this character array directly

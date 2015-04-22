@@ -35,6 +35,18 @@ struct ic_string * ic_string_new(char *source, unsigned int len);
  */
 unsigned int ic_string_init(struct ic_string *string, char *source, unsigned int len);
 
+/* destroy string
+ *
+ * this will only free this string is `free_str` is true
+ *
+ * the caller must determine if it is appropriate or not
+ * to not to call free(str)
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_string_destroy(struct ic_string *str, unsigned int free_str);
+
 /* returns backing character array
  * the caller is NOT allowed to mutate this character array directly
  *
