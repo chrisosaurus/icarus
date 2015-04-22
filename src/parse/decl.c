@@ -89,17 +89,27 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
         field = ic_parse_field(tokens, i);
         if( ! field ){
             puts("ic_parse_type_decl: call to ic_parse_field failed");
-            /* FIXME this leaks any previously stored field(s) */
-            free(decl);
+
+            /* free decl and all contents */
+            if( ic_decl_destroy(decl, 1) ){
+                puts("ic_parse_type_decl: in error tidyup call to ic_decl_destroy failed");
+            }
             return 0;
         }
 
         /* and store it */
         if( ic_type_decl_add_field(tdecl, field) ){
             puts("ic_parse_type_decl: call to ic_type_decl_add_field failed");
-            /* FIXME this leaks any previously stored field(s) */
-            free(decl);
-            free(field);
+
+            /* free field and all contents */
+            if( ic_field_destroy(field, 1) ){
+                puts("ic_parse_type_decl: in error tidyup call to ic_field_destroy failed");
+            }
+
+            /* free decl and all contents */
+            if( ic_decl_destroy(decl, 1) ){
+                puts("ic_parse_type_decl: in error tidyup call to ic_decl_destroy failed");
+            }
             return 0;
         }
 
@@ -120,8 +130,11 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
      * successful return
      */
     puts("ic_parse_type_decl: call to ic_parse_this_is_not_the_end encountered an error");
-    /* FIXME this leaks any previously stored field(s) */
-    free(decl);
+
+    /* free decl and all contents */
+    if( ic_decl_destroy(decl, 1) ){
+        puts("ic_parse_type_decl: in error tidyup call to ic_decl_destroy failed");
+    }
     return 0;
 }
 
