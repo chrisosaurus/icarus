@@ -53,12 +53,12 @@ clean: cleanobj
 example: icarus
 	./icarus example/simple.ic
 
+# clean
 # build all OBJ
 # run all TESTO
-# cleanup all temp objects
-# 	relying on OBJ first and calling cleanobj last
-# 	ensure that we do a fresh build every time
-test: $(OBJ) $(TESTO) test_success cleanobj
+# cleanobj
+#   this ensures that we do a fresh build every time
+test: clean $(OBJ) $(TESTO) test_success cleanobj
 
 # compile and run each test
 $(TESTO) : $(TESTOUT)/% : %.c
