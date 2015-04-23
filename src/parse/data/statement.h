@@ -28,6 +28,15 @@ struct ic_stmt_ret * ic_stmt_ret_new(void);
  */
 unsigned int ic_stmt_ret_init(struct ic_stmt_ret *ret);
 
+/* destroy ret
+ *
+ * will only free ret if `free_ret` is truthy
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_stmt_ret_destroy(struct ic_stmt_ret *ret, unsigned int free_ret);
+
 /* get the ic_expr * contained within
  *
  * returns pointer on success
@@ -73,6 +82,15 @@ struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *ty
  */
 unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned int id_len, char *type_src, unsigned int type_len);
 
+/* destroy let
+ *
+ * will only free let if `free_let` is truthy
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let);
+
 /* get the ic_expr * contained within
  *
  * returns pointer on success
@@ -114,6 +132,15 @@ struct ic_stmt_if * ic_stmt_if_new(void);
  * returns 1 on failure
  */
 unsigned int ic_stmt_if_init(struct ic_stmt_if *sif);
+
+/* destroy if
+ *
+ * only frees stmt_if if `free_if` is truthy
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_stmt_if_destroy(struct ic_stmt_if *sif, unsigned int free_if);
 
 /* returns pointer on success
  * returns 0 on failure
@@ -177,6 +204,15 @@ struct ic_stmt * ic_stmt_new(enum ic_stmt_type type);
  * returns 1 on failure
  */
 int ic_stmt_init(struct ic_stmt *stmt, enum ic_stmt_type type);
+
+/* destroy stmt
+ *
+ * will only free stmt if `free_stmt` is truthy
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_stmt_destroy(struct ic_stmt *stmt, unsigned int free_stmt);
 
 /* get a pointer to the return within
  * will only succeed if ic_stmt is of the correct type
