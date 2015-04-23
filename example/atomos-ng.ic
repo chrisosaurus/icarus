@@ -5,7 +5,7 @@ import Math::random
 # into https://github.com/mkfifo/icarus
 
 
-const N_GAS 2
+const N_GAS = 2
 
 
 type Cell
