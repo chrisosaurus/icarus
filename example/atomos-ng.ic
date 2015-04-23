@@ -16,11 +16,11 @@ type cell
 end
 
 
-fn init( &cells :: Array<Cell, xd, yd, zd> ) -> Int
-    let xm, yd, zd = xd/2, yd/2, zd/2
+fn init( &cells :: Array<Cell, xd, yd, zd> ) -> Uint
+    const xm, yd, zd = xd/2, yd/2, zd/2
 
-    let quan = 0
-    let quan_tot = 0
+    let quan :: Uint = 0
+    let quan_tot :: Uint = 0
 
     for z in 0..zd
         for y in 0..yd
@@ -104,16 +104,19 @@ end # fn tick
 
 
 fn main()
-    let xd, yd, zd = 128, 128, 128
-    let nticks = 1000
+    const xd, yd, zd = 128, 128, 128
+    const nticks = 1000
 
     let &cells = Array<Cell, xd, yd, zd>
 
-    let quan_tot = init(&cells)
+    const quan_tot = init(&cells)
 
     for 0 .. nticks
         tick(&cells)
     end
+
+    printf("Finished simulation of {} particles in a {} * {} * {} volume for {} ticks\n",
+            quan_tot, xd, yd, zd, nticks )
 
 end
 
