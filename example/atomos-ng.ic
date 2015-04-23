@@ -1,0 +1,119 @@
+import Math::abs
+import Math::random
+
+# naive translation of https://github.com/mkfifo/atomos-ng
+# into https://github.com/mkfifo/icarus
+
+
+const N_GAS 2
+
+
+type cell
+    /* a count of the number of each
+     * gas in this cell
+     */
+    gas_counts :: Array<Uint N_GAS>
+end
+
+
+fn init( &cells :: Array<Cell, xd, yd, zd> ) -> Int
+    let xm, yd, zd = xd/2, yd/2, zd/2
+
+    let quan = 0
+    let quan_tot = 0
+
+    for z in 0..zd
+        for y in 0..yd
+            for x in 0..xd
+                let &c = cells[x, y, z]
+
+                quan = Math::abs(xm - x) + Math::abs(ym - y) + Math::abs(zm - z)
+                quan_tot += quan
+
+                &c.gas_counts[0] = quan
+                &c.gas_counts[1] = quan
+            end # for x
+        end # for y
+    end # for z
+
+    return quan_tot
+end
+
+
+fn tick( &cells :: Array<Cell, xd, yd, zd> )
+
+    for z in 0..zd
+        for y in 0..yd
+            for x in 0..yd
+
+                let &ca = cells[x, y, z]
+
+                # consider swap with x pos neigh
+                if cells.contains(x+1, y, z)
+                    let &cb = cells[x+1, y, z]
+                    let ra, rb = Math::random(N_GAS), Math::random(N_GAS)
+
+                    if ca.gas_counts[ra]
+                        &ca.gas_counts[ra]--
+                        &cb.gas_counts[ra]++
+                    end
+
+                    if cb.gas_counts[rb]
+                        &ca.gas_counts[rb]++
+                        &cb.gas_counts[rb]--
+                    end
+                end
+
+                # consider swap with y pos neigh
+                if cells.contains(x, y+1, z)
+                    let &cb = cells[x, y+1, z]
+                    let ra, rb = Math::random(N_GAS), Math::random(N_GAS)
+
+                    if ca.gas_counts[ra]
+                        &ca.gas_counts[ra]--
+                        &cb.gas_counts[ra]++
+                    end
+
+                    if cb.gas_counts[rb]
+                        &ca.gas_counts[rb]++
+                        &cb.gas_counts[rb]--
+                    end
+                end
+
+                # consider swap with z pos neigh
+                if cells.contains(x, y, z+a)
+                    let &cb = cells[x, y, z+1]
+                    let ra, rb = Math::random(N_GAS), Math::random(N_GAS)
+
+                    if ca.gas_counts[ra]
+                        &ca.gas_counts[ra]--
+                        &cb.gas_counts[ra]++
+                    end
+
+                    if cb.gas_counts[rb]
+                        &ca.gas_counts[rb]++
+                        &cb.gas_counts[rb]--
+                    end
+                end
+
+            end # for x
+        end # for y
+    end # for z
+
+end # fn tick
+
+
+fn main()
+    let xd, yd, zd = 128, 128, 128
+    let nticks = 1000
+
+    let &cells = Array<Cell, xd, yd, zd>
+
+    let quan_tot = init(&cells)
+
+    for 0 .. nticks
+        tick(&cells)
+    end
+
+end
+
