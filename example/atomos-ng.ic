@@ -44,7 +44,7 @@ fn tick( &cells :: Array<Cell, xd, yd, zd> )
 
     for z in 0..zd
         for y in 0..yd
-            for x in 0..yd
+            for x in 0..xd
 
                 let &ca = cells[x, y, z]
 
