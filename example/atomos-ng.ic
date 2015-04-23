@@ -8,7 +8,7 @@ import Math::random
 const N_GAS 2
 
 
-type cell
+type Cell
     /* a count of the number of each
      * gas in this cell
      */
