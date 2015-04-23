@@ -81,7 +81,7 @@ fn tick( &cells :: Array<Cell, xd, yd, zd> )
                 end
 
                 # consider swap with z pos neigh
-                if cells.contains(x, y, z+a)
+                if cells.contains(x, y, z+1)
                     let &cb = cells[x, y, z+1]
                     let ra, rb = Math::random(N_GAS), Math::random(N_GAS)
 
