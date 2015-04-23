@@ -584,16 +584,6 @@ STRING_LOOP_EXIT:
      *
      */
 
-    /* error if we failed to consume anything
-     *
-     * due to the above this is impossible so this
-     * code is left here purely defensively
-     */
-    if( len == 0 ){
-        puts("ic_consume_string: failed to parse string");
-        return 0;
-    }
-
     /* step over closing " */
     ++len;
 
