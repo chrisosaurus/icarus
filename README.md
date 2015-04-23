@@ -43,7 +43,6 @@ Plans
     * like haskell's ADTs (Algebraic Data Types)
 * including both an interpreter and compiler(s) (currently considering both C and LLVM bitcode as compiler backend outputs) - see `docs/components.md`
 * whitespace insensitive (except using \n to terminate a comment, but comments are stripped by the lexer for now)
-* no commas (hail to the lisp)
 * no semicolons
 * type safety - no casting; explicit conversion functions between builtin types will be provided but only when they make sense, composite types can then build on these
 

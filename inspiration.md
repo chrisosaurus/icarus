@@ -87,7 +87,6 @@ Rust:
 
 Scheme:
 
-* lack of commas
 * macros
 
 
