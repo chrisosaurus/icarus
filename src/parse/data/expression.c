@@ -248,6 +248,7 @@ struct ic_expr_identifier * ic_expr_identifier_new(char *id, unsigned int id_len
     /* initialise */
     if( ic_expr_identifier_init(identifier, id, id_len) ){
         puts("ic_expr_identifier_new: call to ic_expr_identifier_init failed");
+        free(identifier);
         return 0;
     }
 
