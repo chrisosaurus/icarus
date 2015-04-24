@@ -4,7 +4,7 @@
 
 #include "../../src/parse/data/ast.h"
 
-int main(void){
+void basic(void){
     struct ic_field *field = 0;
     struct ic_type_decl *tdecl = 0;
     struct ic_ast *ast;
@@ -53,7 +53,20 @@ int main(void){
     /* FIXME once we have working ic_decl we need to test ic_ast
      * more thoroughly
      */
+}
 
+void errors(void){
+    struct ic_ast ast;
+    assert( 1 == ic_ast_init(0) );
+    assert( 0 == ic_ast_get(0, 0) );
+    assert( -1 == ic_ast_append(0, 0) );
+    assert( -1 == ic_ast_append(&ast, 0) );
+    assert( 0 == ic_ast_length(0) );
+}
+
+int main(void){
+    basic();
+    errors();
 
     return 0;
 }
