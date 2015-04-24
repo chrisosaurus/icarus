@@ -53,6 +53,9 @@ void basic(void){
     /* FIXME once we have working ic_decl we need to test ic_ast
      * more thoroughly
      */
+
+    assert( 0 == ic_type_decl_destroy(tdecl, 1) );
+    assert( 0 == ic_ast_destroy(ast, 1) );
 }
 
 void errors(void){
