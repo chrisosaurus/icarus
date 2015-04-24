@@ -14,7 +14,7 @@ fn init( &arr :: Array<Int, xd, yd> ) {
 }
 
 fn main() {
-    let &a = Array<Int, 4, 4>();
+    let &a = Array<Int, 4, 4>()
 
     init(&a)
 

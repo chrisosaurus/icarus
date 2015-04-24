@@ -46,7 +46,7 @@ fn main()
   bar(x.a)
 
 
-  let &i::Int = 0;
+  let &i::Int = 0
 
   # four - function can mutate i
   bar(&i)
