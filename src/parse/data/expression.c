@@ -69,6 +69,53 @@ unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, char *name,
 
 }
 
+/* destroy fcall
+ *
+ * only free fcall if `free_fcall` is truthy
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned int free_fcall){
+    int i = 0;
+    int len = 0;
+    struct ic_expr *expr = 0;
+
+    if( ! fcall ){
+        puts("ic_expr_func_call_destroy: fcall was null");
+        return 1;
+    }
+
+    /* free = 0 as member */
+    if( ic_symbol_destroy( &(fcall->fname), 0 ) ){
+        puts("ic_expr_func_call_destroy: call to ic_symbol_destroy failed");
+        return 1;
+    }
+
+    len = ic_expr_func_call_length(fcall);
+    for( i=0; i<len; ++i ){
+        expr = ic_expr_func_call_get_arg(fcall, i);
+        if( ! expr ){
+            puts("ic_expr_func_call_destroy: call to ic_expr_func-call_get_arg failed");
+            return 1;
+        }
+
+        /* free = 1 as pointer element */
+        if( ic_expr_destroy( expr, 1 ) ){
+            puts("ic_expr_func_call_destroy: call to ic_expr_destroy failed");
+            return 1;
+        }
+    }
+
+
+    /* if asked */
+    if( free_fcall ){
+        free(fcall);
+    }
+
+    return 0;
+}
+
 /* add a new argument to this function call
  *
  * returns 0 on success
@@ -215,6 +262,7 @@ struct ic_expr_identifier * ic_expr_identifier_new(char *id, unsigned int id_len
 unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, char *id, unsigned int id_len){
     if( ! identifier ){
         puts("ic_expr_identifier_init: identifier was null");
+        return 1;
     }
 
     if( ! id ){
@@ -229,6 +277,34 @@ unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, cha
     }
 
     return 0;
+}
+
+/* destroy identifier
+ *
+ * will free id if `free_id` is truthy
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_expr_identifier_destroy(struct ic_expr_identifier * identifier, unsigned int free_id){
+    if( ! identifier ){
+        puts("ic_expr_identifier_destroy: identifier was null");
+        return 1;
+    }
+
+    /* free = 0 as member */
+    if( ic_symbol_destroy( &(identifier->identifier), 0 ) ){
+        puts("ic_expr_identifier_destroy: identifier was null");
+        return 1;
+    }
+
+    /* if asked nicely */
+    if( free_id ){
+        free(identifier);
+    }
+
+    return 0;
+
 }
 
 /* allocate and init a new constant
@@ -260,7 +336,7 @@ struct ic_expr_constant * ic_expr_constant_new(enum ic_expr_constant_type type){
  * returns 0 on success
  * returns 1 on error
  */
-int ic_expr_constant_init(struct ic_expr_constant *constant, enum ic_expr_constant_type type){
+unsigned int ic_expr_constant_init(struct ic_expr_constant *constant, enum ic_expr_constant_type type){
     if( ! constant ){
         puts("ic_expr_constant_init: constant was null");
         return 1;
@@ -270,6 +346,45 @@ int ic_expr_constant_init(struct ic_expr_constant *constant, enum ic_expr_consta
     constant->type = type;
 
     /* victory */
+    return 0;
+}
+
+/* destroy const
+ *
+ * will free const if `free_const` is truthy
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, unsigned int free_const){
+    if( ! constant ){
+        puts("ic_expr_constant_destroy: constant was null");
+        return 1;
+    }
+
+    switch( constant->type ){
+        case ic_expr_constant_type_integer:
+            /* nothing to do */
+            break;
+
+        case ic_expr_constant_type_string:
+            /* free = 0 as member */
+            if( ic_string_destroy( &(constant->u.string), 0 ) ){
+                puts("ic_expr_constant_destroy: call to ic_string_destroy failed");
+                return 1;
+            }
+            break;
+
+        default:
+            puts("ic_expr_constant_destroy: impossible type");
+            return 1;
+            break;
+    }
+
+    if( free_const ){
+        free(constant);
+    }
+
     return 0;
 }
 
@@ -455,6 +570,48 @@ unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, struct ic_
     return 0;
 }
 
+/* destroy operator
+ *
+ * will free op if `free_op` is truthy
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_expr_operator_destroy(struct ic_expr_operator *op, unsigned int free_op){
+    if( ! op ){
+        puts("ic_expr_operator_destroy: operator was null");
+        return 1;
+    }
+
+    if( op->lexpr ){
+        /* free = 1 as pointer */
+        if( ic_expr_destroy( op->lexpr, 1 ) ){
+            puts("ic_expr_operator_destroy: lexpr : call to ic_expr_destroy failed");
+            return 1;
+        }
+    }
+
+    if( op->rexpr ){
+        /* free = 1 as pointer */
+        if( ic_expr_destroy( op->rexpr, 1 ) ){
+            puts("ic_expr_operator_destroy: rexpr : call to ic_expr_destroy failed");
+            return 1;
+        }
+    }
+
+    /* free = 0 as member */
+    if( ic_symbol_destroy( &(op->op), 0 ) ){
+        puts("ic_expr_operator_destroy: call to ic_symbol_destroy failed");
+        return 1;
+    }
+
+    if( free_op ){
+        free(op);
+    }
+
+    return 0;
+}
+
 /* print this operator */
 void ic_expr_operator_print(struct ic_expr_operator *op, unsigned int *indent_level){
     /* fake indent we pass into sub expr */
@@ -525,6 +682,65 @@ int ic_expr_init(struct ic_expr *expr, enum ic_expr_type type){
     expr->type = type;
 
     /* we do NOT initialise the union members */
+
+    return 0;
+}
+
+/* destroy expr
+ *
+ * will only free expr if `free_expr` is truthy
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+int ic_expr_destroy(struct ic_expr *expr, unsigned int free_expr){
+    if( ! expr ){
+        puts("ic_expr_destroy: expr was null");
+        return 1;
+    }
+
+    /* dispatch on type */
+    switch( expr->type ){
+        case ic_expr_type_func_call:
+            /* free = 0 as member */
+            if( ic_expr_func_call_destroy( &(expr->u.fcall), 0 ) ){
+                puts("ic_expr_destroy: call to ic_expr_func_call_destroy failed");
+                return 1;
+            }
+            break;
+
+        case ic_expr_type_identifier:
+            /* free = 0 as member */
+            if( ic_expr_identifier_destroy( &(expr->u.id), 0 ) ){
+                puts("ic_expr_destroy: call to ic_expr_identifier_destroy failed");
+                return 1;
+            }
+            break;
+
+        case ic_expr_type_constant:
+            /* free = 0 as member */
+            if( ic_expr_constant_destroy( &(expr->u.cons), 0 ) ){
+                puts("ic_expr_destroy: call to ic_expr_constant_destroy failed");
+                return 1;
+            }
+            break;
+
+        case ic_expr_type_operator:
+            /* free = 0 as member */
+            if( ic_expr_operator_destroy( &(expr->u.op), 0 ) ){
+                puts("ic_expr_destroy: call to ic_expr_operator_destroy failed");
+                return 1;
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    /* if asked */
+    if( free_expr ){
+        free(expr);
+    }
 
     return 0;
 }
