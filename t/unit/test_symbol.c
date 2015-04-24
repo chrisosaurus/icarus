@@ -30,6 +30,8 @@ void normal(void){
 
     /* cannot test output */
     ic_symbol_print(str);
+
+    assert( 0 == ic_symbol_destroy(str, 1) );
 }
 
 void abnormal(void){
