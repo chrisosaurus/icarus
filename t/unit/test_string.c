@@ -93,6 +93,8 @@ void abnormal(void){
     assert( 1 == ic_string_set(str, 5, 'c') );
     /* we also do not allow for val to be the '\0' */
     assert( 1 == ic_string_set(str, 0, '\0') );
+
+    assert( 0 == ic_string_destroy(str, 1) );
 }
 
 int main(void){
