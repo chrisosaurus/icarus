@@ -1,0 +1,34 @@
+# since in icarus all types are capitalised
+# we can expose some interesting pattern matching syntax
+# that is reminiscent of prolog
+
+# here we have a foo which takes a 2 dimensional Array of Int
+# we capture the size of the first dimension (x) into `xd`
+# we capture the size of the second dimension (y) into `yd`
+fn init( &arr :: Array<Int, xd, yd> ) {
+    for x in 0..xd {
+        for y in 0..yd {
+            &arr[x][y] = x + y
+        }
+    }
+}
+
+fn main() {
+    let &a = Array<Int, 4, 4>();
+
+    init(&a)
+
+    # this matching so far is only thought out at function level
+    # so locally things are still less than ideal
+    for x in 0 .. arr.dim(0) {
+        for y in 0 .. arr.dim(1) {
+            print(a[x][y])
+        }
+    }
+
+    # although in case case we probably just need
+    for each in arr {
+        print(each)
+    }
+}
+

@@ -12,6 +12,7 @@ Inspiration has been drawn from (in alphabetical order):
 * Java
 * Julia
 * Perl
+* Prolog
 * Python
 * Racket
 * Rust

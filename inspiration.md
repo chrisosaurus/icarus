@@ -65,6 +65,11 @@ Perl:
 * `obj->method()` => `namespace_of(obj)::method(obj)` shorthand
 
 
+Prolog:
+
+* pattern matching (see `example/template_pattern.ic`)
+
+
 Python:
 
 * value / variable reference semantics ('pass by reference')
@@ -83,6 +88,7 @@ Rust:
 * Option
 * macros (specifically in a statically typed language)
 * type inference
+* pattern matching
 
 
 Scheme:
