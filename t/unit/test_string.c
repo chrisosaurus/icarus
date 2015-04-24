@@ -66,6 +66,9 @@ void normal(void){
     assert( '_' ==  ic_string_get(str2, 0) );
     assert(ic_string_length(str2) == 8);
     assert( ! strncmp("_worldly", ic_string_contents(str2), 9) );
+
+    assert( 0 == ic_string_destroy(str, 1) );
+    assert( 0 == ic_string_destroy(str2, 1) );
 }
 
 void abnormal(void){
