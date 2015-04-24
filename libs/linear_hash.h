@@ -27,11 +27,11 @@
     https://github.com/mkfifo/linear_hash
 
 
-    commit 8a9882492c9c30e1b66f61d2cc839c9d206ec96f
+    commit 22fe528e3d2402c6b97088f3cfc1779787ca5fa7
     Author: Chris Hall <followingthepath@gmail.com>
-    Date:   Mon Apr 20 20:16:49 2015 +1200
+    Date:   Fri Apr 24 14:43:53 2015 +1200
 
-        removing ugly LH_INTERNAL
+        clarifying comment about free
 
  */
 
