@@ -26,11 +26,12 @@
 /* extracted from
     https://github.com/mkfifo/linear_set
 
-    commit 410ab94b6f5345e1ed5922ea2a1c59a733871e64
+    commit fe1f938541041e489ddd83b39d2c897e509e9260
     Author: Chris Hall <followingthepath@gmail.com>
-    Date:   Mon Apr 20 21:44:53 2015 +1200
+    Date:   Fri Apr 24 14:46:21 2015 +1200
 
-        fixing case issue in defines
+        fixing memory leak in new error case
+
  */
 
 #ifndef linear_hals_H

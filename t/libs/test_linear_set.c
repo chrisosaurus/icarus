@@ -5,16 +5,13 @@
 /* extracted from
     https://github.com/mkfifo/linear_set
 
-    commit 410ab94b6f5345e1ed5922ea2a1c59a733871e64
+    commit fe1f938541041e489ddd83b39d2c897e509e9260
     Author: Chris Hall <followingthepath@gmail.com>
-    Date:   Mon Apr 20 21:44:53 2015 +1200
+    Date:   Fri Apr 24 14:46:21 2015 +1200
 
-        fixing case issue in defines
-
-    only deviation is the include line to linear_set.h
+        fixing memory leak in new error case
 
  */
-
 
 #include <assert.h> /* assert */
 #include <stdio.h> /* puts */
@@ -415,6 +412,7 @@ void internal(void){
     struct ls_set table;
     struct ls_entry she;
     struct ls_entry static_she;
+    char * c = 0;
 
     puts("\ntesting internal functions");
 
@@ -425,7 +423,9 @@ void internal(void){
     /* ls_strdupn */
     puts("testing ls_strdupn");
     assert( 0 == ls_strdupn(0, 6) );
-    assert( ls_strdupn("hello", 0) );
+    c = ls_strdupn("hello", 0);
+    assert(c);
+    free(c);
 
     /* ls_entry_new and ls_entry_init */
     puts("testing ls_entry_new and ls_entry_init");

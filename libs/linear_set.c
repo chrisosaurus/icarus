@@ -26,11 +26,12 @@
 /* extracted from
     https://github.com/mkfifo/linear_set
 
-    commit 410ab94b6f5345e1ed5922ea2a1c59a733871e64
+    commit fe1f938541041e489ddd83b39d2c897e509e9260
     Author: Chris Hall <followingthepath@gmail.com>
-    Date:   Mon Apr 20 21:44:53 2015 +1200
+    Date:   Fri Apr 24 14:46:21 2015 +1200
 
-        fixing case issue in defines
+        fixing memory leak in new error case
+
  */
 
 #include <stdio.h> /* puts, printf */
@@ -466,6 +467,7 @@ struct ls_set * ls_new(void){
     /* init */
     if( ! ls_init(sht, LS_DEFALT_SIZE) ){
         puts("ls_new: call to ls_init failed");
+        free(sht);
         return 0;
     }
 
@@ -599,7 +601,7 @@ unsigned int ls_resize(struct ls_set *table, size_t new_size){
             if( new_entries[j].state != ls_ENTRY_EMPTY ){
                 continue;
             }
-            goto ls_RESIZE_FOUND;
+            goto LS_RESIZE_FOUND;
         }
 
         for( j = 0; j < new_pos; ++ j){
@@ -607,13 +609,17 @@ unsigned int ls_resize(struct ls_set *table, size_t new_size){
             if( new_entries[j].state != ls_ENTRY_EMPTY ){
                 continue;
             }
-            goto ls_RESIZE_FOUND;
+            goto LS_RESIZE_FOUND;
         }
 
         puts("ls_resize: failed to find spot for new element!");
+        /* make sure to free our new_entries since we don't store them
+         * no need to free items in as they are still held in our old elems
+         */
+        free(new_entries);
         return 0;
 
-ls_RESIZE_FOUND:
+LS_RESIZE_FOUND:
         new_entries[j].hash    = cur->hash;
         new_entries[j].key     = cur->key;
         new_entries[j].key_len = cur->key_len;
@@ -744,7 +750,7 @@ unsigned int ls_insert(struct ls_set *table, char *key){
         }
 
         /* otherwise (empty or dummy) jump to found */
-        goto ls_INSERT_FOUND;
+        goto LS_INSERT_FOUND;
     }
 
     /* iterate from 0 to pos */
@@ -756,14 +762,14 @@ unsigned int ls_insert(struct ls_set *table, char *key){
         }
 
         /* otherwise (empty or dummy) jump to found */
-        goto ls_INSERT_FOUND;
+        goto LS_INSERT_FOUND;
     }
 
     /* no slot found */
     puts("ls_insert: unable to find insertion slot");
     return 0;
 
-ls_INSERT_FOUND:
+LS_INSERT_FOUND:
     /* she is already set! */
 
 #ifdef DEBUG
@@ -856,7 +862,7 @@ unsigned int ls_delete(struct ls_set *table, char *key){
             continue;
         }
 
-        goto ls_DELETE_FOUND;
+        goto LS_DELETE_FOUND;
     }
 
     /* if we are here then we hit the end,
@@ -881,14 +887,14 @@ unsigned int ls_delete(struct ls_set *table, char *key){
             continue;
         }
 
-        goto ls_DELETE_FOUND;
+        goto LS_DELETE_FOUND;
     }
 
     /* failed to find element */
     puts("ls_delete: failed to find key, both loops terminated");
     return 0;
 
-ls_DELETE_FOUND:
+LS_DELETE_FOUND:
         /* cur is already set! */
 
         /* clear out */
