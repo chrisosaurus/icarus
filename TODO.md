@@ -14,5 +14,5 @@ technical debt:
 
 * function return value on failure, need to standardise (e.g. symbol, some 0 on failure, others 1)
 * consider const-correctness on read only args
-* all objects (esp. containers) need destructors
+* all objects (esp. containers) need destructors (see `./scripts/destruct_audit.sh` for current list)
 
