@@ -76,7 +76,7 @@ unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, char *name,
  * returns 0 on success
  * returns 1 on failure
  */
-int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned int free_fcall){
+unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned int free_fcall){
     int i = 0;
     int len = 0;
     struct ic_expr *expr = 0;
@@ -694,7 +694,7 @@ int ic_expr_init(struct ic_expr *expr, enum ic_expr_type type){
  * returns 0 on success
  * returns 1 on failure
  */
-int ic_expr_destroy(struct ic_expr *expr, unsigned int free_expr){
+unsigned int ic_expr_destroy(struct ic_expr *expr, unsigned int free_expr){
     if( ! expr ){
         puts("ic_expr_destroy: expr was null");
         return 1;
