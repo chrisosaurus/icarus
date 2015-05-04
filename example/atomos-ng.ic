@@ -9,15 +9,13 @@ const N_GAS = 2
 
 
 type Cell
-    /* a count of the number of each
-     * gas in this cell
-     */
+    # a count of the number of each
+    # gas in this cell
     gas_counts :: Array<Uint N_GAS>
 end
 
-
 fn init( &cells :: Array<Cell, xd, yd, zd> ) -> Uint
-    const xm, yd, zd = xd/2, yd/2, zd/2
+    const xm, ym, zm = xd/2, yd/2, zd/2
 
     let quan :: Uint = 0
     let quan_tot :: Uint = 0
