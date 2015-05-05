@@ -11,6 +11,7 @@ Inspiration has been drawn from (in alphabetical order):
 * Haskell
 * Java
 * Julia
+* Ocaml
 * Perl
 * Prolog
 * Python

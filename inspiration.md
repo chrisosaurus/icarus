@@ -60,6 +60,11 @@ Julia:
 * Nullable
 
 
+Ocaml:
+
+* variant types
+
+
 Perl:
 
 * `obj->method()` => `namespace_of(obj)::method(obj)` shorthand
