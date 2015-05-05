@@ -106,14 +106,6 @@ unsigned int ic_pvector_destroy(struct ic_pvector *vec, unsigned int free_vec, u
     }
 
     len = ic_pvector_length(vec);
-    if( ! len ){
-        /* FIXME the error reporting for length is crappy
-         * as this pvector could be empty, and if so this is
-         * not an error
-         */
-        puts("ic_pvector_destroy: call to ic_pvector_length failed");
-        return 1;
-    }
 
     /* iterate through each item calling the supplied
      * destroy_item function

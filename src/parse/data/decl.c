@@ -127,10 +127,6 @@ unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_
     }
 
     len = ic_pvector_length( &(fdecl->args) );
-    if( ! len ){
-        puts("ic_type_decl_destroy: call to ic_pvector_length failed");
-        return 1;
-    }
 
     for( i=0; i<len; ++i ){
         field = ic_pvector_get( &(fdecl->args), i );
