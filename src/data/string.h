@@ -3,6 +3,8 @@
 
 #include "carray.h"
 
+struct ic_symbol;
+
 struct ic_string {
     /* the number of characters slots used within the carray
      * this is useful if we start mutating the string
@@ -97,6 +99,14 @@ char ic_string_set(struct ic_string *string, unsigned int pos, char val);
 unsigned int ic_string_append(struct ic_string *to, struct ic_string *from);
 
 /* append the contents of `from` to `to`
+ * this will resize `to` to guarantee there is enough space
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+unsigned int ic_string_append_symbol(struct ic_string *to, struct ic_symbol *from);
+
+/* append the contents of `from` to `to`
  * copying over a maximum of from_len
  *
  * this will resize `to` to guarantee there is enough space
@@ -108,5 +118,8 @@ unsigned int ic_string_append(struct ic_string *to, struct ic_string *from);
  * returns 1 on error
  */
 unsigned int ic_string_append_char(struct ic_string *to, char *from, unsigned int from_len);
+
+/* print this string */
+void ic_string_print(struct ic_string *string);
 
 #endif

@@ -3,6 +3,7 @@
 #include <string.h> /* strncpy */
 
 #include "string.h"
+#include "symbol.h"
 
 /* FIXME crutch for unused param */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -241,7 +242,7 @@ unsigned int ic_string_append(struct ic_string *to, struct ic_string *from){
     to->used = (len - 1);
 
     /* concat the strings together */
-    strncat( ic_string_contents(to), ic_string_contents(from), ic_string_length(from) );
+    strncat( ic_string_contents(to), ic_string_contents(from), from_len );
 
     /* ensure string */
     if( ic_carray_set( &(to->backing), to->used, '\0') ){
@@ -251,6 +252,56 @@ unsigned int ic_string_append(struct ic_string *to, struct ic_string *from){
 
     /* success */
     return 0;
+}
+
+/* append the contents of `from` to `to`
+ * this will resize `to` to guarantee there is enough space
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+unsigned int ic_string_append_symbol(struct ic_string *to, struct ic_symbol *from){
+    unsigned int len = 0;
+    unsigned int from_len = 0;
+
+    if( ! to ){
+        puts("ic_string_append_symbol: to string was null");
+        return 1;
+    }
+    if( ! from ){
+        puts("ic_string_append_symbol: from symbol was null");
+        return 1;
+    }
+
+    /* cache the result */
+    from_len = ic_symbol_length(from);
+
+    /* calculate our desired length */
+    len = 1; /* null pointer */
+    len += ic_string_length(to);
+    len += from_len;
+
+    /* make sure our carray is large enough */
+    if( ic_carray_ensure(&(to->backing), len) ){
+        puts("ic_string_append_symbol: call to ic_carray_ensure failed");
+        return 1;
+    }
+
+    /* store our string, note that we do not include the null terminator here */
+    to->used = (len - 1);
+
+    /* concat the strings together */
+    strncat( ic_string_contents(to), ic_symbol_contents(from), from_len );
+
+    /* ensure string */
+    if( ic_carray_set( &(to->backing), to->used, '\0') ){
+        puts("ic_string_append_symbol: call to ic_carray_set failed");
+        return 1;
+    }
+
+    /* success */
+    return 0;
+
 }
 
 /* append the contents of `from` to `to`
@@ -302,6 +353,24 @@ unsigned int ic_string_append_char(struct ic_string *to, char *from, unsigned in
     /* success */
     return 0;
 
+}
+
+/* print this string */
+void ic_string_print(struct ic_string *string){
+    char *con;
+
+    if( ! string ){
+        puts("ic_string_print: string was null");
+        return;
+    }
+
+    con = ic_string_contents(string);
+    if( ! con ){
+        puts("ic_string_print: call to ic_string_contents failed");
+        return;
+    }
+
+    printf("%s", con);
 }
 
 

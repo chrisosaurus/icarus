@@ -7,6 +7,7 @@
 #include "../../data/pvector.h"
 #include "statement.h"
 #include "../../data/symbol.h"
+#include "../../data/string.h"
 #include "../parse.h"
 
 /* FIXME crutch for unused param */
@@ -70,6 +71,12 @@ unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned 
         return 1;
     }
 
+    /* initialise empty string fdecl->string */
+    if( ic_string_init( &(fdecl->string), "", 0 ) ){
+        puts("ic_func_decl_init: call to ic_string_init for string failed");
+        return 1;
+    }
+
     /* initialise return type to 0 (void) */
     fdecl->ret_type = 0;
 
@@ -108,6 +115,14 @@ unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_
      */
     if( ic_symbol_destroy(&(fdecl->name), 0) ){
         puts("ic_type_decl_destroy: for name call to ic_symbol_destroy failed");
+        return 1;
+    }
+
+    /* free string contents but do not free string itself
+     * since it is an element on fdecl
+     */
+    if( ic_string_destroy(&(fdecl->string), 0) ){
+        puts("ic_type_decl_destroy: for string call to ic_string_destroy failed");
         return 1;
     }
 
@@ -275,6 +290,18 @@ void ic_func_decl_print(struct ic_func_decl *fdecl, unsigned int *indent_level){
         return;
     }
 
+    /* guarantee generation of function string */
+    if( ! ic_func_decl_str(fdecl) ){
+        puts("ERROR ERROR");
+        puts("ic_func_decl_print: call to ic_func_decl_str failed");
+        return;
+    }
+
+    /* print comment and then function decl string */
+    fputs("# ", stdout);
+    ic_string_print(&(fdecl->string));
+    puts("");
+
     /* print `function`, name, and opening bracket */
     printf("fn %s(", ic_symbol_contents( &(fdecl->name) ));
 
@@ -321,7 +348,7 @@ void ic_func_decl_print(struct ic_func_decl *fdecl, unsigned int *indent_level){
 /* return a string representation of this function signature
  *
  * for a function signature
- *      fn foo(a::Int b::Int) -> Int
+ *      fn foo(a::Int, b::Int) -> Int
  *
  * this function will return
  *      foo(Int Int)
@@ -330,9 +357,66 @@ void ic_func_decl_print(struct ic_func_decl *fdecl, unsigned int *indent_level){
  * returns 0 on failure
  */
 char * ic_func_decl_str(struct ic_func_decl *fdecl){
-    /* FIXME */
-    puts("ic_fund_decl_str: unimplemented");
-    return 0;
+    /* offset into args pvector */
+    unsigned int i = 0;
+    /* cached len */
+    unsigned int len = 0;
+    /* cache of string */
+    struct ic_string *fstr = 0;
+    /* each field we consider in args */
+    struct ic_field *field = 0;
+
+    if( ! fdecl ){
+        puts("ic_func_decl_str: fdecl was null");
+        return 0;
+    }
+
+    fstr = &(fdecl->string);
+
+    /* if a non-zero length fecl->string is found then return it */
+    if( ic_string_length(fstr) ){
+        return ic_string_contents(fstr);
+    }
+
+    /* note that we do not check for length as a length of 0 is valid */
+    len = ic_pvector_length(&(fdecl->args));
+
+    /* fdecl->name */
+    if( ic_string_append_symbol(fstr, &(fdecl->name)) ){
+        puts("ic_func_decl_str: name: call to ic_string_append_symbol failed");
+        return 0;
+    }
+
+    /* opening bracket */
+    if( ic_string_append_char(fstr, "(", 1) ){
+        puts("ic_func_decl_str: opening brace: call to ic_string_append_char failed");
+        return 0;
+    }
+
+    /* iterate through args
+     * appending on the type name
+     */
+    for( i=0; i<len; ++i ){
+        field = ic_pvector_get( &(fdecl->args), i );
+        if( ! field ){
+            puts("ic_func_decl_str: arg: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        if( ic_string_append_symbol(fstr, &(field->type)) ){
+            puts("ic_func_decl_str: arg: call to ic_string_append_symbol failed");
+            return 0;
+        }
+    }
+
+    /* final bracket */
+    if( ic_string_append_char(fstr, ")", 1) ){
+        puts("ic_func_decl_str: closing brace: call to ic_string_append_char failed");
+        return 0;
+    }
+
+    /* we rely on the fdecl storing the string */
+    return ic_string_contents(&(fdecl->string));
 }
 
 /* allocate and return a new type_decl

@@ -17,14 +17,20 @@ struct ic_func_decl {
      *
      */
     struct ic_symbol name;
+
     /* a pointer vector of fields */
     struct ic_pvector args;
+
     /* return type is optional
      *  0    -> void
      *  else -> symbol for type
      */
     struct ic_symbol *ret_type;
+
     struct ic_body body;
+
+    /* the string representation of this function decl */
+    struct ic_string string;
 };
 
 /* allocate and initialise a new func_decl
