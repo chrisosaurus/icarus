@@ -353,6 +353,9 @@ void ic_func_decl_print(struct ic_func_decl *fdecl, unsigned int *indent_level){
  * this function will return
  *      foo(Int Int)
  *
+ * the char* returned is a string stored within fdecl,
+ * this means the caller must not free or mutate this string
+ *
  * returns char* on success
  * returns 0 on failure
  */
@@ -371,6 +374,7 @@ char * ic_func_decl_str(struct ic_func_decl *fdecl){
         return 0;
     }
 
+    /* cache string pointer */
     fstr = &(fdecl->string);
 
     /* if a non-zero length fecl->string is found then return it */
@@ -393,10 +397,10 @@ char * ic_func_decl_str(struct ic_func_decl *fdecl){
         return 0;
     }
 
-    /* iterate through args
-     * appending on the type name
+    /* iterate through args appending the type name to our string representation
      */
     for( i=0; i<len; ++i ){
+        /* capture our field */
         field = ic_pvector_get( &(fdecl->args), i );
         if( ! field ){
             puts("ic_func_decl_str: arg: call to ic_pvector_get failed");

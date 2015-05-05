@@ -93,6 +93,9 @@ void ic_func_decl_print(struct ic_func_decl *fdecl, unsigned int *indent_level);
  * this function will return
  *      foo(Int Int)
  *
+ * the char* returned is a string stored within fdecl,
+ * this means the caller must not free or mutate this string
+ *
  * returns char* on success
  * returns 0 on failure
  */
