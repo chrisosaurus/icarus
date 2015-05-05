@@ -67,5 +67,6 @@ int main(int argc, char **argv){
     free(tokens->tokens);
     free(tokens);
 
+    return 0;
 }
 
