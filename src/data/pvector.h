@@ -34,6 +34,34 @@ struct ic_pvector * ic_pvector_new(unsigned int cap);
  */
 unsigned int ic_pvector_init(struct ic_pvector *vec, unsigned int cap);
 
+/* destroy pvector
+ *
+ * this will only free the pvecto if `free_pvector` is true
+ *
+ * takes a function which is called once for each argument stored in the pvector
+ * it will be called with it's free argument set to true
+ *
+ * this function will bail at the first error encountered
+ *
+ * note that this function signature prevents storing a pvector/parray inside a pvector
+ * without the use of a shim as the destroy_item signature doesn't match ic_pvector_destroy
+ *
+ * sadly this does require a shim for each type as the following function pointers are not
+ * compatible:
+ *
+ *  unsigned int (*destroy_item)(void *item, unsigned int free_item);
+ *  unsigned int (*destroy_item)(struct foo *item, unsigned int free_item);
+ *
+ * so a simple shim is needed to convert between
+ *  unsigned int shim(void *item, unsigned int free){
+ *      return foo(item, free);
+ *  }
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_pvector_destroy(struct ic_pvector *vec, unsigned int free_vec, unsigned int (*destroy_item)(void* item, unsigned int free));
+
 /* get item at pos
  * bounds checked
  *

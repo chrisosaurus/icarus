@@ -10,11 +10,12 @@ TODO:
 * it will be useful for callers of ic_parse_check_token to be able to distinguish between error (null tokens, dist failed) and comparison failures (the token was not as expected)
 * add escaping support to lexing string (escaping " with \)
 * add kludge destructor
-* add pvector/parray destructor helper which takes a function * and iterates through it's contents passing to function
 
 technical debt:
 
 * function return value on failure, need to standardise (e.g. symbol, some 0 on failure, others 1)
 * consider const-correctness on read only args
 * all objects (esp. containers) need destructors (see `./scripts/destruct_audit.sh` for current list)
+* add pvector/parray destructor helper which takes a function * and iterates through it's contents passing to function
+* add shims to allow ic_pvector_destroy to be called on each type
 

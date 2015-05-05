@@ -60,6 +60,87 @@ unsigned int ic_pvector_init(struct ic_pvector *vec, unsigned int cap){
     return 0;
 }
 
+/* destroy pvector
+ *
+ * this will only free the pvecto if `free_pvector` is true
+ *
+ * takes a function which is called once for each argument stored in the pvector
+ * it will be called with it's free argument set to true
+ *
+ * this function will bail at the first error encountered
+ *
+ * note that this function signature prevents storing a pvector/parray inside a pvector
+ * without the use of a shim as the destroy_item signature doesn't match ic_pvector_destroy
+ *
+ * sadly this does require a shim for each type as the following function pointers are not
+ * compatible:
+ *
+ *  unsigned int (*destroy_item)(void *item, unsigned int free_item);
+ *  unsigned int (*destroy_item)(struct foo *item, unsigned int free_item);
+ *
+ * so a simple shim is needed to convert between
+ *  unsigned int shim(void *item, unsigned int free){
+ *      return foo(item, free);
+ *  }
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_pvector_destroy(struct ic_pvector *vec, unsigned int free_vec, unsigned int (*destroy_item)(void* item, unsigned int free)){
+    /* offset into pvector */
+    unsigned int i = 0;
+    /* cache of length */
+    unsigned int len = 0;
+    /* current item in vec */
+    void * item = 0;
+
+    if( ! vec ){
+        puts("ic_pvector_destroy: vec was null");
+        return 1;
+    }
+
+    /* we must receive a valid looking destroy_item function */
+    if( ! destroy_item ){
+        puts("ic_pvector_destroy: destroy_item was null");
+        return 1;
+    }
+
+    len = ic_pvector_length(vec);
+    if( ! len ){
+        /* FIXME the error reporting for length is crappy
+         * as this pvector could be empty, and if so this is
+         * not an error
+         */
+        puts("ic_pvector_destroy: call to ic_pvector_length failed");
+        return 1;
+    }
+
+    /* iterate through each item calling the supplied
+     * destroy_item function
+     *
+     * bail early at first sign of error
+     */
+    for( i=0; i<len; ++i ){
+        item = ic_pvector_get(vec, i);
+        if( ! item ){
+            puts("ic_pvector_destroy: call to ic_pvector_get failed");
+            return 1;
+        }
+
+        if( destroy_item(item, 1) ){
+            puts("ic_pvector_destroy: call to user provided destroy func failed");
+            return 1;
+        }
+    }
+
+    /* if asked nicely */
+    if( free_vec ){
+        free(vec);
+    }
+
+    return 0;
+}
+
 /* get item at pos
  * bounds checked
  *

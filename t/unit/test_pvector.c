@@ -4,6 +4,7 @@
 #include <assert.h> /* assert */
 
 #include "../../src/data/pvector.h"
+#include "../../src/data/string.h"
 
 void normal(void){
     int i;
@@ -103,17 +104,44 @@ void normal(void){
 }
 
 void abnormal(void){
+    struct ic_pvector *vec = ic_pvector_new(0);
+
     /* test null pvector args */
     assert( 1 == ic_pvector_init(0, 0) );
     assert( 0 == ic_pvector_get(0, 0) );
     assert( -1 == ic_pvector_append(0, 0) );
     assert( 1 == ic_pvector_ensure(0, 0) );
     assert( 0 == ic_pvector_length(0) );
+    assert( 1 == ic_pvector_destroy(0, 0, 0) );
+
+    /* actually destroy to clean up
+     * nothing stored so a simple free
+     * is sufficient
+     */
+    free(vec);
+}
+
+/* this is an example of why the c spec sucks */
+unsigned int string_shim(void *str, unsigned int free){
+    return ic_string_destroy(str, free);
+}
+
+void destroy(void){
+    struct ic_pvector *vec = ic_pvector_new(0);
+
+    /* insert some strings */
+    assert( -1 != ic_pvector_append(vec, ic_string_new("hello", 5)) );
+    assert( -1 != ic_pvector_append(vec, ic_string_new("world", 5)) );
+    assert( -1 != ic_pvector_append(vec, ic_string_new("a", 1)) );
+    assert( -1 != ic_pvector_append(vec, ic_string_new("dude", 4)) );
+
+    assert( 0 == ic_pvector_destroy(vec, 1, string_shim) );
 }
 
 int main(void){
     normal();
     abnormal();
+    destroy();
 
     return 0;
 }
