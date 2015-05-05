@@ -1,0 +1,28 @@
+# FIXME need to decide on
+# import syntax
+# does 'import System::shell' expose 'System::shell' or 'shell'
+# what if I want to import 'the other' ?
+# python 'from foo import bar' is ugly
+# perls 'use foo qw(bar)' isn't bad
+# 'import System::shell as shell' is probably the cleanest, the repeated shell is a little ugly but meh
+
+import System::shell
+import Path::cd
+
+const paths = q[
+    icarus
+    foo
+    bar
+    baz
+]
+
+fn main()
+    for each in paths
+        Path::cd(each)
+        System::shell("git fetch --all")
+        System::shell("git fetch --tags")
+        System::shell("git pull")
+        Path::cd("..")
+    end
+end
+
