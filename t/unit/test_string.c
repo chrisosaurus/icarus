@@ -8,6 +8,7 @@ void normal(void){
     int i;
     struct ic_string *str = ic_string_new("hello", 5);
     struct ic_string *str2 = 0;
+    struct ic_string empty;
 
     puts("ignore any text output, testing error cases");
 
@@ -69,6 +70,14 @@ void normal(void){
 
     assert( 0 == ic_string_destroy(str, 1) );
     assert( 0 == ic_string_destroy(str2, 1) );
+
+    /* testing empty new and init */
+    str = ic_string_new_empty();
+    assert(str);
+    assert( 0 == ic_string_destroy(str, 1) );
+
+    assert( 0 == ic_string_init_empty(&empty) );
+    assert( 0 == ic_string_destroy(&empty, 0) );
 }
 
 void abnormal(void){
