@@ -85,6 +85,7 @@ void abnormal(void){
 
     /* testing null string cases */
     assert( 1 == ic_string_init(0, 0, 0) );
+    assert( 1 == ic_string_init_empty(0) );
     assert( 0 == ic_string_contents(0) );
     assert( 0 == ic_string_get(0, 0) );
     assert( 1 == ic_string_set(0, 0, 0) );
