@@ -429,7 +429,10 @@ static struct ic_tokens * ic_consume_arrow(struct ic_tokens *tokens, char *sourc
  */
 static struct ic_tokens * ic_consume_number(struct ic_tokens *tokens, char *source, unsigned int *i){
     unsigned int len = 0;
+    /* record if we found a leading zero in order to detect octal or hex */
     unsigned int leading_zero = 0;
+    /* record if we found an unsupported format character ('.', 'b', 'x') partway through the parse */
+    unsigned int unsupported_format = 0;
 
     if( ! i || ! source ){
         puts("ic_consume_number: null source or i provided");
@@ -481,10 +484,14 @@ static struct ic_tokens * ic_consume_number(struct ic_tokens *tokens, char *sour
             case '.':
             case 'x':
             case 'b':
-                /* we do not support hex, octal or floating point yet
-                 * adding explicit cases for completeness
+                /* we do not support binary, hex, or floating point yet
+                 * adding explicit case to aid in helpful diagnostics
+                 *
+                 * record that we found the unsupported format character but report at end of parse
+                 * for more complete error message
                  */
-                goto NUMBER_LOOP_EXIT;
+                unsupported_format = 1;
+                continue;
                 break;
 
             default:
@@ -512,7 +519,20 @@ NUMBER_LOOP_EXIT:
      * but '01' is not
      */
     if( len > 1 && leading_zero ){
-        puts("WARNING: ic_consume_number currently only accepts base ten integers");
+        printf("ic_consume_number: currently only accepts base ten integers; found '%.*s'\n", len, &(source[*i]));
+        return 0;
+    }
+
+    /* unsupported format character found suggesting unsupported number format
+     *  floating point
+     *  binary
+     *  hex
+     *
+     * note that binary and hex should be caught by the above
+     * leading_zero check
+     */
+    if( unsupported_format ){
+        printf("ic_consume_number: currently does not accept floating point, binary or hex; found '%.*s'\n", len, &(source[*i]));
         return 0;
     }
 
