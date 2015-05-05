@@ -72,8 +72,8 @@ unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned 
     }
 
     /* initialise empty string fdecl->string */
-    if( ic_string_init( &(fdecl->string), "", 0 ) ){
-        puts("ic_func_decl_init: call to ic_string_init for string failed");
+    if( ic_string_init_empty( &(fdecl->string) ) ){
+        puts("ic_func_decl_init: call to ic_string_init_empty for string failed");
         return 1;
     }
 
