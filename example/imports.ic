@@ -1,0 +1,9 @@
+import System::shell as shell
+import Path::cd as pcd
+import Math::random
+
+fn main()
+    shell("...")
+    pcd("...")
+    Math::random(14)
+end
