@@ -43,10 +43,6 @@ int main(int argc, char **argv){
     printf("%s\n", tokens->tokens);
     puts("----------------\n");
 
-    /* FIXME eventually need to free ast
-     * note that ast itself will need a deeper free
-     * no currently implemented interface supports this
-     */
     ast = ic_parse(tokens);
     if( ! ast ){
         puts("parsing failed");
@@ -58,10 +54,7 @@ int main(int argc, char **argv){
     ic_ast_print(ast);
     puts("----------------\n");
 
-    /* FIXME currently we do not free ast
-     * as ast is built form many compound objects
-     * we need to have some mechanism for this
-     */
+    ic_ast_destroy(ast, 1);
 
     free(source);
     free(tokens->tokens);
