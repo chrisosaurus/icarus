@@ -433,6 +433,8 @@ static struct ic_tokens * ic_consume_number(struct ic_tokens *tokens, char *sour
     unsigned int leading_zero = 0;
     /* record if we found an unsupported format character ('.', 'b', 'x') partway through the parse */
     unsigned int unsupported_format = 0;
+    /* an illegal character we could not categories */
+    unsigned int illegal_character = 0;
 
     if( ! i || ! source ){
         puts("ic_consume_number: null source or i provided");
@@ -494,11 +496,26 @@ static struct ic_tokens * ic_consume_number(struct ic_tokens *tokens, char *sour
                 continue;
                 break;
 
+            case '\0':
+            case '\n':
+            case '\t':
+            case ' ':
+            case ',':
+            case ';':
+            case ')':
+            case ']':
+            case '}':
+                /* valid terminators for numbers */
+                goto NUMBER_LOOP_EXIT;
+                break;
+
             default:
                 /* invalid character
-                 * for now the lexer only supports integer numbers
+                 *
+                 * record that we found it but continue trying to parse number
                  */
-                goto NUMBER_LOOP_EXIT;
+                illegal_character = 1;
+                continue;
                 break;
         }
     }
@@ -533,6 +550,13 @@ NUMBER_LOOP_EXIT:
      */
     if( unsupported_format ){
         printf("ic_consume_number: currently does not accept floating point, binary or hex; found '%.*s'\n", len, &(source[*i]));
+        return 0;
+    }
+
+    /* an illegal character which we could not categorise was found
+     */
+    if( illegal_character ){
+        printf("ic_consume_number: unknown illegal character found in number; found '%.*s'\n", len, &(source[*i]));
         return 0;
     }
 
