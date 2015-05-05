@@ -428,22 +428,22 @@ static struct ic_tokens * ic_consume_arrow(struct ic_tokens *tokens, char *sourc
  * returns 0 on failure
  */
 static struct ic_tokens * ic_consume_number(struct ic_tokens *tokens, char *source, unsigned int *i){
-    unsigned int len=0;
+    unsigned int len = 0;
+    unsigned int leading_zero = 0;
 
     if( ! i || ! source ){
         puts("ic_consume_number: null source or i provided");
         return 0;
     }
 
-    /* error if leading 0
+    /* check for leading '0'
      * as we do not yet support:
      *  octal
      *  hex
      *  fractions / floating points
      */
     if( source[*i] == '0' ){
-        puts("WARNING: ic_consume_number currently only accepts base ten integers");
-        return 0;
+        leading_zero = 1;
     }
 
     /* a word must start with a letter or _
@@ -504,6 +504,15 @@ NUMBER_LOOP_EXIT:
          * is missing a *_symbol case
          */
         printf("ic_consume_number: stuck on a non-number character '%c', raising error\n", source[*i]);
+        return 0;
+    }
+
+    /* a leading '0' is an error but only if the integer is longer than len 1
+     * this is because the integer '0' is valid base 10,
+     * but '01' is not
+     */
+    if( len > 1 && leading_zero ){
+        puts("WARNING: ic_consume_number currently only accepts base ten integers");
         return 0;
     }
 
