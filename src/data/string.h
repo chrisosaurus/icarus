@@ -31,11 +31,26 @@ struct ic_string {
  */
 struct ic_string * ic_string_new(char *source, unsigned int len);
 
+/* build a new empty string
+ *
+ * this will allocate a buffer to store the null terminator
+ *
+ * returns new string on success
+ * returns 0 on failure
+ */
+struct ic_string * ic_string_new_empty(void);
+
 /* initialise an existing symbol from a char* and a length
  * returns 0 on success
  * returns 1 on error
  */
 unsigned int ic_string_init(struct ic_string *string, char *source, unsigned int len);
+
+/* initialise an existing symbol to empty
+ * returns 0 on success
+ * returns 1 on error
+ */
+unsigned int ic_string_init_empty(struct ic_string *string);
 
 /* destroy string
  *

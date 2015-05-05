@@ -31,6 +31,17 @@ struct ic_string * ic_string_new(char *source, unsigned int len){
     return str;
 }
 
+/* build a new empty string
+ *
+ * this will allocate a buffer to store the null terminator
+ *
+ * returns new string on success
+ * returns 0 on failure
+ */
+struct ic_string * ic_string_new_empty(void){
+    return ic_string_new("", 0);
+}
+
 /* initalise an existing string from a char* and len
  * returns 0 on success
  * returns 1 on error
@@ -67,6 +78,14 @@ unsigned int ic_string_init(struct ic_string *str, char *source, unsigned int le
 
     return 0;
 
+}
+
+/* initialise an existing symbol to empty
+ * returns 0 on success
+ * returns 1 on error
+ */
+unsigned int ic_string_init_empty(struct ic_string *string){
+    return ic_string_init(string, "", 0);
 }
 
 /* destroy string
