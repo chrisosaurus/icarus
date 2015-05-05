@@ -7,11 +7,6 @@
 #include "data/statement.h"
 #include "../lex/lexer.h"
 
-/* enable by default for now */
-#ifndef DEBUG_PARSE_STMT
-#define DEBUG_PARSE_STMT
-#endif
-
 /* ignore unused parameter warnings */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
@@ -241,7 +236,7 @@ struct ic_stmt * ic_parse_stmt(struct ic_tokens *tokens, unsigned int *i){
     for( pt_offset=0; pt_offset < LENGTH(ic_parse_table); ++pt_offset ){
 
 #ifdef DEBUG_PARSE_STMT
-            printf( "ic_parse_stmt: comparing token token '%.*s' (%u) with parse_table entry '%.*s' (%u)\n",
+            printf( "ic_parse_stmt: comparing token '%.*s' (%u) with parse_table entry '%.*s' (%u)\n",
                     dist,
                     &(tokens->tokens[*i]),
                     dist,

@@ -17,10 +17,6 @@
 /* ignore unused variables that are set */
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 
-#ifndef DEBUG_PARSE_EXPR
-#define DEBUG_PARSE_EXPR
-#endif
-
 /* current supported expression types:
  *  func call
  *  identifier
@@ -233,8 +229,6 @@ static struct ic_expr * ic_parse_expr_constant_string(struct ic_tokens *tokens, 
 
     /* record our starting value */
     start = &(tokens->tokens[*i]);
-
-    printf("parse_string looking at '%s'\n'", &(tokens->tokens[*i + length]));
 
     /* find length of string
      * FIXME naive

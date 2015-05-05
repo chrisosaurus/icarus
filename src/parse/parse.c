@@ -15,10 +15,6 @@
  * based on their return types
  */
 
-#ifndef DEBUG_PARSE
-#define DEBUG_PARSE
-#endif
-
 /* an entry in the parse table showing the
  * length and token string that must be match
  * and if a match is found, the function to dispatch to
@@ -89,7 +85,7 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
 
         for( pt_offset=0; pt_offset < LENGTH(ic_parse_table); ++pt_offset ){
 #ifdef DEBUG_PARSE
-            printf( "comparing token token '%.*s' (%u) with parse_table entry '%.*s' (%u)\n",
+            printf( "comparing token '%.*s' (%u) with parse_table entry '%.*s' (%u)\n",
                     dist,
                     &(tokens->tokens[i]),
                     dist,
