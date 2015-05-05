@@ -33,7 +33,7 @@ int main(void){
     assert(field);
     assert( ic_func_decl_add_arg(fdecl, field) == 0 );
 
-    printf("Should see:\nfn Foo(a::Int b::String) -> Void\nend\n");
+    printf("Should see:\n# Foo(int String)\nfn Foo(a::Int b::String) -> Void\nend\n");
 
     /* output type */
     puts("Output:");
