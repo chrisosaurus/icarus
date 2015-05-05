@@ -7,7 +7,9 @@ SRC = $(shell find src libs -name '*.c' | grep -v src/main.c)
 OBJ = ${SRC:.c=.o}
 
 # tests live in t/
-TESTS = $(shell find t -name '*.c' )
+# we only want to automatically build and run t/libs and t/unit
+# t/custom is managed manually by test_custom
+TESTS = $(shell find t/libs t/unit -name '*.c' )
 # output location for tests
 TESTOUT = bin
 TESTO = $(patsubst %.c, $(TESTOUT)/%, $(TESTS))
@@ -58,7 +60,15 @@ example: icarus
 # run all TESTO
 # cleanobj
 #   this ensures that we do a fresh build every time
-test: clean $(OBJ) $(TESTO) test_success cleanobj
+test: clean $(OBJ) $(TESTO) test_custom test_success cleanobj
+
+
+test_custom: $(OBJ)
+	@echo "\n\ncompiling t/custom/test_example.c to bin/t/custom/test_example"
+	@mkdir -p `dirname bin/t/custom/test_example`
+	@${CC} t/custom/test_example.c -o bin/t/custom/test_example ${LDFLAGS} ${OBJ}
+	@echo running test_example.pl
+	t/custom/test_example.pl
 
 # compile and run each test
 $(TESTO) : $(TESTOUT)/% : %.c
@@ -72,5 +82,5 @@ $(TESTO) : $(TESTOUT)/% : %.c
 test_success:
 	@echo "\n\ntesting success\n"
 
-.PHONY: all clean cleanobj icarus test example
+.PHONY: all clean cleanobj icarus test test_custom example
 
