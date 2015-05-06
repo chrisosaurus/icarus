@@ -50,10 +50,10 @@ if instead we create a mutable reference we can get the desired behavior
 
 notice that I use `&f.a` to specify mutability
 
-I can still use `f.a` to refer to Foo(1) is a non mutable fashion (say to pass to another function)
+I can still use both `f` to refer to `Foo(1)` and `f.a` to refer to `1` as non-mutables (say to pass to another function)
 
-    # don't give print a mutable reference, we do not allow print to modify Foo(1)
-    print(f.a)
+    # don't give print a mutable reference, we do not allow print to modify `Foo(1)`
+    print(f)
 
 
 Function arguments
@@ -75,10 +75,10 @@ and
 
     fn foo(&c::Int)
 
-then c is an **immutable* local variable holding a reference to an mutable Integer value
+then c is an **immutable** local variable holding a reference to a **mutable** Integer value
 
 
-that is to say inside a function there is noway to reuse an argument variable to refer to a new value
+That is to say inside a function there is no way to reuse an argument variable to refer to a new value
 
 with an argument holding a mutable reference we do get pointer semantics
 
