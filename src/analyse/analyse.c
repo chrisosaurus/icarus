@@ -1,12 +1,14 @@
 #include <stdlib.h> /* FIMXE exit */
 #include <stdio.h>
 
+#include "../parse/data/field.h"
 #include "analyse.h"
 
 /* ignored unused parameter */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 /* ignored unused variable */
 #pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 
 
 /* takes an ast and performs analysis on it
@@ -89,8 +91,66 @@ struct ic_kludge * ic_analyse(struct ic_ast *ast){
  * returns 1 on error
  */
 unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl *tdecl){
-    puts("ic_analyse_type_decl: unimplemented");
+    /* index into fields */
+    unsigned int i = 0;
+    /* len of fields */
+    unsigned int len = 0;
+    /* current field */
+    struct ic_field *field = 0;
+    /* current name from field */
+    char *name = 0;
+    /* current type from field */
+    char *type = 0;
+
+    if( ! kludge ){
+        puts("ic_analyse_type_decl: kludge was null");
+        return 1;
+    }
+
+    if( ! tdecl ){
+        puts("ic_analyse_type_decl: tdecl was null");
+        return 1;
+    }
+
+    /* iterate through each field
+     * for each field we check:
+     *      the field name is unique within this type decl
+     *      the field type exists
+     */
+    len = ic_pvector_length(&(tdecl->fields));
+    for( i=0; i<len; ++i ){
+        field = ic_pvector_get(&(tdecl->fields), i);
+        if( ! field ){
+            puts("ic_analyse_type_decl: call to ic_pvector_get failed");
+            return 1;
+        }
+
+        name = ic_symbol_contents(&(field->name));
+        if( ! type ){
+            puts("ic_analyse_type_decl: call to ic_symbol_contents failed for name");
+            return 1;
+        }
+
+        /* FIXME
+         * check name is unique within this type decl
+         */
+
+        type = ic_symbol_contents(&(field->type));
+        if( ! type ){
+            puts("ic_analyse_type_decl: call to ic_symbol_contents failed for type");
+            return 1;
+        }
+
+        /* FIXME
+         * check that type exists
+         */
+    }
+
+    /* FIXME */
+    puts("ic_analyse_type_decl: unfinished");
     exit(1);
+
+    return 0;
 }
 
 /* takes a func_decl and performs analysis

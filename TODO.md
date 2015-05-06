@@ -10,6 +10,10 @@ TODO:
 * it will be useful for callers of ic_parse_check_token to be able to distinguish between error (null tokens, dist failed) and comparison failures (the token was not as expected)
 * add escaping support to lexing string (escaping " with \)
 * add kludge testing
+* add unique field name check to ic_analyse_type_decl
+* add field type check to ic_analyse_type_decl
+* add unique type / func check in kludge populate insert
+* add kludge 'get_fdecl' and 'get_tdecl' functions
 
 technical debt:
 
