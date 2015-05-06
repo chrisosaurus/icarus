@@ -63,22 +63,26 @@ these rules apply to function arguments as well, with one minor exceptions
 
     let a::Int = 5
 
-is a **mutable** local variable a holding a reference to an **immutable** value 5
+here `a` is a **mutable** local variable a holding a reference to an **immutable** value 5
 
 however if we have
 
     fn foo(b::Int)
 
-then b is an **immutable** local variable holding a reference to an **immutable** Integer value
+here `b` is an **immutable** local variable holding a reference to an **immutable** Integer value
 
 and
 
     fn foo(&c::Int)
 
-then c is an **immutable** local variable holding a reference to a **mutable** Integer value
+here c is an **immutable** local variable holding a reference to a **mutable** Integer value
+
+we can refer to this as both a mutable value `&c` and an immutable value `c`, we can mutate the value `&c = 4`,
+but any attempt to modify the variable `c = 4` directly is an error
+
 
 
 That is to say inside a function there is no way to reuse an argument variable to refer to a new value
 
-with an argument holding a mutable reference we do get pointer semantics
+with an argument holding a mutable reference we get pointer semantics
 
