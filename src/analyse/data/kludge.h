@@ -39,8 +39,10 @@ struct ic_kludge {
 
 /* alloc and init a new kludge
  *
- * note that this does not progress the supplied ast,
- * it is only stored by pointer in the new kludge
+ * this call will break apart the ast to populate the
+ * fields stored on kludge
+ *
+ * this will NOT perform any analysis
  *
  * returns pointer on success
  * returns 0 on error
@@ -49,8 +51,10 @@ struct ic_kludge * ic_kludge_new(struct ic_ast *ast);
 
 /* init an existing kludge
  *
- * note that this does not progress the supplied ast,
- * it is only stored by pointer in the provided  kludge
+ * this call will break apart the ast to populate the
+ * fields stored on kludge
+ *
+ * this will NOT perform any analysis
  *
  * returns 0 on success
  * returns 1 on error

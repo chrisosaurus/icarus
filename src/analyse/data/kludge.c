@@ -3,11 +3,65 @@
 
 #include "kludge.h"
 #include "../../data/pvector.h"
+#include "../../parse/data/decl.h"
+
+/* takes an ast and breaks it down to populate the supplied kludge
+ *
+ * returns 0 on success
+ * return 1 on failure
+ */
+static unsigned int ic_kludge_populate_from_ast(struct ic_kludge *kludge, struct ic_ast *ast){
+    /* offset */
+    unsigned int i = 0;
+    /* cached len */
+    unsigned int len = 0;
+
+    /* current decl we are considering */
+    struct ic_decl *decl = 0;
+
+    /* iterate through each declaration
+     * in the ast and add to kludge
+     */
+    len = ic_ast_length(ast);
+    for( i=0; i<len; ++i ){
+        decl = ic_ast_get(ast, i);
+        if( ! decl ){
+            puts("ic_kludge_populate_from_ast: call to ic_ast_get failed");
+            return 1;
+        }
+
+        /* dispatch on type to appropriate kludge_add function */
+        switch(decl->type){
+            case ic_decl_func_decl:
+                if( ic_kludge_add_fdecl(kludge, &(decl->u.fdecl)) ){
+                    puts("ic_kludge_populate_from_ast: call to ic_kludge_add_fdecl failed");
+                    return 1;
+                }
+                break;
+
+            case ic_decl_type_decl:
+                if( ic_kludge_add_tdecl(kludge, &(decl->u.tdecl)) ){
+                    puts("ic_kludge_populate_from_ast: call to ic_kludge_add_tdecl failed");
+                    return 1;
+                }
+                break;
+
+            default:
+                puts("ic_kludge_populate_from_ast: decl had impossible type");
+                return 1;
+                break;
+        }
+    }
+
+    return 0;
+}
 
 /* alloc and init a new kludge
  *
- * note that this does not progress the supplied ast,
- * it is only stored by pointer in the new kludge
+ * this call will break apart the ast to populate the
+ * fields stored on kludge
+ *
+ * this will NOT perform any analysis
  *
  * returns pointer on success
  * returns 0 on error
@@ -40,8 +94,10 @@ struct ic_kludge * ic_kludge_new(struct ic_ast *ast){
 
 /* init an existing kludge
  *
- * note that this does not progress the supplied ast,
- * it is only stored by pointer in the provided  kludge
+ * this call will break apart the ast to populate the
+ * fields stored on kludge
+ *
+ * this will NOT perform any analysis
  *
  * returns 0 on success
  * returns 1 on error
@@ -88,6 +144,18 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast){
 
     /* ast ast */
     kludge->aast = ast;
+
+    /* populate kludge fiels from ast:
+     *      dict_tname
+     *      dict_fsig
+     *      tdecls
+     *      fdecls
+     */
+    if( ic_kludge_populate_from_ast(kludge, ast) ){
+        puts("ic_kludge_init: errors: call to ic_kludge_populate_from_ast failed");
+        return 1;
+    }
+
 
     return 0;
 }
