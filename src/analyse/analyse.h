@@ -15,6 +15,9 @@
  * this returns a kludge
  *
  * see kludge->errors for errors
+ *
+ * returns kludge on success
+ * returns 0 on failure
  */
 struct ic_kludge * analyse(struct ic_ast *ast);
 

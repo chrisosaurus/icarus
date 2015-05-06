@@ -3,14 +3,82 @@
 
 #include "analyse.h"
 
+/* ignored unused parameter */
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+/* ignored unused variable */
+#pragma GCC diagnostic ignored "-Wunused-variable"
+
+
 /* takes an ast and performs analysis on it
  * this returns a kludge
  *
  * see kludge->errors for errors
+ *
+ * returns kludge on success
+ * returns 0 on failure
  */
 struct ic_kludge * analyse(struct ic_ast *ast){
-    puts("analyse: unimplemented");
-    exit(1);
+    /* our offset into various lists */
+    unsigned int i = 0;
+    /* cached len of various lists */
+    unsigned int len = 0;
+
+    /* the current type we are analysing */
+    struct ic_type_decl *tdecl = 0;
+    /* the current func we are analysing */
+    struct ic_func_decl *fdecl = 0;
+
+    /* our mighty kludge */
+    struct ic_kludge *kludge = 0;
+
+    /* steps:
+     *      create kludge from ast
+     *      for each type call analyse_type_decl
+     *      for each func call analyst_func_decl
+     */
+
+    if( ! ast ){
+        puts("analyse: ast null");
+        return 0;
+    }
+
+    /* create kludge from ast */
+    kludge = ic_kludge_new(ast);
+    if( ! kludge ){
+        puts("analyse: call to ic_kludge_new failed");
+        return 0;
+    }
+    /* for each type call analyse_type_decl */
+    len = ic_pvector_length(&(kludge->tdecls));
+    for( i=0; i<len; ++i ){
+        tdecl = ic_pvector_get(&(kludge->tdecls), i);
+        if( ! tdecl ){
+            puts("analyse: call to ic_pvector_get failed for tdecl");
+            return 0;
+        }
+
+        if( analyse_type_decl(kludge, tdecl) ){
+            puts("analyse: call to analyse_type_decl failed");
+            return 0;
+        }
+    }
+
+    /* for each func call analyst_func_decl */
+    len = ic_pvector_length(&(kludge->fdecls));
+    for( i=0; i<len; ++i ){
+        fdecl = ic_pvector_get(&(kludge->fdecls), i);
+        if( ! fdecl ){
+            puts("analyse: call to ic_pvector_get failed for fdecl");
+            return 0;
+        }
+
+        if( analyse_func_decl(kludge, fdecl) ){
+            puts("analyse: call to analyse_type_decl failed");
+            return 0;
+        }
+    }
+
+    return kludge;
 }
 
 /* takes a type_decl and performs analysis
