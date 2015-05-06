@@ -167,7 +167,7 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
      *      struct ic_pvector errors;
      */
     len = ic_pvector_length( &(kludge->errors) );
-    for( i=0; i<len; ++i ){
+    if( len ){
         /* FIXME
          * here we just throw a fit as we have no way of cleaning up these errors
          */
