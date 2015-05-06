@@ -19,7 +19,7 @@
  * returns kludge on success
  * returns 0 on failure
  */
-struct ic_kludge * analyse(struct ic_ast *ast);
+struct ic_kludge * ic_analyse(struct ic_ast *ast);
 
 /* takes a type_decl and performs analysis
  *
@@ -28,7 +28,7 @@ struct ic_kludge * analyse(struct ic_ast *ast);
  * returns 0 on success
  * returns 1 on error
  */
-unsigned int analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl *tdecl);
+unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl *tdecl);
 
 /* takes a func_decl and performs analysis
  *
@@ -37,7 +37,7 @@ unsigned int analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl *td
  * returns 0 on success
  * returns 1 on error
  */
-unsigned int analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl *fdecl);
+unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl *fdecl);
 
 /* takes an expr and returns the inferred type as a symbol
  *
@@ -52,7 +52,7 @@ unsigned int analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl *fd
  * returns symbol on success
  * returns 0 on error
  */
-struct ic_symbol * analyse_infer(struct ic_kludge *kludge, struct ic_expr *expr);
+struct ic_symbol * ic_analyse_infer(struct ic_kludge *kludge, struct ic_expr *expr);
 
 /* check a statement for validity
  *
@@ -66,7 +66,7 @@ struct ic_symbol * analyse_infer(struct ic_kludge *kludge, struct ic_expr *expr)
  * returns 0 for success
  * returns 1 for error
  */
-unsigned int analyse_check(struct ic_kludge *kludge, struct ic_stmt *stmt);
+unsigned int ic_analyse_check(struct ic_kludge *kludge, struct ic_stmt *stmt);
 
 #endif
 

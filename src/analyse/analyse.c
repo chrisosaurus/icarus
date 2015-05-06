@@ -17,7 +17,7 @@
  * returns kludge on success
  * returns 0 on failure
  */
-struct ic_kludge * analyse(struct ic_ast *ast){
+struct ic_kludge * ic_analyse(struct ic_ast *ast){
     /* our offset into various lists */
     unsigned int i = 0;
     /* cached len of various lists */
@@ -33,32 +33,32 @@ struct ic_kludge * analyse(struct ic_ast *ast){
 
     /* steps:
      *      create kludge from ast
-     *      for each type call analyse_type_decl
-     *      for each func call analyst_func_decl
+     *      for each type call ic_analyse_type_decl
+     *      for each func call ic_analyse_func_decl
      */
 
     if( ! ast ){
-        puts("analyse: ast null");
+        puts("ic_analyse: ast null");
         return 0;
     }
 
     /* create kludge from ast */
     kludge = ic_kludge_new(ast);
     if( ! kludge ){
-        puts("analyse: call to ic_kludge_new failed");
+        puts("ic_analyse: call to ic_kludge_new failed");
         return 0;
     }
-    /* for each type call analyse_type_decl */
+    /* for each type call ic_analyse_type_decl */
     len = ic_pvector_length(&(kludge->tdecls));
     for( i=0; i<len; ++i ){
         tdecl = ic_pvector_get(&(kludge->tdecls), i);
         if( ! tdecl ){
-            puts("analyse: call to ic_pvector_get failed for tdecl");
+            puts("ic_analyse: call to ic_pvector_get failed for tdecl");
             return 0;
         }
 
-        if( analyse_type_decl(kludge, tdecl) ){
-            puts("analyse: call to analyse_type_decl failed");
+        if( ic_analyse_type_decl(kludge, tdecl) ){
+            puts("ic_analyse: call to ic_analyse_type_decl failed");
             return 0;
         }
     }
@@ -68,12 +68,12 @@ struct ic_kludge * analyse(struct ic_ast *ast){
     for( i=0; i<len; ++i ){
         fdecl = ic_pvector_get(&(kludge->fdecls), i);
         if( ! fdecl ){
-            puts("analyse: call to ic_pvector_get failed for fdecl");
+            puts("ic_analyse: call to ic_pvector_get failed for fdecl");
             return 0;
         }
 
-        if( analyse_func_decl(kludge, fdecl) ){
-            puts("analyse: call to analyse_type_decl failed");
+        if( ic_analyse_func_decl(kludge, fdecl) ){
+            puts("ic_analyse: call to ic_analyse_type_decl failed");
             return 0;
         }
     }
@@ -88,8 +88,8 @@ struct ic_kludge * analyse(struct ic_ast *ast){
  * returns 0 on success
  * returns 1 on error
  */
-unsigned int analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl *tdecl){
-    puts("analyse_type_decl: unimplemented");
+unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl *tdecl){
+    puts("ic_analyse_type_decl: unimplemented");
     exit(1);
 }
 
@@ -100,8 +100,8 @@ unsigned int analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl *td
  * returns 0 on success
  * returns 1 on error
  */
-unsigned int analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl *fdecl){
-    puts("analyse_func_decl: unimplemented");
+unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl *fdecl){
+    puts("ic_analyse_func_decl: unimplemented");
     exit(1);
 }
 
@@ -118,8 +118,8 @@ unsigned int analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl *fd
  * returns symbol on success
  * returns 0 on error
  */
-struct ic_symbol * analyse_infer(struct ic_kludge *kludge, struct ic_expr *expr){
-    puts("analyse_infer: unimplemented");
+struct ic_symbol * ic_analyse_infer(struct ic_kludge *kludge, struct ic_expr *expr){
+    puts("ic_analyse_infer: unimplemented");
     exit(1);
 }
 
@@ -135,8 +135,8 @@ struct ic_symbol * analyse_infer(struct ic_kludge *kludge, struct ic_expr *expr)
  * returns 0 for success
  * returns 1 for error
  */
-unsigned int analyse_check(struct ic_kludge *kludge, struct ic_stmt *stmt){
-    puts("analyse_check: unimplemented");
+unsigned int ic_analyse_check(struct ic_kludge *kludge, struct ic_stmt *stmt){
+    puts("ic_analyse_check: unimplemented");
     exit(1);
 }
 
