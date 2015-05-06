@@ -9,7 +9,6 @@ TODO:
 * write remaining parse code
 * it will be useful for callers of ic_parse_check_token to be able to distinguish between error (null tokens, dist failed) and comparison failures (the token was not as expected)
 * add escaping support to lexing string (escaping " with \)
-* add kludge destructor
 
 technical debt:
 

@@ -51,6 +51,15 @@ struct ic_kludge * ic_kludge_new(struct ic_ast *ast);
  */
 unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast);
 
+/* destroy kludge
+ *
+ * will only free kludge if `free_kludge` is truthy
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludge);
+
 /* add a new type decl to this kludge
  * this will insert into dict_tname and also
  * into tdecls

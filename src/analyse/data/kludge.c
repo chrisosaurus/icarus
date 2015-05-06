@@ -86,6 +86,106 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast){
     return 0;
 }
 
+/* destroy kludge
+ *
+ * will only free kludge if `free_kludge` is truthy
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludge){
+    /* index into various pvectors */
+    unsigned int i = 0;
+    /* cached len */
+    unsigned int len = 0;
+
+    /* items we are currently considering inside each pvector */
+    struct ic_func_decl *fdecl = 0;
+    struct ic_type_decl *tdecl = 0;
+
+    if( !kludge ){
+        puts("ic_kludge_destroy: kludge was null");
+        return 1;
+    }
+
+    /* NOTE we have to be careful as various parts of the kludge share the same
+     * objects
+     *
+     * for example each fdecl will be in both fict_fsig and fdecls
+     *
+     * destroying twice would be an error
+     *
+     * so we properly destroy each element except for:
+     *      dict_tname
+     *      dict_fsig
+     */
+
+    /* iterate through tdecls destroying each tdecl
+     *      list of Type decls
+     *      struct ic_pvector tdecls;
+     */
+    len = ic_pvector_length( &(kludge->tdecls) );
+    for( i=0; i<len; ++i ){
+        tdecl = ic_pvector_get( &(kludge->tdecls), i );
+        if( ! tdecl ){
+            puts("ic_kludge_destroy: tdecl - call to ic_pvector_get failed");
+            return 1;
+        }
+
+        if( ic_type_decl_destroy(tdecl, 1) ){
+            puts("ic_kludge_destroy: tdecl - call to ic_type_decl_destroy failed");
+            return 1;
+        }
+    }
+
+    /* iterate through fdecls destroying each fdecl
+     *      list of Func decls
+     *      struct ic_pvector fdecls;
+     */
+    len = ic_pvector_length( &(kludge->fdecls) );
+    for( i=0; i<len; ++i ){
+        fdecl = ic_pvector_get( &(kludge->fdecls), i );
+        if( ! fdecl ){
+            puts("ic_kludge_destroy: fdecl - call to ic_pvector_get failed");
+            return 1;
+        }
+
+        if( ic_func_decl_destroy(fdecl, 1) ){
+            puts("ic_kludge_destroy: fdecl - call to ic_func_decl_destroy failed");
+            return 1;
+        }
+    }
+
+    /* iterate through errors destroying each error
+     *      list of Errors
+     *      struct ic_pvector errors;
+     */
+    len = ic_pvector_length( &(kludge->errors) );
+    for( i=0; i<len; ++i ){
+        /* FIXME
+         * here we just throw a fit as we have no way of cleaning up these errors
+         */
+        puts("ic_kludge_destroy: found an error we wanted to destroy, but no way to destroy it");
+        return 1;
+    }
+
+    /* call ast_destroy on our annotated ast
+     *       annotated AST
+     *       struct ic_ast *aast;
+     */
+    if( ic_ast_destroy( kludge->aast, 1 ) ){
+        puts("ic_kludge_destroy: asst - call to ic_ast_destroy failed");
+        return 1;
+    }
+
+    /* if asked nicely, destroy destroy destroy! */
+    if( free_kludge ){
+        free(kludge);
+    }
+
+    return 0;
+}
+
 /* add a new type decl to this kludge
  * this will insert into dict_tname and also
  * into tdecls
