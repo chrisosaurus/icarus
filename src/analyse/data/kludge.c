@@ -268,6 +268,8 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
  * returns 1 on failure
  */
 unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *tdecl){
+    char * str = 0;
+
     if( ! kludge ){
         puts("ic_kludge_add_tdecl: kludge was null");
         return 1;
@@ -277,17 +279,31 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *
         return 1;
     }
 
+    /* cache str
+     * do not need to free as this char* is stored on the tdecl
+     */
+    str = ic_type_decl_str(tdecl); if( ! str ){
+        puts("ic_kludge_add_tdecl: call to ic_type_decl_str failed");
+        return 1;
+    }
+
+    /* check for exists first to aid diagnostics */
+    if( ic_dict_exists( &(kludge->dict_tname), str ) ){
+        printf("ic_kludge_add_tdecl: type '%s' already exists on this kludge\n", str);
+        return 1;
+    }
+
     /* insert into dict tname
      * returns 0 on failure
      */
-    if( ! ic_dict_insert(&(kludge->dict_tname), ic_type_decl_str(tdecl), tdecl) ){
+    if( ! ic_dict_insert(&(kludge->dict_tname), str, tdecl) ){
         puts("ic_kludge_add_tdecl: call to ic_dict_insert failed");
         return 1;
     }
 
     /* insert into list of tdecls */
     if( ic_pvector_append( &(kludge->tdecls), tdecl ) == -1 ){
-        puts("ic_kludge_add_tdecl: call to ic_pvector_append failed");
+    if( ic_pvector_append( &(kludge->tdecls), tdecl ) == -1 )
         return 1;
     }
 
@@ -302,6 +318,8 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *
  * returns 1 on failure
  */
 unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *fdecl){
+    char * str = 0;
+
     if( ! kludge ){
         puts("ic_kludge_add_fdecl: kludge was null");
         return 1;
@@ -311,10 +329,25 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *
         return 1;
     }
 
+    /* cache str
+     * do not need to free as this char* is stored on the fdecl
+     */
+    str = ic_func_decl_str(fdecl);
+    if( ! str ){
+        puts("ic_kludge_add_fdecl: call to ic_func_decl_str failed");
+        return 1;
+    }
+
+    /* check for exists first to aid diagnostics */
+    if( ic_dict_exists( &(kludge->dict_fsig), str ) ){
+        printf("ic_kludge_add_fdecl: function signature '%s' already exists on this kludge\n", str);
+        return 1;
+    }
+
     /* insert into dict tname
      * returns 0 on failure
      */
-    if( ! ic_dict_insert(&(kludge->dict_fsig), ic_func_decl_str(fdecl), fdecl) ){
+    if( ! ic_dict_insert(&(kludge->dict_fsig), str, fdecl) ){
         puts("ic_kludge_add_fdecl: call to ic_dict_insert failed");
         return 1;
     }
