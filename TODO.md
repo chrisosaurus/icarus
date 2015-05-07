@@ -11,7 +11,6 @@ TODO:
 * add escaping support to lexing string (escaping " with \)
 * add kludge testing
 * add unique field name check to ic_analyse_type_decl
-* add field type check to ic_analyse_type_decl
 * consider how to deal with builtin types (int, string) and functions (print)
 
 technical debt:

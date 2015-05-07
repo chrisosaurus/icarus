@@ -141,14 +141,16 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
             return 1;
         }
 
-        /* FIXME
-         * check that type exists
-         */
+        /* check that type exists */
+        if( ! ic_kludge_get_tdecl(kludge, type) ){
+            printf("ic_analyse_type_decl: type '%s' \
+                    mentioned in type declaration for '%s' \
+                    does not exist within this kludge\n",
+                    type,
+                    ic_type_decl_str(tdecl));
+            return 1;
+        }
     }
-
-    /* FIXME */
-    puts("ic_analyse_type_decl: unfinished");
-    exit(1);
 
     return 0;
 }
