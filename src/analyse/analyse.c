@@ -173,7 +173,8 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
  *
  * examples:
  *  infer 1 -> Int
- *  infer "helo" -> String
+ *  infer "hello" -> String
+ *  infer f -> typeof contents of f
  *  infer addone(1) -> addone(Int)->Int -> Int
  *  infer Foo(1 "hello") -> Foo(Int String) -> Foo
  *
@@ -181,6 +182,54 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
  * returns 0 on error
  */
 struct ic_symbol * ic_analyse_infer(struct ic_kludge *kludge, struct ic_expr *expr){
+    /*
+     *  infer 1 -> Int
+     *  expr->type == constant
+     *  cons = expr->u.cons
+     *  cons->type == integer
+     *  return integer
+     */
+
+    /*
+     *  infer "hello" -> String
+     *  expr->type == constant
+     *  cons = expr->u.cons
+     *  cons->type == string
+     *  return string
+     */
+
+    /*
+     *  infer f -> typeof contents of f
+     *  expr->type = identifier
+     *  id = expr->u.id
+     *  name = str(id)
+     *  variable = get variable within scope name // FIXME no mechanism
+     *  type = get type of variable // FIXME no mechanism
+     *  return type
+     */
+
+    /*
+     *  infer addone(1) -> addone(Int)->Int -> Int
+     *  expr->type == func_call
+     *  fc = expr->u.fcall
+     *  fstr = str(fc) // FIXME ic_func_call_str doesn't exist
+     *  fdecl = kludge get fdecl from fstr
+     *  tstr = fdecl->ret_type
+     *  type = kludge get tdecl from tstr
+     *  return type
+     */
+
+    /*
+     *  infer Foo(1 "hello") -> Foo(Int String) -> Foo
+     *  expr->type == func_call
+     *  fc = expr->u.fcall
+     *  fstr = str(fc) // FIXME ic_func_call_str doesn't exist
+     *  fdecl = kludge get fdecl from fstr
+     *  tstr = fdecl->ret_type
+     *  type = kludge get tdecl from tstr
+     *  return type
+     */
+
     puts("ic_analyse_infer: unimplemented");
     exit(1);
 }
