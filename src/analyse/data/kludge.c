@@ -328,6 +328,44 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *
     return 0;
 }
 
+/* retrieve type decl by string
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type_decl * ic_kludge_get_tdecl(struct ic_kludge *kludge, char *tdecl_str){
+    if( ! kludge ){
+        puts("ic_kludge_get_tdecl: kludge was null");
+        return 0;
+    }
+
+    if( ! tdecl_str ){
+        puts("ic_kludge_get_tdecl: tdecl_str was null");
+        return 0;
+    }
+
+    return ic_dict_get( &(kludge->dict_tname), tdecl_str );
+}
+
+/* retrieve type decl by string
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_func_decl * ic_kludge_get_fdecl(struct ic_kludge *kludge, char *fdecl_str){
+    if( ! kludge ){
+        puts("ic_kludge_get_fdecl: kludge was null");
+        return 0;
+    }
+
+    if( ! fdecl_str ){
+        puts("ic_kludge_get_fdecl: fdecl_str was null");
+        return 0;
+    }
+
+    return ic_dict_get( &(kludge->dict_fsig), fdecl_str );
+}
+
 /* add a new error to error list
  *
  * FIXME no error type

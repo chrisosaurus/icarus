@@ -13,7 +13,6 @@ TODO:
 * add unique field name check to ic_analyse_type_decl
 * add field type check to ic_analyse_type_decl
 * add unique type / func check in kludge populate insert
-* add kludge 'get_fdecl' and 'get_tdecl' functions
 * consider how to deal with builtin types (int, string) and functions (print)
 
 technical debt:

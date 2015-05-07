@@ -88,6 +88,20 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *
  */
 unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *fdecl);
 
+/* retrieve type decl by string
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type_decl * ic_kludge_get_tdecl(struct ic_kludge *kludge, char *tdecl_str);
+
+/* retrieve type decl by string
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_func_decl * ic_kludge_get_fdecl(struct ic_kludge *kludge, char *fdecl_str);
+
 /* add a new error to error list
  *
  * FIXME no error type
