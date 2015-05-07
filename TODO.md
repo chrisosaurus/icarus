@@ -12,6 +12,7 @@ TODO:
 * add kludge testing
 * add unique field name check to ic_analyse_type_decl
 * consider how to deal with builtin types (int, string) and functions (print)
+* an fcall should also store the found fdecl (post analysis)
 
 technical debt:
 
