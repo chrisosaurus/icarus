@@ -73,7 +73,8 @@ unsigned int ic_type_set_symbol(struct ic_type *type, char *type_str, unsigned i
 /* set the *tdecl on this type
  * this will change type.type to tdecl
  *
- * FIXME decide on what happens to sym
+ * this is only allowed it the type is NOT already set to tdecl
+ * if type is already a symbol then the symbol will first be destroyed
  *
  * returns 0 on success
  * returns 1 on error

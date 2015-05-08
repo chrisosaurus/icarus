@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "type.h"
 
@@ -11,8 +12,20 @@
  * returns 0 on failure
  */
 struct ic_type * ic_type_new(void){
-    puts("ic_type_ : unimplemented");
-    return 0;
+    struct ic_type *type = 0;
+
+    type = calloc(1, sizeof(struct ic_type));
+    if( ! type ){
+        puts("ic_type_new: call to calloc failed");
+        return 0;
+    }
+
+    if( ic_type_init(type) ){
+        puts("ic_type_new: call to ic_type_init failed");
+        return 0;
+    }
+
+    return type;
 }
 
 /* intialise a type
@@ -22,8 +35,17 @@ struct ic_type * ic_type_new(void){
  * returns 1 on failure
  */
 unsigned int ic_type_init(struct ic_type *type){
-    puts("ic_type_init : unimplemented");
-    return 1;
+    if( ! type ){
+        puts("ic_type_init: type was null");
+        return 1;
+    }
+
+    /* default to unknown types
+     * other type_type(s) are set via methods
+     */
+    type->type = ic_type_unknown;
+
+    return 0;
 }
 
 /* destroy type
@@ -34,8 +56,41 @@ unsigned int ic_type_init(struct ic_type *type){
  * returns 1 on error
  */
 unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type){
-    puts("ic_type_destroy : unimplemented");
-    return 1;
+    if( ! type ){
+        puts("ic_type_destroy: type was null");
+        return 1;
+    }
+
+    /* cleanup depends on type_type */
+    switch( type->type ){
+        case ic_type_unknown:
+            /* nothing to do */
+            break;
+
+        case ic_type_symbol:
+            /* clean up symbol, do not free as member */
+            if( ic_symbol_destroy( &(type->u.sym), 0 ) ){
+                puts("ic_type_destroy: call to ic_symbol_destroy failed");
+                return 1;
+            }
+            break;
+
+        case ic_type_tdecl:
+            /* nothing to do, tdecl is not onwed by us */
+            break;
+
+        default:
+            puts("ic_type_destroy: type->type was impossible type_type");
+            return 1;
+            break;
+    }
+
+    /* if asked nicely */
+    if( free_type ){
+        free(type);
+    }
+
+    return 0;
 }
 
 /* set the sym on this type from the provided string
@@ -57,7 +112,8 @@ unsigned int ic_type_set_symbol(struct ic_type *type, char *type_str, unsigned i
 /* set the *tdecl on this type
  * this will change type.type to tdecl
  *
- * FIXME decide on what happens to sym
+ * this is only allowed it the type is NOT already set to tdecl
+ * if type is already a symbol then the symbol will first be destroyed
  *
  * returns 0 on success
  * returns 1 on error
