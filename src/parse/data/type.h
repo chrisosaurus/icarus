@@ -48,6 +48,21 @@ struct ic_type * ic_type_new(void);
  */
 unsigned int ic_type_init(struct ic_type *type);
 
+/* allocate and intialise a new type
+ * as a symbol
+ *
+ * returns new type on success
+ * returns 0 on failure
+ */
+struct ic_type * ic_type_symbol_new(char *type_str, unsigned int type_len);
+
+/* intialise a type as a  symbol
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_type_symbol_init(struct ic_type *type, char *type_str, unsigned int type_len);
+
 /* destroy type
  *
  * this will only free type if `free_type` is truthy

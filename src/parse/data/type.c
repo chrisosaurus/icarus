@@ -48,6 +48,66 @@ unsigned int ic_type_init(struct ic_type *type){
     return 0;
 }
 
+/* allocate and intialise a new type
+ * as a symbol
+ *
+ * returns new type on success
+ * returns 0 on failure
+ */
+struct ic_type * ic_type_symbol_new(char *type_str, unsigned int type_len){
+    struct ic_type *type = 0;
+
+    if( ! type_str ){
+        puts("ic_type_symbol_new: type_str was null");
+        return 0;
+    }
+
+    /* construct base type */
+    type = ic_type_new();
+    if( ! type ){
+        puts("ic_type_symbol_new: call to ic_type_new failed");
+        return 0;
+    }
+
+    /* set to symbol */
+    if( ic_type_set_symbol(type, type_str, type_len) ){
+        puts("ic_type_symbol_new: call to ic_type_set_symbol failed");
+        return 0;
+    }
+
+    return type;
+}
+
+/* intialise a type as a  symbol
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_type_symbol_init(struct ic_type *type, char *type_str, unsigned int type_len){
+    if( ! type){
+        puts("ic_type_symbol_init: type_str was null");
+        return 1;
+    }
+    if( ! type_str ){
+        puts("ic_type_symbol_init: type_str was null");
+        return 1;
+    }
+
+    /* init base type */
+    if( ic_type_init(type) ){
+        puts("ic_type_symbol_init: call to ic_type_init failed");
+        return 1;
+    }
+
+    /* set to symbol */
+    if( ic_type_set_symbol(type, type_str, type_len) ){
+        puts("ic_type_symbol_init: call to ic_type_set_symbol failed");
+        return 1;
+    }
+
+    return 0;
+}
+
 /* destroy type
  *
  * this will only free type if `free_type` is truthy
