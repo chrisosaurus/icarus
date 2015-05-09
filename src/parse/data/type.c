@@ -115,8 +115,8 @@ unsigned int ic_type_set_symbol(struct ic_type *type, char *type_str, unsigned i
         return 1;
     }
 
-    /* may have to do cleanup or raise errors based on current
-     * type->type
+    /* only allowed to set to symbol if current set
+     * to unknown
      */
     switch( type->type ){
         case ic_type_unknown:
