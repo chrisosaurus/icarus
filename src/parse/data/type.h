@@ -81,4 +81,7 @@ unsigned int ic_type_set_symbol(struct ic_type *type, char *type_str, unsigned i
  */
 unsigned int ic_type_set_tdecl(struct ic_type *type, struct ic_type_decl *tdecl);
 
+/* print this this type */
+void ic_type_print(struct ic_type *type);
+
 #endif

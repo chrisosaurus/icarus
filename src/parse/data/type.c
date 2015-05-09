@@ -210,3 +210,37 @@ unsigned int ic_type_set_tdecl(struct ic_type *type, struct ic_type_decl *tdecl)
     return 0;
 }
 
+/* print this this type */
+void ic_type_print(struct ic_type *type){
+    if( ! type ){
+        puts("ic_type_print: type was null");
+        return;
+    }
+    switch( type->type ){
+        case ic_type_unknown:
+            /* nothing to do */
+            break;
+
+        case ic_type_symbol:
+            /* if we are of type symbol then just print that symbol */
+            ic_symbol_print( &(type->u.sym) );
+            break;
+
+        case ic_type_tdecl:
+            if( ! type->u.tdecl ){
+                puts("ic_type_print: type was tdecl but tdecl member was null");
+                return;
+            }
+            /* if we are of type tdecl then print the symbol on tdecl */
+            ic_symbol_print( &(type->u.tdecl->name) );
+            break;
+
+        default:
+            puts("ic_type_print: type->type was impossible type_type");
+            return;
+            break;
+    }
+
+    return;
+}
+
