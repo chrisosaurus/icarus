@@ -105,8 +105,52 @@ unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type){
  * returns 1 on error
  */
 unsigned int ic_type_set_symbol(struct ic_type *type, char *type_str, unsigned int type_len){
-    puts("ic_type_set_symbol : unimplemented");
-    return 1;
+    if( ! type ) {
+        puts("ic_type_set_symbol: type was null");
+        return 1;
+    }
+
+    if( ! type_str ) {
+        puts("ic_type_set_symbol: type_str was null");
+        return 1;
+    }
+
+    /* may have to do cleanup or raise errors based on current
+     * type->type
+     */
+    switch( type->type ){
+        case ic_type_unknown:
+            /* nothing to do */
+            break;
+
+        case ic_type_symbol:
+            /* error, already a symbol */
+            puts("ic_type_set_symbol: type was already a symbol");
+            return 1;
+            break;
+
+        case ic_type_tdecl:
+            /* error, already a tdecl */
+            puts("ic_type_set_symbol: type was already a tdecl");
+            return 1;
+            break;
+
+        default:
+            puts("ic_type_set_symbol: type->type was impossible type_type");
+            return 1;
+            break;
+    }
+
+    /* set to tdecl */
+    type->type = ic_type_symbol;
+
+    /* set our symbol from the provider char * and len */
+    if( ic_symbol_init(&(type->u.sym), type_str, type_len) ){
+        puts("ic_type_set_symbol: call to ic_symbol_init failed");
+        return 1;
+    }
+
+    return 0;
 }
 
 /* set the *tdecl on this type
