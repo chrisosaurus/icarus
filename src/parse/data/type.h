@@ -96,6 +96,16 @@ unsigned int ic_type_set_symbol(struct ic_type *type, char *type_str, unsigned i
  */
 unsigned int ic_type_set_tdecl(struct ic_type *type, struct ic_type_decl *tdecl);
 
+/* return a symbol representing this type
+ *
+ * if type is unknown then 0 is reuturned
+ * if type is symbol then the symbol is returned
+ * if type is tdecl then the symbol on that tdecl is returedn
+ *
+ * returns 0 on failure
+ */
+struct ic_symbol * ic_type_get_symbol(struct ic_type *type);
+
 /* print this this type */
 void ic_type_print(struct ic_type *type);
 

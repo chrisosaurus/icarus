@@ -270,6 +270,51 @@ unsigned int ic_type_set_tdecl(struct ic_type *type, struct ic_type_decl *tdecl)
     return 0;
 }
 
+/* return a symbol representing this type
+ *
+ * if type is unknown then 0 is reuturned
+ * if type is symbol then the symbol is returned
+ * if type is tdecl then the symbol on that tdecl is returedn
+ *
+ * returns 0 on failure
+ */
+struct ic_symbol * ic_type_get_symbol(struct ic_type *type){
+    if( ! type ){
+        puts("ic_type_get_symbol: type was null");
+        return 0;
+    }
+
+    switch( type->type ){
+        case ic_type_unknown:
+            /* error, nothing to return */
+            puts("ic_type_get_symbol: type was of type unknown");
+            return 0;
+            break;
+
+        case ic_type_symbol:
+            /* just return the symbol */
+            return &(type->u.sym);
+            break;
+
+        case ic_type_tdecl:
+            if( ! type->u.tdecl ){
+                puts("ic_type_get_symbol: type was tdecl but tdecl member was null");
+                return 0;
+            }
+
+            /* if we are of type tdecl then return the symbol on tdecl */
+            return &(type->u.tdecl->name);
+            break;
+
+        default:
+            puts("ic_type_print: type->type was impossible type_type");
+            return 0;
+            break;
+    }
+
+    return 0;
+}
+
 /* print this this type */
 void ic_type_print(struct ic_type *type){
     if( ! type ){
