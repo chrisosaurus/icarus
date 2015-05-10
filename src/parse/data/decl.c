@@ -364,6 +364,8 @@ char * ic_func_decl_str(struct ic_func_decl *fdecl){
     struct ic_string *fstr = 0;
     /* each field we consider in args */
     struct ic_field *field = 0;
+    /* temporary symbol for current field type */
+    struct ic_symbol *cur_type = 0;
 
     if( ! fdecl ){
         puts("ic_func_decl_str: fdecl was null");
@@ -403,7 +405,13 @@ char * ic_func_decl_str(struct ic_func_decl *fdecl){
             return 0;
         }
 
-        if( ic_string_append_symbol(fstr, &(field->type)) ){
+        cur_type = ic_type_get_symbol(&(field->type));
+        if( ! cur_type ){
+            puts("ic_func_decl_str: arg: call to ic_type_get_symbol failed");
+            return 0;
+        }
+
+        if( ic_string_append_symbol(fstr, cur_type) ){
             puts("ic_func_decl_str: arg: call to ic_string_append_symbol failed");
             return 0;
         }

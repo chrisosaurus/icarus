@@ -3,15 +3,16 @@
 
 #include "../../data/symbol.h"
 #include "../../data/pvector.h"
+#include "type.h"
 
 /* a field is a combination of a symbol and a type
  *  foo::Int
  * the symbol is `foo`
- * and the type is `Int
+ * and the type is `Int`
  */
 struct ic_field {
     struct ic_symbol name;
-    struct ic_symbol type;
+    struct ic_type type;
 };
 
 /* allocate and return a new field

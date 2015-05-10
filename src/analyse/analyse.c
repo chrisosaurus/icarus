@@ -100,7 +100,8 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
     /* current name from field */
     char *name = 0;
     /* current type from field */
-    char *type = 0;
+    struct ic_symbol *type = 0;
+    char *type_str = 0;
 
     if( ! kludge ){
         puts("ic_analyse_type_decl: kludge was null");
@@ -135,18 +136,29 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
          * check name is unique within this type decl
          */
 
-        type = ic_symbol_contents(&(field->type));
+        /* FIXME pulling out the type and then type_str
+         * is a little ugly
+         * as it may be that this type is already a tdecl
+         * in which case we already know it exists
+         */
+        type = ic_type_get_symbol(&(field->type));
         if( ! type ){
+            puts("ic_analyse_type_decl: call to ic_type_get_symbol failed for type");
+            return 1;
+        }
+
+        type_str = ic_symbol_contents(type);
+        if( ! type_str ){
             puts("ic_analyse_type_decl: call to ic_symbol_contents failed for type");
             return 1;
         }
 
         /* check that type exists */
-        if( ! ic_kludge_get_tdecl(kludge, type) ){
+        if( ! ic_kludge_get_tdecl(kludge, type_str) ){
             printf("ic_analyse_type_decl: type '%s' \
                     mentioned in type declaration for '%s' \
                     does not exist within this kludge\n",
-                    type,
+                    type_str,
                     ic_type_decl_str(tdecl));
             return 1;
         }

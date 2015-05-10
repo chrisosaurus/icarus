@@ -57,8 +57,8 @@ unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int 
     }
 
     /* init type symbol */
-    if( ic_symbol_init( &(field->type), type_src, type_len ) ){
-        puts("ic_field_init: call to ic_symbol_init for type failed");
+    if( ic_type_symbol_init( &(field->type), type_src, type_len ) ){
+        puts("ic_field_init: call to ic_type_symbol_init for type failed");
         return 1;
     }
 
@@ -91,8 +91,8 @@ unsigned int ic_field_destroy(struct ic_field *field, unsigned int free_field){
      * note we do not ask it to destroy_symbol
      * as it is a member
      */
-    if( ic_symbol_destroy( &(field->type), 0 ) ){
-        puts("ic_field_destroy: type: call to ic_symbol_destroy failed");
+    if( ic_type_destroy( &(field->type), 0 ) ){
+        puts("ic_field_destroy: type: call to ic_type_destroy failed");
         return 1;
     }
 
@@ -111,9 +111,7 @@ void ic_field_print(struct ic_field *field){
         puts("ic_field_print: field was null");
         return;
     }
-    printf("%s::%s",
-           ic_symbol_contents(&(field->name))  ,
-           ic_symbol_contents(&(field->type)) );
-
+    printf("%s::", ic_symbol_contents(&(field->name)) );
+    ic_type_print(&(field->type));
 }
 

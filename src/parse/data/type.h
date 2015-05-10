@@ -1,7 +1,6 @@
 #ifndef ICARUS_TYPE_H
 #define ICARUS_TYPE_H
 
-#include "decl.h"
 #include "../../data/symbol.h"
 
 enum ic_type_type {

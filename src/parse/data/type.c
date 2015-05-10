@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "type.h"
+#include "decl.h"
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
