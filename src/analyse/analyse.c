@@ -136,7 +136,7 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
         }
 
         name = ic_symbol_contents(&(field->name));
-        if( ! type ){
+        if( ! name ){
             puts("ic_analyse_type_decl: call to ic_symbol_contents failed for name");
             goto AT_ERROR;
         }
@@ -168,9 +168,7 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
 
         /* check that type exists */
         if( ! ic_kludge_get_tdecl(kludge, type_str) ){
-            printf("ic_analyse_type_decl: type '%s' \
-                    mentioned in type declaration for '%s' \
-                    does not exist within this kludge\n",
+            printf("ic_analyse_type_decl: type '%s' mentioned in type declaration for '%s' does not exist within this kludge\n",
                     type_str,
                     ic_type_decl_str(tdecl));
             goto AT_ERROR;
