@@ -6,11 +6,13 @@
 #include "lex/lexer.h" /* ic_lex */
 #include "parse/parse.h" /* ic_parse */
 #include "parse/data/ast.h" /* ic_ast structure */
+#include "analyse/analyse.h" /* ic_kludge */
 
 int main(int argc, char **argv){
     char *filename = 0, *source = 0;
     struct ic_tokens *tokens = 0;
     struct ic_ast *ast = 0;
+    struct ic_kludge *kludge = 0;
 
     if( argc < 2 ){
         puts("No source file specified");
@@ -43,6 +45,7 @@ int main(int argc, char **argv){
     printf("%s\n", tokens->tokens);
     puts("----------------\n");
 
+
     ast = ic_parse(tokens);
     if( ! ast ){
         puts("parsing failed");
@@ -53,6 +56,24 @@ int main(int argc, char **argv){
     puts("----------------");
     ic_ast_print(ast);
     puts("----------------\n");
+
+
+#if 0
+    /* kludge section currently commented out as it is incomplete
+     * and doesn't yet pass testing
+     */
+    kludge = ic_analyse(ast);
+    if( ! kludge ){
+        puts("analysis failed");
+        exit(1);
+    }
+
+
+    /* clean up time */
+    if( ic_kludge_destroy(kludge, 1) ){
+        puts("main: ic_kludge_destroy call failed");
+    }
+#endif
 
     if( ic_ast_destroy(ast, 1) ){
         puts("main: ic_ast_destroy call failed");
