@@ -263,7 +263,9 @@ struct lh_entry * lh_find_entry(struct lh_table *table, char *key){
         /* if this is an empty then we stop */
         if( cur->state == LH_ENTRY_EMPTY ){
             /* failed to find element */
+#ifndef DEBUG
             puts("lh_find_entry: failed to find key, encountered empty");
+#endif
             return 0;
         }
 
@@ -286,7 +288,9 @@ struct lh_entry * lh_find_entry(struct lh_table *table, char *key){
         /* if this is an empty then we stop */
         if( cur->state == LH_ENTRY_EMPTY ){
             /* failed to find element */
+#ifndef DEBUG
             puts("lh_find_entry: failed to find key, encountered empty");
+#endif
             return 0;
         }
 
@@ -918,7 +922,9 @@ void * lh_delete(struct lh_table *table, char *key){
         /* if this is an empty then we stop */
         if( cur->state == LH_ENTRY_EMPTY ){
             /* failed to find element */
+#ifndef DEBUG
             puts("lh_delete: failed to find key, encountered empty");
+#endif
             return 0;
         }
 
@@ -943,7 +949,9 @@ void * lh_delete(struct lh_table *table, char *key){
         /* if this is an empty then we stop */
         if( cur->state == LH_ENTRY_EMPTY ){
             /* failed to find element */
+#ifndef DEBUG
             puts("lh_delete: failed to find key, encountered empty");
+#endif
             return 0;
         }
 
