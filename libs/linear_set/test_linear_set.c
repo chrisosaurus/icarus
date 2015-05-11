@@ -1,7 +1,6 @@
 /*  gcc linear_set.c test_linear_set.c -Wall -Wextra -Werror -o test_sh
  * ./test_sh
  */
-
 #include <assert.h> /* assert */
 #include <stdio.h> /* puts */
 #include <stdlib.h> /* calloc */

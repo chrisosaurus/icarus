@@ -23,8 +23,8 @@
  * SOFTWARE.
  */
 
-#ifndef linear_hals_H
-#define linear_hals_H
+#ifndef LINEAR_SET_H
+#define LINEAR_SET_H
 
 #include <stddef.h> /* size_t */
 
