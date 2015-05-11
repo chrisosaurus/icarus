@@ -143,9 +143,9 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
 
         /* check name is unique within this type decl */
         if( ! ic_set_insert(set, name) ){
-            printf("ic_analyse_type_decl: for type '%s' : field name '%s' it not unique\n",
-                    type_str,
-                    name);
+            printf("ic_analyse_type_decl: field name '%s' it not unique within type declaration for '%s'\n",
+                    name,
+                    ic_type_decl_str(tdecl));
             goto AT_ERROR;
         }
 
