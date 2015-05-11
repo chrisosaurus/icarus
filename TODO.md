@@ -13,6 +13,7 @@ TODO:
 * consider how to deal with builtin types (int, string) and functions (print)
 * an fcall should also store the found fdecl (post analysis)
 * review `src/data/set.[ch]` as it was derived from dict and most likely has documentation errors and poorly named fields
+* `ic_analyse_type_decl` currently allows co-recursive types `type Foo a::Bar end` `type bar a::Foo end`
 
 technical debt:
 
