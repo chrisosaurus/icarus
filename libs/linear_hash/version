@@ -1,8 +1,8 @@
 https://github.com/mkfifo/linear_hash
 
-commit f87ece0592e6514bea7332e9f19705e6c7c93a0a
+commit 18adb2c95949e34fdbeef5e66ececb09b432eb2c
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Mon May 11 21:44:18 2015 +1200
+Date:   Mon May 11 21:47:41 2015 +1200
 
-    wrapping "soft errors" in ifndef blocks
+    correctly silencing soft errors
 
