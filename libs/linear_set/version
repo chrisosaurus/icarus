@@ -1,8 +1,8 @@
 https://github.com/mkfifo/linear_set
 
-commit 4d1f2fa3a91780b5e428d493be6c453da4e7caa9
+commit 0ef9f6004f1d68c094042f5c8dabd685f1d2a1b6
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Mon May 11 21:42:08 2015 +1200
+Date:   Mon May 11 21:48:46 2015 +1200
 
-    wrapping "soft errors" in ifndef blocks
+    correctly silencing soft errors
 
