@@ -1,5 +1,6 @@
 #include <stdlib.h> /* FIMXE exit */
 #include <stdio.h>
+#include <string.h> /* strcmp */
 
 #include "../parse/data/field.h"
 #include "../data/set.h"
@@ -92,6 +93,8 @@ struct ic_kludge * ic_analyse(struct ic_ast *ast){
  * returns 1 on error
  */
 unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl *tdecl){
+    /* name of current type we are trying to declare */
+    char *this_type = 0;
     /* index into fields */
     unsigned int i = 0;
     /* len of fields */
@@ -113,6 +116,12 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
 
     if( ! tdecl ){
         puts("ic_analyse_type_decl: tdecl was null");
+        return 1;
+    }
+
+    this_type = ic_type_decl_str(tdecl);
+    if( ! this_type ){
+        puts("ic_analyse_type_decl: for this_type: call to ic_type_decl_str failed");
         return 1;
     }
 
@@ -145,7 +154,7 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
         if( ! ic_set_insert(set, name) ){
             printf("ic_analyse_type_decl: field name '%s' it not unique within type declaration for '%s'\n",
                     name,
-                    ic_type_decl_str(tdecl));
+                    this_type);
             goto AT_ERROR;
         }
 
@@ -166,11 +175,21 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
             goto AT_ERROR;
         }
 
+        /* check that the type used is not the same we are currently trying
+         * to declare as this would be an infinitely recursive type
+         */
+        if( ! strcmp(type_str, this_type) ){
+            printf("ic_analyse_type_decl: recursive type '%s' used within declaration of same type '%s'\n",
+                    type_str,
+                    this_type);
+            goto AT_ERROR;
+        }
+
         /* check that type exists */
         if( ! ic_kludge_get_tdecl(kludge, type_str) ){
             printf("ic_analyse_type_decl: type '%s' mentioned in type declaration for '%s' does not exist within this kludge\n",
                     type_str,
-                    ic_type_decl_str(tdecl));
+                    this_type);
             goto AT_ERROR;
         }
     }
