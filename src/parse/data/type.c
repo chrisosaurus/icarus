@@ -73,6 +73,10 @@ struct ic_type * ic_type_symbol_new(char *type_str, unsigned int type_len){
     /* set to symbol */
     if( ic_type_set_symbol(type, type_str, type_len) ){
         puts("ic_type_symbol_new: call to ic_type_set_symbol failed");
+        /* destroy type
+         * free type as allocated with new
+         */
+        ic_type_destroy(type, 1);
         return 0;
     }
 
