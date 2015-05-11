@@ -219,8 +219,7 @@ AT_ERROR:
      * free_set as we allocated above with new
      */
     if( ! ic_set_destroy(set, 1) ){
-        puts("ic_analyse_type_decl: call to ic_set_destroy failed");
-        return 1;
+        puts("ic_analyse_type_decl: call to ic_set_destroy failed in error case");
     }
 
     return 1;
