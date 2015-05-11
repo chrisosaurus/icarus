@@ -256,7 +256,9 @@ struct ls_entry * ls_find_entry(struct ls_set *table, char *key){
         /* if this is an empty then we stop */
         if( cur->state == ls_ENTRY_EMPTY ){
             /* failed to find element */
+#ifndef DEBUG
             puts("ls_find_entry: failed to find key, encountered empty");
+#endif
             return 0;
         }
 
@@ -279,7 +281,9 @@ struct ls_entry * ls_find_entry(struct ls_set *table, char *key){
         /* if this is an empty then we stop */
         if( cur->state == ls_ENTRY_EMPTY ){
             /* failed to find element */
+#ifndef DEBUG
             puts("ls_find_entry: failed to find key, encountered empty");
+#endif
             return 0;
         }
 
@@ -700,7 +704,9 @@ unsigned int ls_insert(struct ls_set *table, char *key){
      * insert only works if the key is not already present
      */
     if( ls_exists(table, key) ){
+#ifndef DEBUG
         puts("ls_insert: key already exists in table");
+#endif
         return 0;
     }
 
@@ -838,7 +844,9 @@ unsigned int ls_delete(struct ls_set *table, char *key){
         /* if this is an empty then we stop */
         if( cur->state == ls_ENTRY_EMPTY ){
             /* failed to find element */
+#ifndef DEBUG
             puts("ls_delete: failed to find key, encountered empty");
+#endif
             return 0;
         }
 
@@ -863,7 +871,9 @@ unsigned int ls_delete(struct ls_set *table, char *key){
         /* if this is an empty then we stop */
         if( cur->state == ls_ENTRY_EMPTY ){
             /* failed to find element */
+#ifndef DEBUG
             puts("ls_delete: failed to find key, encountered empty");
+#endif
             return 0;
         }
 
