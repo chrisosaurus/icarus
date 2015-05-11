@@ -1,8 +1,8 @@
 https://github.com/mkfifo/linear_hash
 
-commit 22fe528e3d2402c6b97088f3cfc1779787ca5fa7
+commit b6f6054f5af3b3c5d425634ec138fd7525a12501
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Fri Apr 24 14:43:53 2015 +1200
+Date:   Mon May 11 21:12:24 2015 +1200
 
-    clarifying comment about free
+    fixing ifndef
 

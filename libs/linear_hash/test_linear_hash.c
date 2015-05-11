@@ -1,7 +1,6 @@
 /*  gcc linear_hash.c test_linear_hash.c -Wall -Wextra -Werror -o test_sh
  * ./test_sh
  */
-
 #include <assert.h> /* assert */
 #include <stdio.h> /* puts */
 #include <stdlib.h> /* calloc */

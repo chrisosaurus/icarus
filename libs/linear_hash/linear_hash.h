@@ -23,8 +23,8 @@
  * SOFTWARE.
  */
 
-#ifndef linear_halh_H
-#define linear_halh_H
+#ifndef LINEAR_HASH_H
+#define LINEAR_HASH_H
 
 #include <stddef.h> /* size_t */
 
