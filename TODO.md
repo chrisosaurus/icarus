@@ -10,7 +10,6 @@ TODO:
 * it will be useful for callers of ic_parse_check_token to be able to distinguish between error (null tokens, dist failed) and comparison failures (the token was not as expected)
 * add escaping support to lexing string (escaping " with \)
 * add kludge testing
-* add unique field name check to ic_analyse_type_decl
 * consider how to deal with builtin types (int, string) and functions (print)
 * an fcall should also store the found fdecl (post analysis)
 * review `src/data/set.[ch]` as it was derived from dict and most likely has documentation errors and poorly named fields

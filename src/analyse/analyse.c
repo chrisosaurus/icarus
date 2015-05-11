@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "../parse/data/field.h"
+#include "../data/set.h"
 #include "analyse.h"
 
 /* ignored unused parameter */
@@ -102,6 +103,8 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
     /* current type from field */
     struct ic_symbol *type = 0;
     char *type_str = 0;
+    /* set of all field names used */
+    struct ic_set *set = 0;
 
     if( ! kludge ){
         puts("ic_analyse_type_decl: kludge was null");
@@ -110,6 +113,12 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
 
     if( ! tdecl ){
         puts("ic_analyse_type_decl: tdecl was null");
+        return 1;
+    }
+
+    set = ic_set_new();
+    if( ! set ){
+        puts("ic_analyse_type_decl: call to ic_set_new failed");
         return 1;
     }
 
@@ -123,18 +132,22 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
         field = ic_pvector_get(&(tdecl->fields), i);
         if( ! field ){
             puts("ic_analyse_type_decl: call to ic_pvector_get failed");
-            return 1;
+            goto AT_ERROR;
         }
 
         name = ic_symbol_contents(&(field->name));
         if( ! type ){
             puts("ic_analyse_type_decl: call to ic_symbol_contents failed for name");
-            return 1;
+            goto AT_ERROR;
         }
 
-        /* FIXME
-         * check name is unique within this type decl
-         */
+        /* check name is unique within this type decl */
+        if( ! ic_set_insert(set, name) ){
+            printf("ic_analyse_type_decl: for type '%s' : field name '%s' it not unique\n",
+                    type_str,
+                    name);
+            goto AT_ERROR;
+        }
 
         /* FIXME pulling out the type and then type_str
          * is a little ugly
@@ -144,13 +157,13 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
         type = ic_type_get_symbol(&(field->type));
         if( ! type ){
             puts("ic_analyse_type_decl: call to ic_type_get_symbol failed for type");
-            return 1;
+            goto AT_ERROR;
         }
 
         type_str = ic_symbol_contents(type);
         if( ! type_str ){
             puts("ic_analyse_type_decl: call to ic_symbol_contents failed for type");
-            return 1;
+            goto AT_ERROR;
         }
 
         /* check that type exists */
@@ -160,11 +173,30 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
                     does not exist within this kludge\n",
                     type_str,
                     ic_type_decl_str(tdecl));
-            return 1;
+            goto AT_ERROR;
         }
     }
 
+    /* call set destroy
+     * free_set as we allocated above with new
+     */
+    if( ! ic_set_destroy(set, 1) ){
+        puts("ic_analyse_type_decl: call to ic_set_destroy failed");
+        return 1;
+    }
+
     return 0;
+
+AT_ERROR:
+    /* call set destroy
+     * free_set as we allocated above with new
+     */
+    if( ! ic_set_destroy(set, 1) ){
+        puts("ic_analyse_type_decl: call to ic_set_destroy failed");
+        return 1;
+    }
+
+    return 1;
 }
 
 /* takes a func_decl and performs analysis
