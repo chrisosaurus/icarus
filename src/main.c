@@ -75,6 +75,9 @@ int main(int argc, char **argv){
     }
 #endif
 
+    /* FIXME ic_kludge_destroy will destroy ast
+     * so no need to call both once the above is active
+     */
     if( ic_ast_destroy(ast, 1) ){
         puts("main: ic_ast_destroy call failed");
     }
