@@ -1,0 +1,8 @@
+https://github.com/mkfifo/linear_set
+
+commit fe1f938541041e489ddd83b39d2c897e509e9260
+Author: Chris Hall <followingthepath@gmail.com>
+Date:   Fri Apr 24 14:46:21 2015 +1200
+
+    fixing memory leak in new error case
+

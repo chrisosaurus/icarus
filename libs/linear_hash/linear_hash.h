@@ -23,47 +23,38 @@
  * SOFTWARE.
  */
 
-/* extracted from
-    https://github.com/mkfifo/linear_set
-
-    commit fe1f938541041e489ddd83b39d2c897e509e9260
-    Author: Chris Hall <followingthepath@gmail.com>
-    Date:   Fri Apr 24 14:46:21 2015 +1200
-
-        fixing memory leak in new error case
-
- */
-
-#ifndef linear_hals_H
-#define linear_hals_H
+#ifndef linear_halh_H
+#define linear_halh_H
 
 #include <stddef.h> /* size_t */
 
-enum ls_entry_state {
-    ls_ENTRY_EMPTY,
-    ls_ENTRY_OCCUPIED,
-    ls_ENTRY_DUMMY // was occupied but now delete
+enum lh_entry_state {
+    LH_ENTRY_EMPTY,
+    LH_ENTRY_OCCUPIED,
+    LH_ENTRY_DUMMY // was occupied but now delete
 };
 
-struct ls_entry {
-    enum ls_entry_state state;
-    /* hash value for this entry, output of ls_hash(key) */
+struct lh_entry {
+    enum lh_entry_state state;
+    /* hash value for this entry, output of lh_hash(key) */
     unsigned long int hash;
-    /* string copied using ls_strdup (defined in linear_set.c) */
+    /* string copied using lh_strdup (defined in linear_hash.c) */
     char *key;
     /* strlen of key, simple cache */
     size_t key_len;
+    /* data pointer */
+    void *data;
 };
 
-struct ls_set {
+struct lh_table {
     /* number of slots in hash */
     size_t size;
     /* number of elements stored in hash */
     size_t n_elems;
     /* threshold that triggers an automatic resize */
     unsigned int threshold;
-    /* array of ls_entry(s) */
-    struct ls_entry *entries;
+    /* array of lh_entry(s) */
+    struct lh_entry *entries;
 };
 
 /* function to calculate load
@@ -72,13 +63,13 @@ struct ls_set {
  * returns loading factor 0 -> 10 on success
  * returns 0 on failure
  */
-unsigned int ls_load(struct ls_set *table);
+unsigned int lh_load(struct lh_table *table);
 
 /* set the load that we resize at
  * load is (table->n_elems * 10) / table->size
  *
- * this sets ls_set->threshold
- * this defaults to ls_DEFAULT_THRESHOLD in linear_set.c
+ * this sets lh_table->threshold
+ * this defaults to LH_DEFAULT_THRESHOLD in linear_hash.c
  * this is set to 6 (meaning 60% full) by default
  *
  * this will accept any value between 1 (10%) to 10 (100%)
@@ -86,7 +77,7 @@ unsigned int ls_load(struct ls_set *table);
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ls_tune_threshold(struct ls_set *table, unsigned int threshold);
+unsigned int lh_tune_threshold(struct lh_table *table, unsigned int threshold);
 
 /* takes a char* representing a string
  * and a key_len of it's size
@@ -96,7 +87,7 @@ unsigned int ls_tune_threshold(struct ls_set *table, unsigned int threshold);
  * returns an unsigned long integer hash value on success
  * returns 0 on error
  */
-unsigned long int ls_hash(char *key, size_t key_len);
+unsigned long int lh_hash(char *key, size_t key_len);
 
 /* takes a table and a hash value
  *
@@ -107,72 +98,85 @@ unsigned long int ls_hash(char *key, size_t key_len);
  * this function can only error if table is null
  * so the caller can distinguish these 2 cases
  */
-size_t ls_pos(unsigned long int hash, size_t table_size);
+size_t lh_pos(unsigned long int hash, size_t table_size);
 
-/* allocate and initialise a new ls_set
+/* allocate and initialise a new lh_table
  *
  * will automatically assume a size of 32
  *
- * ls_set will automatically resize when a call to
- * ls_insert detects the load factor is over table->threshold
+ * lh_table will automatically resize when a call to
+ * lh_insert detects the load factor is over table->threshold
  *
  * returns pointer on success
  * returns 0 on error
  */
-struct ls_set * ls_new(void);
+struct lh_table * lh_new(void);
 
-/* free an existing ls_set
+/* free an existing lh_table
  * this will free all the sh entries stored
  * this will free all the keys (as they are strdup-ed)
  *
  * this will only free the *table pointer if `free_table` is set to 1
+ * this will only free the *data pointers if `free_data` is set to 1
  *
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ls_destroy(struct ls_set *table, unsigned int free_table);
+unsigned int lh_destroy(struct lh_table *table, unsigned int free_table, unsigned int free_data);
 
-/* initialise an already allocated ls_set to size size
+/* initialise an already allocated lh_table to size size
  *
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ls_init(struct ls_set *table, size_t size);
+unsigned int lh_init(struct lh_table *table, size_t size);
 
 /* resize an existing table to new_size
  * this will reshuffle all the buckets around
  *
  * you can use this to make a hash larger or smaller
  *
- * you do not need to manually call this in the general case
- * as linear set will manage it's own size
- *
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ls_resize(struct ls_set *table, size_t new_size);
+unsigned int lh_resize(struct lh_table *table, size_t new_size);
 
 /* check if the supplied key already exists in this hash
  *
  * returns 1 on success (key exists)
  * returns 0 if key doesn't exist or on error
  */
-unsigned int ls_exists(struct ls_set *table, char *key);
+unsigned int lh_exists(struct lh_table *table, char *key);
 
-/* insert `key`
- * this will only success if !ls_exists(table, key)
+/* insert `data` under `key`
+ * this will only success if !lh_exists(table, key)
  *
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ls_insert(struct ls_set *table, char *key);
+unsigned int lh_insert(struct lh_table *table, char *key, void *data);
 
-/* delete key `key`
+/* set `data` under `key`
+ * this will only succeed if lh_exists(table, key)
  *
- * returns 1 on success
+ * returns old data on success
  * returns 0 on error
  */
-unsigned int ls_delete(struct ls_set *table, char *key);
+void * lh_set(struct lh_table *table, char *key, void *data);
+
+/* get `data` stored under `key`
+ *
+ * returns data on success
+ * returns 0 on error
+ */
+void * lh_get(struct lh_table *table, char *key);
+
+/* delete entry stored under `key`
+ *
+ * returns data on success
+ * returns 0 on error
+ */
+void *  lh_delete(struct lh_table *table, char *key);
 
 
-#endif // ifndef linear_hals_H
+#endif // ifndef linear_halh_H

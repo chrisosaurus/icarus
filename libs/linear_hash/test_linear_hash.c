@@ -2,23 +2,11 @@
  * ./test_sh
  */
 
-/* extracted from
-    https://github.com/mkfifo/linear_hash
-
-
-    commit 22fe528e3d2402c6b97088f3cfc1779787ca5fa7
-    Author: Chris Hall <followingthepath@gmail.com>
-    Date:   Fri Apr 24 14:43:53 2015 +1200
-
-        clarifying comment about free
-
- */
-
 #include <assert.h> /* assert */
 #include <stdio.h> /* puts */
 #include <stdlib.h> /* calloc */
 
-#include "../../libs/linear_hash.h"
+#include "linear_hash.h"
 
 /* headers for internal functions within linear_hash.c
  * that are not exposed via the header

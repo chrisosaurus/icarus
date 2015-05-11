@@ -1,0 +1,8 @@
+https://github.com/mkfifo/linear_hash
+
+commit 22fe528e3d2402c6b97088f3cfc1779787ca5fa7
+Author: Chris Hall <followingthepath@gmail.com>
+Date:   Fri Apr 24 14:43:53 2015 +1200
+
+    clarifying comment about free
+

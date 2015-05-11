@@ -2,22 +2,11 @@
  * ./test_sh
  */
 
-/* extracted from
-    https://github.com/mkfifo/linear_set
-
-    commit fe1f938541041e489ddd83b39d2c897e509e9260
-    Author: Chris Hall <followingthepath@gmail.com>
-    Date:   Fri Apr 24 14:46:21 2015 +1200
-
-        fixing memory leak in new error case
-
- */
-
 #include <assert.h> /* assert */
 #include <stdio.h> /* puts */
 #include <stdlib.h> /* calloc */
 
-#include "../../libs/linear_set.h"
+#include "linear_set.h"
 
 /* headers for internal functions within linear_set.c
  * that are not exposed via the header

@@ -1,7 +1,7 @@
 #ifndef ICARUS_DICT_H
 #define ICARUS_DICT_H
 
-#include "../../libs/linear_hash.h"
+#include "../../libs/linear_hash/linear_hash.h"
 
 /* this dictionary type maps strings * to void
  * this type is a wrapper around

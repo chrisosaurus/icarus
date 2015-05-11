@@ -3,13 +3,15 @@
 include config.mk
 
 # search src/ and libs/ for c files
-SRC = $(shell find src libs -name '*.c' | grep -v src/main.c)
+# ignore any path that contains '/test_' or 'src/main.c"
+SRC = $(shell find src libs -name '*.c' | grep -v src/main.c | grep -v "/test_")
 OBJ = ${SRC:.c=.o}
 
-# tests live in t/
-# we only want to automatically build and run t/libs and t/unit
+# tests live in t/ and libs
+# tests must begin with test_
+# we only want to automatically build and run t/unit and any tests in libs
 # t/custom is managed manually by test_custom
-TESTS = $(shell find t/libs t/unit -name '*.c' )
+TESTS = $(shell find t/unit libs -name 'test_*.c' )
 # output location for tests
 TESTOUT = bin
 TESTO = $(patsubst %.c, $(TESTOUT)/%, $(TESTS))
