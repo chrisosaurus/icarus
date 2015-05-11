@@ -58,12 +58,12 @@ struct ic_kludge * ic_analyse(struct ic_ast *ast){
         tdecl = ic_pvector_get(&(kludge->tdecls), i);
         if( ! tdecl ){
             puts("ic_analyse: call to ic_pvector_get failed for tdecl");
-            return 0;
+            goto A_ERROR;
         }
 
         if( ic_analyse_type_decl(kludge, tdecl) ){
             puts("ic_analyse: call to ic_analyse_type_decl failed");
-            return 0;
+            goto A_ERROR;
         }
     }
 
@@ -73,16 +73,26 @@ struct ic_kludge * ic_analyse(struct ic_ast *ast){
         fdecl = ic_pvector_get(&(kludge->fdecls), i);
         if( ! fdecl ){
             puts("ic_analyse: call to ic_pvector_get failed for fdecl");
-            return 0;
+            goto A_ERROR;
         }
 
         if( ic_analyse_func_decl(kludge, fdecl) ){
             puts("ic_analyse: call to ic_analyse_type_decl failed");
-            return 0;
+            goto A_ERROR;
         }
     }
 
     return kludge;
+
+A_ERROR:
+    /* destroy kludge
+     * free_kludge as allocated with new
+     */
+    if( ic_kludge_destroy(kludge, 1) ){
+        puts("ic_analyse: call to ic_kludge_destroy failed in error case");
+    }
+
+    return 0;
 }
 
 /* takes a type_decl and performs analysis
