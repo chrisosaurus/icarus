@@ -42,6 +42,10 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
 /* takes an expr and returns the inferred type as a symbol
  *
  * FIXME need a way of signalling error and passing errors
+ * possible suggestions:
+ *  0 -> unrecoverable / internal error
+ *  special ic_type * -> syntax error -> ignore this statement, record error, keep going
+ *  ic_type * -> actual type inferred
  *
  * examples:
  *  infer 1 -> Int
@@ -49,10 +53,10 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
  *  infer addone(1) -> addone(Int)->Int -> Int
  *  infer Foo(1 "hello") -> Foo(Int String) -> Foo
  *
- * returns symbol on success
+ * returns ic_type on success
  * returns 0 on error
  */
-struct ic_symbol * ic_analyse_infer(struct ic_kludge *kludge, struct ic_expr *expr);
+struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_expr *expr);
 
 /* check a statement for validity
  *
