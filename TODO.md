@@ -13,7 +13,7 @@ TODO:
 * consider how to deal with builtin types (int, string) and functions (print)
 * an fcall should also store the found fdecl (post analysis)
 * review `src/data/set.[ch]` as it was derived from dict and most likely has documentation errors and poorly named fields
-* `ic_analyse_type_decl` currently allows co-recursive types `type Foo a::Bar end` `type bar a::Foo end`
+
 
 technical debt:
 
@@ -23,4 +23,10 @@ technical debt:
 * add pvector/parray destructor helper which takes a function * and iterates through it's contents passing to function
 * add shims to allow ic_pvector_destroy to be called on each type
 * src/parse/data/ names, `statement`, `expression`, `decl` seems off (some shortened while others full)
+
+
+considerations:
+
+* `ic_analyse_type_decl` currently allows co-recursive types `type Foo a::Bar end` `type bar a::Foo end`, is this allowed?
+
 
