@@ -4,7 +4,7 @@
 #include "../../data/symbol.h"
 
 enum ic_type_type {
-    /* a type field had 3 states: */
+    /* a type field had 5 states: */
 
     /* unknown
      * this type must be inferred during analysis
@@ -20,14 +20,37 @@ enum ic_type_type {
 
     /* a fully fledged type
      */
-    ic_type_tdecl
+    ic_type_tdecl,
+
+    /* a builtin type
+     * Int
+     * String
+     * ...
+     */
+    ic_type_builtin,
+
+    /* error type
+     * this is NOT a runtime error
+     *
+     * this value is used by the analysis module to
+     * indicate an error during inference such as
+     * being unable to find the type mentioned
+     */
+    ic_type_error
 };
 
 struct ic_type {
     enum ic_type_type type; /* heh */
     union {
+        /* no value for unknown */
+
         struct ic_symbol sym;
+
         struct ic_type_decl *tdecl;
+
+        /* FIXME what is the value for an builtin? */
+
+        /* FIXME what is the value for an error? */
     } u ;
 };
 
