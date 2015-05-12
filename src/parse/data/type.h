@@ -43,13 +43,9 @@ struct ic_type {
     enum ic_type_type type; /* heh */
     union {
         /* no value for unknown */
-
-        struct ic_symbol sym;
-
-        struct ic_type_decl *tdecl;
-
+        struct ic_symbol sym; /* value for ic_type_symbol */
+        struct ic_type_decl *tdecl; /* value for ic_type_tdecl */
         /* FIXME what is the value for an builtin? */
-
         /* FIXME what is the value for an error? */
     } u ;
 };
