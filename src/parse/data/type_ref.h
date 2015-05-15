@@ -39,7 +39,7 @@ enum ic_type_type {
     ic_type_error
 };
 
-struct ic_type {
+struct ic_type_ref {
     enum ic_type_type type; /* heh */
     union {
         /* no value for unknown */
@@ -56,7 +56,7 @@ struct ic_type {
  * returns new type on success
  * returns 0 on failure
  */
-struct ic_type * ic_type_new(void);
+struct ic_type_ref * ic_type_new(void);
 
 /* intialise a type
  * this will set type.type to unknown
@@ -64,7 +64,7 @@ struct ic_type * ic_type_new(void);
  * returns 0 on success
  * returns 1 on failure
  */
-unsigned int ic_type_init(struct ic_type *type);
+unsigned int ic_type_init(struct ic_type_ref *type);
 
 /* allocate and intialise a new type
  * as a symbol
@@ -72,14 +72,14 @@ unsigned int ic_type_init(struct ic_type *type);
  * returns new type on success
  * returns 0 on failure
  */
-struct ic_type * ic_type_symbol_new(char *type_str, unsigned int type_len);
+struct ic_type_ref * ic_type_symbol_new(char *type_str, unsigned int type_len);
 
 /* intialise a type as a  symbol
  *
  * returns 0 on success
  * returns 1 on failure
  */
-unsigned int ic_type_symbol_init(struct ic_type *type, char *type_str, unsigned int type_len);
+unsigned int ic_type_symbol_init(struct ic_type_ref *type, char *type_str, unsigned int type_len);
 
 /* destroy type
  *
@@ -88,7 +88,7 @@ unsigned int ic_type_symbol_init(struct ic_type *type, char *type_str, unsigned 
  * returns 0 on sucess
  * returns 1 on error
  */
-unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type);
+unsigned int ic_type_destroy(struct ic_type_ref *type, unsigned int free_type);
 
 /* set the sym on this type from the provided string
  * this will change type.type to sym
@@ -101,7 +101,7 @@ unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type);
  * returns 0 on success
  * returns 1 on error
  */
-unsigned int ic_type_set_symbol(struct ic_type *type, char *type_str, unsigned int type_len);
+unsigned int ic_type_set_symbol(struct ic_type_ref *type, char *type_str, unsigned int type_len);
 
 /* set the *tdecl on this type
  * this will change type.type to tdecl
@@ -112,7 +112,7 @@ unsigned int ic_type_set_symbol(struct ic_type *type, char *type_str, unsigned i
  * returns 0 on success
  * returns 1 on error
  */
-unsigned int ic_type_set_tdecl(struct ic_type *type, struct ic_type_decl *tdecl);
+unsigned int ic_type_set_tdecl(struct ic_type_ref *type, struct ic_type_decl *tdecl);
 
 /* return a symbol representing this type
  *
@@ -122,9 +122,9 @@ unsigned int ic_type_set_tdecl(struct ic_type *type, struct ic_type_decl *tdecl)
  *
  * returns 0 on failure
  */
-struct ic_symbol * ic_type_get_symbol(struct ic_type *type);
+struct ic_symbol * ic_type_get_symbol(struct ic_type_ref *type);
 
 /* print this this type */
-void ic_type_print(struct ic_type *type);
+void ic_type_print(struct ic_type_ref *type);
 
 #endif

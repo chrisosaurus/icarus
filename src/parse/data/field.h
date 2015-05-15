@@ -3,7 +3,7 @@
 
 #include "../../data/symbol.h"
 #include "../../data/pvector.h"
-#include "type.h"
+#include "type_ref.h"
 
 /* a field is a combination of a symbol and a type
  *  foo::Int
@@ -12,7 +12,7 @@
  */
 struct ic_field {
     struct ic_symbol name;
-    struct ic_type type;
+    struct ic_type_ref type;
 };
 
 /* allocate and return a new field

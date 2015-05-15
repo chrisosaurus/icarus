@@ -10,8 +10,6 @@ In Icarus the concept of a type has a few moving parts
 * ic_type_decl - the information captured for a user declared type
 * ic_type_ref - a reference to a type, built during parse and modified during analysis
 
-currently `ic_type` is what will become `ic_type_ref`, and the above mentioned `ic_type` will be born.
-
 
 type_ref
 --------
@@ -35,7 +33,7 @@ After parsing all types will either be `unknown` or `string`
 
 After analysis all types will either be `builtin`, `tdecl` or `error`
 
-we now have a type for this concept `ic_type` (soon to be renamed to `ic_type_ref`)
+we now have a type for this concept `ic_type_ref`
 
 most of the code using types exists within `src/parse/data/*` and
 currently all of this code uses an `ic_symbol`

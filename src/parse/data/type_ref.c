@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "type.h"
+#include "type_ref.h"
 #include "decl.h"
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -12,10 +12,10 @@
  * returns new type on success
  * returns 0 on failure
  */
-struct ic_type * ic_type_new(void){
-    struct ic_type *type = 0;
+struct ic_type_ref * ic_type_new(void){
+    struct ic_type_ref *type = 0;
 
-    type = calloc(1, sizeof(struct ic_type));
+    type = calloc(1, sizeof(struct ic_type_ref));
     if( ! type ){
         puts("ic_type_new: call to calloc failed");
         return 0;
@@ -35,7 +35,7 @@ struct ic_type * ic_type_new(void){
  * returns 0 on success
  * returns 1 on failure
  */
-unsigned int ic_type_init(struct ic_type *type){
+unsigned int ic_type_init(struct ic_type_ref *type){
     if( ! type ){
         puts("ic_type_init: type was null");
         return 1;
@@ -55,8 +55,8 @@ unsigned int ic_type_init(struct ic_type *type){
  * returns new type on success
  * returns 0 on failure
  */
-struct ic_type * ic_type_symbol_new(char *type_str, unsigned int type_len){
-    struct ic_type *type = 0;
+struct ic_type_ref * ic_type_symbol_new(char *type_str, unsigned int type_len){
+    struct ic_type_ref *type = 0;
 
     if( ! type_str ){
         puts("ic_type_symbol_new: type_str was null");
@@ -88,7 +88,7 @@ struct ic_type * ic_type_symbol_new(char *type_str, unsigned int type_len){
  * returns 0 on success
  * returns 1 on failure
  */
-unsigned int ic_type_symbol_init(struct ic_type *type, char *type_str, unsigned int type_len){
+unsigned int ic_type_symbol_init(struct ic_type_ref *type, char *type_str, unsigned int type_len){
     if( ! type){
         puts("ic_type_symbol_init: type_str was null");
         return 1;
@@ -120,7 +120,7 @@ unsigned int ic_type_symbol_init(struct ic_type *type, char *type_str, unsigned 
  * returns 0 on sucess
  * returns 1 on error
  */
-unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type){
+unsigned int ic_type_destroy(struct ic_type_ref *type, unsigned int free_type){
     if( ! type ){
         puts("ic_type_destroy: type was null");
         return 1;
@@ -169,7 +169,7 @@ unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type){
  * returns 0 on success
  * returns 1 on error
  */
-unsigned int ic_type_set_symbol(struct ic_type *type, char *type_str, unsigned int type_len){
+unsigned int ic_type_set_symbol(struct ic_type_ref *type, char *type_str, unsigned int type_len){
     if( ! type ) {
         puts("ic_type_set_symbol: type was null");
         return 1;
@@ -227,7 +227,7 @@ unsigned int ic_type_set_symbol(struct ic_type *type, char *type_str, unsigned i
  * returns 0 on success
  * returns 1 on error
  */
-unsigned int ic_type_set_tdecl(struct ic_type *type, struct ic_type_decl *tdecl){
+unsigned int ic_type_set_tdecl(struct ic_type_ref *type, struct ic_type_decl *tdecl){
     if( ! type ) {
         puts("ic_type_set_tdecl: type was null");
         return 1;
@@ -283,7 +283,7 @@ unsigned int ic_type_set_tdecl(struct ic_type *type, struct ic_type_decl *tdecl)
  *
  * returns 0 on failure
  */
-struct ic_symbol * ic_type_get_symbol(struct ic_type *type){
+struct ic_symbol * ic_type_get_symbol(struct ic_type_ref *type){
     if( ! type ){
         puts("ic_type_get_symbol: type was null");
         return 0;
@@ -321,7 +321,7 @@ struct ic_symbol * ic_type_get_symbol(struct ic_type *type){
 }
 
 /* print this this type */
-void ic_type_print(struct ic_type *type){
+void ic_type_print(struct ic_type_ref *type){
     if( ! type ){
         puts("ic_type_print: type was null");
         return;
