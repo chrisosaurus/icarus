@@ -1,0 +1,33 @@
+# entry point for program
+fn main()
+    let b::Bar = Bar("hello")
+    let f::Foo = Foo(add_one(1) b)
+
+    d(f)
+end
+
+type Foo
+    a::Int
+    b::Bar
+end
+
+type Bar
+    c::String
+end
+
+fn baz(f::Foo)
+    if f.a == 0
+        display(f)
+    else
+        display(f.b.c)
+    end
+end
+
+fn display(f::Foo)
+    print("Foo: {} -> {}\n" f.a f.b.c)
+end
+
+fn display(b::Bar)
+    print(b.c)
+end
+
