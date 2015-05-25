@@ -10,11 +10,11 @@ type Foo
     c::String
 
     fn Foo(s::String) -> Foo
-        return Foo(1 2 s)
+        return Foo(1, 2, s)
     end
 
-    fn Foo(i::Int s::String) -> Foo
-        return Foo(i 2 s)
+    fn Foo(i::Int, s::String) -> Foo
+        return Foo(i, 2, s)
     end
 end
 
@@ -22,12 +22,12 @@ fn main()
     # we now have 3 constructors on Foo
 
     # the default 3 arg
-    let a::Foo = Foo(3 4 "hello")
+    let a::Foo = Foo(3, 4, "hello")
 
     # the defined 1 arg
     let b::Foo = Foo("goodbye")
 
     # and the defined 2 arg
-    let c::Foo = Foo(4 "why hellooo there")
+    let c::Foo = Foo(4, "why hellooo there")
 
 end

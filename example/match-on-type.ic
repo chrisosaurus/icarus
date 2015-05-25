@@ -15,7 +15,7 @@ end
 
 match m
     case Int
-        print("Got number " m.contents)
+        print("Got number ", m.contents)
     case Empty
         print("Got nothing")
 end

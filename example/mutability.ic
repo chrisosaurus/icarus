@@ -27,7 +27,7 @@ end
 fn bar(s::String)
     # compile time error, trying to mutate through an immutable reference
     # append takes a &String and s is an immutable String reference
-    append(s " world")
+    append(s, " world")
 end
 
 fn main()
