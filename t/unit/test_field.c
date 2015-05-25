@@ -17,7 +17,7 @@ int main(void){
                 1) );
 
     assert( ! strncmp("String",
-                ic_symbol_contents( ic_type_get_symbol(&(field->type)) ),
+                ic_symbol_contents( ic_type_ref_get_symbol(&(field->type)) ),
                 6) );
 
     /* test init */
@@ -28,7 +28,7 @@ int main(void){
                 5) );
 
     assert( ! strncmp("Int",
-                ic_symbol_contents( ic_type_get_symbol(&(init_me.type)) ),
+                ic_symbol_contents( ic_type_ref_get_symbol(&(init_me.type)) ),
                 3) );
 
     /* 'test' printing */

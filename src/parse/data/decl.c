@@ -405,7 +405,7 @@ char * ic_func_decl_str(struct ic_func_decl *fdecl){
             return 0;
         }
 
-        cur_type = ic_type_get_symbol(&(field->type));
+        cur_type = ic_type_ref_get_symbol(&(field->type));
         if( ! cur_type ){
             puts("ic_func_decl_str: arg: call to ic_type_get_symbol failed");
             return 0;

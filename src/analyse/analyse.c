@@ -173,7 +173,7 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
          * as it may be that this type is already a tdecl
          * in which case we already know it exists
          */
-        type = ic_type_get_symbol(&(field->type));
+        type = ic_type_ref_get_symbol(&(field->type));
         if( ! type ){
             puts("ic_analyse_type_decl: call to ic_type_get_symbol failed for type");
             goto AT_ERROR;
