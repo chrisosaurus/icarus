@@ -44,7 +44,7 @@ unsigned int ic_type_ref_init(struct ic_type_ref *type){
     /* default to unknown types
      * other type_type(s) are set via methods
      */
-    type->type = ic_type_unknown;
+    type->type = ic_type_ref_unknown;
 
     return 0;
 }
@@ -128,11 +128,11 @@ unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_typ
 
     /* cleanup depends on type_type */
     switch( type->type ){
-        case ic_type_unknown:
+        case ic_type_ref_unknown:
             /* nothing to do */
             break;
 
-        case ic_type_symbol:
+        case ic_type_ref_symbol:
             /* clean up symbol, do not free as member */
             if( ic_symbol_destroy( &(type->u.sym), 0 ) ){
                 puts("ic_type_destroy: call to ic_symbol_destroy failed");
@@ -140,7 +140,7 @@ unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_typ
             }
             break;
 
-        case ic_type_tdecl:
+        case ic_type_ref_tdecl:
             /* nothing to do, tdecl is not onwed by us */
             break;
 
@@ -184,17 +184,17 @@ unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, un
      * to unknown
      */
     switch( type->type ){
-        case ic_type_unknown:
+        case ic_type_ref_unknown:
             /* nothing to do */
             break;
 
-        case ic_type_symbol:
+        case ic_type_ref_symbol:
             /* error, already a symbol */
             puts("ic_type_set_symbol: type was already a symbol");
             return 1;
             break;
 
-        case ic_type_tdecl:
+        case ic_type_ref_tdecl:
             /* error, already a tdecl */
             puts("ic_type_set_symbol: type was already a tdecl");
             return 1;
@@ -207,7 +207,7 @@ unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, un
     }
 
     /* set to tdecl */
-    type->type = ic_type_symbol;
+    type->type = ic_type_ref_symbol;
 
     /* set our symbol from the provider char * and len */
     if( ic_symbol_init(&(type->u.sym), type_str, type_len) ){
@@ -242,11 +242,11 @@ unsigned int ic_type_ref_set_tdecl(struct ic_type_ref *type, struct ic_type_decl
      * type->type
      */
     switch( type->type ){
-        case ic_type_unknown:
+        case ic_type_ref_unknown:
             /* nothing to do */
             break;
 
-        case ic_type_symbol:
+        case ic_type_ref_symbol:
             /* clean up symbol, do not free as member */
             if( ic_symbol_destroy( &(type->u.sym), 0 ) ){
                 puts("ic_type_set_tdecl: call to ic_symbol_destroy failed");
@@ -254,7 +254,7 @@ unsigned int ic_type_ref_set_tdecl(struct ic_type_ref *type, struct ic_type_decl
             }
             break;
 
-        case ic_type_tdecl:
+        case ic_type_ref_tdecl:
             /* error, already a tdecl */
             puts("ic_type_set_tdecl: type was already a tdecl");
             return 1;
@@ -267,7 +267,7 @@ unsigned int ic_type_ref_set_tdecl(struct ic_type_ref *type, struct ic_type_decl
     }
 
     /* set to tdecl */
-    type->type = ic_type_tdecl;
+    type->type = ic_type_ref_tdecl;
 
     /* store our actual tdecl */
     type->u.tdecl = tdecl;
@@ -290,18 +290,18 @@ struct ic_symbol * ic_type_ref_get_symbol(struct ic_type_ref *type){
     }
 
     switch( type->type ){
-        case ic_type_unknown:
+        case ic_type_ref_unknown:
             /* error, nothing to return */
             puts("ic_type_get_symbol: type was of type unknown");
             return 0;
             break;
 
-        case ic_type_symbol:
+        case ic_type_ref_symbol:
             /* just return the symbol */
             return &(type->u.sym);
             break;
 
-        case ic_type_tdecl:
+        case ic_type_ref_tdecl:
             if( ! type->u.tdecl ){
                 puts("ic_type_get_symbol: type was tdecl but tdecl member was null");
                 return 0;
@@ -327,16 +327,16 @@ void ic_type_ref_print(struct ic_type_ref *type){
         return;
     }
     switch( type->type ){
-        case ic_type_unknown:
+        case ic_type_ref_unknown:
             /* nothing to do */
             break;
 
-        case ic_type_symbol:
+        case ic_type_ref_symbol:
             /* if we are of type symbol then just print that symbol */
             ic_symbol_print( &(type->u.sym) );
             break;
 
-        case ic_type_tdecl:
+        case ic_type_ref_tdecl:
             if( ! type->u.tdecl ){
                 puts("ic_type_print: type was tdecl but tdecl member was null");
                 return;

@@ -3,31 +3,31 @@
 
 #include "../../data/symbol.h"
 
-enum ic_type_type {
+enum ic_type_ref_type {
     /* a type field had 5 states: */
 
     /* unknown
      * this type must be inferred during analysis
      */
-    ic_type_unknown,
+    ic_type_ref_unknown,
 
     /* a symbol found during parsing,
      * most likely user declared (`a::Int`)
      * this will need to resolved to a tdecl
      * during analysis
      */
-    ic_type_symbol,
+    ic_type_ref_symbol,
 
     /* a fully fledged type
      */
-    ic_type_tdecl,
+    ic_type_ref_tdecl,
 
     /* a builtin type
      * Int
      * String
      * ...
      */
-    ic_type_builtin,
+    ic_type_ref_builtin,
 
     /* error type
      * this is NOT a runtime error
@@ -36,11 +36,11 @@ enum ic_type_type {
      * indicate an error during inference such as
      * being unable to find the type mentioned
      */
-    ic_type_error
+    ic_type_ref_error
 };
 
 struct ic_type_ref {
-    enum ic_type_type type; /* heh */
+    enum ic_type_ref_type type; /* heh */
     union {
         /* no value for unknown */
         struct ic_symbol sym; /* value for ic_type_symbol */
