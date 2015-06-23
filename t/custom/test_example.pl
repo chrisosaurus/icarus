@@ -40,14 +40,20 @@ end
 
 # main()
 fn main() -> Void
-    let f::Foo = Foo(add_one(1) "hello")
+    let f::Foo = Foo(add_one(1), "hello")
     d(f)
 end
 ----------------
 
 EOF
 
-die "test_example: FAIL - output was not as expected" unless $output eq $expected;
+unless( $output eq $expected ){
+    say "Output was not as expected";
+    say "=======\nExpected:\n$expected";
+    say "=======\nGot:\n$output";
+    say "=======\n";
+    die "Output not as expected";
+}
 
 say "test_example: successs";
 
