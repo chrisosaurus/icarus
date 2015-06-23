@@ -40,7 +40,7 @@ end
 
 # main()
 fn main() -> Void
-    let f::Foo = Foo(add_one(1), "hello")
+    let f::Foo = Foo(add_one(1) , "hello")
     d(f)
 end
 ----------------

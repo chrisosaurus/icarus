@@ -116,11 +116,13 @@ struct ic_tokens * ic_lex(char *source){
                 ++i;
                 break;
 
-            /* (...)
+            /* (a, b)
+             * (...)
              * a = b
              * a.b
              * &a::Int and &f
              */
+            case ',':
             case '(':
             case ')':
             case '=':

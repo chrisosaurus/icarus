@@ -31,7 +31,7 @@ end\n\
 \n\
 # entry point for program\n\
 fn main()\n\
-    let f::Foo = Foo(add_one(1) \"hello\")\n\
+    let f::Foo = Foo(add_one(1), \"hello\")\n\
 \n\
     d(f)\n\
 end\n\
