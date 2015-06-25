@@ -577,7 +577,9 @@ struct ic_expr * ic_parse_expr(struct ic_tokens *tokens, unsigned int *i){
     printf("context : '%s'\n", next);
 #endif
 
-    /* if we see an operator then go for it */
+    /* if we peek ahead and see a binary operator
+     * then parse a binary operation expression
+     */
     if( ic_parse_operatorish(next) ){
         return ic_parse_expr_operator(tokens, i);
     }
