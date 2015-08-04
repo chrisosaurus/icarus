@@ -3,9 +3,9 @@
 
 #include "../../libs/linear_set/linear_set.h"
 
-/* this setionary type maps strings * to void
+/* this set type maps strings to void *
  * this type is a wrapper around
- *  linear_hash.h:struct lh_table
+ *  linear_set.h:struct ls_set
  */
 struct ic_set{
     struct ls_set lss;

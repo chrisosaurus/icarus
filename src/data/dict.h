@@ -3,7 +3,7 @@
 
 #include "../../libs/linear_hash/linear_hash.h"
 
-/* this dictionary type maps strings * to void
+/* this dictionary type maps strings to void *
  * this type is a wrapper around
  *  linear_hash.h:struct lh_table
  */
@@ -11,7 +11,7 @@ struct ic_dict{
     struct lh_table lht;
 };
 
-/* allocate and inite a new ic_dict
+/* allocate and init a new ic_dict
  *
  * returns pointer on success
  * returns 0 on error

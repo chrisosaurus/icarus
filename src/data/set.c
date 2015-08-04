@@ -3,9 +3,9 @@
 
 #include "set.h"
 
-#define ic_set_DEFAULT_SIZE 32
+#define IC_SET_DEFAULT_SIZE 32
 
-/* allocate and inite a new ic_set
+/* allocate and init a new ic_set
  *
  * returns pointer on success
  * returns 0 on error
@@ -39,7 +39,7 @@ unsigned int ic_set_init(struct ic_set *set){
         return 0;
     }
 
-    return ! ls_init(&(set->lss), ic_set_DEFAULT_SIZE);
+    return ! ls_init(&(set->lss), IC_SET_DEFAULT_SIZE);
 }
 
 /* insert new item

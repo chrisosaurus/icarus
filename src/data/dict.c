@@ -5,7 +5,7 @@
 
 #define IC_DICT_DEFAULT_SIZE 32
 
-/* allocate and inite a new ic_dict
+/* allocate and init a new ic_dict
  *
  * returns pointer on success
  * returns 0 on error
