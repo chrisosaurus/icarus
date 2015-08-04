@@ -58,12 +58,12 @@ struct ic_kludge * ic_analyse(struct ic_ast *ast){
         tdecl = ic_pvector_get(&(kludge->tdecls), i);
         if( ! tdecl ){
             puts("ic_analyse: call to ic_pvector_get failed for tdecl");
-            goto A_ERROR;
+            goto ERROR;
         }
 
         if( ic_analyse_type_decl(kludge, tdecl) ){
             puts("ic_analyse: call to ic_analyse_type_decl failed");
-            goto A_ERROR;
+            goto ERROR;
         }
     }
 
@@ -73,18 +73,18 @@ struct ic_kludge * ic_analyse(struct ic_ast *ast){
         fdecl = ic_pvector_get(&(kludge->fdecls), i);
         if( ! fdecl ){
             puts("ic_analyse: call to ic_pvector_get failed for fdecl");
-            goto A_ERROR;
+            goto ERROR;
         }
 
         if( ic_analyse_func_decl(kludge, fdecl) ){
             puts("ic_analyse: call to ic_analyse_type_decl failed");
-            goto A_ERROR;
+            goto ERROR;
         }
     }
 
     return kludge;
 
-A_ERROR:
+ERROR:
     /* destroy kludge
      * free_kludge as allocated with new
      */
@@ -151,13 +151,13 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
         field = ic_pvector_get(&(tdecl->fields), i);
         if( ! field ){
             puts("ic_analyse_type_decl: call to ic_pvector_get failed");
-            goto AT_ERROR;
+            goto ERROR;
         }
 
         name = ic_symbol_contents(&(field->name));
         if( ! name ){
             puts("ic_analyse_type_decl: call to ic_symbol_contents failed for name");
-            goto AT_ERROR;
+            goto ERROR;
         }
 
         /* check name is unique within this type decl */
@@ -165,7 +165,7 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
             printf("ic_analyse_type_decl: field name '%s' it not unique within type declaration for '%s'\n",
                     name,
                     this_type);
-            goto AT_ERROR;
+            goto ERROR;
         }
 
         /* FIXME pulling out the type and then type_str
@@ -176,13 +176,13 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
         type = ic_type_ref_get_symbol(&(field->type));
         if( ! type ){
             puts("ic_analyse_type_decl: call to ic_type_get_symbol failed for type");
-            goto AT_ERROR;
+            goto ERROR;
         }
 
         type_str = ic_symbol_contents(type);
         if( ! type_str ){
             puts("ic_analyse_type_decl: call to ic_symbol_contents failed for type");
-            goto AT_ERROR;
+            goto ERROR;
         }
 
         /* check that the type used is not the same we are currently trying
@@ -192,7 +192,7 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
             printf("ic_analyse_type_decl: recursive type '%s' used within declaration of same type '%s'\n",
                     type_str,
                     this_type);
-            goto AT_ERROR;
+            goto ERROR;
         }
 
         /* check that type exists */
@@ -200,7 +200,7 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
             printf("ic_analyse_type_decl: type '%s' mentioned in type declaration for '%s' does not exist within this kludge\n",
                     type_str,
                     this_type);
-            goto AT_ERROR;
+            goto ERROR;
         }
     }
 
@@ -214,7 +214,7 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
 
     return 0;
 
-AT_ERROR:
+ERROR:
     /* call set destroy
      * free_set as we allocated above with new
      */
