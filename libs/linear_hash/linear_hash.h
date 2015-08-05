@@ -63,7 +63,7 @@ struct lh_table {
  * returns loading factor 0 -> 10 on success
  * returns 0 on failure
  */
-unsigned int lh_load(struct lh_table *table);
+unsigned int lh_load(const struct lh_table *table);
 
 /* set the load that we resize at
  * load is (table->n_elems * 10) / table->size
@@ -146,7 +146,7 @@ unsigned int lh_resize(struct lh_table *table, size_t new_size);
  * returns 1 on success (key exists)
  * returns 0 if key doesn't exist or on error
  */
-unsigned int lh_exists(struct lh_table *table, const char *key);
+unsigned int lh_exists(const struct lh_table *table, const char *key);
 
 /* insert `data` under `key`
  * this will only success if !lh_exists(table, key)
@@ -169,7 +169,7 @@ void * lh_set(struct lh_table *table, const char *key, void *data);
  * returns data on success
  * returns 0 on error
  */
-void * lh_get(struct lh_table *table, const char *key);
+void * lh_get(const struct lh_table *table, const char *key);
 
 /* delete entry stored under `key`
  *

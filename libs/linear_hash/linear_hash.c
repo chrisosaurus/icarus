@@ -220,7 +220,7 @@ unsigned int lh_entry_destroy(struct lh_entry *entry, unsigned int free_data){
  * returns a pointer to it on success
  * return 0 on failure
  */
-struct lh_entry * lh_find_entry(struct lh_table *table, const char *key){
+struct lh_entry * lh_find_entry(const struct lh_table *table, const char *key){
     /* our cur entry */
     struct lh_entry *cur = 0;
 
@@ -329,7 +329,7 @@ struct lh_entry * lh_find_entry(struct lh_table *table, const char *key){
  * returns loading factor 0 -> 10 on success
  * returns 0 on failure
  */
-unsigned int lh_load(struct lh_table *table){
+unsigned int lh_load(const struct lh_table *table){
     if( ! table ){
         puts("lh_load: table was null");
         return 0;
@@ -644,7 +644,7 @@ LH_RESIZE_FOUND:
  * returns 1 on success (key exists)
  * returns 0 if key doesn't exist or on error
  */
-unsigned int lh_exists(struct lh_table *table, const char *key){
+unsigned int lh_exists(const struct lh_table *table, const char *key){
     struct lh_entry *she = 0;
 
     if( ! table ){
@@ -846,7 +846,7 @@ void * lh_set(struct lh_table *table, const char *key, void *data){
  * returns data on success
  * returns 0 on error
  */
-void * lh_get(struct lh_table *table, const char *key){
+void * lh_get(const struct lh_table *table, const char *key){
     struct lh_entry *she = 0;
 
     if( ! table ){
