@@ -61,7 +61,7 @@ struct ls_set {
  * returns loading factor 0 -> 10 on success
  * returns 0 on failure
  */
-unsigned int ls_load(struct ls_set *table);
+unsigned int ls_load(const struct ls_set *table);
 
 /* set the load that we resize at
  * load is (table->n_elems * 10) / table->size
@@ -85,7 +85,7 @@ unsigned int ls_tune_threshold(struct ls_set *table, unsigned int threshold);
  * returns an unsigned long integer hash value on success
  * returns 0 on error
  */
-unsigned long int ls_hash(char *key, size_t key_len);
+unsigned long int ls_hash(const char *key, size_t key_len);
 
 /* takes a table and a hash value
  *
@@ -146,7 +146,7 @@ unsigned int ls_resize(struct ls_set *table, size_t new_size);
  * returns 1 on success (key exists)
  * returns 0 if key doesn't exist or on error
  */
-unsigned int ls_exists(struct ls_set *table, char *key);
+unsigned int ls_exists(const struct ls_set *table, const char *key);
 
 /* insert `key`
  * this will only success if !ls_exists(table, key)
@@ -161,7 +161,7 @@ unsigned int ls_insert(struct ls_set *table, char *key);
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ls_delete(struct ls_set *table, char *key);
+unsigned int ls_delete(struct ls_set *table, const char *key);
 
 #endif // ifndef LINEAR_SET_H
 

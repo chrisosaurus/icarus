@@ -67,7 +67,7 @@
  * provided hash, key_len and key
  * this is to centralise the once scattered logic
  */
-unsigned int ls_entry_eq(struct ls_entry *cur, unsigned long int hash, unsigned long int key_len, char *key){
+unsigned int ls_entry_eq(const struct ls_entry *cur, unsigned long int hash, unsigned long int key_len, const char *key){
     if( ! cur ){
         puts("ls_entry_eq: cur was null");
         return 0;
@@ -97,7 +97,7 @@ unsigned int ls_entry_eq(struct ls_entry *cur, unsigned long int hash, unsigned 
  * returns char* to new memory containing a strcpy on success
  * returns 0 on error
  */
-char * ls_strdupn(char *str, size_t len){
+char * ls_strdupn(const char *str, size_t len){
     /* our new string */
     char *new_str = 0;
 
@@ -213,7 +213,7 @@ unsigned int ls_entry_destroy(struct ls_entry *entry){
  * returns a pointer to it on success
  * return 0 on failure
  */
-struct ls_entry * ls_find_entry(struct ls_set *table, char *key){
+struct ls_entry * ls_find_entry(const struct ls_set *table, const char *key){
     /* our cur entry */
     struct ls_entry *cur = 0;
 
@@ -322,7 +322,7 @@ struct ls_entry * ls_find_entry(struct ls_set *table, char *key){
  * returns loading factor 0 -> 10 on success
  * returns 0 on failure
  */
-unsigned int ls_load(struct ls_set *table){
+unsigned int ls_load(const struct ls_set *table){
     if( ! table ){
         puts("ls_load: table was null");
         return 0;
@@ -369,7 +369,7 @@ unsigned int ls_tune_threshold(struct ls_set *table, unsigned int threshold){
  * returns an unsigned long integer hash value on success
  * returns 0 on error
  */
-unsigned long int ls_hash(char *key, size_t key_len){
+unsigned long int ls_hash(const char *key, size_t key_len){
     /* our hash value */
     unsigned long int hash = 0;
     /* our iterator through the key */
@@ -634,7 +634,7 @@ LS_RESIZE_FOUND:
  * returns 1 on success (key exists)
  * returns 0 if key doesn't exist or on error
  */
-unsigned int ls_exists(struct ls_set *table, char *key){
+unsigned int ls_exists(const struct ls_set *table, const char *key){
     struct ls_entry *she = 0;
 
     if( ! table ){
@@ -800,7 +800,7 @@ LS_INSERT_FOUND:
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ls_delete(struct ls_set *table, char *key){
+unsigned int ls_delete(struct ls_set *table, const char *key){
     /* our cur entry */
     struct ls_entry *cur = 0;
     /* hash */

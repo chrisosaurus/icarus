@@ -1,8 +1,8 @@
 https://github.com/mkfifo/linear_set
 
-commit fbac1e4a1a427711db5f9949bb6a31544745af33
+commit 9c9c072a31dad4ec4cc4f5117af64ad03d4aa8f8
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Wed Aug 5 15:46:35 2015 +1200
+Date:   Wed Aug 5 15:59:11 2015 +1200
 
-    fixing endif comment
+    updating const correctness
 
