@@ -154,7 +154,7 @@ unsigned int lh_exists(const struct lh_table *table, const char *key);
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int lh_insert(struct lh_table *table, char *key, void *data);
+unsigned int lh_insert(struct lh_table *table, const char *key, void *data);
 
 /* set `data` under `key`
  * this will only succeed if lh_exists(table, key)

@@ -1,8 +1,8 @@
 https://github.com/mkfifo/linear_hash
 
-commit bfa7b65685496d34845c93ca812b38f2a7065cf3
+commit 9eb54200f6072fe08249486893b6ae00b8e5cfcc
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Wed Aug 5 15:53:15 2015 +1200
+Date:   Wed Aug 5 16:39:55 2015 +1200
 
-    updating const correctness on functions taking lh_table
+    tweaking const correctness
 

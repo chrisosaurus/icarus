@@ -678,7 +678,7 @@ unsigned int lh_exists(const struct lh_table *table, const char *key){
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int lh_insert(struct lh_table *table, char *key, void *data){
+unsigned int lh_insert(struct lh_table *table, const char *key, void *data){
     /* our new entry */
     struct lh_entry *she = 0;
     /* hash */
