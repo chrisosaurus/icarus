@@ -1,8 +1,8 @@
 https://github.com/mkfifo/linear_hash
 
-commit 18adb2c95949e34fdbeef5e66ececb09b432eb2c
+commit 2bf6cd9b4e608c4a13d85d7ca5df36514168e4cb
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Mon May 11 21:47:41 2015 +1200
+Date:   Wed Aug 5 15:45:48 2015 +1200
 
-    correctly silencing soft errors
+    fixing endif comment
 

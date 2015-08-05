@@ -67,7 +67,7 @@
  * provided hash, key_len and key
  * this is to centralise the once scattered logic
  */
-unsigned int lh_entry_eq(struct lh_entry *cur, unsigned long int hash, unsigned long int key_len, char *key){
+unsigned int lh_entry_eq(struct lh_entry *cur, unsigned long int hash, unsigned long int key_len, const char *key){
     if( ! cur ){
         puts("lh_entry_eq: cur was null");
         return 0;
@@ -97,7 +97,7 @@ unsigned int lh_entry_eq(struct lh_entry *cur, unsigned long int hash, unsigned 
  * returns char* to new memory containing a strcpy on success
  * returns 0 on error
  */
-char * lh_strdupn(char *str, size_t len){
+char * lh_strdupn(const char *str, size_t len){
     /* our new string */
     char *new_str = 0;
 
@@ -142,7 +142,7 @@ char * lh_strdupn(char *str, size_t len){
  */
 unsigned int lh_entry_init(struct lh_entry *entry,
                                        unsigned long int hash,
-                                       char *key,
+                                       const char *key,
                                        size_t key_len,
                                        void *data ){
 
@@ -220,7 +220,7 @@ unsigned int lh_entry_destroy(struct lh_entry *entry, unsigned int free_data){
  * returns a pointer to it on success
  * return 0 on failure
  */
-struct lh_entry * lh_find_entry(struct lh_table *table, char *key){
+struct lh_entry * lh_find_entry(struct lh_table *table, const char *key){
     /* our cur entry */
     struct lh_entry *cur = 0;
 
@@ -376,7 +376,7 @@ unsigned int lh_tune_threshold(struct lh_table *table, unsigned int threshold){
  * returns an unsigned long integer hash value on success
  * returns 0 on error
  */
-unsigned long int lh_hash(char *key, size_t key_len){
+unsigned long int lh_hash(const char *key, size_t key_len){
     /* our hash value */
     unsigned long int hash = 0;
     /* our iterator through the key */
@@ -644,7 +644,7 @@ LH_RESIZE_FOUND:
  * returns 1 on success (key exists)
  * returns 0 if key doesn't exist or on error
  */
-unsigned int lh_exists(struct lh_table *table, char *key){
+unsigned int lh_exists(struct lh_table *table, const char *key){
     struct lh_entry *she = 0;
 
     if( ! table ){
@@ -808,7 +808,7 @@ LH_INSERT_FOUND:
  * returns old data on success
  * returns 0 on error
  */
-void * lh_set(struct lh_table *table, char *key, void *data){
+void * lh_set(struct lh_table *table, const char *key, void *data){
     struct lh_entry *she = 0;
     void * old_data = 0;
 
@@ -846,7 +846,7 @@ void * lh_set(struct lh_table *table, char *key, void *data){
  * returns data on success
  * returns 0 on error
  */
-void * lh_get(struct lh_table *table, char *key){
+void * lh_get(struct lh_table *table, const char *key){
     struct lh_entry *she = 0;
 
     if( ! table ){
@@ -875,7 +875,7 @@ void * lh_get(struct lh_table *table, char *key){
  * returns data on success
  * returns 0 on error
  */
-void * lh_delete(struct lh_table *table, char *key){
+void * lh_delete(struct lh_table *table, const char *key){
     /* our cur entry */
     struct lh_entry *cur = 0;
     /* hash */

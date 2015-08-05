@@ -87,7 +87,7 @@ unsigned int lh_tune_threshold(struct lh_table *table, unsigned int threshold);
  * returns an unsigned long integer hash value on success
  * returns 0 on error
  */
-unsigned long int lh_hash(char *key, size_t key_len);
+unsigned long int lh_hash(const char *key, size_t key_len);
 
 /* takes a table and a hash value
  *
@@ -146,7 +146,7 @@ unsigned int lh_resize(struct lh_table *table, size_t new_size);
  * returns 1 on success (key exists)
  * returns 0 if key doesn't exist or on error
  */
-unsigned int lh_exists(struct lh_table *table, char *key);
+unsigned int lh_exists(struct lh_table *table, const char *key);
 
 /* insert `data` under `key`
  * this will only success if !lh_exists(table, key)
@@ -162,21 +162,21 @@ unsigned int lh_insert(struct lh_table *table, char *key, void *data);
  * returns old data on success
  * returns 0 on error
  */
-void * lh_set(struct lh_table *table, char *key, void *data);
+void * lh_set(struct lh_table *table, const char *key, void *data);
 
 /* get `data` stored under `key`
  *
  * returns data on success
  * returns 0 on error
  */
-void * lh_get(struct lh_table *table, char *key);
+void * lh_get(struct lh_table *table, const char *key);
 
 /* delete entry stored under `key`
  *
  * returns data on success
  * returns 0 on error
  */
-void *  lh_delete(struct lh_table *table, char *key);
+void *  lh_delete(struct lh_table *table, const char *key);
 
+#endif // ifndef LINEAR_HASH_H
 
-#endif // ifndef linear_halh_H
