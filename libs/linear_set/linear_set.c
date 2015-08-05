@@ -142,7 +142,7 @@ char * ls_strdupn(const char *str, size_t len){
  */
 unsigned int ls_entry_init(struct ls_entry *entry,
                                        unsigned long int hash,
-                                       char *key,
+                                       const char *key,
                                        size_t key_len){
 
     if( ! entry ){
@@ -668,7 +668,7 @@ unsigned int ls_exists(const struct ls_set *table, const char *key){
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ls_insert(struct ls_set *table, char *key){
+unsigned int ls_insert(struct ls_set *table, const char *key){
     /* our new entry */
     struct ls_entry *she = 0;
     /* hash */

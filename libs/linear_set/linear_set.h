@@ -154,7 +154,7 @@ unsigned int ls_exists(const struct ls_set *table, const char *key);
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ls_insert(struct ls_set *table, char *key);
+unsigned int ls_insert(struct ls_set *table, const char *key);
 
 /* delete key `key`
  *

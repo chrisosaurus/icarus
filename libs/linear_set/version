@@ -1,8 +1,8 @@
 https://github.com/mkfifo/linear_set
 
-commit 9c9c072a31dad4ec4cc4f5117af64ad03d4aa8f8
+commit a1db5e5d7327c4aa6bb4a5aa9971f1a155418192
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Wed Aug 5 15:59:11 2015 +1200
+Date:   Wed Aug 5 16:38:26 2015 +1200
 
-    updating const correctness
+    tweaking const correctness
 
