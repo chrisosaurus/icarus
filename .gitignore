@@ -8,5 +8,5 @@ bin/*
 *.gcno
 *.gcda
 
-*coverall*.sh
+*coverall.sh
 
