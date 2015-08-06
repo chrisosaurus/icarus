@@ -42,14 +42,14 @@ void new_insert_get_destroy(void){
     table = lh_new();
     assert(table);
     assert( 32 == table->size );
-    assert( 0 == table->n_elems );
+    assert( 0 == lh_nelems(table) );
     assert( 0 == lh_load(table) );
 
 
     puts("testing insert and get");
     puts("one insert");
     assert( lh_insert(table, key_1, &data_1) );
-    assert( 1 == table->n_elems );
+    assert( 1 == lh_nelems(table));
     assert( 0 == lh_get(table, key_2) );
     assert( 0 == lh_get(table, key_3) );
 
@@ -61,7 +61,7 @@ void new_insert_get_destroy(void){
 
     puts("two insert");
     assert( lh_insert(table, key_2, &data_2) );
-    assert( 2 == table->n_elems );
+    assert( 2 == lh_nelems(table) );
     assert( 0 == lh_get(table, key_3) );
 
     puts("two get");
@@ -72,7 +72,7 @@ void new_insert_get_destroy(void){
 
     puts("three insert");
     assert( lh_insert(table, key_3, &data_3) );
-    assert( 3 == table->n_elems );
+    assert( 3 == lh_nelems(table) );
 
     puts("three get");
     data = lh_get(table, key_3);
@@ -113,12 +113,12 @@ void set(void){
     table = lh_new();
     assert(table);
     assert( 32 == table->size );
-    assert( 0 == table->n_elems );
+    assert( 0 == lh_nelems(table) );
 
 
     puts("inserting some data");
     assert( lh_insert(table, key_1, &data_1) );
-    assert( 1 == table->n_elems );
+    assert( 1 == lh_nelems(table) );
     assert( 0 == lh_get(table, key_2) );
     assert( 0 == lh_get(table, key_3) );
 
@@ -128,7 +128,7 @@ void set(void){
 
 
     assert( lh_insert(table, key_2, &data_2) );
-    assert( 2 == table->n_elems );
+    assert( 2 == lh_nelems(table) );
     assert( 0 == lh_get(table, key_3) );
 
     data = lh_get(table, key_2);
@@ -137,7 +137,7 @@ void set(void){
 
 
     assert( lh_insert(table, key_3, &data_3) );
-    assert( 3 == table->n_elems );
+    assert( 3 == lh_nelems(table) );
 
     data = lh_get(table, key_3);
     assert(data);
@@ -153,7 +153,7 @@ void set(void){
     data = lh_set(table, key_2, &new_data_2);
     assert(data);
     assert( *data == data_2 );
-    assert( 3 == table->n_elems );
+    assert( 3 == lh_nelems(table) );
 
     data = lh_get(table, key_2);
     assert(data);
@@ -163,7 +163,7 @@ void set(void){
     data = lh_set(table, key_3, &new_data_3);
     assert(data);
     assert( *data == data_3 );
-    assert( 3 == table->n_elems );
+    assert( 3 == lh_nelems(table) );
 
     data = lh_get(table, key_3);
     assert(data);
@@ -173,7 +173,7 @@ void set(void){
     data = lh_set(table, key_1, &new_data_1);
     assert(data);
     assert( *data == data_1 );
-    assert( 3 == table->n_elems );
+    assert( 3 == lh_nelems(table) );
 
     data = lh_get(table, key_1);
     assert(data);
@@ -207,12 +207,12 @@ void delete(void){
     table = lh_new();
     assert(table);
     assert( 32 == table->size );
-    assert( 0 == table->n_elems );
+    assert( 0 == lh_nelems(table) );
 
 
     puts("inserting some data");
     assert( lh_insert(table, key_1, &data_1) );
-    assert( 1 == table->n_elems );
+    assert( 1 == lh_nelems(table) );
     assert( 0 == lh_get(table, key_2) );
     assert( 0 == lh_get(table, key_3) );
 
@@ -222,7 +222,7 @@ void delete(void){
 
 
     assert( lh_insert(table, key_2, &data_2) );
-    assert( 2 == table->n_elems );
+    assert( 2 == lh_nelems(table) );
     assert( 0 == lh_get(table, key_3) );
 
     data = lh_get(table, key_2);
@@ -231,7 +231,7 @@ void delete(void){
 
 
     assert( lh_insert(table, key_3, &data_3) );
-    assert( 3 == table->n_elems );
+    assert( 3 == lh_nelems(table) );
 
     data = lh_get(table, key_3);
     assert(data);
@@ -243,7 +243,7 @@ void delete(void){
     data = lh_delete(table, key_1);
     assert(data);
     assert(*data == data_1);
-    assert( 2 == table->n_elems );
+    assert( 2 == lh_nelems(table) );
 
     /* should not be able to re-delete */
     data = lh_delete(table, key_1);
@@ -254,7 +254,7 @@ void delete(void){
     data = lh_delete(table, key_3);
     assert(data);
     assert(*data == data_3);
-    assert( 1 == table->n_elems );
+    assert( 1 == lh_nelems(table) );
 
     /* should not be able to re-delete */
     data = lh_delete(table, key_3);
@@ -265,7 +265,7 @@ void delete(void){
     data = lh_delete(table, key_2);
     assert(data);
     assert(*data == data_2);
-    assert( 0 == table->n_elems );
+    assert( 0 == lh_nelems(table) );
 
     /* should not be able to re-delete */
     data = lh_delete(table, key_2);
@@ -312,74 +312,74 @@ void collision(void){
     table = lh_new();
     assert(table);
     assert( 32 == table->size );
-    assert( 0 == table->n_elems );
+    assert( 0 == lh_nelems(table) );
     assert( 0 == lh_load(table) );
 
     /* artificially shrink down table */
     assert( lh_resize(table, 9) );
     assert( 9 == table->size );
-    assert( 0 == table->n_elems );
+    assert( 0 == lh_nelems(table) );
     assert( 0 == lh_load(table) );
 
 
     puts("inserting some data");
     assert( lh_insert(table, key_1, &data_1) );
-    assert( 1 == table->n_elems );
+    assert( 1 == lh_nelems(table) );
     data = lh_get(table, key_1);
     assert(data);
     assert( data_1 == *data );
 
 
     assert( lh_insert(table, key_2, &data_2) );
-    assert( 2 == table->n_elems );
+    assert( 2 == lh_nelems(table) );
     data = lh_get(table, key_2);
     assert(data);
     assert( data_2 == *data );
 
 
     assert( lh_insert(table, key_3, &data_3) );
-    assert( 3 == table->n_elems );
+    assert( 3 == lh_nelems(table) );
     data = lh_get(table, key_3);
     assert(data);
     assert( data_3 == *data );
 
     assert( lh_insert(table, key_4, &data_4) );
-    assert( 4 == table->n_elems );
+    assert( 4 == lh_nelems(table) );
     data = lh_get(table, key_4);
     assert(data);
     assert( data_4 == *data );
 
     assert( lh_insert(table, key_5, &data_5) );
-    assert( 5 == table->n_elems );
+    assert( 5 == lh_nelems(table) );
     data = lh_get(table, key_5);
     assert(data);
     assert( data_5 == *data );
 
     assert( lh_insert(table, key_6, &data_6) );
-    assert( 6 == table->n_elems );
+    assert( 6 == lh_nelems(table) );
     data = lh_get(table, key_6);
     assert(data);
     assert( data_6 == *data );
 
     assert( lh_insert(table, key_7, &data_7) );
-    assert( 7 == table->n_elems );
+    assert( 7 == lh_nelems(table) );
     data = lh_get(table, key_7);
     assert(data);
     assert( data_7 == *data );
 
     assert( lh_insert(table, key_8, &data_8) );
-    assert( 8 == table->n_elems );
+    assert( 8 == lh_nelems(table) );
     data = lh_get(table, key_8);
     assert(data);
     assert( data_8 == *data );
 
     assert( lh_insert(table, key_9, &data_9) );
-    assert( 9 == table->n_elems );
+    assert( 9 == lh_nelems(table) );
     data = lh_get(table, key_9);
     assert(data);
     assert( data_9 == *data );
 
-    assert( 9 == table->n_elems );
+    assert( 9 == lh_nelems(table) );
     /* assert that our resize succeeded and we
      * are not full */
     assert( 10 > lh_load(table) );
@@ -429,7 +429,7 @@ void collision(void){
     data = lh_delete(table, key_1);
     assert(data);
     assert(*data == data_1);
-    assert( 8 == table->n_elems );
+    assert( 8 == lh_nelems(table) );
 
     /* should not be able to re-delete */
     data = lh_delete(table, key_1);
@@ -439,7 +439,7 @@ void collision(void){
     data = lh_delete(table, key_3);
     assert(data);
     assert(*data == data_3);
-    assert( 7 == table->n_elems );
+    assert( 7 == lh_nelems(table) );
 
     /* should not be able to re-delete */
     data = lh_delete(table, key_3);
@@ -449,7 +449,7 @@ void collision(void){
     data = lh_delete(table, key_2);
     assert(data);
     assert(*data == data_2);
-    assert( 6 == table->n_elems );
+    assert( 6 == lh_nelems(table) );
 
     /* should not be able to re-delete */
     data = lh_delete(table, key_2);
@@ -509,16 +509,16 @@ void resize(void){
     table = lh_new();
     assert(table);
     assert( 32 == table->size );
-    assert( 0 == table->n_elems );
+    assert( 0 == lh_nelems(table) );
 
     /* artificially shrink down */
     assert( lh_resize(table, 3) );
     assert( 3 == table->size );
-    assert( 0 == table->n_elems );
+    assert( 0 == lh_nelems(table) );
 
     puts("inserting some data");
     assert( lh_insert(table, key_1, &data_1) );
-    assert( 1 == table->n_elems );
+    assert( 1 == lh_nelems(table) );
     assert( 0 == lh_get(table, key_2) );
     assert( 0 == lh_get(table, key_3) );
     data = lh_get(table, key_1);
@@ -527,7 +527,7 @@ void resize(void){
 
 
     assert( lh_insert(table, key_2, &data_2) );
-    assert( 2 == table->n_elems );
+    assert( 2 == lh_nelems(table) );
     assert( 0 == lh_get(table, key_3) );
     data = lh_get(table, key_2);
     assert(data);
@@ -535,7 +535,7 @@ void resize(void){
 
 
     assert( lh_insert(table, key_3, &data_3) );
-    assert( 3 == table->n_elems );
+    assert( 3 == lh_nelems(table) );
     data = lh_get(table, key_3);
     assert(data);
     assert( data_3 == *data );
@@ -543,7 +543,7 @@ void resize(void){
 
     puts("testing resize");
     assert( lh_resize(table, 10) );
-    assert( 3  == table->n_elems );
+    assert( 3  == lh_nelems(table) );
     assert( 10 == table->size );
 
     puts("testing we can still fetch all the old values");
@@ -601,12 +601,12 @@ void destroy(void){
     table = lh_new();
     assert(table);
     assert( 32 == table->size );
-    assert( 0 == table->n_elems );
+    assert( 0 == lh_nelems(table) );
 
 
     puts("populating");
     assert( lh_insert(table, key_1, data_1) );
-    assert( 1 == table->n_elems );
+    assert( 1 == lh_nelems(table) );
     assert( 0 == lh_get(table, key_2) );
     assert( 0 == lh_get(table, key_3) );
     data = lh_get(table, key_1);
@@ -615,7 +615,7 @@ void destroy(void){
 
 
     assert( lh_insert(table, key_2, data_2) );
-    assert( 2 == table->n_elems );
+    assert( 2 == lh_nelems(table) );
     assert( 0 == lh_get(table, key_3) );
     data = lh_get(table, key_2);
     assert(data);
@@ -623,7 +623,7 @@ void destroy(void){
 
 
     assert( lh_insert(table, key_3, data_3) );
-    assert( 3 == table->n_elems );
+    assert( 3 == lh_nelems(table) );
     data = lh_get(table, key_3);
     assert(data);
     assert( *data_3 == *data );
@@ -655,22 +655,26 @@ void error_handling(void){
 
 
     puts("\ntesting handling of error cases");
+
+    puts("testing lh_nelems");
+    assert( 0 == lh_nelems(0) );
+
     puts("setting up...");
 
     puts("creating table");
     table = lh_new();
     assert(table);
     assert( 32 == table->size );
-    assert( 0 == table->n_elems );
+    assert( 0 == lh_nelems(table) );
 
     /* artificially shrink */
     assert( lh_resize(table, 3) );
     assert( 3 == table->size );
-    assert( 0 == table->n_elems );
+    assert( 0 == lh_nelems(table) );
 
     puts("inserting some data");
     assert( lh_insert(table, key_1, &data_1) );
-    assert( 1 == table->n_elems );
+    assert( 1 == lh_nelems(table) );
     assert( 0 == lh_get(table, key_2) );
     assert( 0 == lh_get(table, key_3) );
     data = lh_get(table, key_1);
@@ -679,7 +683,7 @@ void error_handling(void){
 
 
     assert( lh_insert(table, key_2, &data_2) );
-    assert( 2 == table->n_elems );
+    assert( 2 == lh_nelems(table) );
     assert( 0 == lh_get(table, key_3) );
     data = lh_get(table, key_2);
     assert(data);
@@ -820,18 +824,18 @@ void load_resize(void){
     table = lh_new();
     assert(table);
     assert( 32 == table->size );
-    assert( 0 == table->n_elems );
+    assert( 0 == lh_nelems(table) );
     assert( 0 == lh_load(table) );
 
     /* artificially shrink */
     assert( lh_resize(table, 4) );
     assert( 4 == table->size );
-    assert( 0 == table->n_elems );
+    assert( 0 == lh_nelems(table) );
     assert( 0 == lh_load(table) );
 
     puts("adding some data to force a resize");
     assert( lh_insert(table, key_1, &data_1) );
-    assert( 1 == table->n_elems );
+    assert( 1 == lh_nelems(table) );
     assert( 0 == lh_get(table, key_2) );
     assert( 0 == lh_get(table, key_3) );
     data = lh_get(table, key_1);
@@ -844,7 +848,7 @@ void load_resize(void){
      * no resize
      */
     assert( 4 == table->size );
-    assert( 1 == table->n_elems );
+    assert( 1 == lh_nelems(table) );
     /* however the load now will be
      * 1 / 4 = 25 %
      */
@@ -852,7 +856,7 @@ void load_resize(void){
 
 
     assert( lh_insert(table, key_2, &data_2) );
-    assert( 2 == table->n_elems );
+    assert( 2 == lh_nelems(table) );
     assert( 0 == lh_get(table, key_3) );
     data = lh_get(table, key_2);
     assert(data);
@@ -864,7 +868,7 @@ void load_resize(void){
      * no resize
      */
     assert( 4 == table->size );
-    assert( 2 == table->n_elems );
+    assert( 2 == lh_nelems(table) );
     /* however the load now will be
      * 2 / 4 = 50 %
      */
@@ -872,7 +876,7 @@ void load_resize(void){
 
 
     assert( lh_insert(table, key_3, &data_3) );
-    assert( 3 == table->n_elems );
+    assert( 3 == lh_nelems(table) );
     data = lh_get(table, key_3);
     assert(data);
     assert( data_3 == *data );
@@ -883,7 +887,7 @@ void load_resize(void){
      * no resize
      */
     assert( 4 == table->size );
-    assert( 3 == table->n_elems );
+    assert( 3 == lh_nelems(table) );
     /* however the load now will be
      * 3 / 4 = 70 %
      * so this will trigger a resize (as 70 >= 60)
@@ -892,7 +896,7 @@ void load_resize(void){
 
 
     assert( lh_insert(table, key_4, &data_4) );
-    assert( 4 == table->n_elems );
+    assert( 4 == lh_nelems(table) );
     data = lh_get(table, key_4);
     assert(data);
     assert( data_4 == *data );
@@ -903,7 +907,7 @@ void load_resize(void){
      * so resize called to double
      */
     assert( 8 == table->size );
-    assert( 4 == table->n_elems );
+    assert( 4 == lh_nelems(table) );
     /* and after resizing the load now will be
      * 4 / 8 = 50 %
      */
@@ -957,7 +961,7 @@ void rollover(void){
     /* force resize to 2 */
     assert( lh_resize(table, 2) );
     assert( 2 == table->size );
-    assert( 0 == table->n_elems );
+    assert( 0 == lh_nelems(table) );
 
     /* insert 2 elements that we know will collide */
     assert( lh_insert(table, key, &data) );
@@ -995,24 +999,24 @@ void threshold(void){
 
     /* insert 4 times checking there has been no resizing */
     assert( lh_insert(table, "a", &data) );
-    assert( 1 == table->n_elems );
+    assert( 1 == lh_nelems(table) );
     assert( 4 == table->size );
 
     assert( lh_insert(table, "b", &data) );
-    assert( 2 == table->n_elems );
+    assert( 2 == lh_nelems(table) );
     assert( 4 == table->size );
 
     assert( lh_insert(table, "c", &data) );
-    assert( 3 == table->n_elems );
+    assert( 3 == lh_nelems(table) );
     assert( 4 == table->size );
 
     assert( lh_insert(table, "d", &data) );
-    assert( 4 == table->n_elems );
+    assert( 4 == lh_nelems(table) );
     assert( 4 == table->size );
 
     /* insert 1 more and check resize */
     assert( lh_insert(table, "e", &data) );
-    assert( 5 == table->n_elems );
+    assert( 5 == lh_nelems(table) );
     assert( 8 == table->size );
     assert( 10 == table->threshold );
 
@@ -1024,7 +1028,7 @@ void artificial(void){
     struct lh_table *table = 0;
     int data = 1;
 
-    puts("\ntesting artificial linear search filure");
+    puts("\ntesting artificial linear search failure");
 
     puts("building table");
     table = lh_new();

@@ -57,6 +57,13 @@ struct lh_table {
     struct lh_entry *entries;
 };
 
+/* function to return number of elements
+ *
+ * returns number on success
+ * returns 0 on error
+ */
+unsigned int lh_nelems(const struct lh_table *table);
+
 /* function to calculate load
  * (table->n_elems * 10) / table->size
  *

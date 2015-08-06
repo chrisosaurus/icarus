@@ -323,6 +323,20 @@ struct lh_entry * lh_find_entry(const struct lh_table *table, const char *key){
  **********************************************
  ***********************************************/
 
+/* function to return number of elements
+ *
+ * returns number on success
+ * returns 0 on error
+ */
+unsigned int lh_nelems(const struct lh_table *table){
+    if( ! table ){
+        puts("lh_nelems: table was null");
+        return 0;
+    }
+
+    return table->n_elems;
+}
+
 /* function to calculate load
  * (table->n_elems * 10) / table->size
  *
