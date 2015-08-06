@@ -186,7 +186,15 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
      *
      * destroying all three would be an error
      *
-     * so we destroy aast but we do NOT destroy the following:
+     * this means that we do not need to destroy the items stored in the following as
+     *  their elements will be freed via ic_ast_destroy on kludge->aast :
+     *      dict_tname
+     *      dict_fsig
+     *      tdecls
+     *      fdecls
+     *
+     * note that we must still ensure to free the above data structures themselves
+     * FIXME the following data structures are not currently destroyed:
      *      dict_tname
      *      dict_fsig
      *      tdecls
