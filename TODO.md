@@ -10,6 +10,7 @@ TODO:
 
 bugs:
 
+* return code: ic_pvector_destroy returns 1 on failure, ic_dict_destroy returns 0 on failure
 
 
 testing debt:
@@ -36,5 +37,5 @@ considerations:
 * consider how to deal with builtin types (int, string) and functions (print)
 * consider const-correctness on read only args
 * `ic_analyse_type_decl` currently allows co-recursive types `type Foo a::Bar end` `type bar a::Foo end`, is this allowed?
-
+ * consider allowing free_data param to ic_pvector_destroy that is passed to (*destroy_item) rather than defaulting to true
 

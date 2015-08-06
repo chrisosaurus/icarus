@@ -194,13 +194,47 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
      *      fdecls
      *
      * note that we must still ensure to free the above data structures themselves
-     * FIXME the following data structures are not currently destroyed:
-     *      dict_tname
-     *      dict_fsig
-     *      tdecls
-     *      fdecls
-     *
      */
+
+    /* cleanup dict_tname
+     * ic_dict_destroy(*dict, free_dict, free_data);
+     * do not free_dict as it is a member of kludge
+     * do not free_data as it is freed when aast is freed
+     */
+    if( ! ic_dict_destroy( &(kludge->dict_tname), 0, 0 ) ){
+        puts("ic_kludge_destroy: call to ic_dict_destroy for dict_tname failed");
+        return 1;
+    }
+
+    /* cleanup dict_fsig
+     * ic_dict_destroy(*dict, free_dict, free_data);
+     * do not free_dict as it is a member of kludge
+     * do not free_data as it is freed when aast is freed
+     */
+    if( ! ic_dict_destroy( &(kludge->dict_fsig), 0, 0 ) ){
+        puts("ic_kludge_destroy: call to ic_dict_destroy for dict_fsig failed");
+        return 1;
+    }
+
+    /* cleanup tdecls
+     * ic_pvector_destroy(*vec, free_vec, (*destroy_item)());
+     * do not free_vec as it is a member of kludge
+     * no need for destroy_item funcion
+     */
+    if( ic_pvector_destroy( &(kludge->tdecls), 0, 0 ) ){
+        puts("ic_kludge_destroy: call to ic_pvector_destroy for tdecls failed");
+        return 1;
+    }
+
+    /* cleanup fdecls
+     * ic_pvector_destroy(*vec, free_vec, (*destroy_item)());
+     * do not free_vec as it is a member of kludge
+     * no need for destroy_item funcion
+     */
+    if( ic_pvector_destroy( &(kludge->fdecls), 0, 0 ) ){
+        puts("ic_kludge_destroy: call to ic_pvector_destroy for fdecls failed");
+        return 1;
+    }
 
     /* iterate through errors destroying each error
      *      list of Errors
