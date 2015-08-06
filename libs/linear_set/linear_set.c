@@ -213,7 +213,7 @@ unsigned int ls_entry_destroy(struct ls_entry *entry){
  * returns a pointer to it on success
  * return 0 on failure
  */
-struct ls_entry * ls_find_entry(const struct ls_set *table, const char *key){
+struct ls_entry * ls_find_entry(const struct ls_set *set, const char *key){
     /* our cur entry */
     struct ls_entry *cur = 0;
 
@@ -227,8 +227,8 @@ struct ls_entry * ls_find_entry(const struct ls_set *table, const char *key){
     size_t key_len = 0;
 
 
-    if( ! table ){
-        puts("ls_find_entry: table undef");
+    if( ! set ){
+        puts("ls_find_entry: set undef");
         return 0;
     }
 
@@ -244,14 +244,14 @@ struct ls_entry * ls_find_entry(const struct ls_set *table, const char *key){
     hash = ls_hash(key, key_len);
 
     /* calculate pos
-     * we know table is defined here
+     * we know set is defined here
      * so ls_pos cannot fail
      */
-    pos = ls_pos(hash, table->size);
+    pos = ls_pos(hash, set->size);
 
     /* search pos..size */
-    for( i=pos; i < table->size; ++i ){
-        cur = &(table->entries[i]);
+    for( i=pos; i < set->size; ++i ){
+        cur = &(set->entries[i]);
 
         /* if this is an empty then we stop */
         if( cur->state == ls_ENTRY_EMPTY ){
@@ -276,7 +276,7 @@ struct ls_entry * ls_find_entry(const struct ls_set *table, const char *key){
 
     /* search 0..pos */
     for( i=0; i < pos; ++i ){
-        cur = &(table->entries[i]);
+        cur = &(set->entries[i]);
 
         /* if this is an empty then we stop */
         if( cur->state == ls_ENTRY_EMPTY ){
@@ -316,26 +316,40 @@ struct ls_entry * ls_find_entry(const struct ls_set *table, const char *key){
  **********************************************
  ***********************************************/
 
+/* function to return number of elements
+ *
+ * returns number on success
+ * returns 0 on error
+ */
+unsigned int ls_nelems(const struct ls_set *set){
+    if( ! set ){
+        puts("ls_nelems: set was null");
+        return 0;
+    }
+
+    return set->n_elems;
+}
+
 /* function to calculate load
- * (table->n_elems * 10) / table->size
+ * (set->n_elems * 10) / set->size
  *
  * returns loading factor 0 -> 10 on success
  * returns 0 on failure
  */
-unsigned int ls_load(const struct ls_set *table){
-    if( ! table ){
-        puts("ls_load: table was null");
+unsigned int ls_load(const struct ls_set *set){
+    if( ! set ){
+        puts("ls_load: set was null");
         return 0;
     }
 
     /* here we multiply by 10 to avoid floating point
      * as we only care about the most significant figure
      */
-    return (table->n_elems * 10) / table->size;
+    return (set->n_elems * 10) / set->size;
 }
 
 /* set the load that we resize at
- * load is (table->n_elems * 10) / table->size
+ * load is (set->n_elems * 10) / set->size
  *
  * this sets ls_set->threshold
  * this defaults to LS_DEFALT_THRESHOLD in linear_set.c
@@ -346,9 +360,9 @@ unsigned int ls_load(const struct ls_set *table){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ls_tune_threshold(struct ls_set *table, unsigned int threshold){
-    if( ! table ){
-        puts("ls_tune_threshold: table was null");
+unsigned int ls_tune_threshold(struct ls_set *set, unsigned int threshold){
+    if( ! set ){
+        puts("ls_tune_threshold: set was null");
         return 0;
     }
 
@@ -357,7 +371,7 @@ unsigned int ls_tune_threshold(struct ls_set *table, unsigned int threshold){
         return 0;
     }
 
-    table->threshold = threshold;
+    set->threshold = threshold;
     return 1;
 }
 
@@ -422,19 +436,19 @@ unsigned long int ls_hash(const char *key, size_t key_len){
     return hash;
 }
 
-/* takes a table and a hash value
+/* takes a set and a hash value
  *
- * returns the index into the table for this hash
- * returns 0 on error (if table is null)
+ * returns the index into the set for this hash
+ * returns 0 on error (if set is null)
  *
  * note the error value is indistinguishable from the 0th bucket
- * this function can only error if table is null
+ * this function can only error if set is null
  * so the caller can distinguish these 2 cases
  */
-size_t ls_pos(unsigned long int hash, size_t table_size){
+size_t ls_pos(unsigned long int hash, size_t set_size){
 
     /* force hash value into a bucket */
-    return hash % table_size;
+    return hash % set_size;
 }
 
 /* allocate and initialise a new ls_set
@@ -442,7 +456,7 @@ size_t ls_pos(unsigned long int hash, size_t table_size){
  * will automatically assume a size of 32
  *
  * ls_set will automatically resize when a call to
- * ls_insert detects the load factor is over table->threshold
+ * ls_insert detects the load factor is over set->threshold
  *
  * returns pointer on success
  * returns 0 on error
@@ -471,35 +485,35 @@ struct ls_set * ls_new(void){
  * this will free all the sh entries stored
  * this will free all the keys (as they are strdup-ed)
  *
- * this will only free the *table pointer if `free_table` is set to 1
+ * this will only free the *set pointer if `free_set` is set to 1
  *
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ls_destroy(struct ls_set *table, unsigned int free_table){
-    /* iterator through table */
+unsigned int ls_destroy(struct ls_set *set, unsigned int free_set){
+    /* iterator through set */
     size_t i = 0;
 
-    if( ! table ){
-        puts("ls_destroy: table undef");
+    if( ! set ){
+        puts("ls_destroy: set undef");
         return 0;
     }
 
     /* iterate through `entries` list
      * calling ls_entry_destroy on each
      */
-    for( i=0; i < table->size; ++i ){
-        if( ! ls_entry_destroy( &(table->entries[i]) ) ){
+    for( i=0; i < set->size; ++i ){
+        if( ! ls_entry_destroy( &(set->entries[i]) ) ){
             puts("ls_destroy: call to ls_entry_destroy failed, continuing...");
         }
     }
 
-    /* free entires table */
-    free(table->entries);
+    /* free entires set */
+    free(set->entries);
 
-    /* finally free table if asked to */
-    if( free_table ){
-        free(table);
+    /* finally free set if asked to */
+    if( free_set ){
+        free(set);
     }
 
     return 1;
@@ -510,9 +524,9 @@ unsigned int ls_destroy(struct ls_set *table, unsigned int free_table){
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ls_init(struct ls_set *table, size_t size){
-    if( ! table ){
-        puts("ls_init: table undef");
+unsigned int ls_init(struct ls_set *set, size_t size){
+    if( ! set ){
+        puts("ls_init: set undef");
         return 0;
     }
 
@@ -521,13 +535,13 @@ unsigned int ls_init(struct ls_set *table, size_t size){
         return 0;
     }
 
-    table->size      = size;
-    table->n_elems   = 0;
-    table->threshold = LS_DEFALT_THRESHOLD;
+    set->size      = size;
+    set->n_elems   = 0;
+    set->threshold = LS_DEFALT_THRESHOLD;
 
     /* calloc our buckets (pointer to ls_entry) */
-    table->entries = calloc(size, sizeof(struct ls_entry));
-    if( ! table->entries ){
+    set->entries = calloc(size, sizeof(struct ls_entry));
+    if( ! set->entries ){
         puts("ls_init: calloc failed");
         return 0;
     }
@@ -535,7 +549,7 @@ unsigned int ls_init(struct ls_set *table, size_t size){
     return 1;
 }
 
-/* resize an existing table to new_size
+/* resize an existing set to new_size
  * this will reshuffle all the buckets around
  *
  * you can use this to make a hash larger or smaller
@@ -543,7 +557,7 @@ unsigned int ls_init(struct ls_set *table, size_t size){
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ls_resize(struct ls_set *table, size_t new_size){
+unsigned int ls_resize(struct ls_set *set, size_t new_size){
     /* our new data area */
     struct ls_entry *new_entries = 0;
     /* the current entry we are copying across */
@@ -555,8 +569,8 @@ unsigned int ls_resize(struct ls_set *table, size_t new_size){
     /* our new position for each element */
     size_t new_pos = 0;
 
-    if( ! table ){
-        puts("ls_resize: table was null");
+    if( ! set ){
+        puts("ls_resize: set was null");
         return 0;
     }
 
@@ -565,7 +579,7 @@ unsigned int ls_resize(struct ls_set *table, size_t new_size){
         return 0;
     }
 
-    if( new_size <= table->n_elems ){
+    if( new_size <= set->n_elems ){
         puts("ls_resize: asked for new_size smaller than number of existing elements, impossible");
         return 0;
     }
@@ -578,8 +592,8 @@ unsigned int ls_resize(struct ls_set *table, size_t new_size){
     }
 
     /* iterate through old data */
-    for( i=0; i < table->size; ++i ){
-        cur = &(table->entries[i]);
+    for( i=0; i < set->size; ++i ){
+        cur = &(set->entries[i]);
 
         /* if we are not occupied then skip */
         if( cur->state != ls_ENTRY_OCCUPIED ){
@@ -620,11 +634,11 @@ LS_RESIZE_FOUND:
     }
 
     /* free old data */
-    free(table->entries);
+    free(set->entries);
 
     /* swap */
-    table->size = new_size;
-    table->entries = new_entries;
+    set->size = new_size;
+    set->entries = new_entries;
 
     return 1;
 }
@@ -634,11 +648,11 @@ LS_RESIZE_FOUND:
  * returns 1 on success (key exists)
  * returns 0 if key doesn't exist or on error
  */
-unsigned int ls_exists(const struct ls_set *table, const char *key){
+unsigned int ls_exists(const struct ls_set *set, const char *key){
     struct ls_entry *she = 0;
 
-    if( ! table ){
-        puts("ls_exists: table undef");
+    if( ! set ){
+        puts("ls_exists: set undef");
         return 0;
     }
 
@@ -652,7 +666,7 @@ unsigned int ls_exists(const struct ls_set *table, const char *key){
 #endif
 
     /* find entry */
-    she = ls_find_entry(table, key);
+    she = ls_find_entry(set, key);
     if( ! she ){
         /* not found */
         return 0;
@@ -663,25 +677,25 @@ unsigned int ls_exists(const struct ls_set *table, const char *key){
 }
 
 /* insert `key`
- * this will only success if !ls_exists(table, key)
+ * this will only success if !ls_exists(set, key)
  *
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ls_insert(struct ls_set *table, const char *key){
+unsigned int ls_insert(struct ls_set *set, const char *key){
     /* our new entry */
     struct ls_entry *she = 0;
     /* hash */
     unsigned long int hash = 0;
     /* position in hash table */
     size_t pos = 0;
-    /* iterator through table */
+    /* iterator through set */
     size_t i = 0;
     /* cached strlen */
     size_t key_len = 0;
 
-    if( ! table ){
-        puts("ls_insert: table undef");
+    if( ! set ){
+        puts("ls_insert: set undef");
         return 0;
     }
 
@@ -703,9 +717,9 @@ unsigned int ls_insert(struct ls_set *table, const char *key){
     /* check for already existing key
      * insert only works if the key is not already present
      */
-    if( ls_exists(table, key) ){
+    if( ls_exists(set, key) ){
 #ifdef DEBUG
-        puts("ls_insert: key already exists in table");
+        puts("ls_insert: key already exists in set");
 #endif
         return 0;
     }
@@ -713,8 +727,8 @@ unsigned int ls_insert(struct ls_set *table, const char *key){
     /* determine if we have to resize
      * note we are checking the load before the insert
      */
-    if( ls_load(table) >= table->threshold ){
-        if( ! ls_resize(table, table->size * LS_SCALING_FACTOR) ){
+    if( ls_load(set) >= set->threshold ){
+        if( ! ls_resize(set, set->size * LS_SCALING_FACTOR) ){
             puts("ls_insert: call to ls_resize failed");
             return 0;
         }
@@ -727,18 +741,18 @@ unsigned int ls_insert(struct ls_set *table, const char *key){
     hash = ls_hash(key, key_len);
 
     /* calculate pos
-     * we know table is defined here
+     * we know set is defined here
      * so ls_pos cannot fail
      */
-    pos = ls_pos(hash, table->size);
+    pos = ls_pos(hash, set->size);
 
 #ifdef DEBUG
     printf("ls_insert: trying to insert key '%s', hash value '%zd', starting at pos '%zd'\n", key, hash, pos);
 #endif
 
     /* iterate from pos to size */
-    for( i=pos; i < table->size; ++i ){
-        she = &(table->entries[i]);
+    for( i=pos; i < set->size; ++i ){
+        she = &(set->entries[i]);
         /* if taken keep searching */
         if( she->state == ls_ENTRY_OCCUPIED ){
             continue;
@@ -750,7 +764,7 @@ unsigned int ls_insert(struct ls_set *table, const char *key){
 
     /* iterate from 0 to pos */
     for( i=0; i < pos; ++i ){
-        she = &(table->entries[i]);
+        she = &(set->entries[i]);
         /* if taken keep searching */
         if( she->state == ls_ENTRY_OCCUPIED ){
             continue;
@@ -788,7 +802,7 @@ LS_INSERT_FOUND:
     }
 
     /* increment number of elements */
-    ++table->n_elems;
+    ++set->n_elems;
 
     /* return success */
     return 1;
@@ -800,20 +814,20 @@ LS_INSERT_FOUND:
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ls_delete(struct ls_set *table, const char *key){
+unsigned int ls_delete(struct ls_set *set, const char *key){
     /* our cur entry */
     struct ls_entry *cur = 0;
     /* hash */
     unsigned long int hash = 0;
     /* position in hash table */
     size_t pos = 0;
-    /* iterator through has table */
+    /* iterator through has set */
     size_t i =0;
     /* cached strlen */
     size_t key_len = 0;
 
-    if( ! table ){
-        puts("ls_delete: table undef");
+    if( ! set ){
+        puts("ls_delete: set undef");
         return 0;
     }
 
@@ -829,17 +843,17 @@ unsigned int ls_delete(struct ls_set *table, const char *key){
     hash = ls_hash(key, key_len);
 
     /* calculate pos
-     * we know table is defined here
+     * we know set is defined here
      * so ls_pos cannot fail
      */
-    pos = ls_pos(hash, table->size);
+    pos = ls_pos(hash, set->size);
 
 
     /* starting at pos search for element
      * searches pos .. size
      */
-    for( i = pos; i < table->size ; ++i ){
-        cur = &(table->entries[i]);
+    for( i = pos; i < set->size ; ++i ){
+        cur = &(set->entries[i]);
 
         /* if this is an empty then we stop */
         if( cur->state == ls_ENTRY_EMPTY ){
@@ -866,7 +880,7 @@ unsigned int ls_delete(struct ls_set *table, const char *key){
      * searches 0 .. pos
      */
     for( i = 0; i < pos; ++i ){
-        cur = &(table->entries[i]);
+        cur = &(set->entries[i]);
 
         /* if this is an empty then we stop */
         if( cur->state == ls_ENTRY_EMPTY ){
@@ -903,7 +917,7 @@ LS_DELETE_FOUND:
         cur->state = ls_ENTRY_DUMMY;
 
         /* decrement number of elements */
-        --table->n_elems;
+        --set->n_elems;
 
         /* return old data */
         return 1;

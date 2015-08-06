@@ -1,8 +1,8 @@
 https://github.com/mkfifo/linear_set
 
-commit a1db5e5d7327c4aa6bb4a5aa9971f1a155418192
+commit 1569305177a07e831a1494747af65d25467df89d
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Wed Aug 5 16:38:26 2015 +1200
+Date:   Thu Aug 6 14:34:56 2015 +1200
 
-    tweaking const correctness
+    replacing uses of "table" with more correct "set"
 

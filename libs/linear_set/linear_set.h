@@ -55,16 +55,23 @@ struct ls_set {
     struct ls_entry *entries;
 };
 
+/* function to return number of elements
+ *
+ * returns number on success
+ * returns 0 on error
+ */
+unsigned int ls_nelems(const struct ls_set *set);
+
 /* function to calculate load
- * (table->n_elems * 10) / table->size
+ * (set->n_elems * 10) / set->size
  *
  * returns loading factor 0 -> 10 on success
  * returns 0 on failure
  */
-unsigned int ls_load(const struct ls_set *table);
+unsigned int ls_load(const struct ls_set *set);
 
 /* set the load that we resize at
- * load is (table->n_elems * 10) / table->size
+ * load is (set->n_elems * 10) / set->size
  *
  * this sets ls_set->threshold
  * this defaults to ls_DEFAULT_THRESHOLD in linear_set.c
@@ -75,7 +82,7 @@ unsigned int ls_load(const struct ls_set *table);
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ls_tune_threshold(struct ls_set *table, unsigned int threshold);
+unsigned int ls_tune_threshold(struct ls_set *set, unsigned int threshold);
 
 /* takes a char* representing a string
  * and a key_len of it's size
@@ -87,23 +94,23 @@ unsigned int ls_tune_threshold(struct ls_set *table, unsigned int threshold);
  */
 unsigned long int ls_hash(const char *key, size_t key_len);
 
-/* takes a table and a hash value
+/* takes a set and a hash value
  *
- * returns the index into the table for this hash
- * returns 0 on error (if table is null)
+ * returns the index into the set for this hash
+ * returns 0 on error (if set is null)
  *
  * note the error value is indistinguishable from the 0th bucket
- * this function can only error if table is null
+ * this function can only error if set is null
  * so the caller can distinguish these 2 cases
  */
-size_t ls_pos(unsigned long int hash, size_t table_size);
+size_t ls_pos(unsigned long int hash, size_t set_size);
 
 /* allocate and initialise a new ls_set
  *
  * will automatically assume a size of 32
  *
  * ls_set will automatically resize when a call to
- * ls_insert detects the load factor is over table->threshold
+ * ls_insert detects the load factor is over set->threshold
  *
  * returns pointer on success
  * returns 0 on error
@@ -114,21 +121,21 @@ struct ls_set * ls_new(void);
  * this will free all the sh entries stored
  * this will free all the keys (as they are strdup-ed)
  *
- * this will only free the *table pointer if `free_table` is set to 1
+ * this will only free the *set pointer if `free_set` is set to 1
  *
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ls_destroy(struct ls_set *table, unsigned int free_table);
+unsigned int ls_destroy(struct ls_set *set, unsigned int free_set);
 
 /* initialise an already allocated ls_set to size size
  *
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ls_init(struct ls_set *table, size_t size);
+unsigned int ls_init(struct ls_set *set, size_t size);
 
-/* resize an existing table to new_size
+/* resize an existing set to new_size
  * this will reshuffle all the buckets around
  *
  * you can use this to make a hash larger or smaller
@@ -139,29 +146,29 @@ unsigned int ls_init(struct ls_set *table, size_t size);
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ls_resize(struct ls_set *table, size_t new_size);
+unsigned int ls_resize(struct ls_set *set, size_t new_size);
 
 /* check if the supplied key already exists in this hash
  *
  * returns 1 on success (key exists)
  * returns 0 if key doesn't exist or on error
  */
-unsigned int ls_exists(const struct ls_set *table, const char *key);
+unsigned int ls_exists(const struct ls_set *set, const char *key);
 
 /* insert `key`
- * this will only success if !ls_exists(table, key)
+ * this will only success if !ls_exists(set, key)
  *
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ls_insert(struct ls_set *table, const char *key);
+unsigned int ls_insert(struct ls_set *set, const char *key);
 
 /* delete key `key`
  *
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ls_delete(struct ls_set *table, const char *key);
+unsigned int ls_delete(struct ls_set *set, const char *key);
 
 #endif // ifndef LINEAR_SET_H
 
