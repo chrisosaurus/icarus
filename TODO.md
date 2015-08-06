@@ -10,7 +10,6 @@ TODO:
 
 bugs:
 
-* ic_kludge_destroy free errors (illegal and double, marked with FIXMEs in the function)
 
 
 testing debt:

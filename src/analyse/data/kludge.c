@@ -168,14 +168,8 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast){
  * returns 1 on failure
  */
 unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludge){
-    /* index into various pvectors */
-    unsigned int i = 0;
     /* cached len */
     unsigned int len = 0;
-
-    /* items we are currently considering inside each pvector */
-    struct ic_func_decl *fdecl = 0;
-    struct ic_type_decl *tdecl = 0;
 
     if( !kludge ){
         puts("ic_kludge_destroy: kludge was null");
@@ -185,52 +179,20 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
     /* NOTE we have to be careful as various parts of the kludge share the same
      * objects
      *
-     * for example each fdecl will be in both fict_fsig and fdecls
+     * for example each fdecl will be in:
+     *  fict_fsig
+     *  fdecls
+     *  aast
      *
-     * destroying twice would be an error
+     * destroying all three would be an error
      *
-     * so we properly destroy each element except for:
+     * so we destroy aast but we do NOT destroy the following:
      *      dict_tname
      *      dict_fsig
+     *      tdecls
+     *      fdecls
+     *
      */
-
-    /* iterate through tdecls destroying each tdecl
-     *      list of Type decls
-     *      struct ic_pvector tdecls;
-     */
-    len = ic_pvector_length( &(kludge->tdecls) );
-    for( i=0; i<len; ++i ){
-        tdecl = ic_pvector_get( &(kludge->tdecls), i );
-        if( ! tdecl ){
-            puts("ic_kludge_destroy: tdecl - call to ic_pvector_get failed");
-            return 1;
-        }
-
-        /* FIXME the `free_tdecl` arg being 1 is causing an illegal free */
-        if( ic_type_decl_destroy(tdecl, 1) ){
-            puts("ic_kludge_destroy: tdecl - call to ic_type_decl_destroy failed");
-            return 1;
-        }
-    }
-
-    /* iterate through fdecls destroying each fdecl
-     *      list of Func decls
-     *      struct ic_pvector fdecls;
-     */
-    len = ic_pvector_length( &(kludge->fdecls) );
-    for( i=0; i<len; ++i ){
-        fdecl = ic_pvector_get( &(kludge->fdecls), i );
-        if( ! fdecl ){
-            puts("ic_kludge_destroy: fdecl - call to ic_pvector_get failed");
-            return 1;
-        }
-
-        /* FIXME the `free_fdecl` arg being 1 is causing an illegal free */
-        if( ic_func_decl_destroy(fdecl, 1) ){
-            puts("ic_kludge_destroy: fdecl - call to ic_func_decl_destroy failed");
-            return 1;
-        }
-    }
 
     /* iterate through errors destroying each error
      *      list of Errors
@@ -249,7 +211,6 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
      *       annotated AST
      *       struct ic_ast *aast;
      *
-     * FIXME this is causing a double-free on all aast items (e.g. tdecl and fdecls)
      */
     if( ic_ast_destroy( kludge->aast, 1 ) ){
         puts("ic_kludge_destroy: asst - call to ic_ast_destroy failed");
