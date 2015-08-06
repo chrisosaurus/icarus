@@ -38,8 +38,9 @@ unsigned int ic_pvector_init(struct ic_pvector *vec, unsigned int cap);
  *
  * this will only free the pvecto if `free_pvector` is true
  *
- * takes a function which is called once for each argument stored in the pvector
+ * takes an optional function which is called once for each argument stored in the pvector
  * it will be called with it's free argument set to true
+ * FIXME consider allowing free_data param to ic_pvector_destroy that is passed to (*destroy_item) rather than defaulting to true
  *
  * this function will bail at the first error encountered
  *

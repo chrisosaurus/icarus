@@ -64,8 +64,9 @@ unsigned int ic_pvector_init(struct ic_pvector *vec, unsigned int cap){
  *
  * this will only free the pvecto if `free_pvector` is true
  *
- * takes a function which is called once for each argument stored in the pvector
+ * takes an optional function which is called once for each argument stored in the pvector
  * it will be called with it's free argument set to true
+ * FIXME consider allowing free_data param to ic_pvector_destroy that is passed to (*destroy_item) rather than defaulting to true
  *
  * this function will bail at the first error encountered
  *
@@ -99,29 +100,26 @@ unsigned int ic_pvector_destroy(struct ic_pvector *vec, unsigned int free_vec, u
         return 1;
     }
 
-    /* we must receive a valid looking destroy_item function */
-    if( ! destroy_item ){
-        puts("ic_pvector_destroy: destroy_item was null");
-        return 1;
-    }
-
     len = ic_pvector_length(vec);
 
-    /* iterate through each item calling the supplied
-     * destroy_item function
-     *
-     * bail early at first sign of error
-     */
-    for( i=0; i<len; ++i ){
-        item = ic_pvector_get(vec, i);
-        if( ! item ){
-            puts("ic_pvector_destroy: call to ic_pvector_get failed");
-            return 1;
-        }
+    /* only iterate through elements if we have a destroy_item function */
+    if( destroy_item ){
+        /* iterate through each item calling the supplied
+         * destroy_item function
+         *
+         * bail early at first sign of error
+         */
+        for( i=0; i<len; ++i ){
+            item = ic_pvector_get(vec, i);
+            if( ! item ){
+                puts("ic_pvector_destroy: call to ic_pvector_get failed");
+                return 1;
+            }
 
-        if( destroy_item(item, 1) ){
-            puts("ic_pvector_destroy: call to user provided destroy func failed");
-            return 1;
+            if( destroy_item(item, 1) ){
+                puts("ic_pvector_destroy: call to user provided destroy func failed");
+                return 1;
+            }
         }
     }
 
