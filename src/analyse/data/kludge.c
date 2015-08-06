@@ -206,6 +206,7 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
             return 1;
         }
 
+        /* FIXME the `free_tdecl` arg being 1 is causing an illegal free */
         if( ic_type_decl_destroy(tdecl, 1) ){
             puts("ic_kludge_destroy: tdecl - call to ic_type_decl_destroy failed");
             return 1;
@@ -224,6 +225,7 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
             return 1;
         }
 
+        /* FIXME the `free_fdecl` arg being 1 is causing an illegal free */
         if( ic_func_decl_destroy(fdecl, 1) ){
             puts("ic_kludge_destroy: fdecl - call to ic_func_decl_destroy failed");
             return 1;
@@ -246,6 +248,8 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
     /* call ast_destroy on our annotated ast
      *       annotated AST
      *       struct ic_ast *aast;
+     *
+     * FIXME this is causing a double-free on all aast items (e.g. tdecl and fdecls)
      */
     if( ic_ast_destroy( kludge->aast, 1 ) ){
         puts("ic_kludge_destroy: asst - call to ic_ast_destroy failed");

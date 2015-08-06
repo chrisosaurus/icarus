@@ -52,6 +52,7 @@ struct ic_kludge * ic_analyse(struct ic_ast *ast){
         puts("ic_analyse: call to ic_kludge_new failed");
         return 0;
     }
+
     /* for each type call ic_analyse_type_decl */
     len = ic_pvector_length(&(kludge->tdecls));
     for( i=0; i<len; ++i ){

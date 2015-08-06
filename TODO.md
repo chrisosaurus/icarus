@@ -8,6 +8,11 @@ TODO:
 * an fcall should also store the found fdecl (post analysis)
 
 
+bugs:
+
+* ic_kludge_destroy free errors (illegal and double, marked with FIXMEs in the function)
+
+
 testing debt:
 
 * test_ast needs to be beefed up
