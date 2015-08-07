@@ -174,10 +174,22 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
             goto ERROR;
         }
 
-        /* FIXME pulling out the type and then type_str
-         * is a little ugly
-         * as it may be that this type is already a tdecl
-         * in which case we already know it exists
+        /* what we are really doing here is:
+         *  a) convert type to string representation
+         *  b) checking that this is not a self-recursive type
+         *  c) check that this field's type exists
+         *
+         * note that field->type may be in a few states,
+         * if field->type.type is one of
+         *  ic_type_ref_tdecl
+         *  ic_type_ref_builtin
+         * then checking the type exists (c) is wasted effort
+         * as we already know the type exists
+         *
+         * at this point however every type should still be
+         *  ic_type_ref_symbol
+         *
+         *  FIXME check / consider this
          */
         type = ic_type_ref_get_symbol(&(field->type));
         if( ! type ){
@@ -201,7 +213,10 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
             goto ERROR;
         }
 
-        /* check that type exists */
+        /* check that type exists
+         * FIXME here we are getting the tdecl and then throwing it away
+         * we should instead be attaching it to field->type
+         */
         if( ! ic_kludge_get_tdecl(kludge, type_str) ){
             printf("ic_analyse_type_decl: type '%s' mentioned in type declaration for '%s' does not exist within this kludge\n",
                     type_str,
