@@ -78,7 +78,7 @@ struct ic_kludge * ic_analyse(struct ic_ast *ast){
         }
 
         if( ic_analyse_func_decl(kludge, fdecl) ){
-            puts("ic_analyse: call to ic_analyse_type_decl failed");
+            puts("ic_analyse: call to ic_analyse_func_decl failed");
             goto ERROR;
         }
     }
@@ -267,7 +267,7 @@ ERROR:
  */
 unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl *fdecl){
     puts("ic_analyse_func_decl: unimplemented");
-    exit(1);
+    return 1;
 }
 
 /* takes an expr and returns the inferred type as a symbol
