@@ -6,8 +6,6 @@ TODO:
 * add escaping support to lexing string (escaping " with \)
 * add kludge testing
 * an fcall should also store the found fdecl (post analysis)
-* add support for multiple args correctly
-* make sure arg names are unique within a given function decl
 
 
 bugs:
@@ -28,6 +26,7 @@ testing debt:
 
 technical debt:
 
+* duplicated code between ic_analyse_tdecl and ic_analyse_fdecl (arg list)
 * parsing of '.' and ',' are not satisfactory, they are currently being caught as identifiers as the 'operator' code is only really for binary operators
 * function return value on failure, need to standardise (e.g. symbol, some 0 on failure, others 1)
 * all objects (esp. containers) need destructors (see `./scripts/destruct_audit.sh` for current list)

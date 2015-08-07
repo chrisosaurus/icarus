@@ -195,13 +195,17 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
          */
         type = ic_type_ref_get_symbol(&(field->type));
         if( ! type ){
-            puts("ic_analyse_type_decl: call to ic_type_get_symbol failed for type");
+            printf("ic_analyse_type_decl: call to ic_type_ref_get_symbol failed for field '%s' in fdecl for func '%s'\n",
+                    name,
+                    this_type);
             goto ERROR;
         }
 
         type_str = ic_symbol_contents(type);
         if( ! type_str ){
-            puts("ic_analyse_type_decl: call to ic_symbol_contents failed for type");
+            printf("ic_analyse_type_decl: call to ic_symbol_contents failed for field '%s' in fdecl for func '%s'\n",
+                    name,
+                    this_type);
             goto ERROR;
         }
 
@@ -276,6 +280,14 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
     unsigned int len = 0;
     /* current arg field */
     struct ic_field *arg = 0;
+    /* arg name */
+    char *name = 0;
+    /* current type from arg field */
+    struct ic_symbol *type = 0;
+    char *type_str = 0;
+    /* for each arg this captures the type we resolve it to */
+    struct ic_type_decl *arg_tdecl = 0;
+
     /* current statement in body */
     struct ic_stmt *stmt = 0;
 
@@ -307,6 +319,12 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
      */
     len = ic_pvector_length( &(fdecl->args) );
     for( i=0; i<len; ++i ){
+        /* FIXME
+         * the below code is near identical to the field section in
+         * `ic_analyse_tdecl`
+         * refactor out and share
+         */
+
         arg = ic_pvector_get(&(fdecl->args), i);
         if( ! arg ){
             printf("ic_analyse_func_decl: call to ic_pvector_get failed for i '%d' in fdecl for function '%s'\n",
@@ -315,7 +333,75 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
             goto ERROR;
         }
 
-        /* FIXME */
+        /* this is a char* to the inside of symbol
+         * so we do not need to worry about free-ing this
+         */
+        name = ic_symbol_contents(&(arg->name));
+        if( ! name ){
+            printf("ic_analyse_func_decl: call to ic_symbol_contents failed for name in fdecl for func '%s'\n",
+                    this_func);
+            goto ERROR;
+        }
+
+        /* check name is unique within this type decl
+         * ic_set_insert makes a strdup copy
+         */
+        if( ! ic_set_insert(set, name) ){
+            printf("ic_analyse_func_decl: arg name '%s' it not unique within function arg declaration for function '%s'\n",
+                    name,
+                    this_func);
+            goto ERROR;
+        }
+
+        /* what we are really doing here is:
+         *  a) convert type to string representation
+         *  b) checking that this is not a self-recursive type
+         *  c) check that this field's type exists
+         *
+         * note that field->type may be in a few states,
+         * if field->type.type is one of
+         *  ic_type_ref_tdecl
+         *  ic_type_ref_builtin
+         * then checking the type exists (c) is wasted effort
+         * as we already know the type exists
+         *
+         * at this point however every type should still be
+         *  ic_type_ref_symbol
+         *
+         *  FIXME check / consider this
+         */
+        type = ic_type_ref_get_symbol(&(arg->type));
+        if( ! type ){
+            puts("ic_analyse_func_decl: call to ic_type_get_symbol failed for type");
+            goto ERROR;
+        }
+
+        type_str = ic_symbol_contents(type);
+        if( ! type_str ){
+            puts("ic_analyse_func_decl: call to ic_symbol_contents failed for type");
+            goto ERROR;
+        }
+
+        /* check that this field's type exists */
+        arg_tdecl = ic_kludge_get_tdecl(kludge, type_str);
+        if( ! arg_tdecl ){
+            printf("ic_analyse_func_decl: type '%s' mentioned in type declaration for '%s' does not exist within this kludge\n",
+                    type_str,
+                    this_func);
+            goto ERROR;
+        }
+
+        /* store that type decl on the field (to save lookup costs again later)
+         * FIXME are we sure this is safe?
+         * if field->type is already a tdecl this will blow up
+         */
+        if( ic_type_ref_set_tdecl( &(arg->type), arg_tdecl ) ){
+            printf("ic_analyse_type_decl: trying to store tdecl for '%s' on field '%s' of type '%s' failed\n",
+                    type_str,
+                    name,
+                    this_func);
+            goto ERROR;
+        }
     }
 
     /* only needed set for args
@@ -353,8 +439,8 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
      */
 
 
-    puts("ic_analyse_func_decl: unimplemented");
-    return 1;
+    puts("ic_analyse_func_decl: implementation pending");
+    return 0;
 
 ERROR:
 
