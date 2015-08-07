@@ -3,6 +3,7 @@
 #include <string.h> /* strcmp */
 
 #include "../parse/data/field.h"
+#include "../parse/data/statement.h"
 #include "../data/set.h"
 #include "analyse.h"
 
@@ -361,15 +362,44 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
             goto ERROR;
         }
 
+        /* FIXME in all cases we must do some work:
+         *  1) if fcall then check exists, and bind
+         *  2) if variable used then check type, and bind
+         */
+        switch( stmt->type ){
+            case ic_stmt_type_ret:
+                /* infer type of expression
+                 * check returned value matches declared return type
+                 */
+                puts("ic_analyse_func_decl: unimplemented stmt->type ic_stmt_type_ref");
+                goto ERROR;
+
+            case ic_stmt_type_let:
+                /* infer type of init. expression
+                 * check against declared let type (if declared)
+                 * check all mentioned types exist
+                 */
+                puts("ic_analyse_func_decl: unimplemented stmt->type ic_stmt_type_let");
+                goto ERROR;
+
+            case ic_stmt_type_if:
+                puts("ic_analyse_func_decl: unimplemented stmt->type ic_stmt_type_if");
+                goto ERROR;
+
+            case ic_stmt_type_expr:
+                /* infer expr type
+                 * warn if using non-void function in void context
+                 */
+                puts("ic_analyse_func_decl: unimplemented stmt->type ic_stmt_type_expr");
+                goto ERROR;
+
+            default:
+                printf("ic_analyse_func_decl: impossible stmt->type '%d'\n", stmt->type);
+                goto ERROR;
+        }
+
         /* FIXME */
     }
-
-
-    /* FIXME also need to ensure that returned type
-     * matches declared return type
-     * (or if void that we do not return a value)
-     */
-
 
     puts("ic_analyse_func_decl: implementation pending");
     return 0;
