@@ -383,6 +383,10 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
                 goto ERROR;
 
             case ic_stmt_type_if:
+                /* need to validate expression
+                 * need to the recurse to validate the body in
+                 * each branch
+                 */
                 puts("ic_analyse_func_decl: unimplemented stmt->type ic_stmt_type_if");
                 goto ERROR;
 
