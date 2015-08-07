@@ -34,6 +34,7 @@ technical debt:
 
 considerations:
 
+* consider const correctness
 * consider how to deal with builtin types (int, string) and functions (print)
 * consider const-correctness on read only args
 * `ic_analyse_type_decl` currently allows co-recursive types `type Foo a::Bar end` `type bar a::Foo end`, is this allowed?

@@ -155,13 +155,18 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
             goto ERROR;
         }
 
+        /* this is a char* to the inside of symbol
+         * so we do not need to worry about free-ing this
+         */
         name = ic_symbol_contents(&(field->name));
         if( ! name ){
             puts("ic_analyse_type_decl: call to ic_symbol_contents failed for name");
             goto ERROR;
         }
 
-        /* check name is unique within this type decl */
+        /* check name is unique within this type decl
+         * ic_set_insert makes a strdup copy
+         */
         if( ! ic_set_insert(set, name) ){
             printf("ic_analyse_type_decl: field name '%s' it not unique within type declaration for '%s'\n",
                     name,
@@ -190,7 +195,7 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
          * to declare as this would be an infinitely recursive type
          */
         if( ! strcmp(type_str, this_type) ){
-            printf("ic_analyse_type_decl: recursive type '%s' used within declaration of same type '%s'\n",
+            printf("ic_analyse_type_decl: recursive type detected; '%s' used within declaration of same type '%s'\n",
                     type_str,
                     this_type);
             goto ERROR;

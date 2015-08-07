@@ -30,14 +30,14 @@ unsigned int ic_set_init(struct ic_set *set);
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ic_set_insert(struct ic_set *set, char *item);
+unsigned int ic_set_insert(struct ic_set *set, const char *item);
 
 /* check if key already exists in set
  *
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ic_set_exists(struct ic_set *set, char *key);
+unsigned int ic_set_exists(const struct ic_set *set, const char *key);
 
 /* delete element at key
  * only works if key exists
@@ -45,7 +45,7 @@ unsigned int ic_set_exists(struct ic_set *set, char *key);
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ic_set_delete(struct ic_set *set, char *key);
+unsigned int ic_set_delete(struct ic_set *set, const char *key);
 
 /* free an existing ic_set
  * this will free all memory internal to the hash

@@ -47,7 +47,7 @@ unsigned int ic_set_init(struct ic_set *set){
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ic_set_insert(struct ic_set *set, char *item){
+unsigned int ic_set_insert(struct ic_set *set, const char *item){
     if( ! set ){
         puts("ic_set_insert: set was null");
         return 0;
@@ -61,7 +61,7 @@ unsigned int ic_set_insert(struct ic_set *set, char *item){
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ic_set_exists(struct ic_set *set, char *key){
+unsigned int ic_set_exists(const struct ic_set *set, const char *key){
     if( ! set ){
         puts("ic_set_exists: set was null");
         return 0;
@@ -76,7 +76,7 @@ unsigned int ic_set_exists(struct ic_set *set, char *key){
  * returns 1 success
  * returns 0 on error
  */
-unsigned int ic_set_delete(struct ic_set *set, char *key){
+unsigned int ic_set_delete(struct ic_set *set, const char *key){
     if( ! set ){
         puts("ic_set_delete: set was null");
         return 0;
