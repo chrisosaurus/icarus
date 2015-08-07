@@ -288,56 +288,89 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
  * returns 0 on error
  */
 struct ic_type_ref * ic_analyse_infer(struct ic_kludge *kludge, struct ic_expr *expr){
-    /*
-     *  infer 1 -> Int
-     *  expr->type == constant
-     *  cons = expr->u.cons
-     *  cons->type == integer
-     *  return integer
-     */
 
-    /*
-     *  infer "hello" -> String
-     *  expr->type == constant
-     *  cons = expr->u.cons
-     *  cons->type == string
-     *  return string
-     */
+    if( ! kludge ){
+        puts("ic_analyse_infer: kludge was null");
+        return 0;
+    }
 
-    /*
-     *  infer f -> typeof contents of f
-     *  expr->type = identifier
-     *  id = expr->u.id
-     *  name = str(id)
-     *  variable = get variable within scope name // FIXME no mechanism
-     *  type = get type of variable // FIXME no mechanism
-     *  return type
-     */
+    if( ! expr ){
+        puts("ic_analyse_infer: expr was null");
+        return 0;
+    }
 
-    /*
-     *  infer addone(1) -> addone(Int)->Int -> Int
-     *  expr->type == func_call
-     *  fc = expr->u.fcall
-     *  fstr = str(fc) // FIXME ic_func_call_str doesn't exist
-     *  fdecl = kludge get fdecl from fstr
-     *  tstr = fdecl->ret_type
-     *  type = kludge get tdecl from tstr
-     *  return type
-     */
+    switch( expr->type ){
+        case ic_expr_type_func_call:
+            /*
+             *  infer addone(1) -> addone(Int)->Int -> Int
+             *  expr->type == func_call
+             *  fc = expr->u.fcall
+             *  fstr = str(fc) // FIXME ic_func_call_str doesn't exist
+             *  fdecl = kludge get fdecl from fstr
+             *  tstr = fdecl->ret_type
+             *  type = kludge get tdecl from tstr
+             *  return type
+             */
 
-    /*
-     *  infer Foo(1 "hello") -> Foo(Int String) -> Foo
-     *  expr->type == func_call
-     *  fc = expr->u.fcall
-     *  fstr = str(fc) // FIXME ic_func_call_str doesn't exist
-     *  fdecl = kludge get fdecl from fstr
-     *  tstr = fdecl->ret_type
-     *  type = kludge get tdecl from tstr
-     *  return type
-     */
+            /*
+             *  infer Foo(1 "hello") -> Foo(Int String) -> Foo
+             *  expr->type == func_call
+             *  fc = expr->u.fcall
+             *  fstr = str(fc) // FIXME ic_func_call_str doesn't exist
+             *  fdecl = kludge get fdecl from fstr
+             *  tstr = fdecl->ret_type
+             *  type = kludge get tdecl from tstr
+             *  return type
+             */
+
+            puts("ic_analyse_infer: ic_expr_type_func_call unimplemented");
+            return 0;
+
+        case ic_expr_type_identifier:
+            /*
+             *  infer f -> typeof contents of f
+             *  expr->type = identifier
+             *  id = expr->u.id
+             *  name = str(id)
+             *  variable = get variable within scope name // FIXME no mechanism
+             *  type = get type of variable // FIXME no mechanism
+             *  return type
+             */
+
+            puts("ic_analyse_infer: ic_expr_type_identifier unimplemented");
+            return 0;
+
+        case ic_expr_type_constant:
+            /*
+             *  infer 1 -> Int
+             *  expr->type == constant
+             *  cons = expr->u.cons
+             *  cons->type == integer
+             *  return integer
+             */
+
+            /*
+             *  infer "hello" -> String
+             *  expr->type == constant
+             *  cons = expr->u.cons
+             *  cons->type == string
+             *  return string
+             */
+
+            puts("ic_analyse_infer: ic_expr_type_constant unimplemented");
+            return 0;
+
+        case ic_expr_type_operator:
+            puts("ic_analyse_infer: ic_expr_type_operator unimplemented");
+            return 0;
+
+        default:
+            printf("ic_analyse_infer: unknown expr->type '%d'\n", expr->type);
+            return 0;
+    }
 
     puts("ic_analyse_infer: unimplemented");
-    exit(1);
+    return 0;
 }
 
 /* check a statement for validity
