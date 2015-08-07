@@ -294,8 +294,9 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
         return 1;
     }
 
+    /* check fields */
     if( ic_analyse_field_list( "type declaration", this_type, kludge, &(tdecl->fields), this_type ) ){
-        puts("ic_analyse_type_decl: call to ic_analyse_field_list failed");
+        puts("ic_analyse_type_decl: call to ic_analyse_field_list for field validation failed");
         goto ERROR;
     }
 
@@ -340,8 +341,9 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
         return 1;
     }
 
+    /* check arg list */
     if( ic_analyse_field_list( "func declaration", this_func, kludge, &(fdecl->args), 0 ) ){
-        puts("ic_analyse_func_decl: call to ic_analyse_field_list failed");
+        puts("ic_analyse_func_decl: call to ic_analyse_field_list for validating argument list failed");
         goto ERROR;
     }
 
