@@ -44,6 +44,10 @@ struct ic_type_ref {
     union {
         /* no value for unknown */
         struct ic_symbol sym; /* value for ic_type_symbol */
+        /* FIXME as per docs/internal/types.md
+         * an ic_type_ref should refer to an ic_type
+         * NOT as we currently do to an ic_type_decl
+         */
         struct ic_type_decl *tdecl; /* value for ic_type_tdecl */
         /* FIXME what is the value for an builtin? */
         /* FIXME what is the value for an error? */
