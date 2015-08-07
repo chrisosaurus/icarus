@@ -30,3 +30,9 @@ fn main()
     d(f)
 end
 
+# temporary hack to allow type and function analysis to pass
+type Int end
+type String end
+fn print(s::String) end
+fn print(i::Int) end
+

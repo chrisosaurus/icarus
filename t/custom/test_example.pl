@@ -43,6 +43,20 @@ fn main() -> Void
     let f::Foo = Foo(add_one(1) , "hello")
     d(f)
 end
+
+type Int
+end
+
+type String
+end
+
+# print(String)
+fn print(s::String) -> Void
+end
+
+# print(Int)
+fn print(i::Int) -> Void
+end
 ----------------
 
 EOF
