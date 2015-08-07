@@ -96,16 +96,20 @@ ERROR:
     return 0;
 }
 
-/* takes a type_decl and performs analysis
+/* iterate through the field list checking:
+ *  a) all field's names are unique within this list
+ *  b) all field's types exist in this kludge
+ *  c) (if provided) that no field's types eq forbidden_type
  *
- * FIXME need a way of signalling and passing errors
+ * `unit` and `unit_name` are used for error printing
+ * it is always printed as '%s for %s error goes here'
+ * e.g. unit of 'function declaration', name of 'Foo'
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 0 on success (all fields are valid as per the 3 rules)
+ * returns 1 on failure
  */
-unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl *tdecl){
-    /* name of current type we are trying to declare */
-    char *this_type = 0;
+static unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_pvector *fields, char *forbidden_type){
+
     /* index into fields */
     unsigned int i = 0;
     /* len of fields */
@@ -116,6 +120,7 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
     char *name = 0;
     /* current type from field */
     struct ic_symbol *type = 0;
+    /* current type from field as string */
     char *type_str = 0;
     /* set of all field names used */
     struct ic_set *set = 0;
@@ -123,37 +128,26 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
     struct ic_type_decl *field_tdecl = 0;
 
     if( ! kludge ){
-        puts("ic_analyse_type_decl: kludge was null");
-        return 1;
+        puts("ic_analyse_field_list: kludge was null");
+        return 0;
     }
 
-    if( ! tdecl ){
-        puts("ic_analyse_type_decl: tdecl was null");
-        return 1;
-    }
-
-    this_type = ic_type_decl_str(tdecl);
-    if( ! this_type ){
-        puts("ic_analyse_type_decl: for this_type: call to ic_type_decl_str failed");
-        return 1;
+    if( ! fields ){
+        puts("ic_analyse_field_list: field was null");
+        return 0;
     }
 
     set = ic_set_new();
     if( ! set ){
-        puts("ic_analyse_type_decl: call to ic_set_new failed");
+        puts("ic_analyse_field_list: call to ic_set_new failed");
         return 1;
     }
 
-    /* iterate through each field
-     * for each field we check:
-     *      the field name is unique within this type decl
-     *      the field type exists
-     */
-    len = ic_pvector_length(&(tdecl->fields));
+    len = ic_pvector_length(fields);
     for( i=0; i<len; ++i ){
-        field = ic_pvector_get(&(tdecl->fields), i);
+        field = ic_pvector_get(fields, i);
         if( ! field ){
-            puts("ic_analyse_type_decl: call to ic_pvector_get failed");
+            puts("ic_analyse_field_list: call to ic_pvector_get failed");
             goto ERROR;
         }
 
@@ -162,7 +156,7 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
          */
         name = ic_symbol_contents(&(field->name));
         if( ! name ){
-            puts("ic_analyse_type_decl: call to ic_symbol_contents failed for name");
+            puts("ic_analyse_field_list: call to ic_symbol_contents failed for name");
             goto ERROR;
         }
 
@@ -170,9 +164,10 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
          * ic_set_insert makes a strdup copy
          */
         if( ! ic_set_insert(set, name) ){
-            printf("ic_analyse_type_decl: field name '%s' it not unique within type declaration for '%s'\n",
+            printf("ic_analyse_field_list: field name '%s' it not unique within '%s' for '%s'\n",
                     name,
-                    this_type);
+                    unit,
+                    unit_name);
             goto ERROR;
         }
 
@@ -195,36 +190,42 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
          */
         type = ic_type_ref_get_symbol(&(field->type));
         if( ! type ){
-            printf("ic_analyse_type_decl: call to ic_type_ref_get_symbol failed for field '%s' in fdecl for func '%s'\n",
+            printf("ic_analyse_field_list: call to ic_type_ref_get_symbol failed for field '%s' in '%s' for '%s'\n",
                     name,
-                    this_type);
+                    unit,
+                    unit_name);
             goto ERROR;
         }
 
         type_str = ic_symbol_contents(type);
         if( ! type_str ){
-            printf("ic_analyse_type_decl: call to ic_symbol_contents failed for field '%s' in fdecl for func '%s'\n",
+            printf("ic_analyse_field_list: call to ic_symbol_contents failed for field '%s' in '%s' for '%s'\n",
                     name,
-                    this_type);
+                    unit,
+                    unit_name);
             goto ERROR;
         }
 
-        /* check that the type used is not the same we are currently trying
-         * to declare as this would be an infinitely recursive type
-         */
-        if( ! strcmp(type_str, this_type) ){
-            printf("ic_analyse_type_decl: recursive type detected; '%s' used within declaration of same type '%s'\n",
-                    type_str,
-                    this_type);
-            goto ERROR;
+        if( forbidden_type ){
+            /* check that the type used is not the same as the 'firbidden_type'
+             * this is used to prevent recursive types during tdecl analyse
+             */
+            if( ! strcmp(type_str, forbidden_type) ){
+                printf("ic_analyse_field_list: recursive type detected; '%s' used within '%s' for '%s'\n",
+                        type_str,
+                        unit,
+                        unit_name);
+                goto ERROR;
+            }
         }
 
         /* check that this field's type exists */
         field_tdecl = ic_kludge_get_tdecl(kludge, type_str);
         if( ! field_tdecl ){
-            printf("ic_analyse_type_decl: type '%s' mentioned in type declaration for '%s' does not exist within this kludge\n",
+            printf("ic_analyse_field_list: type '%s' mentioned in '%s' for '%s' does not exist within this kludge\n",
                     type_str,
-                    this_type);
+                    unit,
+                    unit_name);
             goto ERROR;
         }
 
@@ -233,10 +234,11 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
          * if field->type is already a tdecl this will blow up
          */
         if( ic_type_ref_set_tdecl( &(field->type), field_tdecl ) ){
-            printf("ic_analyse_type_decl: trying to store tdecl for '%s' on field '%s' of type '%s' failed\n",
+            printf("ic_analyse_field_list: trying to store tdecl for '%s' on field '%s' during '%s' for '%s' failed\n",
                     type_str,
                     name,
-                    this_type);
+                    unit,
+                    unit_name);
             goto ERROR;
         }
     }
@@ -245,19 +247,61 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
      * free_set as we allocated above with new
      */
     if( ! ic_set_destroy(set, 1) ){
-        puts("ic_analyse_type_decl: call to ic_set_destroy failed");
-        return 1;
+        puts("ic_analyse_field_list: call to ic_set_destroy failed in error case");
     }
 
     return 0;
 
 ERROR:
+
     /* call set destroy
      * free_set as we allocated above with new
      */
     if( ! ic_set_destroy(set, 1) ){
-        puts("ic_analyse_type_decl: call to ic_set_destroy failed in error case");
+        puts("ic_analyse_field_list: call to ic_set_destroy failed in error case");
     }
+
+
+    return 1;
+}
+
+/* takes a type_decl and performs analysis
+ *
+ * FIXME need a way of signalling and passing errors
+ *
+ * returns 0 on success
+ * returns 1 on error
+ */
+unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl *tdecl){
+    /* name of current type we are trying to declare */
+    char *this_type = 0;
+    /* index into fields */
+    unsigned int i = 0;
+
+    if( ! kludge ){
+        puts("ic_analyse_type_decl: kludge was null");
+        return 1;
+    }
+
+    if( ! tdecl ){
+        puts("ic_analyse_type_decl: tdecl was null");
+        return 1;
+    }
+
+    this_type = ic_type_decl_str(tdecl);
+    if( ! this_type ){
+        puts("ic_analyse_type_decl: for this_type: call to ic_type_decl_str failed");
+        return 1;
+    }
+
+    if( ic_analyse_field_list( "type declaration", this_type, kludge, &(tdecl->fields), this_type ) ){
+        puts("ic_analyse_type_decl: call to ic_analyse_field_list failed");
+        goto ERROR;
+    }
+
+    return 0;
+
+ERROR:
 
     return 1;
 }
@@ -272,22 +316,10 @@ ERROR:
 unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl *fdecl){
     /* name of current func we are trying to declare */
     char *this_func = 0;
-    /* set of all arg names used */
-    struct ic_set *set = 0;
-    /* index into either args or body */
+    /* index into body */
     unsigned int i = 0;
-    /* len of either args or body */
+    /* len of body */
     unsigned int len = 0;
-    /* current arg field */
-    struct ic_field *arg = 0;
-    /* arg name */
-    char *name = 0;
-    /* current type from arg field */
-    struct ic_symbol *type = 0;
-    char *type_str = 0;
-    /* for each arg this captures the type we resolve it to */
-    struct ic_type_decl *arg_tdecl = 0;
-
     /* current statement in body */
     struct ic_stmt *stmt = 0;
 
@@ -308,113 +340,11 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
         return 1;
     }
 
-    set = ic_set_new();
-    if( ! set ){
-        puts("ic_analyse_func_decl: call to ic_set_new failed");
-        return 1;
+    if( ic_analyse_field_list( "func declaration", this_func, kludge, &(fdecl->args), 0 ) ){
+        puts("ic_analyse_func_decl: call to ic_analyse_field_list failed");
+        goto ERROR;
     }
 
-    /* iterate through args checking that each type exists
-     * and that each field name is unqiue within this decl
-     */
-    len = ic_pvector_length( &(fdecl->args) );
-    for( i=0; i<len; ++i ){
-        /* FIXME
-         * the below code is near identical to the field section in
-         * `ic_analyse_tdecl`
-         * refactor out and share
-         */
-
-        arg = ic_pvector_get(&(fdecl->args), i);
-        if( ! arg ){
-            printf("ic_analyse_func_decl: call to ic_pvector_get failed for i '%d' in fdecl for function '%s'\n",
-                    i,
-                    this_func);
-            goto ERROR;
-        }
-
-        /* this is a char* to the inside of symbol
-         * so we do not need to worry about free-ing this
-         */
-        name = ic_symbol_contents(&(arg->name));
-        if( ! name ){
-            printf("ic_analyse_func_decl: call to ic_symbol_contents failed for name in fdecl for func '%s'\n",
-                    this_func);
-            goto ERROR;
-        }
-
-        /* check name is unique within this type decl
-         * ic_set_insert makes a strdup copy
-         */
-        if( ! ic_set_insert(set, name) ){
-            printf("ic_analyse_func_decl: arg name '%s' it not unique within function arg declaration for function '%s'\n",
-                    name,
-                    this_func);
-            goto ERROR;
-        }
-
-        /* what we are really doing here is:
-         *  a) convert type to string representation
-         *  b) checking that this is not a self-recursive type
-         *  c) check that this field's type exists
-         *
-         * note that field->type may be in a few states,
-         * if field->type.type is one of
-         *  ic_type_ref_tdecl
-         *  ic_type_ref_builtin
-         * then checking the type exists (c) is wasted effort
-         * as we already know the type exists
-         *
-         * at this point however every type should still be
-         *  ic_type_ref_symbol
-         *
-         *  FIXME check / consider this
-         */
-        type = ic_type_ref_get_symbol(&(arg->type));
-        if( ! type ){
-            puts("ic_analyse_func_decl: call to ic_type_get_symbol failed for type");
-            goto ERROR;
-        }
-
-        type_str = ic_symbol_contents(type);
-        if( ! type_str ){
-            puts("ic_analyse_func_decl: call to ic_symbol_contents failed for type");
-            goto ERROR;
-        }
-
-        /* check that this field's type exists */
-        arg_tdecl = ic_kludge_get_tdecl(kludge, type_str);
-        if( ! arg_tdecl ){
-            printf("ic_analyse_func_decl: type '%s' mentioned in type declaration for '%s' does not exist within this kludge\n",
-                    type_str,
-                    this_func);
-            goto ERROR;
-        }
-
-        /* store that type decl on the field (to save lookup costs again later)
-         * FIXME are we sure this is safe?
-         * if field->type is already a tdecl this will blow up
-         */
-        if( ic_type_ref_set_tdecl( &(arg->type), arg_tdecl ) ){
-            printf("ic_analyse_type_decl: trying to store tdecl for '%s' on field '%s' of type '%s' failed\n",
-                    type_str,
-                    name,
-                    this_func);
-            goto ERROR;
-        }
-    }
-
-    /* only needed set for args
-     * call set destroy
-     * free_set as we allocated above with new
-     */
-    if( ! ic_set_destroy(set, 1) ){
-        puts("ic_analyse_type_decl: call to ic_set_destroy failed");
-        return 1;
-    }
-
-    /* mark to prevent double destroy */
-    set = 0;
 
     /* step through body checking each statement
      * FIXME
@@ -443,16 +373,6 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
     return 0;
 
 ERROR:
-
-    /* call set destroy
-     * free_set as we allocated above with new
-     */
-    if( set ){
-        if( ! ic_set_destroy(set, 1) ){
-            puts("ic_analyse_type_decl: call to ic_set_destroy failed in error case");
-            return 1;
-        }
-    }
 
     puts("ic_analyse_func_decl: error");
     return 1;

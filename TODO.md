@@ -26,7 +26,6 @@ testing debt:
 
 technical debt:
 
-* duplicated code between ic_analyse_tdecl and ic_analyse_fdecl (arg list)
 * parsing of '.' and ',' are not satisfactory, they are currently being caught as identifiers as the 'operator' code is only really for binary operators
 * function return value on failure, need to standardise (e.g. symbol, some 0 on failure, others 1)
 * all objects (esp. containers) need destructors (see `./scripts/destruct_audit.sh` for current list)
