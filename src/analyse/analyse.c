@@ -266,7 +266,109 @@ ERROR:
  * returns 1 on error
  */
 unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl *fdecl){
+    /* name of current func we are trying to declare */
+    char *this_func = 0;
+    /* set of all arg names used */
+    struct ic_set *set = 0;
+    /* index into either args or body */
+    unsigned int i = 0;
+    /* len of either args or body */
+    unsigned int len = 0;
+    /* current arg field */
+    struct ic_field *arg = 0;
+    /* current statement in body */
+    struct ic_stmt *stmt = 0;
+
+    if( ! kludge ){
+        puts("ic_analyse_func_decl: kludge was null");
+        return 1;
+    }
+
+    if( ! fdecl ){
+        puts("ic_analyse_func_decl: fdecl was null");
+        return 1;
+    }
+
+    /* name of this type, useful for error printing */
+    this_func = ic_func_decl_str(fdecl);
+    if( ! this_func ){
+        puts("ic_analyse_func_decl: for this_type: call to ic_func_decl_str failed");
+        return 1;
+    }
+
+    set = ic_set_new();
+    if( ! set ){
+        puts("ic_analyse_func_decl: call to ic_set_new failed");
+        return 1;
+    }
+
+    /* iterate through args checking that each type exists
+     * and that each field name is unqiue within this decl
+     */
+    len = ic_pvector_length( &(fdecl->args) );
+    for( i=0; i<len; ++i ){
+        arg = ic_pvector_get(&(fdecl->args), i);
+        if( ! arg ){
+            printf("ic_analyse_func_decl: call to ic_pvector_get failed for i '%d' in fdecl for function '%s'\n",
+                    i,
+                    this_func);
+            goto ERROR;
+        }
+
+        /* FIXME */
+    }
+
+    /* only needed set for args
+     * call set destroy
+     * free_set as we allocated above with new
+     */
+    if( ! ic_set_destroy(set, 1) ){
+        puts("ic_analyse_type_decl: call to ic_set_destroy failed");
+        return 1;
+    }
+
+    /* mark to prevent double destroy */
+    set = 0;
+
+    /* step through body checking each statement
+     * FIXME
+     */
+    len = ic_body_length( &(fdecl->body) );
+    for( i=0; i<len; ++i ){
+        stmt = ic_body_get( &(fdecl->body), i );
+        if( ! stmt ){
+            printf("ic_analyse_func_decl: call to ic_body_get failed for i '%d' in fdecl for function '%s'\n",
+                    i,
+                    this_func);
+            goto ERROR;
+        }
+
+        /* FIXME */
+    }
+
+
+    /* FIXME also need to ensure that returned type
+     * matches declared return type
+     * (or if void that we do not return a value)
+     */
+
+
     puts("ic_analyse_func_decl: unimplemented");
+    return 1;
+
+ERROR:
+
+    /* call set destroy
+     * free_set as we allocated above with new
+     */
+    if( set ){
+        if( ! ic_set_destroy(set, 1) ){
+            puts("ic_analyse_type_decl: call to ic_set_destroy failed in error case");
+            return 1;
+        }
+    }
+
+    puts("ic_analyse_func_decl: error");
     return 1;
 }
 
