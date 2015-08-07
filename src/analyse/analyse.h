@@ -6,11 +6,6 @@
 #include "../parse/data/expression.h"
 #include "data/kludge.h"
 
-/* ignore unused parameter */
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-/* ignore unused functions */
-#pragma GCC diagnostic ignored "-Wunused-function"
-
 /* takes an ast and performs analysis on it
  * this returns a kludge
  *

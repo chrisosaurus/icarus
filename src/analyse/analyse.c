@@ -5,13 +5,6 @@
 #include "helpers.h"
 #include "analyse.h"
 
-/* ignored unused parameter */
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-/* ignored unused variable */
-#pragma GCC diagnostic ignored "-Wunused-variable"
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-
-
 /* takes an ast and performs analysis on it
  * this returns a kludge
  *
@@ -105,8 +98,6 @@ ERROR:
 unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl *tdecl){
     /* name of current type we are trying to declare */
     char *this_type = 0;
-    /* index into fields */
-    unsigned int i = 0;
 
     if( ! kludge ){
         puts("ic_analyse_type_decl: kludge was null");
@@ -185,125 +176,4 @@ ERROR:
     puts("ic_analyse_func_decl: error");
     return 1;
 }
-
-/* takes an expr and returns the inferred type as a symbol
- *
- * FIXME need a way of signalling error and passing errors
- * possible suggestions:
- *  0 -> unrecoverable / internal error
- *  special ic_type_ref * -> syntax error -> ignore this statement, record error, keep going
- *  ic_type_ref * -> actual type inferred
- *
- * examples:
- *  infer 1 -> Int
- *  infer "helo" -> String
- *  infer addone(1) -> addone(Int)->Int -> Int
- *  infer Foo(1 "hello") -> Foo(Int String) -> Foo
- *
- * returns ic_type_ref on success
- * returns 0 on error
- */
-struct ic_type_ref * ic_analyse_infer(struct ic_kludge *kludge, struct ic_expr *expr){
-
-    if( ! kludge ){
-        puts("ic_analyse_infer: kludge was null");
-        return 0;
-    }
-
-    if( ! expr ){
-        puts("ic_analyse_infer: expr was null");
-        return 0;
-    }
-
-    switch( expr->type ){
-        case ic_expr_type_func_call:
-            /*
-             *  infer addone(1) -> addone(Int)->Int -> Int
-             *  expr->type == func_call
-             *  fc = expr->u.fcall
-             *  fstr = str(fc) // FIXME ic_func_call_str doesn't exist
-             *  fdecl = kludge get fdecl from fstr
-             *  tstr = fdecl->ret_type
-             *  type = kludge get tdecl from tstr
-             *  return type
-             */
-
-            /*
-             *  infer Foo(1 "hello") -> Foo(Int String) -> Foo
-             *  expr->type == func_call
-             *  fc = expr->u.fcall
-             *  fstr = str(fc) // FIXME ic_func_call_str doesn't exist
-             *  fdecl = kludge get fdecl from fstr
-             *  tstr = fdecl->ret_type
-             *  type = kludge get tdecl from tstr
-             *  return type
-             */
-
-            puts("ic_analyse_infer: ic_expr_type_func_call unimplemented");
-            return 0;
-
-        case ic_expr_type_identifier:
-            /*
-             *  infer f -> typeof contents of f
-             *  expr->type = identifier
-             *  id = expr->u.id
-             *  name = str(id)
-             *  variable = get variable within scope name // FIXME no mechanism
-             *  type = get type of variable // FIXME no mechanism
-             *  return type
-             */
-
-            puts("ic_analyse_infer: ic_expr_type_identifier unimplemented");
-            return 0;
-
-        case ic_expr_type_constant:
-            /*
-             *  infer 1 -> Int
-             *  expr->type == constant
-             *  cons = expr->u.cons
-             *  cons->type == integer
-             *  return integer
-             */
-
-            /*
-             *  infer "hello" -> String
-             *  expr->type == constant
-             *  cons = expr->u.cons
-             *  cons->type == string
-             *  return string
-             */
-
-            puts("ic_analyse_infer: ic_expr_type_constant unimplemented");
-            return 0;
-
-        case ic_expr_type_operator:
-            puts("ic_analyse_infer: ic_expr_type_operator unimplemented");
-            return 0;
-
-        default:
-            printf("ic_analyse_infer: unknown expr->type '%d'\n", expr->type);
-            return 0;
-    }
-
-    puts("ic_analyse_infer: unimplemented");
-    return 0;
-}
-
-/* check a statement for validity
- *
- * FIXME need a way of signalling and passing errors
- *
- * examples:
- *  check let f::Foo = Foo(addone(1) "hello")
- *  check d(f)
- *  check print(s)
- *
- * returns 0 for success
- * returns 1 for error
- */
-unsigned int ic_analyse_check(struct ic_kludge *kludge, struct ic_stmt *stmt){
-    puts("ic_analyse_check: unimplemented");
-    exit(1);
-}
-
 
