@@ -119,6 +119,8 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
     char *type_str = 0;
     /* set of all field names used */
     struct ic_set *set = 0;
+    /* for each field this captures the type we resolve it to */
+    struct ic_type_decl *field_tdecl = 0;
 
     if( ! kludge ){
         puts("ic_analyse_type_decl: kludge was null");
@@ -213,13 +215,23 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
             goto ERROR;
         }
 
-        /* check that type exists
-         * FIXME here we are getting the tdecl and then throwing it away
-         * we should instead be attaching it to field->type
-         */
-        if( ! ic_kludge_get_tdecl(kludge, type_str) ){
+        /* check that type exists */
+        field_tdecl = ic_kludge_get_tdecl(kludge, type_str);
+        if( ! field_tdecl ){
             printf("ic_analyse_type_decl: type '%s' mentioned in type declaration for '%s' does not exist within this kludge\n",
                     type_str,
+                    this_type);
+            goto ERROR;
+        }
+
+        /* store that type decl on the field (to save lookup costs again later)
+         * FIXME are we sure this is safe?
+         * if field->type is already a tdecl this will blow up
+         */
+        if( ic_type_ref_set_tdecl( &(field->type), field_tdecl ) ){
+            printf("ic_analyse_type_decl: trying to store tdecl for '%s' on field '%s' of type '%s' failed\n",
+                    type_str,
+                    name,
                     this_type);
             goto ERROR;
         }
