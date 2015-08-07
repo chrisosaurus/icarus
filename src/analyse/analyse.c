@@ -215,7 +215,7 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
             goto ERROR;
         }
 
-        /* check that type exists */
+        /* check that this field's type exists */
         field_tdecl = ic_kludge_get_tdecl(kludge, type_str);
         if( ! field_tdecl ){
             printf("ic_analyse_type_decl: type '%s' mentioned in type declaration for '%s' does not exist within this kludge\n",
