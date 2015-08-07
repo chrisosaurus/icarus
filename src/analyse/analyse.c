@@ -2,9 +2,6 @@
 #include <stdio.h>
 #include <string.h> /* strcmp */
 
-#include "../parse/data/field.h"
-#include "../parse/data/statement.h"
-#include "../data/set.h"
 #include "helpers.h"
 #include "analyse.h"
 
@@ -150,12 +147,6 @@ ERROR:
 unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl *fdecl){
     /* name of current func we are trying to declare */
     char *this_func = 0;
-    /* index into body */
-    unsigned int i = 0;
-    /* len of body */
-    unsigned int len = 0;
-    /* current statement in body */
-    struct ic_stmt *stmt = 0;
 
     if( ! kludge ){
         puts("ic_analyse_func_decl: kludge was null");
@@ -180,63 +171,10 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
         goto ERROR;
     }
 
-
-    /* step through body checking each statement
-     * FIXME
-     */
-    len = ic_body_length( &(fdecl->body) );
-    for( i=0; i<len; ++i ){
-        stmt = ic_body_get( &(fdecl->body), i );
-        if( ! stmt ){
-            printf("ic_analyse_func_decl: call to ic_body_get failed for i '%d' in fdecl for function '%s'\n",
-                    i,
-                    this_func);
-            goto ERROR;
-        }
-
-        /* FIXME in all cases we must do some work:
-         *  1) if fcall then check exists, and bind
-         *  2) if variable used then check type, and bind
-         */
-        switch( stmt->type ){
-            case ic_stmt_type_ret:
-                /* infer type of expression
-                 * check returned value matches declared return type
-                 */
-                puts("ic_analyse_func_decl: unimplemented stmt->type ic_stmt_type_ref");
-                goto ERROR;
-
-            case ic_stmt_type_let:
-                /* infer type of init. expression
-                 * check against declared let type (if declared)
-                 * check all mentioned types exist
-                 */
-                puts("ic_analyse_func_decl: unimplemented stmt->type ic_stmt_type_let");
-                goto ERROR;
-
-            case ic_stmt_type_if:
-                /* need to validate expression
-                 * need to the recurse to validate the body in
-                 * each branch
-                 *
-                 * FIXME no support for recursing
-                 */
-                puts("ic_analyse_func_decl: unimplemented stmt->type ic_stmt_type_if");
-                goto ERROR;
-
-            case ic_stmt_type_expr:
-                /* infer expr type
-                 * warn if using non-void function in void context
-                 */
-                puts("ic_analyse_func_decl: unimplemented stmt->type ic_stmt_type_expr");
-                goto ERROR;
-
-            default:
-                printf("ic_analyse_func_decl: impossible stmt->type '%d'\n", stmt->type);
-                goto ERROR;
-        }
-
-        /* FIXME */
+    /* check body */
+    if( ic_analyse_body( "func declaration", this_func, kludge, &(fdecl->body) ) ){
+        puts("ic_analyse_func_decl: call to ic_analyse_bofy for validating body failed");
+        goto ERROR;
     }
 
     puts("ic_analyse_func_decl: implementation pending");
