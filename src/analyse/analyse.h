@@ -1,9 +1,6 @@
 #ifndef ICARUS_ANALYSE_H
 #define ICARUS_ANALYSE_H
 
-#include "../parse/data/ast.h"
-#include "../parse/data/decl.h"
-#include "../parse/data/expression.h"
 #include "data/kludge.h"
 
 /* takes an ast and performs analysis on it
