@@ -149,7 +149,7 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
         return 1;
     }
 
-    /* name of this type, useful for error printing */
+    /* name of this func, useful for error printing */
     this_func = ic_func_decl_str(fdecl);
     if( ! this_func ){
         puts("ic_analyse_func_decl: for this_type: call to ic_func_decl_str failed");
