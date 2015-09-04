@@ -65,6 +65,9 @@ unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, char *name,
         return 1;
     }
 
+    /* fstr is set later by ic_expr_func_call_str */
+    fcall->string = 0;
+
     return 0;
 
 }
@@ -107,6 +110,13 @@ unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned
         }
     }
 
+    if( fcall->string ){
+        if( ic_string_destroy( fcall->string, 1 ) ){
+            puts("ic_expr_func_call_destroy: call to ic_string_destroy failed");
+            return 1;
+        }
+        fcall->string = 0;
+    }
 
     /* if asked */
     if( free_fcall ){
@@ -178,14 +188,81 @@ unsigned int ic_expr_func_call_length(struct ic_expr_func_call *fcall){
  * returns 0 on error
  */
 char * ic_expr_func_call_str(struct ic_expr_func_call *fcall){
+    /* offset into args pvector */
+    unsigned int i = 0;
+    /* cached pvector length */
+    unsigned int len = 0;
+    /* function name */
+    struct ic_string *fstr = 0;
+
     if( ! fcall ){
         puts("ic_expr_func_call_str: fcall was null");
     }
 
-    /* FIXME need the ability to infer argument types */
+    /* if there is already a string defined for this then skip generation */
+    if( fcall->string ){
+        puts("ic_expr_func_call_str: called needlessly, caching result");
+        goto EXIT;
+    }
 
-    puts("ic_expr_func_call: implementation pending");
-    return 0;
+    /* generate fstr */
+    fstr = ic_string_new_empty();
+    if( ! fstr ){
+        puts("ic_expr_func_call_str: call to ic_string_new_empty failed");
+        return 0;
+    }
+
+    /* append function name */
+    if( ic_string_append_symbol(fstr, &(fcall->fname)) ){
+        puts("ic_expr_func_call_str: call to ic_string_append_symbol for 'fname' failed");
+        return 0;
+    }
+
+    /* opening bracket */
+    if( ic_string_append_char(fstr, "(", 1) ){
+        puts("ic_expr_func_call_str: call to ic_string_append_char for '(' failed");
+        return 0;
+    }
+
+    /* insert list of argument types
+     * FIXME incomplete
+     */
+    len = ic_pvector_length( &(fcall->args) );
+    for( i=0; i<len; ++i ){
+        /* insert a space if this isn't the first arg */
+        if( i != 0 ){
+            if( ic_string_append_char(fstr, " ", 1) ){
+                puts("ic_expr_func_call_str: call to ic_string_append_char for ' ' failed");
+                return 0;
+            }
+        }
+
+        /* FIXME need the ability to infer argument types */
+        /* FIXME append argument types */
+
+        /* FIXME remove filler */
+        if( ic_string_append_char(fstr, "arg", 3) ){
+            puts("ic_expr_func_call_str: call to ic_string_append_char for 'arg' failed");
+            return 0;
+        }
+
+    }
+
+    /* closing bracket */
+    if( ic_string_append_char(fstr, ")", 1) ){
+        puts("ic_expr_func_call_str: call to ic_string_append_char for ')' failed");
+        return 0;
+    }
+
+    /* store fstr on fcall */
+    fcall->string = fstr;
+
+    puts("ic_expr_func_call: implementation incomplete");
+
+EXIT:
+
+    /* return contents of fstr */
+    return ic_string_contents(fcall->string);
 }
 
 /* print this func call */
