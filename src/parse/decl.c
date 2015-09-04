@@ -342,7 +342,7 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
 
         /* save to our body */
         if( ic_func_decl_add_stmt(fdecl, stmt) ){
-            puts("ic_parse_func_decl: call to ic_func_call_add_stmt failed");
+            puts("ic_parse_func_decl: call to ic_func_decl_add_stmt failed");
             free(decl);
             return 0;
         }
