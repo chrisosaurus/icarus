@@ -121,10 +121,12 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
         goto ERROR;
     }
 
+    puts("ic_analyse_type_decl: implementation pending");
     return 0;
 
 ERROR:
 
+    puts("ic_analyse_type_decl: error");
     return 1;
 }
 
