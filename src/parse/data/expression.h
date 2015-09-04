@@ -58,6 +58,16 @@ struct ic_expr * ic_expr_func_call_get_arg(struct ic_expr_func_call *fcall, unsi
  */
 unsigned int ic_expr_func_call_length(struct ic_expr_func_call *fcall);
 
+/* generate a string (char *) presentation of this function call
+ * the signature generated will be consistent with the one generated
+ * from a call to `ic_func_decl_str` so will include argument type information:
+ *  foo(Int Int)
+ *
+ * return a string representation of this function call on success
+ * returns 0 on error
+ */
+char * ic_expr_func_call_str(struct ic_expr_func_call *fcall);
+
 /* print this func call */
 void ic_expr_func_call_print(struct ic_expr_func_call *fcall, unsigned int *indent_level);
 

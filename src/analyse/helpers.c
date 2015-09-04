@@ -326,7 +326,7 @@ struct ic_type_ref * ic_analyse_infer(struct ic_kludge *kludge, struct ic_expr *
              *  infer addone(1) -> addone(Int)->Int -> Int
              *  expr->type == func_call
              *  fc = expr->u.fcall
-             *  fstr = str(fc) // FIXME ic_func_call_str doesn't exist
+             *  fstr = str(fc) FIXME need to be able to infer arg types
              *  fdecl = kludge get fdecl from fstr
              *  tstr = fdecl->ret_type
              *  type = kludge get tdecl from tstr
@@ -337,7 +337,7 @@ struct ic_type_ref * ic_analyse_infer(struct ic_kludge *kludge, struct ic_expr *
              *  infer Foo(1 "hello") -> Foo(Int String) -> Foo
              *  expr->type == func_call
              *  fc = expr->u.fcall
-             *  fstr = str(fc) // FIXME ic_func_call_str doesn't exist
+             *  fstr = str(fc) FIXME need to be able to infer arg types
              *  fdecl = kludge get fdecl from fstr
              *  tstr = fdecl->ret_type
              *  type = kludge get tdecl from tstr

@@ -169,6 +169,25 @@ unsigned int ic_expr_func_call_length(struct ic_expr_func_call *fcall){
     return ic_pvector_length( &(fcall->args) );
 }
 
+/* generate a string (char *) presentation of this function call
+ * the signature generated will be consistent with the one generated
+ * from a call to `ic_func_decl_str` so will include argument type information:
+ *  foo(Int Int)
+ *
+ * return a string representation of this function call on success
+ * returns 0 on error
+ */
+char * ic_expr_func_call_str(struct ic_expr_func_call *fcall){
+    if( ! fcall ){
+        puts("ic_expr_func_call_str: fcall was null");
+    }
+
+    /* FIXME need the ability to infer argument types */
+
+    puts("ic_expr_func_call: implementation pending");
+    return 0;
+}
+
 /* print this func call */
 void ic_expr_func_call_print(struct ic_expr_func_call *fcall, unsigned int *indent_level){
     /* our eventual return value */
