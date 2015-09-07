@@ -42,7 +42,7 @@ unsigned int ic_symbol_init(struct ic_symbol *sym, char *source, unsigned int le
     }
 
     /* dispatch to handle initialisation of internal */
-    if( ic_string_init( &(sym->internal), source, len ) ){
+    if( ! ic_string_init( &(sym->internal), source, len ) ){
         puts("ic_symbol_new: error in call to ic_string_init");
         return 1;
     }
@@ -70,7 +70,7 @@ unsigned int ic_symbol_destroy(struct ic_symbol *sym, unsigned int free_sym){
      * note that we do NOT ask it to free_str
      * as internal is an element on sym
      */
-    if( ic_string_destroy( &(sym->internal), 0 ) ){
+    if( ! ic_string_destroy( &(sym->internal), 0 ) ){
         puts("ic_symbol_destroy: call to ic_string_destroy failed");
         return 1;
     }

@@ -72,7 +72,7 @@ unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned 
     }
 
     /* initialise empty string fdecl->string */
-    if( ic_string_init_empty( &(fdecl->string) ) ){
+    if( ! ic_string_init_empty( &(fdecl->string) ) ){
         puts("ic_func_decl_init: call to ic_string_init_empty for string failed");
         return 1;
     }
@@ -121,7 +121,7 @@ unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_
     /* free string contents but do not free string itself
      * since it is an element on fdecl
      */
-    if( ic_string_destroy(&(fdecl->string), 0) ){
+    if( ! ic_string_destroy(&(fdecl->string), 0) ){
         puts("ic_type_decl_destroy: for string call to ic_string_destroy failed");
         return 1;
     }
@@ -384,13 +384,13 @@ char * ic_func_decl_str(struct ic_func_decl *fdecl){
     len = ic_pvector_length(&(fdecl->args));
 
     /* fdecl->name */
-    if( ic_string_append_symbol(fstr, &(fdecl->name)) ){
+    if( ! ic_string_append_symbol(fstr, &(fdecl->name)) ){
         puts("ic_func_decl_str: name: call to ic_string_append_symbol failed");
         return 0;
     }
 
     /* opening bracket */
-    if( ic_string_append_char(fstr, "(", 1) ){
+    if( ! ic_string_append_char(fstr, "(", 1) ){
         puts("ic_func_decl_str: opening brace: call to ic_string_append_char failed");
         return 0;
     }
@@ -411,14 +411,14 @@ char * ic_func_decl_str(struct ic_func_decl *fdecl){
             return 0;
         }
 
-        if( ic_string_append_symbol(fstr, cur_type) ){
+        if( ! ic_string_append_symbol(fstr, cur_type) ){
             puts("ic_func_decl_str: arg: call to ic_string_append_symbol failed");
             return 0;
         }
     }
 
     /* final bracket */
-    if( ic_string_append_char(fstr, ")", 1) ){
+    if( ! ic_string_append_char(fstr, ")", 1) ){
         puts("ic_func_decl_str: closing brace: call to ic_string_append_char failed");
         return 0;
     }

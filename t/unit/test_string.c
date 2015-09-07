@@ -36,7 +36,7 @@ void normal(void){
     assert(ic_string_length(str2) == 6);
 
     /* test append */
-    assert( 0 == ic_string_append(str, str2) );
+    assert( 1 == ic_string_append(str, str2) );
     assert(ic_string_length(str) == 11);
     assert( ! strncmp("hello world", ic_string_contents(str), 12) );
 
@@ -58,53 +58,53 @@ void normal(void){
     assert(ic_string_get(str, 12) == 0);
 
     /* test append by char */
-    assert( 0 == ic_string_append_char(str2, "ly", 2) );
+    assert( 1 == ic_string_append_char(str2, "ly", 2) );
     assert(ic_string_length(str2) == 8);
     assert( ! strncmp(" worldly", ic_string_contents(str2), 9) );
 
     /* testing set */
-    assert( 0 ==  ic_string_set(str2, 0, '_') );
+    assert( 1 ==  ic_string_set(str2, 0, '_') );
     assert( '_' ==  ic_string_get(str2, 0) );
     assert(ic_string_length(str2) == 8);
     assert( ! strncmp("_worldly", ic_string_contents(str2), 9) );
 
-    assert( 0 == ic_string_destroy(str, 1) );
-    assert( 0 == ic_string_destroy(str2, 1) );
+    assert( 1 == ic_string_destroy(str, 1) );
+    assert( 1 == ic_string_destroy(str2, 1) );
 
     /* testing empty new and init */
     str = ic_string_new_empty();
     assert(str);
-    assert( 0 == ic_string_destroy(str, 1) );
+    assert( 1 == ic_string_destroy(str, 1) );
 
-    assert( 0 == ic_string_init_empty(&empty) );
-    assert( 0 == ic_string_destroy(&empty, 0) );
+    assert( 1 == ic_string_init_empty(&empty) );
+    assert( 1 == ic_string_destroy(&empty, 0) );
 }
 
 void abnormal(void){
     struct ic_string *str = ic_string_new("hello", 5);
 
     /* testing null string cases */
-    assert( 1 == ic_string_init(0, 0, 0) );
-    assert( 1 == ic_string_init_empty(0) );
+    assert( 0 == ic_string_init(0, 0, 0) );
+    assert( 0 == ic_string_init_empty(0) );
     assert( 0 == ic_string_contents(0) );
     assert( 0 == ic_string_get(0, 0) );
-    assert( 1 == ic_string_set(0, 0, 0) );
+    assert( 0 == ic_string_set(0, 0, 0) );
     assert( -1 == ic_string_length(0) );
-    assert( 1 == ic_string_append(0, 0) );
-    assert( 1 == ic_string_append_char(0, 0, 0) );
+    assert( 0 == ic_string_append(0, 0) );
+    assert( 0 == ic_string_append_char(0, 0, 0) );
 
     /* testing cases with non-null string but other
      * null required arguments
      */
-    assert( 1 == ic_string_append(str, 0) );
-    assert( 1 == ic_string_append_char(str, 0, 0) );
+    assert( 0 == ic_string_append(str, 0) );
+    assert( 0 == ic_string_append_char(str, 0, 0) );
 
     /* for string set we also do not allow for the pos to be out of range */
-    assert( 1 == ic_string_set(str, 5, 'c') );
+    assert( 0 == ic_string_set(str, 5, 'c') );
     /* we also do not allow for val to be the '\0' */
-    assert( 1 == ic_string_set(str, 0, '\0') );
+    assert( 0 == ic_string_set(str, 0, '\0') );
 
-    assert( 0 == ic_string_destroy(str, 1) );
+    assert( 1 == ic_string_destroy(str, 1) );
 }
 
 int main(void){

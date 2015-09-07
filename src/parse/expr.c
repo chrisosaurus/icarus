@@ -248,7 +248,7 @@ static struct ic_expr * ic_parse_expr_constant_string(struct ic_tokens *tokens, 
      * we have the start of the string (start)
      * and the total length (dist_sum)
      */
-    if( ic_string_init(string, start, length) ){
+    if( ! ic_string_init(string, start, length) ){
         puts("ic_parse_expr_constant_string: call to ic_string_init failed");
         free(expr);
         return 0;

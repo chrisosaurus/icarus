@@ -123,7 +123,7 @@ void abnormal(void){
 
 /* this is an example of why the c spec sucks */
 unsigned int string_shim(void *str, unsigned int free){
-    return ic_string_destroy(str, free);
+    return ! ic_string_destroy(str, free);
 }
 
 void destroy(void){

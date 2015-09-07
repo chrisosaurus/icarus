@@ -111,7 +111,7 @@ unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned
     }
 
     if( fcall->string ){
-        if( ic_string_destroy( fcall->string, 1 ) ){
+        if( ! ic_string_destroy( fcall->string, 1 ) ){
             puts("ic_expr_func_call_destroy: call to ic_string_destroy failed");
             return 1;
         }
@@ -213,13 +213,13 @@ char * ic_expr_func_call_str(struct ic_expr_func_call *fcall){
     }
 
     /* append function name */
-    if( ic_string_append_symbol(fstr, &(fcall->fname)) ){
+    if( ! ic_string_append_symbol(fstr, &(fcall->fname)) ){
         puts("ic_expr_func_call_str: call to ic_string_append_symbol for 'fname' failed");
         return 0;
     }
 
     /* opening bracket */
-    if( ic_string_append_char(fstr, "(", 1) ){
+    if( ! ic_string_append_char(fstr, "(", 1) ){
         puts("ic_expr_func_call_str: call to ic_string_append_char for '(' failed");
         return 0;
     }
@@ -231,7 +231,7 @@ char * ic_expr_func_call_str(struct ic_expr_func_call *fcall){
     for( i=0; i<len; ++i ){
         /* insert a space if this isn't the first arg */
         if( i != 0 ){
-            if( ic_string_append_char(fstr, " ", 1) ){
+            if( ! ic_string_append_char(fstr, " ", 1) ){
                 puts("ic_expr_func_call_str: call to ic_string_append_char for ' ' failed");
                 return 0;
             }
@@ -241,7 +241,7 @@ char * ic_expr_func_call_str(struct ic_expr_func_call *fcall){
         /* FIXME append argument types */
 
         /* FIXME remove filler */
-        if( ic_string_append_char(fstr, "arg", 3) ){
+        if( ! ic_string_append_char(fstr, "arg", 3) ){
             puts("ic_expr_func_call_str: call to ic_string_append_char for 'arg' failed");
             return 0;
         }
@@ -249,7 +249,7 @@ char * ic_expr_func_call_str(struct ic_expr_func_call *fcall){
     }
 
     /* closing bracket */
-    if( ic_string_append_char(fstr, ")", 1) ){
+    if( ! ic_string_append_char(fstr, ")", 1) ){
         puts("ic_expr_func_call_str: call to ic_string_append_char for ')' failed");
         return 0;
     }
@@ -466,7 +466,7 @@ unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, unsigne
 
         case ic_expr_constant_type_string:
             /* free = 0 as member */
-            if( ic_string_destroy( &(constant->u.string), 0 ) ){
+            if( ! ic_string_destroy( &(constant->u.string), 0 ) ){
                 puts("ic_expr_constant_destroy: call to ic_string_destroy failed");
                 return 1;
             }

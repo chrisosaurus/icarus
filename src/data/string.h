@@ -41,14 +41,16 @@ struct ic_string * ic_string_new(char *source, unsigned int len);
 struct ic_string * ic_string_new_empty(void);
 
 /* initialise an existing symbol from a char* and a length
- * returns 0 on success
- * returns 1 on error
+ *
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_string_init(struct ic_string *string, char *source, unsigned int len);
 
 /* initialise an existing symbol to empty
- * returns 0 on success
- * returns 1 on error
+ *
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_string_init_empty(struct ic_string *string);
 
@@ -59,8 +61,8 @@ unsigned int ic_string_init_empty(struct ic_string *string);
  * the caller must determine if it is appropriate or not
  * to not to call free(str)
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_string_destroy(struct ic_string *str, unsigned int free_str);
 
@@ -108,16 +110,16 @@ char ic_string_set(struct ic_string *string, unsigned int pos, char val);
 /* append the contents of `from` to `to`
  * this will resize `to` to guarantee there is enough space
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_string_append(struct ic_string *to, struct ic_string *from);
 
 /* append the contents of `from` to `to`
  * this will resize `to` to guarantee there is enough space
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_string_append_symbol(struct ic_string *to, struct ic_symbol *from);
 
@@ -129,8 +131,8 @@ unsigned int ic_string_append_symbol(struct ic_string *to, struct ic_symbol *fro
  * this will also make sure the final character internally is a \0
  * even if the character at from[from_len - 1] != '\0'
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_string_append_char(struct ic_string *to, char *from, unsigned int from_len);
 
