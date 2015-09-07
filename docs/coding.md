@@ -25,13 +25,11 @@ Example conforming function:
         return 1;
     }
 
-known areas, types and functions not conforming:
+known areas, types, and functions not conforming:
 
 * carray
 * parray
 * pvector
-* lex
-* read
 * parse
 * analyse
 * symbol
