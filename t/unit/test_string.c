@@ -92,12 +92,15 @@ void abnormal(void){
     assert( -1 == ic_string_length(0) );
     assert( 0 == ic_string_append(0, 0) );
     assert( 0 == ic_string_append_char(0, 0, 0) );
+    assert( 0 == ic_string_append_symbol(0, 0) );
+    assert( 0 == ic_string_destroy(0, 0) );
 
     /* testing cases with non-null string but other
      * null required arguments
      */
     assert( 0 == ic_string_append(str, 0) );
     assert( 0 == ic_string_append_char(str, 0, 0) );
+    assert( 0 == ic_string_append_symbol(str, 0) );
 
     /* for string set we also do not allow for the pos to be out of range */
     assert( 0 == ic_string_set(str, 5, 'c') );
@@ -105,6 +108,7 @@ void abnormal(void){
     assert( 0 == ic_string_set(str, 0, '\0') );
 
     assert( 1 == ic_string_destroy(str, 1) );
+
 }
 
 int main(void){
