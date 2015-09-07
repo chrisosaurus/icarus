@@ -30,15 +30,13 @@ testing debt:
 technical debt:
 -----
 
+* see docs/coding.md 'Error handling' section
 * parsing of '.' and ',' are not satisfactory, they are currently being caught as identifiers as the 'operator' code is only really for binary operators
-* function return value on failure, need to standardise (e.g. symbol, some 0 on failure, others 1)
 * all objects (esp. containers) need destructors (see `./scripts/destruct_audit.sh` for current list)
 * add pvector/parray destructor helper which takes a function * and iterates through it's contents passing to function
 * add shims to allow ic_pvector_destroy to be called on each type
 * src/parse/data/ names, `statement`, `expression`, `decl` seems off (some shortened while others full)
 * ic_dict interface set/insert is non-ideal, see linear_hash upstream TODO
-* ic_dict return values on error are a mess
-* ic_scope return values on error are a mess and do not match the ic_dict convention
 * ic_scope insert interface is non-ideal
 * ic_scope lacks an exists
 
@@ -52,37 +50,5 @@ considerations:
 * `ic_analyse_type_decl` currently allows co-recursive types `type Foo a::Bar end` `type bar a::Foo end`, is this allowed?
  * consider allowing free_data param to ic_pvector_destroy that is passed to (*destroy_item) rather than defaulting to true
 
-
-
-return codes:
------
-
-currently icarus has mixed return code semantics, this needs to be resolved (with a standard) and then fixed
-
-
-the following types/modules returns 0 on all errors:
-
-* libs/linear_hash
-* dict
-* libs/liner_set
-* set
-
-
-the following types/modules return 0 on error for pointers and 1 for non-pointers:
-
-* scope
-* carray
-* parray
-* pvector
-* lex (only one func)
-* read (only one func)
-* parse
-* analyse
-
-
-the following types/modules are special cases:
-
-* symbol (-1 for error), otherwise 0 for pointer and 1 for other (mostly, symbol_get is broken)
-* string (-1 for error), otherwise 0 for pointer and 1 for other (mostly, string_get is broken)
 
 
