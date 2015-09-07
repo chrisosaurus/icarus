@@ -5,6 +5,7 @@
  * a dynamic bounds checked array
  * stores an array of void pointers
  * caller is responsible for managing the contents
+ *
  */
 struct ic_parray {
     unsigned int len;
@@ -27,6 +28,17 @@ struct ic_parray * ic_parray_new(unsigned int len);
  * returns 0 on error
  */
 unsigned int ic_parray_init(struct ic_parray *arr, unsigned int len);
+
+/* destroy this parray
+ * will only free parray itself if free_parr is truthy
+ *
+ * this does NOT free the items in the parray as parray does not store length,
+ * this is the user's responsibility
+ *
+ * returns 1 on success
+ * returns 0 on error
+ */
+unsigned int ic_parray_destroy(struct ic_parray *arr, unsigned int free_parr);
 
 /* get item at pos
  *

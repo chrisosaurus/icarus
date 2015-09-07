@@ -51,6 +51,33 @@ unsigned int ic_parray_init(struct ic_parray *arr, unsigned int len){
     return 1;
 }
 
+/* destroy this parray
+ * will only free parray itself if free_parr is truthy
+ *
+ * this does NOT free the items in the parray, as parray does not store length,
+ * this is the user's responsibility
+ *
+ * returns 1 on success
+ * returns 0 on error
+ */
+unsigned int ic_parray_destroy(struct ic_parray *arr, unsigned int free_parr){
+    if( ! arr ){
+        puts("ic_parray_destroy: arr was null");
+        return 0;
+    }
+
+    if( arr->contents ){
+        free(arr->contents);
+        arr->contents = 0;
+    }
+
+    if( free_parr ){
+        free(arr);
+    }
+
+    return 1;
+}
+
 /* get item at pos
  *
  * bounds checked

@@ -34,6 +34,8 @@ void normal(void){
     /* and check that out of range get and set are still errors */
     assert(ic_parray_get(arr, 10) == 0);
     assert(ic_parray_set(arr, 10, arr) == 0);
+
+    assert( 1 == ic_parray_destroy(arr, 1) );
 }
 
 void abnormal(void){
@@ -42,6 +44,7 @@ void abnormal(void){
     assert( 0 == ic_parray_get(0, 0) );
     assert( 0 == ic_parray_set(0, 0, 0) );
     assert( 0 == ic_parray_ensure(0, 0) );
+    assert( 0 == ic_parray_destroy(0, 0) );
 }
 
 int main(void){
