@@ -81,7 +81,7 @@ ERROR:
     /* destroy kludge
      * free_kludge as allocated with new
      */
-    if( ic_kludge_destroy(kludge, 1) ){
+    if( ! ic_kludge_destroy(kludge, 1) ){
         puts("ic_analyse: call to ic_kludge_destroy failed in error case");
     }
 

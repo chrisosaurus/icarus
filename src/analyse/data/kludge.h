@@ -56,8 +56,8 @@ struct ic_kludge * ic_kludge_new(struct ic_ast *ast);
  *
  * this will NOT perform any analysis
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast);
 
@@ -65,8 +65,8 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast);
  *
  * will only free kludge if `free_kludge` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludge);
 
@@ -74,8 +74,8 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
  * this will insert into dict_tname and also
  * into tdecls
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *tdecl);
 
@@ -83,8 +83,8 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *
  * this will insert into dict_fname and also
  * into fsigs
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *fdecl);
 
@@ -106,8 +106,8 @@ struct ic_func_decl * ic_kludge_get_fdecl(struct ic_kludge *kludge, char *fdecl_
  *
  * FIXME no error type
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_kludge_add_error(struct ic_kludge *kludge, void *error);
 

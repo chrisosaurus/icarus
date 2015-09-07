@@ -70,7 +70,7 @@ int main(int argc, char **argv){
 
 
     /* clean up time */
-    if( ic_kludge_destroy(kludge, 1) ){
+    if( ! ic_kludge_destroy(kludge, 1) ){
         puts("main: ic_kludge_destroy call failed");
     }
 #endif
