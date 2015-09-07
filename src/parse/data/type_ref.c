@@ -134,7 +134,7 @@ unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_typ
 
         case ic_type_ref_symbol:
             /* clean up symbol, do not free as member */
-            if( ic_symbol_destroy( &(type->u.sym), 0 ) ){
+            if( ! ic_symbol_destroy( &(type->u.sym), 0 ) ){
                 puts("ic_type_destroy: call to ic_symbol_destroy failed");
                 return 1;
             }
@@ -210,7 +210,7 @@ unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, un
     type->type = ic_type_ref_symbol;
 
     /* set our symbol from the provider char * and len */
-    if( ic_symbol_init(&(type->u.sym), type_str, type_len) ){
+    if( ! ic_symbol_init(&(type->u.sym), type_str, type_len) ){
         puts("ic_type_set_symbol: call to ic_symbol_init failed");
         return 1;
     }
@@ -248,7 +248,7 @@ unsigned int ic_type_ref_set_tdecl(struct ic_type_ref *type, struct ic_type_decl
 
         case ic_type_ref_symbol:
             /* clean up symbol, do not free as member */
-            if( ic_symbol_destroy( &(type->u.sym), 0 ) ){
+            if( ! ic_symbol_destroy( &(type->u.sym), 0 ) ){
                 puts("ic_type_set_tdecl: call to ic_symbol_destroy failed");
                 return 1;
             }

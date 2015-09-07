@@ -55,7 +55,7 @@ unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, char *name,
 
     /* call init on components */
 
-    if( ic_symbol_init( &(fcall->fname), name, name_len ) ){
+    if( ! ic_symbol_init( &(fcall->fname), name, name_len ) ){
         puts("ic_expr_func_call_init: call to ic_symbol_init failed");
         return 1;
     }
@@ -90,7 +90,7 @@ unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned
     }
 
     /* free = 0 as member */
-    if( ic_symbol_destroy( &(fcall->fname), 0 ) ){
+    if( ! ic_symbol_destroy( &(fcall->fname), 0 ) ){
         puts("ic_expr_func_call_destroy: call to ic_symbol_destroy failed");
         return 1;
     }
@@ -368,7 +368,7 @@ unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, cha
     }
 
     /* init our symbol name */
-    if( ic_symbol_init( &(identifier->identifier), id, id_len ) ){
+    if( ! ic_symbol_init( &(identifier->identifier), id, id_len ) ){
         puts("ic_expr_identifier_init: call to ic_symbol_init failed");
         return 1;
     }
@@ -390,7 +390,7 @@ unsigned int ic_expr_identifier_destroy(struct ic_expr_identifier * identifier, 
     }
 
     /* free = 0 as member */
-    if( ic_symbol_destroy( &(identifier->identifier), 0 ) ){
+    if( ! ic_symbol_destroy( &(identifier->identifier), 0 ) ){
         puts("ic_expr_identifier_destroy: identifier was null");
         return 1;
     }
@@ -654,7 +654,7 @@ unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, struct ic_
 
 
     /* initialise symbol op */
-    if( ic_symbol_init( &(operator->op), op, op_len ) ){
+    if( ! ic_symbol_init( &(operator->op), op, op_len ) ){
         puts("ic_expr_operator_init: call to ic_symbol_init failed");
         return 1;
     }
@@ -697,7 +697,7 @@ unsigned int ic_expr_operator_destroy(struct ic_expr_operator *op, unsigned int 
     }
 
     /* free = 0 as member */
-    if( ic_symbol_destroy( &(op->op), 0 ) ){
+    if( ! ic_symbol_destroy( &(op->op), 0 ) ){
         puts("ic_expr_operator_destroy: call to ic_symbol_destroy failed");
         return 1;
     }

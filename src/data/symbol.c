@@ -21,7 +21,7 @@ struct ic_symbol * ic_symbol_new(char *source, unsigned int len){
         return 0;
     }
 
-    if( ic_symbol_init(sym, source, len) ){
+    if( ! ic_symbol_init(sym, source, len) ){
         puts("ic_symbol_new: error in call to ic_symbol_init");
         free(sym);
         return 0;
@@ -32,22 +32,22 @@ struct ic_symbol * ic_symbol_new(char *source, unsigned int len){
 
 /* initialise an existing symbol from a char* and a length
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_symbol_init(struct ic_symbol *sym, char *source, unsigned int len){
     if( ! sym ){
         puts("ic_symbol_init: passed in sym was null");
-        return 1;
+        return 0;
     }
 
     /* dispatch to handle initialisation of internal */
     if( ! ic_string_init( &(sym->internal), source, len ) ){
         puts("ic_symbol_new: error in call to ic_string_init");
-        return 1;
+        return 0;
     }
 
-    return 0;
+    return 1;
 }
 
 /* destroy symbol
@@ -57,13 +57,13 @@ unsigned int ic_symbol_init(struct ic_symbol *sym, char *source, unsigned int le
  * the caller must determine if it is appropriate or not
  * to not to call free(sym)
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_symbol_destroy(struct ic_symbol *sym, unsigned int free_sym){
     if( ! sym ){
         puts("ic_symbol_destroy: passed in sym was null");
-        return 1;
+        return 0;
     }
 
     /* dispatch to string destroy for work
@@ -72,7 +72,7 @@ unsigned int ic_symbol_destroy(struct ic_symbol *sym, unsigned int free_sym){
      */
     if( ! ic_string_destroy( &(sym->internal), 0 ) ){
         puts("ic_symbol_destroy: call to ic_string_destroy failed");
-        return 1;
+        return 0;
     }
 
     /* free symbol if asked */
@@ -81,7 +81,7 @@ unsigned int ic_symbol_destroy(struct ic_symbol *sym, unsigned int free_sym){
     }
 
     /* success */
-    return 0;
+    return 1;
 }
 
 

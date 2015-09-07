@@ -31,12 +31,12 @@ void normal(void){
     /* cannot test output */
     ic_symbol_print(str);
 
-    assert( 0 == ic_symbol_destroy(str, 1) );
+    assert( 1 == ic_symbol_destroy(str, 1) );
 }
 
 void abnormal(void){
     /* test null symbol cases */
-    assert( 1 == ic_symbol_init(0, 0, 0) );
+    assert( 0 == ic_symbol_init(0, 0, 0) );
     assert( 0 == ic_symbol_contents(0) );
     assert( 0 == ic_symbol_get(0, 0) );
     assert( -1 == ic_symbol_length(0) );

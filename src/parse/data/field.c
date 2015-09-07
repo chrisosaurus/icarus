@@ -51,7 +51,7 @@ unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int 
     }
 
     /* init name symbol */
-    if( ic_symbol_init( &(field->name), name_src, name_len ) ){
+    if( ! ic_symbol_init( &(field->name), name_src, name_len ) ){
         puts("ic_field_init: call to ic_symbol_init for name failed");
         return 1;
     }
@@ -82,7 +82,7 @@ unsigned int ic_field_destroy(struct ic_field *field, unsigned int free_field){
      * note we do not ask it to destroy_symbol
      * as it is a member
      */
-    if( ic_symbol_destroy( &(field->name), 0 ) ){
+    if( ! ic_symbol_destroy( &(field->name), 0 ) ){
         puts("ic_field_destroy: name: call to ic_symbol_destroy failed");
         return 1;
     }

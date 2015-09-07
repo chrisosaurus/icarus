@@ -60,7 +60,7 @@ unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned 
     }
 
     /* initialise name symbol */
-    if( ic_symbol_init( &(fdecl->name), name, name_len ) ){
+    if( ! ic_symbol_init( &(fdecl->name), name, name_len ) ){
         puts("ic_func_decl_init: call to ic_symbol_init for name failed");
         return 1;
     }
@@ -113,7 +113,7 @@ unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_
     /* free symbol contents but do not free symbol itself
      * since it is an element on fdecl
      */
-    if( ic_symbol_destroy(&(fdecl->name), 0) ){
+    if( ! ic_symbol_destroy(&(fdecl->name), 0) ){
         puts("ic_type_decl_destroy: for name call to ic_symbol_destroy failed");
         return 1;
     }
@@ -152,7 +152,7 @@ unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_
          *    // ic_func_decl_set_return :
          *    fdecl->ret_type = ic_symbol_new(type, type_len);
          */
-        if( ic_symbol_destroy(fdecl->ret_type, 1) ){
+        if( ! ic_symbol_destroy(fdecl->ret_type, 1) ){
             puts("ic_type_decl_destroy: for ret_type call to ic_symbol_destroy failed");
             return 1;
         }
@@ -472,7 +472,7 @@ unsigned int ic_type_decl_init(struct ic_type_decl *tdecl, char *name_src, unsig
     }
 
     /* initialise name */
-    if( ic_symbol_init( &(tdecl->name), name_src, name_len ) ){
+    if( ! ic_symbol_init( &(tdecl->name), name_src, name_len ) ){
         puts("ic_type_decl_init: call to ic_symbol_init for name failed");
         return 1;
     }
@@ -509,7 +509,7 @@ unsigned int ic_type_decl_destroy(struct ic_type_decl *tdecl, unsigned int free_
     /* free symbol contents but do not free symbol itself
      * since it is an element on tdecl
      */
-    if( ic_symbol_destroy(&(tdecl->name), 0) ){
+    if( ! ic_symbol_destroy(&(tdecl->name), 0) ){
         puts("ic_type_decl_destroy: call to ic_symbol_destroy failed");
         return 1;
     }

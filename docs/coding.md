@@ -29,12 +29,12 @@ known areas, types, and functions not conforming:
 
 * parse
 * analyse
-* symbol
 
 
 allowed special cases:
 
 * ic_pvector_append will return the index of the appended item, returns -1 on error
 * ic_string_length will return the length, returns -1 on error
+* ic_symbol_length will return the length, returns -1 on error
 
 

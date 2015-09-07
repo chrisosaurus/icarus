@@ -177,13 +177,13 @@ unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned in
     }
 
     /* dispatch to symbol init for id */
-    if( ic_symbol_init( &(let->identifier), id_src, id_len ) ){
+    if( ! ic_symbol_init( &(let->identifier), id_src, id_len ) ){
         puts("ic_smtm_let_init: call to ic_symbol_init for id failed");
         return 1;
     }
 
     /* dispatch to symbol init for type */
-    if( ic_symbol_init( &(let->type), type_src, type_len ) ){
+    if( ! ic_symbol_init( &(let->type), type_src, type_len ) ){
         puts("ic_smtm_let_init: call to ic_symbol_init for type failed");
         return 1;
     }
@@ -208,13 +208,13 @@ unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let)
     }
 
     /* free = 0 as member */
-    if( ic_symbol_destroy( &(let->identifier), 0 ) ){
+    if( ! ic_symbol_destroy( &(let->identifier), 0 ) ){
         puts("ic_stmt_let_destroy: identifier called to ic_symbol_destroy failed");
         return 1;
     }
 
     /* free = 0 as member */
-    if( ic_symbol_destroy( &(let->type), 0 ) ){
+    if( ! ic_symbol_destroy( &(let->type), 0 ) ){
         puts("ic_stmt_let_destroy: type called to ic_symbol_destroy failed");
         return 1;
     }
