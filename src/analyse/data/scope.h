@@ -48,7 +48,7 @@ unsigned int ic_scope_init(struct ic_scope *scope, struct ic_scope *parent);
 unsigned int ic_scope_destroy(struct ic_scope *scope, unsigned int free_scope);
 
 /* insert a new entry to this scope
- * this will insert into content
+ * this will insert into content, key must not already exist
  *
  * returns 0 on success
  * returns 1 on failure

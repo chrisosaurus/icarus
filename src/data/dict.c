@@ -73,6 +73,7 @@ void * ic_dict_set(struct ic_dict *dict, char *key, void *data){
 }
 
 /* insert data into dict under key
+ * insert will only work if key doesn't already exist
  *
  * returns 1 on success
  * returns 0 on error
