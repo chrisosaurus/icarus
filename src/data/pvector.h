@@ -61,7 +61,7 @@ unsigned int ic_pvector_init(struct ic_pvector *vec, unsigned int cap);
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_pvector_destroy(struct ic_pvector *vec, unsigned int free_vec, unsigned int (*destroy_item)(void* item, unsigned int free));
+unsigned int ic_pvector_destroy(struct ic_pvector *vec, unsigned int free_vec, unsigned int (*destroy_item)(void *item, unsigned int free));
 
 /* get item at pos
  * bounds checked
