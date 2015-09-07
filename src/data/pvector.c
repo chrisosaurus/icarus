@@ -66,6 +66,7 @@ unsigned int ic_pvector_init(struct ic_pvector *vec, unsigned int cap){
  *
  * takes an optional function which is called once for each argument stored in the pvector
  * it will be called with it's free argument set to true
+ * this function is expected to return 0 on error
  * FIXME consider allowing free_data param to ic_pvector_destroy that is passed to (*destroy_item) rather than defaulting to true
  *
  * this function will bail at the first error encountered
@@ -116,7 +117,7 @@ unsigned int ic_pvector_destroy(struct ic_pvector *vec, unsigned int free_vec, u
                 return 0;
             }
 
-            if( destroy_item(item, 1) ){
+            if( ! destroy_item(item, 1) ){
                 puts("ic_pvector_destroy: call to user provided destroy func failed");
                 return 0;
             }
