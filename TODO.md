@@ -60,7 +60,7 @@ return codes:
 currently icarus has mixed return code semantics, this needs to be resolved (with a standard) and then fixed
 
 
-the following types returns 0 on all errors:
+the following types/modules returns 0 on all errors:
 
 * libs/linear_hash
 * dict
@@ -68,15 +68,19 @@ the following types returns 0 on all errors:
 * set
 
 
-the following types return 0 on error for pointers and 1 for non-pointers:
+the following types/modules return 0 on error for pointers and 1 for non-pointers:
 
 * scope
 * carray
 * parray
 * pvector
+* lex (only one func)
+* read (only one func)
+* parse
+* analyse
 
 
-the following types are special cases:
+the following types/modules are special cases:
 
 * symbol (-1 for error), otherwise 0 for pointer and 1 for other (mostly, symbol_get is broken)
 * string (-1 for error), otherwise 0 for pointer and 1 for other (mostly, string_get is broken)
