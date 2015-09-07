@@ -136,7 +136,7 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
                 }
 
                 /* store ret in our ast */
-                if( ic_ast_append(ast, ret) == -1 ){
+                if( -1 == ic_ast_append(ast, ret) ){
                     puts("ic_parse: call to ic_ast_append failed");
 
                     /* free ast and all contents */

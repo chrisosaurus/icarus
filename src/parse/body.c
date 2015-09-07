@@ -40,7 +40,7 @@ struct ic_body * ic_parse_body(struct ic_tokens *tokens, unsigned int *i){
         }
 
         /* store this stmt in the body */
-        if( ic_body_append(body, stmt) == -1 ){
+        if( -1 == ic_body_append(body, stmt) ){
             puts("ic_parse_body: call to ic_body_append failed");
             return 0;
         }

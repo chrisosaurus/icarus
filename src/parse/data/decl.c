@@ -257,7 +257,7 @@ unsigned int ic_func_decl_add_stmt(struct ic_func_decl *fdecl, struct ic_stmt *s
     }
 
     /* add our element */
-    if( ic_body_append( &(fdecl->body), stmt ) == -1 ){
+    if( -1 == ic_body_append( &(fdecl->body), stmt ) ){
         puts("ic_func_decl_add_stmt: call to ic_body_append failed");
         return 1;
     }
