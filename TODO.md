@@ -1,4 +1,5 @@
 TODO:
+-----
 
 * document parse function interfaces
 * write remaining parse code
@@ -9,6 +10,7 @@ TODO:
 
 
 bugs:
+-----
 
 * return code: ic_pvector_destroy returns 1 on failure, ic_dict_destroy returns 0 on failure
 * docs/internal/types.md specifies ic_type_ref -> ic_type -> ic_type_decl, however ic_type_ref currently refers directly to an ic_type_decl
@@ -16,6 +18,7 @@ bugs:
 
 
 testing debt:
+-----
 
 * test_ast needs to be beefed up
 * create test_parse
@@ -25,6 +28,7 @@ testing debt:
 
 
 technical debt:
+-----
 
 * parsing of '.' and ',' are not satisfactory, they are currently being caught as identifiers as the 'operator' code is only really for binary operators
 * function return value on failure, need to standardise (e.g. symbol, some 0 on failure, others 1)
@@ -40,10 +44,35 @@ technical debt:
 
 
 considerations:
+-----
 
 * consider const correctness
 * consider how to deal with builtin types (int, string) and functions (print)
 * consider const-correctness on read only args
 * `ic_analyse_type_decl` currently allows co-recursive types `type Foo a::Bar end` `type bar a::Foo end`, is this allowed?
  * consider allowing free_data param to ic_pvector_destroy that is passed to (*destroy_item) rather than defaulting to true
+
+
+
+return codes:
+-----
+
+currently icarus has mixed return code semantics, this needs to be resolved (with a standard) and then fixed
+
+the following types returns 0 on all errors:
+libs/linear_hash
+dict
+set
+
+
+the following types return 0 on error for pointers and 1 for non-pointers:
+scope
+carray
+parray
+pvector
+
+the following types are special cases:
+symbol (-1 for error), otherwise 0 for pointer and 1 for other (mostly, symbol_get is broken)
+string (-1 for error), otherwise 0 for pointer and 1 for other (mostly, string_get is broken)
+
 
