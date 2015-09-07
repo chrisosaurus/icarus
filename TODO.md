@@ -64,6 +64,7 @@ the following types returns 0 on all errors:
 
 * libs/linear_hash
 * dict
+* libs/liner_set
 * set
 
 
