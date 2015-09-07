@@ -65,6 +65,7 @@ void errors(void){
     assert( -1 == ic_ast_append(0, 0) );
     assert( -1 == ic_ast_append(&ast, 0) );
     assert( 0 == ic_ast_length(0) );
+    assert( 1 == ic_ast_destroy(0, 0) );
 }
 
 int main(void){
