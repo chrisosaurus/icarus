@@ -59,20 +59,25 @@ return codes:
 
 currently icarus has mixed return code semantics, this needs to be resolved (with a standard) and then fixed
 
+
 the following types returns 0 on all errors:
-libs/linear_hash
-dict
-set
+
+* libs/linear_hash
+* dict
+* set
 
 
 the following types return 0 on error for pointers and 1 for non-pointers:
-scope
-carray
-parray
-pvector
+
+* scope
+* carray
+* parray
+* pvector
+
 
 the following types are special cases:
-symbol (-1 for error), otherwise 0 for pointer and 1 for other (mostly, symbol_get is broken)
-string (-1 for error), otherwise 0 for pointer and 1 for other (mostly, string_get is broken)
+
+* symbol (-1 for error), otherwise 0 for pointer and 1 for other (mostly, symbol_get is broken)
+* string (-1 for error), otherwise 0 for pointer and 1 for other (mostly, string_get is broken)
 
 
