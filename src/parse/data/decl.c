@@ -66,7 +66,7 @@ unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned 
     }
 
     /* initialise empty args pvector */
-    if( ic_pvector_init( &(fdecl->args), 0 ) ){
+    if( ! ic_pvector_init( &(fdecl->args), 0 ) ){
         puts("ic_func_decl_init: call to ic_pvector_init failed");
         return 1;
     }
@@ -478,7 +478,7 @@ unsigned int ic_type_decl_init(struct ic_type_decl *tdecl, char *name_src, unsig
     }
 
     /* init fields pvector */
-    if( ic_pvector_init( &(tdecl->fields), 0 ) ){
+    if( ! ic_pvector_init( &(tdecl->fields), 0 ) ){
         puts("ic_type_decl_init: call to ic_pvector_init for fields failed");
         return 1;
     }

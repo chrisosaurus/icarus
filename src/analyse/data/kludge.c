@@ -125,19 +125,19 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast){
     }
 
     /* pvector tdecls */
-    if( ic_pvector_init( &(kludge->tdecls), 0 ) ){
+    if( ! ic_pvector_init( &(kludge->tdecls), 0 ) ){
         puts("ic_kludge_init: tdecl: call to ic_pvector_init failed");
         return 0;
     }
 
     /* pvector fdecls */
-    if( ic_pvector_init( &(kludge->fdecls), 0 ) ){
+    if( ! ic_pvector_init( &(kludge->fdecls), 0 ) ){
         puts("ic_kludge_init: fdecl: call to ic_pvector_init failed");
         return 0;
     }
 
     /* pvector error */
-    if( ic_pvector_init( &(kludge->errors), 0 ) ){
+    if( ! ic_pvector_init( &(kludge->errors), 0 ) ){
         puts("ic_kludge_init: errors: call to ic_pvector_init failed");
         return 0;
     }
@@ -221,7 +221,7 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
      * do not free_vec as it is a member of kludge
      * no need for destroy_item funcion
      */
-    if( ic_pvector_destroy( &(kludge->tdecls), 0, 0 ) ){
+    if( ! ic_pvector_destroy( &(kludge->tdecls), 0, 0 ) ){
         puts("ic_kludge_destroy: call to ic_pvector_destroy for tdecls failed");
         return 0;
     }
@@ -231,7 +231,7 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
      * do not free_vec as it is a member of kludge
      * no need for destroy_item funcion
      */
-    if( ic_pvector_destroy( &(kludge->fdecls), 0, 0 ) ){
+    if( ! ic_pvector_destroy( &(kludge->fdecls), 0, 0 ) ){
         puts("ic_kludge_destroy: call to ic_pvector_destroy for fdecls failed");
         return 0;
     }

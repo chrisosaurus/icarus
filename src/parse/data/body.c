@@ -42,7 +42,7 @@ unsigned int ic_body_init(struct ic_body *body){
     };
 
     /* simply dispatch to pvector init */
-    if( ic_pvector_init( &(body->contents), 0 ) ){
+    if( ! ic_pvector_init( &(body->contents), 0 ) ){
         puts("ic_body_init: call to ic_pvector_init failed");
         return 1;
     }

@@ -29,8 +29,8 @@ struct ic_pvector * ic_pvector_new(unsigned int cap);
  *
  * will use a default cap of PVECTOR_DEFAULT_SIZE is no cap is supplied
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_pvector_init(struct ic_pvector *vec, unsigned int cap);
 
@@ -58,8 +58,8 @@ unsigned int ic_pvector_init(struct ic_pvector *vec, unsigned int cap);
  *      return foo(item, free);
  *  }
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_pvector_destroy(struct ic_pvector *vec, unsigned int free_vec, unsigned int (*destroy_item)(void* item, unsigned int free));
 
@@ -74,7 +74,7 @@ void * ic_pvector_get(struct ic_pvector *arr, unsigned int pos);
 /* append a new item to the end of pvector
  * this will grow pvector if needed
  *
- * returns a positive integer representing the new item's index into the vector on success
+ * returns an integer representing the new item's index into the vector on success
  * returns -1 on failure
  */
 int ic_pvector_append(struct ic_pvector *arr, void *data);
@@ -82,8 +82,8 @@ int ic_pvector_append(struct ic_pvector *arr, void *data);
 /* ensure pvector is at least as big as `new_cap`
  * this will not shrink the pvector
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_pvector_ensure(struct ic_pvector *arr, unsigned int new_cap);
 

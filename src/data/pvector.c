@@ -20,7 +20,7 @@ struct ic_pvector * ic_pvector_new(unsigned int cap){
         return 0;
     }
 
-    if( ic_pvector_init(arr, cap) ){
+    if( ! ic_pvector_init(arr, cap) ){
         puts("ic_pvector_new: call to ic_pvector_init failed");
         free(arr);
         return 0;
@@ -33,13 +33,13 @@ struct ic_pvector * ic_pvector_new(unsigned int cap){
  *
  * will use a default cap of PVECTOR_DEFAULT_SIZE is no cap is supplied
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_pvector_init(struct ic_pvector *vec, unsigned int cap){
     if( ! vec ){
         puts("ic_pvector_init: vec was null");
-        return 1;
+        return 0;
     }
 
     /* default to PVECTOR_DEFAULT_SIZE if no cap is specified
@@ -54,10 +54,10 @@ unsigned int ic_pvector_init(struct ic_pvector *vec, unsigned int cap){
     vec->contents = calloc(cap, sizeof(void*));
     if( ! vec->contents ){
         puts("ic_pvector_init: calloc of contents failed");
-        return 1;
+        return 0;
     }
 
-    return 0;
+    return 1;
 }
 
 /* destroy pvector
@@ -84,8 +84,8 @@ unsigned int ic_pvector_init(struct ic_pvector *vec, unsigned int cap){
  *      return foo(item, free);
  *  }
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_pvector_destroy(struct ic_pvector *vec, unsigned int free_vec, unsigned int (*destroy_item)(void* item, unsigned int free)){
     /* offset into pvector */
@@ -97,7 +97,7 @@ unsigned int ic_pvector_destroy(struct ic_pvector *vec, unsigned int free_vec, u
 
     if( ! vec ){
         puts("ic_pvector_destroy: vec was null");
-        return 1;
+        return 0;
     }
 
     len = ic_pvector_length(vec);
@@ -113,12 +113,12 @@ unsigned int ic_pvector_destroy(struct ic_pvector *vec, unsigned int free_vec, u
             item = ic_pvector_get(vec, i);
             if( ! item ){
                 puts("ic_pvector_destroy: call to ic_pvector_get failed");
-                return 1;
+                return 0;
             }
 
             if( destroy_item(item, 1) ){
                 puts("ic_pvector_destroy: call to user provided destroy func failed");
-                return 1;
+                return 0;
             }
         }
     }
@@ -128,7 +128,7 @@ unsigned int ic_pvector_destroy(struct ic_pvector *vec, unsigned int free_vec, u
         free(vec);
     }
 
-    return 0;
+    return 1;
 }
 
 /* get item at pos
@@ -153,7 +153,7 @@ void * ic_pvector_get(struct ic_pvector *arr, unsigned int pos){
 /* append a new item to the end of pvector
  * this will grow pvector if needed
  *
- * returns a positive integer representing the new item's index into the vector on success
+ * returns an integer representing the new item's index into the vector on success
  * returns -1 on failure
  */
 int ic_pvector_append(struct ic_pvector *arr, void *data){
@@ -166,7 +166,7 @@ int ic_pvector_append(struct ic_pvector *arr, void *data){
     if( arr->used >= arr->cap ){
         /* resize */
         /* FIXME want to have a smarter growth pattern */
-        if( ic_pvector_ensure(arr, arr->cap * 2) ){
+        if( ! ic_pvector_ensure(arr, arr->cap * 2) ){
             puts("ic_pvector_append: call to ic_pvector_ensure failed");
             return -1;
         }
@@ -191,13 +191,13 @@ int ic_pvector_append(struct ic_pvector *arr, void *data){
 /* ensure pvector is at least as big as `new_cap`
  * this will not shrink the pvector
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_pvector_ensure(struct ic_pvector *arr, unsigned int new_cap){
     if( ! arr ){
         puts("ic_pvector_ensure: supplied array was null");
-        return 1;
+        return 0;
     }
 
     if( ! new_cap ){
@@ -206,7 +206,7 @@ unsigned int ic_pvector_ensure(struct ic_pvector *arr, unsigned int new_cap){
 
     if( arr->cap >= new_cap ){
         /* nothing to do */
-        return 0;
+        return 1;
     }
 
     /* perform actual resizing
@@ -216,14 +216,14 @@ unsigned int ic_pvector_ensure(struct ic_pvector *arr, unsigned int new_cap){
     arr->contents = realloc(arr->contents, sizeof(void*) * new_cap);
     if( ! arr->contents ){
         puts("ic_pvector_ensure: realloc failed");
-        return 1;
+        return 0;
     }
 
     /* zero out new bytes */
     memset( &(arr->contents[arr->cap]), 0, (new_cap - arr->cap) );
 
     arr->cap = new_cap;
-    return 0;
+    return 1;
 }
 
 /* returns the length of the used section of the vector

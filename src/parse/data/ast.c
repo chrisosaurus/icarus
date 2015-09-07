@@ -42,7 +42,7 @@ unsigned int ic_ast_init(struct ic_ast *ast){
     }
 
     /* initialise pvector decls to 0 cap */
-    if( ic_pvector_init( &(ast->decls), 0 ) ){
+    if( ! ic_pvector_init( &(ast->decls), 0 ) ){
         puts("ic_ast_init: call to ic_pvector_init failed");
         return 1;
     }

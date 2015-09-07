@@ -27,9 +27,14 @@ Example conforming function:
 
 known areas, types, and functions not conforming:
 
-* pvector
 * parse
 * analyse
 * symbol
 * string
+
+
+allowed special cases:
+
+* ic_pvector_append will return the index of the appended item, returns -1 on error
+
 

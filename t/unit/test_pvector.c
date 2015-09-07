@@ -31,7 +31,7 @@ void normal(void){
     assert(arr->cap == 10);
 
     /* we can also artifically grow a pvector */
-    assert(ic_pvector_ensure(arr, 20) == 0);
+    assert(ic_pvector_ensure(arr, 20) == 1);
 
     /* this should not change used */
     assert(arr->used == 10);
@@ -50,10 +50,10 @@ void normal(void){
     assert(arr->cap == 8);
 
     /* ensure to same or less size should do nothing */
-    assert( 0 == ic_pvector_ensure(arr, 8) );
+    assert( 1 == ic_pvector_ensure(arr, 8) );
     assert(arr->used == 0);
     assert(arr->cap == 8);
-    assert( 0 == ic_pvector_ensure(arr, 4) );
+    assert( 1 == ic_pvector_ensure(arr, 4) );
     assert(arr->used == 0);
     assert(arr->cap == 8);
 
@@ -95,7 +95,7 @@ void normal(void){
     /* here the ensure of 0 will default
      * to an ensure of PVECTOR_DEFAULT_SIZE
      */
-    assert( 0 == ic_pvector_ensure(arr2, 0) );
+    assert( 1 == ic_pvector_ensure(arr2, 0) );
     assert(arr2->used == 0);
     /* PVECTOR_DEFAULT_SIZE is 8 */
     assert(arr2->cap == 8);
@@ -107,12 +107,12 @@ void abnormal(void){
     struct ic_pvector *vec = ic_pvector_new(0);
 
     /* test null pvector args */
-    assert( 1 == ic_pvector_init(0, 0) );
+    assert( 0 == ic_pvector_init(0, 0) );
     assert( 0 == ic_pvector_get(0, 0) );
     assert( -1 == ic_pvector_append(0, 0) );
-    assert( 1 == ic_pvector_ensure(0, 0) );
+    assert( 0 == ic_pvector_ensure(0, 0) );
     assert( 0 == ic_pvector_length(0) );
-    assert( 1 == ic_pvector_destroy(0, 0, 0) );
+    assert( 0 == ic_pvector_destroy(0, 0, 0) );
 
     /* actually destroy to clean up
      * nothing stored so a simple free
@@ -135,7 +135,7 @@ void destroy(void){
     assert( -1 != ic_pvector_append(vec, ic_string_new("a", 1)) );
     assert( -1 != ic_pvector_append(vec, ic_string_new("dude", 4)) );
 
-    assert( 0 == ic_pvector_destroy(vec, 1, string_shim) );
+    assert( 1 == ic_pvector_destroy(vec, 1, string_shim) );
 }
 
 int main(void){

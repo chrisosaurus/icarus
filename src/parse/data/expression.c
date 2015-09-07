@@ -60,7 +60,7 @@ unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, char *name,
         return 1;
     }
 
-    if( ic_pvector_init( &(fcall->args), 0 ) ){
+    if( ! ic_pvector_init( &(fcall->args), 0 ) ){
         puts("ic_expr_func_call_init: call to ic_pvector_init failed");
         return 1;
     }
