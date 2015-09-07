@@ -80,3 +80,37 @@ remaining cases:
     parse/data/type_ref.h:106: * returns 1 on error
     parse/data/type_ref.h:117: * returns 1 on error
 
+
+Error checking
+==============
+
+most functions in icarus return 0 on error, this should be checked as such
+
+    if( ! ic_foo_bar(...) ){
+        puts("ic_baz: call to ic_foo_bar failed");
+        return 0;
+    }
+
+
+some functions return a value to be assigned, the preferred form for this is
+
+    struct ic_foo *foo = 0;
+
+    foo = ic_foo_new();
+    if( ! foo ){
+        puts("ic_baz: call to ic_foo_new failed");
+        return 0;
+    }
+
+
+there are a few functions which use 0 as a valid response and so need `-1` to indicate error, the form
+for checking this is
+
+    if( -1 == ic_foo_append(...) ){
+        ...
+    }
+
+this is so that a grep for 'if( ic_foo' will not flag this line, which allows us to more easily find functions
+not conforming to the first error checking rule above.
+
+
