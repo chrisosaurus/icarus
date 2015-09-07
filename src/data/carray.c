@@ -18,7 +18,7 @@ struct ic_carray * ic_carray_new(unsigned int len){
         return 0;
     }
 
-    if( ic_carray_init(arr, len) ){
+    if( ! ic_carray_init(arr, len) ){
         puts("ic_array_new: call to ic_carray_init failed");
         free(arr);
         return 0;
@@ -29,13 +29,13 @@ struct ic_carray * ic_carray_new(unsigned int len){
 
 /* initialise an existing array to the specified len
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_carray_init(struct ic_carray *arr, unsigned int len){
     if( ! arr ){
         puts("ic_carray_init: called with null array");
-        return 1;
+        return 0;
     }
 
     arr->len = len;
@@ -43,10 +43,10 @@ unsigned int ic_carray_init(struct ic_carray *arr, unsigned int len){
     arr->contents = calloc(len, sizeof(void*));
     if( ! arr->contents ){
         puts("ic_carray_init: calloc of contents failed");
-        return 1;
+        return 0;
     }
 
-    return 0;
+    return 1;
 }
 
 /* destroy carray
@@ -56,13 +56,13 @@ unsigned int ic_carray_init(struct ic_carray *arr, unsigned int len){
  * the caller must determine if it is appropriate or not
  * to not to call free(arr)
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_carray_destroy(struct ic_carray *arr, unsigned int free_arr){
     if( ! arr ){
         puts("ic_carray_init: called with null array");
-        return 1;
+        return 0;
     }
 
     /* free our contents */
@@ -73,7 +73,7 @@ unsigned int ic_carray_destroy(struct ic_carray *arr, unsigned int free_arr){
         free(arr);
     }
 
-    return 0;
+    return 1;
 }
 
 /* get item at pos
@@ -102,39 +102,39 @@ char ic_carray_get(struct ic_carray *arr, unsigned int pos){
  *
  * bounds checked
  *
- * returns 0 on successful set
- * returns 1 on failure
+ * returns 1 on successful set
+ * returns 0 on failure
  */
 unsigned int ic_carray_set(struct ic_carray *arr, unsigned int pos, char val){
     if( ! arr ){
         puts("ic_carray_set: arr was null");
-        return 1;
+        return 0;
     }
 
     if( pos >= arr->len ){
         /* out of bounds */
         puts("ic_carray_set: requested pos is out of bounds");
-        return 1;
+        return 0;
     }
 
     arr->contents[pos] = val;
-    return 0;
+    return 1;
 }
 
 /* ensure array is at least as big as `new_len`
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_carray_ensure(struct ic_carray *arr, unsigned int new_len){
     if( ! arr ){
         puts("ic_carray_ensure: supplied array was null");
-        return 1;
+        return 0;
     }
 
     if( arr->len >= new_len ){
         /* nothing to do */
-        return 0;
+        return 1;
     }
 
     /* perform actual resizing
@@ -144,14 +144,14 @@ unsigned int ic_carray_ensure(struct ic_carray *arr, unsigned int new_len){
     arr->contents = realloc(arr->contents, sizeof(void*) * new_len);
     if( ! arr->contents ){
         puts("ic_carray_ensure: realloc failed");
-        return 1;
+        return 0;
     }
 
     /* zero out new bytes */
     memset( &(arr->contents[arr->len]), 0, (new_len - arr->len) );
 
     arr->len = new_len;
-    return 0;
+    return 1;
 }
 
 

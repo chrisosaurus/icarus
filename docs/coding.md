@@ -27,7 +27,6 @@ Example conforming function:
 
 known areas, types, and functions not conforming:
 
-* carray
 * parray
 * pvector
 * parse

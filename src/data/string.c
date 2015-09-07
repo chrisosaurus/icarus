@@ -55,7 +55,7 @@ unsigned int ic_string_init(struct ic_string *str, char *source, unsigned int le
     /* our passed in len does not include the null terminator
      * but carray must take this into account
      */
-    if( ic_carray_init( &(str->backing), (len + 1) ) ){
+    if( ! ic_carray_init( &(str->backing), (len + 1) ) ){
         puts("ic_string_init: call to ic_carray_init failed");
         return 1;
     }
@@ -108,7 +108,7 @@ unsigned int ic_string_destroy(struct ic_string *str, unsigned int free_str){
      * note we do not set free_carray as
      * it is an element on us
      */
-    if( ic_carray_destroy( &(str->backing), 0 ) ){
+    if( ! ic_carray_destroy( &(str->backing), 0 ) ){
         puts("ic_string_destroy: call to ic_carray_destroy failed");
         return 1;
     }
@@ -215,7 +215,7 @@ char ic_string_set(struct ic_string *string, unsigned int pos, char val){
         return 1;
     }
 
-    if( ic_carray_set(&(string->backing), pos, val) ){
+    if( ! ic_carray_set(&(string->backing), pos, val) ){
         puts("ic_string_set: call to ic_carray_set failed");
         return 1;
     }
@@ -252,7 +252,7 @@ unsigned int ic_string_append(struct ic_string *to, struct ic_string *from){
     len += from_len;
 
     /* make sure our carray is large enough */
-    if( ic_carray_ensure(&(to->backing), len) ){
+    if( ! ic_carray_ensure(&(to->backing), len) ){
         puts("ic_string_append: call to ic_carray_ensure failed");
         return 1;
     }
@@ -264,7 +264,7 @@ unsigned int ic_string_append(struct ic_string *to, struct ic_string *from){
     strncat( ic_string_contents(to), ic_string_contents(from), from_len );
 
     /* ensure string */
-    if( ic_carray_set( &(to->backing), to->used, '\0') ){
+    if( ! ic_carray_set( &(to->backing), to->used, '\0') ){
         puts("ic_string_append: call to ic_carray_set failed");
         return 1;
     }
@@ -301,7 +301,7 @@ unsigned int ic_string_append_symbol(struct ic_string *to, struct ic_symbol *fro
     len += from_len;
 
     /* make sure our carray is large enough */
-    if( ic_carray_ensure(&(to->backing), len) ){
+    if( ! ic_carray_ensure(&(to->backing), len) ){
         puts("ic_string_append_symbol: call to ic_carray_ensure failed");
         return 1;
     }
@@ -313,7 +313,7 @@ unsigned int ic_string_append_symbol(struct ic_string *to, struct ic_symbol *fro
     strncat( ic_string_contents(to), ic_symbol_contents(from), from_len );
 
     /* ensure string */
-    if( ic_carray_set( &(to->backing), to->used, '\0') ){
+    if( ! ic_carray_set( &(to->backing), to->used, '\0') ){
         puts("ic_string_append_symbol: call to ic_carray_set failed");
         return 1;
     }
@@ -352,7 +352,7 @@ unsigned int ic_string_append_char(struct ic_string *to, char *from, unsigned in
     len += from_len;
 
     /* make sure our carray is large enough */
-    if( ic_carray_ensure(&(to->backing), len) ){
+    if( ! ic_carray_ensure(&(to->backing), len) ){
         puts("ic_string_append_char: call to ic_carray_ensure failed");
         return 1;
     }
@@ -364,7 +364,7 @@ unsigned int ic_string_append_char(struct ic_string *to, char *from, unsigned in
     strncat( ic_string_contents(to), from, from_len );
 
     /* ensure string */
-    if( ic_carray_set( &(to->backing), to->used, '\0') ){
+    if( ! ic_carray_set( &(to->backing), to->used, '\0') ){
         puts("ic_string_append_char: call to ic_carray_set failed");
         return 1;
     }

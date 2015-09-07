@@ -20,8 +20,8 @@ struct ic_carray * ic_carray_new(unsigned int len);
 
 /* initialise an existing array to the specified len
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_carray_init(struct ic_carray *arr, unsigned int len);
 
@@ -32,8 +32,8 @@ unsigned int ic_carray_init(struct ic_carray *arr, unsigned int len);
  * the caller must determine if it is appropriate or not
  * to not to call free(arr)
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_carray_destroy(struct ic_carray *arr, unsigned int free_arr);
 
@@ -50,15 +50,15 @@ char ic_carray_get(struct ic_carray *arr, unsigned int pos);
  *
  * bounds checked
  *
- * returns 0 on successful set
- * returns 1 on failure
+ * returns 1 on successful set
+ * returns 0 on failure
  */
 unsigned int ic_carray_set(struct ic_carray *arr, unsigned int pos, char val);
 
 /* ensure array is at least as big as `new_len`
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_carray_ensure(struct ic_carray *arr, unsigned int new_len);
 
