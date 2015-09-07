@@ -23,8 +23,8 @@ struct ic_parray * ic_parray_new(unsigned int len);
 
 /* initialise an existing array to the specified len
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_parray_init(struct ic_parray *arr, unsigned int len);
 
@@ -41,15 +41,15 @@ void * ic_parray_get(struct ic_parray *arr, unsigned int pos);
  *
  * bounds checked
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_parray_set(struct ic_parray *arr, unsigned int pos, void *val);
 
 /* ensure array is at least as big as `new_len`
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_parray_ensure(struct ic_parray *arr, unsigned int new_len);
 
