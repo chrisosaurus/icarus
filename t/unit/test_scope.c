@@ -31,7 +31,7 @@ void normal(void){
     assert( 0 == ic_scope_get(scope, "hello") );
 
     /* add something */
-    assert( 0 == ic_scope_insert(scope, "hello", &data_1) );
+    assert( 1 == ic_scope_insert(scope, "hello", &data_1) );
 
     /* check that the insert was actually a success */
     assert( &data_1 == ic_scope_get(scope, "hello") );
@@ -47,7 +47,7 @@ void normal(void){
     assert( 0 == ic_scope_get(parent, "world") );
 
     /* add something */
-    assert( 0 == ic_scope_insert(parent, "world", &data_2) );
+    assert( 1 == ic_scope_insert(parent, "world", &data_2) );
 
     /* check that the insert was actually a success */
     assert( &data_2 == ic_scope_get(parent, "world") );
@@ -59,7 +59,7 @@ void normal(void){
     assert( 0 == ic_scope_get_nofollow(scope, "world") );
 
     /* test masking of parent value by child */
-    assert( 0 == ic_scope_insert(scope, "world", &data_3) );
+    assert( 1 == ic_scope_insert(scope, "world", &data_3) );
     assert( &data_2 == ic_scope_get(parent, "world") );
     assert( &data_3 == ic_scope_get(scope, "world") );
 
@@ -68,13 +68,13 @@ void normal(void){
 
     /* test delete */
     /* successful delete */
-    assert( 0 == ic_scope_delete(scope, "hello") );
-    /* unsuccessful delete */
     assert( 1 == ic_scope_delete(scope, "hello") );
+    /* unsuccessful delete */
+    assert( 0 == ic_scope_delete(scope, "hello") );
     /* successful delete */
-    assert( 0 == ic_scope_delete(parent, "world") );
+    assert( 1 == ic_scope_delete(parent, "world") );
     /* successful delete */
-    assert( 0 == ic_scope_delete(scope, "world") );
+    assert( 1 == ic_scope_delete(scope, "world") );
 
 
     puts("testing destroy");
@@ -82,7 +82,7 @@ void normal(void){
     /* finally cleanup
      * this will also cleanup parent
      */
-    assert( 0 == ic_scope_destroy(scope, 1) );
+    assert( 1 == ic_scope_destroy(scope, 1) );
 
     puts("success");
 }
@@ -90,11 +90,11 @@ void normal(void){
 void abnormal(void){
     puts("ignore any text output, testing error cases");
     /* check all the scope null cases */
-    assert( 1 == ic_scope_init(0, 0) );
+    assert( 0 == ic_scope_init(0, 0) );
     assert( 0 == ic_scope_get(0, 0) );
-    assert( 1 == ic_scope_insert(0, 0, 0) );
-    assert( 1 == ic_scope_delete(0, 0) );
-    assert( 1 == ic_scope_destroy(0, 0) );
+    assert( 0 == ic_scope_insert(0, 0, 0) );
+    assert( 0 == ic_scope_delete(0, 0) );
+    assert( 0 == ic_scope_destroy(0, 0) );
     puts("success");
 }
 

@@ -33,8 +33,8 @@ struct ic_scope * ic_scope_new(struct ic_scope *parent);
  *
  * parent may be null
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_scope_init(struct ic_scope *scope, struct ic_scope *parent);
 
@@ -42,16 +42,16 @@ unsigned int ic_scope_init(struct ic_scope *scope, struct ic_scope *parent);
  *
  * will only free scope if `free_scope` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_scope_destroy(struct ic_scope *scope, unsigned int free_scope);
 
 /* insert a new entry to this scope
  * this will insert into content, key must not already exist
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_scope_insert(struct ic_scope *scope, char *key, void *data);
 
@@ -79,8 +79,8 @@ void * ic_scope_get_nofollow(struct ic_scope *scope, char *key);
  * this will insert into dict_tname and also
  * into tdecls
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_scope_delete(struct ic_scope *scope, char *key);
 

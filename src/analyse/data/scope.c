@@ -24,7 +24,7 @@ struct ic_scope * ic_scope_new(struct ic_scope *parent){
         return 0;
     }
 
-    if( ic_scope_init(scope, parent) ){
+    if( ! ic_scope_init(scope, parent) ){
         puts("ic_scope_new: call to ic_scope_init failed");
         return 0;
     }
@@ -36,45 +36,45 @@ struct ic_scope * ic_scope_new(struct ic_scope *parent){
  *
  * parent may be null
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_scope_init(struct ic_scope *scope, struct ic_scope *parent){
     if( ! scope ){
         puts("ic_scope_init: scope was null");
-        return 1;
+        return 0;
     }
 
     scope->parent = parent;
 
     if( ic_dict_init(&(scope->contents)) ){
         puts("ic_scope_init: call to ic_dict_init failed");
-        return 1;
+        return 0;
     }
 
-    return 0;
+    return 1;
 }
 
 /* destroy scope
  *
  * will only free scope if `free_scope` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_scope_destroy(struct ic_scope *scope, unsigned int free_scope){
     if( ! scope ){
         puts("ic_scope_destroy: scope was null");
-        return 1;
+        return 0;
     }
 
     /* call free on parent first
      * FIXME consider not parent freeing
      */
     if( scope->parent ){
-        if( ic_scope_destroy(scope->parent, free_scope) ){
+        if( ! ic_scope_destroy(scope->parent, free_scope) ){
             puts("ic_scope_destroy: call to scope_destroy on parent failed");
-            return 1;
+            return 0;
         }
     }
 
@@ -86,44 +86,44 @@ unsigned int ic_scope_destroy(struct ic_scope *scope, unsigned int free_scope){
      */
     if( ! ic_dict_destroy(&(scope->contents), 0, 0) ){
         puts("ic_scope_destroy: call ot ic_dict_destroy failed");
-        return 1;
+        return 0;
     }
 
     if( free_scope ){
         free(scope);
     }
 
-    return 0;
+    return 1;
 }
 
 /* insert a new entry to this scope
  * this will insert into content, key must not already exist
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_scope_insert(struct ic_scope *scope, char *key, void *data){
     if( ! scope ){
         puts("ic_scope_insert: scope was null");
-        return 1;
+        return 0;
     }
 
     if( ! key ){
         puts("ic_scope_insert: key was null");
-        return 1;
+        return 0;
     }
 
     if( ! data ){
         puts("ic_scope_insert: data was null");
-        return 1;
+        return 0;
     }
 
     if( ! ic_dict_insert(&(scope->contents), key, data) ){
         puts("ic_scope_insert: call to ic_dict_insert failed");
-        return 1;
+        return 0;
     }
 
-    return 0;
+    return 1;
 }
 
 /* retrieve contents by string
@@ -186,26 +186,26 @@ void * ic_scope_get_nofollow(struct ic_scope *scope, char *key){
  * this will insert into dict_tname and also
  * into tdecls
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_scope_delete(struct ic_scope *scope, char *key){
     if( ! scope ){
         puts("ic_scope_insert: scope was null");
-        return 1;
+        return 0;
     }
 
     if( ! key ){
         puts("ic_scope_insert: key was null");
-        return 1;
+        return 0;
     }
 
     if( ! ic_dict_delete(&(scope->contents), key) ){
         puts("ic_scope_insert: call to ic_dict_delete failed");
-        return 1;
+        return 0;
     }
 
-    return 0;
+    return 1;
 
 }
 
