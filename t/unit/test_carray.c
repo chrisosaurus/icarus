@@ -36,6 +36,8 @@ void normal(void){
     /* and check that out of range get and set are still errors */
     assert(ic_carray_get(arr, 10) == 0);
     assert(ic_carray_set(arr, 10, 'a') == 0);
+
+    assert( 1 == ic_carray_destroy(arr, 1) );
 }
 
 void abnormal(void){
@@ -44,6 +46,7 @@ void abnormal(void){
     assert( 0 == ic_carray_get(0, 0) );
     assert( 0 == ic_carray_set(0, 0, 0) );
     assert( 0 == ic_carray_ensure(0, 0) );
+    assert( 0 == ic_carray_destroy(0, 0) );
 }
 
 int main(void){
