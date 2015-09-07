@@ -309,7 +309,7 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *
     }
 
     /* insert into list of tdecls */
-    if( ic_pvector_append( &(kludge->tdecls), tdecl ) == -1 ){
+    if( -1 == ic_pvector_append( &(kludge->tdecls), tdecl ) ){
         return 0;
     }
 
@@ -359,7 +359,7 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *
     }
 
     /* insert into list of fdecls */
-    if( ic_pvector_append( &(kludge->fdecls), fdecl ) == -1 ){
+    if( -1 == ic_pvector_append( &(kludge->fdecls), fdecl )  ){
         puts("ic_kludge_add_fdecl: call to ic_pvector_append failed");
         return 0;
     }
@@ -423,7 +423,7 @@ unsigned int ic_kludge_add_error(struct ic_kludge *kludge, void *error){
     }
 
     /* just a simple pvector of errors */
-    if( ic_pvector_append(&(kludge->errors), error) == -1 ){
+    if( -1 == ic_pvector_append(&(kludge->errors), error) ){
         puts("ic_kludge_add_error: call to ic_pvector_append failed");
         return 0;
     }

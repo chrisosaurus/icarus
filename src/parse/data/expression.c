@@ -143,7 +143,7 @@ int ic_expr_func_call_add_arg(struct ic_expr_func_call *fcall, struct ic_expr *e
     }
 
     /* let pvector do al the work */
-    if( ic_pvector_append( &(fcall->args), expr ) == -1 ){
+    if( -1 == ic_pvector_append( &(fcall->args), expr ) ){
         puts("ic_expr_func_call_add_arg: call to ic_pvector_append failed");
         return 1;
     }

@@ -194,7 +194,7 @@ unsigned int ic_func_decl_add_arg(struct ic_func_decl *fdecl, struct ic_field *f
     /* append field
      * returns -1 on failure
      */
-    if( ic_pvector_append( &(fdecl->args), field ) == -1 ){
+    if( -1 == ic_pvector_append( &(fdecl->args), field ) ){
         puts("ic_func_decl_add_arg: call to ic_pvector_append failed");
         return 1;
     }
@@ -562,7 +562,7 @@ unsigned int ic_type_decl_add_field(struct ic_type_decl *tdecl, struct ic_field 
         return 1;
     }
 
-    if( ic_pvector_append( &(tdecl->fields), field ) == -1 ){
+    if( -1 == ic_pvector_append( &(tdecl->fields), field ) ){
         puts("ic_type_decl_add_field: call to ic_pvector_append failed");
         return 1;
     }

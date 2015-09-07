@@ -31,7 +31,7 @@ void normal(void){
     assert(arr->cap == 10);
 
     /* we can also artifically grow a pvector */
-    assert(ic_pvector_ensure(arr, 20) == 1);
+    assert(1 == ic_pvector_ensure(arr, 20));
 
     /* this should not change used */
     assert(arr->used == 10);
