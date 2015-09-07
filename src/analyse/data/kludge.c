@@ -310,7 +310,6 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *
 
     /* insert into list of tdecls */
     if( ic_pvector_append( &(kludge->tdecls), tdecl ) == -1 ){
-    if( ic_pvector_append( &(kludge->tdecls), tdecl ) == -1 )
         return 0;
     }
 
