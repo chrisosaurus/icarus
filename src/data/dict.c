@@ -19,7 +19,7 @@ struct ic_dict * ic_dict_new(void){
         return 0;
     }
 
-    if( ic_dict_init(dict) ){
+    if( ! ic_dict_init(dict) ){
         puts("ic_dict_new: call to ic_dict_init failed");
         free(dict);
         return 0;
@@ -30,8 +30,8 @@ struct ic_dict * ic_dict_new(void){
 
 /* init an existing ic_dict
  *
- * return 0 on success
- * return 1 on error
+ * return 1 on success
+ * return 0 on error
  */
 unsigned int ic_dict_init(struct ic_dict *dict){
     if( ! dict ){
@@ -39,7 +39,7 @@ unsigned int ic_dict_init(struct ic_dict *dict){
         return 0;
     }
 
-    return ! lh_init(&(dict->lht), IC_DICT_DEFAULT_SIZE);
+    return lh_init(&(dict->lht), IC_DICT_DEFAULT_SIZE);
 }
 
 /* get item stored in dict at key

@@ -27,7 +27,6 @@ Example conforming function:
 
 known areas, types and functions not conforming:
 
-* dict
 * carray
 * parray
 * pvector

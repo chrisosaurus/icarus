@@ -113,13 +113,13 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast){
     }
 
     /* dict_tname hash */
-    if( ic_dict_init(&(kludge->dict_tname)) ){
+    if( ! ic_dict_init(&(kludge->dict_tname)) ){
         puts("ic_kludge_init: dict_tname: call to ic_dict_init failed");
         return 1;
     }
 
     /* dict_fsig hash */
-    if( ic_dict_init(&(kludge->dict_fsig)) ){
+    if( ! ic_dict_init(&(kludge->dict_fsig)) ){
         puts("ic_kludge_init: dict_fsig: call to ic_dict_init failed");
         return 1;
     }

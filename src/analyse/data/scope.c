@@ -47,7 +47,7 @@ unsigned int ic_scope_init(struct ic_scope *scope, struct ic_scope *parent){
 
     scope->parent = parent;
 
-    if( ic_dict_init(&(scope->contents)) ){
+    if( ! ic_dict_init(&(scope->contents)) ){
         puts("ic_scope_init: call to ic_dict_init failed");
         return 0;
     }
