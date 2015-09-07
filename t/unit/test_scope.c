@@ -88,13 +88,30 @@ void normal(void){
 }
 
 void abnormal(void){
+    struct ic_scope *scope = 0;
+    char *ch = "hello";
+
     puts("ignore any text output, testing error cases");
     /* check all the scope null cases */
     assert( 0 == ic_scope_init(0, 0) );
     assert( 0 == ic_scope_get(0, 0) );
+    assert( 0 == ic_scope_get_nofollow(0, 0) );
     assert( 0 == ic_scope_insert(0, 0, 0) );
     assert( 0 == ic_scope_delete(0, 0) );
     assert( 0 == ic_scope_destroy(0, 0) );
+
+    /* testing with null non-first args */
+    scope = ic_scope_new(0);
+    assert(scope);
+
+    assert( 0 == ic_scope_insert(scope, 0, 0) );
+    assert( 0 == ic_scope_insert(scope, ch, 0) );
+    assert( 0 == ic_scope_get(scope, 0) );
+    assert( 0 == ic_scope_get_nofollow(scope, 0) );
+    assert( 0 == ic_scope_delete(scope, 0) );
+
+    assert( 1 == ic_scope_destroy(scope, 1) );
+
     puts("success");
 }
 
