@@ -11,7 +11,7 @@
  * returns 1 on success
  * returns 0 on error
  */
-struct ic_slot * ic_slot_new(void){
+struct ic_slot * ic_slot_new(struct ic_symbol *name, struct ic_type_ref *type, bool mutable, bool reference){
     struct ic_slot *slot = 0;
 
     slot = calloc(1, sizeof(struct ic_slot));
@@ -20,7 +20,7 @@ struct ic_slot * ic_slot_new(void){
         return 0;
     }
 
-    if( ! ic_slot_init(slot) ){
+    if( ! ic_slot_init(slot, name, type, mutable, reference) ){
         puts("ic_slot_new: call to ic_slot_init failed");
         return 0;
     }
@@ -33,18 +33,34 @@ struct ic_slot * ic_slot_new(void){
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ic_slot_init(struct ic_slot *slot){
+unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct ic_type_ref *type, bool mutable, bool reference){
     if( ! slot ){
         puts("ic_slot_init: slot was null");
         return 0;
     }
 
-    puts("ic_slot_init: implementation pending");
-    return 0;
+    if( ! name ){
+        puts("ic_slot_init: name was null");
+        return 0;
+    }
+
+    if( ! type ){
+        puts("ic_slot_init: type was null");
+        return 0;
+    }
+
+    slot->name = name;
+    slot->type = type;
+    slot->mutable = mutable;
+    slot->reference = reference;
+
+    return 1;
 }
 
 /* destroy slot
  * will only free slot if `free_slot` is true
+ *
+ * this will not free any of the members stored on this slot
  *
  * returns 1 on success
  * returns 0 on error
@@ -55,7 +71,13 @@ unsigned int ic_slot_destroy(struct ic_slot *slot, unsigned int free_slot){
         return 0;
     }
 
-    puts("ic_slot_destroy: implementation pending");
-    return 0;
+    slot->name = 0;
+    slot->type = 0;
+
+    if( free_slot ){
+        free(slot);
+    }
+
+    return 1;
 }
 
