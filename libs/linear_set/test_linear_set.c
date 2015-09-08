@@ -1,5 +1,5 @@
-/*  gcc linear_set.c test_linear_set.c -Wall -Wextra -Werror -o test_sh
- * ./test_sh
+/*  gcc linear_set.c test_linear_set.c -Wall -Wextra -Werror -o test_ls
+ * ./test_ls
  */
 #include <assert.h> /* assert */
 #include <stdio.h> /* puts */

@@ -1,8 +1,8 @@
 https://github.com/mkfifo/linear_set
 
-commit 1569305177a07e831a1494747af65d25467df89d
+commit c4bdc475e0e3187c87f827884e5dfb0b7fbdf06e
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Thu Aug 6 14:34:56 2015 +1200
+Date:   Tue Sep 8 13:18:46 2015 +1200
 
-    replacing uses of "table" with more correct "set"
+    changing wording "on failure" to "on error"
 

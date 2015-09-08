@@ -211,7 +211,7 @@ unsigned int ls_entry_destroy(struct ls_entry *entry){
 /* find the ls_entry that should be holding this key
  *
  * returns a pointer to it on success
- * return 0 on failure
+ * return 0 on error
  */
 struct ls_entry * ls_find_entry(const struct ls_set *set, const char *key){
     /* our cur entry */
@@ -334,7 +334,7 @@ unsigned int ls_nelems(const struct ls_set *set){
  * (set->n_elems * 10) / set->size
  *
  * returns loading factor 0 -> 10 on success
- * returns 0 on failure
+ * returns 0 on error
  */
 unsigned int ls_load(const struct ls_set *set){
     if( ! set ){
@@ -358,7 +358,7 @@ unsigned int ls_load(const struct ls_set *set){
  * this will accept any value between 1 (10%) to 10 (100%)
  *
  * returns 1 on success
- * returns 0 on failure
+ * returns 0 on error
  */
 unsigned int ls_tune_threshold(struct ls_set *set, unsigned int threshold){
     if( ! set ){
