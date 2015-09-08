@@ -4,6 +4,7 @@
 #include "../data/pvector.h"
 #include "../parse/data/expression.h"
 #include "data/kludge.h"
+#include "data/scope.h"
 
 /* iterate through the field list checking:
  *  a) all field's names are unique within this list
@@ -28,7 +29,7 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
  * returns 1 on success (pass)
  * returns 0 on error
  */
-unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body);
+unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_scope *parent_scope);
 
 /* takes an expr and returns the inferred type as a symbol
  *

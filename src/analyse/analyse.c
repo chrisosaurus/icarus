@@ -165,7 +165,7 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
     }
 
     /* check body */
-    if( ! ic_analyse_body( "func declaration", this_func, kludge, &(fdecl->body) ) ){
+    if( ! ic_analyse_body( "func declaration", this_func, kludge, &(fdecl->body), 0 ) ){
         puts("ic_analyse_func_decl: call to ic_analyse_bofy for validating body failed");
         goto ERROR;
     }

@@ -47,6 +47,8 @@ unsigned int ic_body_init(struct ic_body *body){
         return 1;
     }
 
+    body->scope = 0;
+
     /* success */
     return 0;
 }
@@ -54,6 +56,8 @@ unsigned int ic_body_init(struct ic_body *body){
 /* destroy body
  *
  * will only free body if `free_body` is truthy
+ *
+ * this will NOT free the scope
  *
  * returns 0 on success
  * returns 1 on failure
@@ -93,6 +97,8 @@ unsigned int ic_body_destroy(struct ic_body *body, unsigned int free_body){
             return 1;
         }
     }
+
+    body->scope = 0;
 
     /* free if asked nicely */
     if( free_body ){
