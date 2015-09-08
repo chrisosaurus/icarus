@@ -19,7 +19,7 @@ struct ic_field * ic_field_new(char *name_src, unsigned int name_len, char *type
         return 0;
     }
 
-    if( ic_field_init(field, name_src, name_len, type_src, type_len) ){
+    if( ! ic_field_init(field, name_src, name_len, type_src, type_len) ){
         puts("ic_field_new: call to ic_field_init failed");
         free(field);
         return 0;
@@ -31,51 +31,51 @@ struct ic_field * ic_field_new(char *name_src, unsigned int name_len, char *type
 /* initialise an existing field
  * takes 2 tokens as char * and len pairs
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int name_len, char *type_src, unsigned int type_len){
     if( ! field ){
         puts("ic_field_init: field was null");
-        return 1;
+        return 0;
     }
 
     if( ! name_src ){
         puts("ic_field_init: name_src was null");
-        return 1;
+        return 0;
     }
 
     if( ! type_src ){
         puts("ic_field_init: type_src was null");
-        return 1;
+        return 0;
     }
 
     /* init name symbol */
     if( ! ic_symbol_init( &(field->name), name_src, name_len ) ){
         puts("ic_field_init: call to ic_symbol_init for name failed");
-        return 1;
+        return 0;
     }
 
     /* init type symbol */
     if( ic_type_ref_symbol_init( &(field->type), type_src, type_len ) ){
         puts("ic_field_init: call to ic_type_symbol_init for type failed");
-        return 1;
+        return 0;
     }
 
-    return 0;
+    return 1;
 }
 
 /* destroy field
  *
  * will free field if `free_field` is truhty
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_field_destroy(struct ic_field *field, unsigned int free_field){
     if( ! field ){
         puts("ic_field_destroy: field was null");
-        return 1;
+        return 0;
     }
 
     /* dispatch to symbol destroy for name
@@ -84,7 +84,7 @@ unsigned int ic_field_destroy(struct ic_field *field, unsigned int free_field){
      */
     if( ! ic_symbol_destroy( &(field->name), 0 ) ){
         puts("ic_field_destroy: name: call to ic_symbol_destroy failed");
-        return 1;
+        return 0;
     }
 
     /* dispatch to symbol destroy for type
@@ -93,7 +93,7 @@ unsigned int ic_field_destroy(struct ic_field *field, unsigned int free_field){
      */
     if( ic_type_ref_destroy( &(field->type), 0 ) ){
         puts("ic_field_destroy: type: call to ic_type_destroy failed");
-        return 1;
+        return 0;
     }
 
     /* free field if we are asked nicely */
@@ -101,7 +101,7 @@ unsigned int ic_field_destroy(struct ic_field *field, unsigned int free_field){
         free(field);
     }
 
-    return 0;
+    return 1;
 }
 
 

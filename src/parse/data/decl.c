@@ -138,7 +138,7 @@ unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_
         /* dispatch to field destroy
          * free_field set to 1
          */
-        if( ic_field_destroy(field, 1) ){
+        if( ! ic_field_destroy(field, 1) ){
             puts("ic_type_decl_destroy: call to ic_field_destroy failed");
             return 1;
         }
@@ -531,7 +531,7 @@ unsigned int ic_type_decl_destroy(struct ic_type_decl *tdecl, unsigned int free_
         /* dispatch to field destroy
          * free_field set to 1
          */
-        if( ic_field_destroy(field, 1) ){
+        if( ! ic_field_destroy(field, 1) ){
             puts("ic_type_type_destroy: call to ic_field_destroy failed");
             return 1;
         }

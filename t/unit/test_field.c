@@ -21,7 +21,7 @@ int main(void){
                 6) );
 
     /* test init */
-    assert( ic_field_init(&init_me, "hello", 5, "Int", 3) == 0 );
+    assert( ic_field_init(&init_me, "hello", 5, "Int", 3) );
 
     assert( ! strncmp("hello",
                 ic_symbol_contents(&(init_me.name)),

@@ -102,7 +102,7 @@ struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i){
             puts("ic_parse_type_decl: call to ic_type_decl_add_field failed");
 
             /* free field and all contents */
-            if( ic_field_destroy(field, 1) ){
+            if( ! ic_field_destroy(field, 1) ){
                 puts("ic_parse_type_decl: in error tidyup call to ic_field_destroy failed");
             }
 

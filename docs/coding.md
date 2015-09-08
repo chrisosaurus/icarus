@@ -53,8 +53,6 @@ remaining cases:
     parse/data/expression.c:434: * returns 1 on error
     parse/data/expression.h:51: * returns 1 on error
     parse/data/expression.h:137: * returns 1 on error
-    parse/data/field.c:35: * returns 1 on error
-    parse/data/field.h:30: * returns 1 on error
     parse/data/type.c:25: * returns 1 on error
     parse/data/type.h:43: * returns 1 on error
     parse/data/type_ref.c:121: * returns 1 on error

@@ -26,8 +26,8 @@ struct ic_field * ic_field_new(char *name_src, unsigned int name_len, char *type
 /* initialise an existing field
  * takes 2 tokens as char * and len pairs
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int name_len, char *type_src, unsigned int type_len);
 
@@ -35,8 +35,8 @@ unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int 
  *
  * will free field if `free_field` is truhty
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_field_destroy(struct ic_field *field, unsigned int free_field);
 
