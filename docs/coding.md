@@ -55,12 +55,6 @@ remaining cases:
     parse/data/expression.c:434: * returns 1 on error
     parse/data/expression.h:51: * returns 1 on error
     parse/data/expression.h:137: * returns 1 on error
-    parse/data/type_ref.c:121: * returns 1 on error
-    parse/data/type_ref.c:170: * returns 1 on error
-    parse/data/type_ref.c:228: * returns 1 on error
-    parse/data/type_ref.h:93: * returns 1 on error
-    parse/data/type_ref.h:106: * returns 1 on error
-    parse/data/type_ref.h:117: * returns 1 on error
 
     chris@Ox1b icarus(master)-> git grep -ni '1 on failure' *
     src/parse/data/body.c:36: * returns 1 on failure
@@ -107,10 +101,6 @@ remaining cases:
     src/parse/data/statement.h:141: * returns 1 on failure
     src/parse/data/statement.h:204: * returns 1 on failure
     src/parse/data/statement.h:213: * returns 1 on failure
-    src/parse/data/type_ref.c:36: * returns 1 on failure
-    src/parse/data/type_ref.c:89: * returns 1 on failure
-    src/parse/data/type_ref.h:69: * returns 1 on failure
-    src/parse/data/type_ref.h:84: * returns 1 on failure
 
 
 known exceptions:

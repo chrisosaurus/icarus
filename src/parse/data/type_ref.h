@@ -65,8 +65,8 @@ struct ic_type_ref * ic_type_ref_new(void);
 /* intialise a type
  * this will set type.type to unknown
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_type_ref_init(struct ic_type_ref *type);
 
@@ -80,8 +80,8 @@ struct ic_type_ref * ic_type_ref_symbol_new(char *type_str, unsigned int type_le
 
 /* intialise a type as a  symbol
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_type_ref_symbol_init(struct ic_type_ref *type, char *type_str, unsigned int type_len);
 
@@ -89,8 +89,8 @@ unsigned int ic_type_ref_symbol_init(struct ic_type_ref *type, char *type_str, u
  *
  * this will only free type if `free_type` is truthy
  *
- * returns 0 on sucess
- * returns 1 on error
+ * returns 1 on sucess
+ * returns 0 on error
  */
 unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_type);
 
@@ -102,8 +102,8 @@ unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_typ
  * if type.type is tdecl then calling this function is an error
  * as that would be going 'backwards'
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, unsigned int type_len);
 
@@ -113,8 +113,8 @@ unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, un
  * this is only allowed it the type is NOT already set to tdecl
  * if type is already a symbol then the symbol will first be destroyed
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_type_ref_set_tdecl(struct ic_type_ref *type, struct ic_type_decl *tdecl);
 

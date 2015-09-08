@@ -157,7 +157,7 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
          * FIXME are we sure this is safe?
          * if field->type is already a tdecl this will blow up
          */
-        if( ic_type_ref_set_tdecl( &(field->type), field_tdecl ) ){
+        if( ! ic_type_ref_set_tdecl( &(field->type), field_tdecl ) ){
             printf("ic_analyse_field_list: trying to store tdecl for '%s' on field '%s' during '%s' for '%s' failed\n",
                     type_str,
                     name,
