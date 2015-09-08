@@ -65,8 +65,6 @@ remaining cases:
     parse/data/type_ref.h:117: * returns 1 on error
 
     chris@Ox1b icarus(master)-> git grep -ni '1 on failure' *
-    TODO.md:15:* return code: ic_pvector_destroy returns 1 on failure, ic_dict_destroy returns 0 on failure
-
     src/parse/data/ast.c:36: * returns 1 on failure
     src/parse/data/ast.c:61: * returns 1 on failure
     src/parse/data/ast.h:22: * returns 1 on failure
