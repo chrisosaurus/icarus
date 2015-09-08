@@ -3,6 +3,7 @@
 
 #include "../data/pvector.h"
 #include "../parse/data/expression.h"
+#include "../parse/data/statement.h"
 #include "data/kludge.h"
 #include "data/scope.h"
 
@@ -63,6 +64,13 @@ struct ic_type_ref * ic_analyse_infer(struct ic_kludge *kludge, struct ic_expr *
  * returns 0 on error
  */
 unsigned int ic_analyse_check(struct ic_kludge *kludge, struct ic_stmt *stmt);
+
+/* perform analyse of let statement in the provided body
+ *
+ * returns 1 for success
+ * returns 0 on error
+ */
+unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_stmt_let *let);
 
 #endif // ifndef ICARUS_ANALYSE_HELPERS_H
 

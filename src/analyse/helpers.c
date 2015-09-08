@@ -6,8 +6,9 @@
 #include "../parse/data/statement.h"
 #include "helpers.h"
 
-/* ignored unused parameter */
+/* ignored unused parameter and variables */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wunused-variable"
 
 /* iterate through the field list checking:
  *  a) all field's names are unique within this list
@@ -263,14 +264,22 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                  */
                 puts("ic_analyse_body: unimplemented stmt->type ic_stmt_type_ret");
                 goto ERROR;
+                break;
 
             case ic_stmt_type_let:
                 /* infer type of init. expression
                  * check against declared let type (if declared)
                  * check all mentioned types exist
+                 *
+                 * check that this let isn't masking an existing slot in scope
+                 * create a new slot for this let and insert it into the current scope
                  */
-                puts("ic_analyse_body: unimplemented stmt->type ic_stmt_type_let");
-                goto ERROR;
+                if( ! ic_analyse_let(unit, unit_name, kludge, body, ic_stmt_get_let(stmt)) ){
+                    puts("ic_analyse_body: call to ic_analyse_let failed");
+                    goto ERROR;
+                }
+
+                break;
 
             case ic_stmt_type_if:
                 /* need to validate expression
@@ -279,6 +288,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                  */
                 puts("ic_analyse_body: unimplemented stmt->type ic_stmt_type_if");
                 goto ERROR;
+                break;
 
             case ic_stmt_type_expr:
                 /* infer expr type
@@ -286,10 +296,12 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                  */
                 puts("ic_analyse_body: unimplemented stmt->type ic_stmt_type_expr");
                 goto ERROR;
+                break;
 
             default:
                 printf("ic_analyse_body: impossible stmt->type '%d'\n", stmt->type);
                 goto ERROR;
+                break;
         }
 
         /* FIXME */
@@ -422,6 +434,52 @@ struct ic_type_ref * ic_analyse_infer(struct ic_kludge *kludge, struct ic_expr *
 unsigned int ic_analyse_check(struct ic_kludge *kludge, struct ic_stmt *stmt){
     puts("ic_analyse_check: unimplemented");
     exit(1);
+}
+
+/* perform analyse of let statement in the provided body
+ *
+ * returns 1 for success
+ * returns 0 on error
+ */
+unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_stmt_let *let){
+    struct ic_slot *slot = 0;
+
+    if( ! unit ){
+        puts("ic_analyse_let: unit was null");
+        return 0;
+    }
+
+    if( ! unit_name ){
+        puts("ic_analyse_let: unit_name was null");
+        return 0;
+    }
+
+    if( ! kludge ){
+        puts("ic_analyse_let: kludge was null");
+        return 0;
+    }
+
+    if( ! body ){
+        puts("ic_analyse_let: body was null");
+        return 0;
+    }
+
+    if( ! body->scope ){
+        puts("ic_analyse_let: body is lacking scope");
+        return 0;
+    }
+
+    if( ! let ){
+        puts("ic_analyse_let: let was null");
+        return 0;
+    }
+
+    /* FIXME slot creation time
+     * after gathering all the needed parts
+     */
+
+    puts("ic_analyse_let: unimplemented");
+    return 1;
 }
 
 
