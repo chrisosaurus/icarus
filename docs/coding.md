@@ -170,3 +170,17 @@ this is so that a grep for 'if( ic_foo' will not flag this line, which allows us
 not conforming to the first error checking rule above.
 
 
+Function documentation
+======================
+
+all functions should document their return values
+
+    /* does nothing
+     * returns 1 on success
+     * returns 0 on failure
+     */
+    unsigned int foo(void);
+
+TODO: decide on wording 'on failure' vs 'on error' (228 vs 136 occurrences respectively at time of writing).
+
+
