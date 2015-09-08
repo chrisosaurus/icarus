@@ -68,6 +68,74 @@ remaining cases:
     data/symbol.h:53: * returns -1 on error
 
 
+    chris@Ox1b icarus(master)-> git grep -ni '1 on failure' *
+    TODO.md:15:* return code: ic_pvector_destroy returns 1 on failure, ic_dict_destroy returns 0 on failure
+
+    src/parse/data/ast.c:36: * returns 1 on failure
+    src/parse/data/ast.c:61: * returns 1 on failure
+    src/parse/data/ast.h:22: * returns 1 on failure
+    src/parse/data/ast.h:34: * returns 1 on failure
+    src/parse/data/body.c:36: * returns 1 on failure
+    src/parse/data/body.c:59: * returns 1 on failure
+    src/parse/data/body.h:29: * returns 1 on failure
+    src/parse/data/body.h:38: * returns 1 on failure
+    src/parse/data/body.h:50: * returns -1 on failure
+    src/parse/data/decl.c:100: * returns 1 on failure
+    src/parse/data/decl.c:497: * returns 1 on failure
+    src/parse/data/decl.c:688: * returns 1 on failure
+    src/parse/data/decl.h:58: * returns 1 on failure
+    src/parse/data/decl.h:145: * returns 1 on failure
+    src/parse/data/decl.h:207: * returns 1 on failure
+    src/parse/data/expression.c:43: * returns 1 on failure
+    src/parse/data/expression.c:80: * returns 1 on failure
+    src/parse/data/expression.c:357: * returns 1 on failure
+    src/parse/data/expression.c:384: * returns 1 on failure
+    src/parse/data/expression.c:454: * returns 1 on failure
+    src/parse/data/expression.c:631: * returns 1 on failure
+    src/parse/data/expression.c:675: * returns 1 on failure
+    src/parse/data/expression.c:770: * returns 1 on failure
+    src/parse/data/expression.c:791: * returns 1 on failure
+    src/parse/data/expression.h:35: * retunns 1 on failure
+    src/parse/data/expression.h:44: * returns 1 on failure
+    src/parse/data/expression.h:96: * returns 1 on failure
+    src/parse/data/expression.h:105: * returns 1 on failure
+    src/parse/data/expression.h:146: * returns 1 on failure
+    src/parse/data/expression.h:190: * returns 1 on failure
+    src/parse/data/expression.h:199: * returns 1 on failure
+    src/parse/data/expression.h:236: * returns 1 on failure
+    src/parse/data/expression.h:245: * returns 1 on failure
+    src/parse/data/statement.c:39: * returns 1 on failure
+    src/parse/data/statement.c:58: * returns 1 on failure
+    src/parse/data/statement.c:161: * returns 1 on failure
+    src/parse/data/statement.c:202: * returns 1 on failure
+    src/parse/data/statement.c:321: * returns 1 on failure
+    src/parse/data/statement.c:347: * returns 1 on failure
+    src/parse/data/statement.c:483: * returns 1 on failure
+    src/parse/data/statement.c:504: * returns 1 on failure
+    src/parse/data/statement.h:27: * returns 1 on failure
+    src/parse/data/statement.h:36: * returns 1 on failure
+    src/parse/data/statement.h:81: * returns 1 on failure
+    src/parse/data/statement.h:90: * returns 1 on failure
+    src/parse/data/statement.h:132: * returns 1 on failure
+    src/parse/data/statement.h:141: * returns 1 on failure
+    src/parse/data/statement.h:204: * returns 1 on failure
+    src/parse/data/statement.h:213: * returns 1 on failure
+    src/parse/data/type.c:37: * returns 1 on failure
+    src/parse/data/type.h:52: * returns 1 on failure
+    src/parse/data/type_ref.c:36: * returns 1 on failure
+    src/parse/data/type_ref.c:89: * returns 1 on failure
+    src/parse/data/type_ref.h:69: * returns 1 on failure
+    src/parse/data/type_ref.h:84: * returns 1 on failure
+
+FIXME categorise the following
+
+    src/data/pvector.c:158: * returns -1 on failure
+    src/data/pvector.h:78: * returns -1 on failure
+    src/parse/data/ast.c:125: * returns -1 on failure
+    src/parse/data/ast.h:49: * returns -1 on failure
+    src/parse/data/body.c:121: * returns -1 on failure
+    src/parse/data/decl.c:195:     * returns -1 on failure
+
 
 Error checking
 ==============
