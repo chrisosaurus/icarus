@@ -27,6 +27,8 @@ Example conforming function:
 
 allowed special cases:
 
+* ic_ast_append will return the index of the appended item, returns -1 on error
+* ic_body_append will return the index of the appended item, returns -1 on error
 * ic_pvector_append will return the index of the appended item, returns -1 on error
 * ic_string_length will return the length, returns -1 on error
 * ic_symbol_length will return the length, returns -1 on error
@@ -61,12 +63,6 @@ remaining cases:
     parse/data/type_ref.h:93: * returns 1 on error
     parse/data/type_ref.h:106: * returns 1 on error
     parse/data/type_ref.h:117: * returns 1 on error
-
-    data/string.c:143: * returns -1 on error
-    data/string.h:81: * returns -1 on error
-    data/symbol.c:106: * returns -1 on error
-    data/symbol.h:53: * returns -1 on error
-
 
     chris@Ox1b icarus(master)-> git grep -ni '1 on failure' *
     TODO.md:15:* return code: ic_pvector_destroy returns 1 on failure, ic_dict_destroy returns 0 on failure
@@ -126,8 +122,13 @@ remaining cases:
     src/parse/data/type_ref.h:69: * returns 1 on failure
     src/parse/data/type_ref.h:84: * returns 1 on failure
 
-FIXME categorise the following
 
+known exceptions:
+
+    data/string.c:143: * returns -1 on error
+    data/string.h:81: * returns -1 on error
+    data/symbol.c:106: * returns -1 on error
+    data/symbol.h:53: * returns -1 on error
     src/data/pvector.c:158: * returns -1 on failure
     src/data/pvector.h:78: * returns -1 on failure
     src/parse/data/ast.c:125: * returns -1 on failure
