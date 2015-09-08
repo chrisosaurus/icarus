@@ -249,7 +249,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                 /* infer type of expression
                  * check returned value matches declared return type
                  */
-                puts("ic_analyse_body: unimplemented stmt->type ic_stmt_type_ref");
+                puts("ic_analyse_body: unimplemented stmt->type ic_stmt_type_ret");
                 goto ERROR;
 
             case ic_stmt_type_let:
