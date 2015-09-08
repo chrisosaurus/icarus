@@ -1,8 +1,8 @@
 https://github.com/mkfifo/linear_hash
 
-commit 3f663cd3df58d2b46dbc5adb6f7a75328b259d7d
+commit 71cae56492ccfe383061b7769f5ed7ba5708c8e5
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Thu Aug 6 14:28:44 2015 +1200
+Date:   Tue Sep 8 13:18:13 2015 +1200
 
-    fixing typo in error message
+    changing wording "on failure" to "on error"
 

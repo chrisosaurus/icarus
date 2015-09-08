@@ -68,7 +68,7 @@ unsigned int lh_nelems(const struct lh_table *table);
  * (table->n_elems * 10) / table->size
  *
  * returns loading factor 0 -> 10 on success
- * returns 0 on failure
+ * returns 0 on error
  */
 unsigned int lh_load(const struct lh_table *table);
 
@@ -82,7 +82,7 @@ unsigned int lh_load(const struct lh_table *table);
  * this will accept any value between 1 (10%) to 10 (100%)
  *
  * returns 1 on success
- * returns 0 on failure
+ * returns 0 on error
  */
 unsigned int lh_tune_threshold(struct lh_table *table, unsigned int threshold);
 

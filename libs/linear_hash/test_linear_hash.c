@@ -1,5 +1,5 @@
-/*  gcc linear_hash.c test_linear_hash.c -Wall -Wextra -Werror -o test_sh
- * ./test_sh
+/*  gcc linear_hash.c test_linear_hash.c -Wall -Wextra -Werror -o test_lh
+ * ./test_lh
  */
 #include <assert.h> /* assert */
 #include <stdio.h> /* puts */

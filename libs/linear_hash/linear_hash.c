@@ -218,7 +218,7 @@ unsigned int lh_entry_destroy(struct lh_entry *entry, unsigned int free_data){
 /* find the lh_entry that should be holding this key
  *
  * returns a pointer to it on success
- * return 0 on failure
+ * return 0 on error
  */
 struct lh_entry * lh_find_entry(const struct lh_table *table, const char *key){
     /* our cur entry */
@@ -341,7 +341,7 @@ unsigned int lh_nelems(const struct lh_table *table){
  * (table->n_elems * 10) / table->size
  *
  * returns loading factor 0 -> 10 on success
- * returns 0 on failure
+ * returns 0 on error
  */
 unsigned int lh_load(const struct lh_table *table){
     if( ! table ){
@@ -365,7 +365,7 @@ unsigned int lh_load(const struct lh_table *table){
  * this will accept any value between 1 (10%) to 10 (100%)
  *
  * returns 1 on success
- * returns 0 on failure
+ * returns 0 on error
  */
 unsigned int lh_tune_threshold(struct lh_table *table, unsigned int threshold){
     if( ! table ){
