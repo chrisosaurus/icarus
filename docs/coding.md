@@ -65,10 +65,6 @@ remaining cases:
     parse/data/type_ref.h:117: * returns 1 on error
 
     chris@Ox1b icarus(master)-> git grep -ni '1 on failure' *
-    src/parse/data/ast.c:36: * returns 1 on failure
-    src/parse/data/ast.c:61: * returns 1 on failure
-    src/parse/data/ast.h:22: * returns 1 on failure
-    src/parse/data/ast.h:34: * returns 1 on failure
     src/parse/data/body.c:36: * returns 1 on failure
     src/parse/data/body.c:59: * returns 1 on failure
     src/parse/data/body.h:29: * returns 1 on failure

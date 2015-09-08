@@ -18,8 +18,8 @@ struct ic_ast * ic_ast_new(void);
 
 /* initialise a pre-existing ast
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_ast_init(struct ic_ast *ast);
 
@@ -30,8 +30,8 @@ unsigned int ic_ast_init(struct ic_ast *ast);
  * the caller must determine if it is appropriate
  * or not to call free(ast)
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_ast_destroy(struct ic_ast *ast, unsigned int free_ast);
 

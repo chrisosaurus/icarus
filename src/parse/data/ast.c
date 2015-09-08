@@ -21,7 +21,7 @@ struct ic_ast * ic_ast_new(void){
     }
 
     /* initialise ast */
-    if( ic_ast_init(ast) ){
+    if( ! ic_ast_init(ast) ){
         puts("ic_ast_new: call to ic_ast_init fialed");
         free(ast);
         return 0;
@@ -32,22 +32,22 @@ struct ic_ast * ic_ast_new(void){
 
 /* initialise a pre-existing ast
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_ast_init(struct ic_ast *ast){
     if( ! ast ){
         puts("ic_ast_init: ast was null");
-        return 1;
+        return 0;
     }
 
     /* initialise pvector decls to 0 cap */
     if( ! ic_pvector_init( &(ast->decls), 0 ) ){
         puts("ic_ast_init: call to ic_pvector_init failed");
-        return 1;
+        return 0;
     }
 
-    return 0;
+    return 1;
 }
 
 /* calls destroy on all elements within
@@ -57,8 +57,8 @@ unsigned int ic_ast_init(struct ic_ast *ast){
  * the caller must determine if it is appropriate
  * or not to call free(ast)
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_ast_destroy(struct ic_ast *ast, unsigned int free_ast){
     /* iterator through contained decls */
@@ -70,7 +70,7 @@ unsigned int ic_ast_destroy(struct ic_ast *ast, unsigned int free_ast){
 
     if( ! ast ){
         puts("ic_ast_destroy");
-        return 1;
+        return 0;
     }
 
     /* get length */
@@ -82,7 +82,7 @@ unsigned int ic_ast_destroy(struct ic_ast *ast, unsigned int free_ast){
         decl = ic_ast_get(ast, i);
         if( ! decl ){
             puts("ic_ast_destroy: call to ic_ast_get failed");
-            return 1;
+            return 0;
         }
 
         /* destroy everything contained within decl
@@ -90,7 +90,7 @@ unsigned int ic_ast_destroy(struct ic_ast *ast, unsigned int free_ast){
          */
         if( ic_decl_destroy(decl, 1) ){
             puts("ic_ast_destroy: call to ic_decl_destroy failed");
-            return 1;
+            return 0;
         }
     }
 
@@ -100,7 +100,7 @@ unsigned int ic_ast_destroy(struct ic_ast *ast, unsigned int free_ast){
     }
 
     /* success */
-    return 0;
+    return 1;
 }
 
 /* get item stores at index i

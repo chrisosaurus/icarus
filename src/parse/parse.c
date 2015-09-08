@@ -116,7 +116,7 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
                             ic_parse_table[pt_offset].token );
 
                     /* free ast and all contents */
-                    if( ic_ast_destroy(ast, 1) ){
+                    if( ! ic_ast_destroy(ast, 1) ){
                         puts("ic_parse: call to ic_ast_destroy failed in error case tidy up");
                     }
                     return 0;
@@ -129,7 +129,7 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
                     puts("ic_parse: error when calling parsing function");
 
                     /* free ast and all contents */
-                    if( ic_ast_destroy(ast, 1) ){
+                    if( ! ic_ast_destroy(ast, 1) ){
                         puts("ic_parse: call to ic_ast_destroy failed in error case tidy up");
                     }
                     return 0;
@@ -140,7 +140,7 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
                     puts("ic_parse: call to ic_ast_append failed");
 
                     /* free ast and all contents */
-                    if( ic_ast_destroy(ast, 1) ){
+                    if( ! ic_ast_destroy(ast, 1) ){
                         puts("ic_parse: call to ic_ast_destroy failed in error case tidy up");
                     }
                     return 0;
@@ -167,7 +167,7 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
                 &(tokens->tokens[i]) );
 
         /* free ast and all contents */
-        if( ic_ast_destroy(ast, 1) ){
+        if( ! ic_ast_destroy(ast, 1) ){
             puts("ic_parse: call to ic_ast_destroy failed in error case tidy up");
         }
         return 0;

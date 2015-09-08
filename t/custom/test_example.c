@@ -37,7 +37,7 @@ int main(int argc, char **argv){
     ic_ast_print(ast);
     puts("----------------\n");
 
-    if( ic_ast_destroy(ast, 1) ){
+    if( ! ic_ast_destroy(ast, 1) ){
         puts("text_example: ic_ast_destroy failed");
     }
 

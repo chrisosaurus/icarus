@@ -254,7 +254,7 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
      *       struct ic_ast *aast;
      *
      */
-    if( ic_ast_destroy( kludge->aast, 1 ) ){
+    if( ! ic_ast_destroy( kludge->aast, 1 ) ){
         puts("ic_kludge_destroy: asst - call to ic_ast_destroy failed");
         return 0;
     }

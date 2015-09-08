@@ -55,17 +55,17 @@ void basic(void){
      */
 
     assert( 0 == ic_type_decl_destroy(tdecl, 1) );
-    assert( 0 == ic_ast_destroy(ast, 1) );
+    assert( 1 == ic_ast_destroy(ast, 1) );
 }
 
 void errors(void){
     struct ic_ast ast;
-    assert( 1 == ic_ast_init(0) );
+    assert( 0 == ic_ast_init(0) );
     assert( 0 == ic_ast_get(0, 0) );
     assert( -1 == ic_ast_append(0, 0) );
     assert( -1 == ic_ast_append(&ast, 0) );
     assert( 0 == ic_ast_length(0) );
-    assert( 1 == ic_ast_destroy(0, 0) );
+    assert( 0 == ic_ast_destroy(0, 0) );
 }
 
 int main(void){
