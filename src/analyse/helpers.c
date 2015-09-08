@@ -301,10 +301,10 @@ ERROR:
  *  ic_type_ref * -> actual type inferred
  *
  * examples:
- *  infer 1 -> Int
- *  infer "helo" -> String
- *  infer addone(1) -> addone(Int)->Int -> Int
- *  infer Foo(1 "hello") -> Foo(Int String) -> Foo
+ *  infer 1 to Int
+ *  infer "hello" to String
+ *  infer addone(1) which is a call to addone(Int) -> Int therefore Int
+ *  infer Foo(1 "hello") which is call to Foo(Int String) -> Foo therefore Foo
  *
  * returns ic_type_ref on success
  * returns 0 on error
@@ -355,7 +355,7 @@ struct ic_type_ref * ic_analyse_infer(struct ic_kludge *kludge, struct ic_expr *
              *  id = expr->u.id
              *  name = str(id)
              *  variable = get variable within scope name // FIXME no mechanism
-             *  type = get type of variable // FIXME no mechanism
+             *  type = get type of variable
              *  return type
              */
 
