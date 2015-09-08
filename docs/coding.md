@@ -25,12 +25,6 @@ Example conforming function:
         return 1;
     }
 
-known areas, types, and functions not conforming:
-
-* parse
-* analyse
-
-
 allowed special cases:
 
 * ic_pvector_append will return the index of the appended item, returns -1 on error
@@ -41,10 +35,6 @@ allowed special cases:
 remaining cases:
 
     chris@Ox1b src(master)-> git grep -ni '1 on error' *
-    analyse/analyse.c:96: * returns 1 on error
-    analyse/analyse.c:138: * returns 1 on error
-    analyse/analyse.h:21: * returns 1 on error
-    analyse/analyse.h:30: * returns 1 on error
     parse/data/decl.c:49: * returns 1 on error
     parse/data/decl.c:181: * returns 1 on error
     parse/data/decl.c:210: * returns 1 on error

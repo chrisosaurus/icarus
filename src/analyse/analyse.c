@@ -54,7 +54,7 @@ struct ic_kludge * ic_analyse(struct ic_ast *ast){
             goto ERROR;
         }
 
-        if( ic_analyse_type_decl(kludge, tdecl) ){
+        if( ! ic_analyse_type_decl(kludge, tdecl) ){
             puts("ic_analyse: call to ic_analyse_type_decl failed");
             goto ERROR;
         }
@@ -69,7 +69,7 @@ struct ic_kludge * ic_analyse(struct ic_ast *ast){
             goto ERROR;
         }
 
-        if( ic_analyse_func_decl(kludge, fdecl) ){
+        if( ! ic_analyse_func_decl(kludge, fdecl) ){
             puts("ic_analyse: call to ic_analyse_func_decl failed");
             goto ERROR;
         }
@@ -92,8 +92,8 @@ ERROR:
  *
  * FIXME need a way of signalling and passing errors
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl *tdecl){
     /* name of current type we are trying to declare */
@@ -101,18 +101,18 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
 
     if( ! kludge ){
         puts("ic_analyse_type_decl: kludge was null");
-        return 1;
+        return 0;
     }
 
     if( ! tdecl ){
         puts("ic_analyse_type_decl: tdecl was null");
-        return 1;
+        return 0;
     }
 
     this_type = ic_type_decl_str(tdecl);
     if( ! this_type ){
         puts("ic_analyse_type_decl: for this_type: call to ic_type_decl_str failed");
-        return 1;
+        return 0;
     }
 
     /* check fields */
@@ -122,20 +122,20 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
     }
 
     puts("ic_analyse_type_decl: implementation pending");
-    return 0;
+    return 1;
 
 ERROR:
 
     puts("ic_analyse_type_decl: error");
-    return 1;
+    return 0;
 }
 
 /* takes a func_decl and performs analysis
  *
  * FIXME need a way of signalling and passing errors
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl *fdecl){
     /* name of current func we are trying to declare */
@@ -143,19 +143,19 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
 
     if( ! kludge ){
         puts("ic_analyse_func_decl: kludge was null");
-        return 1;
+        return 0;
     }
 
     if( ! fdecl ){
         puts("ic_analyse_func_decl: fdecl was null");
-        return 1;
+        return 0;
     }
 
     /* name of this func, useful for error printing */
     this_func = ic_func_decl_str(fdecl);
     if( ! this_func ){
         puts("ic_analyse_func_decl: for this_type: call to ic_func_decl_str failed");
-        return 1;
+        return 0;
     }
 
     /* check arg list */
@@ -171,11 +171,11 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
     }
 
     puts("ic_analyse_func_decl: implementation pending");
-    return 0;
+    return 1;
 
 ERROR:
 
     puts("ic_analyse_func_decl: error");
-    return 1;
+    return 0;
 }
 
