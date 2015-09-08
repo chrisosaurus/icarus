@@ -79,7 +79,6 @@ remaining cases:
     src/parse/data/body.c:59: * returns 1 on failure
     src/parse/data/body.h:29: * returns 1 on failure
     src/parse/data/body.h:38: * returns 1 on failure
-    src/parse/data/body.h:50: * returns -1 on failure
     src/parse/data/decl.c:100: * returns 1 on failure
     src/parse/data/decl.c:497: * returns 1 on failure
     src/parse/data/decl.c:688: * returns 1 on failure
@@ -134,7 +133,7 @@ FIXME categorise the following
     src/parse/data/ast.c:125: * returns -1 on failure
     src/parse/data/ast.h:49: * returns -1 on failure
     src/parse/data/body.c:121: * returns -1 on failure
-    src/parse/data/decl.c:195:     * returns -1 on failure
+    src/parse/data/body.h:50: * returns -1 on failure
 
 
 Error checking

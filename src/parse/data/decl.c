@@ -191,9 +191,7 @@ unsigned int ic_func_decl_add_arg(struct ic_func_decl *fdecl, struct ic_field *f
         return 1;
     }
 
-    /* append field
-     * returns -1 on failure
-     */
+    /* append field returns -1 on failure */
     if( -1 == ic_pvector_append( &(fdecl->args), field ) ){
         puts("ic_func_decl_add_arg: call to ic_pvector_append failed");
         return 1;
