@@ -39,8 +39,8 @@ struct ic_type * ic_type_new(void);
  *
  * FIXME unknown params
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_type_init(struct ic_type *type);
 

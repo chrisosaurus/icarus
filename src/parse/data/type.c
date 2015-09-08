@@ -21,23 +21,23 @@ struct ic_type * ic_type_new(void){
  *
  * FIXME unknown params
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on error
  */
 unsigned int ic_type_init(struct ic_type *type){
     puts("ic_type_init: unimplemented");
-    return 1;
+    return 0;
 }
 
 /* destroy a type
  *
  * will only free the type if `free_type` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_tytpe){
     puts("ic_type_destroy: unimplemented");
-    return 1;
+    return 0;
 }
 
