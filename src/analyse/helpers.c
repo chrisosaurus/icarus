@@ -18,8 +18,8 @@
  * it is always printed as '%s for %s error goes here'
  * e.g. unit of 'function declaration', name of 'Foo'
  *
- * returns 0 on success (all fields are valid as per the 3 rules)
- * returns 1 on failure
+ * returns 1 on success (all fields are valid as per the 3 rules)
+ * returns 0 on error
  */
 unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_pvector *fields, char *forbidden_type){
 
@@ -63,7 +63,7 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
     set = ic_set_new();
     if( ! set ){
         puts("ic_analyse_field_list: call to ic_set_new failed");
-        return 1;
+        return 0;
     }
 
     len = ic_pvector_length(fields);
@@ -173,7 +173,7 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
         puts("ic_analyse_field_list: call to ic_set_destroy failed in error case");
     }
 
-    return 0;
+    return 1;
 
 ERROR:
 
@@ -185,7 +185,7 @@ ERROR:
     }
 
 
-    return 1;
+    return 0;
 }
 
 /* perform analysis on body
@@ -194,8 +194,9 @@ ERROR:
  * `unit` and `unit_name` are used for error printing
  * it is always printed as '%s for %s error goes here'
  * e.g. unit of 'function declaration', name of 'Foo'
- * returns 0 on success (pass)
- * returns 1 on failure
+ *
+ * returns 1 on success (pass)
+ * returns 0 on error
  */
 unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body){
     /* index into body */
@@ -288,7 +289,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
 ERROR:
 
     puts("ic_analyse_body: unimplemented in error case");
-    return 1;
+    return 0;
 }
 
 /* takes an expr and returns the inferred type as a symbol
@@ -403,8 +404,8 @@ struct ic_type_ref * ic_analyse_infer(struct ic_kludge *kludge, struct ic_expr *
  *  check d(f)
  *  check print(s)
  *
- * returns 0 for success
- * returns 1 for error
+ * returns 1 for success
+ * returns 0 on error
  */
 unsigned int ic_analyse_check(struct ic_kludge *kludge, struct ic_stmt *stmt){
     puts("ic_analyse_check: unimplemented");
