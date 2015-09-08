@@ -81,7 +81,7 @@ unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned 
     fdecl->ret_type = 0;
 
     /* initialise our empty body */
-    if( ic_body_init( &(fdecl->body) ) ){
+    if( ! ic_body_init( &(fdecl->body) ) ){
         puts("ic_func_decl_init: call to ic_body_init failed");
         return 1;
     }
@@ -161,7 +161,7 @@ unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_
     /* free body contents but do not free body itself
      * since it is an element on fdecl
      */
-    if( ic_body_destroy(&(fdecl->body), 0) ){
+    if( ! ic_body_destroy(&(fdecl->body), 0) ){
         puts("ic_type_decl_destroy: for body call to ic_body_destroy failed");
         return 1;
     }

@@ -31,8 +31,8 @@ struct ic_body * ic_body_new(void);
 
 /* initialise an existing ic_body
  *
- * returns 0 on sucess
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_body_init(struct ic_body *body);
 
@@ -42,8 +42,8 @@ unsigned int ic_body_init(struct ic_body *body);
  *
  * this will NOT free the scope
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_body_destroy(struct ic_body *body, unsigned int free_body);
 

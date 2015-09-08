@@ -25,7 +25,7 @@ struct ic_body * ic_parse_body(struct ic_tokens *tokens, unsigned int *i){
     }
 
     /* initialise our body */
-    if( ic_body_init(body) ){
+    if( ! ic_body_init(body) ){
         puts("ic_parse_body: call to ic_body_init failed");
         return 0;
     }

@@ -21,7 +21,7 @@ struct ic_body * ic_body_new(void){
     }
 
     /* init */
-    if( ic_body_init(body) ){
+    if( ! ic_body_init(body) ){
         puts("ic_body_new: call to ic_body_init failed");
         free(body);
         return 0;
@@ -32,25 +32,25 @@ struct ic_body * ic_body_new(void){
 
 /* initialise an existing ic_body
  *
- * returns 0 on sucess
- * returns 1 on failure
+ * returns 1 on sucess
+ * returns 0 on failure
  */
 unsigned int ic_body_init(struct ic_body *body){
     if( ! body ){
         puts("ic_body_init: body was null");
-        return 1;
+        return 0;
     };
 
     /* simply dispatch to pvector init */
     if( ! ic_pvector_init( &(body->contents), 0 ) ){
         puts("ic_body_init: call to ic_pvector_init failed");
-        return 1;
+        return 0;
     }
 
     body->scope = 0;
 
     /* success */
-    return 0;
+    return 1;
 }
 
 /* destroy body
@@ -59,8 +59,8 @@ unsigned int ic_body_init(struct ic_body *body){
  *
  * this will NOT free the scope
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_body_destroy(struct ic_body *body, unsigned int free_body){
     int i = 0;
@@ -69,13 +69,13 @@ unsigned int ic_body_destroy(struct ic_body *body, unsigned int free_body){
 
     if( ! body ){
         puts("ic_body_destroy: body was null");
-        return 1;
+        return 0;
     };
 
     len = ic_body_length(body);
     if( len == -1 ){
         puts("ic_body_destroy: call to ic_body_length failed");
-        return 1;
+        return 0;
     }
 
     /* we cannot dispatch to pvector as it has no idea what it contains
@@ -86,7 +86,7 @@ unsigned int ic_body_destroy(struct ic_body *body, unsigned int free_body){
         stmt = ic_body_get(body, i);
         if( ! stmt ){
             puts("ic_body_destroy: call to ic_body_get failed");
-            return 1;
+            return 0;
         }
 
         /* dispatch to stmt destroy
@@ -94,7 +94,7 @@ unsigned int ic_body_destroy(struct ic_body *body, unsigned int free_body){
          */
         if( ic_stmt_destroy(stmt, 1) ){
             puts("ic_body_destroy: call to ic_stmt_destroy failed");
-            return 1;
+            return 0;
         }
     }
 
@@ -105,7 +105,7 @@ unsigned int ic_body_destroy(struct ic_body *body, unsigned int free_body){
         free(body);
     }
 
-    return 0;
+    return 1;
 }
 
 /* returns item at offset i on sucess

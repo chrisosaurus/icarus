@@ -57,10 +57,6 @@ remaining cases:
     parse/data/expression.h:137: * returns 1 on error
 
     chris@Ox1b icarus(master)-> git grep -ni '1 on failure' *
-    src/parse/data/body.c:36: * returns 1 on failure
-    src/parse/data/body.c:59: * returns 1 on failure
-    src/parse/data/body.h:29: * returns 1 on failure
-    src/parse/data/body.h:38: * returns 1 on failure
     src/parse/data/decl.c:100: * returns 1 on failure
     src/parse/data/decl.c:497: * returns 1 on failure
     src/parse/data/decl.c:688: * returns 1 on failure

@@ -327,7 +327,7 @@ unsigned int ic_stmt_if_init(struct ic_stmt_if *sif){
     }
 
     /* let body_init handle the work */
-    if( ic_body_init( &(sif->body) ) ){
+    if( ! ic_body_init( &(sif->body) ) ){
         puts("ic_stmt_if_init: call ot ic_body_init failed");
         return 1;
     }
@@ -361,7 +361,7 @@ unsigned int ic_stmt_if_destroy(struct ic_stmt_if *sif, unsigned int free_if){
     }
 
     /* free_body = 0 as member */
-    if( ic_body_destroy( &(sif->body), 0 ) ){
+    if( ! ic_body_destroy( &(sif->body), 0 ) ){
         puts("ic_stmt_if_detroy: call to ic_body_destroy failed");
         return 1;
     }
