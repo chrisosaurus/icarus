@@ -19,7 +19,7 @@ struct ic_set * ic_set_new(void){
         return 0;
     }
 
-    if( ic_set_init(set) ){
+    if( ! ic_set_init(set) ){
         puts("ic_set_new: call to ic_set_init failed");
         free(set);
         return 0;
@@ -30,8 +30,8 @@ struct ic_set * ic_set_new(void){
 
 /* init an existing ic_set
  *
- * return 0 on success
- * return 1 on error
+ * return 1 on success
+ * return 0 on error
  */
 unsigned int ic_set_init(struct ic_set *set){
     if( ! set ){
@@ -39,7 +39,7 @@ unsigned int ic_set_init(struct ic_set *set){
         return 0;
     }
 
-    return ! ls_init(&(set->lss), IC_SET_DEFAULT_SIZE);
+    return ls_init(&(set->lss), IC_SET_DEFAULT_SIZE);
 }
 
 /* insert new item

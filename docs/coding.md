@@ -45,8 +45,6 @@ remaining cases:
     analyse/analyse.c:138: * returns 1 on error
     analyse/analyse.h:21: * returns 1 on error
     analyse/analyse.h:30: * returns 1 on error
-    data/set.c:34: * return 1 on error
-    data/set.h:24: * return 1 on error
     data/string.c:143: * returns -1 on error
     data/string.h:81: * returns -1 on error
     data/symbol.c:106: * returns -1 on error

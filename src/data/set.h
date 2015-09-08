@@ -20,8 +20,8 @@ struct ic_set * ic_set_new(void);
 
 /* init an existing ic_set
  *
- * return 0 on success
- * return 1 on error
+ * return 1 on success
+ * return 0 on error
  */
 unsigned int ic_set_init(struct ic_set *set);
 
