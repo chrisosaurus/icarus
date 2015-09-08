@@ -12,7 +12,6 @@ TODO:
 bugs:
 -----
 
-* return code: ic_pvector_destroy returns 1 on failure, ic_dict_destroy returns 0 on failure
 * docs/internal/types.md specifies ic_type_ref -> ic_type -> ic_type_decl, however ic_type_ref currently refers directly to an ic_type_decl
 * `,` vs space separated args (in decl and call) needs to be implemented correctly
 
