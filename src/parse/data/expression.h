@@ -31,8 +31,8 @@ struct ic_expr_func_call * ic_expr_func_call_new(char *name, unsigned int name_l
 
 /* intialise an existing func call
  *
- * returns 0 on success
- * retunns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, char *name, unsigned int name_len);
 
@@ -40,15 +40,15 @@ unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, char *name,
  *
  * only free fcall if `free_fcall` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned int free_fcall);
 
 /* add a new argument to this function call
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 int ic_expr_func_call_add_arg(struct ic_expr_func_call *fcall, struct ic_expr *expr);
 
@@ -92,8 +92,8 @@ struct ic_expr_identifier{
 struct ic_expr_identifier * ic_expr_identifier_new(char *id, unsigned int id_len);
 
 /* initialise an existing identifier
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, char *id, unsigned int id_len);
 
@@ -101,8 +101,8 @@ unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, cha
  *
  * will free id if `free_id` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_expr_identifier_destroy(struct ic_expr_identifier * identifier, unsigned int free_id);
 
@@ -133,8 +133,8 @@ struct ic_expr_constant * ic_expr_constant_new(enum ic_expr_constant_type type);
 
 /* initialise an existing constant
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, enum ic_expr_constant_type type);
 
@@ -142,8 +142,8 @@ unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, enum ic
  *
  * will free const if `free_const` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_expr_constant_init(struct ic_expr_constant *constant, unsigned int free_const);
 
@@ -186,8 +186,8 @@ struct ic_expr_operator * ic_expr_operator_new(struct ic_expr *lexpr, struct ic_
 
 /* initialise an existing op
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, struct ic_expr *lexpr, struct ic_expr *rexpr, char *op, unsigned int op_len);
 
@@ -195,8 +195,8 @@ unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, struct ic_
  *
  * will free op if `free_op` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_expr_operator_destroy(struct ic_expr_operator *op, unsigned int free_op);
 
@@ -232,8 +232,8 @@ struct ic_expr * ic_expr_new(enum ic_expr_type type);
 /* initialise an existing ic_expr
  * will not initialise union members
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 int ic_expr_init(struct ic_expr *expr, enum ic_expr_type type);
 
@@ -241,8 +241,8 @@ int ic_expr_init(struct ic_expr *expr, enum ic_expr_type type);
  *
  * will only free expr if `free_expr` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_expr_destroy(struct ic_expr *expr, unsigned int free_expr);
 

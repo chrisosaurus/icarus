@@ -28,7 +28,7 @@ struct ic_expr_func_call * ic_expr_func_call_new(char *name, unsigned int name_l
         return 0;
     }
 
-    if( ic_expr_func_call_init(fcall, name, name_len) ){
+    if( ! ic_expr_func_call_init(fcall, name, name_len) ){
         puts("ic_expr_func_call_init: call to ic_expr_func_call_init failed");
         free(fcall);
         return 0;
@@ -39,36 +39,36 @@ struct ic_expr_func_call * ic_expr_func_call_new(char *name, unsigned int name_l
 
 /* intialise an existing func call
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, char *name, unsigned int name_len){
     if( ! fcall ){
         puts("ic_expr_func_call_init: fcall was null");
-        return 1;
+        return 0;
     }
 
     if( ! name ){
         puts("ic_expr_func_call_init: name was null");
-        return 1;
+        return 0;
     }
 
     /* call init on components */
 
     if( ! ic_symbol_init( &(fcall->fname), name, name_len ) ){
         puts("ic_expr_func_call_init: call to ic_symbol_init failed");
-        return 1;
+        return 0;
     }
 
     if( ! ic_pvector_init( &(fcall->args), 0 ) ){
         puts("ic_expr_func_call_init: call to ic_pvector_init failed");
-        return 1;
+        return 0;
     }
 
     /* fstr is set later by ic_expr_func_call_str */
     fcall->string = 0;
 
-    return 0;
+    return 1;
 
 }
 
@@ -76,8 +76,8 @@ unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, char *name,
  *
  * only free fcall if `free_fcall` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned int free_fcall){
     int i = 0;
@@ -86,13 +86,13 @@ unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned
 
     if( ! fcall ){
         puts("ic_expr_func_call_destroy: fcall was null");
-        return 1;
+        return 0;
     }
 
     /* free = 0 as member */
     if( ! ic_symbol_destroy( &(fcall->fname), 0 ) ){
         puts("ic_expr_func_call_destroy: call to ic_symbol_destroy failed");
-        return 1;
+        return 0;
     }
 
     len = ic_expr_func_call_length(fcall);
@@ -100,20 +100,20 @@ unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned
         expr = ic_expr_func_call_get_arg(fcall, i);
         if( ! expr ){
             puts("ic_expr_func_call_destroy: call to ic_expr_func-call_get_arg failed");
-            return 1;
+            return 0;
         }
 
         /* free = 1 as pointer element */
-        if( ic_expr_destroy( expr, 1 ) ){
+        if( ! ic_expr_destroy( expr, 1 ) ){
             puts("ic_expr_func_call_destroy: call to ic_expr_destroy failed");
-            return 1;
+            return 0;
         }
     }
 
     if( fcall->string ){
         if( ! ic_string_destroy( fcall->string, 1 ) ){
             puts("ic_expr_func_call_destroy: call to ic_string_destroy failed");
-            return 1;
+            return 0;
         }
         fcall->string = 0;
     }
@@ -123,13 +123,13 @@ unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned
         free(fcall);
     }
 
-    return 0;
+    return 1;
 }
 
 /* add a new argument to this function call
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 int ic_expr_func_call_add_arg(struct ic_expr_func_call *fcall, struct ic_expr *expr){
 
@@ -145,10 +145,10 @@ int ic_expr_func_call_add_arg(struct ic_expr_func_call *fcall, struct ic_expr *e
     /* let pvector do al the work */
     if( -1 == ic_pvector_append( &(fcall->args), expr ) ){
         puts("ic_expr_func_call_add_arg: call to ic_pvector_append failed");
-        return 1;
+        return 0;
     }
 
-    return 0;
+    return 1;
 }
 
 /* get argument
@@ -342,7 +342,7 @@ struct ic_expr_identifier * ic_expr_identifier_new(char *id, unsigned int id_len
     }
 
     /* initialise */
-    if( ic_expr_identifier_init(identifier, id, id_len) ){
+    if( ! ic_expr_identifier_init(identifier, id, id_len) ){
         puts("ic_expr_identifier_new: call to ic_expr_identifier_init failed");
         free(identifier);
         return 0;
@@ -353,46 +353,46 @@ struct ic_expr_identifier * ic_expr_identifier_new(char *id, unsigned int id_len
 }
 
 /* initialise an existing identifier
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, char *id, unsigned int id_len){
     if( ! identifier ){
         puts("ic_expr_identifier_init: identifier was null");
-        return 1;
+        return 0;
     }
 
     if( ! id ){
         puts("ic_expr_identifier_init: id was null");
-        return 1;
+        return 0;
     }
 
     /* init our symbol name */
     if( ! ic_symbol_init( &(identifier->identifier), id, id_len ) ){
         puts("ic_expr_identifier_init: call to ic_symbol_init failed");
-        return 1;
+        return 0;
     }
 
-    return 0;
+    return 1;
 }
 
 /* destroy identifier
  *
  * will free id if `free_id` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_expr_identifier_destroy(struct ic_expr_identifier * identifier, unsigned int free_id){
     if( ! identifier ){
         puts("ic_expr_identifier_destroy: identifier was null");
-        return 1;
+        return 0;
     }
 
     /* free = 0 as member */
     if( ! ic_symbol_destroy( &(identifier->identifier), 0 ) ){
         puts("ic_expr_identifier_destroy: identifier was null");
-        return 1;
+        return 0;
     }
 
     /* if asked nicely */
@@ -400,8 +400,7 @@ unsigned int ic_expr_identifier_destroy(struct ic_expr_identifier * identifier, 
         free(identifier);
     }
 
-    return 0;
-
+    return 1;
 }
 
 /* allocate and init a new constant
@@ -419,7 +418,7 @@ struct ic_expr_constant * ic_expr_constant_new(enum ic_expr_constant_type type){
     }
 
     /* init */
-    if( ic_expr_constant_init(constant, type) ){
+    if( ! ic_expr_constant_init(constant, type) ){
         puts("ic_expr_constant_new: call to ic_expr_constant_init failed");
         return 0;
     }
@@ -430,33 +429,33 @@ struct ic_expr_constant * ic_expr_constant_new(enum ic_expr_constant_type type){
 
 /* initialise an existing constant
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_expr_constant_init(struct ic_expr_constant *constant, enum ic_expr_constant_type type){
     if( ! constant ){
         puts("ic_expr_constant_init: constant was null");
-        return 1;
+        return 0;
     }
 
     /* for now our only job is to set the type */
     constant->type = type;
 
     /* victory */
-    return 0;
+    return 1;
 }
 
 /* destroy const
  *
  * will free const if `free_const` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, unsigned int free_const){
     if( ! constant ){
         puts("ic_expr_constant_destroy: constant was null");
-        return 1;
+        return 0;
     }
 
     switch( constant->type ){
@@ -468,13 +467,13 @@ unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, unsigne
             /* free = 0 as member */
             if( ! ic_string_destroy( &(constant->u.string), 0 ) ){
                 puts("ic_expr_constant_destroy: call to ic_string_destroy failed");
-                return 1;
+                return 0;
             }
             break;
 
         default:
             puts("ic_expr_constant_destroy: impossible type");
-            return 1;
+            return 0;
             break;
     }
 
@@ -482,7 +481,7 @@ unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, unsigne
         free(constant);
     }
 
-    return 0;
+    return 1;
 }
 
 /* return pointer to integer within,
@@ -615,7 +614,7 @@ struct ic_expr_operator * ic_expr_operator_new(struct ic_expr *lexpr, struct ic_
     }
 
     /* initialise */
-    if( ic_expr_operator_init(operator, lexpr, rexpr, op, op_len) ){
+    if( ! ic_expr_operator_init(operator, lexpr, rexpr, op, op_len) ){
         puts("ic_expr_operator_new: call to ic_expr_operator_init failed");
         free(operator);
         return 0;
@@ -627,36 +626,36 @@ struct ic_expr_operator * ic_expr_operator_new(struct ic_expr *lexpr, struct ic_
 
 /* initialise an existing op
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, struct ic_expr *lexpr, struct ic_expr *rexpr, char *op, unsigned int op_len){
 
     if( ! operator ){
         puts("ic_expr_operator_init: operator was null");
-        return 1;
+        return 0;
     }
 
     if( ! lexpr ){
         puts("ic_expr_operator_init: lexpr was null");
-        return 1;
+        return 0;
     }
 
     if( ! rexpr ){
         puts("ic_expr_operator_init: rexpr was null");
-        return 1;
+        return 0;
     }
 
     if( ! op ){
         puts("ic_expr_operator_init: op char* was null");
-        return 1;
+        return 0;
     }
 
 
     /* initialise symbol op */
     if( ! ic_symbol_init( &(operator->op), op, op_len ) ){
         puts("ic_expr_operator_init: call to ic_symbol_init failed");
-        return 1;
+        return 0;
     }
 
     /* assign sub expressions */
@@ -664,49 +663,49 @@ unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, struct ic_
     operator->rexpr = rexpr;
 
     /* success */
-    return 0;
+    return 1;
 }
 
 /* destroy operator
  *
  * will free op if `free_op` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_expr_operator_destroy(struct ic_expr_operator *op, unsigned int free_op){
     if( ! op ){
         puts("ic_expr_operator_destroy: operator was null");
-        return 1;
+        return 0;
     }
 
     if( op->lexpr ){
         /* free = 1 as pointer */
-        if( ic_expr_destroy( op->lexpr, 1 ) ){
+        if( ! ic_expr_destroy( op->lexpr, 1 ) ){
             puts("ic_expr_operator_destroy: lexpr : call to ic_expr_destroy failed");
-            return 1;
+            return 0;
         }
     }
 
     if( op->rexpr ){
         /* free = 1 as pointer */
-        if( ic_expr_destroy( op->rexpr, 1 ) ){
+        if( ! ic_expr_destroy( op->rexpr, 1 ) ){
             puts("ic_expr_operator_destroy: rexpr : call to ic_expr_destroy failed");
-            return 1;
+            return 0;
         }
     }
 
     /* free = 0 as member */
     if( ! ic_symbol_destroy( &(op->op), 0 ) ){
         puts("ic_expr_operator_destroy: call to ic_symbol_destroy failed");
-        return 1;
+        return 0;
     }
 
     if( free_op ){
         free(op);
     }
 
-    return 0;
+    return 1;
 }
 
 /* print this operator */
@@ -755,7 +754,7 @@ struct ic_expr * ic_expr_new(enum ic_expr_type type){
     }
 
     /* init */
-    if( ic_expr_init(expr, type) ){
+    if( ! ic_expr_init(expr, type) ){
         puts("ic_expr_new: call to ic_expr_init failed");
         return 0;
     }
@@ -766,13 +765,13 @@ struct ic_expr * ic_expr_new(enum ic_expr_type type){
 /* initialise an existing ic_expr
  * will not initialise union members
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 int ic_expr_init(struct ic_expr *expr, enum ic_expr_type type){
     if( ! expr ){
         puts("ic_expr_init: expr was null");
-        return 1;
+        return 0;
     }
 
     /* we only initialise the type */
@@ -780,53 +779,53 @@ int ic_expr_init(struct ic_expr *expr, enum ic_expr_type type){
 
     /* we do NOT initialise the union members */
 
-    return 0;
+    return 1;
 }
 
 /* destroy expr
  *
  * will only free expr if `free_expr` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_expr_destroy(struct ic_expr *expr, unsigned int free_expr){
     if( ! expr ){
         puts("ic_expr_destroy: expr was null");
-        return 1;
+        return 0;
     }
 
     /* dispatch on type */
     switch( expr->type ){
         case ic_expr_type_func_call:
             /* free = 0 as member */
-            if( ic_expr_func_call_destroy( &(expr->u.fcall), 0 ) ){
+            if( ! ic_expr_func_call_destroy( &(expr->u.fcall), 0 ) ){
                 puts("ic_expr_destroy: call to ic_expr_func_call_destroy failed");
-                return 1;
+                return 0;
             }
             break;
 
         case ic_expr_type_identifier:
             /* free = 0 as member */
-            if( ic_expr_identifier_destroy( &(expr->u.id), 0 ) ){
+            if( ! ic_expr_identifier_destroy( &(expr->u.id), 0 ) ){
                 puts("ic_expr_destroy: call to ic_expr_identifier_destroy failed");
-                return 1;
+                return 0;
             }
             break;
 
         case ic_expr_type_constant:
             /* free = 0 as member */
-            if( ic_expr_constant_destroy( &(expr->u.cons), 0 ) ){
+            if( ! ic_expr_constant_destroy( &(expr->u.cons), 0 ) ){
                 puts("ic_expr_destroy: call to ic_expr_constant_destroy failed");
-                return 1;
+                return 0;
             }
             break;
 
         case ic_expr_type_operator:
             /* free = 0 as member */
-            if( ic_expr_operator_destroy( &(expr->u.op), 0 ) ){
+            if( ! ic_expr_operator_destroy( &(expr->u.op), 0 ) ){
                 puts("ic_expr_destroy: call to ic_expr_operator_destroy failed");
-                return 1;
+                return 0;
             }
             break;
 
@@ -839,7 +838,7 @@ unsigned int ic_expr_destroy(struct ic_expr *expr, unsigned int free_expr){
         free(expr);
     }
 
-    return 0;
+    return 1;
 }
 
 /* return pointer to fcall within,

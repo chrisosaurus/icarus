@@ -68,7 +68,7 @@ unsigned int ic_stmt_ret_destroy(struct ic_stmt_ret *ret, unsigned int free_ret)
          * here we set free_expr as ret->ret is
          * a pointer membe
          */
-        if( ic_expr_destroy( ret->ret, 1 ) ){
+        if( ! ic_expr_destroy( ret->ret, 1 ) ){
             puts("ic_stmt_ret_destroy: call ot ic_expr_destroy failed");
             return 1;
         }
@@ -221,7 +221,7 @@ unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let)
 
     if( let->init ){
         /* free = 1 as pointer member */
-        if( ic_expr_destroy( let->init, 0 ) ){
+        if( ! ic_expr_destroy( let->init, 0 ) ){
             puts("ic_stmt_let_destroy: called to ic_expr_destroy failed");
             return 1;
         }
@@ -354,7 +354,7 @@ unsigned int ic_stmt_if_destroy(struct ic_stmt_if *sif, unsigned int free_if){
 
     if( sif->expr ){
         /* free_expr = 1 as pointer member */
-        if( ic_expr_destroy( sif->expr, 1 ) ){
+        if( ! ic_expr_destroy( sif->expr, 1 ) ){
             puts("ic_stmt_if_detroy: call to ic_expr_destroy failed");
             return 1;
         }
@@ -538,7 +538,7 @@ unsigned int ic_stmt_destroy(struct ic_stmt *stmt, unsigned int free_stmt){
         case ic_stmt_type_expr:
             if( stmt->u.expr ){
                 /* free_expr as pointer member */
-                if( ic_expr_destroy( stmt->u.expr, 1 ) ){
+                if( ! ic_expr_destroy( stmt->u.expr, 1 ) ){
                     puts("ic_stmt_destroy: call to ic_expr_destroy failed");
                     return 1;
                 }

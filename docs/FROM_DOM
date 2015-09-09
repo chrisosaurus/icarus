@@ -1,0 +1,161 @@
+type Foo
+  a::Int
+  b::String
+End
+
+let x = Foo(1 "hello")
+# call bar with 2 arguments
+# for the first argument we pass a mutable reference to x
+# for the second argument we pass an immutable reference to x
+bar(&x x)
+
+# bar takes 2 arguments
+# the first argument is a mutable refernce to a Foo
+# the second argument is an immutable reference to a Foo
+fn bar(&f1::Foo f2::Foo)
+  &f1.a += 4
+  print(f2.a) # what do we see here?
+end
+
+
+# I think since this is an imm and mut ref to the same instance
+# and that when we do
+# f1.a += 4
+# this is really
+# f1.a = f1.a + 4
+# which creates a new int containing 5
+# and then making f1.a point at it
+# f2.a is the same variable, and we havent changed the object
+# so I expect this to print '5'
+
+# I think it should be 9 to be consistent
+
+
+============================================================
+
+fn baz(&a::Int b::Int)
+  &a += 5
+  print(b)
+end
+
+let x = 4
+baz(&x x)
+
+# I expect this to output 4
+# but this is iffier, I could also follow an argument for 9
+
+# @Dom the argument for printing 4 above is that it means
+# that arguments (like b::Int) are effectively pass by value
+# whereas & are pass by refernece 
+
+# but didn't you say everything is pass by reference?
+
+# yes, but that only matters in the case of instances of objects
+# so I am basically saying that 
+let a = 5 # make a new variable 'a' and a new value '5' and bind them
+
+a = 14 # make a new value '14' and rebind a to it (leaving the exisitng value)
+
+# make a new variable 'f' and bind the new instance of Foo to it
+let f = Foo(1 "hello")
+
+# make a new instance of Foo and rebind f to it
+f = Foo(2 "world") 
+
+# change the first field of f
+f.a = 14
+
+# change the second field of f
+f.b = "DDUUUDDEE"
+
+# this means that 'a = x' alwas makes a new value from x and makes a point at it
+
+# and that `a.b = x` always makes a new value x and makes `a.b` point at it (but it doesnt make a new a.b)
+
+
+
+
+The issue that I'd like to get around is that I find it weird to explain to comp102 students that 
+
+
+fn baz(b::Int)  # passes by immutable reference to immutable object
+fn baz(b::Foo)  # passes by immutable reference to   mutable object
+
+# yes, although for arguments sake an int could be mutable, I just haven't defined any mutable operators on it :P
+
+# I'm referring to the basic int type assuming your language has one
+
+# Yes, i am saying that all values are mutable
+# however that = never mutates, it always creates a new value
+# and that integer only has operations defined on it via =
+# and is immutable becuase of that, not because it itself is immutable
+# as any operation on int, say
+# a += 5
+# is really
+# a = a + 5
+# and as mentioned above = always creates a new, so no mutation takes places
+# and that the only way to mutate is via a . field
+
+# you are right that this makes int effectively immutable
+# as it does to all basic non-struct types (Int, String, Char, Float)
+
+# but I think this can all be explained by
+# a) `=` always creates a new value and rebinds a variable, leaving the old value untouched
+# b) `a += b` is really `a = a + b` and as per above, `=` does not mutate
+
+# c) `f.a = b` consideres `f.a` as a variable name, so the above rules still apply
+
+
+
+
+
+==========
+
+# yes, really it is passing by an immutable reference and it is guaranteed that the object doesnt change, but the object's contents may
+# I do understand that is weird and I am unsure on it
+
+# and I *really* want local assignment (via let) and non-local (via mutable ref) to have identical semantics
+
+
+
+
+===========================
+
+# two new keywords replace let:
+#  ref: reference
+#  val: value
+
+# this is what I was approaching when I said that maybe they are different things
+# that we have both 'variables' (vars) and 'aliases' (refs)
+
+
+# I feel like this is heading into the direction similar to Cpp references where no & means const
+
+# basically yes, however I don't think the word 'ref' is needed here
+# as all function args are currently passed as refs
+
+fn baz(&ref a::Int ref b::Int)
+  &a += 5
+  print(b)
+end
+
+val x = 4
+baz(x x)
+
+====== 
+
+let y = 5
+increment(&y)
+print(y) # 6
+
+fn increment(&i::Int)
+  &i += 1
+end
+
+
+
+
+
+
+
+

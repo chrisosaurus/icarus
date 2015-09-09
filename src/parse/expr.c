@@ -62,7 +62,7 @@ static struct ic_expr * ic_parse_expr_fcall(struct ic_tokens *tokens, unsigned i
     }
 
     /* build our function */
-    if( ic_expr_func_call_init( &(expr->u.fcall), &(tokens->tokens[*i]), dist ) ){
+    if( ! ic_expr_func_call_init( &(expr->u.fcall), &(tokens->tokens[*i]), dist ) ){
         puts("ic_parse_expr_fcall: call to ic_expr_func_call_init failed");
         free(expr);
         return 0;
@@ -89,7 +89,7 @@ static struct ic_expr * ic_parse_expr_fcall(struct ic_tokens *tokens, unsigned i
         }
 
         /* store it inside our function */
-        if( ic_expr_func_call_add_arg( &(expr->u.fcall), arg ) ){
+        if( ! ic_expr_func_call_add_arg( &(expr->u.fcall), arg ) ){
             puts("ic_parse_expr_fcall: call to ic_expr_func_call_add_arg failed");
             free(expr);
             return 0;
@@ -147,7 +147,7 @@ static struct ic_expr * ic_parse_expr_identifier(struct ic_tokens *tokens, unsig
     }
 
     /* initialise our id */
-    if( ic_expr_identifier_init(id, &(tokens->tokens[*i]), dist) ){
+    if( ! ic_expr_identifier_init(id, &(tokens->tokens[*i]), dist) ){
         puts("ic_parse_expr_identifier: call to ic_expr_identifier_init failed");
         free(expr);
         return 0;
@@ -210,7 +210,7 @@ static struct ic_expr * ic_parse_expr_constant_string(struct ic_tokens *tokens, 
     }
 
     /* initialise our constant */
-    if( ic_expr_constant_init(cons, ic_expr_constant_type_string) ){
+    if( ! ic_expr_constant_init(cons, ic_expr_constant_type_string) ){
         puts("ic_parse_expr_constant_string: call to ic_expr_constant_init failed");
         free(expr);
         return 0;
@@ -302,7 +302,7 @@ static struct ic_expr * ic_parse_expr_constant_integer(struct ic_tokens *tokens,
     }
 
     /* initialise our constant */
-    if( ic_expr_constant_init(cons, ic_expr_constant_type_integer) ){
+    if( ! ic_expr_constant_init(cons, ic_expr_constant_type_integer) ){
         puts("ic_parse_expr_constant_integer: call to ic_expr_constant_init failed");
         free(expr);
         return 0;
@@ -504,7 +504,7 @@ static struct ic_expr * ic_parse_expr_operator(struct ic_tokens *tokens, unsigne
     }
 
     /* initialise our operator */
-    if( ic_expr_operator_init(operator, left, right, op_start, op_len) ){
+    if( ! ic_expr_operator_init(operator, left, right, op_start, op_len) ){
         puts("ic_parse_expr_operator: call to ic_expr_operator_init failed");
         free(expr);
         free(left);

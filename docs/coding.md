@@ -38,28 +38,6 @@ remaining cases:
 
     chris@heimdall:~/devel/icarus$ git grep -ni '1 on failure' src/
 
-    src/parse/data/expression.c:43: * returns 1 on failure
-    src/parse/data/expression.c:80: * returns 1 on failure
-    src/parse/data/expression.c:132: * returns 1 on failure
-    src/parse/data/expression.c:357: * returns 1 on failure
-    src/parse/data/expression.c:384: * returns 1 on failure
-    src/parse/data/expression.c:434: * returns 1 on failure
-    src/parse/data/expression.c:454: * returns 1 on failure
-    src/parse/data/expression.c:631: * returns 1 on failure
-    src/parse/data/expression.c:675: * returns 1 on failure
-    src/parse/data/expression.c:770: * returns 1 on failure
-    src/parse/data/expression.c:791: * returns 1 on failure
-    src/parse/data/expression.h:35: * retunns 1 on failure
-    src/parse/data/expression.h:44: * returns 1 on failure
-    src/parse/data/expression.h:51: * returns 1 on failure
-    src/parse/data/expression.h:96: * returns 1 on failure
-    src/parse/data/expression.h:105: * returns 1 on failure
-    src/parse/data/expression.h:137: * returns 1 on failure
-    src/parse/data/expression.h:146: * returns 1 on failure
-    src/parse/data/expression.h:190: * returns 1 on failure
-    src/parse/data/expression.h:199: * returns 1 on failure
-    src/parse/data/expression.h:236: * returns 1 on failure
-    src/parse/data/expression.h:245: * returns 1 on failure
     src/parse/data/statement.c:39: * returns 1 on failure
     src/parse/data/statement.c:58: * returns 1 on failure
     src/parse/data/statement.c:161: * returns 1 on failure
