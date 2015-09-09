@@ -59,8 +59,8 @@ struct ic_type_ref * ic_analyse_infer(struct ic_kludge *kludge, struct ic_expr *
  *  check d(f)
  *  check print(s)
  *
- * returns 0 for success
- * returns 1 for error
+ * returns 1 for success
+ * returns 0 for error
  */
 unsigned int ic_analyse_check(struct ic_kludge *kludge, struct ic_stmt *stmt);
 
