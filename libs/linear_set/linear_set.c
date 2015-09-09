@@ -95,7 +95,7 @@ unsigned int ls_entry_eq(const struct ls_entry *cur, unsigned long int hash, uns
 /* internal strdup equivalent
  *
  * returns char* to new memory containing a strcpy on success
- * returns 0 on error
+ * returns 0 on failure
  */
 char * ls_strdupn(const char *str, size_t len){
     /* our new string */
@@ -138,7 +138,7 @@ char * ls_strdupn(const char *str, size_t len){
 /* initialise an existing ls_entry
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ls_entry_init(struct ls_entry *entry,
                                        unsigned long int hash,
@@ -193,7 +193,7 @@ unsigned int ls_entry_init(struct ls_entry *entry,
  * will free all other values
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ls_entry_destroy(struct ls_entry *entry){
     if( ! entry ){
@@ -211,7 +211,7 @@ unsigned int ls_entry_destroy(struct ls_entry *entry){
 /* find the ls_entry that should be holding this key
  *
  * returns a pointer to it on success
- * return 0 on error
+ * return 0 on failure
  */
 struct ls_entry * ls_find_entry(const struct ls_set *set, const char *key){
     /* our cur entry */
@@ -319,7 +319,7 @@ struct ls_entry * ls_find_entry(const struct ls_set *set, const char *key){
 /* function to return number of elements
  *
  * returns number on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ls_nelems(const struct ls_set *set){
     if( ! set ){
@@ -334,7 +334,7 @@ unsigned int ls_nelems(const struct ls_set *set){
  * (set->n_elems * 10) / set->size
  *
  * returns loading factor 0 -> 10 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ls_load(const struct ls_set *set){
     if( ! set ){
@@ -358,7 +358,7 @@ unsigned int ls_load(const struct ls_set *set){
  * this will accept any value between 1 (10%) to 10 (100%)
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ls_tune_threshold(struct ls_set *set, unsigned int threshold){
     if( ! set ){
@@ -381,7 +381,7 @@ unsigned int ls_tune_threshold(struct ls_set *set, unsigned int threshold){
  * will recalculate key_len if 0
  *
  * returns an unsigned long integer hash value on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned long int ls_hash(const char *key, size_t key_len){
     /* our hash value */
@@ -439,7 +439,7 @@ unsigned long int ls_hash(const char *key, size_t key_len){
 /* takes a set and a hash value
  *
  * returns the index into the set for this hash
- * returns 0 on error (if set is null)
+ * returns 0 on failure (if set is null)
  *
  * note the error value is indistinguishable from the 0th bucket
  * this function can only error if set is null
@@ -459,7 +459,7 @@ size_t ls_pos(unsigned long int hash, size_t set_size){
  * ls_insert detects the load factor is over set->threshold
  *
  * returns pointer on success
- * returns 0 on error
+ * returns 0 on failure
  */
 struct ls_set * ls_new(void){
     struct ls_set *sht = 0;
@@ -488,7 +488,7 @@ struct ls_set * ls_new(void){
  * this will only free the *set pointer if `free_set` is set to 1
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ls_destroy(struct ls_set *set, unsigned int free_set){
     /* iterator through set */
@@ -522,7 +522,7 @@ unsigned int ls_destroy(struct ls_set *set, unsigned int free_set){
 /* initialise an already allocated ls_set to size size
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ls_init(struct ls_set *set, size_t size){
     if( ! set ){
@@ -555,7 +555,7 @@ unsigned int ls_init(struct ls_set *set, size_t size){
  * you can use this to make a hash larger or smaller
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ls_resize(struct ls_set *set, size_t new_size){
     /* our new data area */
@@ -646,7 +646,7 @@ LS_RESIZE_FOUND:
 /* check if the supplied key already exists in this hash
  *
  * returns 1 on success (key exists)
- * returns 0 if key doesn't exist or on error
+ * returns 0 if key doesn't exist or on failure
  */
 unsigned int ls_exists(const struct ls_set *set, const char *key){
     struct ls_entry *she = 0;
@@ -680,7 +680,7 @@ unsigned int ls_exists(const struct ls_set *set, const char *key){
  * this will only success if !ls_exists(set, key)
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ls_insert(struct ls_set *set, const char *key){
     /* our new entry */
@@ -812,7 +812,7 @@ LS_INSERT_FOUND:
 /* delete key `key`
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ls_delete(struct ls_set *set, const char *key){
     /* our cur entry */

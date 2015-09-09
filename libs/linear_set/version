@@ -1,8 +1,8 @@
 https://github.com/mkfifo/linear_set
 
-commit c4bdc475e0e3187c87f827884e5dfb0b7fbdf06e
+commit 41e17bb273a931d01f736d5e84093990d564a792
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Tue Sep 8 13:18:46 2015 +1200
+Date:   Wed Sep 9 13:18:31 2015 +1200
 
-    changing wording "on failure" to "on error"
+    moving to "on failure" wording
 
