@@ -17,8 +17,8 @@ struct ic_kludge * ic_analyse(struct ic_ast *ast);
  *
  * FIXME need a way of signalling and passing errors
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl *tdecl);
 
@@ -26,8 +26,8 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
  *
  * FIXME need a way of signalling and passing errors
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl *fdecl);
 

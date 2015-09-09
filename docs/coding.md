@@ -38,8 +38,6 @@ remaining cases:
 
     chris@heimdall:~/devel/icarus$ git grep -ni '1 on failure' src/
 
-    src/analyse/analyse.h:21: * returns 1 on failure
-    src/analyse/analyse.h:30: * returns 1 on failure
     src/parse/data/expression.c:43: * returns 1 on failure
     src/parse/data/expression.c:80: * returns 1 on failure
     src/parse/data/expression.c:132: * returns 1 on failure
