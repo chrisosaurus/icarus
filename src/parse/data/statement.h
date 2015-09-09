@@ -23,8 +23,8 @@ struct ic_stmt_ret * ic_stmt_ret_new(void);
 /* initialise an existing return
  * does not touch the init expression
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_stmt_ret_init(struct ic_stmt_ret *ret);
 
@@ -32,8 +32,8 @@ unsigned int ic_stmt_ret_init(struct ic_stmt_ret *ret);
  *
  * will only free ret if `free_ret` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_stmt_ret_destroy(struct ic_stmt_ret *ret, unsigned int free_ret);
 
@@ -77,8 +77,8 @@ struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *ty
 /* initialise an existing let
  * does not touch the init expression
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned int id_len, char *type_src, unsigned int type_len);
 
@@ -86,8 +86,8 @@ unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned in
  *
  * will only free let if `free_let` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let);
 
@@ -128,8 +128,8 @@ struct ic_stmt_if * ic_stmt_if_new(void);
  * this will initialise the body
  * but will NOT initialise the expression
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_stmt_if_init(struct ic_stmt_if *sif);
 
@@ -137,8 +137,8 @@ unsigned int ic_stmt_if_init(struct ic_stmt_if *sif);
  *
  * only frees stmt_if if `free_if` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_stmt_if_destroy(struct ic_stmt_if *sif, unsigned int free_if);
 
@@ -200,8 +200,8 @@ struct ic_stmt * ic_stmt_new(enum ic_stmt_type type);
 
 /* initialise an existing ic_stmt
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 int ic_stmt_init(struct ic_stmt *stmt, enum ic_stmt_type type);
 
@@ -209,8 +209,8 @@ int ic_stmt_init(struct ic_stmt *stmt, enum ic_stmt_type type);
  *
  * will only free stmt if `free_stmt` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_stmt_destroy(struct ic_stmt *stmt, unsigned int free_stmt);
 

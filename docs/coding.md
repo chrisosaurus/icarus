@@ -33,28 +33,6 @@ allowed special cases:
 * ic_string_length will return the length, returns -1 on error
 * ic_symbol_length will return the length, returns -1 on error
 
-
-remaining cases:
-
-    chris@heimdall:~/devel/icarus$ git grep -ni '1 on failure' src/
-
-    src/parse/data/statement.c:39: * returns 1 on failure
-    src/parse/data/statement.c:58: * returns 1 on failure
-    src/parse/data/statement.c:161: * returns 1 on failure
-    src/parse/data/statement.c:202: * returns 1 on failure
-    src/parse/data/statement.c:321: * returns 1 on failure
-    src/parse/data/statement.c:347: * returns 1 on failure
-    src/parse/data/statement.c:483: * returns 1 on failure
-    src/parse/data/statement.c:504: * returns 1 on failure
-    src/parse/data/statement.h:27: * returns 1 on failure
-    src/parse/data/statement.h:36: * returns 1 on failure
-    src/parse/data/statement.h:81: * returns 1 on failure
-    src/parse/data/statement.h:90: * returns 1 on failure
-    src/parse/data/statement.h:132: * returns 1 on failure
-    src/parse/data/statement.h:141: * returns 1 on failure
-    src/parse/data/statement.h:204: * returns 1 on failure
-    src/parse/data/statement.h:213: * returns 1 on failure
-
 known exceptions:
 
     data/string.c:143: * returns -1 on error

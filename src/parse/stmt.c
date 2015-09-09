@@ -53,7 +53,7 @@ static struct ic_stmt * ic_parse_stmt_ret(struct ic_tokens *tokens, unsigned int
         return 0;
     }
     /* initialise our ret */
-    if( ic_stmt_ret_init(ret) ){
+    if( ! ic_stmt_ret_init(ret) ){
         puts("ic_parse_stmt_ret: call to ic_stmt_ret_init failed");
         free(stmt);
         return 0;
@@ -134,7 +134,7 @@ static struct ic_stmt * ic_parse_stmt_let(struct ic_tokens *tokens, unsigned int
     ic_parse_token_advance(i, type_len);
 
     /* initialise our let */
-    if( ic_stmt_let_init(let, id_start, id_len, type_start, type_len) ){
+    if( ! ic_stmt_let_init(let, id_start, id_len, type_start, type_len) ){
         puts("ic_parse_stmt_let: call to ic_stmt_let_init failed");
         free(stmt);
         return 0;

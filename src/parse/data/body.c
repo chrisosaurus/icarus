@@ -92,7 +92,7 @@ unsigned int ic_body_destroy(struct ic_body *body, unsigned int free_body){
         /* dispatch to stmt destroy
          * set free_stmt
          */
-        if( ic_stmt_destroy(stmt, 1) ){
+        if( ! ic_stmt_destroy(stmt, 1) ){
             puts("ic_body_destroy: call to ic_stmt_destroy failed");
             return 0;
         }

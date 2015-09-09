@@ -23,7 +23,7 @@ struct ic_stmt_ret * ic_stmt_ret_new(void){
     }
 
     /* init */
-    if( ic_stmt_ret_init(ret) ){
+    if( ! ic_stmt_ret_init(ret) ){
         puts("ic_stmt_ret: call to ic_stmt_ret_init failed");
         return 0;
     }
@@ -35,32 +35,32 @@ struct ic_stmt_ret * ic_stmt_ret_new(void){
 /* initialise an existing return
  * does not touch the init expression
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_stmt_ret_init(struct ic_stmt_ret *ret){
     if( ! ret ){
         puts("ic_stmt_ret_init: ret was null ");
-        return 1;
+        return 0;
     }
 
     /* only work to do is to ensure our ic_expr is zerod */
     ret->ret = 0;
 
-    return 0;
+    return 1;
 }
 
 /* destroy ret
  *
  * will only free ret if `free_ret` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_stmt_ret_destroy(struct ic_stmt_ret *ret, unsigned int free_ret){
     if( ! ret ){
         puts("ic_stmt_ret_destroy: ret was null ");
-        return 1;
+        return 0;
     }
 
     if( ret->ret ){
@@ -70,7 +70,7 @@ unsigned int ic_stmt_ret_destroy(struct ic_stmt_ret *ret, unsigned int free_ret)
          */
         if( ! ic_expr_destroy( ret->ret, 1 ) ){
             puts("ic_stmt_ret_destroy: call ot ic_expr_destroy failed");
-            return 1;
+            return 0;
         }
     }
 
@@ -79,7 +79,7 @@ unsigned int ic_stmt_ret_destroy(struct ic_stmt_ret *ret, unsigned int free_ret)
         free(ret);
     }
 
-    return 0;
+    return 1;
 }
 
 /* get the ic_expr * contained within
@@ -142,7 +142,7 @@ struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *ty
     /* hand over for init
      * NB: we leave arg checking up to init
      */
-    if( ic_stmt_let_init(let, id_src, id_len, type_src, type_len) ){
+    if( ! ic_stmt_let_init(let, id_src, id_len, type_src, type_len) ){
         puts("ic_stmt_let_new: call to ic_stmt_let_init failed");
         free(let);
         return 0;
@@ -157,73 +157,73 @@ struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *ty
 /* initialise an existing let
  * does not touch the init expression
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned int id_len, char *type_src, unsigned int type_len){
     if( ! let ){
         puts("ic_stmt_let_init: let was null");
-        return 1;
+        return 0;
     }
 
     if( ! id_src ){
         puts("ic_stmt_let_init: id_src was null");
-        return 1;
+        return 0;
     }
 
     if( ! type_src ){
         puts("ic_stmt_let_init: type_src was null");
-        return 1;
+        return 0;
     }
 
     /* dispatch to symbol init for id */
     if( ! ic_symbol_init( &(let->identifier), id_src, id_len ) ){
         puts("ic_smtm_let_init: call to ic_symbol_init for id failed");
-        return 1;
+        return 0;
     }
 
     /* dispatch to symbol init for type */
     if( ! ic_symbol_init( &(let->type), type_src, type_len ) ){
         puts("ic_smtm_let_init: call to ic_symbol_init for type failed");
-        return 1;
+        return 0;
     }
 
     /* zero out init */
     let->init = 0;
 
-    return 0;
+    return 1;
 }
 
 /* destroy let
  *
  * will only free let if `free_let` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let){
     if( ! let ){
         puts("ic_stmt_let_destroy: let was null");
-        return 1;
+        return 0;
     }
 
     /* free = 0 as member */
     if( ! ic_symbol_destroy( &(let->identifier), 0 ) ){
         puts("ic_stmt_let_destroy: identifier called to ic_symbol_destroy failed");
-        return 1;
+        return 0;
     }
 
     /* free = 0 as member */
     if( ! ic_symbol_destroy( &(let->type), 0 ) ){
         puts("ic_stmt_let_destroy: type called to ic_symbol_destroy failed");
-        return 1;
+        return 0;
     }
 
     if( let->init ){
         /* free = 1 as pointer member */
         if( ! ic_expr_destroy( let->init, 0 ) ){
             puts("ic_stmt_let_destroy: called to ic_expr_destroy failed");
-            return 1;
+            return 0;
         }
     }
 
@@ -232,7 +232,7 @@ unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let)
         free(let);
     }
 
-    return 0;
+    return 1;
 }
 
 /* get the ic_expr * contained within
@@ -304,7 +304,7 @@ struct ic_stmt_if * ic_stmt_if_new(void){
     }
 
     /* init */
-    if( ic_stmt_if_init(sif) ){
+    if( ! ic_stmt_if_init(sif) ){
         puts("ic_stmt_if_new: call to ic_stmt_if_init failed");
         free(sif);
         return 0;
@@ -317,60 +317,60 @@ struct ic_stmt_if * ic_stmt_if_new(void){
  * this will initialise the body
  * but will NOT initialise the expression
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_stmt_if_init(struct ic_stmt_if *sif){
     if( ! sif ){
         puts("ic_stmt_if_init: sif was null");
-        return 1;
+        return 0;
     }
 
     /* let body_init handle the work */
     if( ! ic_body_init( &(sif->body) ) ){
         puts("ic_stmt_if_init: call ot ic_body_init failed");
-        return 1;
+        return 0;
     }
 
     /* just zero out expr */
     sif->expr = 0;
 
     /* return success */
-    return 0;
+    return 1;
 }
 
 /* destroy if
  *
  * only frees stmt_if if `free_if` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_stmt_if_destroy(struct ic_stmt_if *sif, unsigned int free_if){
     if( ! sif ){
         puts("ic_stmt_if_detroy: sif was null");
-        return 1;
+        return 0;
     }
 
     if( sif->expr ){
         /* free_expr = 1 as pointer member */
         if( ! ic_expr_destroy( sif->expr, 1 ) ){
             puts("ic_stmt_if_detroy: call to ic_expr_destroy failed");
-            return 1;
+            return 0;
         }
     }
 
     /* free_body = 0 as member */
     if( ! ic_body_destroy( &(sif->body), 0 ) ){
         puts("ic_stmt_if_detroy: call to ic_body_destroy failed");
-        return 1;
+        return 0;
     }
 
     if( free_if ){
         free(sif);
     }
 
-    return 0;
+    return 1;
 }
 
 /* returns pointer on success
@@ -469,7 +469,7 @@ struct ic_stmt * ic_stmt_new(enum ic_stmt_type type){
     }
 
     /* init */
-    if( ic_stmt_init(stmt, type) ){
+    if( ! ic_stmt_init(stmt, type) ){
         puts("ic_stmt_new: call to ic_stmt_init failed");
         return 0;
     }
@@ -479,13 +479,13 @@ struct ic_stmt * ic_stmt_new(enum ic_stmt_type type){
 
 /* initialise an existing ic_stmt
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 int ic_stmt_init(struct ic_stmt *stmt, enum ic_stmt_type type){
     if( ! stmt ){
         puts("ic_stmt_init: stmt was null");
-        return 1;
+        return 0;
     }
 
     /* only initialise type */
@@ -493,45 +493,45 @@ int ic_stmt_init(struct ic_stmt *stmt, enum ic_stmt_type type){
 
     /* do not touch union */
 
-    return 0;
+    return 1;
 }
 
 /* destroy stmt
  *
  * will only free stmt if `free_stmt` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_stmt_destroy(struct ic_stmt *stmt, unsigned int free_stmt){
     if( ! stmt ){
         puts("ic_stmt_destroy: stmt was null");
-        return 1;
+        return 0;
     }
 
     /* dispatch for appropritte subtype */
     switch( stmt->type ){
         case ic_stmt_type_ret:
             /* do not free as member */
-            if( ic_stmt_ret_destroy( &(stmt->u.ret), 0 ) ){
+            if( ! ic_stmt_ret_destroy( &(stmt->u.ret), 0 ) ){
                 puts("ic_stmt_destroy: call to ic_stmt_ret_destroy failed");
-                return 1;
+                return 0;
             }
             break;
 
         case ic_stmt_type_let:
             /* do not free as member */
-            if( ic_stmt_let_destroy( &(stmt->u.let), 0 ) ){
+            if( ! ic_stmt_let_destroy( &(stmt->u.let), 0 ) ){
                 puts("ic_stmt_destroy: call to ic_stmt_let_destroy failed");
-                return 1;
+                return 0;
             }
             break;
 
         case ic_stmt_type_if:
             /* do not free as member */
-            if( ic_stmt_if_destroy( &(stmt->u.sif), 0 ) ){
+            if( ! ic_stmt_if_destroy( &(stmt->u.sif), 0 ) ){
                 puts("ic_stmt_destroy: call to ic_stmt_if_destroy failed");
-                return 1;
+                return 0;
             }
             break;
 
@@ -540,7 +540,7 @@ unsigned int ic_stmt_destroy(struct ic_stmt *stmt, unsigned int free_stmt){
                 /* free_expr as pointer member */
                 if( ! ic_expr_destroy( stmt->u.expr, 1 ) ){
                     puts("ic_stmt_destroy: call to ic_expr_destroy failed");
-                    return 1;
+                    return 0;
                 }
             }
 
@@ -548,7 +548,7 @@ unsigned int ic_stmt_destroy(struct ic_stmt *stmt, unsigned int free_stmt){
 
         default:
             puts("ic_stmt_destroy: impossible stmt type");
-            return 1;
+            return 0;
             break;
     }
 
@@ -557,7 +557,7 @@ unsigned int ic_stmt_destroy(struct ic_stmt *stmt, unsigned int free_stmt){
         free(stmt);
     }
 
-    return 0;
+    return 1;
 }
 
 /* get a pointer to the return within
