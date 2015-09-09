@@ -45,7 +45,7 @@ struct ic_kludge {
  * this will NOT perform any analysis
  *
  * returns pointer on success
- * returns 0 on error
+ * returns 0 on failure
  */
 struct ic_kludge * ic_kludge_new(struct ic_ast *ast);
 
@@ -57,7 +57,7 @@ struct ic_kludge * ic_kludge_new(struct ic_ast *ast);
  * this will NOT perform any analysis
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast);
 

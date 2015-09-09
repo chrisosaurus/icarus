@@ -17,7 +17,7 @@
  * e.g. unit of 'function declaration', name of 'Foo'
  *
  * returns 1 on success (all fields are valid as per the 3 rules)
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_pvector *fields, char *forbidden_type);
 
@@ -28,7 +28,7 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
  * it is always printed as '%s for %s error goes here'
  * e.g. unit of 'function declaration', name of 'Foo'
  * returns 1 on success (pass)
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_scope *parent_scope);
 
@@ -47,7 +47,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
  *  infer Foo(1 "hello") -> Foo(Int String) -> Foo
  *
  * returns ic_type_ref on success
- * returns 0 on error
+ * returns 0 on failure
  */
 struct ic_type_ref * ic_analyse_infer(struct ic_kludge *kludge, struct ic_expr *expr);
 
@@ -61,14 +61,14 @@ struct ic_type_ref * ic_analyse_infer(struct ic_kludge *kludge, struct ic_expr *
  *  check print(s)
  *
  * returns 1 for success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_analyse_check(struct ic_kludge *kludge, struct ic_stmt *stmt);
 
 /* perform analyse of let statement in the provided body
  *
  * returns 1 for success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_stmt_let *let);
 

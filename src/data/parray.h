@@ -25,7 +25,7 @@ struct ic_parray * ic_parray_new(unsigned int len);
 /* initialise an existing array to the specified len
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_parray_init(struct ic_parray *arr, unsigned int len);
 
@@ -36,7 +36,7 @@ unsigned int ic_parray_init(struct ic_parray *arr, unsigned int len);
  * this is the user's responsibility
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_parray_destroy(struct ic_parray *arr, unsigned int free_parr);
 

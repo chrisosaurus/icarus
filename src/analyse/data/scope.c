@@ -13,7 +13,7 @@
  * parent may be null
  *
  * returns pointer on success
- * returns 0 on error
+ * returns 0 on failure
  */
 struct ic_scope * ic_scope_new(struct ic_scope *parent){
     struct ic_scope *scope = 0;
@@ -37,7 +37,7 @@ struct ic_scope * ic_scope_new(struct ic_scope *parent){
  * parent may be null
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_scope_init(struct ic_scope *scope, struct ic_scope *parent){
     if( ! scope ){

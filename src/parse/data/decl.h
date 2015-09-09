@@ -36,7 +36,7 @@ struct ic_func_decl {
 /* allocate and initialise a new func_decl
  *
  * returns new func_decl on success
- * returns 0 on error
+ * returns 0 on failure
  */
 struct ic_func_decl * ic_func_decl_new(char *name, unsigned int name_len);
 
@@ -182,7 +182,7 @@ struct ic_decl {
  * this is left up to the caller
  *
  * returns new ic_decl on success
- * returns 0 on error
+ * returns 0 on failure
  */
 struct ic_decl * ic_decl_new(enum ic_decl_type type);
 

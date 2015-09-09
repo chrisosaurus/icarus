@@ -89,7 +89,7 @@ unsigned int ic_symbol_destroy(struct ic_symbol *sym, unsigned int free_sym){
  * the caller is NOT allowed to mutate this character array directly
  *
  * returns a char * on success
- * returns 0 on error
+ * returns 0 on failure
  */
 char * ic_symbol_contents(struct ic_symbol *symbol){
     if( ! symbol ){
@@ -103,7 +103,7 @@ char * ic_symbol_contents(struct ic_symbol *symbol){
  * this length does NOT include the null terminator
  *
  * returns numbers of characters in symbol on success
- * returns -1 on error
+ * returns -1 on failure
  */
 int ic_symbol_length(struct ic_symbol *symbol){
     if( ! symbol ){

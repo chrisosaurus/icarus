@@ -30,7 +30,7 @@ struct ic_carray * ic_carray_new(unsigned int len){
 /* initialise an existing array to the specified len
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_carray_init(struct ic_carray *arr, unsigned int len){
     if( ! arr ){

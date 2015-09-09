@@ -181,7 +181,7 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
 }
 
 /* returns length of token starting at source[i]
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_parse_token_length(char *source, unsigned int i){
     /* position of next space in tokens */
@@ -436,7 +436,7 @@ int ic_parse_numberish(struct ic_tokens *tokens, unsigned int *i){
  * returns a char* pointing to the start of the next
  * token
  *
- * returns 0 on error
+ * returns 0 on failure
  */
 char * ic_parse_peek_next(struct ic_tokens *tokens, unsigned int *i){
     /* dist of current token */

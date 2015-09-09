@@ -66,7 +66,7 @@ unsigned int ic_pvector_init(struct ic_pvector *vec, unsigned int cap){
  *
  * takes an optional function which is called once for each argument stored in the pvector
  * it will be called with it's free argument set to true
- * this function is expected to return 0 on error
+ * this function is expected to return 0 on failure
  * FIXME consider allowing free_data param to ic_pvector_destroy that is passed to (*destroy_item) rather than defaulting to true
  *
  * this function will bail at the first error encountered
@@ -229,7 +229,7 @@ unsigned int ic_pvector_ensure(struct ic_pvector *arr, unsigned int new_cap){
 
 /* returns the length of the used section of the vector
  *
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_pvector_length(struct ic_pvector *arr){
     if( ! arr ){

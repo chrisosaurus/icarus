@@ -9,7 +9,7 @@
 /* allocate and init a new slot
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 struct ic_slot * ic_slot_new(struct ic_symbol *name, struct ic_type_ref *type, bool mutable, bool reference){
     struct ic_slot *slot = 0;
@@ -31,7 +31,7 @@ struct ic_slot * ic_slot_new(struct ic_symbol *name, struct ic_type_ref *type, b
 /* init an existing slot
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct ic_type_ref *type, bool mutable, bool reference){
     if( ! slot ){
@@ -63,7 +63,7 @@ unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct i
  * this will not free any of the members stored on this slot
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_slot_destroy(struct ic_slot *slot, unsigned int free_slot){
     if( ! slot ){

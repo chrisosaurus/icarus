@@ -93,7 +93,7 @@ ERROR:
  * FIXME need a way of signalling and passing errors
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl *tdecl){
     /* name of current type we are trying to declare */
@@ -135,7 +135,7 @@ ERROR:
  * FIXME need a way of signalling and passing errors
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl *fdecl){
     /* name of current func we are trying to declare */

@@ -48,7 +48,7 @@ unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned
 /* add a new argument to this function call
  *
  * returns 0 on success
- * returns 1 on error
+ * returns 1 on failure
  */
 int ic_expr_func_call_add_arg(struct ic_expr_func_call *fcall, struct ic_expr *expr);
 
@@ -70,7 +70,7 @@ unsigned int ic_expr_func_call_length(struct ic_expr_func_call *fcall);
  *  foo(Int Int)
  *
  * return a string representation of this function call on success
- * returns 0 on error
+ * returns 0 on failure
  */
 char * ic_expr_func_call_str(struct ic_expr_func_call *fcall);
 
@@ -134,7 +134,7 @@ struct ic_expr_constant * ic_expr_constant_new(enum ic_expr_constant_type type);
 /* initialise an existing constant
  *
  * returns 0 on success
- * returns 1 on error
+ * returns 1 on failure
  */
 unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, enum ic_expr_constant_type type);
 

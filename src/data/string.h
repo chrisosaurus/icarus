@@ -43,14 +43,14 @@ struct ic_string * ic_string_new_empty(void);
 /* initialise an existing symbol from a char* and a length
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_string_init(struct ic_string *string, char *source, unsigned int len);
 
 /* initialise an existing symbol to empty
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_string_init_empty(struct ic_string *string);
 
@@ -70,7 +70,7 @@ unsigned int ic_string_destroy(struct ic_string *str, unsigned int free_str);
  * the caller is NOT allowed to mutate this character array directly
  *
  * returns a char * on success
- * returns 0 on error
+ * returns 0 on failure
  */
 char * ic_string_contents(struct ic_string *string);
 
@@ -78,7 +78,7 @@ char * ic_string_contents(struct ic_string *string);
  * this length does NOT include the null terminator
  *
  * returns numbers of characters in string on success
- * returns -1 on error
+ * returns -1 on failure
  */
 int ic_string_length(struct ic_string *string);
 
@@ -111,7 +111,7 @@ char ic_string_set(struct ic_string *string, unsigned int pos, char val);
  * this will resize `to` to guarantee there is enough space
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_string_append(struct ic_string *to, struct ic_string *from);
 
@@ -119,7 +119,7 @@ unsigned int ic_string_append(struct ic_string *to, struct ic_string *from);
  * this will resize `to` to guarantee there is enough space
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_string_append_symbol(struct ic_string *to, struct ic_symbol *from);
 
@@ -132,7 +132,7 @@ unsigned int ic_string_append_symbol(struct ic_string *to, struct ic_symbol *fro
  * even if the character at from[from_len - 1] != '\0'
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_string_append_char(struct ic_string *to, char *from, unsigned int from_len);
 

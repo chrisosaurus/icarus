@@ -5,7 +5,7 @@
 
 /* slurp entire file into single alloc-ed buffer
  * returns this buffer on success
- * returns 0 on error
+ * returns 0 on failure
  */
 char * ic_read_slurp(char *filename){
     /* file object */

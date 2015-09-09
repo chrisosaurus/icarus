@@ -118,7 +118,7 @@ unsigned int ic_type_ref_symbol_init(struct ic_type_ref *type, char *type_str, u
  * this will only free type if `free_type` is truthy
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_type){
     if( ! type ){
@@ -167,7 +167,7 @@ unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_typ
  * as that would be going 'backwards'
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, unsigned int type_len){
     if( ! type ) {
@@ -225,7 +225,7 @@ unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, un
  * if type is already a symbol then the symbol will first be destroyed
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_type_ref_set_tdecl(struct ic_type_ref *type, struct ic_type_decl *tdecl){
     if( ! type ) {

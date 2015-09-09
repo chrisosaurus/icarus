@@ -13,7 +13,7 @@ struct ic_tokens {
 /* takes a character array of the source code as text
  * returns an icarus_tokens * containing the output from lexing
  *
- * returns 0 on error
+ * returns 0 on failure
  */
 struct ic_tokens * ic_lex(char *source);
 

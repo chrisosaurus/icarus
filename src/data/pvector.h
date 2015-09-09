@@ -89,7 +89,7 @@ unsigned int ic_pvector_ensure(struct ic_pvector *arr, unsigned int new_cap);
 
 /* returns the length of the used section of the vector
  *
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int ic_pvector_length(struct ic_pvector *arr);
 

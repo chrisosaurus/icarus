@@ -150,7 +150,7 @@ struct ic_expr * ic_stmt_if_get_expr(struct ic_stmt_if *sif);
 /* get statement of offset i within the body
  *
  * returns pointer to element on success
- * returns 0 on error
+ * returns 0 on failure
  */
 struct ic_stmt * ic_stmt_if_get_stmt(struct ic_stmt_if *sif, unsigned int i);
 
