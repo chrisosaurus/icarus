@@ -48,8 +48,8 @@ unsigned int ic_type_init(struct ic_type *type);
  *
  * will only free the type if `free_type` is truthy
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_tytpe);
 
