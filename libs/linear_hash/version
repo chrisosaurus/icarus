@@ -1,8 +1,8 @@
 https://github.com/mkfifo/linear_hash
 
-commit 71cae56492ccfe383061b7769f5ed7ba5708c8e5
+commit 05887e86b9dcf88c2e61bd95405636ae32b9b22d
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Tue Sep 8 13:18:13 2015 +1200
+Date:   Wed Sep 9 13:18:54 2015 +1200
 
-    changing wording "on failure" to "on error"
+    moving to "on failure" wording
 

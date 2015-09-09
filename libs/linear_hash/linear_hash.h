@@ -60,7 +60,7 @@ struct lh_table {
 /* function to return number of elements
  *
  * returns number on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int lh_nelems(const struct lh_table *table);
 
@@ -68,7 +68,7 @@ unsigned int lh_nelems(const struct lh_table *table);
  * (table->n_elems * 10) / table->size
  *
  * returns loading factor 0 -> 10 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int lh_load(const struct lh_table *table);
 
@@ -82,7 +82,7 @@ unsigned int lh_load(const struct lh_table *table);
  * this will accept any value between 1 (10%) to 10 (100%)
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int lh_tune_threshold(struct lh_table *table, unsigned int threshold);
 
@@ -92,14 +92,14 @@ unsigned int lh_tune_threshold(struct lh_table *table, unsigned int threshold);
  * will recalculate key_len if 0
  *
  * returns an unsigned long integer hash value on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned long int lh_hash(const char *key, size_t key_len);
 
 /* takes a table and a hash value
  *
  * returns the index into the table for this hash
- * returns 0 on error (if table is null)
+ * returns 0 on failure (if table is null)
  *
  * note the error value is indistinguishable from the 0th bucket
  * this function can only error if table is null
@@ -115,7 +115,7 @@ size_t lh_pos(unsigned long int hash, size_t table_size);
  * lh_insert detects the load factor is over table->threshold
  *
  * returns pointer on success
- * returns 0 on error
+ * returns 0 on failure
  */
 struct lh_table * lh_new(void);
 
@@ -127,14 +127,14 @@ struct lh_table * lh_new(void);
  * this will only free the *data pointers if `free_data` is set to 1
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int lh_destroy(struct lh_table *table, unsigned int free_table, unsigned int free_data);
 
 /* initialise an already allocated lh_table to size size
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int lh_init(struct lh_table *table, size_t size);
 
@@ -144,14 +144,14 @@ unsigned int lh_init(struct lh_table *table, size_t size);
  * you can use this to make a hash larger or smaller
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int lh_resize(struct lh_table *table, size_t new_size);
 
 /* check if the supplied key already exists in this hash
  *
  * returns 1 on success (key exists)
- * returns 0 if key doesn't exist or on error
+ * returns 0 if key doesn't exist or on failure
  */
 unsigned int lh_exists(const struct lh_table *table, const char *key);
 
@@ -159,7 +159,7 @@ unsigned int lh_exists(const struct lh_table *table, const char *key);
  * this will only success if !lh_exists(table, key)
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int lh_insert(struct lh_table *table, const char *key, void *data);
 
@@ -167,21 +167,21 @@ unsigned int lh_insert(struct lh_table *table, const char *key, void *data);
  * this will only succeed if lh_exists(table, key)
  *
  * returns old data on success
- * returns 0 on error
+ * returns 0 on failure
  */
 void * lh_set(struct lh_table *table, const char *key, void *data);
 
 /* get `data` stored under `key`
  *
  * returns data on success
- * returns 0 on error
+ * returns 0 on failure
  */
 void * lh_get(const struct lh_table *table, const char *key);
 
 /* delete entry stored under `key`
  *
  * returns data on success
- * returns 0 on error
+ * returns 0 on failure
  */
 void *  lh_delete(struct lh_table *table, const char *key);
 
