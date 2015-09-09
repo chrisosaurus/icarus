@@ -89,7 +89,7 @@ unsigned int ic_type_ref_symbol_init(struct ic_type_ref *type, char *type_str, u
  *
  * this will only free type if `free_type` is truthy
  *
- * returns 1 on sucess
+ * returns 1 on success
  * returns 0 on error
  */
 unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_type);

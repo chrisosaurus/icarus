@@ -317,7 +317,7 @@ struct ic_stmt_if * ic_stmt_if_new(void){
  * this will initialise the body
  * but will NOT initialise the expression
  *
- * returns 0 on sucess
+ * returns 0 on success
  * returns 1 on failure
  */
 unsigned int ic_stmt_if_init(struct ic_stmt_if *sif){
@@ -403,7 +403,7 @@ struct ic_stmt * ic_stmt_if_get_stmt(struct ic_stmt_if *sif, unsigned int i){
 
 /* get length of body
  *
- * returns length on sucess
+ * returns length on success
  * returns 0 on failure
  */
 unsigned int ic_stmt_if_length(struct ic_stmt_if *sif){

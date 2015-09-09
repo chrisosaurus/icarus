@@ -627,7 +627,7 @@ struct ic_expr_operator * ic_expr_operator_new(struct ic_expr *lexpr, struct ic_
 
 /* initialise an existing op
  *
- * returns 0 on sucess
+ * returns 0 on success
  * returns 1 on failure
  */
 unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, struct ic_expr *lexpr, struct ic_expr *rexpr, char *op, unsigned int op_len){

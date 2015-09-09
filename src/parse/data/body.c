@@ -7,7 +7,7 @@
 
 /* allocate and initialise a new ic_body
  *
- * returns pointer to new ic_body on sucess
+ * returns pointer to new ic_body on success
  * returns 0 on failure
  */
 struct ic_body * ic_body_new(void){
@@ -32,7 +32,7 @@ struct ic_body * ic_body_new(void){
 
 /* initialise an existing ic_body
  *
- * returns 1 on sucess
+ * returns 1 on success
  * returns 0 on failure
  */
 unsigned int ic_body_init(struct ic_body *body){
@@ -108,7 +108,7 @@ unsigned int ic_body_destroy(struct ic_body *body, unsigned int free_body){
     return 1;
 }
 
-/* returns item at offset i on sucess
+/* returns item at offset i on success
  * returns 0 on failure
  */
 struct ic_stmt * ic_body_get(struct ic_body *body, unsigned int i){
