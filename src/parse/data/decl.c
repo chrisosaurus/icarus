@@ -34,7 +34,7 @@ struct ic_func_decl * ic_func_decl_new(char *name, unsigned int name_len){
     }
 
     /* initialise */
-    if( ic_func_decl_init(fdecl, name, name_len) ){
+    if( ! ic_func_decl_init(fdecl, name, name_len) ){
         puts("ic_func_decl_new: call to ic_func_decl_init failed");
         free(fdecl);
         return 0;
@@ -45,36 +45,36 @@ struct ic_func_decl * ic_func_decl_new(char *name, unsigned int name_len){
 
 /* initialise an existing func_decl
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned int name_len){
     if( ! fdecl ){
         puts("ic_func_decl_init: fdecl was null");
-        return 1;
+        return 0;
     }
 
     if( ! name ){
         puts("ic_func_decl_init: name was null");
-        return 1;
+        return 0;
     }
 
     /* initialise name symbol */
     if( ! ic_symbol_init( &(fdecl->name), name, name_len ) ){
         puts("ic_func_decl_init: call to ic_symbol_init for name failed");
-        return 1;
+        return 0;
     }
 
     /* initialise empty args pvector */
     if( ! ic_pvector_init( &(fdecl->args), 0 ) ){
         puts("ic_func_decl_init: call to ic_pvector_init failed");
-        return 1;
+        return 0;
     }
 
     /* initialise empty string fdecl->string */
     if( ! ic_string_init_empty( &(fdecl->string) ) ){
         puts("ic_func_decl_init: call to ic_string_init_empty for string failed");
-        return 1;
+        return 0;
     }
 
     /* initialise return type to 0 (void) */
@@ -83,10 +83,10 @@ unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned 
     /* initialise our empty body */
     if( ! ic_body_init( &(fdecl->body) ) ){
         puts("ic_func_decl_init: call to ic_body_init failed");
-        return 1;
+        return 0;
     }
 
-    return 0;
+    return 1;
 }
 
 /* calls destroy on every element within
@@ -96,8 +96,8 @@ unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned 
  * the caller must determine if it is appropriate
  * or not to call free(decl)
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_fdecl){
     int i = 0;
@@ -107,7 +107,7 @@ unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_
 
     if( ! fdecl ){
         puts("ic_type_decl_destroy: fdecl was null");
-        return 1;
+        return 0;
     }
 
     /* free symbol contents but do not free symbol itself
@@ -115,7 +115,7 @@ unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_
      */
     if( ! ic_symbol_destroy(&(fdecl->name), 0) ){
         puts("ic_type_decl_destroy: for name call to ic_symbol_destroy failed");
-        return 1;
+        return 0;
     }
 
     /* free string contents but do not free string itself
@@ -123,7 +123,7 @@ unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_
      */
     if( ! ic_string_destroy(&(fdecl->string), 0) ){
         puts("ic_type_decl_destroy: for string call to ic_string_destroy failed");
-        return 1;
+        return 0;
     }
 
     len = ic_pvector_length( &(fdecl->args) );
@@ -132,7 +132,7 @@ unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_
         field = ic_pvector_get( &(fdecl->args), i );
         if( ! field ){
             puts("ic_type_decl_destroy: call to ic_pvector_get failed");
-            return 1;
+            return 0;
         }
 
         /* dispatch to field destroy
@@ -140,7 +140,7 @@ unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_
          */
         if( ! ic_field_destroy(field, 1) ){
             puts("ic_type_decl_destroy: call to ic_field_destroy failed");
-            return 1;
+            return 0;
         }
     }
 
@@ -154,7 +154,7 @@ unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_
          */
         if( ! ic_symbol_destroy(fdecl->ret_type, 1) ){
             puts("ic_type_decl_destroy: for ret_type call to ic_symbol_destroy failed");
-            return 1;
+            return 0;
         }
     }
 
@@ -163,7 +163,7 @@ unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_
      */
     if( ! ic_body_destroy(&(fdecl->body), 0) ){
         puts("ic_type_decl_destroy: for body call to ic_body_destroy failed");
-        return 1;
+        return 0;
     }
 
     /* only free if caller asked */
@@ -172,95 +172,95 @@ unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_
     }
 
     /* success */
-    return 0;
+    return 1;
 }
 
 /* add new arg field to func_decl
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_func_decl_add_arg(struct ic_func_decl *fdecl, struct ic_field *field){
     if( ! fdecl ){
         puts("ic_func_decl_add_arg: fdecl was null");
-        return 1;
+        return 0;
     }
 
     if( ! field ){
         puts("ic_func_decl_add_arg: field was null");
-        return 1;
+        return 0;
     }
 
     /* append field returns -1 on failure */
     if( -1 == ic_pvector_append( &(fdecl->args), field ) ){
         puts("ic_func_decl_add_arg: call to ic_pvector_append failed");
-        return 1;
+        return 0;
     }
 
-    return 0;
+    return 1;
 }
 
 /* set return type
  *
  * this function will fail if the return type is already set
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_func_decl_set_return(struct ic_func_decl *fdecl, char *type, unsigned int type_len){
     if( ! fdecl ){
         puts("ic_func_decl_set_return: fdecl was null");
-        return 1;
+        return 0;
     }
     if( ! type ){
         puts("ic_func_decl_set_return: type was null");
-        return 1;
+        return 0;
     }
     if( ! type_len ){
         puts("ic_func_decl_set_return: type_len was 0");
-        return 1;
+        return 0;
     }
 
     /* check we haven't already set */
     if( fdecl->ret_type ){
         /* it is an error to re-set the return type */
         puts("ic_func_decl_set_return: attempt to re-set return type");
-        return 1;
+        return 0;
     }
 
     /* create our return type */
     fdecl->ret_type = ic_symbol_new(type, type_len);
     if( ! fdecl->ret_type ){
         puts("ic_func_decl_set_return: call to ic_symbol_new failed");
-        return 1;
+        return 0;
     }
 
     /* success */
-    return 0;
+    return 1;
 }
 
 /* add new stmt to the body
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_func_decl_add_stmt(struct ic_func_decl *fdecl, struct ic_stmt *stmt){
     if( ! fdecl ){
         puts("ic_func_decl_add_stmt: fdecl was null");
-        return 1;
+        return 0;
     }
     if( ! stmt ){
         puts("ic_func_decl_add_stmt: stmt was null");
-        return 1;
+        return 0;
     }
 
     /* add our element */
     if( -1 == ic_body_append( &(fdecl->body), stmt ) ){
         puts("ic_func_decl_add_stmt: call to ic_body_append failed");
-        return 1;
+        return 0;
     }
 
-    return 0;
+    return 1;
 }
 
 /* print func_decl */
@@ -442,7 +442,7 @@ struct ic_type_decl * ic_type_decl_new(char *name_src, unsigned int name_len){
         return 0;
     }
 
-    if( ic_type_decl_init(tdecl, name_src, name_len) ){
+    if( ! ic_type_decl_init(tdecl, name_src, name_len) ){
         puts("ic_type_decl_new: call to ic_type_decl_init failed");
         free(tdecl);
         return 0;
@@ -455,33 +455,33 @@ struct ic_type_decl * ic_type_decl_new(char *name_src, unsigned int name_len){
  * only needs name and len
  * will also allocate an empty pvector for fields
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_type_decl_init(struct ic_type_decl *tdecl, char *name_src, unsigned int name_len){
     if( ! tdecl ){
         puts("ic_type_decl_init: tdecl was null");
-        return 1;
+        return 0;
     }
 
     if( ! name_src ){
         puts("ic_type_decl_init: name_src was null");
-        return 1;
+        return 0;
     }
 
     /* initialise name */
     if( ! ic_symbol_init( &(tdecl->name), name_src, name_len ) ){
         puts("ic_type_decl_init: call to ic_symbol_init for name failed");
-        return 1;
+        return 0;
     }
 
     /* init fields pvector */
     if( ! ic_pvector_init( &(tdecl->fields), 0 ) ){
         puts("ic_type_decl_init: call to ic_pvector_init for fields failed");
-        return 1;
+        return 0;
     }
 
-    return 0;
+    return 1;
 }
 
 /* calls destroy on every element within
@@ -491,8 +491,8 @@ unsigned int ic_type_decl_init(struct ic_type_decl *tdecl, char *name_src, unsig
  * the caller must determine if it is appropriate
  * or not to call free(decl)
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_type_decl_destroy(struct ic_type_decl *tdecl, unsigned int free_tdecl){
     int i = 0;
@@ -501,7 +501,7 @@ unsigned int ic_type_decl_destroy(struct ic_type_decl *tdecl, unsigned int free_
 
     if( ! tdecl ){
         puts("ic_type_decl_destroy: tdecl was null");
-        return 1;
+        return 0;
     }
 
     /* free symbol contents but do not free symbol itself
@@ -509,13 +509,13 @@ unsigned int ic_type_decl_destroy(struct ic_type_decl *tdecl, unsigned int free_
      */
     if( ! ic_symbol_destroy(&(tdecl->name), 0) ){
         puts("ic_type_decl_destroy: call to ic_symbol_destroy failed");
-        return 1;
+        return 0;
     }
 
     len = ic_pvector_length( &(tdecl->fields) );
     if( len == -1 ){
         puts("ic_type_decl_destroy: call to ic_body_length failed");
-        return 1;
+        return 0;
     }
 
     /* loop through each item destroying */
@@ -523,7 +523,7 @@ unsigned int ic_type_decl_destroy(struct ic_type_decl *tdecl, unsigned int free_
         field = ic_pvector_get( &(tdecl->fields), i );
         if( ! field ){
             puts("ic_type_type_destroy: call to ic_pvector_get failed");
-            return 1;
+            return 0;
         }
 
         /* dispatch to field destroy
@@ -531,7 +531,7 @@ unsigned int ic_type_decl_destroy(struct ic_type_decl *tdecl, unsigned int free_
          */
         if( ! ic_field_destroy(field, 1) ){
             puts("ic_type_type_destroy: call to ic_field_destroy failed");
-            return 1;
+            return 0;
         }
     }
 
@@ -541,31 +541,31 @@ unsigned int ic_type_decl_destroy(struct ic_type_decl *tdecl, unsigned int free_
     }
 
     /* success */
-    return 0;
+    return 1;
 }
 
 /* add a new field to types list of fields
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_type_decl_add_field(struct ic_type_decl *tdecl, struct ic_field *field){
     if( ! tdecl ){
         puts("ic_type_decl_add_field: tdecl was null");
-        return 1;
+        return 0;
     }
 
     if( ! field ){
         puts("ic_type_decl_add_field: field was null");
-        return 1;
+        return 0;
     }
 
     if( -1 == ic_pvector_append( &(tdecl->fields), field ) ){
         puts("ic_type_decl_add_field: call to ic_pvector_append failed");
-        return 1;
+        return 0;
     }
 
-    return 0;
+    return 1;
 }
 
 /* print the type_decl to stdout */
@@ -641,7 +641,7 @@ struct ic_decl * ic_decl_new(enum ic_decl_type type){
     }
 
     /* initialise */
-    if( ic_decl_init(decl, type) ){
+    if( ! ic_decl_init(decl, type) ){
         puts("ic_decl_new: call to ic_decl_init failed");
         return 0;
     }
@@ -654,13 +654,13 @@ struct ic_decl * ic_decl_new(enum ic_decl_type type){
  * NOTE: this call will NOT initialise the contents of the union
  * this is left up to the caller
  *
- * returns 0 on sucess
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_decl_init(struct ic_decl *decl, enum ic_decl_type type){
     if( ! decl ){
         puts("ic_decl_init: decl was null");
-        return 1;
+        return 0;
     }
 
     /* set type */
@@ -672,7 +672,7 @@ unsigned int ic_decl_init(struct ic_decl *decl, enum ic_decl_type type){
      * FIXME: reconsider this interface
      */
 
-    return 0;
+    return 1;
 }
 
 /* calls destroy on every element within
@@ -682,13 +682,13 @@ unsigned int ic_decl_init(struct ic_decl *decl, enum ic_decl_type type){
  * the caller must determine if it is appropriate
  * or not to call free(decl)
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl){
     if( ! decl ){
         puts("ic_decl_destroy: decl was null");
-        return 1;
+        return 0;
     }
 
     /* dispatch based on type
@@ -700,23 +700,23 @@ unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl){
     switch( decl->type ){
         case ic_decl_func_decl:
             /* destroy all elements but not not (0) free fdecl itself */
-            if( ic_func_decl_destroy(&(decl->u.fdecl), 0) ){
+            if( ! ic_func_decl_destroy(&(decl->u.fdecl), 0) ){
                 puts("ic_decl_destroy: call to ic_func_decl_destroy failed");
-                return 1;
+                return 0;
             }
             break;
 
         case ic_decl_type_decl:
             /* destroy all elements but not not (0) free tdecl itself */
-            if( ic_type_decl_destroy(&(decl->u.tdecl), 0) ){
+            if( ! ic_type_decl_destroy(&(decl->u.tdecl), 0) ){
                 puts("ic_decl_destroy: call to ic_type_decl_destroy failed");
-                return 1;
+                return 0;
             }
             break;
 
         default:
             puts("ic_decl_destroy: impossible decl type, aborting");
-            return 1;
+            return 0;
             break;
     }
 
@@ -726,7 +726,7 @@ unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl){
     }
 
     /* success */
-    return 0;
+    return 1;
 }
 
 /* returns pointer to ic_func_decl element

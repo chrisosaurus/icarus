@@ -27,11 +27,11 @@ int main(void){
     /* add some fields */
     field = ic_field_new("a", 1, "Int", 3);
     assert(field);
-    assert( ic_type_decl_add_field(tdecl, field) == 0 );
+    assert( 1 == ic_type_decl_add_field(tdecl, field) );
 
     field = ic_field_new("b", 1, "String", 6);
     assert(field);
-    assert( ic_type_decl_add_field(tdecl, field) == 0 );
+    assert( 1 == ic_type_decl_add_field(tdecl, field) );
 
     printf("Should see:\ntype Foo\n    a::Int\n    b::String\nend\n");
 

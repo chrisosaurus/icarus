@@ -42,8 +42,8 @@ struct ic_func_decl * ic_func_decl_new(char *name, unsigned int name_len);
 
 /* initialise an existing func_decl
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned int name_len);
 
@@ -54,15 +54,15 @@ unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned 
  * the caller must determine if it is appropriate
  * or not to call free(decl)
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_fdecl);
 
 /* add new arg field to func_decl
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_func_decl_add_arg(struct ic_func_decl *fdecl, struct ic_field *field);
 
@@ -70,15 +70,15 @@ unsigned int ic_func_decl_add_arg(struct ic_func_decl *fdecl, struct ic_field *f
  *
  * this function will fail if the return type is already set
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_func_decl_set_return(struct ic_func_decl *fdecl, char *type, unsigned int type_len);
 
 /* add new stmt to the body
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_func_decl_add_stmt(struct ic_func_decl *fdecl, struct ic_stmt *stmt);
 
@@ -129,8 +129,8 @@ struct ic_type_decl * ic_type_decl_new(char *name_src, unsigned int name_len);
  * only needs name and len
  * will also allocate an empty pvector for fields
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_type_decl_init(struct ic_type_decl *tdecl, char *name_src, unsigned int name_len);
 
@@ -141,15 +141,15 @@ unsigned int ic_type_decl_init(struct ic_type_decl *tdecl, char *name_src, unsig
  * the caller must determine if it is appropriate
  * or not to call free(decl)
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_type_decl_destroy(struct ic_type_decl *tdecl, unsigned int free_tdecl);
 
 /* add a new field to types list of fields
  *
- * returns 0 on success
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_type_decl_add_field(struct ic_type_decl *tdecl, struct ic_field *field);
 
@@ -191,8 +191,8 @@ struct ic_decl * ic_decl_new(enum ic_decl_type type);
  * NOTE: this call will NOT initialise the contents of the union
  * this is left up to the caller
  *
- * returns 0 on sucess
- * returns 1 on error
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_decl_init(struct ic_decl *decl, enum ic_decl_type type);
 
@@ -203,8 +203,8 @@ unsigned int ic_decl_init(struct ic_decl *decl, enum ic_decl_type type);
  * the caller must determine if it is appropriate
  * or not to call free(decl)
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl);
 

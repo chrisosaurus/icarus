@@ -20,18 +20,18 @@ int main(void){
     assert( decl->type == ic_decl_type_decl );
 
     /* check that trying to pull out the wrong type is an error */
-    assert( ic_decl_get_fdecl(decl) == 0 );
+    assert( 0 == ic_decl_get_fdecl(decl) );
 
     /* check that getting the right type out is fine */
     tdecl = ic_decl_get_tdecl(decl);
     assert(tdecl);
 
     /* initialise tdecl */
-    assert( ic_type_decl_init(tdecl, "Foo", 3) == 0 );
+    assert( 1 == ic_type_decl_init(tdecl, "Foo", 3) );
 
     /* add a single field */
     field = ic_field_new("bar", 3, "Baz", 3);
-    assert( ic_type_decl_add_field(tdecl, field) == 0 );
+    assert( 1 == ic_type_decl_add_field(tdecl, field) );
 
     /* test display */
     printf("Expected:\ntype Foo\n    bar::Baz\nend\n");
@@ -50,18 +50,18 @@ int main(void){
     assert( decl->type == ic_decl_func_decl );
 
     /* check that trying to pull out the wrong type is an error */
-    assert( ic_decl_get_tdecl(decl) == 0 );
+    assert( 0 == ic_decl_get_tdecl(decl) );
 
     /* check that getting the right type out is fine */
     fdecl = ic_decl_get_fdecl(decl);
     assert(fdecl);
 
     /* initialise fdecl */
-    assert( ic_func_decl_init(fdecl, "Foo", 3) == 0 );
+    assert( 1 == ic_func_decl_init(fdecl, "Foo", 3) );
 
     /* add a single field */
     field = ic_field_new("bar", 3, "Baz", 3);
-    assert( ic_func_decl_add_arg(fdecl, field) == 0 );
+    assert( 1 == ic_func_decl_add_arg(fdecl, field) );
 
     /* test display */
     printf("Expected:\n# Foo(Baz)\nfn Foo(bar::Baz) -> Void\nend\n");

@@ -38,6 +38,7 @@ technical debt:
 * ic_dict interface set/insert is non-ideal, see linear_hash upstream TODO
 * ic_scope insert interface is non-ideal
 * ic_scope lacks an exists
+* ic_type_decl and ic_func_decl should really be renamed to ic_decl_type and ic_decl_func to match naming conventions.
 
 
 considerations:

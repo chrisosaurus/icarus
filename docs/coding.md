@@ -37,32 +37,12 @@ allowed special cases:
 remaining cases:
 
     chris@Ox1b src(master)-> git grep -ni '1 on error' *
-    parse/data/decl.c:49: * returns 1 on error
-    parse/data/decl.c:181: * returns 1 on error
-    parse/data/decl.c:210: * returns 1 on error
-    parse/data/decl.c:247: * returns 1 on error
-    parse/data/decl.c:461: * returns 1 on error
-    parse/data/decl.c:552: * returns 1 on error
-    parse/data/decl.c:660: * returns 1 on error
-    parse/data/decl.h:46: * returns 1 on error
-    parse/data/decl.h:65: * returns 1 on error
-    parse/data/decl.h:74: * returns 1 on error
-    parse/data/decl.h:81: * returns 1 on error
-    parse/data/decl.h:133: * returns 1 on error
-    parse/data/decl.h:152: * returns 1 on error
-    parse/data/decl.h:195: * returns 1 on error
     parse/data/expression.c:132: * returns 1 on error
     parse/data/expression.c:434: * returns 1 on error
     parse/data/expression.h:51: * returns 1 on error
     parse/data/expression.h:137: * returns 1 on error
 
     chris@Ox1b icarus(master)-> git grep -ni '1 on failure' *
-    src/parse/data/decl.c:100: * returns 1 on failure
-    src/parse/data/decl.c:497: * returns 1 on failure
-    src/parse/data/decl.c:688: * returns 1 on failure
-    src/parse/data/decl.h:58: * returns 1 on failure
-    src/parse/data/decl.h:145: * returns 1 on failure
-    src/parse/data/decl.h:207: * returns 1 on failure
     src/parse/data/expression.c:43: * returns 1 on failure
     src/parse/data/expression.c:80: * returns 1 on failure
     src/parse/data/expression.c:357: * returns 1 on failure
@@ -157,6 +137,5 @@ all functions should document their return values
      */
     unsigned int foo(void);
 
-TODO: decide on wording 'on failure' vs 'on error' (228 vs 136 occurrences respectively at time of writing).
-
+note that the wording 'on failure' is preferred over 'on error'
 

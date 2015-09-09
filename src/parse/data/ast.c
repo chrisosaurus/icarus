@@ -88,7 +88,7 @@ unsigned int ic_ast_destroy(struct ic_ast *ast, unsigned int free_ast){
         /* destroy everything contained within decl
          * and free the decl itself
          */
-        if( ic_decl_destroy(decl, 1) ){
+        if( ! ic_decl_destroy(decl, 1) ){
             puts("ic_ast_destroy: call to ic_decl_destroy failed");
             return 0;
         }
