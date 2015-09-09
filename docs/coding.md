@@ -36,17 +36,16 @@ allowed special cases:
 
 remaining cases:
 
-    chris@Ox1b src(master)-> git grep -ni '1 on error' *
-    parse/data/expression.c:132: * returns 1 on error
-    parse/data/expression.c:434: * returns 1 on error
-    parse/data/expression.h:51: * returns 1 on error
-    parse/data/expression.h:137: * returns 1 on error
+    chris@heimdall:~/devel/icarus$ git grep -ni '1 on failure' src/
 
-    chris@Ox1b icarus(master)-> git grep -ni '1 on failure' *
+    src/analyse/analyse.h:21: * returns 1 on failure
+    src/analyse/analyse.h:30: * returns 1 on failure
     src/parse/data/expression.c:43: * returns 1 on failure
     src/parse/data/expression.c:80: * returns 1 on failure
+    src/parse/data/expression.c:132: * returns 1 on failure
     src/parse/data/expression.c:357: * returns 1 on failure
     src/parse/data/expression.c:384: * returns 1 on failure
+    src/parse/data/expression.c:434: * returns 1 on failure
     src/parse/data/expression.c:454: * returns 1 on failure
     src/parse/data/expression.c:631: * returns 1 on failure
     src/parse/data/expression.c:675: * returns 1 on failure
@@ -54,8 +53,10 @@ remaining cases:
     src/parse/data/expression.c:791: * returns 1 on failure
     src/parse/data/expression.h:35: * retunns 1 on failure
     src/parse/data/expression.h:44: * returns 1 on failure
+    src/parse/data/expression.h:51: * returns 1 on failure
     src/parse/data/expression.h:96: * returns 1 on failure
     src/parse/data/expression.h:105: * returns 1 on failure
+    src/parse/data/expression.h:137: * returns 1 on failure
     src/parse/data/expression.h:146: * returns 1 on failure
     src/parse/data/expression.h:190: * returns 1 on failure
     src/parse/data/expression.h:199: * returns 1 on failure
@@ -77,7 +78,6 @@ remaining cases:
     src/parse/data/statement.h:141: * returns 1 on failure
     src/parse/data/statement.h:204: * returns 1 on failure
     src/parse/data/statement.h:213: * returns 1 on failure
-
 
 known exceptions:
 
