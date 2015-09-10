@@ -28,7 +28,7 @@ eventually we want the following dep. diagram:
         ^
         |      ic_type_decl - a user defined type
         |            ^
-        \            |
+        |            |
          \          /
           \        /
            \      /
@@ -36,18 +36,28 @@ eventually we want the following dep. diagram:
              \  /
               \/
             ic_type - a type, one instance per type (Int, String, Foo, Bar, ...)
-               ^
-               |
-               |
-               |
-           ic_type_ref - a use of a type, say the type of a variable
+             ^   ^
+             |    \
+             |     \   (reference via the symbol -> ic_type dict, not explicit)
+             |      \
+             |   ic_type_ref - a use of a type, the type of a variable or field at parse time, a symbol
+             |       ^
+             |       |
+             |       |
+             |    ic_field - a name and a type_ref, built at parse time for fields and variables
+             |
+             |
+             |
+          ic_slot - a name and an ic_type, built during analysis time from an ic_field
 
+
+we also will have a mapping of symbols to ic_type for type lookup, this is how we get from an ic_type_ref to an ic_type.
 
 ic_type_ref
 -----------
 
 ic_type_ref(s) are constructed during parse time and are a use of a type
-at parse time. 
+at parse time.
 
 In icarus a type_ref has 3 possible states:
 
@@ -67,48 +77,5 @@ an ic_type thus has 2 states:
 
 * builtin - this type is a builtin type defined in the icarus source code
 * user - this type is a type defined by the user in their program source
-
-
-
-
-current state / old documentation
-===============
-
-THE FOLLOWING DOCUMENTATION IS DEPRECATED AND WILL BE SLOWLY BE MADE MORE AND MORE INCORRECT
-
-
-type_ref
---------
-
-In icarus a type_ref has 5 possible states:
-
-* unknown - we have no information yet about this type
-* string - set by parser - we have a string type name from the parser
-* tdecl - set by inference - we have a type_decl found from the string or context
-* builtin - set by inference - we have a type_builtin froun from the string or context
-* error - a user fixable error occurred during inference
-
-This models a progression from least to most known in the case of
-
-    unknown -> string -> tdecl
-    unknown -> string -> builtin
-    string -> tdecl
-    string -> builtin
-
-After parsing all types will either be `unknown` or `string`
-
-After analysis all types will either be `builtin`, `tdecl` or `error`
-
-we now have a type for this concept `ic_type_ref`
-
-most of the code using types exists within `src/parse/data/*` and
-currently all of this code uses an `ic_symbol`
-
-This should be used in:
-
-* fields - on tdecls and fdecls
-* variables
-* return values - fdecls
-
 
 
