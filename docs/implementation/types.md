@@ -13,10 +13,13 @@ high level
 
 In Icarus the concept of a type has a few moving parts
 
-* ic_type - the concept of a type, either builtin or user defined, and points to ic_type_decl or ic_type_builtin
-* ic_type_builtin - the information needed for a builtin
+at parse time we have:
+* ic_type_ref - a reference to a type, built during parse
 * ic_type_decl - the information captured for a user declared type
-* ic_type_ref - a reference to a type, built during parse and modified during analysis
+
+at the analysis phase we have:
+* ic_type_builtin - the information needed for a builtin
+* ic_type - the concept of a type, either builtin or user defined, and points to ic_type_decl or ic_type_builtin
 
 
 eventually we want the following dep. diagram:
@@ -44,18 +47,15 @@ ic_type_ref
 -----------
 
 ic_type_ref(s) are constructed during parse time and are a use of a type
-at parse time most type references start their life as either 'unknown' (type inference)
-or 'string' (declared as string in source, say `name::String`)
+at parse time. 
 
-In icarus a type_ref has 4 possible states:
+In icarus a type_ref has 3 possible states:
 
 * unknown - we have no information about this type, rely on type inference
 * string - set by parser from source text of program
-* reference - a reference to a known ic_type - this is the most complete a type_ref can be
 * error - a user fixable error occurred during inference
 
-at the end of the analyse phase it is an error if any ic_type_ref is not in the `reference` state
-as it means we could not resolve the reference to a concrete type.
+during the analyse phase an ic_type_ref will be converted into an ic_type *
 
 
 ic_type
