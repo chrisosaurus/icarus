@@ -7,6 +7,7 @@ TODO:
 * add escaping support to lexing string (escaping " with \)
 * add kludge testing
 * an fcall should also store the found fdecl (post analysis)
+* symbol interning
 
 
 bugs:
