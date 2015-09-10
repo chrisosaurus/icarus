@@ -4,7 +4,7 @@
 #include "../../data/symbol.h"
 
 enum ic_type_ref_type {
-    /* a type field had 5 states: */
+    /* a type field had 3 states: */
 
     /* unknown
      * this type must be inferred during analysis
@@ -13,21 +13,10 @@ enum ic_type_ref_type {
 
     /* a symbol found during parsing,
      * most likely user declared (`a::Int`)
-     * this will need to resolved to a tdecl
+     * this will need to resolved to an ic_type
      * during analysis
      */
     ic_type_ref_symbol,
-
-    /* a fully fledged type
-     */
-    ic_type_ref_tdecl,
-
-    /* a builtin type
-     * Int
-     * String
-     * ...
-     */
-    ic_type_ref_builtin,
 
     /* error type
      * this is NOT a runtime error
@@ -35,6 +24,8 @@ enum ic_type_ref_type {
      * this value is used by the analysis module to
      * indicate an error during inference such as
      * being unable to find the type mentioned
+     *
+     * FIXME it may be that errors are moved out of here
      */
     ic_type_ref_error
 };
@@ -44,13 +35,7 @@ struct ic_type_ref {
     union {
         /* no value for unknown */
         struct ic_symbol sym; /* value for ic_type_symbol */
-        /* FIXME as per docs/internal/types.md
-         * an ic_type_ref should refer to an ic_type
-         * NOT as we currently do to an ic_type_decl
-         */
-        struct ic_type_decl *tdecl; /* value for ic_type_tdecl */
-        /* FIXME what is the value for an builtin? */
-        /* FIXME what is the value for an error? */
+        /* FIXME need a structure for an error */
     } u ;
 };
 
@@ -97,32 +82,15 @@ unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_typ
 /* set the sym on this type from the provided string
  * this will change type.type to sym
  *
- * Note that this is ONLY allowed if a tdecl hasn't already been set
- *
- * if type.type is tdecl then calling this function is an error
- * as that would be going 'backwards'
- *
  * returns 1 on success
  * returns 0 on failure
  */
 unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, unsigned int type_len);
 
-/* set the *tdecl on this type
- * this will change type.type to tdecl
- *
- * this is only allowed it the type is NOT already set to tdecl
- * if type is already a symbol then the symbol will first be destroyed
- *
- * returns 1 on success
- * returns 0 on failure
- */
-unsigned int ic_type_ref_set_tdecl(struct ic_type_ref *type, struct ic_type_decl *tdecl);
-
 /* return a symbol representing this type
  *
  * if type is unknown then 0 is reuturned
  * if type is symbol then the symbol is returned
- * if type is tdecl then the symbol on that tdecl is returedn
  *
  * returns 0 on failure
  */

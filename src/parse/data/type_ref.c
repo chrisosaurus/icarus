@@ -140,10 +140,6 @@ unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_typ
             }
             break;
 
-        case ic_type_ref_tdecl:
-            /* nothing to do, tdecl is not onwed by us */
-            break;
-
         default:
             puts("ic_type_destroy: type->type was impossible type_type");
             return 0;
@@ -160,11 +156,6 @@ unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_typ
 
 /* set the sym on this type from the provided string
  * this will change type.type to sym
- *
- * Note that this is ONLY allowed if a tdecl hasn't already been set
- *
- * if type.type is tdecl then calling this function is an error
- * as that would be going 'backwards'
  *
  * returns 1 on success
  * returns 0 on failure
@@ -194,19 +185,13 @@ unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, un
             return 0;
             break;
 
-        case ic_type_ref_tdecl:
-            /* error, already a tdecl */
-            puts("ic_type_set_symbol: type was already a tdecl");
-            return 0;
-            break;
-
         default:
             puts("ic_type_set_symbol: type->type was impossible type_type");
             return 0;
             break;
     }
 
-    /* set to tdecl */
+    /* set to type symbol */
     type->type = ic_type_ref_symbol;
 
     /* set our symbol from the provider char * and len */
@@ -218,68 +203,10 @@ unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, un
     return 1;
 }
 
-/* set the *tdecl on this type
- * this will change type.type to tdecl
- *
- * this is only allowed it the type is NOT already set to tdecl
- * if type is already a symbol then the symbol will first be destroyed
- *
- * returns 1 on success
- * returns 0 on failure
- */
-unsigned int ic_type_ref_set_tdecl(struct ic_type_ref *type, struct ic_type_decl *tdecl){
-    if( ! type ) {
-        puts("ic_type_set_tdecl: type was null");
-        return 0;
-    }
-
-    if( ! tdecl ) {
-        puts("ic_type_set_tdecl: tdecl was null");
-        return 0;
-    }
-
-    /* may have to do cleanup or raise errors based on current
-     * type->type
-     */
-    switch( type->type ){
-        case ic_type_ref_unknown:
-            /* nothing to do */
-            break;
-
-        case ic_type_ref_symbol:
-            /* clean up symbol, do not free as member */
-            if( ! ic_symbol_destroy( &(type->u.sym), 0 ) ){
-                puts("ic_type_set_tdecl: call to ic_symbol_destroy failed");
-                return 0;
-            }
-            break;
-
-        case ic_type_ref_tdecl:
-            /* error, already a tdecl */
-            puts("ic_type_set_tdecl: type was already a tdecl");
-            return 0;
-            break;
-
-        default:
-            puts("ic_type_set_tdecl: type->type was impossible type_type");
-            return 0;
-            break;
-    }
-
-    /* set to tdecl */
-    type->type = ic_type_ref_tdecl;
-
-    /* store our actual tdecl */
-    type->u.tdecl = tdecl;
-
-    return 1;
-}
-
 /* return a symbol representing this type
  *
  * if type is unknown then 0 is reuturned
  * if type is symbol then the symbol is returned
- * if type is tdecl then the symbol on that tdecl is returedn
  *
  * returns 0 on failure
  */
@@ -299,16 +226,6 @@ struct ic_symbol * ic_type_ref_get_symbol(struct ic_type_ref *type){
         case ic_type_ref_symbol:
             /* just return the symbol */
             return &(type->u.sym);
-            break;
-
-        case ic_type_ref_tdecl:
-            if( ! type->u.tdecl ){
-                puts("ic_type_get_symbol: type was tdecl but tdecl member was null");
-                return 0;
-            }
-
-            /* if we are of type tdecl then return the symbol on tdecl */
-            return &(type->u.tdecl->name);
             break;
 
         default:
@@ -334,15 +251,6 @@ void ic_type_ref_print(struct ic_type_ref *type){
         case ic_type_ref_symbol:
             /* if we are of type symbol then just print that symbol */
             ic_symbol_print( &(type->u.sym) );
-            break;
-
-        case ic_type_ref_tdecl:
-            if( ! type->u.tdecl ){
-                puts("ic_type_print: type was tdecl but tdecl member was null");
-                return;
-            }
-            /* if we are of type tdecl then print the symbol on tdecl */
-            ic_symbol_print( &(type->u.tdecl->name) );
             break;
 
         default:

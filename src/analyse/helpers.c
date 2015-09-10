@@ -100,16 +100,6 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
          *  b) checking that this is not a self-recursive type
          *  c) check that this field's type exists
          *
-         * note that field->type may be in a few states,
-         * if field->type.type is one of
-         *  ic_type_ref_tdecl
-         *  ic_type_ref_builtin
-         * then checking the type exists (c) is wasted effort
-         * as we already know the type exists
-         *
-         * at this point however every type should still be
-         *  ic_type_ref_symbol
-         *
          *  FIXME check / consider this
          */
         type = ic_type_ref_get_symbol(&(field->type));
@@ -131,7 +121,7 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
         }
 
         if( forbidden_type ){
-            /* check that the type used is not the same as the 'firbidden_type'
+            /* check that the type used is not the same as the 'forbidden_type'
              * this is used to prevent recursive types during tdecl analyse
              */
             if( ! strcmp(type_str, forbidden_type) ){
@@ -157,6 +147,7 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
          * FIXME are we sure this is safe?
          * if field->type is already a tdecl this will blow up
          */
+        /* FIXME deprecated code
         if( ! ic_type_ref_set_tdecl( &(field->type), field_tdecl ) ){
             printf("ic_analyse_field_list: trying to store tdecl for '%s' on field '%s' during '%s' for '%s' failed\n",
                     type_str,
@@ -165,6 +156,7 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
                     unit_name);
             goto ERROR;
         }
+        */
     }
 
     /* call set destroy
