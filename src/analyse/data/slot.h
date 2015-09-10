@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 #include "../../data/symbol.h"
-#include "../../parse/data/type_ref.h"
+#include "type.h"
 
 /* a slot represents an argument or a variable at the semantic analyse phase
  * examples:
@@ -41,7 +41,7 @@ struct ic_slot {
      * or inferred via usage
      *  let a = 5
      */
-    struct ic_type_ref *type;
+    struct ic_type *type;
 
     /* is this slot mutable?
      * an argument is immutable
@@ -61,14 +61,14 @@ struct ic_slot {
  * returns 1 on success
  * returns 0 on failure
  */
-struct ic_slot * ic_slot_new(struct ic_symbol *name, struct ic_type_ref *type, bool mutable, bool reference);
+struct ic_slot * ic_slot_new(struct ic_symbol *name, struct ic_type *type, bool mutable, bool reference);
 
 /* init an existing slot
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct ic_type_ref *type, bool mutable, bool reference);
+unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct ic_type *type, bool mutable, bool reference);
 
 /* destroy slot
  * will only free slot if `free_slot` is true

@@ -11,7 +11,7 @@
  * returns 1 on success
  * returns 0 on failure
  */
-struct ic_slot * ic_slot_new(struct ic_symbol *name, struct ic_type_ref *type, bool mutable, bool reference){
+struct ic_slot * ic_slot_new(struct ic_symbol *name, struct ic_type *type, bool mutable, bool reference){
     struct ic_slot *slot = 0;
 
     slot = calloc(1, sizeof(struct ic_slot));
@@ -33,7 +33,7 @@ struct ic_slot * ic_slot_new(struct ic_symbol *name, struct ic_type_ref *type, b
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct ic_type_ref *type, bool mutable, bool reference){
+unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct ic_type *type, bool mutable, bool reference){
     if( ! slot ){
         puts("ic_slot_init: slot was null");
         return 0;
