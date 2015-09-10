@@ -1,12 +1,10 @@
 #ifndef IC_TYPE_H
 #define IC_TYPE_H
 
-#include "decl.h"
+#include "../../parse/data/decl.h"
 
 /* an instance of a type
  * ic_type has a single instance for each type within a program (FIXME consider type scoping)
- * every reference to this type (say within an expr or as the type of a variable/value) is
- * a type_ref instance that holds a reference to ic_type
  *
  * an ic_type can either be:
  *  - a builtin - FIXME no current support for builtins
