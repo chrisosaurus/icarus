@@ -4,7 +4,7 @@
 #include "../../parse/data/decl.h"
 
 /* an instance of a type
- * ic_type has a single instance for each type within a program (FIXME consider type scoping)
+ * ic_type has a single instance for each type within a kludge (FIXME consider type scoping)
  *
  * an ic_type can either be:
  *  - a builtin - FIXME no current support for builtins
@@ -24,31 +24,29 @@ struct ic_type {
     } u;
 };
 
-/* alloc and init a new type
- *
- * FIXME unknown params
+/* alloc and init a new type representing a tdecl
  *
  * returns new type on success
  * returns 0 on failure
  */
-struct ic_type * ic_type_new(void);
+struct ic_type * ic_type_new_tdecl(struct ic_type_decl *decl);
 
-/* init an existing type
- *
- * FIXME unknown params
+/* init an existing type representing a tdecl
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_type_init(struct ic_type *type);
+unsigned int ic_type_init_tdecl(struct ic_type *type, struct ic_type_decl *decl);
 
 /* destroy a type
  *
  * will only free the type if `free_type` is truthy
  *
+ * will NOT free any decl or builtin objects
+ *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_tytpe);
+unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type);
 
 #endif
