@@ -67,6 +67,8 @@ unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, char *name,
 
     /* fstr is set later by ic_expr_func_call_str */
     fcall->string = 0;
+    /* fdecl is used in the analyse phase */
+    fcall->fdecl = 0;
 
     return 1;
 
@@ -118,10 +120,39 @@ unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned
         fcall->string = 0;
     }
 
+    fcall->fdecl = 0;
+
     /* if asked */
     if( free_fcall ){
         free(fcall);
     }
+
+    return 1;
+}
+
+/* set fdecl on fcall
+ * must not already be set
+ *
+ * returns 1 on success
+ * returns 1 on failure
+ */
+unsigned int ic_expr_func_call_set_fdecl(struct ic_expr_func_call *fcall, struct ic_func_decl *fdecl){
+    if( ! fcall ){
+        puts("ic_expr_func_call_set_fdecl: fcall was null");
+        return 0;
+    }
+
+    if( ! fdecl ){
+        puts("ic_expr_func_call_set_fdecl: fdecl was null");
+        return 0;
+    }
+
+    if( fcall->fdecl ){
+        puts("ic_expr_func_call_set_fdecl: fdecl was already set");
+        return 0;
+    }
+
+    fcall->fdecl = fdecl;
 
     return 1;
 }

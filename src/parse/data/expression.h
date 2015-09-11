@@ -20,6 +20,15 @@ struct ic_expr_func_call {
      * e.g. Foo(Int Int)
      */
     struct ic_string *string;
+
+    /* the function we are calling
+     * this is set at the analyse phase
+     *
+     * FIXME not currently used
+     * FIXME eventually migrate to ic_func as this
+     *      could be a call to an fdecl or a builtin
+     */
+    struct ic_func_decl *fdecl;
 };
 
 /* allocate and initialise a new func call
@@ -44,6 +53,14 @@ unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, char *name,
  * returns 0 on failure
  */
 unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned int free_fcall);
+
+/* set fdecl on fcall
+ * must not already be set
+ *
+ * returns 1 on success
+ * returns 1 on failure
+ */
+unsigned int ic_expr_func_call_set_fdecl(struct ic_expr_func_call *fcall, struct ic_func_decl *fdecl);
 
 /* add a new argument to this function call
  *
