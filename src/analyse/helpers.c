@@ -514,6 +514,14 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
         return 0;
     }
 
+    /* need to store slot in body->scope
+     * FIXME this handling of symbols is a bit gross
+     */
+    if( ! ic_scope_insert( body->scope, ic_symbol_contents(&(let->identifier)), slot ) ){
+        puts("ic_analyse_let: call to ic_scope_insert failed");
+        return 0;
+    }
+
     puts("ic_analyse_let: implementation pending");
     return 1;
 }
