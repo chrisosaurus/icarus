@@ -5,6 +5,7 @@
 #include "../data/set.h"
 #include "../parse/data/statement.h"
 #include "helpers.h"
+#include "data/slot.h"
 
 /* ignored unused parameter and variables */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -435,6 +436,7 @@ unsigned int ic_analyse_check(struct ic_kludge *kludge, struct ic_stmt *stmt){
  */
 unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_stmt_let *let){
     struct ic_slot *slot = 0;
+    struct ic_type *type = 0;
 
     if( ! unit ){
         puts("ic_analyse_let: unit was null");
@@ -468,9 +470,51 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
 
     /* FIXME slot creation time
      * after gathering all the needed parts
+     *
+     * a slot needs:
+     *  symbol *name
+     *  ic_type *type
+     *  bool mutable
+     *  bool reference
+     *
+     * a let has:
+     *  unsigned int mut
+     *  symbol identifier
+     *  symbol type
+     *  ic_expr init
+     *
      */
 
-    puts("ic_analyse_let: unimplemented");
+    /* we need to take teh let->type (symbol) and convert it to a full
+     * ic_type
+     *
+     * FIXME later on let->type may be null and we will instead
+     * need to run inference against the init
+     */
+    if( ! ic_symbol_length(&(let->type)) ){
+        puts("ic_analyse_let: let was lacking a type, inference not yet supported");
+        return 0;
+    }
+
+    /* FIXME fetch type from kludge
+     * not currently supported as here we want an ic_type
+     * but the kludge is storing tdecls
+     */
+    type = 0;
+
+    /*
+     * FIXME ref is hardcoded (0) to false as they are not
+     * currently supported
+     *
+     *                (name, type, mut, ref)
+     */
+    slot = ic_slot_new(&(let->identifier), type, let->mut, 0);
+    if( ! slot ){
+        puts("ic_analyse_let: call to ic_slot_new failed");
+        return 0;
+    }
+
+    puts("ic_analyse_let: implementation pending");
     return 1;
 }
 
