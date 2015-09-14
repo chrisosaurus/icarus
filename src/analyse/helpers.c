@@ -330,6 +330,7 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
     struct ic_symbol *sym = 0;
     char *ch = 0;
     struct ic_slot *slot = 0;
+    struct ic_type *type = 0;
 
     if( ! kludge ){
         puts("ic_analyse_infer: kludge was null");
@@ -398,13 +399,14 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
                 return 0;
             }
 
-            if( ! slot->type ){
+            type = slot->type;
+            if( ! type ){
                 printf("ic_analyse_infer: error fetching identifier '%s', no type found\n", ch);
                 return 0;
             }
 
             /* return type */
-            return slot->type;
+            return type;
 
             puts("ic_analyse_infer: ic_expr_type_identifier unimplemented");
             return 0;
