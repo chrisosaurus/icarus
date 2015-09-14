@@ -425,7 +425,7 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
             /* now we have to get the return type for this func */
             sym = fdecl->ret_type;
             if( ! sym ){
-                puts("ic_analyse_infer: fcall: failed to get fdecl_>ret_type");
+                puts("ic_analyse_infer: fcall: failed to get fdecl->ret_type");
                 return 0;
             }
 
