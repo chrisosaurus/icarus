@@ -422,7 +422,7 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
 
             ch = ic_symbol_contents(sym);
             if( ! sym ){
-                puts("ic_analyse_infer: fcall: call ot ic_symbol_contents failed for ret_type");
+                puts("ic_analyse_infer: fcall: call to ic_symbol_contents failed for ret_type");
                 return 0;
             }
 
@@ -430,6 +430,10 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
              * no appropriate field on fcall
              */
             type = ic_kludge_get_type(kludge, ch);
+            if( ! type ){
+                printf("ic_analyse_infer: fcall: could not find return type '%s'\n", ch);
+                return 0;
+            }
 
             return type;
             break;
