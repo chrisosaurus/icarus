@@ -97,7 +97,24 @@ struct ic_symbol * ic_type_name(struct ic_type *type){
         return 0;
     }
 
-    puts("ic_type_name: unimplemented");
+    switch( type->type ){
+        case ic_type_builtin:
+            puts("ic_type_name: builtin: unimplemented");
+            return 0;
+            break;
+
+        case ic_type_user:
+            return &(type->u.decl->name);
+            break;
+
+        default:
+            puts("ic_type_name: impossible type->type");
+            return 0;
+            break;
+    }
+
+
+    puts("ic_type_name: impossible case");
     return 0;
 }
 
