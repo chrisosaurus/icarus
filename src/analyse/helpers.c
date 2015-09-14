@@ -199,6 +199,10 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
     unsigned int len = 0;
     /* current statement in body */
     struct ic_stmt *stmt = 0;
+    /* expr from stmt */
+    struct ic_expr *expr = 0;
+    /* type of expression */
+    struct ic_type *type = 0;
 
     if( ! unit ){
         puts("ic_analyse_body: unit was null");
@@ -285,10 +289,22 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
 
             case ic_stmt_type_expr:
                 /* infer expr type
-                 * warn if using non-void function in void context
+                 * FIXME warn if using non-void function in void context
                  */
-                puts("ic_analyse_body: unimplemented stmt->type ic_stmt_type_expr");
-                goto ERROR;
+                expr = ic_stmt_get_expr(stmt);
+                if( ! expr ){
+                    puts("ic_analyse_body: expr: call to ic_stmt_get_expr failed");
+                    goto ERROR;
+                }
+
+                type = ic_analyse_infer(kludge, body->scope, expr);
+                if( ! type ){
+                    puts("ic_analyse_body: expr: call to ic_analyse_infer failed");
+                    goto ERROR;
+                }
+
+                /* FIXME warn about non-void in void context */
+
                 break;
 
             default:
