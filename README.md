@@ -12,8 +12,8 @@ Goals
 Work so far
 ===========
 
-So far Icarus only has a lexer and parser (syntactic analysis),
-work is starting on the analyse (semantic analyse) stage,
+So far Icarus only has a lexer and basic parser (syntactic analysis),
+work is progressing on the analyse (semantic analyse) stage,
 there are no backends yet.
 
 Here is an example of the lex and parse steps in action:
