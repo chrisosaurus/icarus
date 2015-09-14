@@ -5,6 +5,7 @@
 #include "../../data/pvector.h"
 #include "../../data/dict.h"
 #include "../../data/symbol.h"
+#include "../../parse/data/type_ref.h"
 
 /* a Kludge is the output from the analyse stage of icarus
  *
@@ -102,6 +103,13 @@ struct ic_type * ic_kludge_get_type(struct ic_kludge *kludge, char *tdecl_str);
  * returns 0 on failure
  */
 struct ic_type * ic_kludge_get_type_from_symbol(struct ic_kludge *kludge, struct ic_symbol *type);
+
+/* retrieve ic_type by type_ref
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type * ic_kludge_get_type_from_typeref(struct ic_kludge *kludge, struct ic_type_ref *type_ref);
 
 /* retrieve func decl by string
  *

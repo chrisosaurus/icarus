@@ -423,6 +423,30 @@ struct ic_type * ic_kludge_get_type_from_symbol(struct ic_kludge *kludge, struct
     return ic_kludge_get_type(kludge, type_str);
 }
 
+/* retrieve ic_type by type_ref
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type * ic_kludge_get_type_from_typeref(struct ic_kludge *kludge, struct ic_type_ref *type_ref){
+    if( ! kludge ){
+        puts("ic_kludge_get_type_from_typeref: kludge was null");
+        return 0;
+    }
+
+    if( ! type_ref ){
+        puts("ic_kludge_get_type_from_typeref: type was null");
+        return 0;
+    }
+
+    if( type_ref->type != ic_type_ref_symbol ){
+        puts("ic_kludge_get_type_from_typeref: type ref was not of type symbol");
+        return 0;
+    }
+
+    return ic_kludge_get_type_from_symbol(kludge, &(type_ref->u.sym));
+}
+
 /* retrieve func decl by string
  *
  * returns * on success
