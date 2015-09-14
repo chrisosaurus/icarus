@@ -139,6 +139,8 @@ ERROR:
 unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl *fdecl){
     /* name of current func we are trying to declare */
     char *this_func = 0;
+    /* our scope */
+    struct ic_scope *scope = 0;
 
     if( ! kludge ){
         puts("ic_analyse_func_decl: kludge was null");
@@ -163,9 +165,30 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
         goto ERROR;
     }
 
+    /* new scope with no parent
+     * FIXME this scope is currently leaked
+     */
+    scope = ic_scope_new(0);
+    if( ! scope ){
+        puts("ic_analyse_func_decl: call to ic_scope_new failed");
+        goto ERROR;
+    }
+
+    if( fdecl->body.scope ){
+        puts("ic_analyse_func_decl: scope was already set on body");
+        goto ERROR;
+    }
+
+    /* store scope
+     * FIXME this scope is currently leaked
+     */
+    fdecl->body.scope = scope;
+
+    /* FIXME insert each arg as a lot into a scope */
+
     /* check body */
-    if( ! ic_analyse_body( "func declaration", this_func, kludge, &(fdecl->body), 0 ) ){
-        puts("ic_analyse_func_decl: call to ic_analyse_bofy for validating body failed");
+    if( ! ic_analyse_body( "func declaration", this_func, kludge, &(fdecl->body)) ){
+        puts("ic_analyse_func_decl: call to ic_analyse_body for validating body failed");
         goto ERROR;
     }
 

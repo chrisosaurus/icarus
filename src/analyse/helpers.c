@@ -192,7 +192,7 @@ ERROR:
  * returns 1 on success (pass)
  * returns 0 on failure
  */
-unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_scope *parent_scope){
+unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body){
     /* index into body */
     unsigned int i = 0;
     /* len of body */
@@ -224,15 +224,8 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
         return 0;
     }
 
-    if( body->scope ){
-        puts("ic_analyse_body: body already had a scope, error");
-        return 0;
-    }
-
-    /* FIXME this scope is currently leaked */
-    body->scope = ic_scope_new(parent_scope);
-    if( ! body->scope) {
-        puts("ic_analyse_body: call to ic_body_new failed");
+    if( ! body->scope ){
+        puts("ic_analyse_body: body did not have a scope");
         return 0;
     }
 

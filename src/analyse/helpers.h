@@ -30,7 +30,7 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
  * returns 1 on success (pass)
  * returns 0 on failure
  */
-unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_scope *parent_scope);
+unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body);
 
 /* takes an expr and returns the inferred type
  *
