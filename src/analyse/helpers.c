@@ -428,6 +428,18 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
              *  return string
              */
 
+            switch( expr->u.cons.type ){
+                case ic_expr_constant_type_integer:
+                    puts("ic_analyse_infer: constant: integer not yet implemented");
+                    break;
+                case ic_expr_constant_type_string:
+                    puts("ic_analyse_infer: constant: string not yet implemented");
+                    break;
+                default:
+                    puts("ic_analyse_infer: constant: impossible and unexpected constant, neither integer not string");
+                    break;
+            }
+
             puts("ic_analyse_infer: ic_expr_type_constant unimplemented");
             return 0;
 
