@@ -653,7 +653,10 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
      */
     type = ic_kludge_get_type(kludge, type_str);
     if( ! type ){
-        puts("ic_analyse_let: call to ic_kludge_get_type failed");
+        /* FIXME type not found
+         * need helpful error message
+         */
+        printf("ic_analyse_let: failed to find type '%s'\n", type_str);
         return 0;
     }
 
