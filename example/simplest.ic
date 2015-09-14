@@ -1,8 +1,14 @@
-
 type Foo
 end
 
 fn main()
-    let f::Foo = 5
+    let f::Foo = baz(5)
+end
+
+fn baz(i::Foo)
+    bar(i)
+end
+
+fn bar(i::Foo)
 end
 
