@@ -4,6 +4,7 @@
 #include "../../parse/data/ast.h"
 #include "../../data/pvector.h"
 #include "../../data/dict.h"
+#include "../../data/symbol.h"
 
 /* a Kludge is the output from the analyse stage of icarus
  *
@@ -94,6 +95,13 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *
  * returns 0 on failure
  */
 struct ic_type * ic_kludge_get_type(struct ic_kludge *kludge, char *tdecl_str);
+
+/* retrieve ic_type by symbol
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type * ic_kludge_get_type_from_symbol(struct ic_kludge *kludge, struct ic_symbol *type);
 
 /* retrieve func decl by string
  *

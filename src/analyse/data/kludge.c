@@ -384,16 +384,43 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *
  */
 struct ic_type * ic_kludge_get_type(struct ic_kludge *kludge, char *tdecl_str){
     if( ! kludge ){
-        puts("ic_kludge_get_tdecl: kludge was null");
+        puts("ic_kludge_get_type: kludge was null");
         return 0;
     }
 
     if( ! tdecl_str ){
-        puts("ic_kludge_get_tdecl: tdecl_str was null");
+        puts("ic_kludge_get_type: tdecl_str was null");
         return 0;
     }
 
     return ic_dict_get( &(kludge->dict_tname), tdecl_str );
+}
+
+/* retrieve ic_type by symbol
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type * ic_kludge_get_type_from_symbol(struct ic_kludge *kludge, struct ic_symbol *type){
+    char * type_str = 0;
+
+    if( ! kludge ){
+        puts("ic_kludge_get_type_from_symbol: kludge was null");
+        return 0;
+    }
+
+    if( ! type ){
+        puts("ic_kludge_get_type_from_symbol: type was null");
+        return 0;
+    }
+
+    type_str = ic_symbol_contents(type);
+    if( ! type_str ){
+        puts("ic_kludge_get_type_from_symbol: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    return ic_kludge_get_type(kludge, type_str);
 }
 
 /* retrieve func decl by string
