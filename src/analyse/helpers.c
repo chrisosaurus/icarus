@@ -353,7 +353,9 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
              *  infer addone(1) -> addone(Int)->Int -> Int
              *  expr->type == func_call
              *  fc = expr->u.fcall
-             *  fstr = str(fc) FIXME need to be able to infer arg types
+             *  fstr = str(fc)
+             *      TODO note that icarus fcalls are dependent on arg types
+             *           so we need to infer arg types by calling ic_analyse_infer on the arguments
              *  fdecl = kludge get fdecl from fstr
              *  tstr = fdecl->ret_type
              *  type = kludge get tdecl from tstr
@@ -364,7 +366,9 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
              *  infer Foo(1 "hello") -> Foo(Int String) -> Foo
              *  expr->type == func_call
              *  fc = expr->u.fcall
-             *  fstr = str(fc) FIXME need to be able to infer arg types
+             *  fstr = str(fc)
+             *      TODO note that icarus fcalls are dependent on arg types
+             *           so we need to infer arg types by calling ic_analyse_infer on the arguments
              *  fdecl = kludge get fdecl from fstr
              *  tstr = fdecl->ret_type
              *  type = kludge get tdecl from tstr
