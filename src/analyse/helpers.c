@@ -428,22 +428,6 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
             return 0;
 
         case ic_expr_type_constant:
-            /*
-             *  infer 1 -> Int
-             *  expr->type == constant
-             *  cons = expr->u.cons
-             *  cons->type == integer
-             *  return integer
-             */
-
-            /*
-             *  infer "hello" -> String
-             *  expr->type == constant
-             *  cons = expr->u.cons
-             *  cons->type == string
-             *  return string
-             */
-
             cons = ic_expr_get_constant(expr);
             if( ! cons ){
                 puts("ic_analyse_infer: constant: call to ic_expr_get_constant failed");
@@ -451,6 +435,13 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
             }
 
             switch( cons->type ){
+                /*
+                 *  infer 1 -> Int
+                 *  expr->type == constant
+                 *  cons = expr->u.cons
+                 *  cons->type == integer
+                 *  return integer
+                 */
                 case ic_expr_constant_type_integer:
                     type = ic_scope_get(scope, "Int");
                     if( ! type ){
@@ -460,6 +451,13 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
                     return type;
                     break;
 
+                /*
+                 *  infer "hello" -> String
+                 *  expr->type == constant
+                 *  cons = expr->u.cons
+                 *  cons->type == string
+                 *  return string
+                 */
                 case ic_expr_constant_type_string:
                     type = ic_scope_get(scope, "String");
                     if( ! type ){
