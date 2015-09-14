@@ -170,7 +170,7 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
         goto ERROR;
     }
 
-    puts("ic_analyse_func_decl: implementation pending");
+    puts("warning: ic_analyse_func_decl: implementation pending");
     return 1;
 
 ERROR:

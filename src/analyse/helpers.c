@@ -300,7 +300,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
         /* FIXME */
     }
 
-    puts("ic_analyse_body: unimplemented");
+    puts("warning: ic_analyse_body: implementation pending");
     return 1;
 
 ERROR:
@@ -680,7 +680,7 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
         return 0;
     }
 
-    puts("ic_analyse_let: implementation pending");
+    puts("warning: ic_analyse_let: implementation pending");
     return 1;
 }
 
