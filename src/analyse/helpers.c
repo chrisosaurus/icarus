@@ -327,6 +327,9 @@ ERROR:
  * returns 0 on failure
  */
 struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr){
+    struct ic_symbol *sym = 0;
+    char *ch = 0;
+    struct ic_slot *slot = 0;
 
     if( ! kludge ){
         puts("ic_analyse_infer: kludge was null");
@@ -371,10 +374,37 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
              *  expr->type = identifier
              *  id = expr->u.id
              *  name = str(id)
-             *  variable = get variable within scope name // FIXME no mechanism
+             *  variable = get variable within scope name
              *  type = get type of variable
              *  return type
              */
+
+            /* get symbol */
+            sym = &(expr->u.id.identifier);
+            /* char* representation */
+            ch = ic_symbol_contents(sym);
+            if( ! ch ){
+                puts("ic_analyse_infer: ic_expr_type_identifier: call to ic_symbol_contents failed");
+                return 0;
+            }
+
+            /* get slot from identifier (variable) name */
+            slot = ic_scope_get(scope, ch);
+            if( ! slot ){
+                /* FIXME unknown identifier
+                 * need helpful output here
+                 */
+                printf("ic_analyse_infer: unknown identifier '%s', not in scope\n", ch);
+                return 0;
+            }
+
+            if( ! slot->type ){
+                printf("ic_analyse_infer: error fetching identifier '%s', no type found\n", ch);
+                return 0;
+            }
+
+            /* return type */
+            return slot->type;
 
             puts("ic_analyse_infer: ic_expr_type_identifier unimplemented");
             return 0;
