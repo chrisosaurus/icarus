@@ -613,7 +613,7 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
         return 0;
     }
 
-    /* FIXME slot creation time
+    /* slot creation time
      * after gathering all the needed parts
      *
      * a slot needs:
@@ -680,7 +680,6 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
         return 0;
     }
 
-    puts("warning: ic_analyse_let: implementation pending");
     return 1;
 }
 

@@ -121,7 +121,6 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
         goto ERROR;
     }
 
-    puts("warning: ic_analyse_type_decl: implementation pending");
     return 1;
 
 ERROR:
@@ -170,7 +169,6 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
         goto ERROR;
     }
 
-    puts("warning: ic_analyse_func_decl: implementation pending");
     return 1;
 
 ERROR:

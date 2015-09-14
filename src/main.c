@@ -67,6 +67,7 @@ int main(int argc, char **argv){
         exit(1);
     }
 
+    puts("warning: main implementation pending, icarus is currently only partially functional");
     puts("analysis complete");
 
     /* clean up time
@@ -85,7 +86,6 @@ int main(int argc, char **argv){
     }
 #endif
 
-    puts("Warning: main implementation pending, icarus is currently only partially functional");
 
     free(source);
     free(tokens->tokens);
