@@ -212,6 +212,10 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
 
         /* get arg type */
         arg_type = ic_kludge_get_type_from_typeref(kludge, &(arg->type));
+        if( ! arg_type ){
+            puts("ic_analyse_func_decl: call to ic_kludge_get_type_from_typeref failed");
+            goto ERROR;
+        }
 
         /* create slot
          * args are not mutable so always 0
