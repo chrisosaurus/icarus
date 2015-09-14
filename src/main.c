@@ -58,7 +58,6 @@ int main(int argc, char **argv){
     puts("----------------\n");
 
 
-#if 0
     /* kludge section currently commented out as it is incomplete
      * and doesn't yet pass testing
      */
@@ -68,19 +67,25 @@ int main(int argc, char **argv){
         exit(1);
     }
 
+    puts("analysis complete");
 
-    /* clean up time */
+    /* clean up time
+     * this will destroy both the kludge and the ast (via aast)
+     */
     if( ! ic_kludge_destroy(kludge, 1) ){
         puts("main: ic_kludge_destroy call failed");
     }
-#endif
 
+#if 0
     /* FIXME ic_kludge_destroy will destroy ast
      * so no need to call both once the above is active
      */
     if( ! ic_ast_destroy(ast, 1) ){
         puts("main: ic_ast_destroy call failed");
     }
+#endif
+
+    puts("Warning: main implementation pending, icarus is currently only partially functional");
 
     free(source);
     free(tokens->tokens);
