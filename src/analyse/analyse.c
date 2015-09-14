@@ -4,6 +4,7 @@
 
 #include "helpers.h"
 #include "analyse.h"
+#include "data/slot.h"
 
 /* takes an ast and performs analysis on it
  * this returns a kludge
@@ -142,6 +143,17 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
     /* our scope */
     struct ic_scope *scope = 0;
 
+    /* current arg */
+    struct ic_field *arg = 0;
+    /* index into args */
+    unsigned int i = 0;
+    /* length of args */
+    unsigned int len = 0;
+    /* arg type */
+    struct ic_type *arg_type = 0;
+    /* slot created for arg */
+    struct ic_slot *slot = 0;
+
     if( ! kludge ){
         puts("ic_analyse_func_decl: kludge was null");
         return 0;
@@ -184,7 +196,41 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
      */
     fdecl->body.scope = scope;
 
-    /* FIXME insert each arg as a lot into a scope */
+    /* insert each arg as a lot into a scope
+     * FIXME this is gross as it means we are iterating through args twice
+     * once above for ic_analyse_field_list
+     * and again here
+     */
+    len = ic_pvector_length( &(fdecl->args) );
+
+    for( i=0; i<len; ++i ){
+        arg = ic_pvector_get( &(fdecl->args), i );
+        if( ! arg ){
+            puts("ic_analyse_func_decl: call to ic_pvector_get failed");
+            goto ERROR;
+        }
+
+        /* get arg type */
+        arg_type = ic_kludge_get_type_from_typeref(kludge, &(arg->type));
+
+        /* create slot
+         * args are not mutable so always 0
+         * references are not yet supported so 0 FIXME
+         */
+        slot = ic_slot_new(&(arg->name), arg_type, 0, 0);
+        if( ! slot ){
+            puts("ic_analyse_func_decl: call to ic_slot_new failed");
+            goto ERROR;
+        }
+
+        /* insert slot into scope */
+        if( ! ic_scope_insert(scope, ic_symbol_contents(&(arg->name)), slot) ){
+            puts("ic_analyse_func_decl: call to ic_scope_insert failed");
+            goto ERROR;
+        }
+
+        slot = 0;
+    }
 
     /* check body */
     if( ! ic_analyse_body( "func declaration", this_func, kludge, &(fdecl->body)) ){
