@@ -31,38 +31,5 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
  */
 unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl *fdecl);
 
-/* takes an expr and returns the inferred type as a symbol
- *
- * FIXME need a way of signalling error and passing errors
- * possible suggestions:
- *  0 -> unrecoverable / internal error
- *  special ic_type_ref * -> syntax error -> ignore this statement, record error, keep going
- *  ic_type_ref * -> actual type inferred
- *
- * examples:
- *  infer 1 -> Int
- *  infer "helo" -> String
- *  infer addone(1) -> addone(Int)->Int -> Int
- *  infer Foo(1 "hello") -> Foo(Int String) -> Foo
- *
- * returns ic_type_ref on success
- * returns 0 on failure
- */
-struct ic_type_ref * ic_analyse_infer(struct ic_kludge *kludge, struct ic_expr *expr);
-
-/* check a statement for validity
- *
- * FIXME need a way of signalling and passing errors
- *
- * examples:
- *  check let f::Foo = Foo(addone(1) "hello")
- *  check d(f)
- *  check print(s)
- *
- * returns 1 for success
- * returns 0 for error
- */
-unsigned int ic_analyse_check(struct ic_kludge *kludge, struct ic_stmt *stmt);
-
 #endif
 

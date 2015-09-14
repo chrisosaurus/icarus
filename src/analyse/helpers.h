@@ -32,7 +32,7 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
  */
 unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_scope *parent_scope);
 
-/* takes an expr and returns the inferred type as a symbol
+/* takes an expr and returns the inferred type
  *
  * FIXME need a way of signalling error and passing errors
  * possible suggestions:
@@ -46,10 +46,10 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
  *  infer addone(1) -> addone(Int)->Int -> Int
  *  infer Foo(1 "hello") -> Foo(Int String) -> Foo
  *
- * returns ic_type_ref on success
+ * returns ic_type * on success
  * returns 0 on failure
  */
-struct ic_type_ref * ic_analyse_infer(struct ic_kludge *kludge, struct ic_expr *expr);
+struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr);
 
 /* check a statement for validity
  *

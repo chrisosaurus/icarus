@@ -309,7 +309,7 @@ ERROR:
     return 0;
 }
 
-/* takes an expr and returns the inferred type as a symbol
+/* takes an expr and returns the inferred type
  *
  * FIXME need a way of signalling error and passing errors
  * possible suggestions:
@@ -323,10 +323,10 @@ ERROR:
  *  infer addone(1) which is a call to addone(Int) -> Int therefore Int
  *  infer Foo(1 "hello") which is call to Foo(Int String) -> Foo therefore Foo
  *
- * returns ic_type_ref on success
+ * returns ic_type * on success
  * returns 0 on failure
  */
-struct ic_type_ref * ic_analyse_infer(struct ic_kludge *kludge, struct ic_expr *expr){
+struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr){
 
     if( ! kludge ){
         puts("ic_analyse_infer: kludge was null");
