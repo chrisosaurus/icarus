@@ -533,19 +533,23 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
 
                 default:
                     puts("ic_analyse_infer: constant: impossible and unexpected constant, neither integer not string");
+                    return 0;
                     break;
             }
 
-            puts("ic_analyse_infer: ic_expr_type_constant unimplemented");
+            puts("ic_analyse_infer: constant: impossible case");
             return 0;
+            break;
 
         case ic_expr_type_operator:
             puts("ic_analyse_infer: ic_expr_type_operator unimplemented");
             return 0;
+            break;
 
         default:
             printf("ic_analyse_infer: unknown expr->type '%d'\n", expr->type);
             return 0;
+            break;
     }
 
     puts("ic_analyse_infer: unimplemented");
