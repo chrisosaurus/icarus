@@ -98,6 +98,7 @@ unsigned int ic_body_destroy(struct ic_body *body, unsigned int free_body){
         }
     }
 
+    /* FIXME currently leaking scope */
     body->scope = 0;
 
     /* free if asked nicely */
