@@ -2,6 +2,7 @@
 #define IC_TYPE_H
 
 #include "../../parse/data/decl.h"
+#include "type_builtin.h"
 
 /* an instance of a type
  * ic_type has a single instance for each type within a kludge (FIXME consider type scoping)
@@ -19,7 +20,7 @@ enum ic_type_type {
 struct ic_type {
     enum ic_type_type type;
     union {
-        /* FIXME what do we store for a builtin ? */
+        struct ic_type_builtin *builtin;
         struct ic_type_decl *decl;
     } u;
 };
