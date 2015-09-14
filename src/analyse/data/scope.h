@@ -1,6 +1,7 @@
 #ifndef ICARUS_CLUDGE_H
 #define ICARUS_CLUDGE_H
 
+#include "../../data/symbol.h"
 #include "../../data/dict.h"
 
 /* this is a scope used in the analyse phase
@@ -64,6 +65,16 @@ unsigned int ic_scope_insert(struct ic_scope *scope, char *key, void *data);
  * returns 0 on failure
  */
 void * ic_scope_get(struct ic_scope *scope, char *key);
+
+/* retrieve contents by symbol
+ *
+ * this will first search the current scope
+ * then, if a parent exists, it will continue search up parents
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+void * ic_scope_get_from_symbol(struct ic_scope *scope, struct ic_symbol *key);
 
 /* retrieve contents by string
  *

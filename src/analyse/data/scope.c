@@ -160,6 +160,36 @@ void * ic_scope_get(struct ic_scope *scope, char *key){
     return data;
 }
 
+/* retrieve contents by symbol
+ *
+ * this will first search the current scope
+ * then, if a parent exists, it will continue search up parents
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+void * ic_scope_get_from_symbol(struct ic_scope *scope, struct ic_symbol *key){
+    char *key_chars = 0;
+
+    if( ! scope ){
+        puts("ic_scope_get_symbol: scope was null");
+        return 0;
+    }
+
+    if( ! key ){
+        puts("ic_scope_get_symbol: key was null");
+        return 0;
+    }
+
+    key_chars = ic_symbol_contents(key);
+    if( ! key_chars ){
+        puts("ic_scope_get_symbol: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    return ic_scope_get(scope, key_chars);
+}
+
 /* retrieve contents by string
  *
  * this will first search the current scope
