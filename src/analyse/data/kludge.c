@@ -291,7 +291,8 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *
     /* cache str
      * do not need to free as this char* is stored on the tdecl
      */
-    str = ic_type_decl_str(tdecl); if( ! str ){
+    str = ic_type_decl_str(tdecl);
+    if( ! str ){
         puts("ic_kludge_add_tdecl: call to ic_type_decl_str failed");
         return 0;
     }
