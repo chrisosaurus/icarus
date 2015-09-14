@@ -74,6 +74,10 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
 
 /* create a function signature string from a function call
  *
+ * this function must be compatible with the one produced
+ * by `ic_func_decl_str`
+ *      foo(Int Int)
+ *
  * returns char * on success
  * returns 0 on failure
  */

@@ -672,10 +672,27 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
 
 /* create a function signature string from a function call
  *
+ * this function must be compatible with the one produced
+ * by `ic_func_decl_str`
+ *      foo(Int Int)
+ *
  * returns char * on success
  * returns 0 on failure
  */
 char * ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall){
+    /* resulting string, stored as fcall->string */
+    struct ic_string *str = 0;
+    /* offset into args pvector */
+    unsigned int i = 0;
+    /* len of args pvector */
+    unsigned int len = 0;
+    /* current argument */
+    struct ic_expr *expr = 0;
+    /* type of current argument */
+    struct ic_type *expr_type = 0;
+    /* current arg type's name */
+    struct ic_symbol *type_name = 0;
+
     if( ! kludge ){
         puts("ic_analyse_fcall_str: kludge was null");
         return 0;
@@ -691,9 +708,96 @@ char * ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, st
         return 0;
     }
 
-    /* FIXME implementation needed */
-    puts("ic_analyse_fcall_str: unimplemented");
+    if( fcall->string ){
+        /* don't recalculate */
+        goto EXIT;
+    }
+
+    /* construct a new string */
+    str = ic_string_new_empty();
+    if( ! str ){
+        puts("ic_analyse_fcall_str: call to ic_string_new_empty failed");
+        goto ERROR;
+    }
+
+    /* append function name */
+    if( ! ic_string_append_symbol(str, &(fcall->fname)) ){
+        puts("ic_analyse_fcall_str: call to ic_string_append_symbol for 'fname' failed");
+        goto ERROR;
+    }
+
+    /* opening bracket */
+    if( ! ic_string_append_char(str, "(", 1) ){
+        puts("ic_analyse_fcall_str: call to ic_string_append_char for '(' failed");
+        goto ERROR;
+    }
+
+    /* insert list of argument types */
+    len = ic_pvector_length( &(fcall->args) );
+    for( i=0; i<len; ++i ){
+        /* insert a space if this isn't the first arg */
+        if( i != 0 ){
+            if( ! ic_string_append_char(str, " ", 1) ){
+                puts("ic_analyse_fcall_str: call to ic_string_append_char for ' ' failed");
+                goto ERROR;
+            }
+        }
+
+        /* current arg */
+        expr = ic_pvector_get( &(fcall->args), i);
+        if( ! expr ){
+            puts("ic_analyse_fcall_str: call to ic_pvector_get failed");
+            goto ERROR;
+        }
+
+        /* current arg's type */
+        expr_type = ic_analyse_infer(kludge, scope, expr);
+        if( ! expr_type ){
+            printf("ic_analyse_fcall_str: call to ic_analyse_infer failed for argument '%i'\n", i);
+            goto ERROR;
+        }
+
+        /* current arg's type's name */
+        type_name = ic_type_name(expr_type);
+        if( ! type_name ){
+            printf("ic_analyse_fcall_str: call to ic_type_name failed for argument '%i'\n", i);
+            goto ERROR;
+        }
+
+        /* append our argument type */
+        if( ! ic_string_append_symbol(str, type_name) ){
+            printf("ic_analyse_fcall_str: call to ic_string_append_symbol for 'arg' '%i' failed\n", i);
+            goto ERROR;
+        }
+    }
+
+    /* closing bracket */
+    if( ! ic_string_append_char(str, ")", 1) ){
+        puts("ic_analyse_fcall_str: call to ic_string_append_char for ')' failed");
+        goto ERROR;
+    }
+
+    /* store string on fcall */
+    fcall->string = str;
+
+    goto EXIT;
+
+ERROR:
+    /* cleanup */
+    puts("ic_analyse_fcall_str: error occurred, destroying string");
+
+    if( str ){
+        ic_string_destroy(str, 1);
+    }
+
     return 0;
+
+EXIT:
+    /* we rely on fcall->string holding onto the ic_string
+     * otherwise we would have to clean up
+     * this is freed as part of ic_expr_func_call_destroy
+     */
+    return ic_string_contents(fcall->string);
 }
 
 

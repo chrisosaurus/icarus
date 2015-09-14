@@ -86,3 +86,19 @@ unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type){
     return 1;
 }
 
+/* return a symbol representing the name of this type
+ *
+ * returns ic_symbol * on sucess
+ * returns 0 on failure
+ */
+struct ic_symbol * ic_type_name(struct ic_type *type){
+    if( ! type ){
+        puts("ic_type_name: type was null");
+        return 0;
+    }
+
+    puts("ic_type_name: unimplemented");
+    return 0;
+}
+
+

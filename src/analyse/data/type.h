@@ -49,4 +49,11 @@ unsigned int ic_type_init_tdecl(struct ic_type *type, struct ic_type_decl *decl)
  */
 unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type);
 
+/* return a symbol representing the name of this type
+ *
+ * returns ic_symbol * on sucess
+ * returns 0 on failure
+ */
+struct ic_symbol * ic_type_name(struct ic_type *type);
+
 #endif
