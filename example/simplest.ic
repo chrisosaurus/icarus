@@ -1,0 +1,8 @@
+
+type Foo
+end
+
+fn main()
+    let f::Foo = 5
+end
+
