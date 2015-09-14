@@ -8,7 +8,7 @@
 /* a Kludge is the output from the analyse stage of icarus
  *
  * a Kludge consists of the following:
- *      dict Type name -> Type decl
+ *      dict Type name -> ic_type
  *      dict Func sig  -> Func decl
  *      list Type decls
  *      list Func decls
@@ -16,7 +16,7 @@
  *      AAST - annotated AST
  */
 struct ic_kludge {
-    /* dict Type name (char *) -> Type decl */
+    /* dict Type name (char *) -> ic_type */
     struct ic_dict dict_tname;
 
     /* dict Func sig (char *)  -> Func decl */
@@ -71,8 +71,8 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast);
 unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludge);
 
 /* add a new type decl to this kludge
- * this will insert into dict_tname and also
- * into tdecls
+ * this will insert into tdecls
+ * it will also construct a new ic_type and insert into dict_tname
  *
  * returns 1 on success
  * returns 0 on failure
@@ -88,14 +88,14 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *
  */
 unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *fdecl);
 
-/* retrieve type decl by string
+/* retrieve ic_type by string
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_type_decl * ic_kludge_get_tdecl(struct ic_kludge *kludge, char *tdecl_str);
+struct ic_type * ic_kludge_get_type(struct ic_kludge *kludge, char *tdecl_str);
 
-/* retrieve type decl by string
+/* retrieve func decl by string
  *
  * returns * on success
  * returns 0 on failure

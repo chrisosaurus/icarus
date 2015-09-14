@@ -40,7 +40,7 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
     /* set of all field names used */
     struct ic_set *set = 0;
     /* for each field this captures the type we resolve it to */
-    struct ic_type_decl *field_tdecl = 0;
+    struct ic_type *field_type = 0;
 
     if( ! unit ){
         puts("ic_analyse_field_list: unit was null");
@@ -135,8 +135,8 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
         }
 
         /* check that this field's type exists */
-        field_tdecl = ic_kludge_get_tdecl(kludge, type_str);
-        if( ! field_tdecl ){
+        field_type = ic_kludge_get_type(kludge, type_str);
+        if( ! field_type ){
             printf("ic_analyse_field_list: type '%s' mentioned in '%s' for '%s' does not exist within this kludge\n",
                     type_str,
                     unit,

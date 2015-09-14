@@ -2,6 +2,7 @@
 #include <stdlib.h> /* calloc */
 
 #include "kludge.h"
+#include "type.h"
 #include "../../data/pvector.h"
 #include "../../parse/data/decl.h"
 
@@ -268,14 +269,15 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
 }
 
 /* add a new type decl to this kludge
- * this will insert into dict_tname and also
- * into tdecls
+ * this will insert into tdecls
+ * it will also construct a new ic_type and insert into dict_tname
  *
  * returns 1 on success
  * returns 0 on failure
  */
 unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *tdecl){
     char * str = 0;
+    struct ic_type *type = 0;
 
     if( ! kludge ){
         puts("ic_kludge_add_tdecl: kludge was null");
@@ -300,10 +302,17 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *
         return 0;
     }
 
+    /* construct new ic_type */
+    type = ic_type_new_tdecl(tdecl);
+    if( ! type ){
+        puts("ic_kludge_add_tdecl: call to ic_type_new_tdecl failed");
+        return 0;
+    }
+
     /* insert into dict tname
      * returns 0 on failure
      */
-    if( ! ic_dict_insert(&(kludge->dict_tname), str, tdecl) ){
+    if( ! ic_dict_insert(&(kludge->dict_tname), str, type) ){
         puts("ic_kludge_add_tdecl: call to ic_dict_insert failed");
         return 0;
     }
@@ -367,12 +376,12 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *
     return 1;
 }
 
-/* retrieve type decl by string
+/* retrieve ic_type by string
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_type_decl * ic_kludge_get_tdecl(struct ic_kludge *kludge, char *tdecl_str){
+struct ic_type * ic_kludge_get_type(struct ic_kludge *kludge, char *tdecl_str){
     if( ! kludge ){
         puts("ic_kludge_get_tdecl: kludge was null");
         return 0;
@@ -386,7 +395,7 @@ struct ic_type_decl * ic_kludge_get_tdecl(struct ic_kludge *kludge, char *tdecl_
     return ic_dict_get( &(kludge->dict_tname), tdecl_str );
 }
 
-/* retrieve type decl by string
+/* retrieve func decl by string
  *
  * returns * on success
  * returns 0 on failure
