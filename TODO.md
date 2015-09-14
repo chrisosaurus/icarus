@@ -2,6 +2,8 @@ TODO:
 -----
 
 * decide on type case sensitivity (String vs string, Foo vs foo)
+* decide on void type handling
+* tidy up type_ref / symbol -> type handling, we now have kludge_get_type_from_type_ref and kludge_get_type_from_symbol
 * document parse function interfaces
 * write remaining parse code
 * it will be useful for callers of ic_parse_check_token to be able to distinguish between error (null tokens, dist failed) and comparison failures (the token was not as expected)
