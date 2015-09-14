@@ -581,6 +581,7 @@ unsigned int ic_analyse_check(struct ic_kludge *kludge, struct ic_stmt *stmt){
 unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_stmt_let *let){
     struct ic_slot *slot = 0;
     struct ic_type *type = 0;
+    char *type_str = 0;
 
     if( ! unit ){
         puts("ic_analyse_let: unit was null");
@@ -629,7 +630,7 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
      *
      */
 
-    /* we need to take teh let->type (symbol) and convert it to a full
+    /* we need to take the let->type (symbol) and convert it to a full
      * ic_type
      *
      * FIXME later on let->type may be null and we will instead
@@ -640,11 +641,21 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
         return 0;
     }
 
-    /* FIXME fetch type from kludge
+    type_str = ic_symbol_contents(&(let->type));
+    if( ! type_str ){
+        puts("ic_analyse_let: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    /* fetch type from kludge
      * not currently supported as here we want an ic_type
      * but the kludge is storing tdecls
      */
-    type = 0;
+    type = ic_kludge_get_type(kludge, type_str);
+    if( ! type ){
+        puts("ic_analyse_let: call to ic_kludge_get_type failed");
+        return 0;
+    }
 
     /*
      * FIXME ref is hardcoded (0) to false as they are not
