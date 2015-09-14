@@ -332,6 +332,11 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
     struct ic_slot *slot = 0;
     struct ic_type *type = 0;
 
+    struct ic_expr_func_call *fcall = 0;
+    struct ic_expr_identifier *id = 0;
+    struct ic_expr_constant *cons  = 0;
+    struct ic_expr_operator *op  = 0;
+
     if( ! kludge ){
         puts("ic_analyse_infer: kludge was null");
         return 0;
@@ -381,7 +386,18 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
              */
 
             /* get symbol */
-            sym = &(expr->u.id.identifier);
+            id = ic_expr_get_identifier(expr);
+            if( ! id ){
+                puts("ic_analyse_infer: ic_expr_type_identifier: call to ic_expr_get_identifier failed");
+                return 0;
+            }
+
+            sym = ic_expr_identifier_symbol(id);
+            if( ! sym ){
+                puts("ic_analyse_infer: ic_expr_type_identifier: call to ic_expr_identifier_symbol failed");
+                return 0;
+            }
+
             /* char* representation */
             ch = ic_symbol_contents(sym);
             if( ! ch ){

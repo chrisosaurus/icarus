@@ -434,6 +434,20 @@ unsigned int ic_expr_identifier_destroy(struct ic_expr_identifier * identifier, 
     return 1;
 }
 
+/* get idenifier symbol
+ *
+ * returns ic_symbol * on success
+ * returns 0 on error
+ */
+struct ic_symbol *ic_expr_identifier_symbol(struct ic_expr_identifier *identifier){
+    if( ! identifier ){
+        puts("ic_expr_identifier_symbol: identifier was null");
+        return 0;
+    }
+
+    return &(identifier->identifier);
+}
+
 /* allocate and init a new constant
  * returns pointer on success
  * returns 0 on failure

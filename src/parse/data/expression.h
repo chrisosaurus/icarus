@@ -123,6 +123,13 @@ unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, cha
  */
 unsigned int ic_expr_identifier_destroy(struct ic_expr_identifier * identifier, unsigned int free_id);
 
+/* get idenifier symbol
+ *
+ * returns ic_symbol * on success
+ * returns 0 on error
+ */
+struct ic_symbol *ic_expr_identifier_symbol(struct ic_expr_identifier *identifier);
+
 /* print this identifier */
 void ic_expr_identifier_print(struct ic_expr_identifier * identifier, unsigned int *indent_level);
 
