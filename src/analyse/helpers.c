@@ -444,13 +444,31 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
              *  return string
              */
 
-            switch( expr->u.cons.type ){
+            cons = ic_expr_get_constant(expr);
+            if( ! cons ){
+                puts("ic_analyse_infer: constant: call to ic_expr_get_constant failed");
+                return 0;
+            }
+
+            switch( cons->type ){
                 case ic_expr_constant_type_integer:
-                    puts("ic_analyse_infer: constant: integer not yet implemented");
+                    type = ic_scope_get(scope, "Int");
+                    if( ! type ){
+                        puts("ic_analyse_infer: constant: Int: call to ic_scope_get failed");
+                        return 0;
+                    }
+                    return type;
                     break;
+
                 case ic_expr_constant_type_string:
-                    puts("ic_analyse_infer: constant: string not yet implemented");
+                    type = ic_scope_get(scope, "String");
+                    if( ! type ){
+                        puts("ic_analyse_infer: constant: String: call to ic_scope_get failed");
+                        return 0;
+                    }
+                    return type;
                     break;
+
                 default:
                     puts("ic_analyse_infer: constant: impossible and unexpected constant, neither integer not string");
                     break;
