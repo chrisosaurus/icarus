@@ -1,6 +1,7 @@
 TODO:
 -----
 
+* decide on type case sensitivity (String vs string, Foo vs foo)
 * document parse function interfaces
 * write remaining parse code
 * it will be useful for callers of ic_parse_check_token to be able to distinguish between error (null tokens, dist failed) and comparison failures (the token was not as expected)

@@ -447,6 +447,7 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
                  *  return integer
                  */
                 case ic_expr_constant_type_integer:
+                    /* FIXME decide on type case sensitivity */
                     type = ic_scope_get(scope, "Int");
                     if( ! type ){
                         puts("ic_analyse_infer: constant: Int: call to ic_scope_get failed");
@@ -463,6 +464,7 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
                  *  return string
                  */
                 case ic_expr_constant_type_string:
+                    /* FIXME decide on type case sensitivity */
                     type = ic_scope_get(scope, "String");
                     if( ! type ){
                         puts("ic_analyse_infer: constant: String: call to ic_scope_get failed");
