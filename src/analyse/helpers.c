@@ -337,8 +337,15 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
     struct ic_expr_constant *cons  = 0;
     struct ic_expr_operator *op  = 0;
 
+    struct ic_func_decl *fdecl = 0;
+
     if( ! kludge ){
         puts("ic_analyse_infer: kludge was null");
+        return 0;
+    }
+
+    if( ! scope ){
+        puts("ic_analyse_infer: scope was null");
         return 0;
     }
 
@@ -349,6 +356,7 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
 
     switch( expr->type ){
         case ic_expr_type_func_call:
+
             /*
              *  infer addone(1) -> addone(Int)->Int -> Int
              *  expr->type == func_call
@@ -375,8 +383,56 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
              *  return type
              */
 
-            puts("ic_analyse_infer: ic_expr_type_func_call unimplemented");
-            return 0;
+
+            /* first convert the fcall to an fdecl */
+
+            /* FIXME bind fcall to fdecl
+             * FIXME no appropriate field on fdecl
+             */
+
+            fcall = ic_expr_get_fcall(expr);
+            if( ! fcall ){
+                puts("ic_analyse_infer: fcall: call to ic_expr_get_fcall failed");
+                return 0;
+            }
+
+            ch = ic_analyse_fcall_str(kludge, scope, fcall);
+            if( ! ch ){
+                puts("ic_analyse_infer: fcall: call to ic_analyse_fcall_str failed");
+                return 0;
+            }
+
+            fdecl = ic_kludge_get_fdecl(kludge, ch);
+            if( ! fdecl ){
+                /* FIXME return type not found
+                 * need helpful error message
+                 */
+                printf("ic_analyse_infer: fcall: error finding fdecl for fcall '%s'\n", ch);
+                return 0;
+            }
+
+            /* now convert the fdecl to a return type */
+
+            /* now we have to get the return type for this func */
+            sym = fdecl->ret_type;
+            if( ! sym ){
+                puts("ic_analyse_infer: fcall: failed to get fdecl_>ret_type");
+                return 0;
+            }
+
+            ch = ic_symbol_contents(sym);
+            if( ! sym ){
+                puts("ic_analyse_infer: fcall: call ot ic_symbol_contents failed for ret_type");
+                return 0;
+            }
+
+            /* FIXME bind type to fcall
+             * no appropriate field on fcall
+             */
+            type = ic_kludge_get_type(kludge, ch);
+
+            return type;
+            break;
 
         case ic_expr_type_identifier:
             /*
@@ -427,9 +483,7 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
 
             /* return type */
             return type;
-
-            puts("ic_analyse_infer: ic_expr_type_identifier unimplemented");
-            return 0;
+            break;
 
         case ic_expr_type_constant:
             cons = ic_expr_get_constant(expr);
@@ -606,6 +660,32 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
 
     puts("ic_analyse_let: implementation pending");
     return 1;
+}
+
+/* create a function signature string from a function call
+ *
+ * returns char * on success
+ * returns 0 on failure
+ */
+char * ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall){
+    if( ! kludge ){
+        puts("ic_analyse_fcall_str: kludge was null");
+        return 0;
+    }
+
+    if( ! scope ){
+        puts("ic_analyse_fcall_str: scope was null");
+        return 0;
+    }
+
+    if( ! fcall ){
+        puts("ic_analyse_fcall_str: fcall was null");
+        return 0;
+    }
+
+    /* FIXME implementation needed */
+    puts("ic_analyse_fcall_str: unimplemented");
+    return 0;
 }
 
 

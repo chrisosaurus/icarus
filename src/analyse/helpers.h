@@ -72,5 +72,12 @@ unsigned int ic_analyse_check(struct ic_kludge *kludge, struct ic_stmt *stmt);
  */
 unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_stmt_let *let);
 
+/* create a function signature string from a function call
+ *
+ * returns char * on success
+ * returns 0 on failure
+ */
+char * ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall);
+
 #endif // ifndef ICARUS_ANALYSE_HELPERS_H
 
