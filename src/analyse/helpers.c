@@ -355,8 +355,8 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
     }
 
     switch( expr->type ){
-        case ic_expr_type_func_call:
 
+        case ic_expr_type_func_call:
             /*
              *  infer addone(1) -> addone(Int)->Int -> Int
              *  expr->type == func_call
