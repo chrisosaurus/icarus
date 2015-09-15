@@ -299,7 +299,12 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                     goto ERROR;
                 }
 
-                /* FIXME warn about non-void in void context */
+                if( ! ic_type_isvoid(type) ){
+                /* warn about non-void in void context
+                 * FIXME make this more useful
+                 */
+                    puts("Warning: usage of non-void expression in void context");
+                }
 
                 break;
 
