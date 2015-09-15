@@ -32,7 +32,6 @@ fn read_file(file_name::String) -> Result<Vector<Line>>
             return Err(x)
     end
 
-    # iter is Result<(contents number)>
     for (line, count) in enumerate(&f)
         append(&v, Line(count line))
     end
