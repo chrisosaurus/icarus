@@ -6,6 +6,22 @@ type Line
   content::String
 end
 
+# this will require a lot of blocks that are of the form
+#
+#    let &f::File = match File(file_name)
+#        case OK(x)
+#            yield x
+#        case Err(x)
+#            return Err(x)
+#    end
+#
+# we may want to introduce a shorthand / macro that is equivalent
+#
+#   let &f::File = unwrap File(file_name)
+#
+#   this has to be syntax/macro as it may return from the current scope
+
+
 fn read_file(file_name::String) -> Result<Vector<Line>>
     let &v = Vector<Line>()
 
@@ -17,15 +33,8 @@ fn read_file(file_name::String) -> Result<Vector<Line>>
     end
 
     # iter is Result<(contents number)>
-    for iter in read_iterate_lines(&f)
-        let (line count) = match iter
-            case Ok(x)
-                yield x
-            case Err(x)
-                return Err(x)
-        end
-
-        append(&v Line(count line))
+    for (line, count) in enumerate(&f)
+        append(&v, Line(count line))
     end
 
     # box our Vector up as a success and return
@@ -42,7 +51,7 @@ fn main(file_name::String)
     end
 
     for line in results
-        print(line.number " : " line.contents)
+        print(line.number, " : ", line.contents)
     end
 
 end
