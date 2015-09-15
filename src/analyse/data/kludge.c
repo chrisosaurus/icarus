@@ -218,6 +218,12 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast){
         return 0;
     }
 
+    /* populate tbuiltins */
+    if( ! ic_kludge_populate_builtins(kludge) ){
+        puts("ic_kludge_init: errors: call to ic_kludge_populateb_uiltins failed");
+        return 0;
+    }
+
     /* ast ast */
     kludge->aast = ast;
 
@@ -229,12 +235,6 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast){
      */
     if( ! ic_kludge_populate_from_ast(kludge, ast) ){
         puts("ic_kludge_init: errors: call to ic_kludge_populate_from_ast failed");
-        return 0;
-    }
-
-    /* populate tbuiltins */
-    if( ! ic_kludge_populate_builtins(kludge) ){
-        puts("ic_kludge_init: errors: call to ic_kludge_populateb_uiltins failed");
         return 0;
     }
 
