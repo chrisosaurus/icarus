@@ -228,7 +228,7 @@ void ic_expr_func_call_print(struct ic_expr_func_call *fcall, unsigned int *inde
         return;
     }
     if( ! indent_level ){
-        puts("ic_expr_func_call_print: fcall was indent_level");
+        puts("ic_expr_func_call_print: indent_level was null");
         return;
     }
 
