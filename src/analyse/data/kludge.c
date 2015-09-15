@@ -41,10 +41,12 @@ static unsigned int ic_kludge_populate_builtins (struct ic_kludge *kludge){
             return 0;
         }
 
-        /* mark as void if this is the first type */
-        if( ! ic_type_builtin_mark_void(builtin) ){
-            printf("ic_kludge_populate_builtins: ic_type_builtin_mark_void failed for type '%s', i '%d'\n", types[i], i);
-            return 0;
+        if( i == 0 ){
+            /* mark as void if this is the first type */
+            if( ! ic_type_builtin_mark_void(builtin) ){
+                printf("ic_kludge_populate_builtins: ic_type_builtin_mark_void failed for type '%s', i '%d'\n", types[i], i);
+                return 0;
+            }
         }
 
         /* insert into kludge->tbuiltins */
