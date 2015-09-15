@@ -17,8 +17,8 @@
 static unsigned int ic_kludge_populate_builtins (struct ic_kludge *kludge){
     unsigned int i = 0;
     struct ic_symbol *sym = 0;
-    char *types[] =        { "Int", "String", "Void" };
-    unsigned int lens[] =  { 3,      6,        4     };
+    char *types[] =        { "Void", "Int", "String" };
+    unsigned int lens[] =  { 4,      3,      6       };
     struct ic_type_builtin *builtin = 0;
     struct ic_type *type = 0;
 
@@ -38,6 +38,12 @@ static unsigned int ic_kludge_populate_builtins (struct ic_kludge *kludge){
         builtin = ic_type_builtin_new(sym);
         if( ! builtin ){
             printf("ic_kludge_populate_builtins: ic_type_builtin_new failed for type '%s', i '%d'\n", types[i], i);
+            return 0;
+        }
+
+        /* mark as void if this is the first type */
+        if( ! ic_type_builtin_mark_void(builtin) ){
+            printf("ic_kludge_populate_builtins: ic_type_builtin_mark_void failed for type '%s', i '%d'\n", types[i], i);
             return 0;
         }
 

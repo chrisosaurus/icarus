@@ -53,6 +53,22 @@ unsigned int ic_type_builtin_init(struct ic_type_builtin *builtin, struct ic_sym
     return 1;
 }
 
+/* mark this type as the void type
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_type_builtin_mark_void(struct ic_type_builtin *builtin){
+    if( ! builtin ){
+        puts("ic_type_builtin_mark_void: builtin was null");
+        return 0;
+    }
+
+    builtin->isvoid = 1;
+
+    return 1;
+}
+
 /* destroy builtin
  *
  * will only free builtin is free_builtin is truthy

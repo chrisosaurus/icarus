@@ -8,6 +8,11 @@ struct ic_type_builtin {
      * destroy does not free
      */
     struct ic_symbol *name;
+
+    /* 1 if this is the void type
+     * 0 if this is not the void type
+     */
+    unsigned int isvoid;
 };
 
 /* allocate and initialise a new builtin
@@ -23,6 +28,13 @@ struct ic_type_builtin * ic_type_builtin_new(struct ic_symbol *name);
  * returns 0 on failure
  */
 unsigned int ic_type_builtin_init(struct ic_type_builtin *builtin, struct ic_symbol *name);
+
+/* mark this type as the void type
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_type_builtin_mark_void(struct ic_type_builtin *builtin);
 
 /* destroy builtin
  *

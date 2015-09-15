@@ -168,4 +168,22 @@ struct ic_symbol * ic_type_name(struct ic_type *type){
     return 0;
 }
 
+/* is this type void
+ *
+ * returns 1 if provided type is Void
+ * returns 0 if provided type is NOT void
+ */
+unsigned int ic_type_isvoid(struct ic_type *type){
+    if( ! type ){
+        puts("ic_type_isvoid: type was null");
+        return 0;
+    }
+
+    if( type->type != ic_type_builtin ){
+        return 0;
+    }
+
+    return type->u.builtin->isvoid;
+}
+
 

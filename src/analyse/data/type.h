@@ -70,4 +70,11 @@ unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type);
  */
 struct ic_symbol * ic_type_name(struct ic_type *type);
 
+/* is this type void
+ *
+ * returns 1 if provided type is Void
+ * returns 0 if provided type is NOT void
+ */
+unsigned int ic_type_isvoid(struct ic_type *type);
+
 #endif
