@@ -44,12 +44,6 @@ fn main() -> Void
     d(f)
 end
 
-type Int
-end
-
-type String
-end
-
 # print(String)
 fn print(s::String) -> Void
 end

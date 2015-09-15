@@ -37,8 +37,6 @@ fn main()\n\
 end\n\
 \n\
 # temporary hack to allow type and function analysis to pass\n\
-type Int end\n\
-type String end\n\
 fn print(s::String) end\n\
 fn print(i::Int) end\n\
 \n\

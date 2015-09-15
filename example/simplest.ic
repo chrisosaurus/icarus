@@ -1,4 +1,5 @@
 type Foo
+    i::Int
 end
 
 fn main() -> Void
