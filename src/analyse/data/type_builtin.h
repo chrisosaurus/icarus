@@ -15,7 +15,7 @@ struct ic_type_builtin {
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_type_builtin_new(struct ic_symbol *name);
+struct ic_type_builtin * ic_type_builtin_new(struct ic_symbol *name);
 
 /* initialise an existing builtin
  *

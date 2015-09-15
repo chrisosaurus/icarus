@@ -8,7 +8,7 @@
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_type_builtin_new(struct ic_symbol *name){
+struct ic_type_builtin * ic_type_builtin_new(struct ic_symbol *name){
     struct ic_type_builtin *builtin = 0;
 
     if( ! name ){
@@ -27,7 +27,7 @@ unsigned int ic_type_builtin_new(struct ic_symbol *name){
         return 0;
     }
 
-    return 1;
+    return builtin;
 }
 
 /* initialise an existing builtin
