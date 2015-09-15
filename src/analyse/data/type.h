@@ -38,6 +38,19 @@ struct ic_type * ic_type_new_tdecl(struct ic_type_decl *decl);
  * returns 0 on failure
  */
 unsigned int ic_type_init_tdecl(struct ic_type *type, struct ic_type_decl *decl);
+/* alloc and init a new type representing a builtin
+ *
+ * returns new type on success
+ * returns 0 on failure
+ */
+struct ic_type * ic_type_new_builtin(struct ic_type_builtin *builtin);
+
+/* init an existing type representing a builtin
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_type_init_builtin(struct ic_type *type, struct ic_type_builtin *builtin);
 
 /* destroy a type
  *
