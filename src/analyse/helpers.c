@@ -518,9 +518,9 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
                  */
                 case ic_expr_constant_type_integer:
                     /* FIXME decide on type case sensitivity */
-                    type = ic_scope_get(scope, "Int");
+                    type = ic_kludge_get_type(kludge, "Int");
                     if( ! type ){
-                        puts("ic_analyse_infer: constant: Int: call to ic_scope_get failed");
+                        puts("ic_analyse_infer: constant: Int: call to ic_kludge_get_type failed");
                         return 0;
                     }
                     return type;
@@ -535,9 +535,9 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
                  */
                 case ic_expr_constant_type_string:
                     /* FIXME decide on type case sensitivity */
-                    type = ic_scope_get(scope, "String");
+                    type = ic_kludge_get_type(kludge, "String");
                     if( ! type ){
-                        puts("ic_analyse_infer: constant: String: call to ic_scope_get failed");
+                        puts("ic_analyse_infer: constant: String: call to ic_kludge_get_type failed");
                         return 0;
                     }
                     return type;
