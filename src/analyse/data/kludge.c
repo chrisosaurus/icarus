@@ -1,10 +1,23 @@
 #include <stdio.h> /* puts */
 #include <stdlib.h> /* calloc */
 
-#include "kludge.h"
-#include "type.h"
 #include "../../data/pvector.h"
 #include "../../parse/data/decl.h"
+#include "kludge.h"
+#include "type_builtin.h"
+#include "type.h"
+
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
+/* populate kludge with builtins
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_kludge_populate_builtins (struct ic_kludge *kludge){
+    puts("warning: ic_kludge_populate_builtins: implementation needed");
+    return 0;
+}
 
 /* takes an ast and breaks it down to populate the supplied kludge
  *
@@ -131,6 +144,12 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast){
         return 0;
     }
 
+    /* pvector tbuiltins */
+    if( ! ic_pvector_init( &(kludge->tbuiltins), 0 ) ){
+        puts("ic_kludge_init: tdecl: call to ic_pvector_init failed");
+        return 0;
+    }
+
     /* pvector fdecls */
     if( ! ic_pvector_init( &(kludge->fdecls), 0 ) ){
         puts("ic_kludge_init: fdecl: call to ic_pvector_init failed");
@@ -157,6 +176,11 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast){
         return 0;
     }
 
+    /* populate tbuiltins */
+    if( ! ic_kludge_populate_builtins(kludge) ){
+        puts("ic_kludge_init: errors: call to ic_kludge_populateb_uiltins failed");
+        return 0;
+    }
 
     return 1;
 }
@@ -220,17 +244,30 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
     /* cleanup tdecls
      * ic_pvector_destroy(*vec, free_vec, (*destroy_item)());
      * do not free_vec as it is a member of kludge
-     * no need for destroy_item funcion
+     * no need for destroy_item function
      */
     if( ! ic_pvector_destroy( &(kludge->tdecls), 0, 0 ) ){
         puts("ic_kludge_destroy: call to ic_pvector_destroy for tdecls failed");
         return 0;
     }
 
+    /* cleanup tbuiltins
+     * ic_pvector_destroy(*vec, free_vec, (*destroy_item)());
+     * do not free_vec as it is a member of kludge
+     * no need for destroy_item function
+     *
+     * FIXME currently leaking builtins
+     */
+    if( ! ic_pvector_destroy( &(kludge->tbuiltins), 0, 0 ) ){
+        puts("ic_kludge_destroy: call to ic_pvector_destroy for tdecls failed");
+        return 0;
+    }
+
+
     /* cleanup fdecls
      * ic_pvector_destroy(*vec, free_vec, (*destroy_item)());
      * do not free_vec as it is a member of kludge
-     * no need for destroy_item funcion
+     * no need for destroy_item function
      */
     if( ! ic_pvector_destroy( &(kludge->fdecls), 0, 0 ) ){
         puts("ic_kludge_destroy: call to ic_pvector_destroy for fdecls failed");

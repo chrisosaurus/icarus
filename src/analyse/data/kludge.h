@@ -13,6 +13,7 @@
  *      dict Type name -> ic_type
  *      dict Func sig  -> Func decl
  *      list Type decls
+ *      list Type builtins
  *      list Func decls
  *      list of Errors
  *      AAST - annotated AST
@@ -26,6 +27,13 @@ struct ic_kludge {
 
     /* list of Type decls */
     struct ic_pvector tdecls;
+
+    /* list of Type builtins
+     * this is populated as part of kludge_init
+     * FIXME consider builtin population
+     * FIXME builtins currently leaked
+     */
+    struct ic_pvector tbuiltins;
 
     /* list of Func decls */
     struct ic_pvector fdecls;
