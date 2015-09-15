@@ -5,7 +5,7 @@ end
 
 fn fizzbuzz(from::Int, to::Int)
     for num in range(from to)
-        let &arr = []
+        let &arr::Vector<String> = []
 
         if is_div(num, 3)
             &arr.append("Fizz")
