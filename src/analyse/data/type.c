@@ -150,8 +150,7 @@ struct ic_symbol * ic_type_name(struct ic_type *type){
 
     switch( type->type ){
         case ic_type_builtin:
-            puts("ic_type_name: builtin: unimplemented");
-            return 0;
+            return type->u.builtin->name;
             break;
 
         case ic_type_user:
