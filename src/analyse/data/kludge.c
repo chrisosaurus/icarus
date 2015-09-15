@@ -15,8 +15,56 @@
  * returns 0 on failure
  */
 static unsigned int ic_kludge_populate_builtins (struct ic_kludge *kludge){
-    puts("warning: ic_kludge_populate_builtins: implementation needed");
-    return 0;
+    unsigned int i = 0;
+    struct ic_symbol *sym = 0;
+    char *types[] =        { "Int", "String", "Void" };
+    unsigned int lens[] =  { 3,      6,        4     };
+    struct ic_type_builtin *builtin = 0;
+    struct ic_type *type = 0;
+
+    for( i=0; i<3; ++i ){
+        /* construct symbol for type
+         * FIXME symbol leaked
+         */
+        sym = ic_symbol_new(types[i], lens[i]);
+        if( ! sym ){
+            printf("ic_kludge_populate_builtins: ic_symbol_new failed for type '%s', i '%d'\n", types[i], i);
+            return 0;
+        }
+
+        /* construct ic_type_builtin
+         * FIXME builtin leaked
+         */
+        builtin = ic_type_builtin_new(sym);
+        if( ! builtin ){
+            printf("ic_kludge_populate_builtins: ic_type_builtin_new failed for type '%s', i '%d'\n", types[i], i);
+            return 0;
+        }
+
+        /* insert into kludge->tbuiltins */
+        if( -1 == ic_pvector_append(&(kludge->tbuiltins), builtin) ){
+            printf("ic_kludge_populate_builtins: ic_pvector_append failed for type '%s', i '%d'\n", types[i], i);
+            return 0;
+        }
+
+        /* build ic_type
+         * FIXME this ic_type is leaked
+         */
+        type = ic_type_new_builtin(builtin);
+        if( ! type ){
+            printf("ic_kludge_populate_builtins: ic_type_new failed for type '%s', i '%d'\n", types[i], i);
+            return 0;
+        }
+
+        /* insert into dict_tname */
+        if( ! ic_dict_insert(&(kludge->dict_tname), types[i], type) ){
+            printf("ic_kludge_populate_builtins: ic_dict_insert failed for type '%s', i '%d'\n", types[i], i);
+            return 0;
+        }
+
+    }
+
+    return 1;
 }
 
 /* takes an ast and breaks it down to populate the supplied kludge
