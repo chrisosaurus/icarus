@@ -3,7 +3,7 @@ end
 
 fn main()
     let f::Foo = 5
-    bar(5)
+    bar(f)
 end
 
 fn baz(i::Foo)
