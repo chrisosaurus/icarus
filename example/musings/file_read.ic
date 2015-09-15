@@ -11,7 +11,7 @@ fn read_file(file_name::String) -> Vector<Line>
     let &f = File(file_name)
 
     for (line, count) in read_lines(&f)
-        append(&v Line(count line))
+        append(&v Line(count, line))
     end
 
     return v
@@ -21,7 +21,7 @@ fn main(file_name::String)
     let results = read_file(file_name)
 
     for line in results
-        print(line.number " : " line.contents)
+        print(line.number, " : ", line.contents)
     end
 end
 
