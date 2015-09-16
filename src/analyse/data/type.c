@@ -186,4 +186,22 @@ unsigned int ic_type_isvoid(struct ic_type *type){
     return type->u.builtin->isvoid;
 }
 
+/* are these 2 types the equal
+ *
+ * returns 1 if they are equal
+ * returns 0 of they are NOT equal
+ */
+unsigned int ic_type_equal(struct ic_type *a, struct ic_type *b){
+    if( ! a ){
+        puts("ic_type_equal: type a was null");
+        return 0;
+    }
+
+    if( ! b ){
+        puts("ic_type_equal: type b was null");
+        return 0;
+    }
+
+    return a == b;
+}
 

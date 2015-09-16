@@ -77,4 +77,11 @@ struct ic_symbol * ic_type_name(struct ic_type *type);
  */
 unsigned int ic_type_isvoid(struct ic_type *type);
 
+/* are these 2 types the equal
+ *
+ * returns 1 if they are equal
+ * returns 0 of they are NOT equal
+ */
+unsigned int ic_type_equal(struct ic_type *a, struct ic_type *b);
+
 #endif
