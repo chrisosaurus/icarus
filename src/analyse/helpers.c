@@ -628,6 +628,9 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
     struct ic_type *type = 0;
     char *type_str = 0;
 
+    struct ic_expr *init_expr = 0;
+    struct ic_type *init_type = 0;
+
     if( ! unit ){
         puts("ic_analyse_let: unit was null");
         return 0;
@@ -687,15 +690,13 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
     }
 
     type_str = ic_symbol_contents(&(let->type));
+    /* FIXME eventually this declared type will be optional */
     if( ! type_str ){
         puts("ic_analyse_let: call to ic_symbol_contents failed");
         return 0;
     }
 
-    /* fetch type from kludge
-     * not currently supported as here we want an ic_type
-     * but the kludge is storing tdecls
-     */
+    /* fetch type from kludge */
     type = ic_kludge_get_type(kludge, type_str);
     if( ! type ){
         /* FIXME type not found
@@ -722,6 +723,26 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
      */
     if( ! ic_scope_insert( body->scope, ic_symbol_contents(&(let->identifier)), slot ) ){
         puts("ic_analyse_let: call to ic_scope_insert failed");
+        return 0;
+    }
+
+    /* infer the type of init expression if one exists */
+    init_expr = let->init;
+    /* FIXME eventually such an expr will be optional */
+    if( ! init_expr ){
+        puts("ic_analyse_let: init_expr was null");
+        return 0;
+    }
+
+    init_type = ic_analyse_infer(kludge, body->scope, init_expr);
+    if( ! init_type ){
+        puts("ic_analyse_let: call to ic_analyse_infer on init_expr failed");
+        return 0;
+    }
+
+    /* if an init expression exists, verify it's type is the same as the declared */
+    if( ! ic_type_equal(init_type, type) ){
+        puts("ic_analyse_let: let init type did not match declared type");
         return 0;
     }
 

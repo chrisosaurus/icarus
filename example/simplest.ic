@@ -3,7 +3,7 @@ type Foo
 end
 
 fn main()
-    let f::Foo = 5
+    let f::Foo = new_foo(5)
     bar(f)
 end
 
@@ -12,5 +12,9 @@ fn baz(i::Foo)
 end
 
 fn bar(i::Foo)
+end
+
+# temporary hack
+fn new_foo(i::Int) -> Foo
 end
 
