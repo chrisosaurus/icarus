@@ -293,8 +293,8 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
      *
      * if we do, consume it, and then parse return type
      *
-     * if we do not, then there is no argument and we skip this
-     * and begin parsing the body
+     * if we do not, then there is no return type and we set this function as Void
+     * then begin parsing the body
      */
     if( ! ic_parse_check_token("->", 2, tokens->tokens, i) ){
         /* we found a type arrow and have skipped over it
@@ -316,6 +316,13 @@ struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i){
 
         /* advance over our type */
         ic_parse_token_advance(i, dist);
+    } else {
+        /* add Void type to our fdecl */
+        if( ! ic_func_decl_set_return(fdecl, "Void", 4) ){
+            puts("ic_parse_func_decl: call to ic_func_decl_set_return failed for 'Void'");
+            free(decl);
+            return 0;
+        }
     }
 
     /* parse body */
