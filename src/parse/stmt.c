@@ -189,6 +189,11 @@ static struct ic_stmt * ic_parse_stmt_if(struct ic_tokens *tokens, unsigned int 
      *
      *  if [operator] expr [operator expr] expr ... end
      *
+     * so every operator must be followed by an expr
+     * we must consume at least one expr
+     * after the first expr any additional expressions are ignored unless
+     *  preceded by an operator
+     *
      */
 
     puts("ic_parse_stmt_if: unimplemented");
