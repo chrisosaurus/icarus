@@ -167,28 +167,27 @@ static struct ic_stmt * ic_parse_stmt_if(struct ic_tokens *tokens, unsigned int 
     /* out eventual return value */
     struct ic_stmt *stmt = 0;
 
-    /* there are 2 cases of if we care about at this point
+    /* there are a few cases of if we care about at this point
      *
      *  if expr
      *      body
      *  end
      *
-     *  if expr operator expr
+     * an expression may contain more operators and expressions
+     * which yields a generic form of
+     *
+     *  if [operator] expr [operator expr] ...
      *      body
      *  end
      *
      * notice that after lexing these will appear as
      *
-     *  if expr body end
-     *
-     *  if expr operator body end
+     *  if [operator] expr [operator expr] ... body end
      *
      * and a body is a list of statements, some of which may be expressions in void context
      * so we have to be able to deal with
      *
-     *  if expr expr ... end
-     *
-     *  if expr operator expr expr ... end
+     *  if [operator] expr [operator expr] expr ... end
      *
      */
 
