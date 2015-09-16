@@ -34,6 +34,7 @@ testing debt:
 technical debt:
 -----
 
+* parse functions don't seem to check their arguments as well as analyse does
 * see docs/coding.md 'Error handling' section
 * parsing of '.' and ',' are not satisfactory, they are currently being caught as identifiers as the 'operator' code is only really for binary operators
 * all objects (esp. containers) need destructors (see `./scripts/destruct_audit.sh` for current list)
