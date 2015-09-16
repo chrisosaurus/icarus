@@ -313,9 +313,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                 break;
 
             case ic_stmt_type_expr:
-                /* infer expr type
-                 * FIXME warn if using non-void function in void context
-                 */
+                /* infer expr type */
                 expr = ic_stmt_get_expr(stmt);
                 if( ! expr ){
                     puts("ic_analyse_body: expr: call to ic_stmt_get_expr failed");
@@ -328,6 +326,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                     goto ERROR;
                 }
 
+                /* check if type is non-void so we can warn */
                 if( ! ic_type_isvoid(type) ){
                 /* warn about non-void in void context
                  * FIXME make this more useful
