@@ -1,6 +1,7 @@
 TODO:
 -----
 
+* allow 'return' from void functions, this needs support at both parse and analyse levels
 * decide on type case sensitivity (String vs string, Foo vs foo)
 * decide on void type handling
 * tidy up type_ref / symbol -> type handling, we now have kludge_get_type_from_type_ref and kludge_get_type_from_symbol

@@ -205,6 +205,10 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
     struct ic_expr *expr = 0;
     /* type of expression */
     struct ic_type *type = 0;
+    /* another type when we need to juggle */
+    struct ic_type *other_type = 0;
+    /* ret from stmt */
+    struct ic_stmt_ret *ret = 0;
 
     if( ! unit ){
         puts("ic_analyse_body: unit was null");
@@ -254,8 +258,33 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                 /* infer type of expression
                  * check returned value matches declared return type
                  */
-                puts("ic_analyse_body: unimplemented stmt->type ic_stmt_type_ret");
-                goto ERROR;
+                ret = ic_stmt_get_ret(stmt);
+                if( ! ret ){
+                    puts("ic_analyse_body: failed to infer returned type");
+                    goto ERROR;
+                }
+
+                expr = ret->ret;
+                if( ! expr ){
+                    puts("ic_analyse_body: failed to infer returned type");
+                    goto ERROR;
+                }
+
+                /* type actually returned */
+                /* FIXME what about void ? */
+                type = ic_analyse_infer(kludge, body->scope, expr);
+                if( ! type ){
+                    puts("ic_analyse_body: failed to infer returned type");
+                    goto ERROR;
+                }
+
+                other_type = ic_kludge_get_type_from_symbol(kludge, fdecl->ret_type);
+                /* compare to declared return type */
+                if( ! ic_type_equal(type, other_type) ){
+                    puts("ic_analyse_body: ret: returned type did not match declared");
+                    goto ERROR;
+                }
+
                 break;
 
             case ic_stmt_type_let:
