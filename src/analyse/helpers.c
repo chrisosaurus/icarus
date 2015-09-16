@@ -271,9 +271,9 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                 }
 
                 /* type actually returned */
-                /* FIXME what about void ? */
                 type = ic_analyse_infer(kludge, body->scope, expr);
                 if( ! type ){
+                    /* Void is a concrete type so type being null is an error */
                     puts("ic_analyse_body: failed to infer returned type");
                     goto ERROR;
                 }
@@ -281,6 +281,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                 other_type = ic_kludge_get_type_from_symbol(kludge, fdecl->ret_type);
                 /* compare to declared return type */
                 if( ! ic_type_equal(type, other_type) ){
+                    /* Void is a concrete type so type being null is an error */
                     puts("ic_analyse_body: ret: returned type did not match declared");
                     goto ERROR;
                 }
