@@ -2,15 +2,15 @@ type Foo
     i::Int
 end
 
-fn main() -> Void
+fn main()
     let f::Foo = 5
     bar(f)
 end
 
-fn baz(i::Foo) -> Void
+fn baz(i::Foo)
     bar(i)
 end
 
-fn bar(i::Foo) -> Void
+fn bar(i::Foo)
 end
 
