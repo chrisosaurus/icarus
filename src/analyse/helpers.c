@@ -209,6 +209,10 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
     struct ic_type *other_type = 0;
     /* ret from stmt */
     struct ic_stmt_ret *ret = 0;
+    /* if from stmt */
+    struct ic_stmt_if *sif = 0;
+    /* new scope for body of if */
+    struct ic_scope *if_scope = 0;
 
     if( ! unit ){
         puts("ic_analyse_body: unit was null");
@@ -308,8 +312,58 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                  * need to the recurse to validate the body in
                  * each branch
                  */
-                puts("ic_analyse_body: unimplemented stmt->type ic_stmt_type_if");
-                goto ERROR;
+
+                /* pull out if stmt */
+                sif = ic_stmt_get_sif(stmt);
+                if( ! sif ){
+                    puts("ic_analyse_body: if: call to ic_stmt_get_sif failed");
+                    goto ERROR;
+                }
+
+                /* pull out if expr */
+                expr = sif->expr;
+                if( ! expr ){
+                    puts("ic_analyse_body: if: no expr found in if");
+                    goto ERROR;
+                }
+
+                /* check expr and get type */
+                type = ic_analyse_infer(kludge, body->scope, expr);
+                if( ! type ){
+                    puts("ic_analyse_body: if: failed to infer type of condition expr");
+                    goto ERROR;
+                }
+
+                /* check if this expression is void
+                 * as a void has no boolean interpretation
+                 */
+                if( ic_type_isvoid(type) ){
+                    puts("ic_analyse_body: if: void expression used as if condition");
+                    goto ERROR;
+                }
+
+                /* FIXME may want to check if this expression can be interpreted as boolean */
+
+                /* check if body
+                 * and if produces a new scope, so we must construct one and attach it
+                 * FIXME this scope is leaked
+                 */
+                if_scope = ic_scope_new(body->scope);
+                if( ! if_scope ){
+                    puts("ic_analyse_body: if: call to ic_scope_new failed");
+                    goto ERROR;
+                }
+
+                /* attach new scope to if body
+                 * FIXME this scope is leaked */
+                sif->body.scope = if_scope;
+
+                /* analyse body of if */
+                if( ! ic_analyse_body( unit, unit_name, kludge, &(sif->body), fdecl) ){
+                    puts("ic_analyse_body: if: ic_analyse_body failed");
+                    goto ERROR;
+                }
+
                 break;
 
             case ic_stmt_type_expr:
