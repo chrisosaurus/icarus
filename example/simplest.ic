@@ -16,5 +16,8 @@ end
 
 # temporary hack
 fn new_foo(i::Int) -> Foo
+    if i == 5
+        puts("hello")
+    end
 end
 
