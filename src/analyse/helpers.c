@@ -189,10 +189,12 @@ ERROR:
  * it is always printed as '%s for %s error goes here'
  * e.g. unit of 'function declaration', name of 'Foo'
  *
+ * fdecl is the function containing this body
+ *
  * returns 1 on success (pass)
  * returns 0 on failure
  */
-unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body){
+unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_func_decl *fdecl){
     /* index into body */
     unsigned int i = 0;
     /* len of body */
@@ -251,9 +253,6 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
             case ic_stmt_type_ret:
                 /* infer type of expression
                  * check returned value matches declared return type
-                 *
-                 * FIXME how do we get the functions return type?
-                 * what if we are n-bodies deep
                  */
                 puts("ic_analyse_body: unimplemented stmt->type ic_stmt_type_ret");
                 goto ERROR;
