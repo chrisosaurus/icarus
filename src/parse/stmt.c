@@ -166,6 +166,10 @@ static struct ic_stmt * ic_parse_stmt_let(struct ic_tokens *tokens, unsigned int
 static struct ic_stmt * ic_parse_stmt_if(struct ic_tokens *tokens, unsigned int *i){
     /* out eventual return value */
     struct ic_stmt *stmt = 0;
+    /* our condition expression */
+    struct ic_expr *expr = 0;
+    /* our body */
+    struct ic_body *body = 0;
 
     /* there are a few cases of if we care about at this point
      *
@@ -194,10 +198,40 @@ static struct ic_stmt * ic_parse_stmt_if(struct ic_tokens *tokens, unsigned int 
      * after the first expr any additional expressions are ignored unless
      *  preceded by an operator
      *
+     * the above requires knowledge of available operators at parse time
      */
 
-    puts("ic_parse_stmt_if: unimplemented");
-    return 0;
+    stmt = ic_stmt_new(ic_stmt_type_if);
+    if( ! stmt ){
+        puts("ic_parse_stmt_if: call to ic_stmt_new failed");
+        return 0;
+    }
+
+    /* consume if */
+    if( ic_parse_check_token("if", 2, tokens->tokens, i) ){
+        puts("ic_parse_stmt_ret: Failed to find `return` token");
+        free(stmt);
+        return 0;
+    }
+
+    /* FIXME parse if condition */
+
+    /* save our expr on the body stmt */
+    stmt->u.sif.expr = expr;
+
+    /* parse our body */
+    body = ic_parse_body(tokens, i);
+    if( ! body ){
+        puts("ic_parse_stmt_if: call to ic_parse_body failed");
+        return 0;
+    }
+
+    /* save our body on the stmt */
+    stmt->u.sif.body = body;
+
+    /* FIXME consume end */
+
+    return stmt;
 }
 
 /* consume token

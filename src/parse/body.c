@@ -6,6 +6,12 @@
 /* ignore unused parameter warnings */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
+/* parse a body
+ * a body ends when an unmatched `end` is found, this will be consumed
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
 struct ic_body * ic_parse_body(struct ic_tokens *tokens, unsigned int *i){
     /* the body we eventually return */
     struct ic_body *body = 0;
@@ -24,9 +30,10 @@ struct ic_body * ic_parse_body(struct ic_tokens *tokens, unsigned int *i){
         return 0;
     }
 
-    /* initialise our body */
-    if( ! ic_body_init(body) ){
-        puts("ic_parse_body: call to ic_body_init failed");
+    /* create our body */
+    body = ic_body_new();
+    if( ! body ){
+        puts("ic_parse_body: call to ic_body_new failed");
         return 0;
     }
 

@@ -117,6 +117,12 @@ struct ic_stmt * ic_parse_stmt(struct ic_tokens *tokens, unsigned int *i);
 
 /**** parse/body.c ****/
 
+/* parse a body
+ * a body ends when an unmatched `end` is found, this will be consumed
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
 struct ic_body * ic_parse_body(struct ic_tokens *tokens, unsigned int *i);
 
 
