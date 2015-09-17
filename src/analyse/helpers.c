@@ -354,12 +354,17 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                     goto ERROR;
                 }
 
+                if( ! sif->body ){
+                    puts("ic_analyse_body: if: if statement had no body");
+                    goto ERROR;
+                }
+
                 /* attach new scope to if body
                  * FIXME this scope is leaked */
-                sif->body.scope = if_scope;
+                sif->body->scope = if_scope;
 
                 /* analyse body of if */
-                if( ! ic_analyse_body( unit, unit_name, kludge, &(sif->body), fdecl) ){
+                if( ! ic_analyse_body( unit, unit_name, kludge, sif->body, fdecl) ){
                     puts("ic_analyse_body: if: ic_analyse_body failed");
                     goto ERROR;
                 }

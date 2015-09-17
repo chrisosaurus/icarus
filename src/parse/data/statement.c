@@ -326,14 +326,9 @@ unsigned int ic_stmt_if_init(struct ic_stmt_if *sif){
         return 0;
     }
 
-    /* let body_init handle the work */
-    if( ! ic_body_init( &(sif->body) ) ){
-        puts("ic_stmt_if_init: call ot ic_body_init failed");
-        return 0;
-    }
-
-    /* just zero out expr */
+    /* just zero out expr and body*/
     sif->expr = 0;
+    sif->body = 0;
 
     /* return success */
     return 1;
@@ -361,7 +356,7 @@ unsigned int ic_stmt_if_destroy(struct ic_stmt_if *sif, unsigned int free_if){
     }
 
     /* free_body = 0 as member */
-    if( ! ic_body_destroy( &(sif->body), 0 ) ){
+    if( ! ic_body_destroy( sif->body, 0 ) ){
         puts("ic_stmt_if_detroy: call to ic_body_destroy failed");
         return 0;
     }
@@ -398,7 +393,7 @@ struct ic_stmt * ic_stmt_if_get_stmt(struct ic_stmt_if *sif, unsigned int i){
     }
 
     /* let body do the lifting */
-    return ic_body_get( &(sif->body), i );
+    return ic_body_get( sif->body, i );
 }
 
 /* get length of body
@@ -413,7 +408,7 @@ unsigned int ic_stmt_if_length(struct ic_stmt_if *sif){
     }
 
     /* let body do the lifting */
-    return ic_body_length( &(sif->body) );
+    return ic_body_length( sif->body );
 }
 
 /* print this if */
@@ -445,7 +440,7 @@ void ic_stmt_if_print(struct ic_stmt_if *sif, unsigned int *indent_level){
     /* print body
      * body will handle incr and decr of the indent level
      */
-    ic_body_print( &(sif->body), indent_level );
+    ic_body_print( sif->body, indent_level );
 
     /* statements are displayed on their own line */
     puts("end");

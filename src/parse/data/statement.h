@@ -107,12 +107,8 @@ void ic_stmt_let_print(struct ic_stmt_let *let, unsigned int *indent_level);
  *  end
  */
 struct ic_stmt_if {
-    /* FIXME making this an ic_expr *
-     * to simplify interface between
-     * parse stmt and parse expr
-     */
     struct ic_expr *expr;
-    struct ic_body body;
+    struct ic_body *body;
 };
 
 /* allocate and initialise a new ic_stmtm_if
