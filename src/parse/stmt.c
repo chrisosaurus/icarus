@@ -173,32 +173,21 @@ static struct ic_stmt * ic_parse_stmt_if(struct ic_tokens *tokens, unsigned int 
 
     /* there are a few cases of if we care about at this point
      *
-     *  if expr
+     *  if expr then
      *      body
      *  end
      *
      * an expression may contain more operators and expressions
      * which yields a generic form of
      *
-     *  if [operator] expr [operator expr] ...
+     *  if [operator] expr [operator expr] ... then
      *      body
      *  end
      *
      * notice that after lexing these will appear as
      *
-     *  if [operator] expr [operator expr] ... body end
+     *  if [operator] expr [operator expr] ... then body end
      *
-     * and a body is a list of statements, some of which may be expressions in void context
-     * so we have to be able to deal with
-     *
-     *  if [operator] expr [operator expr] expr ... end
-     *
-     * so every operator must be followed by an expr
-     * we must consume at least one expr
-     * after the first expr any additional expressions are ignored unless
-     *  preceded by an operator
-     *
-     * the above requires knowledge of available operators at parse time
      */
 
     stmt = ic_stmt_new(ic_stmt_type_if);
