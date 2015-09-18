@@ -12,6 +12,7 @@
  * a Kludge consists of the following:
  *      dict Type name -> ic_type
  *      dict Func sig  -> Func decl
+ *      dict op name -> func name (symbol)
  *      list Type decls
  *      list Type builtins
  *      list Func decls
@@ -25,8 +26,15 @@ struct ic_kludge {
     /* dict Func sig (char *)  -> Func decl */
     struct ic_dict dict_fsig;
 
+    /* dict Op name (char*) -> Func name (symbol *)
+     * e.g.
+     * + -> symbol(Plus)
+     */
+    struct ic_dict dict_op;
+
     /* list of Type decls */
     struct ic_pvector tdecls;
+
 
     /* list of Type builtins
      * this is populated as part of kludge_init
