@@ -504,8 +504,8 @@ static struct ic_expr * ic_parse_expr_operator(struct ic_tokens *tokens, unsigne
     }
 
     /* initialise our operator */
-    if( ! ic_expr_operator_init(operator, left, right, op_start, op_len) ){
-        puts("ic_parse_expr_operator: call to ic_expr_operator_init failed");
+    if( ! ic_expr_operator_init_binary(operator, left, right, op_start, op_len) ){
+        puts("ic_parse_expr_operator: call to ic_expr_operator_init_binary failed");
         free(expr);
         free(left);
         free(right);

@@ -180,30 +180,63 @@ struct ic_string * ic_expr_constant_get_string(struct ic_expr_constant *constant
 /* print this constant */
 void ic_expr_constant_print(struct ic_expr_constant *constant, unsigned int *indent_level);
 
+enum ic_expr_operator_type {
+    ic_expr_operator_type_unary,
+    ic_expr_operator_type_binary
+};
+
 /* an application of an operator to 2
  * sub expressions
  *
  * maps to a function call
  */
 struct ic_expr_operator {
-    struct ic_expr * lexpr;
-    struct ic_expr * rexpr;
+    enum ic_expr_operator_type type;
+    /* all operators must have a symbol */
     struct ic_symbol op;
+    /* unary operators will only have a first
+     * binary operators will have a first and second
+     */
+    struct ic_expr * first;
+    struct ic_expr * second;
 };
 
-/* allocate and initialise a new op
+/* allocate and initialise a new unary op
  *
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr_operator * ic_expr_operator_new(struct ic_expr *lexpr, struct ic_expr *rexpr, char *op, unsigned int op_len);
+struct ic_expr_operator * ic_expr_operator_new_unary(struct ic_expr *first, char *op, unsigned int op_len);
+
+/* initialise an existing unary op
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_operator_init_unary(struct ic_expr_operator *operator, struct ic_expr *first, char *op, unsigned int op_len);
+
+/* allocate and initialise a new binary op
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr_operator * ic_expr_operator_new_binary(struct ic_expr *first, struct ic_expr *second, char *op, unsigned int op_len);
+
+/* initialise an existing binary op
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_operator_init_binary(struct ic_expr_operator *operator, struct ic_expr *first, struct ic_expr *second, char *op, unsigned int op_len);
 
 /* initialise an existing op
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, struct ic_expr *lexpr, struct ic_expr *rexpr, char *op, unsigned int op_len);
+unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, enum ic_expr_operator_type type, struct ic_expr *first, struct ic_expr *second, char *op, unsigned int op_len);
+
+
 
 /* destroy operator
  *

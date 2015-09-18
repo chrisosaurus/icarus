@@ -541,40 +541,34 @@ void ic_expr_constant_print(struct ic_expr_constant *constant, unsigned int *ind
     }
 }
 
-
-/* allocate and initialise a new op
+/* allocate and initialise a new unary op
  *
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr_operator * ic_expr_operator_new(struct ic_expr *lexpr, struct ic_expr *rexpr, char *op, unsigned int op_len){
+struct ic_expr_operator * ic_expr_operator_new_unary(struct ic_expr *first, char *op, unsigned int op_len){
     struct ic_expr_operator *operator = 0;
 
-    if( ! lexpr ){
-        puts("ic_expr_operator_new: lexpr was null");
-        return 0;
-    }
-
-    if( ! rexpr ){
-        puts("ic_expr_operator_new: rexpr was null");
+    if( ! first ){
+        puts("ic_expr_operator_new_unary: first was null");
         return 0;
     }
 
     if( ! op ){
-        puts("ic_expr_operator_new: op char* was null");
+        puts("ic_expr_operator_new_unary: op char* was null");
         return 0;
     }
 
     /* allocate */
     operator = calloc(1, sizeof(struct ic_expr_operator));
     if( ! operator ){
-        puts("ic_expr_operator_new: calloc failed");
+        puts("ic_expr_operator_new_unary: calloc failed");
         return 0;
     }
 
     /* initialise */
-    if( ! ic_expr_operator_init(operator, lexpr, rexpr, op, op_len) ){
-        puts("ic_expr_operator_new: call to ic_expr_operator_init failed");
+    if( ! ic_expr_operator_init_unary(operator, first, op, op_len) ){
+        puts("ic_expr_operator_new_unary: call to ic_expr_operator_init_unary failed");
         free(operator);
         return 0;
     }
@@ -583,46 +577,109 @@ struct ic_expr_operator * ic_expr_operator_new(struct ic_expr *lexpr, struct ic_
     return operator;
 }
 
+/* initialise an existing unary op
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_operator_init_unary(struct ic_expr_operator *operator, struct ic_expr *first, char *op, unsigned int op_len){
+    return ic_expr_operator_init(operator, ic_expr_operator_type_unary, first, 0, op, op_len);
+}
+
+
+/* allocate and initialise a new binary op
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr_operator * ic_expr_operator_new_binary(struct ic_expr *first, struct ic_expr *second, char *op, unsigned int op_len){
+    struct ic_expr_operator *operator = 0;
+
+    if( ! first ){
+        puts("ic_expr_operator_new_binary: first was null");
+        return 0;
+    }
+
+    if( ! second ){
+        puts("ic_expr_operator_new_binary: second was null");
+        return 0;
+    }
+
+    if( ! op ){
+        puts("ic_expr_operator_new_binary: op char* was null");
+        return 0;
+    }
+
+    /* allocate */
+    operator = calloc(1, sizeof(struct ic_expr_operator));
+    if( ! operator ){
+        puts("ic_expr_operator_new_binary: calloc failed");
+        return 0;
+    }
+
+    /* initialise */
+    if( ! ic_expr_operator_init_binary(operator, first, second, op, op_len) ){
+        puts("ic_expr_operator_new_binary: call to ic_expr_operator_init_binary failed");
+        free(operator);
+        return 0;
+    }
+
+    /* success */
+    return operator;
+}
+
+/* initialise an existing binary op
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_operator_init_binary(struct ic_expr_operator *operator, struct ic_expr *first, struct ic_expr *second, char *op, unsigned int op_len){
+    return ic_expr_operator_init(operator, ic_expr_operator_type_binary, first, second, op, op_len);
+}
+
 /* initialise an existing op
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, struct ic_expr *lexpr, struct ic_expr *rexpr, char *op, unsigned int op_len){
-
+unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, enum ic_expr_operator_type type, struct ic_expr *first, struct ic_expr *second, char *op, unsigned int op_len){
     if( ! operator ){
-        puts("ic_expr_operator_init: operator was null");
+        puts("ic_expr_operator_init_binary: operator was null");
         return 0;
     }
 
-    if( ! lexpr ){
-        puts("ic_expr_operator_init: lexpr was null");
-        return 0;
-    }
-
-    if( ! rexpr ){
-        puts("ic_expr_operator_init: rexpr was null");
+    if( ! first ){
+        puts("ic_expr_operator_init_binary: first was null");
         return 0;
     }
 
     if( ! op ){
-        puts("ic_expr_operator_init: op char* was null");
+        puts("ic_expr_operator_init_binary: op char* was null");
         return 0;
     }
 
+    if( type == ic_expr_operator_type_binary ){
+        if( ! second ){
+            puts("ic_expr_operator_init_binary: second was null");
+            return 0;
+        }
+
+        operator->second = second;
+    }
 
     /* initialise symbol op */
     if( ! ic_symbol_init( &(operator->op), op, op_len ) ){
-        puts("ic_expr_operator_init: call to ic_symbol_init failed");
+        puts("ic_expr_operator_init_binary: call to ic_symbol_init failed");
         return 0;
     }
 
     /* assign sub expressions */
-    operator->lexpr = lexpr;
-    operator->rexpr = rexpr;
+    operator->first = first;
+    operator->type = type;
 
     /* success */
     return 1;
+
 }
 
 /* destroy operator
@@ -638,18 +695,18 @@ unsigned int ic_expr_operator_destroy(struct ic_expr_operator *op, unsigned int 
         return 0;
     }
 
-    if( op->lexpr ){
+    if( op->first ){
         /* free = 1 as pointer */
-        if( ! ic_expr_destroy( op->lexpr, 1 ) ){
-            puts("ic_expr_operator_destroy: lexpr : call to ic_expr_destroy failed");
+        if( ! ic_expr_destroy( op->first, 1 ) ){
+            puts("ic_expr_operator_destroy: first : call to ic_expr_destroy failed");
             return 0;
         }
     }
 
-    if( op->rexpr ){
+    if( op->second ){
         /* free = 1 as pointer */
-        if( ! ic_expr_destroy( op->rexpr, 1 ) ){
-            puts("ic_expr_operator_destroy: rexpr : call to ic_expr_destroy failed");
+        if( ! ic_expr_destroy( op->second, 1 ) ){
+            puts("ic_expr_operator_destroy: second : call to ic_expr_destroy failed");
             return 0;
         }
     }
@@ -684,15 +741,33 @@ void ic_expr_operator_print(struct ic_expr_operator *op, unsigned int *indent_le
     /* print indent before expr */
     ic_parse_print_indent(*indent_level);
 
-    /* assuming infix
-     * print:
-     *  left op right
-     */
-    ic_expr_print(op->lexpr, &fake_indent);
-    fputs(" ", stdout);
-    ic_symbol_print(&(op->op));
-    fputs(" ", stdout);
-    ic_expr_print(op->rexpr, &fake_indent);
+    switch( op->type ){
+        case ic_expr_operator_type_unary:
+            /* print prefix
+             * print:
+             *  op first
+             */
+            ic_symbol_print(&(op->op));
+            fputs(" ", stdout);
+            ic_expr_print(op->first, &fake_indent);
+            break;
+
+        case ic_expr_operator_type_binary:
+            /* print infix
+             * print:
+             *  first op second
+             */
+            ic_expr_print(op->first, &fake_indent);
+            fputs(" ", stdout);
+            ic_symbol_print(&(op->op));
+            fputs(" ", stdout);
+            ic_expr_print(op->second, &fake_indent);
+
+            break;
+        default:
+            puts("ic_expr_operator_print: unknown operator type");
+            break;
+    }
 }
 
 
