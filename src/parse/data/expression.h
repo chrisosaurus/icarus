@@ -236,8 +236,6 @@ unsigned int ic_expr_operator_init_binary(struct ic_expr_operator *operator, str
  */
 unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, enum ic_expr_operator_type type, struct ic_expr *first, struct ic_expr *second, char *op, unsigned int op_len);
 
-
-
 /* destroy operator
  *
  * will free op if `free_op` is truthy
