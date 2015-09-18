@@ -1,6 +1,7 @@
 TODO:
 -----
 
+* when a variable is declared we must also check it doesn't shadow a type, function, or operator
 * allow 'return' from void functions, this needs support at both parse and analyse levels
 * decide on type case sensitivity (String vs string, Foo vs foo)
 * decide on void type handling
