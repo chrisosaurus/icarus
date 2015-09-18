@@ -69,6 +69,11 @@ Perl:
 
 * `obj->method()` => `namespace_of(obj)::method(obj)` shorthand
 
+Pony:
+
+* I had been considering forcing conditional expressions to be boolean, Pony helped convince me
+* I was unsure of `if cond then ... end`, but Pony convinced me
+
 
 Prolog:
 
