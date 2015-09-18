@@ -14,7 +14,7 @@ fn find_last_hello(arr::Array<1,String>) -> String
   let last::String
 
   for str in arr
-    if str == "hello"
+    if str == "hello" then
 
       # here we are storing an immutable reference to str in the mutable variable last
       last = str

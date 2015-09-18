@@ -7,15 +7,15 @@ fn fizzbuzz(from::Int, to::Int)
     for num in range(from to)
         let &arr::Vector<String>
 
-        if is_div(num, 3)
+        if is_div(num, 3) then
             &arr.append("Fizz")
         end
 
-        if is_div(num, 5)
+        if is_div(num, 5) then
             &arr.append("Buzz")
         end
 
-        if length(arr) == 0
+        if length(arr) == 0 then
             &arr.append(num)
         end
 

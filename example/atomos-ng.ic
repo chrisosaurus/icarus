@@ -47,48 +47,48 @@ fn tick( &cells :: Array<Cell, xd, yd, zd> )
                 let &ca = cells[x, y, z]
 
                 # consider swap with x pos neigh
-                if cells.contains(x+1, y, z)
+                if cells.contains(x+1, y, z) then
                     let &cb = cells[x+1, y, z]
                     let ra, rb = Math::random(N_GAS), Math::random(N_GAS)
 
-                    if ca.gas_counts[ra]
+                    if ca.gas_counts[ra] then
                         &ca.gas_counts[ra]--
                         &cb.gas_counts[ra]++
                     end
 
-                    if cb.gas_counts[rb]
+                    if cb.gas_counts[rb] then
                         &ca.gas_counts[rb]++
                         &cb.gas_counts[rb]--
                     end
                 end
 
                 # consider swap with y pos neigh
-                if cells.contains(x, y+1, z)
+                if cells.contains(x, y+1, z) then
                     let &cb = cells[x, y+1, z]
                     let ra, rb = Math::random(N_GAS), Math::random(N_GAS)
 
-                    if ca.gas_counts[ra]
+                    if ca.gas_counts[ra] then
                         &ca.gas_counts[ra]--
                         &cb.gas_counts[ra]++
                     end
 
-                    if cb.gas_counts[rb]
+                    if cb.gas_counts[rb] then
                         &ca.gas_counts[rb]++
                         &cb.gas_counts[rb]--
                     end
                 end
 
                 # consider swap with z pos neigh
-                if cells.contains(x, y, z+1)
+                if cells.contains(x, y, z+1) then
                     let &cb = cells[x, y, z+1]
                     let ra, rb = Math::random(N_GAS), Math::random(N_GAS)
 
-                    if ca.gas_counts[ra]
+                    if ca.gas_counts[ra] then
                         &ca.gas_counts[ra]--
                         &cb.gas_counts[ra]++
                     end
 
-                    if cb.gas_counts[rb]
+                    if cb.gas_counts[rb] then
                         &ca.gas_counts[rb]++
                         &cb.gas_counts[rb]--
                     end
