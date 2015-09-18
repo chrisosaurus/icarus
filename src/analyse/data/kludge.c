@@ -9,6 +9,45 @@
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
+/* populate kludge with operators
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_kludge_populate_operators(struct ic_kludge *kludge){
+    unsigned int i = 0;
+    struct ic_symbol *sym= 0;
+
+    /* here we have tables showing
+     * operators: the from operator (char *)
+     * functions: the to function (char *)
+     * lengths:   length of function char * (unsigned int)
+     */
+
+    /*                              0      1        2       3      4      5     6    */
+    char          *operators[] = { "!",   "==",    "+",    "and", "&&",  "or", "||" };
+    char          *functions[] = { "not", "equal", "plus", "and", "and", "or", "or" };
+    unsigned int     lengths[] = { 3,     5,       4,      3,     3,     2,    2,   };
+
+    for( i=0; i<7; ++i ){
+        /* create symbol for function, this is our value */
+        sym = ic_symbol_new(functions[i], lengths[i]);
+        if( ! sym ){
+            printf("ic_kludge_populate_operators: call to ic_symbol_new failed for type '%s', i '%d'\n", operators[i], i);
+            return 0;
+        }
+
+        /* insert into dict_op */
+        if( ! ic_dict_insert(&(kludge->dict_op), operators[i], sym) ){
+            printf("ic_kludge_populate_operators: ic_dict_insert failed for type '%s', i '%d'\n", operators[i], i);
+            return 0;
+        }
+
+    }
+
+    return 1;
+}
+
 /* populate kludge with builtins
  *
  * returns 1 on success
@@ -224,9 +263,15 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast){
         return 0;
     }
 
+    /* populate dict_op */
+    if( ! ic_kludge_populate_operators(kludge) ){
+        puts("ic_kludge_init: errors: call to ic_kludge_populate_operators failed");
+        return 0;
+    }
+
     /* populate tbuiltins */
     if( ! ic_kludge_populate_builtins(kludge) ){
-        puts("ic_kludge_init: errors: call to ic_kludge_populateb_uiltins failed");
+        puts("ic_kludge_init: errors: call to ic_kludge_populate_builtins failed");
         return 0;
     }
 
