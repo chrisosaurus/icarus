@@ -198,15 +198,26 @@ static struct ic_stmt * ic_parse_stmt_if(struct ic_tokens *tokens, unsigned int 
 
     /* consume if */
     if( ic_parse_check_token("if", 2, tokens->tokens, i) ){
-        puts("ic_parse_stmt_ret: Failed to find `return` token");
+        puts("ic_parse_stmt_ret: Failed to find `if` token");
         free(stmt);
         return 0;
     }
 
-    /* FIXME parse if condition */
+    /* FIXME parse if condition
+     * continue parsing until we encounter 'then'
+     */
 
     /* save our expr on the body stmt */
     stmt->u.sif.expr = expr;
+
+    /* FIXME check that our 'expr' has the type Bool */
+
+    /* consume then */
+    if( ic_parse_check_token("then", 4, tokens->tokens, i) ){
+        puts("ic_parse_stmt_ret: Failed to find `then` token");
+        free(stmt);
+        return 0;
+    }
 
     /* parse our body */
     body = ic_parse_body(tokens, i);
