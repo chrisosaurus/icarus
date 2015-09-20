@@ -134,6 +134,45 @@ struct ic_type * ic_kludge_get_type_from_typeref(struct ic_kludge *kludge, struc
  */
 struct ic_func_decl * ic_kludge_get_fdecl(struct ic_kludge *kludge, char *fdecl_str);
 
+/* retrieve func decl by symbol
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_func_decl * ic_kludge_get_fdecl_from_symbol(struct ic_kludge *kludge, struct ic_symbol *fdecl);
+
+/* check if an existing identifier is taken either within the kludge or the provided sope
+ *
+ * if scope is not provided (null) then it will not be checked (and no error will be raised)
+ *
+ * this checks:
+ *  already an existing an identifier within the scope
+ *  already in use as a type name
+ *  already in use as a function name
+ *  already in use as an operator
+ *
+ * returns 1 if the identifier exists
+ * returns 0 if the identifier does not exist
+ * returns -1 on failure
+ */
+int ic_kludge_identifier_exists(struct ic_kludge *kludge, struct ic_scope *scope, char *identifier);
+
+/* check if an existing identifier is taken either within the kludge or the provided sope
+ *
+ * if scope is not provided (null) then it will not be checked (and no error will be raised)
+ *
+ * this checks:
+ *  already an existing an identifier within the scope
+ *  already in use as a type name
+ *  already in use as a function name
+ *  already in use as an operator
+ *
+ * returns 1 if the identifier exists
+ * returns 0 if the identifier does not exist
+ * returns -1 on failure
+ */
+int ic_kludge_identifier_exists_symbol(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_symbol *identifier);
+
 /* add a new error to error list
  *
  * FIXME no error type

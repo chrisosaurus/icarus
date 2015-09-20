@@ -622,6 +622,135 @@ struct ic_func_decl * ic_kludge_get_fdecl(struct ic_kludge *kludge, char *fdecl_
     return ic_dict_get( &(kludge->dict_fsig), fdecl_str );
 }
 
+/* retrieve func decl by symbol
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_func_decl * ic_kludge_get_fdecl_from_symbol(struct ic_kludge *kludge, struct ic_symbol *fdecl){
+    char *fdecl_str = 0;
+
+    if( ! kludge ){
+        puts("ic_kludge_get_fdecl_from_symbol: kludge was null");
+        return 0;
+    }
+
+    if( ! fdecl ){
+        puts("ic_kludge_get_fdecl_from_symbol: fdecl was null");
+        return 0;
+    }
+
+    fdecl_str = ic_symbol_contents(fdecl);
+    if( ! fdecl_str ){
+        puts("ic_kludge_get_fdecl_from_symbol: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    return ic_kludge_get_fdecl(kludge, fdecl_str);
+}
+
+/* check if an existing identifier is taken either within the kludge or the provided scope
+ *
+ * if scope is not provided (null) then it will not be checked (and no error will be raised)
+ *
+ * this checks:
+ *  already an existing an identifier within the scope
+ *  already in use as a type name
+ *  already in use as a function name
+ *  already in use as an operator
+ *
+ * returns 1 if the identifier exists
+ * returns 0 if the identifier does not exist
+ * returns -1 on failure
+ */
+int ic_kludge_identifier_exists(struct ic_kludge *kludge, struct ic_scope *scope, char *identifier){
+    if( ! kludge ){
+        puts("ic_kludge_identifier_exists: kludge was null");
+        return -1;
+    }
+
+    if( ! identifier ){
+        puts("ic_kludge_identifier_exists: identifier was null");
+        return -1;
+    }
+
+    /* only check in scope if provided, scope is optional */
+    if( scope ){
+        /* check if identifier is used within scope */
+        if( ic_scope_get(scope, identifier) ){
+            /* identifier was found in scope */
+            return 1;
+        }
+    }
+
+    /* check for existing type */
+    if( ic_kludge_get_type(kludge, identifier) ){
+        /* identifier was found as a type in kludge */
+        return 1;
+    }
+
+    /* check for existing func */
+    if( ic_kludge_get_fdecl(kludge, identifier) ){
+        /* identifier was found as a func in kludge */
+        return 1;
+    }
+
+    /* FIXME check for operator */
+
+    return 0;
+}
+
+/* check if an existing identifier is taken either within the kludge or the provided scope
+ *
+ * if scope is not provided (null) then it will not be checked (and no error will be raised)
+ *
+ * this checks:
+ *  already an existing an identifier within the scope
+ *  already in use as a type name
+ *  already in use as a function name
+ *  already in use as an operator
+ *
+ * returns 1 if the identifier exists
+ * returns 0 if the identifier does not exist
+ * returns -1 on failure
+ */
+int ic_kludge_identifier_exists_symbol(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_symbol *identifier){
+    if( ! kludge ){
+        puts("ic_kludge_identifier_exists_symbol: kludge was null");
+        return -1;
+    }
+
+    if( ! identifier ){
+        puts("ic_kludge_identifier_exists_symbol: identifier was null");
+        return -1;
+    }
+
+    /* only check in scope if provided, scope is optional */
+    if( scope ){
+        /* check if identifier is used within scope */
+        if( ic_scope_get_from_symbol(scope, identifier) ){
+            /* identifier was found in scope */
+            return 1;
+        }
+    }
+
+    /* check for existing type */
+    if( ic_kludge_get_type_from_symbol(kludge, identifier) ){
+        /* identifier was found as a type in kludge */
+        return 1;
+    }
+
+    /* check for existing func */
+    if( ic_kludge_get_fdecl_from_symbol(kludge, identifier) ){
+        /* identifier was found as a func in kludge */
+        return 1;
+    }
+
+    /* FIXME check for operator */
+
+    return 0;
+}
+
 /* add a new error to error list
  *
  * FIXME no error type
