@@ -690,6 +690,8 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
     struct ic_expr *init_expr = 0;
     struct ic_type *init_type = 0;
 
+    int ret = 0;
+
     if( ! unit ){
         puts("ic_analyse_let: unit was null");
         return 0;
@@ -736,6 +738,17 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
      *  ic_expr init
      *
      */
+
+    /* check if identifier is already in use */
+    ret = ic_kludge_identifier_exists_symbol(kludge, body->scope, &(let->identifier));
+    if( 1 == ret ){
+        printf("ic_analyse_let: identifier already exists '%s'\n", ic_symbol_contents(&(let->identifier)));
+        return 0;
+    }
+    if( 0 != ret ){
+        printf("ic_analyse_let: error checking for identifier existence '%s'\n", ic_symbol_contents(&(let->identifier)));
+        return 0;
+    }
 
     /* we need to take the let->type (symbol) and convert it to a full
      * ic_type
