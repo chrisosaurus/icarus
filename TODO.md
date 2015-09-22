@@ -32,6 +32,7 @@ testing debt:
 technical debt:
 -----
 
+* lexer output is a space separated char array of 'tokens' (strings), which means string/symbol comparison is done all over parse/analyse, would prefer an enum token type
 * `fdecl`, `tdecl`, `type_decl`, `func_decl` are all intermixed
 * parse functions don't seem to check their arguments as well as analyse does
 * see docs/coding.md 'Error handling' section

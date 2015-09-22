@@ -6,7 +6,7 @@ struct ic_tokens {
     unsigned int len;
     /* length of char *tokens allocated */
     unsigned int cap;
-    /* spare separated char array of tokens */
+    /* space separated char array of tokens */
     char *tokens;
 };
 
