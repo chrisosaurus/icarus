@@ -112,6 +112,7 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
         return 0;
     }
 
+    /* check type name doesn't shadow */
     ret = ic_kludge_identifier_exists_symbol(kludge, 0, &(tdecl->name));
     if( 1 == ret ){
         printf("ic_analyse_type_decl: identifier already exists '%s'\n", ic_symbol_contents(&(tdecl->name)));
@@ -178,6 +179,7 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
         return 0;
     }
 
+    /* check function name doesn't shadow another identifiers */
     ret = ic_kludge_identifier_exists_symbol(kludge, 0, &(fdecl->name));
     if( 1 == ret ){
         printf("ic_analyse_func_decl: identifier already exists '%s'\n", ic_symbol_contents(&(fdecl->name)));
@@ -232,6 +234,17 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
         if( ! arg ){
             puts("ic_analyse_func_decl: call to ic_pvector_get failed");
             goto ERROR;
+        }
+
+        /* check each argument name does not shadow an existing identifier */
+        ret = ic_kludge_identifier_exists_symbol(kludge, 0, &(arg->name));
+        if( 1 == ret ){
+            printf("ic_analyse_func_decl: arg identifier already exists '%s'\n", ic_symbol_contents(&(arg->name)));
+            return 0;
+        }
+        if( 0 != ret ){
+            printf("ic_analyse_func_decl: error checking for arg identifier existence '%s'\n", ic_symbol_contents(&(arg->name)));
+            return 0;
         }
 
         /* get arg type */
