@@ -99,6 +99,8 @@ ERROR:
 unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl *tdecl){
     /* name of current type we are trying to declare */
     char *this_type = 0;
+    /* return value for checking if identifier already exists */
+    int ret = 0;
 
     if( ! kludge ){
         puts("ic_analyse_type_decl: kludge was null");
@@ -107,6 +109,16 @@ unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl 
 
     if( ! tdecl ){
         puts("ic_analyse_type_decl: tdecl was null");
+        return 0;
+    }
+
+    ret = ic_kludge_identifier_exists_symbol(kludge, 0, &(tdecl->name));
+    if( 1 == ret ){
+        printf("ic_analyse_type_decl: identifier already exists '%s'\n", ic_symbol_contents(&(tdecl->name)));
+        return 0;
+    }
+    if( 0 != ret ){
+        printf("ic_analyse_type_decl: error checking for identifier existence '%s'\n", ic_symbol_contents(&(tdecl->name)));
         return 0;
     }
 
@@ -154,6 +166,8 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
     /* slot created for arg */
     struct ic_slot *slot = 0;
 
+    int ret = 0;
+
     if( ! kludge ){
         puts("ic_analyse_func_decl: kludge was null");
         return 0;
@@ -161,6 +175,16 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
 
     if( ! fdecl ){
         puts("ic_analyse_func_decl: fdecl was null");
+        return 0;
+    }
+
+    ret = ic_kludge_identifier_exists_symbol(kludge, 0, &(fdecl->name));
+    if( 1 == ret ){
+        printf("ic_analyse_func_decl: identifier already exists '%s'\n", ic_symbol_contents(&(fdecl->name)));
+        return 0;
+    }
+    if( 0 != ret ){
+        printf("ic_analyse_func_decl: error checking for identifier existence '%s'\n", ic_symbol_contents(&(fdecl->name)));
         return 0;
     }
 
