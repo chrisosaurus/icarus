@@ -66,7 +66,7 @@ test: clean $(OBJ) $(TESTO) test_custom test_success cleanobj
 
 
 test_custom: $(OBJ)
-	@echo "\n\ncompiling t/custom/test_example.c to bin/t/custom/test_example"
+	@echo -e "\n\ncompiling t/custom/test_example.c to bin/t/custom/test_example"
 	@mkdir -p `dirname bin/t/custom/test_example`
 	@${CC} t/custom/test_example.c -o bin/t/custom/test_example ${LDFLAGS} ${OBJ}
 	@echo running test_example.pl
@@ -74,7 +74,7 @@ test_custom: $(OBJ)
 
 # compile and run each test
 $(TESTO) : $(TESTOUT)/% : %.c
-	@echo "\n\ncompiling $< to $@"
+	@echo -e "\n\ncompiling $< to $@"
 	@mkdir -p `dirname $@`
 	@${CC} $< -o $@ ${LDFLAGS} ${OBJ}
 	@echo running test
@@ -82,7 +82,7 @@ $(TESTO) : $(TESTOUT)/% : %.c
 
 # signal test success
 test_success:
-	@echo "\n\ntesting success\n"
+	@echo -e "\n\ntesting success\n"
 
 .PHONY: all clean cleanobj icarus test test_custom example
 
