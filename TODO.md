@@ -2,7 +2,6 @@ TODO:
 -----
 
 * allow 'return' from void functions, this needs support at both parse and analyse levels
-* decide on type case sensitivity (String vs string, Foo vs foo)
 * decide on void type handling
 * tidy up type_ref / symbol -> type handling, we now have kludge_get_type_from_type_ref and kludge_get_type_from_symbol
 * document parse function interfaces
@@ -10,14 +9,13 @@ TODO:
 * it will be useful for callers of ic_parse_check_token to be able to distinguish between error (null tokens, dist failed) and comparison failures (the token was not as expected)
 * add escaping support to lexing string (escaping " with \)
 * add kludge testing
-* an fcall should also store the found fdecl (post analysis)
+* an fcall should also store the found function (fdecl or fbuiltin) (post analysis)
 * symbol interning
 
 
 bugs:
 -----
 
-* docs/internal/types.md specifies ic_type_ref -> ic_type -> ic_type_decl, however ic_type_ref currently refers directly to an ic_type_decl
 * `,` vs space separated args (in decl and call) needs to be implemented correctly
 
 
@@ -34,6 +32,7 @@ testing debt:
 technical debt:
 -----
 
+* `fdecl`, `tdecl`, `type_decl`, `func_decl` are all intermixed
 * parse functions don't seem to check their arguments as well as analyse does
 * see docs/coding.md 'Error handling' section
 * parsing of '.' and ',' are not satisfactory, they are currently being caught as identifiers as the 'operator' code is only really for binary operators
