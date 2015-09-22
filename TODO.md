@@ -32,7 +32,9 @@ testing debt:
 technical debt:
 -----
 
+* lexer output will (probably) need to keep track of newlines
 * lexer output is a space separated char array of 'tokens' (strings), which means string/symbol comparison is done all over parse/analyse, would prefer an enum token type
+* lexer token type should include original line text, source file and location
 * `fdecl`, `tdecl`, `type_decl`, `func_decl` are all intermixed
 * parse functions don't seem to check their arguments as well as analyse does
 * see docs/coding.md 'Error handling' section
