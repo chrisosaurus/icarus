@@ -1,7 +1,7 @@
 #ifndef ICARUS_LEX_H
 #define ICARUS_LEX_H
 
-#include "../data/pvector.h"
+#include "../../data/pvector.h"
 
 enum ic_token_id {
     IC_NEWLINE,
