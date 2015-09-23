@@ -4,6 +4,8 @@
 #include "../../data/pvector.h"
 
 enum ic_token_id {
+    IC_IDENTIFIER, /* no entry in table[] */
+
     IC_NEWLINE,
     IC_END,
 
@@ -15,11 +17,10 @@ enum ic_token_id {
 
     IC_TYPE,
     IC_FUNC,
-    IC_IDENTIFIER,
 
     IC_ARROW,
-    IC_ASSIGN,
-    IC_EQUAL,
+    IC_EQUAL, /* == */
+    IC_ASSIGN, /* = */
     IC_DOUBLECOLON, /* :: double colon */
     IC_PERIOD,
     IC_COMMA,
