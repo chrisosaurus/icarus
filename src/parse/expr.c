@@ -114,12 +114,94 @@ static struct ic_expr * ic_parse_expr_identifier(struct ic_tokens *tokens, unsig
     /* dist of our identifier */
     unsigned int dist = 0;
 
+    /* iter into this identifier */
+    unsigned int iter = 0;
+    /* current char in identifier we are checking */
+    char ch = 0;
+
     if( ! tokens ){
         puts("ic_parse_expr_identifier: tokens was null");
         return 0;
     }
     if( ! i ){
         puts("ic_parse_expr_identifier: i was null");
+        return 0;
+    }
+
+    /* find the distance for our token */
+    dist = ic_parse_token_length(tokens->tokens, *i);
+    if( ! dist ){
+        puts("ic_parse_expr_identifier: call to ic_parse_token_length failed");
+        free(expr);
+        return 0;
+    }
+
+    ch = tokens->tokens[*i];
+
+    /* the first character must be within
+     * a - z (functions, variables and arguments)
+     * A - Z (types)
+     * _
+     */
+    if( ('a' <= ch && ch <= 'z' ) ||
+        ('A' <= ch && ch <= 'Z' ) ||
+        ( '_' == ch ) ){
+        /* valid starting character */
+    } else if( '.' == ch || '+' == ch || '=' == ch || ',' == ch ){
+        /* FIXME temporarily allowed characters
+         * until operator parsing work is completed
+         */
+    } else {
+        /* illegal starting character */
+        printf("ic_parse_expr_identifier: illegal starting character '%c' found in identifier '%.*s'\n",
+                ch,
+                dist,
+                &(tokens->tokens[*i]));
+        return 0;
+    }
+
+    /* all other characters must be within
+     *  a - z
+     *  A - Z
+     *  0 - 9
+     *  -
+     *  _
+     */
+    for( iter=1; iter<dist; ++iter ){
+        ch = tokens->tokens[ *i + iter ];
+
+        if( 'a' <= ch && ch <= 'z' ){
+            continue;
+        }
+
+        if( 'A' <= ch && ch <= 'Z' ){
+            continue;
+        }
+
+        if( '0' <= ch && ch <= '9' ){
+            continue;
+        }
+
+        if( '-' == ch ){
+            continue;
+        }
+
+        if( '_' == ch ){
+            continue;
+        }
+
+        if( '.' == ch || '+' == ch || '=' == ch || ',' == ch ){
+            /* FIXME temporarily allowed characters
+             * until operator parsing work is completed
+             */
+            continue;
+        }
+
+        /* illegal character error */
+        printf("ic_parse_expr_identifier: illegal character '%c' found in identifier '%.*s'\n",
+                ch,
+                dist,
+                &(tokens->tokens[*i]));
         return 0;
     }
 
@@ -134,14 +216,6 @@ static struct ic_expr * ic_parse_expr_identifier(struct ic_tokens *tokens, unsig
     id = ic_expr_get_identifier(expr);
     if( ! id ){
         puts("ic_parse_expr_identifier: call to ic_expr_get_identifier failed");
-        free(expr);
-        return 0;
-    }
-
-    /* find the distance for our token */
-    dist = ic_parse_token_length(tokens->tokens, *i);
-    if( ! dist ){
-        puts("ic_parse_expr_identifier: call to ic_parse_token_length failed");
         free(expr);
         return 0;
     }
@@ -399,7 +473,7 @@ static struct ic_expr * ic_parse_expr_constant_integer(struct ic_tokens *tokens,
  *  identifier
  *
  * this is useful if we know the next thing is say an operator but we want
- * to constraint parsing up until it
+ * to constrain parsing up until it
  */
 static struct ic_expr * ic_parse_expr_single_token(struct ic_tokens *tokens, unsigned int *i){
     if( ! tokens ){
