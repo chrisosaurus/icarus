@@ -56,4 +56,27 @@ struct ic_token {
     } u;
 };
 
+/* alloc and init a new token
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_token * ic_token_new(void);
+
+/* init an existing token
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_token_init(struct ic_token *token);
+
+/* destroy
+ *
+ * will only free token if free_token is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_token_destroy(struct ic_token *token, unsigned int free_token);
+
 #endif
