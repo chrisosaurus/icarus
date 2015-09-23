@@ -51,7 +51,10 @@ this yields:
         char * file;
 
         union {
-            char * string;
+            struct {
+                char * string;
+                unsigned int str_len;
+            } s;
             int integer;
             float floating;
         } u;
