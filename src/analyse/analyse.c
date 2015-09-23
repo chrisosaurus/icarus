@@ -166,17 +166,6 @@ unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl 
         return 0;
     }
 
-    /* check function name doesn't shadow another identifiers */
-    ret = ic_kludge_identifier_exists_symbol(kludge, 0, &(fdecl->name));
-    if( 1 == ret ){
-        printf("ic_analyse_func_decl: identifier already exists '%s'\n", ic_symbol_contents(&(fdecl->name)));
-        return 0;
-    }
-    if( 0 != ret ){
-        printf("ic_analyse_func_decl: error checking for identifier existence '%s'\n", ic_symbol_contents(&(fdecl->name)));
-        return 0;
-    }
-
     /* name of this func, useful for error printing */
     this_func = ic_func_decl_str(fdecl);
     if( ! this_func ){
