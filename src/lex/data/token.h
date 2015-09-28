@@ -61,14 +61,48 @@ struct ic_token {
  * returns * on success
  * returns 0 on failure
  */
-struct ic_token * ic_token_new(void);
+struct ic_token * ic_token_new(enum ic_token_id id, char *line, unsigned int offset, char *file, unsigned int line_num);
 
 /* init an existing token
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_token_init(struct ic_token *token);
+unsigned int ic_token_init(struct ic_token *token, enum ic_token_id id, char *line, unsigned int offset, char *file, unsigned int line_num);
+
+/* set string data on token
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_token_set_string(struct ic_token *token, char *string, unsigned int len);
+
+/* get string data on token
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+char * ic_token_get_string(struct ic_token *token);
+
+/* get string length on token
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+char * ic_token_get_string_length(struct ic_token *token);
+
+/* set integer data on token
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+int ic_token_set_integer(struct ic_token *token, int integer);
+/* get integer data on token
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+char * ic_token_get_integer(struct ic_token *token);
 
 /* destroy
  *
