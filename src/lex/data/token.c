@@ -68,7 +68,7 @@ unsigned int ic_token_set_string(struct ic_token *token, char *string, unsigned 
         return 0;
     }
 
-    puts("OH GOD");
+    puts("ic_token_set_string: implementation pending");
     return 0;
 }
 
@@ -83,7 +83,7 @@ char * ic_token_get_string(struct ic_token *token){
         return 0;
     }
 
-    puts("OH GOD");
+    puts("ic_token_get_string_length: implementation pending");
     return 0;
 }
 
@@ -98,7 +98,7 @@ char * ic_token_get_string_length(struct ic_token *token){
         return 0;
     }
 
-    puts("OH GOD");
+    puts("ic_token_get_string_length: implementation pending");
     return 0;
 }
 
@@ -113,7 +113,7 @@ int ic_token_set_integer(struct ic_token *token, int integer){
         return 0;
     }
 
-    puts("OH GOD");
+    puts("ic_token_set_integer: implementation pending");
     return 0;
 }
 
@@ -128,7 +128,7 @@ char * ic_token_get_integer(struct ic_token *token){
         return 0;
     }
 
-    puts("OH GOD");
+    puts("ic_token_get_integer: implementation pending");
     return 0;
 }
 
