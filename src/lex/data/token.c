@@ -68,8 +68,10 @@ unsigned int ic_token_set_string(struct ic_token *token, char *string, unsigned 
         return 0;
     }
 
-    puts("ic_token_set_string: implementation pending");
-    return 0;
+    /* FIXME consider checking if token->id allows for a string */
+    token->u.str.string = string;
+    token->u.str.len = len;
+    return 1;
 }
 
 /* get string data on token
@@ -83,23 +85,23 @@ char * ic_token_get_string(struct ic_token *token){
         return 0;
     }
 
-    puts("ic_token_get_string_length: implementation pending");
-    return 0;
+    /* FIXME consider checking if token->id allows for a string */
+    return token->u.str.string;
 }
 
 /* get string length on token
  *
- * returns * on success
+ * returns length on success
  * returns 0 on failure
  */
-char * ic_token_get_string_length(struct ic_token *token){
+unsigned int ic_token_get_string_length(struct ic_token *token){
     if( ! token ){
         puts("ic_token_get_string_length: token was null");
         return 0;
     }
 
-    puts("ic_token_get_string_length: implementation pending");
-    return 0;
+    /* FIXME consider checking if token->id allows for a string */
+    return token->u.str.len;
 }
 
 /* set integer data on token
@@ -113,8 +115,9 @@ int ic_token_set_integer(struct ic_token *token, int integer){
         return 0;
     }
 
-    puts("ic_token_set_integer: implementation pending");
-    return 0;
+    /* FIXME consider checking if token->id allows for an integer */
+    token->u.integer = integer;
+    return 1;
 }
 
 /* get integer data on token
@@ -122,14 +125,14 @@ int ic_token_set_integer(struct ic_token *token, int integer){
  * returns * on success
  * returns 0 on failure
  */
-char * ic_token_get_integer(struct ic_token *token){
+int ic_token_get_integer(struct ic_token *token){
     if( ! token ){
         puts("ic_token_get_integer: token was null");
         return 0;
     }
 
-    puts("ic_token_get_integer: implementation pending");
-    return 0;
+    /* FIXME consider checking if token->id allows for an integer */
+    return token->u.integer;
 }
 
 /* destroy

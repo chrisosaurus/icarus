@@ -86,10 +86,10 @@ char * ic_token_get_string(struct ic_token *token);
 
 /* get string length on token
  *
- * returns * on success
+ * returns length on success
  * returns 0 on failure
  */
-char * ic_token_get_string_length(struct ic_token *token);
+unsigned int ic_token_get_string_length(struct ic_token *token);
 
 /* set integer data on token
  *
@@ -97,12 +97,13 @@ char * ic_token_get_string_length(struct ic_token *token);
  * returns 0 on failure
  */
 int ic_token_set_integer(struct ic_token *token, int integer);
+
 /* get integer data on token
  *
- * returns * on success
+ * returns integer on success
  * returns 0 on failure
  */
-char * ic_token_get_integer(struct ic_token *token);
+int ic_token_get_integer(struct ic_token *token);
 
 /* destroy
  *
