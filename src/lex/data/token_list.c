@@ -42,6 +42,8 @@ unsigned int ic_token_list_init(struct ic_token_list *list){
         return 0;
     }
 
+    list->counter = 0;
+
     return 1;
 }
 
@@ -121,5 +123,100 @@ struct ic_token * ic_token_list_get(struct ic_token_list *list, unsigned int i){
     }
 
     return token;
+}
+
+/* get current length
+ *
+ * returns length on success
+ * returns 0 on failure
+ */
+unsigned int ic_token_list_length(struct ic_token_list *list){
+    if( ! list ){
+        puts("ic_token_list_length: list was null");
+        return 0;
+    }
+
+    return ic_pvector_length(&(list->tokens));
+}
+
+/* peek at next token
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_token * ic_token_list_peek(struct ic_token_list *list){
+    struct ic_token *token = 0;
+
+    if( ! list ){
+        puts("ic_token_list_peek: list was null");
+        return 0;
+    }
+
+    token = ic_pvector_get(&(list->tokens), list->counter);
+    if( ! token ){
+        puts("ic_token_list_peek: call to ic_pvector_get failed");
+        return 0;
+    }
+
+    ++list->counter;
+
+    return token;
+}
+
+/* consume next token and return
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_token * ic_token_list_next(struct ic_token_list *list){
+    struct ic_token *token = 0;
+
+    if( ! list ){
+        puts("ic_token_list_next: list was null");
+        return 0;
+    }
+
+    token = ic_pvector_get(&(list->tokens), list->counter);
+    if( ! token ){
+        puts("ic_token_list_next: call to ic_pvector_get failed");
+        return 0;
+    }
+
+    ++list->counter;
+
+    return token;
+}
+
+/* reset token counter, moving back to start
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_token_list_reset(struct ic_token_list *list){
+    if( ! list ){
+        puts("ic_token_list_counter: list was null");
+        return 0;
+    }
+
+    list->counter = 0;
+
+    return 1;
+}
+
+/* get current value of counter
+ * note that the counter is the NEXT token to consider
+ * so a value of `0` means we are at the start
+ * a value of len means we are finished
+ *
+ * returns count on success
+ * returns 0 on failure
+ */
+unsigned int ic_token_list_counter(struct ic_token_list *list){
+    if( ! list ){
+        puts("ic_token_list_counter: list was null");
+        return 0;
+    }
+
+    return list->counter;
 }
 
