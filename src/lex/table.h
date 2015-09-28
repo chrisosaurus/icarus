@@ -28,14 +28,14 @@ struct ic_table_entry table[] {
     { "->",         2,      IC_ARROW },
     { "==",         2,      IC_EQUAL },
     { "=",          1,      IC_ASSIGN },
-    { "::",         0,      IC_DOUBLECOLON },
-    { ".",          0,      IC_PERIOD },
-    { ",",          0,      IC_COMMA },
+    { "::",         2,      IC_DOUBLECOLON },
+    { ".",          1,      IC_PERIOD },
+    { ",",          1,      IC_COMMA },
 
-    { "(",          0,      IC_LRBRACKET },
-    { ")",          0,      IC_RRBRACKET },
+    { "(",          1,      IC_LRBRACKET },
+    { ")",          1,      IC_RRBRACKET },
 
-    { "",           0,      IC_TOKEN_LEN }
+    { "",           1,      IC_TOKEN_LEN }
 };
 
 #endif
