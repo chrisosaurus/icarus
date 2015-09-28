@@ -1,7 +1,7 @@
-#ifndef ICARUS_LEXER_H
-#define ICARUS_LEXER_H
+#ifndef ICARUS_OLD_LEXER_H
+#define ICARUS_OLD_LEXER_H
 
-struct ic_tokens {
+struct ic_old_tokens {
     /* length of char *tokens used */
     unsigned int len;
     /* length of char *tokens allocated */
@@ -15,6 +15,6 @@ struct ic_tokens {
  *
  * returns 0 on failure
  */
-struct ic_tokens * ic_lex(char *source);
+struct ic_old_tokens * ic_old_lex(char *source);
 
 #endif

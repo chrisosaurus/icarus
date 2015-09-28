@@ -3,7 +3,7 @@
 
 #include "parse.h"
 
-struct ic_field * ic_parse_field(struct ic_tokens *tokens, unsigned int *i){
+struct ic_field * ic_parse_field(struct ic_old_tokens *tokens, unsigned int *i){
     /* the field we build and return */
     struct ic_field *field = 0;
     /* name component char* and len*/

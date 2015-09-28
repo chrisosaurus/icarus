@@ -12,7 +12,7 @@
  * returns * on success
  * returns 0 on failure
  */
-struct ic_body * ic_parse_body(struct ic_tokens *tokens, unsigned int *i){
+struct ic_body * ic_parse_body(struct ic_old_tokens *tokens, unsigned int *i){
     /* the body we eventually return */
     struct ic_body *body = 0;
     /* each intermediate statement that we add to the body */

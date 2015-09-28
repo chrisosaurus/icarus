@@ -26,7 +26,7 @@
  * returns ic_stmt* on success
  * returns 0 on failure
  */
-static struct ic_stmt * ic_parse_stmt_ret(struct ic_tokens *tokens, unsigned int *i){
+static struct ic_stmt * ic_parse_stmt_ret(struct ic_old_tokens *tokens, unsigned int *i){
     /* return form
      *      return expr
      */
@@ -76,7 +76,7 @@ static struct ic_stmt * ic_parse_stmt_ret(struct ic_tokens *tokens, unsigned int
  * returns ic_stmt* on success
  * returns 0 on failure
  */
-static struct ic_stmt * ic_parse_stmt_let(struct ic_tokens *tokens, unsigned int *i){
+static struct ic_stmt * ic_parse_stmt_let(struct ic_old_tokens *tokens, unsigned int *i){
     /* current let forms
      *      let identifier::type = expression
      *
@@ -163,7 +163,7 @@ static struct ic_stmt * ic_parse_stmt_let(struct ic_tokens *tokens, unsigned int
  * returns ic_stmt* on success
  * returns 0 on failure
  */
-static struct ic_stmt * ic_parse_stmt_if(struct ic_tokens *tokens, unsigned int *i){
+static struct ic_stmt * ic_parse_stmt_if(struct ic_old_tokens *tokens, unsigned int *i){
     /* out eventual return value */
     struct ic_stmt *stmt = 0;
     /* our condition expression */
@@ -238,7 +238,7 @@ static struct ic_stmt * ic_parse_stmt_if(struct ic_tokens *tokens, unsigned int 
  * returns ic_stmt* on success
  * returns 0 on failure
  */
-static struct ic_stmt * ic_parse_stmt_expr(struct ic_tokens *tokens, unsigned int *i){
+static struct ic_stmt * ic_parse_stmt_expr(struct ic_old_tokens *tokens, unsigned int *i){
     /* out eventual return value */
     struct ic_stmt *stmt = 0;
 
@@ -267,7 +267,7 @@ static struct ic_stmt * ic_parse_stmt_expr(struct ic_tokens *tokens, unsigned in
 static struct ic_parse_table_entry {
     unsigned int len;
     char *token;
-    struct ic_stmt * (*func)(struct ic_tokens *tokens, unsigned int *i);
+    struct ic_stmt * (*func)(struct ic_old_tokens *tokens, unsigned int *i);
 } ic_parse_table [] = {
     /* len    token       function    */
     {  2,     "if",       ic_parse_stmt_if  },
@@ -276,7 +276,7 @@ static struct ic_parse_table_entry {
     /* otherwise we default to ic_parse_stmt_expr */
 };
 
-struct ic_stmt * ic_parse_stmt(struct ic_tokens *tokens, unsigned int *i){
+struct ic_stmt * ic_parse_stmt(struct ic_old_tokens *tokens, unsigned int *i){
     /* length of current token */
     unsigned int dist = 0;
 
@@ -284,7 +284,7 @@ struct ic_stmt * ic_parse_stmt(struct ic_tokens *tokens, unsigned int *i){
     unsigned int pt_offset = 0;
 
     /* function to dispatch to */
-    struct ic_stmt * (*func)(struct ic_tokens *tokens, unsigned int *i) = 0;
+    struct ic_stmt * (*func)(struct ic_old_tokens *tokens, unsigned int *i) = 0;
 
     /* return from call to func */
     struct ic_stmt *ret = 0;

@@ -22,7 +22,7 @@
 static struct ic_parse_table_entry {
     unsigned int len;
     char *token;
-    struct ic_decl * (*func)(struct ic_tokens *tokens, unsigned int *i);
+    struct ic_decl * (*func)(struct ic_old_tokens *tokens, unsigned int *i);
 } ic_parse_table [] = {
     /* len    token       function    */
     {  2,     "fn",       ic_parse_func_decl  },
@@ -32,7 +32,7 @@ static struct ic_parse_table_entry {
     {  8,     "function", ic_parse_func_decl  }
 };
 
-struct ic_ast * ic_parse(struct ic_tokens *tokens){
+struct ic_ast * ic_parse(struct ic_old_tokens *tokens){
     /* offset into tokens */
     unsigned int i = 0;
     /* length of current token */
@@ -42,7 +42,7 @@ struct ic_ast * ic_parse(struct ic_tokens *tokens){
     unsigned int pt_offset = 0;
 
     /* function to dispatch to */
-    struct ic_decl * (*func)(struct ic_tokens *tokens, unsigned int *i) = 0;
+    struct ic_decl * (*func)(struct ic_old_tokens *tokens, unsigned int *i) = 0;
 
     /* return from call to func */
     struct ic_decl *ret = 0;
@@ -243,7 +243,7 @@ void ic_parse_token_advance(unsigned int *i, unsigned int dist){
  * returns 1 if this is NOT an `end` token
  * returns -1 if an error occurs (if \0 is hit for example)
  */
-int ic_parse_this_is_not_the_end(struct ic_tokens *tokens, unsigned int *i){
+int ic_parse_this_is_not_the_end(struct ic_old_tokens *tokens, unsigned int *i){
     unsigned int dist = 0;
 
     if( ! tokens ){
@@ -358,7 +358,7 @@ unsigned int ic_parse_check_token(char *expected, unsigned int exp_len, char *so
  * returns 1 if yes
  * returns 0 if no
  */
-int ic_parse_stringish(struct ic_tokens *tokens, unsigned int *i){
+int ic_parse_stringish(struct ic_old_tokens *tokens, unsigned int *i){
     if( ! tokens ){
         puts("ic_parse_stringish: tokens was null");
         return 0;
@@ -396,7 +396,7 @@ int ic_parse_stringish(struct ic_tokens *tokens, unsigned int *i){
  * returns 1 if yes
  * returns 0 if no
  */
-int ic_parse_numberish(struct ic_tokens *tokens, unsigned int *i){
+int ic_parse_numberish(struct ic_old_tokens *tokens, unsigned int *i){
     if( ! tokens ){
         puts("ic_parse_numberish: tokens was null");
         return 0;
@@ -438,7 +438,7 @@ int ic_parse_numberish(struct ic_tokens *tokens, unsigned int *i){
  *
  * returns 0 on failure
  */
-char * ic_parse_peek_next(struct ic_tokens *tokens, unsigned int *i){
+char * ic_parse_peek_next(struct ic_old_tokens *tokens, unsigned int *i){
     /* dist of current token */
     unsigned int dist = 0;
     /* offset of next token */

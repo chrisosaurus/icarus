@@ -29,7 +29,7 @@
  * returns ic_expr* on success
  * returns 0 on failure
  */
-static struct ic_expr * ic_parse_expr_fcall(struct ic_tokens *tokens, unsigned int *i){
+static struct ic_expr * ic_parse_expr_fcall(struct ic_old_tokens *tokens, unsigned int *i){
     /* our eventual return value */
     struct ic_expr * expr = 0;
     /* used for getting the distance of our function name */
@@ -106,7 +106,7 @@ static struct ic_expr * ic_parse_expr_fcall(struct ic_tokens *tokens, unsigned i
  * returns ic_expr* on success
  * returns 0 on failure
  */
-static struct ic_expr * ic_parse_expr_identifier(struct ic_tokens *tokens, unsigned int *i){
+static struct ic_expr * ic_parse_expr_identifier(struct ic_old_tokens *tokens, unsigned int *i){
     /* our final return expr */
     struct ic_expr * expr = 0;
     /* pointer to our internal id */
@@ -238,7 +238,7 @@ static struct ic_expr * ic_parse_expr_identifier(struct ic_tokens *tokens, unsig
  * returns ic_expr* on success
  * returns 0 on failure
  */
-static struct ic_expr * ic_parse_expr_constant_string(struct ic_tokens *tokens, unsigned int *i){
+static struct ic_expr * ic_parse_expr_constant_string(struct ic_old_tokens *tokens, unsigned int *i){
     /* our eventual return value */
     struct ic_expr * expr = 0;
     /* the i value that marks the beginning of our string
@@ -337,7 +337,7 @@ static struct ic_expr * ic_parse_expr_constant_string(struct ic_tokens *tokens, 
  * returns ic_expr* on success
  * returns 0 on failure
  */
-static struct ic_expr * ic_parse_expr_constant_integer(struct ic_tokens *tokens, unsigned int *i){
+static struct ic_expr * ic_parse_expr_constant_integer(struct ic_old_tokens *tokens, unsigned int *i){
     /* our eventual return value */
     struct ic_expr * expr = 0;
     /* iterator through string to check all characters are numeric */
@@ -475,7 +475,7 @@ static struct ic_expr * ic_parse_expr_constant_integer(struct ic_tokens *tokens,
  * this is useful if we know the next thing is say an operator but we want
  * to constrain parsing up until it
  */
-static struct ic_expr * ic_parse_expr_single_token(struct ic_tokens *tokens, unsigned int *i){
+static struct ic_expr * ic_parse_expr_single_token(struct ic_old_tokens *tokens, unsigned int *i){
     if( ! tokens ){
         puts("ic_parse_expr_single_token: tokens was null");
         return 0;
@@ -506,7 +506,7 @@ static struct ic_expr * ic_parse_expr_single_token(struct ic_tokens *tokens, uns
  * returns ic_expr* on success
  * returns 0 on failure
  */
-static struct ic_expr * ic_parse_expr_operator(struct ic_tokens *tokens, unsigned int *i){
+static struct ic_expr * ic_parse_expr_operator(struct ic_old_tokens *tokens, unsigned int *i){
     /* our eventual return value */
     struct ic_expr *expr = 0;
     /* our internal operator */
@@ -593,7 +593,7 @@ static struct ic_expr * ic_parse_expr_operator(struct ic_tokens *tokens, unsigne
     return expr;
 }
 
-struct ic_expr * ic_parse_expr(struct ic_tokens *tokens, unsigned int *i){
+struct ic_expr * ic_parse_expr(struct ic_old_tokens *tokens, unsigned int *i){
     /* pointer used to peek at start of next token */
     char *next = 0;
 

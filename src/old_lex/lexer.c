@@ -13,7 +13,7 @@
  * returns pointer to tokens on success (which may have a different value)
  * returns 0 on failure
  */
-static struct ic_tokens * ic_expand_tokens(struct ic_tokens *tokens, unsigned int new_cap);
+static struct ic_old_tokens * ic_expand_tokens(struct ic_old_tokens *tokens, unsigned int new_cap);
 
 /* consumes one word (alpha, numbers, -, and _)
  * adds this consumed unit as a token
@@ -21,7 +21,7 @@ static struct ic_tokens * ic_expand_tokens(struct ic_tokens *tokens, unsigned in
  * returns *tokens on success
  * returns 0 on failure
  */
-static struct ic_tokens * ic_consume_word(struct ic_tokens *tokens, char *source, unsigned int *i);
+static struct ic_old_tokens * ic_consume_word(struct ic_old_tokens *tokens, char *source, unsigned int *i);
 
 /* consumes one arrow `->`
  * adds this consumed unit as a token
@@ -29,7 +29,7 @@ static struct ic_tokens * ic_consume_word(struct ic_tokens *tokens, char *source
  * returns *tokens on success
  * returns 0 on failure
  */
-static struct ic_tokens * ic_consume_arrow(struct ic_tokens *tokens, char *source, unsigned int *i);
+static struct ic_old_tokens * ic_consume_arrow(struct ic_old_tokens *tokens, char *source, unsigned int *i);
 
 /* consume a number
  * adds this consumed unit as a token
@@ -37,7 +37,7 @@ static struct ic_tokens * ic_consume_arrow(struct ic_tokens *tokens, char *sourc
  * returns *tokens on success
  * returns 0 on failure
  */
-static struct ic_tokens * ic_consume_number(struct ic_tokens *tokens, char *source, unsigned int *i);
+static struct ic_old_tokens * ic_consume_number(struct ic_old_tokens *tokens, char *source, unsigned int *i);
 
 /* consumes a string denoted by double quote characters
  * adds this consumed unit as a token
@@ -45,7 +45,7 @@ static struct ic_tokens * ic_consume_number(struct ic_tokens *tokens, char *sour
  * returns *tokens on success
  * returns 0 on failure
  */
-static struct ic_tokens * ic_consume_string(struct ic_tokens *tokens, char *source, unsigned int *i);
+static struct ic_old_tokens * ic_consume_string(struct ic_old_tokens *tokens, char *source, unsigned int *i);
 
 /* consumes one symbol at current position
  * adds this consumed unit as a token
@@ -53,7 +53,7 @@ static struct ic_tokens * ic_consume_string(struct ic_tokens *tokens, char *sour
  * returns *tokens on success
  * returns 0 on failure
  */
-static struct ic_tokens * ic_consume_single_symbol(struct ic_tokens *tokens, char *source, unsigned int *i);
+static struct ic_old_tokens * ic_consume_single_symbol(struct ic_old_tokens *tokens, char *source, unsigned int *i);
 
 /* consumes as many of the specified symbol `sym` in a row
  * adds this consumed unit as a token
@@ -61,7 +61,7 @@ static struct ic_tokens * ic_consume_single_symbol(struct ic_tokens *tokens, cha
  * returns *tokens on success
  * returns 0 on failure
  */
-static struct ic_tokens * ic_consume_repeated_symbol(struct ic_tokens *tokens, char *source, unsigned int *i, char sym);
+static struct ic_old_tokens * ic_consume_repeated_symbol(struct ic_old_tokens *tokens, char *source, unsigned int *i, char sym);
 
 /* consume comment
  * this checks for a beginning # (comment character) and will raise an error if not found
@@ -73,17 +73,17 @@ static struct ic_tokens * ic_consume_repeated_symbol(struct ic_tokens *tokens, c
  * returns token passes in on success
  * returns 0 on failure
  */
-static struct ic_tokens * ic_strip_comment(struct ic_tokens *tokens, char *source, unsigned int *i);
+static struct ic_old_tokens * ic_strip_comment(struct ic_old_tokens *tokens, char *source, unsigned int *i);
 
 /* takes a character array of the source code as text
- * returns an struct ic_tokens * containing the output from lexing
+ * returns an struct ic_old_tokens * containing the output from lexing
  *
  * returns 0 on failure
  */
-struct ic_tokens * ic_lex(char *source){
+struct ic_old_tokens * ic_old_lex(char *source){
     unsigned int i = 0;
     unsigned int len = 0;
-    struct ic_tokens *tokens = 0;
+    struct ic_old_tokens *tokens = 0;
 
     if( ! source ){
         puts("lex: provided source was null");
@@ -215,12 +215,12 @@ struct ic_tokens * ic_lex(char *source){
  * returns pointer to tokens on success (which may have a different value)
  * returns 0 on failure
  */
-static struct ic_tokens * ic_expand_tokens(struct ic_tokens *tokens, unsigned int new_cap){
+static struct ic_old_tokens * ic_expand_tokens(struct ic_old_tokens *tokens, unsigned int new_cap){
     /* if null was provided we must behave like realloc
-     * and correctly allocate the new struct ic_tokens
+     * and correctly allocate the new struct ic_old_tokens
      */
     if( ! tokens ){
-        tokens = calloc(1, sizeof(struct ic_tokens));
+        tokens = calloc(1, sizeof(struct ic_old_tokens));
         if( ! tokens ){
             puts("ic_expand_tokens: alloc failed");
             return 0;
@@ -253,7 +253,7 @@ static struct ic_tokens * ic_expand_tokens(struct ic_tokens *tokens, unsigned in
 }
 
 /* given the pointer to a start of a token and a len
- * will add to the end of struct ic_tokens
+ * will add to the end of struct ic_old_tokens
  *
  * will call ic_expand_tokens to ensure sufficient room
  *
@@ -262,7 +262,7 @@ static struct ic_tokens * ic_expand_tokens(struct ic_tokens *tokens, unsigned in
  *
  * returns 0 on failure
  */
-static struct ic_tokens * add_token(struct ic_tokens *tokens, char *start, unsigned int len){
+static struct ic_old_tokens * add_token(struct ic_old_tokens *tokens, char *start, unsigned int len){
     unsigned int required_len = len + 2;
 
     if( tokens ){
@@ -314,7 +314,7 @@ static struct ic_tokens * add_token(struct ic_tokens *tokens, char *start, unsig
  * returns *tokens on success
  * returns 0 on failure
  */
-static struct ic_tokens * ic_consume_word(struct ic_tokens *tokens, char *source, unsigned int *i){
+static struct ic_old_tokens * ic_consume_word(struct ic_old_tokens *tokens, char *source, unsigned int *i){
     unsigned int len=0;
     char ch=0;
 
@@ -391,7 +391,7 @@ static struct ic_tokens * ic_consume_word(struct ic_tokens *tokens, char *source
  * returns *tokens on success
  * returns 0 on failure
  */
-static struct ic_tokens * ic_consume_arrow(struct ic_tokens *tokens, char *source, unsigned int *i){
+static struct ic_old_tokens * ic_consume_arrow(struct ic_old_tokens *tokens, char *source, unsigned int *i){
     if( ! i || ! source ){
         puts("ic_consume_arrow: null source or i provided");
         return 0;
@@ -429,7 +429,7 @@ static struct ic_tokens * ic_consume_arrow(struct ic_tokens *tokens, char *sourc
  * returns *tokens on success
  * returns 0 on failure
  */
-static struct ic_tokens * ic_consume_number(struct ic_tokens *tokens, char *source, unsigned int *i){
+static struct ic_old_tokens * ic_consume_number(struct ic_old_tokens *tokens, char *source, unsigned int *i){
     unsigned int len = 0;
     /* record if we found a leading zero in order to detect octal or hex */
     unsigned int leading_zero = 0;
@@ -579,7 +579,7 @@ NUMBER_LOOP_EXIT:
  * returns *tokens on success
  * returns 0 on failure
  */
-static struct ic_tokens * ic_consume_string(struct ic_tokens *tokens, char *source, unsigned int *i){
+static struct ic_old_tokens * ic_consume_string(struct ic_old_tokens *tokens, char *source, unsigned int *i){
     unsigned int len=0;
 
     if( ! i || ! source ){
@@ -660,7 +660,7 @@ STRING_LOOP_EXIT:
  * returns *tokens on success
  * returns 0 on failure
  */
-static struct ic_tokens * ic_consume_single_symbol(struct ic_tokens *tokens, char *source, unsigned int *i){
+static struct ic_old_tokens * ic_consume_single_symbol(struct ic_old_tokens *tokens, char *source, unsigned int *i){
     if( ! i || ! source ){
         puts("ic_consume_single_symbol: null source or i provided");
         return 0;
@@ -681,7 +681,7 @@ static struct ic_tokens * ic_consume_single_symbol(struct ic_tokens *tokens, cha
  * returns *tokens on success
  * returns 0 on failure
  */
-static struct ic_tokens * ic_consume_repeated_symbol(struct ic_tokens *tokens, char *source, unsigned int *i, char sym){
+static struct ic_old_tokens * ic_consume_repeated_symbol(struct ic_old_tokens *tokens, char *source, unsigned int *i, char sym){
     unsigned int len = 0;
 
     if( ! i || ! source ){
@@ -715,7 +715,7 @@ static struct ic_tokens * ic_consume_repeated_symbol(struct ic_tokens *tokens, c
  * returns token passes in on success
  * returns 0 on failure
  */
-static struct ic_tokens * ic_strip_comment(struct ic_tokens *tokens, char *source, unsigned int *i){
+static struct ic_old_tokens * ic_strip_comment(struct ic_old_tokens *tokens, char *source, unsigned int *i){
     /* we cannot return a 0 tokens as that is how we indicate error
      * for now we will raise an error
      * consider later on instead creating a new tokens when this happens and returning that

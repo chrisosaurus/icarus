@@ -35,13 +35,13 @@ void ic_parse_token_advance(unsigned int *i, unsigned int dist);
  * returns 1 if yes
  * returns 0 if no
  */
-int ic_parse_stringish(struct ic_tokens *tokens, unsigned int *i);
+int ic_parse_stringish(struct ic_old_tokens *tokens, unsigned int *i);
 
 /* check if the current token looks like a number
  * returns 1 if yes
  * returns 0 if no
  */
-int ic_parse_numberish(struct ic_tokens *tokens, unsigned int *i);
+int ic_parse_numberish(struct ic_old_tokens *tokens, unsigned int *i);
 
 /* check if the current token looks like an operator
  * this take a char* and will currently only dereference it
@@ -57,7 +57,7 @@ int ic_parse_operatorish(char *cursor);
  *
  * returns 0 on failure
  */
-char * ic_parse_peek_next(struct ic_tokens *tokens, unsigned int *i);
+char * ic_parse_peek_next(struct ic_old_tokens *tokens, unsigned int *i);
 
 /* compare and consume un-important token
  *
@@ -97,22 +97,22 @@ unsigned int ic_parse_check_token(char *expected, unsigned int exp_len, char *so
  * returns 0 if this is an `end` token
  * returns -1 if an error occurs (if \0 is hit for example)
  */
-int ic_parse_this_is_not_the_end(struct ic_tokens *tokens, unsigned int *i);
+int ic_parse_this_is_not_the_end(struct ic_old_tokens *tokens, unsigned int *i);
 
 
 /**** parse/field.c ****/
 
-struct ic_field * ic_parse_field(struct ic_tokens *tokens, unsigned int *i);
+struct ic_field * ic_parse_field(struct ic_old_tokens *tokens, unsigned int *i);
 
 
 /**** parse/expr.c ****/
 
-struct ic_expr * ic_parse_expr(struct ic_tokens *tokens, unsigned int *i);
+struct ic_expr * ic_parse_expr(struct ic_old_tokens *tokens, unsigned int *i);
 
 
 /**** parse/stmt.c ****/
 
-struct ic_stmt * ic_parse_stmt(struct ic_tokens *tokens, unsigned int *i);
+struct ic_stmt * ic_parse_stmt(struct ic_old_tokens *tokens, unsigned int *i);
 
 
 /**** parse/body.c ****/
@@ -123,23 +123,23 @@ struct ic_stmt * ic_parse_stmt(struct ic_tokens *tokens, unsigned int *i);
  * returns * on success
  * returns 0 on failure
  */
-struct ic_body * ic_parse_body(struct ic_tokens *tokens, unsigned int *i);
+struct ic_body * ic_parse_body(struct ic_old_tokens *tokens, unsigned int *i);
 
 
 /**** parse/decl.c ****/
 
-struct ic_decl * ic_parse_type_decl(struct ic_tokens *tokens, unsigned int *i);
+struct ic_decl * ic_parse_type_decl(struct ic_old_tokens *tokens, unsigned int *i);
 
-struct ic_decl * ic_parse_enum_decl(struct ic_tokens *tokens, unsigned int *i);
+struct ic_decl * ic_parse_enum_decl(struct ic_old_tokens *tokens, unsigned int *i);
 
-struct ic_decl * ic_parse_union_decl(struct ic_tokens *tokens, unsigned int *i);
+struct ic_decl * ic_parse_union_decl(struct ic_old_tokens *tokens, unsigned int *i);
 
-struct ic_decl * ic_parse_func_decl(struct ic_tokens *tokens, unsigned int *i);
+struct ic_decl * ic_parse_func_decl(struct ic_old_tokens *tokens, unsigned int *i);
 
 
 /**** parse.c ****/
 
-struct ic_ast * ic_parse(struct ic_tokens *tokens);
+struct ic_ast * ic_parse(struct ic_old_tokens *tokens);
 
 #endif
 
