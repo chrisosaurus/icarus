@@ -5,7 +5,7 @@
 #include "data/ast.h"
 #include "parse.h"
 #include "data/statement.h"
-#include "../lex/lexer.h"
+#include "../old_lex/lexer.h"
 
 /* ignore unused parameter warnings */
 #pragma GCC diagnostic ignored "-Wunused-parameter"

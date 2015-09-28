@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "../../src/read/read.h" /* ic_read_slurp */
-#include "../../src/lex/lexer.h" /* ic_lex */
+#include "../../src/old_lex/lexer.h" /* ic_lex */
 #include "../../src/parse/parse.h" /* ic_parse */
 #include "../../src/parse/data/ast.h" /* ic_ast structure */
 

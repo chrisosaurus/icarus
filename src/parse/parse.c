@@ -2,7 +2,7 @@
 #include <string.h> /* strchr, strncmp */
 #include <stdlib.h> /* free */
 
-#include "../lex/lexer.h"
+#include "../old_lex/lexer.h"
 #include "data/ast.h"
 #include "parse.h"
 
