@@ -16,6 +16,9 @@ So far Icarus only has a lexer and basic parser (syntactic analysis),
 work is progressing on the analyse (semantic analyse) stage,
 there are no backends yet.
 
+Icarus is currently in the process of a major refactor of the lexing system,
+for a transition period icarus will have an additional lexer 'hanging off the side'.
+
 Here is an example of the lex and parse steps in action:
 
 We have the contents of `example/simple.ic`:
