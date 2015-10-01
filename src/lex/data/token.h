@@ -7,6 +7,8 @@ enum ic_token_id {
     IC_IDENTIFIER, /* no entry in table[] */
 
     IC_NEWLINE,
+    IC_WHITESPACE,
+
     IC_END,
 
     IC_IF,

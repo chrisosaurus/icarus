@@ -15,6 +15,10 @@ struct ic_table_entry table[] = {
 
     /* str,         len,    id */
     { "\n",         1,      IC_NEWLINE },
+    { "\r",         1,      IC_WHITESPACE },
+    { "\t",         1,      IC_WHITESPACE },
+    { " ",          1,      IC_WHITESPACE },
+
     { "end",        3,      IC_END },
 
     { "if",         2,      IC_IF },
