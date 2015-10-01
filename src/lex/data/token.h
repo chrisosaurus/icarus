@@ -5,6 +5,7 @@
 
 enum ic_token_id {
     IC_IDENTIFIER, /* no entry in table[] */
+    IC_LITERAL, /* no entry in table[] */
 
     IC_NEWLINE,
     IC_WHITESPACE,
@@ -47,7 +48,7 @@ struct ic_token {
     /* line number in file */
     unsigned int line_num;
 
-    /* token data */
+    /* token data for literals */
     union {
         struct {
             char *string;

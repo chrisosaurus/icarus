@@ -3,6 +3,8 @@
 
 #include "data/token.h"
 
+#define IC_LEX_TABLE_LEN()(sizeof table / sizeof table[0])
+
 struct ic_table_entry {
     char *str;
     unsigned int len;
