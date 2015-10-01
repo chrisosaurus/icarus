@@ -10,7 +10,7 @@ struct ic_table_entry {
 };
 
 /* a map of tokens to their ids */
-struct ic_table_entry table[] {
+struct ic_table_entry table[] = {
     /* no entry for identifier */
 
     /* str,         len,    id */
