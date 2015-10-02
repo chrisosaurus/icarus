@@ -2,6 +2,7 @@
 #define IC_LEXER_H
 
 #include "data/token_list.h"
+#include "data/lex_data.h"
 
 /* takes a character array of the source program
  *
