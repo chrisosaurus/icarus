@@ -12,6 +12,8 @@
 
 static unsigned int ic_lex_comment(struct ic_lex_data *lex_data);
 static unsigned int ic_lex_identifier(struct ic_lex_data *lex_data);
+static unsigned int ic_lex_literal_integer(struct ic_lex_data *lex_data);
+static unsigned int ic_lex_literal_string(struct ic_lex_data *lex_data);
 
 /* takes a character array of the source program
  *
@@ -120,19 +122,23 @@ struct ic_token_list * ic_lex(char *filename, char *source){
          *  string literal
          *  integer literal
          *  identifier
-         *  FIXME
          */
         switch( source[lex_data->s_i] ){
             case '#':
                 /* attempt lexing as comment */
-                /* FIXME consume rest of line into token */
-                /* FIXME maintain lex_data while we do so */
-                /* FIXME add payload */
+                if( ! ic_lex_comment(lex_data) ){
+                    puts("ic_lex: call to ic_lex_comment failed");
+                    return 0;
+                }
                 break;
 
             case '"':
             case '\'':
                 /* attempt lexing as string literal */
+                if( ! ic_lex_literal_string(lex_data) ){
+                    puts("ic_lex: call to ic_lex_literal_string failed");
+                    return 0;
+                }
                 break;
 
             case '0':
@@ -146,10 +152,18 @@ struct ic_token_list * ic_lex(char *filename, char *source){
             case '8':
             case '9':
                 /* attempt lexing as integer literal */
+                if( ! ic_lex_literal_integer(lex_data) ){
+                    puts("ic_lex: call to ic_lex_literal_integer failed");
+                    return 0;
+                }
                 break;
 
             default:
                 /* attempt lexing as identifier */
+                if( ! ic_lex_identifier(lex_data) ){
+                    puts("ic_lex: call to ic_lex_identifier failed");
+                    return 0;
+                }
                 break;
         }
 
@@ -179,11 +193,34 @@ struct ic_token_list * ic_lex(char *filename, char *source){
 }
 
 static unsigned int ic_lex_comment(struct ic_lex_data *lex_data){
+    /* FIXME consume rest of line into token */
+    /* FIXME add payload */
+    /* FIXME maintain lex_data while we do so */
     puts("ic_lex_comment: unimplemented");
     return 0;
 }
 
 static unsigned int ic_lex_identifier(struct ic_lex_data *lex_data){
+    /* FIXME consume */
+    /* FIXME add payload */
+    /* FIXME maintain lex_data while we do so */
     puts("ic_lex_comment: unimplemented");
     return 0;
 }
+
+static unsigned int ic_lex_literal_integer(struct ic_lex_data *lex_data){
+    /* FIXME consume */
+    /* FIXME add payload */
+    /* FIXME maintain lex_data while we do so */
+    puts("ic_lex_literal_integer: unimplemented");
+    return 0;
+}
+
+static unsigned int ic_lex_literal_string(struct ic_lex_data *lex_data){
+    /* FIXME consume */
+    /* FIXME add payload */
+    /* FIXME maintain lex_data while we do so */
+    puts("ic_lex_literal_string: unimplemented");
+    return 0;
+}
+
