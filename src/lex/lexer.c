@@ -103,8 +103,11 @@ struct ic_token_list * ic_lex(char *filename, char *source){
                 lex_data->line_num += 1;
                 lex_data->offset_into_line = 0;
                 lex_data->start_of_line = &(lex_data->source[lex_data->s_i]);
+            } else if( table_id == IC_COMMENT ){
+                /* FIXME consume rest of line into token */
+                /* FIXME maintain lex_data while we do so */
+                /* FIXME add payload */
             }
-
         }
 
         if( token ){
@@ -113,7 +116,6 @@ struct ic_token_list * ic_lex(char *filename, char *source){
         }
 
         /* otherwise this is one of:
-         *  comment
          *  identifier
          *  literal
          *  FIXME

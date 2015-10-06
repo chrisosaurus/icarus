@@ -4,11 +4,12 @@
 #include "../../data/pvector.h"
 
 enum ic_token_id {
-    IC_IDENTIFIER, /* no entry in table[] */
-    IC_LITERAL, /* no entry in table[] */
+    IC_IDENTIFIER, /* no entry in table[], payload */
+    IC_LITERAL, /* no entry in table[], payload */
 
     IC_NEWLINE,
     IC_WHITESPACE,
+    IC_COMMENT, /* FIXME add payload */
 
     IC_END,
 
