@@ -72,27 +72,39 @@ struct ic_token_list * ic_lex(char *filename, char *source){
                 continue;
             }
 
-            /* we have a match !
-             * update i
-             */
-            lex_data->s_i += table_len;
+            /* we have a match !  */
 
-            /* build a new token
-             * FIXME most of these fields are not currently populated / upkept
-             */
+            /* build a new token */
             token = ic_token_new(table_id, lex_data->start_of_line, lex_data->offset_into_line, lex_data->filename, lex_data->line_num);
             if( ! token ){
                 puts("ic_lex: call to ic_token_new failed");
                 return 0;
             }
 
-            /* append token
-             * FIXME encapsulate
-             */
+            /* append token */
             if( ! ic_token_list_append(lex_data->token_list, token) ){
                 puts("ic_lex: call to ic_token_list_append failed");
                 return 0;
             }
+
+            /* book keeping */
+            /* update i
+             * update offset into line
+             */
+            lex_data->s_i += table_len;
+            lex_data->offset_into_line += table_len;
+
+            /* if our match was a \n then we need to:
+             *  increment the line counter
+             *  reset offset into line
+             *  capture current start of line
+             */
+            if( table_id == IC_NEWLINE ){
+                lex_data->line_num += 1;
+                lex_data->offset_into_line = 0;
+                lex_data->start_of_line = &(lex_data->source[lex_data->s_i]);
+            }
+
         }
 
         if( token ){
