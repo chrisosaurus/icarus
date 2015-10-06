@@ -62,11 +62,6 @@ struct ic_token_list * ic_lex(char *filename, char *source){
             table_len = table[t_i].len;
             table_id  = table[t_i].id;
 
-            if( source[lex_data->s_i] != table_str[0] ){
-                /* first char doesn't match */
-                continue;
-            }
-
             if( lex_data->s_i + table_len > lex_data->s_len ){
                 /* no way it could fit */
                 continue;
