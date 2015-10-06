@@ -22,6 +22,9 @@ static unsigned int ic_lex_identifier(struct ic_lex_data *lex_data);
  * returns 0 on failure
  */
 struct ic_token_list * ic_lex(char *filename, char *source){
+    /* final return value, only used at end of function */
+    struct ic_token_list *final_value = 0;
+
     struct ic_lex_data * lex_data = 0;
 
     /* str from table */
@@ -103,10 +106,6 @@ struct ic_token_list * ic_lex(char *filename, char *source){
                 lex_data->line_num += 1;
                 lex_data->offset_into_line = 0;
                 lex_data->start_of_line = &(lex_data->source[lex_data->s_i]);
-            } else if( table_id == IC_COMMENT ){
-                /* FIXME consume rest of line into token */
-                /* FIXME maintain lex_data while we do so */
-                /* FIXME add payload */
             }
         }
 
@@ -115,15 +114,68 @@ struct ic_token_list * ic_lex(char *filename, char *source){
             continue;
         }
 
-        /* otherwise this is one of:
+        /* otherwise this is something with a payload
+         * one of:
+         *  comment
+         *  string literal
+         *  integer literal
          *  identifier
-         *  literal
          *  FIXME
          */
+        switch( source[lex_data->s_i] ){
+            case '#':
+                /* attempt lexing as comment */
+                /* FIXME consume rest of line into token */
+                /* FIXME maintain lex_data while we do so */
+                /* FIXME add payload */
+                break;
+
+            case '"':
+            case '\'':
+                /* attempt lexing as string literal */
+                break;
+
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                /* attempt lexing as integer literal */
+                break;
+
+            default:
+                /* attempt lexing as identifier */
+                break;
+        }
+
+        if( token ){
+            /* inner loop matched, stop processing this time round */
+            continue;
+        }
+
+        printf("ic_lex: lexing failed at character '%c' offset '%d' \n",
+            source[lex_data->s_i],
+            lex_data->s_i
+        );
+        return 0;
     }
 
-    puts("ic_lex: unimplemented");
-    return 0;
+    /* lexing was a success */
+    final_value = lex_data->token_list;
+
+    /* clean up lex_data */
+    if( ! ic_lex_data_destroy(lex_data, 1) ){
+        puts("ic_lex: call to ic_lex_data failed");
+        return 0;
+    }
+
+    /* return generated token list */
+    return final_value;
 }
 
 static unsigned int ic_lex_comment(struct ic_lex_data *lex_data){

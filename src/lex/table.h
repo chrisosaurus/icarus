@@ -20,7 +20,6 @@ struct ic_table_entry table[] = {
     { "\r",         1,      IC_WHITESPACE },
     { "\t",         1,      IC_WHITESPACE },
     { " ",          1,      IC_WHITESPACE },
-    { "#",          1,      IC_COMMENT },
 
     { "end",        3,      IC_END },
 

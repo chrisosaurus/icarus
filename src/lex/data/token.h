@@ -5,11 +5,12 @@
 
 enum ic_token_id {
     IC_IDENTIFIER, /* no entry in table[], payload */
-    IC_LITERAL, /* no entry in table[], payload */
+    IC_INTEGER_LITERAL, /* no entry in table[], payload */
+    IC_STRING_LITERAL, /* no entry in table[], payload */
+    IC_COMMENT, /* no entry in table[],  add payload */
 
     IC_NEWLINE,
     IC_WHITESPACE,
-    IC_COMMENT, /* FIXME add payload */
 
     IC_END,
 

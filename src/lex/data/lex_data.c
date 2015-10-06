@@ -72,3 +72,27 @@ unsigned int ic_lex_data_init(struct ic_lex_data *lex_data, char *filename, char
     return 1;
 }
 
+/* destroy ic_lex_data
+ *
+ * will only free lex_data if `free_lex_data` is truthy
+ *
+ * will NOT free ANY of the elements
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_lex_data_destroy(struct ic_lex_data *lex_data, unsigned int free_lex_data){
+    if( ! lex_data ){
+        puts("ic_lex_data_destroy: lex_data was null");
+        return 0;
+    }
+
+    /* DO NOT free any elements within */
+
+    if( free_lex_data ){
+        free(lex_data);
+    }
+
+    return 1;
+}
+
