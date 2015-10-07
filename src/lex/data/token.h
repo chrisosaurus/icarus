@@ -7,7 +7,7 @@ enum ic_token_id {
     IC_IDENTIFIER, /* no entry in table[], payload */
     IC_LITERAL_INTEGER, /* no entry in table[], payload */
     IC_LITERAL_STRING, /* no entry in table[], payload */
-    IC_COMMENT, /* no entry in table[],  add payload */
+    IC_COMMENT, /* no entry in table[], payload */
 
     IC_NEWLINE,
     IC_WHITESPACE,
@@ -56,8 +56,7 @@ struct ic_token {
             char *string;
             unsigned int len;
         } str;
-        int integer;
-        float floating;
+        long int integer;
     } u;
 };
 

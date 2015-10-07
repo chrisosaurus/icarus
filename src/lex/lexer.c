@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <limits.h>
 
 #include "data/token.h"
 #include "data/token_list.h"
@@ -209,11 +211,103 @@ static unsigned int ic_lex_identifier(struct ic_lex_data *lex_data){
 }
 
 static unsigned int ic_lex_literal_integer(struct ic_lex_data *lex_data){
-    /* FIXME consume */
-    /* FIXME add payload */
-    /* FIXME maintain lex_data while we do so */
-    puts("ic_lex_literal_integer: unimplemented");
-    return 0;
+    /* temporary token we construct */
+    struct ic_token *token = 0;
+
+    /* first char in integer found */
+    char * integer_start = 0;
+    /* length of integer found */
+    unsigned int integer_len = 0;
+    /* value from strtol */
+    long int integer_value = 0;
+
+    /* endptr used by strtol */
+    char *endptr = 0;
+
+    if( ! lex_data ){
+        puts("ic_lex_literal_integer: lex_data was null");
+        return 0;
+    }
+
+    integer_start = &(lex_data->source[lex_data->s_i]);
+    for( integer_len = 0; ; ++integer_len ){
+        /* safety net for overrunning buffer */
+        if( lex_data->s_i + integer_len > lex_data->s_len ){
+            break;
+        }
+
+        switch( lex_data->source[lex_data->s_i + integer_len] ){
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                break;
+
+            case 'x':
+            case 'b':
+                puts("ic_lex_literal_integer: hex and binary are not yet supported");
+                return 0;
+                break;
+
+            default:
+                /* final character, stop
+                 * NB: this could be \0
+                 */
+                goto SUCCESS;
+                break;
+        };
+    }
+
+SUCCESS:
+
+    /* build a new token */
+    token = ic_token_new(IC_LITERAL_INTEGER, lex_data->start_of_line, lex_data->offset_into_line, lex_data->filename, lex_data->line_num);
+    if( ! token ){
+        puts("ic_lex_literal_integer: call to ic_token_new failed");
+        return 0;
+    }
+
+    /* append token */
+    if( ! ic_token_list_append(lex_data->token_list, token) ){
+        puts("ic_lex_literal_integer: call to ic_token_list_append failed");
+        return 0;
+    }
+
+    /* book keeping */
+    /* update i
+     * update offset into line
+     */
+    lex_data->s_i += integer_len;
+    lex_data->offset_into_line += integer_len;
+
+    /* capture payload */
+    integer_value = strtol(integer_start, &endptr, 10);
+    /* check value is not out of range */
+    if( integer_value == LONG_MAX ){
+        puts("ic_lex_literal_integer: call to strtol overflowed");
+        return 0;
+    }
+    if( integer_value == LONG_MIN ){
+        puts("ic_lex_literal_integer: call to strtol underflowed");
+        return 0;
+    }
+
+    /* check we gobbled up as many characters as we expected */
+    if( integer_len != (endptr - integer_start) ){
+        puts("ic_lex_literal_integer: strtol parsed length was not as expected");
+        return 0;
+    }
+
+    /* add payload */
+    token->u.integer = integer_value;
+
+    return 1;
 }
 
 static unsigned int ic_lex_literal_string(struct ic_lex_data *lex_data){
