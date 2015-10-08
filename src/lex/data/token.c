@@ -172,7 +172,7 @@ void ic_token_print(struct ic_token *token){
             printf("\"%.*s\"", token->u.str.len, token->u.str.string);
             break;
         case IC_COMMENT:
-            printf("# %.*s", token->u.str.len, token->u.str.string);
+            printf("#%.*s", token->u.str.len, token->u.str.string);
             break;
 
         case IC_NEWLINE:
