@@ -60,14 +60,56 @@ We can see what Icarus makes of this by running:
 
     make example
 
-Hidden in the output we see the lexer output:
+Hidden in the output we see the old lexer output:
+
+    old lexer output:
+    ----------------
+    type Foo a :: Int b :: String end fn d ( i :: Int ) print ( i ) end fn d ( s :: String ) print ( s ) end fn d ( f :: Foo ) d ( f . a ) d ( f . b ) end fn add_one ( i :: Int ) -> Int return i + 1 end fn main ( ) let f :: Foo = Foo ( add_one ( 1 ) , "hello" ) d ( f ) end fn print ( s :: String ) end fn print ( i :: Int ) end 
+    ----------------
+
+and the new lexer output:
 
     lexer output:
     ----------------
-    type Foo a :: Int b :: String end fn d ( i :: Int ) print ( i ) end fn d ( s :: String ) print ( s ) end fn d ( f :: Foo ) d ( f . a ) d ( f . b ) end fn add_one ( i :: Int ) -> Int return i + 1 end fn main ( ) let f :: Foo = Foo ( add_one ( 1 ) , "hello" ) d ( f ) end
+    # user defined type with 2 fields, an Int and a String
+    type Foo
+        a::Int
+        b::String
+    end
+
+    func d(i::Int)
+        print(i)
+    end
+
+    func d(s::String)
+        print(s)
+    end
+
+    # break apart a Foo and call d on each field
+    func d(f::Foo)
+        d(f.a)
+        d(f.b)
+    end
+
+    # simple function to test return values
+    func add_one(i::Int) -> Int
+        return i + 1
+    end
+
+    # entry point for program
+    func main()
+        let f::Foo = Foo(add_one(1), "hello")
+
+        d(f)
+    end
+
+    # temporary hack to allow type and function analysis to pass
+    func print(s::String) end
+    func print(i::Int) end
+
     ----------------
 
-Hidden elsewhere in the output we can see the parser reconstructing the program from it's current understanding:
+Hidden elsewhere in the output we can see the parser reconstructing the program from it's current understanding (based on old lexer):
 
     parser output:
     ----------------

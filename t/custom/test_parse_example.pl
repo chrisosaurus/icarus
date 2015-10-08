@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use v5.10;
 
-my $path = "bin/t/custom/test_example";
+my $path = "bin/t/custom/test_parse_example";
 
 die "Could not find '$path'\n" unless -e $path;
 
