@@ -195,11 +195,80 @@ struct ic_token_list * ic_lex(char *filename, char *source){
 }
 
 static unsigned int ic_lex_identifier(struct ic_lex_data *lex_data){
-    /* FIXME consume */
-    /* FIXME add payload */
-    /* FIXME maintain lex_data while we do so */
-    puts("ic_lex_comment: unimplemented");
-    return 0;
+    /* temporary token we construct */
+    struct ic_token *token = 0;
+
+    /* first char in literal found */
+    char * string_start = 0;
+    /* length of literal found */
+    unsigned int string_len = 0;
+
+    /* current char we are looking at */
+    char current = 0;
+
+    if( ! lex_data ){
+        puts("ic_lex_identifier: lex_data was null");
+        return 0;
+    }
+
+    string_start = &(lex_data->source[lex_data->s_i]);
+    for( string_len = 0; ; ++string_len ){
+        /* safety net for overrunning buffer */
+        if( lex_data->s_i + string_len > lex_data->s_len ){
+            break;
+        }
+
+        current = lex_data->source[lex_data->s_i + string_len];
+
+        if( current >= 'a' && 'z' <= current ){
+            continue;
+        }
+
+        if( current >= 'A' && 'Z' <= current ){
+            continue;
+        }
+
+        if( current >= '0' && '9' <= current ){
+            continue;
+        }
+
+        if( current == '_' ){
+            continue;
+        }
+
+        if( current == '-' ){
+            continue;
+        }
+
+        printf("ic_lex_identifier: unexpected character found '%c'\n", current);
+        return 0;
+    }
+
+    /* build a new token */
+    token = ic_token_new(IC_IDENTIFIER, lex_data->start_of_line, lex_data->offset_into_line, lex_data->filename, lex_data->line_num);
+    if( ! token ){
+        puts("ic_lex_identifier: call to ic_token_new failed");
+        return 0;
+    }
+
+    /* add payload */
+    token->u.str.string = string_start;
+    token->u.str.len = string_len;
+
+    /* append token */
+    if( ! ic_token_list_append(lex_data->token_list, token) ){
+        puts("ic_lex_identifier: call to ic_token_list_append failed");
+        return 0;
+    }
+
+    /* book keeping */
+    /* update i
+     * update offset into line
+     */
+    lex_data->s_i += string_len;
+    lex_data->offset_into_line += string_len;
+
+    return 1;
 }
 
 static unsigned int ic_lex_comment(struct ic_lex_data *lex_data){
