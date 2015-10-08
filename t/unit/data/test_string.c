@@ -2,7 +2,7 @@
 #include <assert.h> /* assert */
 #include <stdio.h> /* puts */
 
-#include "../../src/data/string.h"
+#include "../../../src/data/string.h"
 
 void normal(void){
     int i;

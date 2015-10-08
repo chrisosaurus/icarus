@@ -3,8 +3,8 @@
 #include <string.h> /* strcmp */
 #include <assert.h> /* assert */
 
-#include "../../src/data/pvector.h"
-#include "../../src/data/string.h"
+#include "../../../src/data/pvector.h"
+#include "../../../src/data/string.h"
 
 void normal(void){
     int i;

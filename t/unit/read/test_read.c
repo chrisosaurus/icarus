@@ -2,7 +2,7 @@
 #include <stdlib.h> /* exit */
 #include <string.h> /* strcmp */
 
-#include "../../src/read/read.h"
+#include "../../../src/read/read.h"
 
 static char *expected = "# user defined type with 2 fields, an Int and a String\n\
 type Foo\n\

@@ -2,12 +2,11 @@
 #include <assert.h> /* assert */
 #include <stdio.h> /* printf */
 
-#include "../../src/parse/data/ast.h"
+#include "../../../../src/parse/data/decl.h"
 
-void basic(void){
+int main(void){
     struct ic_field *field = 0;
     struct ic_type_decl *tdecl = 0;
-    struct ic_ast *ast;
     /* fake indent level */
     unsigned int fake_indent = 0;
 
@@ -20,7 +19,7 @@ void basic(void){
     assert( ! strncmp( ic_symbol_contents(&(tdecl->name)), "Foo", 3) );
 
     /* check vector is zero used
-     * FIXME should expose length methods
+     * FIXME expose lenght methods
      */
     assert( tdecl->fields.used == 0 );
 
@@ -37,40 +36,8 @@ void basic(void){
     printf("Should see:\ntype Foo\n    a::Int\n    b::String\nend\n");
 
     /* output type */
+    puts("Output:");
     ic_type_decl_print(tdecl, &fake_indent);
-
-
-    /* test ast itself */
-    ast = ic_ast_new();
-    assert(ast);
-
-    /* check out initial length */
-    assert( ic_ast_length(ast) == 0 );
-
-    /* check that out of bounds accesses fail */
-    assert( ic_ast_get(ast, 0) == 0 );
-
-    /* FIXME once we have working ic_decl we need to test ic_ast
-     * more thoroughly
-     */
-
-    assert( 1 == ic_type_decl_destroy(tdecl, 1) );
-    assert( 1 == ic_ast_destroy(ast, 1) );
-}
-
-void errors(void){
-    struct ic_ast ast;
-    assert( 0 == ic_ast_init(0) );
-    assert( 0 == ic_ast_get(0, 0) );
-    assert( -1 == ic_ast_append(0, 0) );
-    assert( -1 == ic_ast_append(&ast, 0) );
-    assert( 0 == ic_ast_length(0) );
-    assert( 0 == ic_ast_destroy(0, 0) );
-}
-
-int main(void){
-    basic();
-    errors();
 
     return 0;
 }

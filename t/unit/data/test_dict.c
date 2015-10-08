@@ -2,7 +2,7 @@
 #include <assert.h> /* assert */
 #include <stdio.h> /* puts */
 
-#include "../../src/data/dict.h"
+#include "../../../src/data/dict.h"
 
 void normal(void){
     struct ic_dict *dict = ic_dict_new();

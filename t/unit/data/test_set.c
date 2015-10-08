@@ -2,7 +2,7 @@
 #include <assert.h> /* assert */
 #include <stdio.h> /* puts */
 
-#include "../../src/data/set.h"
+#include "../../../src/data/set.h"
 
 void normal(void){
     struct ic_set *set = ic_set_new();

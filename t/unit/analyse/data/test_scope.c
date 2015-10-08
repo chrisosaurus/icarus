@@ -2,7 +2,7 @@
 #include <assert.h> /* assert */
 #include <stdio.h> /* puts */
 
-#include "../../src/analyse/data/scope.h"
+#include "../../../../src/analyse/data/scope.h"
 
 void normal(void){
     struct ic_scope *parent;

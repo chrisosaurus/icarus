@@ -2,7 +2,7 @@
 #include <assert.h> /* assert */
 #include <stdio.h> /* puts */
 
-#include "../../src/data/symbol.h"
+#include "../../../src/data/symbol.h"
 
 void normal(void){
     int i;
