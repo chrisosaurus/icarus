@@ -155,3 +155,89 @@ unsigned int ic_token_destroy(struct ic_token *token, unsigned int free_token){
     return 1;
 }
 
+void ic_token_print(struct ic_token *token){
+    if( ! token ){
+        return;
+    }
+
+    switch( token->id ){
+        case IC_IDENTIFIER:
+            printf("%s", token->u.str.string);
+            break;
+        case IC_LITERAL_INTEGER:
+            printf("%ld", token->u.integer);
+            break;
+        case IC_LITERAL_STRING:
+            printf("\"%s\"", token->u.str.string);
+            break;
+        case IC_COMMENT:
+            printf("#%s", token->u.str.string);
+            break;
+
+        case IC_NEWLINE:
+            fputs("\n", stdout);
+            break;
+        case IC_WHITESPACE:
+            fputs(" ", stdout);
+            break;
+
+        case IC_END:
+            fputs("end", stdout);
+            break;
+
+        case IC_IF:
+            fputs("if", stdout);
+            break;
+        case IC_ELSE:
+            fputs("else", stdout);
+            break;
+        case IC_THEN:
+            fputs("then", stdout);
+            break;
+        case IC_RETURN:
+            fputs("return", stdout);
+            break;
+        case IC_LET:
+            fputs("let", stdout);
+            break;
+
+        case IC_TYPE:
+            fputs("type", stdout);
+            break;
+        case IC_FUNC:
+            fputs("func", stdout);
+            break;
+
+        case IC_ARROW:
+            fputs("->", stdout);
+            break;
+        case IC_EQUAL:
+            fputs("==", stdout);
+            break;
+        case IC_ASSIGN:
+            fputs("=", stdout);
+            break;
+        case IC_DOUBLECOLON:
+            fputs("::", stdout);
+            break;
+        case IC_PERIOD:
+            fputs(".", stdout);
+            break;
+        case IC_COMMA:
+            fputs(",", stdout);
+            break;
+
+        case IC_LRBRACKET:
+            fputs("(", stdout);
+            break;
+        case IC_RRBRACKET:
+            fputs(")", stdout);
+            break;
+
+        default:
+            printf("ic_token_print: ERROR, unknown token id '%d'\n", token->id);
+            break;
+    }
+}
+
+
