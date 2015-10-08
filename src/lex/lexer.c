@@ -272,11 +272,80 @@ static unsigned int ic_lex_identifier(struct ic_lex_data *lex_data){
 }
 
 static unsigned int ic_lex_comment(struct ic_lex_data *lex_data){
-    /* FIXME consume */
-    /* FIXME add payload */
-    /* FIXME maintain lex_data while we do so */
-    puts("ic_lex_comment: unimplemented");
-    return 0;
+    /* temporary token we construct */
+    struct ic_token *token = 0;
+
+    /* first char in literal found */
+    char * comment_start = 0;
+    /* length of literal found */
+    unsigned int comment_len = 0;
+
+    /* current char we are looking at */
+    char current = 0;
+
+    if( ! lex_data ){
+        puts("ic_lex_comment: lex_data was null");
+        return 0;
+    }
+
+    comment_start = &(lex_data->source[lex_data->s_i]);
+
+    /* check for opening '#' */
+    if( *comment_start != '#' ){
+        printf("ic_lex_comment: expected # but found '%c'\n", *comment_start);
+        return 0;
+    }
+
+    /* skip over this # as we do not want it here */
+    ++comment_start;
+
+    for( comment_len = 0; ; ++comment_len ){
+        /* safety net for overrunning buffer */
+        if( lex_data->s_i + comment_len > lex_data->s_len ){
+            break;
+        }
+
+        /* keep going until we hit a newline or \0 */
+        current = lex_data->source[lex_data->s_i + comment_len];
+
+        if( current >= '\n' ){
+            /* time for us to stop */
+            break;
+        }
+
+        if( current >= '\0' ){
+            /* time for us to stop */
+            break;
+        }
+
+        /* keep on going ! */
+    }
+
+    /* build a new token */
+    token = ic_token_new(IC_COMMENT, lex_data->start_of_line, lex_data->offset_into_line, lex_data->filename, lex_data->line_num);
+    if( ! token ){
+        puts("ic_lex_comment: call to ic_token_new failed");
+        return 0;
+    }
+
+    /* add payload */
+    token->u.str.string = comment_start;
+    token->u.str.len = comment_len;
+
+    /* append token */
+    if( ! ic_token_list_append(lex_data->token_list, token) ){
+        puts("ic_lex_comment: call to ic_token_list_append failed");
+        return 0;
+    }
+
+    /* book keeping */
+    /* update i
+     * update offset into line
+     */
+    lex_data->s_i += comment_len;
+    lex_data->offset_into_line += comment_len;
+
+    return 1;
 }
 
 static unsigned int ic_lex_literal_integer(struct ic_lex_data *lex_data){
