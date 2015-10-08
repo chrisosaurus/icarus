@@ -7,7 +7,7 @@
 #include "../../src/parse/parse.h" /* ic_parse */
 #include "../../src/parse/data/ast.h" /* ic_ast structure */
 
-int main(int argc, char **argv){
+int main(void){
     char *filename = 0, *source = 0;
     struct ic_old_tokens *tokens = 0;
     struct ic_ast *ast = 0;

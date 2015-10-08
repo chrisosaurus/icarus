@@ -5,7 +5,7 @@
 #include "../../src/read/read.h" /* ic_read_slurp */
 #include "../../src/lex/lexer.h" /* ic_old_lex */
 
-int main(int argc, char **argv){
+int main(void){
     char *filename = 0, *source = 0;
     struct ic_token_list *token_list = 0;
 
