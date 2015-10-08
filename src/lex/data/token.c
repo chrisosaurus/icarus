@@ -157,6 +157,7 @@ unsigned int ic_token_destroy(struct ic_token *token, unsigned int free_token){
 
 void ic_token_print(struct ic_token *token){
     if( ! token ){
+        puts("ic_token_print: token was null");
         return;
     }
 
