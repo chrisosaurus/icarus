@@ -194,15 +194,15 @@ struct ic_token_list * ic_lex(char *filename, char *source){
     return final_value;
 }
 
-static unsigned int ic_lex_comment(struct ic_lex_data *lex_data){
-    /* FIXME consume rest of line into token */
+static unsigned int ic_lex_identifier(struct ic_lex_data *lex_data){
+    /* FIXME consume */
     /* FIXME add payload */
     /* FIXME maintain lex_data while we do so */
     puts("ic_lex_comment: unimplemented");
     return 0;
 }
 
-static unsigned int ic_lex_identifier(struct ic_lex_data *lex_data){
+static unsigned int ic_lex_comment(struct ic_lex_data *lex_data){
     /* FIXME consume */
     /* FIXME add payload */
     /* FIXME maintain lex_data while we do so */
@@ -311,10 +311,85 @@ SUCCESS:
 }
 
 static unsigned int ic_lex_literal_string(struct ic_lex_data *lex_data){
-    /* FIXME consume */
-    /* FIXME add payload */
-    /* FIXME maintain lex_data while we do so */
-    puts("ic_lex_literal_string: unimplemented");
-    return 0;
+    /* temporary token we construct */
+    struct ic_token *token = 0;
+
+    /* first char in string found */
+    char * string_start = 0;
+    /* length of string found */
+    unsigned int string_len = 0;
+
+    if( ! lex_data ){
+        puts("ic_lex_literal_string: lex_data was null");
+        return 0;
+    }
+
+    string_start = &(lex_data->source[lex_data->s_i]);
+
+    /* check opening " */
+    if( *string_start != '"' ){
+        printf("ic_lex_literal_string: could not find string opening, expected '\"' but got '%c'\n", *string_start);
+        return 0;
+    }
+
+    /* skip check opening "
+     * we do not want this in the final string
+     */
+    ++string_start;
+
+    for( string_len = 0; ; ++string_len ){
+        /* safety net for overrunning buffer */
+        if( lex_data->s_i + string_len > lex_data->s_len ){
+            break;
+        }
+
+        switch( lex_data->source[lex_data->s_i + string_len] ){
+            case '"':
+                /* closing character, stop */
+                goto SUCCESS;
+                break;
+
+            case '\0':
+                puts("ic_lex_literal_string: encountered unexpected \0");
+                return 0;
+                break;
+
+            default:
+                /* character not found yet, keep going */
+                break;
+        };
+    }
+
+SUCCESS:
+
+    /* we can only get here if we saw a closing "
+     * this is consumed by adding +2 below
+     */
+
+    /* build a new token */
+    token = ic_token_new(IC_LITERAL_STRING, lex_data->start_of_line, lex_data->offset_into_line, lex_data->filename, lex_data->line_num);
+    if( ! token ){
+        puts("ic_lex_literal_string: call to ic_token_new failed");
+        return 0;
+    }
+
+    /* add payload */
+    token->u.str.string = string_start;
+    token->u.str.len = string_len;
+
+    /* append token */
+    if( ! ic_token_list_append(lex_data->token_list, token) ){
+        puts("ic_lex_literal_string: call to ic_token_list_append failed");
+        return 0;
+    }
+
+    /* book keeping */
+    /* update i
+     * update offset into line
+     */
+    lex_data->s_i += string_len + 2; /* +2 to account for opening and closing " */
+    lex_data->offset_into_line += string_len + 2; /* +2 to account for opening and closing " */
+
+    return 1;
 }
 
