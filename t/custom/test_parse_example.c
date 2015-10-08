@@ -16,19 +16,19 @@ int main(int argc, char **argv){
 
     source = ic_read_slurp(filename);
     if( ! source ){
-        puts("slurping failed");
+        puts("test_parse_example: slurping failed");
         exit(1);
     }
 
     tokens = ic_old_lex(source);
     if( ! tokens ){
-        puts("lexing failed");
+        puts("test_parse_example: lexing failed");
         exit(1);
     }
 
     ast = ic_parse(tokens);
     if( ! ast ){
-        puts("parsing failed");
+        puts("test_parse_example: parsing failed");
         exit(1);
     }
 
@@ -38,7 +38,7 @@ int main(int argc, char **argv){
     puts("----------------\n");
 
     if( ! ic_ast_destroy(ast, 1) ){
-        puts("text_example: ic_ast_destroy failed");
+        puts("test_parse_example: ic_ast_destroy failed");
     }
 
     free(source);
