@@ -30,6 +30,11 @@ enum ic_token_id {
     IC_PERIOD,
     IC_COMMA,
 
+    IC_PLUS,
+    IC_MINUS,
+    IC_DIVIDE,
+    IC_MULTIPLY,
+
     IC_LRBRACKET, /* ( left round bracket */
     IC_RRBRACKET, /* ) right round backet */
 

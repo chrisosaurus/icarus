@@ -95,7 +95,7 @@ unsigned int ic_token_list_append(struct ic_token_list *list, struct ic_token *t
         return 0;
     }
 
-    if( ! ic_pvector_append(&(list->tokens), token) ){
+    if( -1 == ic_pvector_append(&(list->tokens), token) ){
         puts("ic_token_list_append: call to ic_pvector_append failed");
         return 0;
     }

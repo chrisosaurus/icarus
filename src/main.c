@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "read/read.h" /* ic_read_slurp */
+#include "lex/lexer.h" /* ic_lex */
 #include "old_lex/lexer.h" /* ic_old_lex */
 #include "parse/parse.h" /* ic_parse */
 #include "parse/data/ast.h" /* ic_ast structure */
@@ -11,6 +12,7 @@
 int main(int argc, char **argv){
     char *filename = 0, *source = 0;
     struct ic_old_tokens *tokens = 0;
+    struct ic_token_list *token_list = 0;
     struct ic_ast *ast = 0;
     struct ic_kludge *kludge = 0;
 
@@ -32,7 +34,7 @@ int main(int argc, char **argv){
 
     tokens = ic_old_lex(source);
     if( ! tokens ){
-        puts("lexing failed");
+        puts("old lexing failed");
         exit(1);
     }
 
@@ -40,11 +42,21 @@ int main(int argc, char **argv){
     printf("len of str '%d', len of tokens '%d', cap of tokens '%d'\n", strlen(source), tokens->len, tokens->cap);
 #endif
 
-    puts("\nlexer output:");
+    puts("\nold lexer output:");
     puts("----------------");
     printf("%s\n", tokens->tokens);
     puts("----------------\n");
 
+    token_list = ic_lex(filename, source);
+    if( ! token_list ){
+        puts("lexing failed");
+        exit(1);
+    }
+
+    puts("\nlexer output:");
+    puts("----------------");
+    ic_token_list_print(token_list);
+    puts("----------------\n");
 
     ast = ic_parse(tokens);
     if( ! ast ){

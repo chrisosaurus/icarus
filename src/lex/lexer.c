@@ -46,6 +46,9 @@ struct ic_token_list * ic_lex(char *filename, char *source){
     /* table length */
     unsigned int t_len = 0;
 
+    /* marker for success in switch/for loops */
+    unsigned int success = 0;
+
     if( ! source ){
         puts("ic_lex: source was null");
         return 0;
@@ -62,6 +65,7 @@ struct ic_token_list * ic_lex(char *filename, char *source){
     /* go through source */
     for( lex_data->s_i = 0; lex_data->s_i < lex_data->s_len; ){
         token = 0;
+        success = 0;
 
         /* check if this exists within the table */
         for( t_i = 0; t_i < t_len; ++t_i ){
@@ -80,6 +84,7 @@ struct ic_token_list * ic_lex(char *filename, char *source){
             }
 
             /* we have a match !  */
+            success = 1;
 
             /* build a new token */
             token = ic_token_new(table_id, lex_data->start_of_line, lex_data->offset_into_line, lex_data->filename, lex_data->line_num);
@@ -113,7 +118,7 @@ struct ic_token_list * ic_lex(char *filename, char *source){
             }
         }
 
-        if( token ){
+        if( success ){
             /* inner loop matched, stop processing this time round */
             continue;
         }
@@ -132,6 +137,7 @@ struct ic_token_list * ic_lex(char *filename, char *source){
                     puts("ic_lex: call to ic_lex_comment failed");
                     return 0;
                 }
+                success = 1;
                 break;
 
             case '"':
@@ -141,6 +147,7 @@ struct ic_token_list * ic_lex(char *filename, char *source){
                     puts("ic_lex: call to ic_lex_literal_string failed");
                     return 0;
                 }
+                success = 1;
                 break;
 
             case '0':
@@ -158,6 +165,7 @@ struct ic_token_list * ic_lex(char *filename, char *source){
                     puts("ic_lex: call to ic_lex_literal_integer failed");
                     return 0;
                 }
+                success = 1;
                 break;
 
             default:
@@ -166,10 +174,11 @@ struct ic_token_list * ic_lex(char *filename, char *source){
                     puts("ic_lex: call to ic_lex_identifier failed");
                     return 0;
                 }
+                success = 1;
                 break;
         }
 
-        if( token ){
+        if( success ){
             /* inner loop matched, stop processing this time round */
             continue;
         }
@@ -220,6 +229,7 @@ static unsigned int ic_lex_identifier(struct ic_lex_data *lex_data){
 
         current = lex_data->source[lex_data->s_i + string_len];
 
+        /* valid identifier characters */
         if( current >= 'a' && 'z' <= current ){
             continue;
         }
@@ -240,7 +250,13 @@ static unsigned int ic_lex_identifier(struct ic_lex_data *lex_data){
             continue;
         }
 
-        printf("ic_lex_identifier: unexpected character found '%c'\n", current);
+        /* end of literal */
+        break;
+    }
+
+    /* if identifier is empty then we failed */
+    if( ! string_len ){
+        printf("ic_lex_identifier: failed to parse identifier starting at character '%c'\n", current);
         return 0;
     }
 
@@ -298,22 +314,24 @@ static unsigned int ic_lex_comment(struct ic_lex_data *lex_data){
 
     /* skip over this # as we do not want it here */
     ++comment_start;
+    ++lex_data->s_i;
 
     for( comment_len = 0; ; ++comment_len ){
         /* safety net for overrunning buffer */
         if( lex_data->s_i + comment_len > lex_data->s_len ){
+            puts("overrun");
             break;
         }
 
         /* keep going until we hit a newline or \0 */
         current = lex_data->source[lex_data->s_i + comment_len];
 
-        if( current >= '\n' ){
+        if( current == '\n' ){
             /* time for us to stop */
             break;
         }
 
-        if( current >= '\0' ){
+        if( current == '\0' ){
             /* time for us to stop */
             break;
         }
@@ -474,6 +492,7 @@ static unsigned int ic_lex_literal_string(struct ic_lex_data *lex_data){
      * we do not want this in the final string
      */
     ++string_start;
+    ++lex_data->s_i;
 
     for( string_len = 0; ; ++string_len ){
         /* safety net for overrunning buffer */
@@ -501,7 +520,7 @@ static unsigned int ic_lex_literal_string(struct ic_lex_data *lex_data){
 SUCCESS:
 
     /* we can only get here if we saw a closing "
-     * this is consumed by adding +2 below
+     * this is consumed by adding +1 below
      */
 
     /* build a new token */
@@ -525,7 +544,7 @@ SUCCESS:
     /* update i
      * update offset into line
      */
-    lex_data->s_i += string_len + 2; /* +2 to account for opening and closing " */
+    lex_data->s_i += string_len + 1; /* +1 to account for closing " */
     lex_data->offset_into_line += string_len + 2; /* +2 to account for opening and closing " */
 
     return 1;

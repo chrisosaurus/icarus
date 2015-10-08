@@ -228,6 +228,20 @@ void ic_token_print(struct ic_token *token){
             fputs(",", stdout);
             break;
 
+        case IC_PLUS:
+            fputs("+", stdout);
+            break;
+        case IC_MINUS:
+            fputs("-", stdout);
+            break;
+        case IC_DIVIDE:
+            fputs("/", stdout);
+            break;
+        case IC_MULTIPLY:
+            fputs("*", stdout);
+            break;
+
+
         case IC_LRBRACKET:
             fputs("(", stdout);
             break;
