@@ -72,40 +72,40 @@ and the new lexer output:
     lexer output:
     ----------------
     # user defined type with 2 fields, an Int and a String
-    type Foo
+    fn Foo
         a::Int
         b::String
     end
 
-    func d(i::Int)
+    fn d(i::Int)
         print(i)
     end
 
-    func d(s::String)
+    fn d(s::String)
         print(s)
     end
 
     # break apart a Foo and call d on each field
-    func d(f::Foo)
+    fn d(f::Foo)
         d(f.a)
         d(f.b)
     end
 
     # simple function to test return values
-    func add_one(i::Int) -> Int
+    fn add_one(i::Int) -> Int
         return i + 1
     end
 
     # entry point for program
-    func main()
+    fn main()
         let f::Foo = Foo(add_one(1), "hello")
 
         d(f)
     end
 
     # temporary hack to allow type and function analysis to pass
-    func print(s::String) end
-    func print(i::Int) end
+    fn print(s::String) end
+    fn print(i::Int) end
 
     ----------------
 

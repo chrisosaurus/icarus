@@ -206,7 +206,7 @@ void ic_token_print(struct ic_token *token){
             fputs("type", stdout);
             break;
         case IC_FUNC:
-            fputs("func", stdout);
+            fputs("fn", stdout);
             break;
 
         case IC_ARROW:
