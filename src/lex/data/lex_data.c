@@ -67,6 +67,11 @@ unsigned int ic_lex_data_init(struct ic_lex_data *lex_data, char *filename, char
         return 0;
     }
 
+    lex_data->line_num = 0;
+    lex_data->offset_into_line = 0;
+    lex_data->start_of_line = source;
+
+    lex_data->s_i = 0;
     lex_data->s_len = strlen(source);
 
     return 1;
