@@ -144,5 +144,13 @@ Hidden elsewhere in the output we can see the parser reconstructing the program 
         let f::Foo = Foo(add_one(1) , "hello")
         d(f)
     end
+
+    # print(String)
+    fn print(s::String) -> Void
+    end
+
+    # print(Int)
+    fn print(i::Int) -> Void
+    end
     ----------------
 
