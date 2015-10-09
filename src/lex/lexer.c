@@ -268,8 +268,10 @@ static unsigned int ic_lex_identifier(struct ic_lex_data *lex_data){
     }
 
     /* add payload */
-    token->u.str.string = string_start;
-    token->u.str.len = string_len;
+    if( ! ic_token_set_string(token, string_start, string_len) ){
+        puts("ic_lex_identifier: call to ic_token_set_string failed");
+        return 0;
+    }
 
     /* append token */
     if( ! ic_token_list_append(lex_data->token_list, token) ){
@@ -347,8 +349,10 @@ static unsigned int ic_lex_comment(struct ic_lex_data *lex_data){
     }
 
     /* add payload */
-    token->u.str.string = comment_start;
-    token->u.str.len = comment_len;
+    if( ! ic_token_set_string(token, comment_start, comment_len) ){
+        puts("ic_lex_comment: call to ic_token_set_string failed");
+        return 0;
+    }
 
     /* append token */
     if( ! ic_token_list_append(lex_data->token_list, token) ){
@@ -461,7 +465,10 @@ SUCCESS:
     }
 
     /* add payload */
-    token->u.integer = integer_value;
+    if( ! ic_token_set_integer(token, integer_value) ){
+        puts("ic_lex_literal_integer: call to ic_token_set_integer failed");
+        return 0;
+    }
 
     return 1;
 }
@@ -531,8 +538,10 @@ SUCCESS:
     }
 
     /* add payload */
-    token->u.str.string = string_start;
-    token->u.str.len = string_len;
+    if( ! ic_token_set_string(token, string_start, string_len) ){
+        puts("ic_lex_literal_string: call to ic_token_set_string failed");
+        return 0;
+    }
 
     /* append token */
     if( ! ic_token_list_append(lex_data->token_list, token) ){
