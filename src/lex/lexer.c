@@ -230,15 +230,15 @@ static unsigned int ic_lex_identifier(struct ic_lex_data *lex_data){
         current = lex_data->source[lex_data->s_i + string_len];
 
         /* valid identifier characters */
-        if( current >= 'a' && 'z' <= current ){
+        if( current >= 'a' && 'z' >= current ){
             continue;
         }
 
-        if( current >= 'A' && 'Z' <= current ){
+        if( current >= 'A' && 'Z' >= current ){
             continue;
         }
 
-        if( current >= '0' && '9' <= current ){
+        if( current >= '0' && '9' >= current ){
             continue;
         }
 

@@ -251,3 +251,37 @@ void ic_token_list_print(struct ic_token_list *list){
     }
 }
 
+/* debug print all the tokens stored in this list
+ * this will NOT use the token's iterator method
+ * so no external side effects occur
+ */
+void ic_token_list_print_debug(struct ic_token_list *list){
+    /* current token in list */
+    struct ic_token *token = 0;
+    /* current offset into token list */
+    unsigned int i = 0;
+    /* cached len of token_list */
+    unsigned int len = 0;
+
+    if( ! list ){
+        puts("ic_token_list_print: ERROR list was null");
+        return;
+    }
+
+    len = ic_token_list_length(list);
+
+    for( i=0; i<len; ++i ){
+        token = ic_token_list_get(list, i);
+
+        if( ! token ){
+            printf("ic_token_list_print: call to ic_token_list_get for i '%d' failed\n", i);
+            return;
+        }
+
+        if( i ){
+            fputs(" ", stdout);
+        }
+        ic_token_print_debug(token);
+    }
+}
+

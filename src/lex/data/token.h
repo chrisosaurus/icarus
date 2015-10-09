@@ -125,4 +125,8 @@ unsigned int ic_token_destroy(struct ic_token *token, unsigned int free_token);
 
 void ic_token_print(struct ic_token *token);
 
+void ic_token_id_print_debug(enum ic_token_id id);
+
+void ic_token_print_debug(struct ic_token *token);
+
 #endif

@@ -255,4 +255,111 @@ void ic_token_print(struct ic_token *token){
     }
 }
 
+void ic_token_id_print_debug(enum ic_token_id id){
+    switch( id ){
+        case IC_IDENTIFIER:
+            /* FIXME add payload */
+            fputs("IC_IDENTIFIER", stdout);
+            break;
+        case IC_LITERAL_INTEGER:
+            /* FIXME add payload */
+            fputs("IC_LITERAL_INTEGER", stdout);
+            break;
+        case IC_LITERAL_STRING:
+            /* FIXME add payload */
+            fputs("IC_LITERAL_STRING", stdout);
+            break;
+        case IC_COMMENT:
+            /* FIXME add payload */
+            fputs("IC_COMMENT", stdout);
+            break;
+
+        case IC_NEWLINE:
+            fputs("IC_NEWLINE", stdout);
+            break;
+        case IC_WHITESPACE:
+            fputs("IC_WHITSPACE", stdout);
+            break;
+
+        case IC_END:
+            fputs("IC_END", stdout);
+            break;
+
+        case IC_IF:
+            fputs("IC_IF", stdout);
+            break;
+        case IC_ELSE:
+            fputs("IC_ELSE", stdout);
+            break;
+        case IC_THEN:
+            fputs("IC_THEN", stdout);
+            break;
+        case IC_RETURN:
+            fputs("IC_RETURN", stdout);
+            break;
+        case IC_LET:
+            fputs("IC_LET", stdout);
+            break;
+
+        case IC_TYPE:
+            fputs("IC_TYPE", stdout);
+            break;
+        case IC_FUNC:
+            fputs("IC_FUNC", stdout);
+            break;
+
+        case IC_ARROW:
+            fputs("IC_ARROW", stdout);
+            break;
+        case IC_EQUAL:
+            fputs("IC_EQUAL", stdout);
+            break;
+        case IC_ASSIGN:
+            fputs("IC_ASSIGN", stdout);
+            break;
+        case IC_DOUBLECOLON:
+            fputs("IC_DOUBLECOLON", stdout);
+            break;
+        case IC_PERIOD:
+            fputs("IC_PERIOD", stdout);
+            break;
+        case IC_COMMA:
+            fputs("IC_COMMA", stdout);
+            break;
+
+        case IC_PLUS:
+            fputs("IC_PLUS", stdout);
+            break;
+        case IC_MINUS:
+            fputs("IC_MINUS", stdout);
+            break;
+        case IC_DIVIDE:
+            fputs("IC_DIVIDE", stdout);
+            break;
+        case IC_MULTIPLY:
+            fputs("IC_MULTIPLY", stdout);
+            break;
+
+        case IC_LRBRACKET:
+            fputs("IC_LRBRACKET", stdout);
+            break;
+        case IC_RRBRACKET:
+            fputs("IC_RRBRACKET", stdout);
+            break;
+
+        default:
+            printf("ic_token_id_print_debug: ERROR, unknown token id '%d'\n", id);
+            break;
+    }
+}
+
+
+void ic_token_print_debug(struct ic_token *token){
+    if( ! token ){
+        puts("ic_token_print_debug: token was null");
+        return;
+    }
+
+    ic_token_id_print_debug(token->id);
+}
 

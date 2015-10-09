@@ -97,4 +97,10 @@ unsigned int ic_token_list_counter(struct ic_token_list *list);
  */
 void ic_token_list_print(struct ic_token_list *list);
 
+/* debug print all the tokens stored in this list
+ * this will NOT use the token's iterator method
+ * so no external side effects occur
+ */
+void ic_token_list_print_debug(struct ic_token_list *list);
+
 #endif
