@@ -68,7 +68,22 @@ unsigned int ic_token_set_string(struct ic_token *token, char *string, unsigned 
         return 0;
     }
 
-    /* FIXME consider checking if token->id allows for a string */
+    /* check if token->id allows for a string */
+    switch( token->id ){
+        case IC_IDENTIFIER:
+        case IC_LITERAL_STRING:
+        case IC_COMMENT:
+            /* string allowed */
+            break;
+
+        default:
+            fputs("ic_token_set_string: called on token not allowing a payload, token->id:", stdout);
+            ic_token_id_print_debug(token->id);
+            puts("");
+            return 1;
+            break;
+    }
+
     token->u.str.string = string;
     token->u.str.len = len;
     return 1;
@@ -85,7 +100,22 @@ char * ic_token_get_string(struct ic_token *token){
         return 0;
     }
 
-    /* FIXME consider checking if token->id allows for a string */
+    /* check if token->id allows for a string */
+    switch( token->id ){
+        case IC_IDENTIFIER:
+        case IC_LITERAL_STRING:
+        case IC_COMMENT:
+            /* string allowed */
+            break;
+
+        default:
+            fputs("ic_token_get_string: called on token not allowing a payload, token->id:", stdout);
+            ic_token_id_print_debug(token->id);
+            puts("");
+            return 0;
+            break;
+    }
+
     return token->u.str.string;
 }
 
@@ -100,7 +130,22 @@ unsigned int ic_token_get_string_length(struct ic_token *token){
         return 0;
     }
 
-    /* FIXME consider checking if token->id allows for a string */
+    /* check if token->id allows for a string */
+    switch( token->id ){
+        case IC_IDENTIFIER:
+        case IC_LITERAL_STRING:
+        case IC_COMMENT:
+            /* string allowed */
+            break;
+
+        default:
+            fputs("ic_token_get_string_length: called on token not allowing a payload, token->id:", stdout);
+            ic_token_id_print_debug(token->id);
+            puts("");
+            return 0;
+            break;
+    }
+
     return token->u.str.len;
 }
 
@@ -115,8 +160,22 @@ int ic_token_set_integer(struct ic_token *token, int integer){
         return 0;
     }
 
-    /* FIXME consider checking if token->id allows for an integer */
+    /* check if token->id allows for an integer */
+    switch( token->id ){
+        case IC_LITERAL_INTEGER:
+            /* string allowed */
+            break;
+
+        default:
+            fputs("ic_token_set_integer: called on token not allowing a payload, token->id:", stdout);
+            ic_token_id_print_debug(token->id);
+            puts("");
+            return 0;
+            break;
+    }
+
     token->u.integer = integer;
+
     return 1;
 }
 
@@ -131,7 +190,20 @@ int ic_token_get_integer(struct ic_token *token){
         return 0;
     }
 
-    /* FIXME consider checking if token->id allows for an integer */
+    /* check if token->id allows for an integer */
+    switch( token->id ){
+        case IC_LITERAL_INTEGER:
+            /* string allowed */
+            break;
+
+        default:
+            fputs("ic_token_get_integer: called on token not allowing a payload, token->id:", stdout);
+            ic_token_id_print_debug(token->id);
+            puts("");
+            return 0;
+            break;
+    }
+
     return token->u.integer;
 }
 
