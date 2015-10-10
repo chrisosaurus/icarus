@@ -9,9 +9,6 @@
 #include "data/lex_data.h"
 #include "lexer.h"
 
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#pragma GCC diagnostic ignored "-Wunused-function"
-
 static unsigned int ic_lex_comment(struct ic_lex_data *lex_data);
 static unsigned int ic_lex_identifier(struct ic_lex_data *lex_data);
 static unsigned int ic_lex_literal_integer(struct ic_lex_data *lex_data);
