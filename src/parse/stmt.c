@@ -5,7 +5,7 @@
 #include "data/ast.h"
 #include "parse.h"
 #include "data/statement.h"
-#include "../old_lex/lexer.h"
+#include "../lex/lexer.h"
 
 /* ignore unused parameter warnings */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -26,7 +26,7 @@
  * returns ic_stmt* on success
  * returns 0 on failure
  */
-static struct ic_stmt * ic_parse_stmt_ret(struct ic_old_tokens *tokens, unsigned int *i){
+static struct ic_stmt * ic_parse_stmt_ret(struct ic_token_list *token_list){
     /* return form
      *      return expr
      */
@@ -35,6 +35,9 @@ static struct ic_stmt * ic_parse_stmt_ret(struct ic_old_tokens *tokens, unsigned
     struct ic_stmt *stmt = 0;
     /* our internal ret value */
     struct ic_stmt_ret *ret = 0;
+
+    /* current token */
+    struct ic_token *token = 0;
 
     /* allocate and initialise */
     stmt = ic_stmt_new(ic_stmt_type_ret);
@@ -47,7 +50,8 @@ static struct ic_stmt * ic_parse_stmt_ret(struct ic_old_tokens *tokens, unsigned
     ret = ic_stmt_get_ret(stmt);
 
     /* check for `return` */
-    if( ic_parse_check_token("return", 6, tokens->tokens, i) ){
+    token = ic_token_list_expect_important(token_list, IC_RETURN);
+    if( ! token ){
         puts("ic_parse_stmt_ret: Failed to find `return` token");
         free(stmt);
         return 0;
@@ -60,7 +64,7 @@ static struct ic_stmt * ic_parse_stmt_ret(struct ic_old_tokens *tokens, unsigned
     }
 
     /* consume initialisation expression */
-    ret->ret = ic_parse_expr(tokens, i);
+    ret->ret = ic_parse_expr(token_list);
     if( ! ret->ret ){
         puts("ic_parse_stmt_ret: call to ic_parse_expr failed");
         free(stmt);
@@ -76,7 +80,7 @@ static struct ic_stmt * ic_parse_stmt_ret(struct ic_old_tokens *tokens, unsigned
  * returns ic_stmt* on success
  * returns 0 on failure
  */
-static struct ic_stmt * ic_parse_stmt_let(struct ic_old_tokens *tokens, unsigned int *i){
+static struct ic_stmt * ic_parse_stmt_let(struct ic_token_list *token_list){
     /* current let forms
      *      let identifier::type = expression
      *
@@ -99,6 +103,9 @@ static struct ic_stmt * ic_parse_stmt_let(struct ic_old_tokens *tokens, unsigned
     char *type_start = 0;
     unsigned int type_len = 0;
 
+    /* current token */
+    struct ic_token *token = 0;
+
     /* allocate and initialise */
     stmt = ic_stmt_new(ic_stmt_type_let);
     if( ! stmt ){
@@ -110,28 +117,52 @@ static struct ic_stmt * ic_parse_stmt_let(struct ic_old_tokens *tokens, unsigned
     let = ic_stmt_get_let(stmt);
 
     /* check for `let` */
-    if( ic_parse_check_token("let", 3, tokens->tokens, i) ){
+    token = ic_token_list_expect_important(token_list, IC_LET);
+    if( ! token ){
         puts("ic_parse_stmt_let: Failed to find `let` token");
         free(stmt);
         return 0;
     }
 
     /* consume identifier */
-    id_start = &(tokens->tokens[*i]);
-    id_len = ic_parse_token_length(tokens->tokens, *i);
-    ic_parse_token_advance(i, id_len);
+    token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
+    if( ! token ){
+        puts("ic_parse_stmt_let: Failed to find let identifier token");
+        free(stmt);
+        return 0;
+    }
+
+    id_start = ic_token_get_string(token);
+    id_len = ic_token_get_string_length(token);
+    if( ! id_start || ! id_len ){
+        puts("ic_parse_stmt_let: Failed to extract let identifier");
+        free(stmt);
+        return 0;
+    }
 
     /* check for `::` */
-    if( ic_parse_check_token("::", 2, tokens->tokens, i) ){
-        puts("ic_parse_stmt_let: Failed to find `::` token");
+    token = ic_token_list_expect_important(token_list, IC_DOUBLECOLON);
+    if( ! token ){
+        puts("ic_parse_stmt_let: Failed to find let doublecolon token");
         free(stmt);
         return 0;
     }
 
     /* consume type */
-    type_start = &(tokens->tokens[*i]);
-    type_len = ic_parse_token_length(tokens->tokens, *i);
-    ic_parse_token_advance(i, type_len);
+    token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
+    if( ! token ){
+        puts("ic_parse_stmt_let: Failed to find let identifier token");
+        free(stmt);
+        return 0;
+    }
+
+    type_start = ic_token_get_string(token);
+    type_len = ic_token_get_string_length(token);
+    if( ! type_start || ! type_len ){
+        puts("ic_parse_stmt_let: Failed to extract type identifier");
+        free(stmt);
+        return 0;
+    }
 
     /* initialise our let */
     if( ! ic_stmt_let_init(let, id_start, id_len, type_start, type_len) ){
@@ -141,14 +172,15 @@ static struct ic_stmt * ic_parse_stmt_let(struct ic_old_tokens *tokens, unsigned
     }
 
     /* check for `=` */
-    if( ic_parse_check_token("=", 1, tokens->tokens, i) ){
-        puts("ic_parse_stmt_let: Failed to find `=` token");
+    token = ic_token_list_expect_important(token_list, IC_ASSIGN);
+    if( ! token ){
+        puts("ic_parse_stmt_let: Failed to find let assign token");
         free(stmt);
         return 0;
     }
 
     /* consume initialisation expression */
-    let->init = ic_parse_expr(tokens, i);
+    let->init = ic_parse_expr(token_list);
     if( ! let->init ){
         puts("ic_parse_stmt_let: call to ic_parse_expr failed");
         free(stmt);
@@ -163,13 +195,16 @@ static struct ic_stmt * ic_parse_stmt_let(struct ic_old_tokens *tokens, unsigned
  * returns ic_stmt* on success
  * returns 0 on failure
  */
-static struct ic_stmt * ic_parse_stmt_if(struct ic_old_tokens *tokens, unsigned int *i){
+static struct ic_stmt * ic_parse_stmt_if(struct ic_token_list *token_list){
     /* out eventual return value */
     struct ic_stmt *stmt = 0;
     /* our condition expression */
     struct ic_expr *expr = 0;
     /* our body */
     struct ic_body *body = 0;
+
+    /* current token */
+    struct ic_token *token = 0;
 
     /* there are a few cases of if we care about at this point
      *
@@ -197,8 +232,9 @@ static struct ic_stmt * ic_parse_stmt_if(struct ic_old_tokens *tokens, unsigned 
     }
 
     /* consume if */
-    if( ic_parse_check_token("if", 2, tokens->tokens, i) ){
-        puts("ic_parse_stmt_ret: Failed to find `if` token");
+    token = ic_token_list_expect_important(token_list, IC_IF);
+    if( ! token ){
+        puts("ic_parse_stmt_if: Failed to find `if` token");
         free(stmt);
         return 0;
     }
@@ -213,14 +249,15 @@ static struct ic_stmt * ic_parse_stmt_if(struct ic_old_tokens *tokens, unsigned 
     /* FIXME check that our 'expr' has the type Bool */
 
     /* consume then */
-    if( ic_parse_check_token("then", 4, tokens->tokens, i) ){
-        puts("ic_parse_stmt_ret: Failed to find `then` token");
+    token = ic_token_list_expect_important(token_list, IC_THEN);
+    if( ! token ){
+        puts("ic_parse_stmt_if: Failed to find `then` token");
         free(stmt);
         return 0;
     }
 
     /* parse our body */
-    body = ic_parse_body(tokens, i);
+    body = ic_parse_body(token_list);
     if( ! body ){
         puts("ic_parse_stmt_if: call to ic_parse_body failed");
         return 0;
@@ -238,7 +275,7 @@ static struct ic_stmt * ic_parse_stmt_if(struct ic_old_tokens *tokens, unsigned 
  * returns ic_stmt* on success
  * returns 0 on failure
  */
-static struct ic_stmt * ic_parse_stmt_expr(struct ic_old_tokens *tokens, unsigned int *i){
+static struct ic_stmt * ic_parse_stmt_expr(struct ic_token_list *token_list){
     /* out eventual return value */
     struct ic_stmt *stmt = 0;
 
@@ -250,7 +287,7 @@ static struct ic_stmt * ic_parse_stmt_expr(struct ic_old_tokens *tokens, unsigne
     }
 
     /* here we really just wrap ic_parse_expr */
-    stmt->u.expr = ic_parse_expr(tokens, i);
+    stmt->u.expr = ic_parse_expr(token_list);
     if( ! stmt->u.expr ){
         puts("ic_parse_stmt_expr: call to ic_parse_expr failed");
         free(stmt);
@@ -265,70 +302,48 @@ static struct ic_stmt * ic_parse_stmt_expr(struct ic_old_tokens *tokens, unsigne
  * and if a match is found, the function to dispatch to
  */
 static struct ic_parse_table_entry {
-    unsigned int len;
-    char *token;
-    struct ic_stmt * (*func)(struct ic_old_tokens *tokens, unsigned int *i);
+    enum ic_token_id id;
+    struct ic_stmt * (*func)(struct ic_token_list *token_list);
 } ic_parse_table [] = {
-    /* len    token       function    */
-    {  2,     "if",       ic_parse_stmt_if  },
-    {  3,     "let",      ic_parse_stmt_let },
-    {  6,     "return",   ic_parse_stmt_ret }
+    /* id          function    */
+    {  IC_IF,      ic_parse_stmt_if  },
+    {  IC_LET,     ic_parse_stmt_let },
+    {  IC_RETURN,  ic_parse_stmt_ret }
     /* otherwise we default to ic_parse_stmt_expr */
 };
 
-struct ic_stmt * ic_parse_stmt(struct ic_old_tokens *tokens, unsigned int *i){
-    /* length of current token */
-    unsigned int dist = 0;
-
+struct ic_stmt * ic_parse_stmt(struct ic_token_list *token_list){
     /* offset into ic_parse_table */
     unsigned int pt_offset = 0;
 
     /* function to dispatch to */
-    struct ic_stmt * (*func)(struct ic_old_tokens *tokens, unsigned int *i) = 0;
+    struct ic_stmt * (*func)(struct ic_token_list *token_list) = 0;
 
     /* return from call to func */
     struct ic_stmt *ret = 0;
+
+    /* current token */
+    struct ic_token *token = 0;
 
 #ifdef DEBUG_PARSE_STMT
     puts("ic_parse_stmt: entered");
 #endif
 
-    /* find length of token */
-    dist = ic_parse_token_length(tokens->tokens, *i);
+    token = ic_token_list_peek_important(token_list);
+    if( ! token ){
+        puts("ic_parse_stmt: call to ic_token_list_peek_important failed");
+        return 0;
+    }
 
     for( pt_offset=0; pt_offset < LENGTH(ic_parse_table); ++pt_offset ){
 
-#ifdef DEBUG_PARSE_STMT
-            printf( "ic_parse_stmt: comparing token '%.*s' (%u) with parse_table entry '%.*s' (%u)\n",
-                    dist,
-                    &(tokens->tokens[*i]),
-                    dist,
-                    ic_parse_table[pt_offset].len,
-                    ic_parse_table[pt_offset].token,
-                    ic_parse_table[pt_offset].len
-                  );
-#endif
-
-        if( dist == ic_parse_table[pt_offset].len
-            && ! strncmp(
-                        &(tokens->tokens[*i]),
-                        ic_parse_table[pt_offset].token,
-                        dist )
-          ){
-#ifdef DEBUG_PARSE_STMT
-
-                printf( "ic_parse_stmt: match found! token '%.*s' with parse_table entry '%.*s'\n",
-                        dist,
-                        &(tokens->tokens[*i]),
-                        ic_parse_table[pt_offset].len,
-                        ic_parse_table[pt_offset].token );
-#endif
+        if( token->id == ic_parse_table[pt_offset].id ){
 
             func = ic_parse_table[pt_offset].func;
             if( ! func ){
-                printf( "ic_parse: Error matched with '%.*s' but parse table function was null, bailing\n",
-                        ic_parse_table[pt_offset].len,
-                        ic_parse_table[pt_offset].token );
+                printf( "ic_parse: Error matched with: ");
+                ic_token_id_print_debug(token->id);
+                puts("but parse table function was null, bailing");
                 return 0;
             }
         }
@@ -342,7 +357,7 @@ struct ic_stmt * ic_parse_stmt(struct ic_old_tokens *tokens, unsigned int *i){
     }
 
     /* out return value */
-    ret = func(tokens, i);
+    ret = func(token_list);
 
     if( ! ret ){
         puts("ic_parse_stmt: call to matched function failed");

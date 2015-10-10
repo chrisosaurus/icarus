@@ -16,9 +16,6 @@ So far Icarus only has a lexer and basic parser (syntactic analysis),
 work is progressing on the analyse (semantic analyse) stage,
 there are no backends yet.
 
-Icarus is currently in the process of a major refactor of the lexing system,
-for a transition period icarus will have an additional lexer 'hanging off the side'.
-
 Here is an example of the lex and parse steps in action:
 
 We have the contents of `example/simple.ic`:
@@ -60,19 +57,12 @@ We can see what Icarus makes of this by running:
 
     make example
 
-Hidden in the output we see the old lexer output:
-
-    old lexer output:
-    ----------------
-    type Foo a :: Int b :: String end fn d ( i :: Int ) print ( i ) end fn d ( s :: String ) print ( s ) end fn d ( f :: Foo ) d ( f . a ) d ( f . b ) end fn add_one ( i :: Int ) -> Int return i + 1 end fn main ( ) let f :: Foo = Foo ( add_one ( 1 ) , "hello" ) d ( f ) end fn print ( s :: String ) end fn print ( i :: Int ) end 
-    ----------------
-
-and the new lexer output:
+Hidden in the output we see the new lexer output:
 
     lexer output:
     ----------------
     # user defined type with 2 fields, an Int and a String
-    fn Foo
+    type Foo
         a::Int
         b::String
     end
@@ -98,7 +88,7 @@ and the new lexer output:
 
     # entry point for program
     fn main()
-        let f::Foo = Foo(add_one(1), "hello")
+        let f::Foo = Foo(add_one(1) "hello")
 
         d(f)
     end
@@ -109,9 +99,10 @@ and the new lexer output:
 
     ----------------
 
-Hidden elsewhere in the output we can see the parser reconstructing the program from it's current understanding (based on old lexer):
 
-    parser output:
+Hidden elsewhere in the output we can see the parser reconstructing the program from it's current understanding (based on new lexer):
+
+   parser output:
     ----------------
     type Foo
         a::Int
@@ -141,7 +132,7 @@ Hidden elsewhere in the output we can see the parser reconstructing the program 
 
     # main()
     fn main() -> Void
-        let f::Foo = Foo(add_one(1) , "hello")
+        let f::Foo = Foo(add_one(1) "hello")
         d(f)
     end
 

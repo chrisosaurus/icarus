@@ -227,6 +227,34 @@ unsigned int ic_token_destroy(struct ic_token *token, unsigned int free_token){
     return 1;
 }
 
+/* check if token is an operator
+ *
+ * returns 1 if it is an operator
+ * returns 0 if not
+ */
+unsigned int ic_token_isoperator(struct ic_token *token){
+    if( ! token ){
+        puts("ic_token_isoperator: token was null");
+        return 0;
+    }
+
+    switch( token->id ){
+        case IC_PLUS:
+        case IC_MINUS:
+        case IC_DIVIDE:
+        case IC_MULTIPLY:
+            return 1;
+
+        case IC_PERIOD:
+            return 1;
+
+        default:
+            break;
+    }
+
+    return 0;
+}
+
 void ic_token_print(struct ic_token *token){
     if( ! token ){
         puts("ic_token_print: token was null");
@@ -279,6 +307,12 @@ void ic_token_print(struct ic_token *token){
             break;
         case IC_FUNC:
             fputs("fn", stdout);
+            break;
+        case IC_ENUM:
+            fputs("enum", stdout);
+            break;
+        case IC_UNION:
+            fputs("union", stdout);
             break;
 
         case IC_ARROW:
@@ -379,6 +413,12 @@ void ic_token_id_print_debug(enum ic_token_id id){
         case IC_FUNC:
             fputs("IC_FUNC", stdout);
             break;
+        case IC_ENUM:
+            fputs("IC_ENUM", stdout);
+            break;
+        case IC_UNION:
+            fputs("IC_UNION", stdout);
+            break;
 
         case IC_ARROW:
             fputs("IC_ARROW", stdout);
@@ -434,4 +474,44 @@ void ic_token_print_debug(struct ic_token *token){
 
     ic_token_id_print_debug(token->id);
 }
+
+void ic_token_print_line(struct ic_token *token){
+    /* number of chars until line ends */
+    unsigned int len = 0;
+
+    if( ! token ){
+        puts("ic_token_print_line: token was null");
+        return;
+    }
+
+    for( len=0; ; ++len ){
+        switch( token->line[len] ){
+            case '\0':
+            case '\n':
+            case '\r':
+                goto END;
+                break;
+
+            default:
+                break;
+        }
+    }
+
+END:
+
+    printf("%.*s\n", len, token->line);
+}
+
+void ic_token_debug(struct ic_token *token){
+    if( ! token ){
+        puts("ic_token_debug: token was null");
+        return;
+    }
+
+    fputs("ic_token_debug:", stdout);
+    ic_token_print_debug(token);
+    printf(" found in context: '%.*s'\nline:\n", 10, &(token->line[token->offset]));
+    ic_token_print_line(token);
+}
+
 

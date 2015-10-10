@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "../../src/read/read.h" /* ic_read_slurp */
-#include "../../src/lex/lexer.h" /* ic_old_lex */
+#include "../../src/lex/lexer.h" /* ic_lex */
 
 int main(void){
     char *filename = 0, *source = 0;

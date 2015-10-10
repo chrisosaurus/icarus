@@ -1,0 +1,494 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ICARUS_ANALYSE_H	/home/chris/devel/icarus//src/analyse/analyse.h	2;"	d
+ICARUS_ANALYSE_HELPERS_H	/home/chris/devel/icarus//src/analyse/helpers.h	2;"	d
+ICARUS_AST_H	/home/chris/devel/icarus//src/parse/data/ast.h	2;"	d
+ICARUS_CLUDGE_H	/home/chris/devel/icarus//src/analyse/data/scope.h	2;"	d
+ICARUS_DECL_H	/home/chris/devel/icarus//src/parse/data/decl.h	2;"	d
+ICARUS_DICT_H	/home/chris/devel/icarus//src/data/dict.h	2;"	d
+ICARUS_EXPRESSION_H	/home/chris/devel/icarus//src/parse/data/expression.h	2;"	d
+ICARUS_FIELD_H	/home/chris/devel/icarus//src/parse/data/field.h	2;"	d
+ICARUS_KLUDGE_H	/home/chris/devel/icarus//src/analyse/data/kludge.h	2;"	d
+ICARUS_OLD_LEXER_H	/home/chris/devel/icarus//src/old_lex/lexer.h	2;"	d
+ICARUS_PARRAY_H	/home/chris/devel/icarus//src/data/parray.h	2;"	d
+ICARUS_PARSE_H	/home/chris/devel/icarus//src/parse/parse.h	2;"	d
+ICARUS_PVECTOR_H	/home/chris/devel/icarus//src/data/pvector.h	2;"	d
+ICARUS_READ_H	/home/chris/devel/icarus//src/read/read.h	2;"	d
+ICARUS_SET_H	/home/chris/devel/icarus//src/data/set.h	2;"	d
+ICARUS_SLOT_H	/home/chris/devel/icarus//src/analyse/data/slot.h	2;"	d
+ICARUS_STATEMENT_H	/home/chris/devel/icarus//src/parse/data/statement.h	2;"	d
+ICARUS_STRING_H	/home/chris/devel/icarus//src/data/string.h	2;"	d
+ICARUS_SYMBOL_H	/home/chris/devel/icarus//src/data/symbol.h	2;"	d
+ICARUS_TABLE_H	/home/chris/devel/icarus//src/lex/table.h	2;"	d
+ICARUS_TOKEN_H	/home/chris/devel/icarus//src/lex/data/token.h	2;"	d
+ICARUS_TOKEN_LIST_H	/home/chris/devel/icarus//src/lex/data/token_list.h	2;"	d
+ICARUS_TYPE_BUILTIN_H	/home/chris/devel/icarus//src/analyse/data/type_builtin.h	2;"	d
+ICARUS_TYPE_H	/home/chris/devel/icarus//src/parse/data/type_ref.h	2;"	d
+ICARUS_carray_H	/home/chris/devel/icarus//src/data/carray.h	2;"	d
+ICARU_BODY_H	/home/chris/devel/icarus//src/parse/data/body.h	2;"	d
+IC_ARROW	/home/chris/devel/icarus//src/lex/data/token.h	/^    IC_ARROW,$/;"	e	enum:ic_token_id
+IC_ASSIGN	/home/chris/devel/icarus//src/lex/data/token.h	/^    IC_ASSIGN, \/* = *\/$/;"	e	enum:ic_token_id
+IC_COMMA	/home/chris/devel/icarus//src/lex/data/token.h	/^    IC_COMMA,$/;"	e	enum:ic_token_id
+IC_DICT_DEFAULT_SIZE	/home/chris/devel/icarus//src/data/dict.c	6;"	d	file:
+IC_DOUBLECOLON	/home/chris/devel/icarus//src/lex/data/token.h	/^    IC_DOUBLECOLON, \/* :: double colon *\/$/;"	e	enum:ic_token_id
+IC_ELSE	/home/chris/devel/icarus//src/lex/data/token.h	/^    IC_ELSE,$/;"	e	enum:ic_token_id
+IC_END	/home/chris/devel/icarus//src/lex/data/token.h	/^    IC_END,$/;"	e	enum:ic_token_id
+IC_EQUAL	/home/chris/devel/icarus//src/lex/data/token.h	/^    IC_EQUAL, \/* == *\/$/;"	e	enum:ic_token_id
+IC_FUNC	/home/chris/devel/icarus//src/lex/data/token.h	/^    IC_FUNC,$/;"	e	enum:ic_token_id
+IC_IDENTIFIER	/home/chris/devel/icarus//src/lex/data/token.h	/^    IC_IDENTIFIER, \/* no entry in table[] *\/$/;"	e	enum:ic_token_id
+IC_IF	/home/chris/devel/icarus//src/lex/data/token.h	/^    IC_IF,$/;"	e	enum:ic_token_id
+IC_LET	/home/chris/devel/icarus//src/lex/data/token.h	/^    IC_LET,$/;"	e	enum:ic_token_id
+IC_LEXER_H	/home/chris/devel/icarus//src/lex/lexer.h	2;"	d
+IC_LRBRACKET	/home/chris/devel/icarus//src/lex/data/token.h	/^    IC_LRBRACKET, \/* ( left round bracket *\/$/;"	e	enum:ic_token_id
+IC_NEWLINE	/home/chris/devel/icarus//src/lex/data/token.h	/^    IC_NEWLINE,$/;"	e	enum:ic_token_id
+IC_PERIOD	/home/chris/devel/icarus//src/lex/data/token.h	/^    IC_PERIOD,$/;"	e	enum:ic_token_id
+IC_RETURN	/home/chris/devel/icarus//src/lex/data/token.h	/^    IC_RETURN,$/;"	e	enum:ic_token_id
+IC_RRBRACKET	/home/chris/devel/icarus//src/lex/data/token.h	/^    IC_RRBRACKET, \/* ) right round backet *\/$/;"	e	enum:ic_token_id
+IC_SET_DEFAULT_SIZE	/home/chris/devel/icarus//src/data/set.c	6;"	d	file:
+IC_THEN	/home/chris/devel/icarus//src/lex/data/token.h	/^    IC_THEN,$/;"	e	enum:ic_token_id
+IC_TOKEN_LEN	/home/chris/devel/icarus//src/lex/data/token.h	/^    IC_TOKEN_LEN \/* final token *\/$/;"	e	enum:ic_token_id
+IC_TYPE	/home/chris/devel/icarus//src/lex/data/token.h	/^    IC_TYPE,$/;"	e	enum:ic_token_id
+IC_TYPE_H	/home/chris/devel/icarus//src/analyse/data/type.h	2;"	d
+INDENT_PER_LEVEL	/home/chris/devel/icarus//src/parse/parse.c	10;"	d	file:
+LENGTH	/home/chris/devel/icarus//src/parse/parse.h	10;"	d
+PVECTOR_DEFAULT_SIZE	/home/chris/devel/icarus//src/data/pvector.c	7;"	d	file:
+aast	/home/chris/devel/icarus//src/analyse/data/kludge.h	/^    struct ic_ast *aast;$/;"	m	struct:ic_kludge	typeref:struct:ic_kludge::ic_ast
+add_token	/home/chris/devel/icarus//src/old_lex/lexer.c	/^static struct ic_old_tokens * add_token(struct ic_old_tokens *tokens, char *start, unsigned int len){$/;"	f	file:
+args	/home/chris/devel/icarus//src/parse/data/decl.h	/^    struct ic_pvector args;$/;"	m	struct:ic_func_decl	typeref:struct:ic_func_decl::ic_pvector
+args	/home/chris/devel/icarus//src/parse/data/expression.h	/^    struct ic_pvector args;$/;"	m	struct:ic_expr_func_call	typeref:struct:ic_expr_func_call::ic_pvector
+backing	/home/chris/devel/icarus//src/data/string.h	/^    struct ic_carray backing;$/;"	m	struct:ic_string	typeref:struct:ic_string::ic_carray
+body	/home/chris/devel/icarus//src/parse/data/decl.h	/^    struct ic_body body;$/;"	m	struct:ic_func_decl	typeref:struct:ic_func_decl::ic_body
+body	/home/chris/devel/icarus//src/parse/data/statement.h	/^    struct ic_body *body;$/;"	m	struct:ic_stmt_if	typeref:struct:ic_stmt_if::ic_body
+builtin	/home/chris/devel/icarus//src/analyse/data/type.h	/^        struct ic_type_builtin *builtin;$/;"	m	union:ic_type::__anon8	typeref:struct:ic_type::__anon8::ic_type_builtin
+cap	/home/chris/devel/icarus//src/data/pvector.h	/^    unsigned int cap;$/;"	m	struct:ic_pvector
+cap	/home/chris/devel/icarus//src/old_lex/lexer.h	/^    unsigned int cap;$/;"	m	struct:ic_old_tokens
+cons	/home/chris/devel/icarus//src/parse/data/expression.h	/^        struct ic_expr_constant cons;$/;"	m	union:ic_expr::__anon4	typeref:struct:ic_expr::__anon4::ic_expr_constant
+contents	/home/chris/devel/icarus//src/analyse/data/scope.h	/^    struct ic_dict contents;$/;"	m	struct:ic_scope	typeref:struct:ic_scope::ic_dict
+contents	/home/chris/devel/icarus//src/data/carray.h	/^    char *contents;$/;"	m	struct:ic_carray
+contents	/home/chris/devel/icarus//src/data/parray.h	/^    void ** contents;$/;"	m	struct:ic_parray
+contents	/home/chris/devel/icarus//src/data/pvector.h	/^    void ** contents;$/;"	m	struct:ic_pvector
+contents	/home/chris/devel/icarus//src/parse/data/body.h	/^    struct ic_pvector contents;$/;"	m	struct:ic_body	typeref:struct:ic_body::ic_pvector
+counter	/home/chris/devel/icarus//src/lex/data/token_list.h	/^    unsigned int counter;$/;"	m	struct:ic_token_list
+decl	/home/chris/devel/icarus//src/analyse/data/type.h	/^        struct ic_type_decl *decl;$/;"	m	union:ic_type::__anon8	typeref:struct:ic_type::__anon8::ic_type_decl
+decls	/home/chris/devel/icarus//src/parse/data/ast.h	/^    struct ic_pvector decls;$/;"	m	struct:ic_ast	typeref:struct:ic_ast::ic_pvector
+dict_fsig	/home/chris/devel/icarus//src/analyse/data/kludge.h	/^    struct ic_dict dict_fsig;$/;"	m	struct:ic_kludge	typeref:struct:ic_kludge::ic_dict
+dict_op	/home/chris/devel/icarus//src/analyse/data/kludge.h	/^    struct ic_dict dict_op;$/;"	m	struct:ic_kludge	typeref:struct:ic_kludge::ic_dict
+dict_tname	/home/chris/devel/icarus//src/analyse/data/kludge.h	/^    struct ic_dict dict_tname;$/;"	m	struct:ic_kludge	typeref:struct:ic_kludge::ic_dict
+errors	/home/chris/devel/icarus//src/analyse/data/kludge.h	/^    struct ic_pvector errors;$/;"	m	struct:ic_kludge	typeref:struct:ic_kludge::ic_pvector
+expr	/home/chris/devel/icarus//src/parse/data/statement.h	/^        struct ic_expr *expr;$/;"	m	union:ic_stmt::__anon5	typeref:struct:ic_stmt::__anon5::ic_expr
+expr	/home/chris/devel/icarus//src/parse/data/statement.h	/^    struct ic_expr *expr;$/;"	m	struct:ic_stmt_if	typeref:struct:ic_stmt_if::ic_expr
+fcall	/home/chris/devel/icarus//src/parse/data/expression.h	/^        struct ic_expr_func_call fcall;$/;"	m	union:ic_expr::__anon4	typeref:struct:ic_expr::__anon4::ic_expr_func_call
+fdecl	/home/chris/devel/icarus//src/parse/data/decl.h	/^        struct ic_func_decl fdecl;$/;"	m	union:ic_decl::__anon7	typeref:struct:ic_decl::__anon7::ic_func_decl
+fdecl	/home/chris/devel/icarus//src/parse/data/expression.h	/^    struct ic_func_decl *fdecl;$/;"	m	struct:ic_expr_func_call	typeref:struct:ic_expr_func_call::ic_func_decl
+fdecls	/home/chris/devel/icarus//src/analyse/data/kludge.h	/^    struct ic_pvector fdecls;$/;"	m	struct:ic_kludge	typeref:struct:ic_kludge::ic_pvector
+fields	/home/chris/devel/icarus//src/parse/data/decl.h	/^    struct ic_pvector fields;$/;"	m	struct:ic_type_decl	typeref:struct:ic_type_decl::ic_pvector
+file	/home/chris/devel/icarus//src/lex/data/token.h	/^    char *file;$/;"	m	struct:ic_token
+first	/home/chris/devel/icarus//src/parse/data/expression.h	/^    struct ic_expr * first;$/;"	m	struct:ic_expr_operator	typeref:struct:ic_expr_operator::ic_expr
+floating	/home/chris/devel/icarus//src/lex/data/token.h	/^        float floating;$/;"	m	union:ic_token::__anon1
+fname	/home/chris/devel/icarus//src/parse/data/expression.h	/^    struct ic_symbol fname;$/;"	m	struct:ic_expr_func_call	typeref:struct:ic_expr_func_call::ic_symbol
+func	/home/chris/devel/icarus//src/parse/parse.c	/^    struct ic_decl * (*func)(struct ic_old_tokens *tokens, unsigned int *i);$/;"	m	struct:ic_parse_table_entry	typeref:struct:ic_parse_table_entry::func	file:
+func	/home/chris/devel/icarus//src/parse/stmt.c	/^    struct ic_stmt * (*func)(struct ic_old_tokens *tokens, unsigned int *i);$/;"	m	struct:ic_parse_table_entry	typeref:struct:ic_parse_table_entry::func	file:
+ic_analyse	/home/chris/devel/icarus//src/analyse/analyse.c	/^struct ic_kludge * ic_analyse(struct ic_ast *ast){$/;"	f
+ic_analyse_body	/home/chris/devel/icarus//src/analyse/helpers.c	/^unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_func_decl *fdecl){$/;"	f
+ic_analyse_check	/home/chris/devel/icarus//src/analyse/helpers.c	/^unsigned int ic_analyse_check(struct ic_kludge *kludge, struct ic_stmt *stmt){$/;"	f
+ic_analyse_fcall_str	/home/chris/devel/icarus//src/analyse/helpers.c	/^char * ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall){$/;"	f
+ic_analyse_field_list	/home/chris/devel/icarus//src/analyse/helpers.c	/^unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_pvector *fields, char *forbidden_type){$/;"	f
+ic_analyse_func_decl	/home/chris/devel/icarus//src/analyse/analyse.c	/^unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl *fdecl){$/;"	f
+ic_analyse_infer	/home/chris/devel/icarus//src/analyse/helpers.c	/^struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr){$/;"	f
+ic_analyse_let	/home/chris/devel/icarus//src/analyse/helpers.c	/^unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_stmt_let *let){$/;"	f
+ic_analyse_type_decl	/home/chris/devel/icarus//src/analyse/analyse.c	/^unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl *tdecl){$/;"	f
+ic_ast	/home/chris/devel/icarus//src/parse/data/ast.h	/^struct ic_ast {$/;"	s
+ic_ast_append	/home/chris/devel/icarus//src/parse/data/ast.c	/^int ic_ast_append(struct ic_ast *ast, struct ic_decl *decl){$/;"	f
+ic_ast_destroy	/home/chris/devel/icarus//src/parse/data/ast.c	/^unsigned int ic_ast_destroy(struct ic_ast *ast, unsigned int free_ast){$/;"	f
+ic_ast_get	/home/chris/devel/icarus//src/parse/data/ast.c	/^struct ic_decl * ic_ast_get(struct ic_ast *ast, unsigned int i){$/;"	f
+ic_ast_init	/home/chris/devel/icarus//src/parse/data/ast.c	/^unsigned int ic_ast_init(struct ic_ast *ast){$/;"	f
+ic_ast_length	/home/chris/devel/icarus//src/parse/data/ast.c	/^unsigned int ic_ast_length(struct ic_ast *ast){$/;"	f
+ic_ast_new	/home/chris/devel/icarus//src/parse/data/ast.c	/^struct ic_ast * ic_ast_new(void){$/;"	f
+ic_ast_print	/home/chris/devel/icarus//src/parse/data/ast.c	/^void ic_ast_print(struct ic_ast *ast){$/;"	f
+ic_body	/home/chris/devel/icarus//src/parse/data/body.h	/^struct ic_body {$/;"	s
+ic_body_append	/home/chris/devel/icarus//src/parse/data/body.c	/^int ic_body_append(struct ic_body *body, struct ic_stmt * data){$/;"	f
+ic_body_destroy	/home/chris/devel/icarus//src/parse/data/body.c	/^unsigned int ic_body_destroy(struct ic_body *body, unsigned int free_body){$/;"	f
+ic_body_get	/home/chris/devel/icarus//src/parse/data/body.c	/^struct ic_stmt * ic_body_get(struct ic_body *body, unsigned int i){$/;"	f
+ic_body_init	/home/chris/devel/icarus//src/parse/data/body.c	/^unsigned int ic_body_init(struct ic_body *body){$/;"	f
+ic_body_length	/home/chris/devel/icarus//src/parse/data/body.c	/^unsigned int ic_body_length(struct ic_body *body){$/;"	f
+ic_body_new	/home/chris/devel/icarus//src/parse/data/body.c	/^struct ic_body * ic_body_new(void){$/;"	f
+ic_body_print	/home/chris/devel/icarus//src/parse/data/body.c	/^void ic_body_print(struct ic_body *body, unsigned int *indent_level){$/;"	f
+ic_carray	/home/chris/devel/icarus//src/data/carray.h	/^struct ic_carray {$/;"	s
+ic_carray_destroy	/home/chris/devel/icarus//src/data/carray.c	/^unsigned int ic_carray_destroy(struct ic_carray *arr, unsigned int free_arr){$/;"	f
+ic_carray_ensure	/home/chris/devel/icarus//src/data/carray.c	/^unsigned int ic_carray_ensure(struct ic_carray *arr, unsigned int new_len){$/;"	f
+ic_carray_get	/home/chris/devel/icarus//src/data/carray.c	/^char ic_carray_get(struct ic_carray *arr, unsigned int pos){$/;"	f
+ic_carray_init	/home/chris/devel/icarus//src/data/carray.c	/^unsigned int ic_carray_init(struct ic_carray *arr, unsigned int len){$/;"	f
+ic_carray_new	/home/chris/devel/icarus//src/data/carray.c	/^struct ic_carray * ic_carray_new(unsigned int len){$/;"	f
+ic_carray_set	/home/chris/devel/icarus//src/data/carray.c	/^unsigned int ic_carray_set(struct ic_carray *arr, unsigned int pos, char val){$/;"	f
+ic_consume_arrow	/home/chris/devel/icarus//src/old_lex/lexer.c	/^static struct ic_old_tokens * ic_consume_arrow(struct ic_old_tokens *tokens, char *source, unsigned int *i){$/;"	f	file:
+ic_consume_number	/home/chris/devel/icarus//src/old_lex/lexer.c	/^static struct ic_old_tokens * ic_consume_number(struct ic_old_tokens *tokens, char *source, unsigned int *i){$/;"	f	file:
+ic_consume_repeated_symbol	/home/chris/devel/icarus//src/old_lex/lexer.c	/^static struct ic_old_tokens * ic_consume_repeated_symbol(struct ic_old_tokens *tokens, char *source, unsigned int *i, char sym){$/;"	f	file:
+ic_consume_single_symbol	/home/chris/devel/icarus//src/old_lex/lexer.c	/^static struct ic_old_tokens * ic_consume_single_symbol(struct ic_old_tokens *tokens, char *source, unsigned int *i){$/;"	f	file:
+ic_consume_string	/home/chris/devel/icarus//src/old_lex/lexer.c	/^static struct ic_old_tokens * ic_consume_string(struct ic_old_tokens *tokens, char *source, unsigned int *i){$/;"	f	file:
+ic_consume_word	/home/chris/devel/icarus//src/old_lex/lexer.c	/^static struct ic_old_tokens * ic_consume_word(struct ic_old_tokens *tokens, char *source, unsigned int *i){$/;"	f	file:
+ic_decl	/home/chris/devel/icarus//src/parse/data/decl.h	/^struct ic_decl {$/;"	s
+ic_decl_destroy	/home/chris/devel/icarus//src/parse/data/decl.c	/^unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl){$/;"	f
+ic_decl_func_decl	/home/chris/devel/icarus//src/parse/data/decl.h	/^    ic_decl_func_decl,$/;"	e	enum:ic_decl_type
+ic_decl_get_fdecl	/home/chris/devel/icarus//src/parse/data/decl.c	/^struct ic_func_decl * ic_decl_get_fdecl(struct ic_decl *decl){$/;"	f
+ic_decl_get_tdecl	/home/chris/devel/icarus//src/parse/data/decl.c	/^struct ic_type_decl * ic_decl_get_tdecl(struct ic_decl *decl){$/;"	f
+ic_decl_init	/home/chris/devel/icarus//src/parse/data/decl.c	/^unsigned int ic_decl_init(struct ic_decl *decl, enum ic_decl_type type){$/;"	f
+ic_decl_new	/home/chris/devel/icarus//src/parse/data/decl.c	/^struct ic_decl * ic_decl_new(enum ic_decl_type type){$/;"	f
+ic_decl_print	/home/chris/devel/icarus//src/parse/data/decl.c	/^void ic_decl_print(struct ic_decl *decl, unsigned int *indent_level){$/;"	f
+ic_decl_type	/home/chris/devel/icarus//src/parse/data/decl.h	/^enum ic_decl_type {$/;"	g
+ic_decl_type_decl	/home/chris/devel/icarus//src/parse/data/decl.h	/^    ic_decl_type_decl$/;"	e	enum:ic_decl_type
+ic_dict	/home/chris/devel/icarus//src/data/dict.h	/^struct ic_dict{$/;"	s
+ic_dict_delete	/home/chris/devel/icarus//src/data/dict.c	/^void * ic_dict_delete(struct ic_dict *dict, char *key){$/;"	f
+ic_dict_destroy	/home/chris/devel/icarus//src/data/dict.c	/^unsigned int ic_dict_destroy(struct ic_dict *dict, unsigned int free_dict, unsigned int free_data){$/;"	f
+ic_dict_exists	/home/chris/devel/icarus//src/data/dict.c	/^unsigned int ic_dict_exists(struct ic_dict *dict, char *key){$/;"	f
+ic_dict_get	/home/chris/devel/icarus//src/data/dict.c	/^void * ic_dict_get(struct ic_dict *dict, char *key){$/;"	f
+ic_dict_init	/home/chris/devel/icarus//src/data/dict.c	/^unsigned int ic_dict_init(struct ic_dict *dict){$/;"	f
+ic_dict_insert	/home/chris/devel/icarus//src/data/dict.c	/^unsigned int ic_dict_insert(struct ic_dict *dict, char *key, void *data){$/;"	f
+ic_dict_new	/home/chris/devel/icarus//src/data/dict.c	/^struct ic_dict * ic_dict_new(void){$/;"	f
+ic_dict_set	/home/chris/devel/icarus//src/data/dict.c	/^void * ic_dict_set(struct ic_dict *dict, char *key, void *data){$/;"	f
+ic_expand_tokens	/home/chris/devel/icarus//src/old_lex/lexer.c	/^static struct ic_old_tokens * ic_expand_tokens(struct ic_old_tokens *tokens, unsigned int new_cap){$/;"	f	file:
+ic_expr	/home/chris/devel/icarus//src/parse/data/expression.h	/^struct ic_expr{$/;"	s
+ic_expr_constant	/home/chris/devel/icarus//src/parse/data/expression.h	/^struct ic_expr_constant {$/;"	s
+ic_expr_constant_destroy	/home/chris/devel/icarus//src/parse/data/expression.c	/^unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, unsigned int free_const){$/;"	f
+ic_expr_constant_get_integer	/home/chris/devel/icarus//src/parse/data/expression.c	/^long int * ic_expr_constant_get_integer(struct ic_expr_constant *constant){$/;"	f
+ic_expr_constant_get_string	/home/chris/devel/icarus//src/parse/data/expression.c	/^struct ic_string * ic_expr_constant_get_string(struct ic_expr_constant *constant){$/;"	f
+ic_expr_constant_init	/home/chris/devel/icarus//src/parse/data/expression.c	/^unsigned int ic_expr_constant_init(struct ic_expr_constant *constant, enum ic_expr_constant_type type){$/;"	f
+ic_expr_constant_new	/home/chris/devel/icarus//src/parse/data/expression.c	/^struct ic_expr_constant * ic_expr_constant_new(enum ic_expr_constant_type type){$/;"	f
+ic_expr_constant_print	/home/chris/devel/icarus//src/parse/data/expression.c	/^void ic_expr_constant_print(struct ic_expr_constant *constant, unsigned int *indent_level){$/;"	f
+ic_expr_constant_type	/home/chris/devel/icarus//src/parse/data/expression.h	/^enum ic_expr_constant_type {$/;"	g
+ic_expr_constant_type_integer	/home/chris/devel/icarus//src/parse/data/expression.h	/^    ic_expr_constant_type_integer,$/;"	e	enum:ic_expr_constant_type
+ic_expr_constant_type_string	/home/chris/devel/icarus//src/parse/data/expression.h	/^    ic_expr_constant_type_string$/;"	e	enum:ic_expr_constant_type
+ic_expr_destroy	/home/chris/devel/icarus//src/parse/data/expression.c	/^unsigned int ic_expr_destroy(struct ic_expr *expr, unsigned int free_expr){$/;"	f
+ic_expr_func_call	/home/chris/devel/icarus//src/parse/data/expression.h	/^struct ic_expr_func_call {$/;"	s
+ic_expr_func_call_add_arg	/home/chris/devel/icarus//src/parse/data/expression.c	/^int ic_expr_func_call_add_arg(struct ic_expr_func_call *fcall, struct ic_expr *expr){$/;"	f
+ic_expr_func_call_destroy	/home/chris/devel/icarus//src/parse/data/expression.c	/^unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned int free_fcall){$/;"	f
+ic_expr_func_call_get_arg	/home/chris/devel/icarus//src/parse/data/expression.c	/^struct ic_expr * ic_expr_func_call_get_arg(struct ic_expr_func_call *fcall, unsigned int i){$/;"	f
+ic_expr_func_call_init	/home/chris/devel/icarus//src/parse/data/expression.c	/^unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, char *name, unsigned int name_len){$/;"	f
+ic_expr_func_call_length	/home/chris/devel/icarus//src/parse/data/expression.c	/^unsigned int ic_expr_func_call_length(struct ic_expr_func_call *fcall){$/;"	f
+ic_expr_func_call_new	/home/chris/devel/icarus//src/parse/data/expression.c	/^struct ic_expr_func_call * ic_expr_func_call_new(char *name, unsigned int name_len){$/;"	f
+ic_expr_func_call_print	/home/chris/devel/icarus//src/parse/data/expression.c	/^void ic_expr_func_call_print(struct ic_expr_func_call *fcall, unsigned int *indent_level){$/;"	f
+ic_expr_func_call_set_fdecl	/home/chris/devel/icarus//src/parse/data/expression.c	/^unsigned int ic_expr_func_call_set_fdecl(struct ic_expr_func_call *fcall, struct ic_func_decl *fdecl){$/;"	f
+ic_expr_get_constant	/home/chris/devel/icarus//src/parse/data/expression.c	/^struct ic_expr_constant * ic_expr_get_constant(struct ic_expr *expr){$/;"	f
+ic_expr_get_fcall	/home/chris/devel/icarus//src/parse/data/expression.c	/^struct ic_expr_func_call * ic_expr_get_fcall(struct ic_expr *expr){$/;"	f
+ic_expr_get_identifier	/home/chris/devel/icarus//src/parse/data/expression.c	/^struct ic_expr_identifier * ic_expr_get_identifier(struct ic_expr *expr){$/;"	f
+ic_expr_get_operator	/home/chris/devel/icarus//src/parse/data/expression.c	/^struct ic_expr_operator * ic_expr_get_operator(struct ic_expr *expr){$/;"	f
+ic_expr_identifier	/home/chris/devel/icarus//src/parse/data/expression.h	/^struct ic_expr_identifier{$/;"	s
+ic_expr_identifier_destroy	/home/chris/devel/icarus//src/parse/data/expression.c	/^unsigned int ic_expr_identifier_destroy(struct ic_expr_identifier * identifier, unsigned int free_id){$/;"	f
+ic_expr_identifier_init	/home/chris/devel/icarus//src/parse/data/expression.c	/^unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, char *id, unsigned int id_len){$/;"	f
+ic_expr_identifier_new	/home/chris/devel/icarus//src/parse/data/expression.c	/^struct ic_expr_identifier * ic_expr_identifier_new(char *id, unsigned int id_len){$/;"	f
+ic_expr_identifier_print	/home/chris/devel/icarus//src/parse/data/expression.c	/^void ic_expr_identifier_print(struct ic_expr_identifier * identifier, unsigned int *indent_level){$/;"	f
+ic_expr_identifier_symbol	/home/chris/devel/icarus//src/parse/data/expression.c	/^struct ic_symbol *ic_expr_identifier_symbol(struct ic_expr_identifier *identifier){$/;"	f
+ic_expr_init	/home/chris/devel/icarus//src/parse/data/expression.c	/^int ic_expr_init(struct ic_expr *expr, enum ic_expr_type type){$/;"	f
+ic_expr_new	/home/chris/devel/icarus//src/parse/data/expression.c	/^struct ic_expr * ic_expr_new(enum ic_expr_type type){$/;"	f
+ic_expr_operator	/home/chris/devel/icarus//src/parse/data/expression.h	/^struct ic_expr_operator {$/;"	s
+ic_expr_operator_destroy	/home/chris/devel/icarus//src/parse/data/expression.c	/^unsigned int ic_expr_operator_destroy(struct ic_expr_operator *op, unsigned int free_op){$/;"	f
+ic_expr_operator_init	/home/chris/devel/icarus//src/parse/data/expression.c	/^unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, enum ic_expr_operator_type type, struct ic_expr *first, struct ic_expr *second, char *op, unsigned int op_len){$/;"	f
+ic_expr_operator_init_binary	/home/chris/devel/icarus//src/parse/data/expression.c	/^unsigned int ic_expr_operator_init_binary(struct ic_expr_operator *operator, struct ic_expr *first, struct ic_expr *second, char *op, unsigned int op_len){$/;"	f
+ic_expr_operator_init_unary	/home/chris/devel/icarus//src/parse/data/expression.c	/^unsigned int ic_expr_operator_init_unary(struct ic_expr_operator *operator, struct ic_expr *first, char *op, unsigned int op_len){$/;"	f
+ic_expr_operator_new_binary	/home/chris/devel/icarus//src/parse/data/expression.c	/^struct ic_expr_operator * ic_expr_operator_new_binary(struct ic_expr *first, struct ic_expr *second, char *op, unsigned int op_len){$/;"	f
+ic_expr_operator_new_unary	/home/chris/devel/icarus//src/parse/data/expression.c	/^struct ic_expr_operator * ic_expr_operator_new_unary(struct ic_expr *first, char *op, unsigned int op_len){$/;"	f
+ic_expr_operator_print	/home/chris/devel/icarus//src/parse/data/expression.c	/^void ic_expr_operator_print(struct ic_expr_operator *op, unsigned int *indent_level){$/;"	f
+ic_expr_operator_type	/home/chris/devel/icarus//src/parse/data/expression.h	/^enum ic_expr_operator_type {$/;"	g
+ic_expr_operator_type_binary	/home/chris/devel/icarus//src/parse/data/expression.h	/^    ic_expr_operator_type_binary$/;"	e	enum:ic_expr_operator_type
+ic_expr_operator_type_unary	/home/chris/devel/icarus//src/parse/data/expression.h	/^    ic_expr_operator_type_unary,$/;"	e	enum:ic_expr_operator_type
+ic_expr_print	/home/chris/devel/icarus//src/parse/data/expression.c	/^void ic_expr_print(struct ic_expr *expr, unsigned int *indent_level){$/;"	f
+ic_expr_type	/home/chris/devel/icarus//src/parse/data/expression.h	/^enum ic_expr_type {$/;"	g
+ic_expr_type_constant	/home/chris/devel/icarus//src/parse/data/expression.h	/^    ic_expr_type_constant,$/;"	e	enum:ic_expr_type
+ic_expr_type_func_call	/home/chris/devel/icarus//src/parse/data/expression.h	/^    ic_expr_type_func_call,$/;"	e	enum:ic_expr_type
+ic_expr_type_identifier	/home/chris/devel/icarus//src/parse/data/expression.h	/^    ic_expr_type_identifier,$/;"	e	enum:ic_expr_type
+ic_expr_type_operator	/home/chris/devel/icarus//src/parse/data/expression.h	/^    ic_expr_type_operator$/;"	e	enum:ic_expr_type
+ic_field	/home/chris/devel/icarus//src/parse/data/field.h	/^struct ic_field {$/;"	s
+ic_field_destroy	/home/chris/devel/icarus//src/parse/data/field.c	/^unsigned int ic_field_destroy(struct ic_field *field, unsigned int free_field){$/;"	f
+ic_field_init	/home/chris/devel/icarus//src/parse/data/field.c	/^unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int name_len, char *type_src, unsigned int type_len){$/;"	f
+ic_field_new	/home/chris/devel/icarus//src/parse/data/field.c	/^struct ic_field * ic_field_new(char *name_src, unsigned int name_len, char *type_src, unsigned int type_len){$/;"	f
+ic_field_print	/home/chris/devel/icarus//src/parse/data/field.c	/^void ic_field_print(struct ic_field *field){$/;"	f
+ic_func_decl	/home/chris/devel/icarus//src/parse/data/decl.h	/^struct ic_func_decl {$/;"	s
+ic_func_decl_add_arg	/home/chris/devel/icarus//src/parse/data/decl.c	/^unsigned int ic_func_decl_add_arg(struct ic_func_decl *fdecl, struct ic_field *field){$/;"	f
+ic_func_decl_add_stmt	/home/chris/devel/icarus//src/parse/data/decl.c	/^unsigned int ic_func_decl_add_stmt(struct ic_func_decl *fdecl, struct ic_stmt *stmt){$/;"	f
+ic_func_decl_destroy	/home/chris/devel/icarus//src/parse/data/decl.c	/^unsigned int ic_func_decl_destroy(struct ic_func_decl *fdecl, unsigned int free_fdecl){$/;"	f
+ic_func_decl_init	/home/chris/devel/icarus//src/parse/data/decl.c	/^unsigned int ic_func_decl_init(struct ic_func_decl *fdecl, char *name, unsigned int name_len){$/;"	f
+ic_func_decl_new	/home/chris/devel/icarus//src/parse/data/decl.c	/^struct ic_func_decl * ic_func_decl_new(char *name, unsigned int name_len){$/;"	f
+ic_func_decl_print	/home/chris/devel/icarus//src/parse/data/decl.c	/^void ic_func_decl_print(struct ic_func_decl *fdecl, unsigned int *indent_level){$/;"	f
+ic_func_decl_set_return	/home/chris/devel/icarus//src/parse/data/decl.c	/^unsigned int ic_func_decl_set_return(struct ic_func_decl *fdecl, char *type, unsigned int type_len){$/;"	f
+ic_func_decl_str	/home/chris/devel/icarus//src/parse/data/decl.c	/^char * ic_func_decl_str(struct ic_func_decl *fdecl){$/;"	f
+ic_kludge	/home/chris/devel/icarus//src/analyse/data/kludge.h	/^struct ic_kludge {$/;"	s
+ic_kludge_add_error	/home/chris/devel/icarus//src/analyse/data/kludge.c	/^unsigned int ic_kludge_add_error(struct ic_kludge *kludge, void *error){$/;"	f
+ic_kludge_add_fdecl	/home/chris/devel/icarus//src/analyse/data/kludge.c	/^unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *fdecl){$/;"	f
+ic_kludge_add_tdecl	/home/chris/devel/icarus//src/analyse/data/kludge.c	/^unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *tdecl){$/;"	f
+ic_kludge_destroy	/home/chris/devel/icarus//src/analyse/data/kludge.c	/^unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludge){$/;"	f
+ic_kludge_get_fdecl	/home/chris/devel/icarus//src/analyse/data/kludge.c	/^struct ic_func_decl * ic_kludge_get_fdecl(struct ic_kludge *kludge, char *fdecl_str){$/;"	f
+ic_kludge_get_fdecl_from_symbol	/home/chris/devel/icarus//src/analyse/data/kludge.c	/^struct ic_func_decl * ic_kludge_get_fdecl_from_symbol(struct ic_kludge *kludge, struct ic_symbol *fdecl){$/;"	f
+ic_kludge_get_type	/home/chris/devel/icarus//src/analyse/data/kludge.c	/^struct ic_type * ic_kludge_get_type(struct ic_kludge *kludge, char *tdecl_str){$/;"	f
+ic_kludge_get_type_from_symbol	/home/chris/devel/icarus//src/analyse/data/kludge.c	/^struct ic_type * ic_kludge_get_type_from_symbol(struct ic_kludge *kludge, struct ic_symbol *type){$/;"	f
+ic_kludge_get_type_from_typeref	/home/chris/devel/icarus//src/analyse/data/kludge.c	/^struct ic_type * ic_kludge_get_type_from_typeref(struct ic_kludge *kludge, struct ic_type_ref *type_ref){$/;"	f
+ic_kludge_identifier_exists	/home/chris/devel/icarus//src/analyse/data/kludge.c	/^int ic_kludge_identifier_exists(struct ic_kludge *kludge, struct ic_scope *scope, char *identifier){$/;"	f
+ic_kludge_identifier_exists_symbol	/home/chris/devel/icarus//src/analyse/data/kludge.c	/^int ic_kludge_identifier_exists_symbol(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_symbol *identifier){$/;"	f
+ic_kludge_init	/home/chris/devel/icarus//src/analyse/data/kludge.c	/^unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast){$/;"	f
+ic_kludge_new	/home/chris/devel/icarus//src/analyse/data/kludge.c	/^struct ic_kludge * ic_kludge_new(struct ic_ast *ast){$/;"	f
+ic_kludge_populate_builtins	/home/chris/devel/icarus//src/analyse/data/kludge.c	/^static unsigned int ic_kludge_populate_builtins (struct ic_kludge *kludge){$/;"	f	file:
+ic_kludge_populate_from_ast	/home/chris/devel/icarus//src/analyse/data/kludge.c	/^static unsigned int ic_kludge_populate_from_ast(struct ic_kludge *kludge, struct ic_ast *ast){$/;"	f	file:
+ic_kludge_populate_operators	/home/chris/devel/icarus//src/analyse/data/kludge.c	/^static unsigned int ic_kludge_populate_operators(struct ic_kludge *kludge){$/;"	f	file:
+ic_lex	/home/chris/devel/icarus//src/lex/lexer.c	/^struct ic_token_list* ic_lex(char *source){$/;"	f
+ic_old_lex	/home/chris/devel/icarus//src/old_lex/lexer.c	/^struct ic_old_tokens * ic_old_lex(char *source){$/;"	f
+ic_old_tokens	/home/chris/devel/icarus//src/old_lex/lexer.h	/^struct ic_old_tokens {$/;"	s
+ic_parray	/home/chris/devel/icarus//src/data/parray.h	/^struct ic_parray {$/;"	s
+ic_parray_destroy	/home/chris/devel/icarus//src/data/parray.c	/^unsigned int ic_parray_destroy(struct ic_parray *arr, unsigned int free_parr){$/;"	f
+ic_parray_ensure	/home/chris/devel/icarus//src/data/parray.c	/^unsigned int ic_parray_ensure(struct ic_parray *arr, unsigned int new_len){$/;"	f
+ic_parray_get	/home/chris/devel/icarus//src/data/parray.c	/^void * ic_parray_get(struct ic_parray *arr, unsigned int pos){$/;"	f
+ic_parray_init	/home/chris/devel/icarus//src/data/parray.c	/^unsigned int ic_parray_init(struct ic_parray *arr, unsigned int len){$/;"	f
+ic_parray_new	/home/chris/devel/icarus//src/data/parray.c	/^struct ic_parray * ic_parray_new(unsigned int len){$/;"	f
+ic_parray_set	/home/chris/devel/icarus//src/data/parray.c	/^unsigned int ic_parray_set(struct ic_parray *arr, unsigned int pos, void *val){$/;"	f
+ic_parse	/home/chris/devel/icarus//src/parse/parse.c	/^struct ic_ast * ic_parse(struct ic_old_tokens *tokens){$/;"	f
+ic_parse_body	/home/chris/devel/icarus//src/parse/body.c	/^struct ic_body * ic_parse_body(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f
+ic_parse_check_token	/home/chris/devel/icarus//src/parse/parse.c	/^unsigned int ic_parse_check_token(char *expected, unsigned int exp_len, char *source, unsigned int *i){$/;"	f
+ic_parse_enum_decl	/home/chris/devel/icarus//src/parse/decl.c	/^struct ic_decl * ic_parse_enum_decl(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f
+ic_parse_expr	/home/chris/devel/icarus//src/parse/expr.c	/^struct ic_expr * ic_parse_expr(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f
+ic_parse_expr_constant_integer	/home/chris/devel/icarus//src/parse/expr.c	/^static struct ic_expr * ic_parse_expr_constant_integer(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f	file:
+ic_parse_expr_constant_string	/home/chris/devel/icarus//src/parse/expr.c	/^static struct ic_expr * ic_parse_expr_constant_string(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f	file:
+ic_parse_expr_fcall	/home/chris/devel/icarus//src/parse/expr.c	/^static struct ic_expr * ic_parse_expr_fcall(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f	file:
+ic_parse_expr_identifier	/home/chris/devel/icarus//src/parse/expr.c	/^static struct ic_expr * ic_parse_expr_identifier(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f	file:
+ic_parse_expr_operator	/home/chris/devel/icarus//src/parse/expr.c	/^static struct ic_expr * ic_parse_expr_operator(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f	file:
+ic_parse_expr_single_token	/home/chris/devel/icarus//src/parse/expr.c	/^static struct ic_expr * ic_parse_expr_single_token(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f	file:
+ic_parse_field	/home/chris/devel/icarus//src/parse/field.c	/^struct ic_field * ic_parse_field(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f
+ic_parse_func_decl	/home/chris/devel/icarus//src/parse/decl.c	/^struct ic_decl * ic_parse_func_decl(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f
+ic_parse_numberish	/home/chris/devel/icarus//src/parse/parse.c	/^int ic_parse_numberish(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f
+ic_parse_operatorish	/home/chris/devel/icarus//src/parse/parse.c	/^int ic_parse_operatorish(char *cursor){$/;"	f
+ic_parse_peek_next	/home/chris/devel/icarus//src/parse/parse.c	/^char * ic_parse_peek_next(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f
+ic_parse_print_indent	/home/chris/devel/icarus//src/parse/parse.c	/^void ic_parse_print_indent(unsigned int levels){$/;"	f
+ic_parse_stmt	/home/chris/devel/icarus//src/parse/stmt.c	/^struct ic_stmt * ic_parse_stmt(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f
+ic_parse_stmt_expr	/home/chris/devel/icarus//src/parse/stmt.c	/^static struct ic_stmt * ic_parse_stmt_expr(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f	file:
+ic_parse_stmt_if	/home/chris/devel/icarus//src/parse/stmt.c	/^static struct ic_stmt * ic_parse_stmt_if(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f	file:
+ic_parse_stmt_let	/home/chris/devel/icarus//src/parse/stmt.c	/^static struct ic_stmt * ic_parse_stmt_let(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f	file:
+ic_parse_stmt_ret	/home/chris/devel/icarus//src/parse/stmt.c	/^static struct ic_stmt * ic_parse_stmt_ret(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f	file:
+ic_parse_stringish	/home/chris/devel/icarus//src/parse/parse.c	/^int ic_parse_stringish(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f
+ic_parse_table	/home/chris/devel/icarus//src/parse/parse.c	/^} ic_parse_table [] = {$/;"	v	typeref:struct:ic_parse_table_entry	file:
+ic_parse_table	/home/chris/devel/icarus//src/parse/stmt.c	/^} ic_parse_table [] = {$/;"	v	typeref:struct:ic_parse_table_entry	file:
+ic_parse_table_entry	/home/chris/devel/icarus//src/parse/parse.c	/^static struct ic_parse_table_entry {$/;"	s	file:
+ic_parse_table_entry	/home/chris/devel/icarus//src/parse/stmt.c	/^static struct ic_parse_table_entry {$/;"	s	file:
+ic_parse_this_is_not_the_end	/home/chris/devel/icarus//src/parse/parse.c	/^int ic_parse_this_is_not_the_end(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f
+ic_parse_token_advance	/home/chris/devel/icarus//src/parse/parse.c	/^void ic_parse_token_advance(unsigned int *i, unsigned int dist){$/;"	f
+ic_parse_token_length	/home/chris/devel/icarus//src/parse/parse.c	/^unsigned int ic_parse_token_length(char *source, unsigned int i){$/;"	f
+ic_parse_type_decl	/home/chris/devel/icarus//src/parse/decl.c	/^struct ic_decl * ic_parse_type_decl(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f
+ic_parse_union_decl	/home/chris/devel/icarus//src/parse/decl.c	/^struct ic_decl * ic_parse_union_decl(struct ic_old_tokens *tokens, unsigned int *i){$/;"	f
+ic_pvector	/home/chris/devel/icarus//src/data/pvector.h	/^struct ic_pvector {$/;"	s
+ic_pvector_append	/home/chris/devel/icarus//src/data/pvector.c	/^int ic_pvector_append(struct ic_pvector *arr, void *data){$/;"	f
+ic_pvector_destroy	/home/chris/devel/icarus//src/data/pvector.c	/^unsigned int ic_pvector_destroy(struct ic_pvector *vec, unsigned int free_vec, unsigned int (*destroy_item)(void *item, unsigned int free)){$/;"	f
+ic_pvector_ensure	/home/chris/devel/icarus//src/data/pvector.c	/^unsigned int ic_pvector_ensure(struct ic_pvector *arr, unsigned int new_cap){$/;"	f
+ic_pvector_get	/home/chris/devel/icarus//src/data/pvector.c	/^void * ic_pvector_get(struct ic_pvector *arr, unsigned int pos){$/;"	f
+ic_pvector_init	/home/chris/devel/icarus//src/data/pvector.c	/^unsigned int ic_pvector_init(struct ic_pvector *vec, unsigned int cap){$/;"	f
+ic_pvector_length	/home/chris/devel/icarus//src/data/pvector.c	/^unsigned int ic_pvector_length(struct ic_pvector *arr){$/;"	f
+ic_pvector_new	/home/chris/devel/icarus//src/data/pvector.c	/^struct ic_pvector * ic_pvector_new(unsigned int cap){$/;"	f
+ic_read_slurp	/home/chris/devel/icarus//src/read/read.c	/^char * ic_read_slurp(char *filename){$/;"	f
+ic_scope	/home/chris/devel/icarus//src/analyse/data/scope.h	/^struct ic_scope {$/;"	s
+ic_scope_delete	/home/chris/devel/icarus//src/analyse/data/scope.c	/^unsigned int ic_scope_delete(struct ic_scope *scope, char *key){$/;"	f
+ic_scope_destroy	/home/chris/devel/icarus//src/analyse/data/scope.c	/^unsigned int ic_scope_destroy(struct ic_scope *scope, unsigned int free_scope){$/;"	f
+ic_scope_get	/home/chris/devel/icarus//src/analyse/data/scope.c	/^void * ic_scope_get(struct ic_scope *scope, char *key){$/;"	f
+ic_scope_get_from_symbol	/home/chris/devel/icarus//src/analyse/data/scope.c	/^void * ic_scope_get_from_symbol(struct ic_scope *scope, struct ic_symbol *key){$/;"	f
+ic_scope_get_nofollow	/home/chris/devel/icarus//src/analyse/data/scope.c	/^void * ic_scope_get_nofollow(struct ic_scope *scope, char *key){$/;"	f
+ic_scope_init	/home/chris/devel/icarus//src/analyse/data/scope.c	/^unsigned int ic_scope_init(struct ic_scope *scope, struct ic_scope *parent){$/;"	f
+ic_scope_insert	/home/chris/devel/icarus//src/analyse/data/scope.c	/^unsigned int ic_scope_insert(struct ic_scope *scope, char *key, void *data){$/;"	f
+ic_scope_new	/home/chris/devel/icarus//src/analyse/data/scope.c	/^struct ic_scope * ic_scope_new(struct ic_scope *parent){$/;"	f
+ic_set	/home/chris/devel/icarus//src/data/set.h	/^struct ic_set{$/;"	s
+ic_set_delete	/home/chris/devel/icarus//src/data/set.c	/^unsigned int ic_set_delete(struct ic_set *set, const char *key){$/;"	f
+ic_set_destroy	/home/chris/devel/icarus//src/data/set.c	/^unsigned int ic_set_destroy(struct ic_set *set, unsigned int free_set){$/;"	f
+ic_set_exists	/home/chris/devel/icarus//src/data/set.c	/^unsigned int ic_set_exists(const struct ic_set *set, const char *key){$/;"	f
+ic_set_init	/home/chris/devel/icarus//src/data/set.c	/^unsigned int ic_set_init(struct ic_set *set){$/;"	f
+ic_set_insert	/home/chris/devel/icarus//src/data/set.c	/^unsigned int ic_set_insert(struct ic_set *set, const char *item){$/;"	f
+ic_set_new	/home/chris/devel/icarus//src/data/set.c	/^struct ic_set * ic_set_new(void){$/;"	f
+ic_slot	/home/chris/devel/icarus//src/analyse/data/slot.h	/^struct ic_slot {$/;"	s
+ic_slot_destroy	/home/chris/devel/icarus//src/analyse/data/slot.c	/^unsigned int ic_slot_destroy(struct ic_slot *slot, unsigned int free_slot){$/;"	f
+ic_slot_init	/home/chris/devel/icarus//src/analyse/data/slot.c	/^unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct ic_type *type, bool mutable, bool reference){$/;"	f
+ic_slot_new	/home/chris/devel/icarus//src/analyse/data/slot.c	/^struct ic_slot * ic_slot_new(struct ic_symbol *name, struct ic_type *type, bool mutable, bool reference){$/;"	f
+ic_stmt	/home/chris/devel/icarus//src/parse/data/statement.h	/^struct ic_stmt {$/;"	s
+ic_stmt_destroy	/home/chris/devel/icarus//src/parse/data/statement.c	/^unsigned int ic_stmt_destroy(struct ic_stmt *stmt, unsigned int free_stmt){$/;"	f
+ic_stmt_get_expr	/home/chris/devel/icarus//src/parse/data/statement.c	/^struct ic_expr * ic_stmt_get_expr(struct ic_stmt *stmt){$/;"	f
+ic_stmt_get_let	/home/chris/devel/icarus//src/parse/data/statement.c	/^struct ic_stmt_let * ic_stmt_get_let(struct ic_stmt *stmt){$/;"	f
+ic_stmt_get_ret	/home/chris/devel/icarus//src/parse/data/statement.c	/^struct ic_stmt_ret * ic_stmt_get_ret(struct ic_stmt *stmt){$/;"	f
+ic_stmt_get_sif	/home/chris/devel/icarus//src/parse/data/statement.c	/^struct ic_stmt_if * ic_stmt_get_sif(struct ic_stmt *stmt){$/;"	f
+ic_stmt_if	/home/chris/devel/icarus//src/parse/data/statement.h	/^struct ic_stmt_if {$/;"	s
+ic_stmt_if_destroy	/home/chris/devel/icarus//src/parse/data/statement.c	/^unsigned int ic_stmt_if_destroy(struct ic_stmt_if *sif, unsigned int free_if){$/;"	f
+ic_stmt_if_get_expr	/home/chris/devel/icarus//src/parse/data/statement.c	/^struct ic_expr * ic_stmt_if_get_expr(struct ic_stmt_if *sif){$/;"	f
+ic_stmt_if_get_stmt	/home/chris/devel/icarus//src/parse/data/statement.c	/^struct ic_stmt * ic_stmt_if_get_stmt(struct ic_stmt_if *sif, unsigned int i){$/;"	f
+ic_stmt_if_init	/home/chris/devel/icarus//src/parse/data/statement.c	/^unsigned int ic_stmt_if_init(struct ic_stmt_if *sif){$/;"	f
+ic_stmt_if_length	/home/chris/devel/icarus//src/parse/data/statement.c	/^unsigned int ic_stmt_if_length(struct ic_stmt_if *sif){$/;"	f
+ic_stmt_if_new	/home/chris/devel/icarus//src/parse/data/statement.c	/^struct ic_stmt_if * ic_stmt_if_new(void){$/;"	f
+ic_stmt_if_print	/home/chris/devel/icarus//src/parse/data/statement.c	/^void ic_stmt_if_print(struct ic_stmt_if *sif, unsigned int *indent_level){$/;"	f
+ic_stmt_init	/home/chris/devel/icarus//src/parse/data/statement.c	/^int ic_stmt_init(struct ic_stmt *stmt, enum ic_stmt_type type){$/;"	f
+ic_stmt_let	/home/chris/devel/icarus//src/parse/data/statement.h	/^struct ic_stmt_let {$/;"	s
+ic_stmt_let_destroy	/home/chris/devel/icarus//src/parse/data/statement.c	/^unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let){$/;"	f
+ic_stmt_let_get_expr	/home/chris/devel/icarus//src/parse/data/statement.c	/^struct ic_expr * ic_stmt_let_get_expr(struct ic_stmt_let *let){$/;"	f
+ic_stmt_let_init	/home/chris/devel/icarus//src/parse/data/statement.c	/^unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned int id_len, char *type_src, unsigned int type_len){$/;"	f
+ic_stmt_let_new	/home/chris/devel/icarus//src/parse/data/statement.c	/^struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *type_src, unsigned int type_len){$/;"	f
+ic_stmt_let_print	/home/chris/devel/icarus//src/parse/data/statement.c	/^void ic_stmt_let_print(struct ic_stmt_let *let, unsigned int *indent_level){$/;"	f
+ic_stmt_new	/home/chris/devel/icarus//src/parse/data/statement.c	/^struct ic_stmt * ic_stmt_new(enum ic_stmt_type type){$/;"	f
+ic_stmt_print	/home/chris/devel/icarus//src/parse/data/statement.c	/^void ic_stmt_print(struct ic_stmt *stmt, unsigned int *indent_level){$/;"	f
+ic_stmt_ret	/home/chris/devel/icarus//src/parse/data/statement.h	/^struct ic_stmt_ret {$/;"	s
+ic_stmt_ret_destroy	/home/chris/devel/icarus//src/parse/data/statement.c	/^unsigned int ic_stmt_ret_destroy(struct ic_stmt_ret *ret, unsigned int free_ret){$/;"	f
+ic_stmt_ret_get_expr	/home/chris/devel/icarus//src/parse/data/statement.c	/^struct ic_expr * ic_stmt_ret_get_expr(struct ic_stmt_ret *ret){$/;"	f
+ic_stmt_ret_init	/home/chris/devel/icarus//src/parse/data/statement.c	/^unsigned int ic_stmt_ret_init(struct ic_stmt_ret *ret){$/;"	f
+ic_stmt_ret_new	/home/chris/devel/icarus//src/parse/data/statement.c	/^struct ic_stmt_ret * ic_stmt_ret_new(void){$/;"	f
+ic_stmt_ret_print	/home/chris/devel/icarus//src/parse/data/statement.c	/^void ic_stmt_ret_print(struct ic_stmt_ret *ret, unsigned int *indent_level){$/;"	f
+ic_stmt_type	/home/chris/devel/icarus//src/parse/data/statement.h	/^enum ic_stmt_type {$/;"	g
+ic_stmt_type_expr	/home/chris/devel/icarus//src/parse/data/statement.h	/^    ic_stmt_type_expr$/;"	e	enum:ic_stmt_type
+ic_stmt_type_if	/home/chris/devel/icarus//src/parse/data/statement.h	/^    ic_stmt_type_if,$/;"	e	enum:ic_stmt_type
+ic_stmt_type_let	/home/chris/devel/icarus//src/parse/data/statement.h	/^    ic_stmt_type_let,$/;"	e	enum:ic_stmt_type
+ic_stmt_type_ret	/home/chris/devel/icarus//src/parse/data/statement.h	/^    ic_stmt_type_ret,$/;"	e	enum:ic_stmt_type
+ic_string	/home/chris/devel/icarus//src/data/string.h	/^struct ic_string {$/;"	s
+ic_string_append	/home/chris/devel/icarus//src/data/string.c	/^unsigned int ic_string_append(struct ic_string *to, struct ic_string *from){$/;"	f
+ic_string_append_char	/home/chris/devel/icarus//src/data/string.c	/^unsigned int ic_string_append_char(struct ic_string *to, char *from, unsigned int from_len){$/;"	f
+ic_string_append_symbol	/home/chris/devel/icarus//src/data/string.c	/^unsigned int ic_string_append_symbol(struct ic_string *to, struct ic_symbol *from){$/;"	f
+ic_string_contents	/home/chris/devel/icarus//src/data/string.c	/^char * ic_string_contents(struct ic_string *string){$/;"	f
+ic_string_destroy	/home/chris/devel/icarus//src/data/string.c	/^unsigned int ic_string_destroy(struct ic_string *str, unsigned int free_str){$/;"	f
+ic_string_get	/home/chris/devel/icarus//src/data/string.c	/^char ic_string_get(struct ic_string *string, unsigned int offset){$/;"	f
+ic_string_init	/home/chris/devel/icarus//src/data/string.c	/^unsigned int ic_string_init(struct ic_string *str, char *source, unsigned int len){$/;"	f
+ic_string_init_empty	/home/chris/devel/icarus//src/data/string.c	/^unsigned int ic_string_init_empty(struct ic_string *string){$/;"	f
+ic_string_length	/home/chris/devel/icarus//src/data/string.c	/^int ic_string_length(struct ic_string *string){$/;"	f
+ic_string_new	/home/chris/devel/icarus//src/data/string.c	/^struct ic_string * ic_string_new(char *source, unsigned int len){$/;"	f
+ic_string_new_empty	/home/chris/devel/icarus//src/data/string.c	/^struct ic_string * ic_string_new_empty(void){$/;"	f
+ic_string_print	/home/chris/devel/icarus//src/data/string.c	/^void ic_string_print(struct ic_string *string){$/;"	f
+ic_string_set	/home/chris/devel/icarus//src/data/string.c	/^char ic_string_set(struct ic_string *string, unsigned int pos, char val){$/;"	f
+ic_strip_comment	/home/chris/devel/icarus//src/old_lex/lexer.c	/^static struct ic_old_tokens * ic_strip_comment(struct ic_old_tokens *tokens, char *source, unsigned int *i){$/;"	f	file:
+ic_symbol	/home/chris/devel/icarus//src/data/symbol.h	/^struct ic_symbol {$/;"	s
+ic_symbol_contents	/home/chris/devel/icarus//src/data/symbol.c	/^char * ic_symbol_contents(struct ic_symbol *symbol){$/;"	f
+ic_symbol_destroy	/home/chris/devel/icarus//src/data/symbol.c	/^unsigned int ic_symbol_destroy(struct ic_symbol *sym, unsigned int free_sym){$/;"	f
+ic_symbol_get	/home/chris/devel/icarus//src/data/symbol.c	/^char ic_symbol_get(struct ic_symbol *symbol, unsigned int offset){$/;"	f
+ic_symbol_init	/home/chris/devel/icarus//src/data/symbol.c	/^unsigned int ic_symbol_init(struct ic_symbol *sym, char *source, unsigned int len){$/;"	f
+ic_symbol_length	/home/chris/devel/icarus//src/data/symbol.c	/^int ic_symbol_length(struct ic_symbol *symbol){$/;"	f
+ic_symbol_new	/home/chris/devel/icarus//src/data/symbol.c	/^struct ic_symbol * ic_symbol_new(char *source, unsigned int len){$/;"	f
+ic_symbol_print	/home/chris/devel/icarus//src/data/symbol.c	/^void ic_symbol_print(struct ic_symbol *symbol){$/;"	f
+ic_table_entry	/home/chris/devel/icarus//src/lex/table.h	/^struct ic_table_entry {$/;"	s
+ic_token	/home/chris/devel/icarus//src/lex/data/token.h	/^struct ic_token {$/;"	s
+ic_token_destroy	/home/chris/devel/icarus//src/lex/data/token.c	/^unsigned int ic_token_destroy(struct ic_token *token, unsigned int free_token){$/;"	f
+ic_token_get_integer	/home/chris/devel/icarus//src/lex/data/token.c	/^int ic_token_get_integer(struct ic_token *token){$/;"	f
+ic_token_get_string	/home/chris/devel/icarus//src/lex/data/token.c	/^char * ic_token_get_string(struct ic_token *token){$/;"	f
+ic_token_get_string_length	/home/chris/devel/icarus//src/lex/data/token.c	/^unsigned int ic_token_get_string_length(struct ic_token *token){$/;"	f
+ic_token_id	/home/chris/devel/icarus//src/lex/data/token.h	/^enum ic_token_id {$/;"	g
+ic_token_init	/home/chris/devel/icarus//src/lex/data/token.c	/^unsigned int ic_token_init(struct ic_token *token, enum ic_token_id id, char *line, unsigned int offset, char *file, unsigned int line_num){$/;"	f
+ic_token_list	/home/chris/devel/icarus//src/lex/data/token_list.h	/^struct ic_token_list {$/;"	s
+ic_token_list_append	/home/chris/devel/icarus//src/lex/data/token_list.c	/^unsigned int ic_token_list_append(struct ic_token_list *list, struct ic_token *token){$/;"	f
+ic_token_list_counter	/home/chris/devel/icarus//src/lex/data/token_list.c	/^unsigned int ic_token_list_counter(struct ic_token_list *list){$/;"	f
+ic_token_list_destroy	/home/chris/devel/icarus//src/lex/data/token_list.c	/^unsigned int ic_token_list_destroy(struct ic_token_list *list, unsigned int free_list){$/;"	f
+ic_token_list_get	/home/chris/devel/icarus//src/lex/data/token_list.c	/^struct ic_token * ic_token_list_get(struct ic_token_list *list, unsigned int i){$/;"	f
+ic_token_list_init	/home/chris/devel/icarus//src/lex/data/token_list.c	/^unsigned int ic_token_list_init(struct ic_token_list *list){$/;"	f
+ic_token_list_length	/home/chris/devel/icarus//src/lex/data/token_list.c	/^unsigned int ic_token_list_length(struct ic_token_list *list){$/;"	f
+ic_token_list_new	/home/chris/devel/icarus//src/lex/data/token_list.c	/^struct ic_token_list * ic_token_list_new(void){$/;"	f
+ic_token_list_next	/home/chris/devel/icarus//src/lex/data/token_list.c	/^struct ic_token * ic_token_list_next(struct ic_token_list *list){$/;"	f
+ic_token_list_peek	/home/chris/devel/icarus//src/lex/data/token_list.c	/^struct ic_token * ic_token_list_peek(struct ic_token_list *list){$/;"	f
+ic_token_list_reset	/home/chris/devel/icarus//src/lex/data/token_list.c	/^unsigned int ic_token_list_reset(struct ic_token_list *list){$/;"	f
+ic_token_new	/home/chris/devel/icarus//src/lex/data/token.c	/^struct ic_token * ic_token_new(enum ic_token_id id, char *line, unsigned int offset, char *file, unsigned int line_num){$/;"	f
+ic_token_set_integer	/home/chris/devel/icarus//src/lex/data/token.c	/^int ic_token_set_integer(struct ic_token *token, int integer){$/;"	f
+ic_token_set_string	/home/chris/devel/icarus//src/lex/data/token.c	/^unsigned int ic_token_set_string(struct ic_token *token, char *string, unsigned int len){$/;"	f
+ic_type	/home/chris/devel/icarus//src/analyse/data/type.h	/^struct ic_type {$/;"	s
+ic_type_builtin	/home/chris/devel/icarus//src/analyse/data/type.h	/^    ic_type_builtin,$/;"	e	enum:ic_type_type
+ic_type_builtin	/home/chris/devel/icarus//src/analyse/data/type_builtin.h	/^struct ic_type_builtin {$/;"	s
+ic_type_builtin_destroy	/home/chris/devel/icarus//src/analyse/data/type_builtin.c	/^unsigned int ic_type_builtin_destroy(struct ic_type_builtin *builtin, unsigned int free_builtin){$/;"	f
+ic_type_builtin_init	/home/chris/devel/icarus//src/analyse/data/type_builtin.c	/^unsigned int ic_type_builtin_init(struct ic_type_builtin *builtin, struct ic_symbol *name){$/;"	f
+ic_type_builtin_mark_void	/home/chris/devel/icarus//src/analyse/data/type_builtin.c	/^unsigned int ic_type_builtin_mark_void(struct ic_type_builtin *builtin){$/;"	f
+ic_type_builtin_new	/home/chris/devel/icarus//src/analyse/data/type_builtin.c	/^struct ic_type_builtin * ic_type_builtin_new(struct ic_symbol *name){$/;"	f
+ic_type_decl	/home/chris/devel/icarus//src/parse/data/decl.h	/^struct ic_type_decl {$/;"	s
+ic_type_decl_add_field	/home/chris/devel/icarus//src/parse/data/decl.c	/^unsigned int ic_type_decl_add_field(struct ic_type_decl *tdecl, struct ic_field *field){$/;"	f
+ic_type_decl_destroy	/home/chris/devel/icarus//src/parse/data/decl.c	/^unsigned int ic_type_decl_destroy(struct ic_type_decl *tdecl, unsigned int free_tdecl){$/;"	f
+ic_type_decl_init	/home/chris/devel/icarus//src/parse/data/decl.c	/^unsigned int ic_type_decl_init(struct ic_type_decl *tdecl, char *name_src, unsigned int name_len){$/;"	f
+ic_type_decl_new	/home/chris/devel/icarus//src/parse/data/decl.c	/^struct ic_type_decl * ic_type_decl_new(char *name_src, unsigned int name_len){$/;"	f
+ic_type_decl_print	/home/chris/devel/icarus//src/parse/data/decl.c	/^void ic_type_decl_print(struct ic_type_decl *tdecl, unsigned int *indent_level){$/;"	f
+ic_type_decl_str	/home/chris/devel/icarus//src/parse/data/decl.c	/^char * ic_type_decl_str(struct ic_type_decl *tdecl){$/;"	f
+ic_type_destroy	/home/chris/devel/icarus//src/analyse/data/type.c	/^unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type){$/;"	f
+ic_type_equal	/home/chris/devel/icarus//src/analyse/data/type.c	/^unsigned int ic_type_equal(struct ic_type *a, struct ic_type *b){$/;"	f
+ic_type_init_builtin	/home/chris/devel/icarus//src/analyse/data/type.c	/^unsigned int ic_type_init_builtin(struct ic_type *type, struct ic_type_builtin *builtin){$/;"	f
+ic_type_init_tdecl	/home/chris/devel/icarus//src/analyse/data/type.c	/^unsigned int ic_type_init_tdecl(struct ic_type *type, struct ic_type_decl *decl){$/;"	f
+ic_type_isvoid	/home/chris/devel/icarus//src/analyse/data/type.c	/^unsigned int ic_type_isvoid(struct ic_type *type){$/;"	f
+ic_type_name	/home/chris/devel/icarus//src/analyse/data/type.c	/^struct ic_symbol * ic_type_name(struct ic_type *type){$/;"	f
+ic_type_new_builtin	/home/chris/devel/icarus//src/analyse/data/type.c	/^struct ic_type * ic_type_new_builtin(struct ic_type_builtin *builtin){$/;"	f
+ic_type_new_tdecl	/home/chris/devel/icarus//src/analyse/data/type.c	/^struct ic_type * ic_type_new_tdecl(struct ic_type_decl *decl){$/;"	f
+ic_type_ref	/home/chris/devel/icarus//src/parse/data/type_ref.h	/^struct ic_type_ref {$/;"	s
+ic_type_ref_destroy	/home/chris/devel/icarus//src/parse/data/type_ref.c	/^unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_type){$/;"	f
+ic_type_ref_error	/home/chris/devel/icarus//src/parse/data/type_ref.h	/^    ic_type_ref_error$/;"	e	enum:ic_type_ref_type
+ic_type_ref_get_symbol	/home/chris/devel/icarus//src/parse/data/type_ref.c	/^struct ic_symbol * ic_type_ref_get_symbol(struct ic_type_ref *type){$/;"	f
+ic_type_ref_init	/home/chris/devel/icarus//src/parse/data/type_ref.c	/^unsigned int ic_type_ref_init(struct ic_type_ref *type){$/;"	f
+ic_type_ref_new	/home/chris/devel/icarus//src/parse/data/type_ref.c	/^struct ic_type_ref * ic_type_ref_new(void){$/;"	f
+ic_type_ref_print	/home/chris/devel/icarus//src/parse/data/type_ref.c	/^void ic_type_ref_print(struct ic_type_ref *type){$/;"	f
+ic_type_ref_set_symbol	/home/chris/devel/icarus//src/parse/data/type_ref.c	/^unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, unsigned int type_len){$/;"	f
+ic_type_ref_symbol	/home/chris/devel/icarus//src/parse/data/type_ref.h	/^    ic_type_ref_symbol,$/;"	e	enum:ic_type_ref_type
+ic_type_ref_symbol_init	/home/chris/devel/icarus//src/parse/data/type_ref.c	/^unsigned int ic_type_ref_symbol_init(struct ic_type_ref *type, char *type_str, unsigned int type_len){$/;"	f
+ic_type_ref_symbol_new	/home/chris/devel/icarus//src/parse/data/type_ref.c	/^struct ic_type_ref * ic_type_ref_symbol_new(char *type_str, unsigned int type_len){$/;"	f
+ic_type_ref_type	/home/chris/devel/icarus//src/parse/data/type_ref.h	/^enum ic_type_ref_type {$/;"	g
+ic_type_ref_unknown	/home/chris/devel/icarus//src/parse/data/type_ref.h	/^    ic_type_ref_unknown,$/;"	e	enum:ic_type_ref_type
+ic_type_type	/home/chris/devel/icarus//src/analyse/data/type.h	/^enum ic_type_type {$/;"	g
+ic_type_user	/home/chris/devel/icarus//src/analyse/data/type.h	/^    ic_type_user$/;"	e	enum:ic_type_type
+id	/home/chris/devel/icarus//src/lex/data/token.h	/^    enum ic_token_id id;$/;"	m	struct:ic_token	typeref:enum:ic_token::ic_token_id
+id	/home/chris/devel/icarus//src/lex/table.h	/^    enum ic_token_id id;$/;"	m	struct:ic_table_entry	typeref:enum:ic_table_entry::ic_token_id
+id	/home/chris/devel/icarus//src/parse/data/expression.h	/^        struct ic_expr_identifier id;$/;"	m	union:ic_expr::__anon4	typeref:struct:ic_expr::__anon4::ic_expr_identifier
+identifier	/home/chris/devel/icarus//src/parse/data/expression.h	/^    struct ic_symbol identifier;$/;"	m	struct:ic_expr_identifier	typeref:struct:ic_expr_identifier::ic_symbol
+identifier	/home/chris/devel/icarus//src/parse/data/statement.h	/^    struct ic_symbol identifier;$/;"	m	struct:ic_stmt_let	typeref:struct:ic_stmt_let::ic_symbol
+init	/home/chris/devel/icarus//src/parse/data/statement.h	/^    struct ic_expr *init;$/;"	m	struct:ic_stmt_let	typeref:struct:ic_stmt_let::ic_expr
+integer	/home/chris/devel/icarus//src/lex/data/token.h	/^        int integer;$/;"	m	union:ic_token::__anon1
+integer	/home/chris/devel/icarus//src/parse/data/expression.h	/^        long int integer;$/;"	m	union:ic_expr_constant::__anon3
+internal	/home/chris/devel/icarus//src/data/symbol.h	/^    struct ic_string internal;$/;"	m	struct:ic_symbol	typeref:struct:ic_symbol::ic_string
+isvoid	/home/chris/devel/icarus//src/analyse/data/type_builtin.h	/^    unsigned int isvoid;$/;"	m	struct:ic_type_builtin
+len	/home/chris/devel/icarus//src/data/carray.h	/^    unsigned int len;$/;"	m	struct:ic_carray
+len	/home/chris/devel/icarus//src/data/parray.h	/^    unsigned int len;$/;"	m	struct:ic_parray
+len	/home/chris/devel/icarus//src/lex/data/token.h	/^            unsigned int len;$/;"	m	struct:ic_token::__anon1::__anon2
+len	/home/chris/devel/icarus//src/lex/table.h	/^    unsigned int len;$/;"	m	struct:ic_table_entry
+len	/home/chris/devel/icarus//src/old_lex/lexer.h	/^    unsigned int len;$/;"	m	struct:ic_old_tokens
+len	/home/chris/devel/icarus//src/parse/parse.c	/^    unsigned int len;$/;"	m	struct:ic_parse_table_entry	file:
+len	/home/chris/devel/icarus//src/parse/stmt.c	/^    unsigned int len;$/;"	m	struct:ic_parse_table_entry	file:
+let	/home/chris/devel/icarus//src/parse/data/statement.h	/^        struct ic_stmt_let let;$/;"	m	union:ic_stmt::__anon5	typeref:struct:ic_stmt::__anon5::ic_stmt_let
+lht	/home/chris/devel/icarus//src/data/dict.h	/^    struct lh_table lht;$/;"	m	struct:ic_dict	typeref:struct:ic_dict::lh_table
+line	/home/chris/devel/icarus//src/lex/data/token.h	/^    char *line;$/;"	m	struct:ic_token
+line_num	/home/chris/devel/icarus//src/lex/data/token.h	/^    unsigned int line_num;$/;"	m	struct:ic_token
+lss	/home/chris/devel/icarus//src/data/set.h	/^    struct ls_set lss;$/;"	m	struct:ic_set	typeref:struct:ic_set::ls_set
+main	/home/chris/devel/icarus//src/main.c	/^int main(int argc, char **argv){$/;"	f
+mut	/home/chris/devel/icarus//src/parse/data/statement.h	/^    unsigned int mut;$/;"	m	struct:ic_stmt_let
+name	/home/chris/devel/icarus//src/analyse/data/slot.h	/^    struct ic_symbol *name;$/;"	m	struct:ic_slot	typeref:struct:ic_slot::ic_symbol
+name	/home/chris/devel/icarus//src/analyse/data/type_builtin.h	/^    struct ic_symbol *name;$/;"	m	struct:ic_type_builtin	typeref:struct:ic_type_builtin::ic_symbol
+name	/home/chris/devel/icarus//src/parse/data/decl.h	/^    struct ic_symbol name;$/;"	m	struct:ic_func_decl	typeref:struct:ic_func_decl::ic_symbol
+name	/home/chris/devel/icarus//src/parse/data/decl.h	/^    struct ic_symbol name;$/;"	m	struct:ic_type_decl	typeref:struct:ic_type_decl::ic_symbol
+name	/home/chris/devel/icarus//src/parse/data/field.h	/^    struct ic_symbol name;$/;"	m	struct:ic_field	typeref:struct:ic_field::ic_symbol
+offset	/home/chris/devel/icarus//src/lex/data/token.h	/^    unsigned int offset;$/;"	m	struct:ic_token
+op	/home/chris/devel/icarus//src/parse/data/expression.h	/^        struct ic_expr_operator op;$/;"	m	union:ic_expr::__anon4	typeref:struct:ic_expr::__anon4::ic_expr_operator
+op	/home/chris/devel/icarus//src/parse/data/expression.h	/^    struct ic_symbol op;$/;"	m	struct:ic_expr_operator	typeref:struct:ic_expr_operator::ic_symbol
+parent	/home/chris/devel/icarus//src/analyse/data/scope.h	/^    struct ic_scope *parent;$/;"	m	struct:ic_scope	typeref:struct:ic_scope::ic_scope
+reference	/home/chris/devel/icarus//src/analyse/data/slot.h	/^    bool reference;$/;"	m	struct:ic_slot
+ret	/home/chris/devel/icarus//src/parse/data/statement.h	/^        struct ic_stmt_ret ret;$/;"	m	union:ic_stmt::__anon5	typeref:struct:ic_stmt::__anon5::ic_stmt_ret
+ret	/home/chris/devel/icarus//src/parse/data/statement.h	/^    struct ic_expr *ret;$/;"	m	struct:ic_stmt_ret	typeref:struct:ic_stmt_ret::ic_expr
+ret_type	/home/chris/devel/icarus//src/parse/data/decl.h	/^    struct ic_symbol *ret_type;$/;"	m	struct:ic_func_decl	typeref:struct:ic_func_decl::ic_symbol
+scope	/home/chris/devel/icarus//src/parse/data/body.h	/^    struct ic_scope *scope;$/;"	m	struct:ic_body	typeref:struct:ic_body::ic_scope
+second	/home/chris/devel/icarus//src/parse/data/expression.h	/^    struct ic_expr * second;$/;"	m	struct:ic_expr_operator	typeref:struct:ic_expr_operator::ic_expr
+sif	/home/chris/devel/icarus//src/parse/data/statement.h	/^        struct ic_stmt_if sif;$/;"	m	union:ic_stmt::__anon5	typeref:struct:ic_stmt::__anon5::ic_stmt_if
+str	/home/chris/devel/icarus//src/lex/data/token.h	/^        } str;$/;"	m	union:ic_token::__anon1	typeref:struct:ic_token::__anon1::__anon2
+str	/home/chris/devel/icarus//src/lex/table.h	/^    char *str;$/;"	m	struct:ic_table_entry
+string	/home/chris/devel/icarus//src/lex/data/token.h	/^            char *string;$/;"	m	struct:ic_token::__anon1::__anon2
+string	/home/chris/devel/icarus//src/parse/data/decl.h	/^    struct ic_string string;$/;"	m	struct:ic_func_decl	typeref:struct:ic_func_decl::ic_string
+string	/home/chris/devel/icarus//src/parse/data/expression.h	/^        struct ic_string string;$/;"	m	union:ic_expr_constant::__anon3	typeref:struct:ic_expr_constant::__anon3::ic_string
+string	/home/chris/devel/icarus//src/parse/data/expression.h	/^    struct ic_string *string;$/;"	m	struct:ic_expr_func_call	typeref:struct:ic_expr_func_call::ic_string
+sym	/home/chris/devel/icarus//src/parse/data/type_ref.h	/^        struct ic_symbol sym; \/* value for ic_type_symbol *\/$/;"	m	union:ic_type_ref::__anon6	typeref:struct:ic_type_ref::__anon6::ic_symbol
+table	/home/chris/devel/icarus//src/lex/table.h	/^struct ic_table_entry table[] {$/;"	s
+tbuiltins	/home/chris/devel/icarus//src/analyse/data/kludge.h	/^    struct ic_pvector tbuiltins;$/;"	m	struct:ic_kludge	typeref:struct:ic_kludge::ic_pvector
+tdecl	/home/chris/devel/icarus//src/parse/data/decl.h	/^        struct ic_type_decl tdecl;$/;"	m	union:ic_decl::__anon7	typeref:struct:ic_decl::__anon7::ic_type_decl
+tdecls	/home/chris/devel/icarus//src/analyse/data/kludge.h	/^    struct ic_pvector tdecls;$/;"	m	struct:ic_kludge	typeref:struct:ic_kludge::ic_pvector
+token	/home/chris/devel/icarus//src/parse/parse.c	/^    char *token;$/;"	m	struct:ic_parse_table_entry	file:
+token	/home/chris/devel/icarus//src/parse/stmt.c	/^    char *token;$/;"	m	struct:ic_parse_table_entry	file:
+tokens	/home/chris/devel/icarus//src/lex/data/token_list.h	/^    struct ic_pvector tokens;$/;"	m	struct:ic_token_list	typeref:struct:ic_token_list::ic_pvector
+tokens	/home/chris/devel/icarus//src/old_lex/lexer.h	/^    char *tokens;$/;"	m	struct:ic_old_tokens
+type	/home/chris/devel/icarus//src/analyse/data/slot.h	/^    struct ic_type *type;$/;"	m	struct:ic_slot	typeref:struct:ic_slot::ic_type
+type	/home/chris/devel/icarus//src/analyse/data/type.h	/^    enum ic_type_type type;$/;"	m	struct:ic_type	typeref:enum:ic_type::ic_type_type
+type	/home/chris/devel/icarus//src/parse/data/decl.h	/^    enum ic_decl_type type;$/;"	m	struct:ic_decl	typeref:enum:ic_decl::ic_decl_type
+type	/home/chris/devel/icarus//src/parse/data/expression.h	/^    enum ic_expr_constant_type type;$/;"	m	struct:ic_expr_constant	typeref:enum:ic_expr_constant::ic_expr_constant_type
+type	/home/chris/devel/icarus//src/parse/data/expression.h	/^    enum ic_expr_operator_type type;$/;"	m	struct:ic_expr_operator	typeref:enum:ic_expr_operator::ic_expr_operator_type
+type	/home/chris/devel/icarus//src/parse/data/expression.h	/^    enum ic_expr_type type;$/;"	m	struct:ic_expr	typeref:enum:ic_expr::ic_expr_type
+type	/home/chris/devel/icarus//src/parse/data/field.h	/^    struct ic_type_ref type;$/;"	m	struct:ic_field	typeref:struct:ic_field::ic_type_ref
+type	/home/chris/devel/icarus//src/parse/data/statement.h	/^    enum ic_stmt_type type;$/;"	m	struct:ic_stmt	typeref:enum:ic_stmt::ic_stmt_type
+type	/home/chris/devel/icarus//src/parse/data/statement.h	/^    struct ic_symbol type;$/;"	m	struct:ic_stmt_let	typeref:struct:ic_stmt_let::ic_symbol
+type	/home/chris/devel/icarus//src/parse/data/type_ref.h	/^    enum ic_type_ref_type type; \/* heh *\/$/;"	m	struct:ic_type_ref	typeref:enum:ic_type_ref::ic_type_ref_type
+u	/home/chris/devel/icarus//src/analyse/data/type.h	/^    } u;$/;"	m	struct:ic_type	typeref:union:ic_type::__anon8
+u	/home/chris/devel/icarus//src/lex/data/token.h	/^    } u;$/;"	m	struct:ic_token	typeref:union:ic_token::__anon1
+u	/home/chris/devel/icarus//src/parse/data/decl.h	/^    } u;$/;"	m	struct:ic_decl	typeref:union:ic_decl::__anon7
+u	/home/chris/devel/icarus//src/parse/data/expression.h	/^    } u;$/;"	m	struct:ic_expr	typeref:union:ic_expr::__anon4
+u	/home/chris/devel/icarus//src/parse/data/expression.h	/^    } u;$/;"	m	struct:ic_expr_constant	typeref:union:ic_expr_constant::__anon3
+u	/home/chris/devel/icarus//src/parse/data/statement.h	/^    } u;$/;"	m	struct:ic_stmt	typeref:union:ic_stmt::__anon5
+u	/home/chris/devel/icarus//src/parse/data/type_ref.h	/^    } u ;$/;"	m	struct:ic_type_ref	typeref:union:ic_type_ref::__anon6
+used	/home/chris/devel/icarus//src/data/pvector.h	/^    unsigned int used;$/;"	m	struct:ic_pvector
+used	/home/chris/devel/icarus//src/data/string.h	/^    unsigned int used;$/;"	m	struct:ic_string

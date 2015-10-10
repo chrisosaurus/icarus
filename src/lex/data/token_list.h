@@ -62,10 +62,35 @@ unsigned int ic_token_list_length(struct ic_token_list *list);
 
 /* peek at next token
  *
+ * will silently return 0 when there are no more tokens
  * returns * on success
  * returns 0 on failure
  */
 struct ic_token * ic_token_list_peek(struct ic_token_list *list);
+
+/* peek at important next token
+ * will skip all non-important tokens
+ *
+ * will silently return 0 when there are no more tokens
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_token * ic_token_list_peek_important(struct ic_token_list *list);
+
+/* peek at next next token
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_token * ic_token_list_peek_ahead(struct ic_token_list *list);
+
+/* peek at next next important token
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_token * ic_token_list_peek_ahead_important(struct ic_token_list *list);
 
 /* consume next token and return
  *
@@ -73,6 +98,35 @@ struct ic_token * ic_token_list_peek(struct ic_token_list *list);
  * returns 0 on failure
  */
 struct ic_token * ic_token_list_next(struct ic_token_list *list);
+
+/* consume up to and including next non-whitespace token and return
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_token * ic_token_list_next_important(struct ic_token_list *list);
+
+/* peek at token, if it is of the type expected then
+ * consume and return it
+ *
+ * otherwise do not consume and return 0
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_token * ic_token_list_expect(struct ic_token_list *list, enum ic_token_id id);
+
+/* peek at token, if it is of the type expected then
+ * consume and return it
+ *
+ * will skip over non-important
+ *
+ * otherwise do not consume and return 0
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_token * ic_token_list_expect_important(struct ic_token_list *list, enum ic_token_id id);
 
 /* reset token counter, moving back to start
  *

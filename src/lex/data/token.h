@@ -22,6 +22,8 @@ enum ic_token_id {
 
     IC_TYPE,
     IC_FUNC,
+    IC_ENUM,
+    IC_UNION,
 
     IC_ARROW,
     IC_EQUAL, /* == */
@@ -123,10 +125,21 @@ int ic_token_get_integer(struct ic_token *token);
  */
 unsigned int ic_token_destroy(struct ic_token *token, unsigned int free_token);
 
+/* check if token is an operator
+ *
+ * returns 1 if it is an operator
+ * returns 0 if not
+ */
+unsigned int ic_token_isoperator(struct ic_token *token);
+
 void ic_token_print(struct ic_token *token);
 
 void ic_token_id_print_debug(enum ic_token_id id);
 
 void ic_token_print_debug(struct ic_token *token);
+
+void ic_token_print_line(struct ic_token *token);
+
+void ic_token_debug(struct ic_token *token);
 
 #endif

@@ -3,13 +3,13 @@
 #include <string.h>
 
 #include "../../src/read/read.h" /* ic_read_slurp */
-#include "../../src/old_lex/lexer.h" /* ic_old_lex */
+#include "../../src/lex/lexer.h" /* ic_lex */
 #include "../../src/parse/parse.h" /* ic_parse */
 #include "../../src/parse/data/ast.h" /* ic_ast structure */
 
 int main(void){
     char *filename = 0, *source = 0;
-    struct ic_old_tokens *tokens = 0;
+    struct ic_token_list *token_list = 0;
     struct ic_ast *ast = 0;
 
     filename = "example/simple.ic";
@@ -20,13 +20,13 @@ int main(void){
         exit(1);
     }
 
-    tokens = ic_old_lex(source);
-    if( ! tokens ){
+    token_list = ic_lex(filename, source);
+    if( ! token_list ){
         puts("test_parse_example: lexing failed");
         exit(1);
     }
 
-    ast = ic_parse(tokens);
+    ast = ic_parse(token_list);
     if( ! ast ){
         puts("test_parse_example: parsing failed");
         exit(1);
@@ -41,9 +41,11 @@ int main(void){
         puts("test_parse_example: ic_ast_destroy failed");
     }
 
+    if( ! ic_token_list_destroy(token_list, 1) ){
+        puts("test_parse_example: ic_token_list_destroy failed");
+    }
+
     free(source);
-    free(tokens->tokens);
-    free(tokens);
 
     return 0;
 }

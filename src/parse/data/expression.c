@@ -546,7 +546,7 @@ void ic_expr_constant_print(struct ic_expr_constant *constant, unsigned int *ind
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr_operator * ic_expr_operator_new_unary(struct ic_expr *first, char *op, unsigned int op_len){
+struct ic_expr_operator * ic_expr_operator_new_unary(struct ic_expr *first, struct ic_token *token){
     struct ic_expr_operator *operator = 0;
 
     if( ! first ){
@@ -554,8 +554,8 @@ struct ic_expr_operator * ic_expr_operator_new_unary(struct ic_expr *first, char
         return 0;
     }
 
-    if( ! op ){
-        puts("ic_expr_operator_new_unary: op char* was null");
+    if( ! token ){
+        puts("ic_expr_operator_new_unary: token  was null");
         return 0;
     }
 
@@ -567,7 +567,7 @@ struct ic_expr_operator * ic_expr_operator_new_unary(struct ic_expr *first, char
     }
 
     /* initialise */
-    if( ! ic_expr_operator_init_unary(operator, first, op, op_len) ){
+    if( ! ic_expr_operator_init_unary(operator, first, token) ){
         puts("ic_expr_operator_new_unary: call to ic_expr_operator_init_unary failed");
         free(operator);
         return 0;
@@ -582,8 +582,8 @@ struct ic_expr_operator * ic_expr_operator_new_unary(struct ic_expr *first, char
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_expr_operator_init_unary(struct ic_expr_operator *operator, struct ic_expr *first, char *op, unsigned int op_len){
-    return ic_expr_operator_init(operator, ic_expr_operator_type_unary, first, 0, op, op_len);
+unsigned int ic_expr_operator_init_unary(struct ic_expr_operator *operator, struct ic_expr *first, struct ic_token *token){
+    return ic_expr_operator_init(operator, ic_expr_operator_type_unary, first, 0, token);
 }
 
 
@@ -592,7 +592,7 @@ unsigned int ic_expr_operator_init_unary(struct ic_expr_operator *operator, stru
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr_operator * ic_expr_operator_new_binary(struct ic_expr *first, struct ic_expr *second, char *op, unsigned int op_len){
+struct ic_expr_operator * ic_expr_operator_new_binary(struct ic_expr *first, struct ic_expr *second, struct ic_token *token){
     struct ic_expr_operator *operator = 0;
 
     if( ! first ){
@@ -605,8 +605,8 @@ struct ic_expr_operator * ic_expr_operator_new_binary(struct ic_expr *first, str
         return 0;
     }
 
-    if( ! op ){
-        puts("ic_expr_operator_new_binary: op char* was null");
+    if( ! token ){
+        puts("ic_expr_operator_new_binary: token was null");
         return 0;
     }
 
@@ -618,7 +618,7 @@ struct ic_expr_operator * ic_expr_operator_new_binary(struct ic_expr *first, str
     }
 
     /* initialise */
-    if( ! ic_expr_operator_init_binary(operator, first, second, op, op_len) ){
+    if( ! ic_expr_operator_init_binary(operator, first, second, token) ){
         puts("ic_expr_operator_new_binary: call to ic_expr_operator_init_binary failed");
         free(operator);
         return 0;
@@ -633,8 +633,8 @@ struct ic_expr_operator * ic_expr_operator_new_binary(struct ic_expr *first, str
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_expr_operator_init_binary(struct ic_expr_operator *operator, struct ic_expr *first, struct ic_expr *second, char *op, unsigned int op_len){
-    return ic_expr_operator_init(operator, ic_expr_operator_type_binary, first, second, op, op_len);
+unsigned int ic_expr_operator_init_binary(struct ic_expr_operator *operator, struct ic_expr *first, struct ic_expr *second, struct ic_token *token){
+    return ic_expr_operator_init(operator, ic_expr_operator_type_binary, first, second, token);
 }
 
 /* initialise an existing op
@@ -642,7 +642,7 @@ unsigned int ic_expr_operator_init_binary(struct ic_expr_operator *operator, str
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, enum ic_expr_operator_type type, struct ic_expr *first, struct ic_expr *second, char *op, unsigned int op_len){
+unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, enum ic_expr_operator_type type, struct ic_expr *first, struct ic_expr *second, struct ic_token *token){
     if( ! operator ){
         puts("ic_expr_operator_init_binary: operator was null");
         return 0;
@@ -653,8 +653,8 @@ unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, enum ic_ex
         return 0;
     }
 
-    if( ! op ){
-        puts("ic_expr_operator_init_binary: op char* was null");
+    if( ! token ){
+        puts("ic_expr_operator_init_binary: token was null");
         return 0;
     }
 
@@ -667,11 +667,7 @@ unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, enum ic_ex
         operator->second = second;
     }
 
-    /* initialise symbol op */
-    if( ! ic_symbol_init( &(operator->op), op, op_len ) ){
-        puts("ic_expr_operator_init_binary: call to ic_symbol_init failed");
-        return 0;
-    }
+    operator->token = token;
 
     /* assign sub expressions */
     operator->first = first;
@@ -711,12 +707,6 @@ unsigned int ic_expr_operator_destroy(struct ic_expr_operator *op, unsigned int 
         }
     }
 
-    /* free = 0 as member */
-    if( ! ic_symbol_destroy( &(op->op), 0 ) ){
-        puts("ic_expr_operator_destroy: call to ic_symbol_destroy failed");
-        return 0;
-    }
-
     if( free_op ){
         free(op);
     }
@@ -741,13 +731,19 @@ void ic_expr_operator_print(struct ic_expr_operator *op, unsigned int *indent_le
     /* print indent before expr */
     ic_parse_print_indent(*indent_level);
 
+    if( ! op->token ){
+        puts("ic_expr_operator_print: asked to print null token!");
+        printf("for op '%p'\n", (void*)op);
+        return;
+    }
+
     switch( op->type ){
         case ic_expr_operator_type_unary:
             /* print prefix
              * print:
              *  op first
              */
-            ic_symbol_print(&(op->op));
+            ic_token_print(op->token);
             fputs(" ", stdout);
             ic_expr_print(op->first, &fake_indent);
             break;
@@ -759,7 +755,7 @@ void ic_expr_operator_print(struct ic_expr_operator *op, unsigned int *indent_le
              */
             ic_expr_print(op->first, &fake_indent);
             fputs(" ", stdout);
-            ic_symbol_print(&(op->op));
+            ic_token_print(op->token);
             fputs(" ", stdout);
             ic_expr_print(op->second, &fake_indent);
 

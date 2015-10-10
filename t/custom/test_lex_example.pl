@@ -39,7 +39,7 @@ end
 
 # entry point for program
 fn main()
-    let f::Foo = Foo(add_one(1), "hello")
+    let f::Foo = Foo(add_one(1) "hello")
 
     d(f)
 end

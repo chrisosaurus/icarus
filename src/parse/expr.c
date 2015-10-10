@@ -24,25 +24,20 @@
  *  operator application
  */
 
-
 /* consume token
  * returns ic_expr* on success
- * returns 0 on failure
+ * renurns 0 on failure
  */
-static struct ic_expr * ic_parse_expr_fcall(struct ic_old_tokens *tokens, unsigned int *i){
+static struct ic_expr * ic_parse_expr_fcall(struct ic_token_list *token_list){
     /* our eventual return value */
     struct ic_expr * expr = 0;
-    /* used for getting the distance of our function name */
-    unsigned int dist = 0;
     /* temporary used for capturing the argument expression */
     struct ic_expr * arg = 0;
+    /* current token */
+    struct ic_token *token = 0;
 
-    if( ! tokens ){
-        puts("ic_parse_expr_fcall: tokens was null");
-        return 0;
-    }
-    if( ! i ){
-        puts("ic_parse_expr_fcall: i was null");
+    if( ! token_list ){
+        puts("ic_parse_expr_fcall: token_list was null");
         return 0;
     }
 
@@ -54,34 +49,51 @@ static struct ic_expr * ic_parse_expr_fcall(struct ic_old_tokens *tokens, unsign
     }
 
     /* find our function name */
-    dist = ic_parse_token_length(tokens->tokens, *i);
-    if( ! dist ){
-        puts("ic_parse_expr_fcall: failed to get distance of function name");
+    token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
+    if( ! token ){
+        puts("ic_parse_expr_fcall: failed to get function name");
         free(expr);
         return 0;
     }
 
     /* build our function */
-    if( ! ic_expr_func_call_init( &(expr->u.fcall), &(tokens->tokens[*i]), dist ) ){
+    if( ! ic_expr_func_call_init( &(expr->u.fcall), ic_token_get_string(token), ic_token_get_string_length(token)) ){
         puts("ic_parse_expr_fcall: call to ic_expr_func_call_init failed");
         free(expr);
         return 0;
     }
 
-    /* skip over function name */
-    ic_parse_token_advance(i, dist);
-
     /* skip over opening ( */
-    if( ic_parse_check_token("(", 1, tokens->tokens, i) ){
+    token = ic_token_list_expect_important(token_list, IC_LRBRACKET);
+    if( ! token ){
         puts("ic_parse_expr_fcall: failed to find opening bracket '('");
         free(expr);
         return 0;
     }
 
     /* keep consuming arguments until we see the closing ) */
-    while( ic_parse_check_token(")", 1, tokens->tokens, i) ){
+    while( (token = ic_token_list_peek_important(token_list)) ){
+        /* if closing right bracket then stop */
+        if( token->id == IC_RRBRACKET ){
+            break;
+        }
+
+        /* if comma then skip
+         * FIXME: this makes commas optional
+         */
+        if( token->id == IC_COMMA ){
+            token = ic_token_list_next_important(token_list);
+            if( ! token ){
+            puts("ic_parse_expr_fcall: parsing arg error, call to ic_token_list_next_important failed when trying to consume comma");
+            free(expr);
+            return 0;
+            }
+            /* skip */
+            continue;
+        }
+
         /* parse this argument */
-        arg = ic_parse_expr(tokens, i);
+        arg = ic_parse_expr(token_list);
         if( ! arg ){
             puts("ic_parse_expr_fcall: parsing arg error, call to ic_parse_expr failed");
             free(expr);
@@ -96,7 +108,12 @@ static struct ic_expr * ic_parse_expr_fcall(struct ic_old_tokens *tokens, unsign
         }
     }
 
-    /* ic_parse_check_token will skip over the closing ) for us */
+    token = ic_token_list_expect_important(token_list, IC_RRBRACKET);
+    if( ! token ){
+        puts("ic_parse_expr_fcall: failed to get closing bracket");
+        free(expr);
+        return 0;
+    }
 
     /* victory */
     return expr;
@@ -106,102 +123,29 @@ static struct ic_expr * ic_parse_expr_fcall(struct ic_old_tokens *tokens, unsign
  * returns ic_expr* on success
  * returns 0 on failure
  */
-static struct ic_expr * ic_parse_expr_identifier(struct ic_old_tokens *tokens, unsigned int *i){
+static struct ic_expr * ic_parse_expr_identifier(struct ic_token_list *token_list){
     /* our final return expr */
     struct ic_expr * expr = 0;
     /* pointer to our internal id */
     struct ic_expr_identifier *id = 0;
-    /* dist of our identifier */
-    unsigned int dist = 0;
 
     /* iter into this identifier */
     unsigned int iter = 0;
     /* current char in identifier we are checking */
     char ch = 0;
 
-    if( ! tokens ){
-        puts("ic_parse_expr_identifier: tokens was null");
-        return 0;
-    }
-    if( ! i ){
-        puts("ic_parse_expr_identifier: i was null");
+    /* current token */
+    struct ic_token *token = 0;
+
+    if( ! token_list ){
+        puts("ic_parse_expr_identifier: token_list was null");
         return 0;
     }
 
-    /* find the distance for our token */
-    dist = ic_parse_token_length(tokens->tokens, *i);
-    if( ! dist ){
-        puts("ic_parse_expr_identifier: call to ic_parse_token_length failed");
+    token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
+    if( ! token ){
+        puts("ic_parse_expr_identifier: failed to get identifier");
         free(expr);
-        return 0;
-    }
-
-    ch = tokens->tokens[*i];
-
-    /* the first character must be within
-     * a - z (functions, variables and arguments)
-     * A - Z (types)
-     * _
-     */
-    if( ('a' <= ch && ch <= 'z' ) ||
-        ('A' <= ch && ch <= 'Z' ) ||
-        ( '_' == ch ) ){
-        /* valid starting character */
-    } else if( '.' == ch || '+' == ch || '=' == ch || ',' == ch ){
-        /* FIXME temporarily allowed characters
-         * until operator parsing work is completed
-         */
-    } else {
-        /* illegal starting character */
-        printf("ic_parse_expr_identifier: illegal starting character '%c' found in identifier '%.*s'\n",
-                ch,
-                dist,
-                &(tokens->tokens[*i]));
-        return 0;
-    }
-
-    /* all other characters must be within
-     *  a - z
-     *  A - Z
-     *  0 - 9
-     *  -
-     *  _
-     */
-    for( iter=1; iter<dist; ++iter ){
-        ch = tokens->tokens[ *i + iter ];
-
-        if( 'a' <= ch && ch <= 'z' ){
-            continue;
-        }
-
-        if( 'A' <= ch && ch <= 'Z' ){
-            continue;
-        }
-
-        if( '0' <= ch && ch <= '9' ){
-            continue;
-        }
-
-        if( '-' == ch ){
-            continue;
-        }
-
-        if( '_' == ch ){
-            continue;
-        }
-
-        if( '.' == ch || '+' == ch || '=' == ch || ',' == ch ){
-            /* FIXME temporarily allowed characters
-             * until operator parsing work is completed
-             */
-            continue;
-        }
-
-        /* illegal character error */
-        printf("ic_parse_expr_identifier: illegal character '%c' found in identifier '%.*s'\n",
-                ch,
-                dist,
-                &(tokens->tokens[*i]));
         return 0;
     }
 
@@ -221,14 +165,11 @@ static struct ic_expr * ic_parse_expr_identifier(struct ic_old_tokens *tokens, u
     }
 
     /* initialise our id */
-    if( ! ic_expr_identifier_init(id, &(tokens->tokens[*i]), dist) ){
+    if( ! ic_expr_identifier_init(id, ic_token_get_string(token), ic_token_get_string_length(token)) ){
         puts("ic_parse_expr_identifier: call to ic_expr_identifier_init failed");
         free(expr);
         return 0;
     }
-
-    /* advance past identifier */
-    ic_parse_token_advance(i, dist);
 
     /* victory */
     return expr;
@@ -238,33 +179,27 @@ static struct ic_expr * ic_parse_expr_identifier(struct ic_old_tokens *tokens, u
  * returns ic_expr* on success
  * returns 0 on failure
  */
-static struct ic_expr * ic_parse_expr_constant_string(struct ic_old_tokens *tokens, unsigned int *i){
+static struct ic_expr * ic_parse_expr_constant_string(struct ic_token_list *token_list){
     /* our eventual return value */
     struct ic_expr * expr = 0;
-    /* the i value that marks the beginning of our string
-     * this is the offset *after* the opening " is read
-     */
-    char *start = 0;
-    /* length of string */
-    unsigned int length = 0;
 
     /* pointer to our constant */
     struct ic_expr_constant *cons = 0;
     /* pointer to our ic_string */
     struct ic_string *string = 0;
 
-    if( ! tokens ){
-        puts("ic_parse_expr_constant_string: tokens was null");
-        return 0;
-    }
-    if( ! i ){
-        puts("ic_parse_expr_constant_string: i was null");
+    /* current token */
+    struct ic_token *token = 0;
+
+    if( ! token_list ){
+        puts("ic_parse_expr_constant_string: token_list was null");
         return 0;
     }
 
-    /* check for opening quote */
-    if( tokens->tokens[*i] != '"' ){
-        puts("ic_parse_expr_constant_string: failed to find opening quote (\")");
+    token = ic_token_list_expect_important(token_list, IC_LITERAL_STRING);
+    if( ! token ){
+        puts("ic_parse_expr_constant_string: failed to get string");
+        free(expr);
         return 0;
     }
 
@@ -298,36 +233,15 @@ static struct ic_expr * ic_parse_expr_constant_string(struct ic_old_tokens *toke
         return 0;
     }
 
-    /* skip over opening " */
-    ++*i;
-
-    /* record our starting value */
-    start = &(tokens->tokens[*i]);
-
-    /* find length of string
-     * FIXME naive
-     */
-    for( length=0; tokens->tokens[*i + length] != '"'; ++length ) ;
-
-    /* skip over string */
-    *i += length;
-
-    /* also skip over closing " */
-    ++ *i;
-
-    /* skip over inter-token delim */
-    ++ *i;
-
     /* initialise our ic_string
      * we have the start of the string (start)
      * and the total length (dist_sum)
      */
-    if( ! ic_string_init(string, start, length) ){
+    if( ! ic_string_init(string, ic_token_get_string(token), ic_token_get_string_length(token)) ){
         puts("ic_parse_expr_constant_string: call to ic_string_init failed");
         free(expr);
         return 0;
     }
-
 
     /* victory */
     return expr;
@@ -337,26 +251,25 @@ static struct ic_expr * ic_parse_expr_constant_string(struct ic_old_tokens *toke
  * returns ic_expr* on success
  * returns 0 on failure
  */
-static struct ic_expr * ic_parse_expr_constant_integer(struct ic_old_tokens *tokens, unsigned int *i){
+static struct ic_expr * ic_parse_expr_constant_integer(struct ic_token_list *token_list){
     /* our eventual return value */
     struct ic_expr * expr = 0;
-    /* iterator through string to check all characters are numeric */
-    unsigned int iter = 0;
-    /* distance of token */
-    unsigned int dist = 0;
     /* our constant */
     struct ic_expr_constant *cons = 0;
     /* pointer to our integer value */
     long int *integer = 0;
-    /* end pointer from strtol */
-    char *endptr;
 
-    if( ! tokens ){
-        puts("ic_parse_expr_constant_integer: tokens was null");
+    /* current token */
+    struct ic_token *token = 0;
+
+    if( ! token_list ){
+        puts("ic_parse_expr_constant_integer: token_list was null");
         return 0;
     }
-    if( ! i ){
-        puts("ic_parse_expr_constant_integer: i was null");
+
+    token = ic_token_list_expect_important(token_list, IC_LITERAL_INTEGER);
+    if( ! token ){
+        puts("ic_parse_expr_constant_integer: unable to find integer");
         return 0;
     }
 
@@ -390,78 +303,8 @@ static struct ic_expr * ic_parse_expr_constant_integer(struct ic_old_tokens *tok
         return 0;
     }
 
-    /* get distance */
-    dist = ic_parse_token_length(tokens->tokens, *i);
-    if( ! dist ){
-        puts("ic_parse_expr_constant_integer: call to ic_parse_token_length failed");
-        free(expr);
-        return 0;
-    }
-
-    /* iterate through and check all characters are numeric */
-    for( iter=0; iter<dist; ++iter ){
-        switch( tokens->tokens[*i + iter] ){
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                /* valid integer, continue */
-                break;
-            default:
-                /* invalid character found, bail */
-                printf("ic_parse_expr_constant_integer: invalid integer found '%c'\n",
-                       tokens->tokens[*i + iter]);
-                free(expr);
-                return 0;
-                break;
-        }
-    }
-
-    /* set error value to clear */
-    errno = 0;
-
     /* strtol */
-    *integer = strtol(&(tokens->tokens[*i]), &endptr, 10);
-
-    /* check the strtol was a success */
-    if( errno == ERANGE ){
-        puts("ic_parse_expr_constant_integer: call to strtol failed");
-        if( *integer == LONG_MIN ){
-            puts("-> underflow occured");
-        } else if( *integer == LONG_MAX){
-            puts("-> overflow occured");
-        } else {
-            puts("-> unknown ERANGE occured");
-        }
-        perror("strtol");
-        free(expr);
-        return 0;
-    }
-
-    if( errno != 0 && *integer == 0 ){
-        puts("ic_parse_expr_constant_integer: call to strtol failed, unknown error");
-        perror("strtol");
-        free(expr);
-        return 0;
-    }
-
-    /* check endptr */
-    if( &(tokens->tokens[*i + dist]) != endptr ){
-        printf("ic_parse_expr_constant_integer: endptr ('%c') was not as expected ('%c')\n",
-               *endptr,
-               tokens->tokens[*i + dist]);
-        free(expr);
-        return 0;
-    }
-
-    /* skip over token */
-    ic_parse_token_advance(i, dist);
+    *integer = ic_token_get_integer(token);
 
     /* victory */
     return expr;
@@ -475,13 +318,18 @@ static struct ic_expr * ic_parse_expr_constant_integer(struct ic_old_tokens *tok
  * this is useful if we know the next thing is say an operator but we want
  * to constrain parsing up until it
  */
-static struct ic_expr * ic_parse_expr_single_token(struct ic_old_tokens *tokens, unsigned int *i){
-    if( ! tokens ){
-        puts("ic_parse_expr_single_token: tokens was null");
+static struct ic_expr * ic_parse_expr_single_token(struct ic_token_list *token_list){
+    /* current token */
+    struct ic_token *token = 0;
+
+    if( ! token_list ){
+        puts("ic_parse_expr_single_token: token_list was null");
         return 0;
     }
-    if( ! i ){
-        puts("ic_parse_expr_single_token: i was null");
+
+    token = ic_token_list_peek_important(token_list);
+    if( ! token ){
+        puts("ic_parse_expr_single_token: call to ic_token_list_peek failed");
         return 0;
     }
 
@@ -491,22 +339,22 @@ static struct ic_expr * ic_parse_expr_single_token(struct ic_old_tokens *tokens,
      *  else -> identifier
      */
 
-    if( ic_parse_stringish(tokens, i) ){
-        return ic_parse_expr_constant_string(tokens, i);
+    if( token->id == IC_LITERAL_STRING ){
+        return ic_parse_expr_constant_string(token_list);
     }
 
-    if( ic_parse_numberish(tokens, i) ){
-        return ic_parse_expr_constant_integer(tokens, i);
+    if( token->id == IC_LITERAL_INTEGER ){
+        return ic_parse_expr_constant_integer(token_list);
     }
     /* otherwise assume this is just an identifier */
-    return ic_parse_expr_identifier(tokens, i);
+    return ic_parse_expr_identifier(token_list);
 }
 
 /* consume token
  * returns ic_expr* on success
  * returns 0 on failure
  */
-static struct ic_expr * ic_parse_expr_operator(struct ic_old_tokens *tokens, unsigned int *i){
+static struct ic_expr * ic_parse_expr_operator(struct ic_token_list *token_list){
     /* our eventual return value */
     struct ic_expr *expr = 0;
     /* our internal operator */
@@ -523,12 +371,11 @@ static struct ic_expr * ic_parse_expr_operator(struct ic_old_tokens *tokens, uns
     /* our right child */
     struct ic_expr *right = 0;
 
-    if( ! tokens ){
-        puts("ic_parse_expr_operator: tokens was null");
-        return 0;
-    }
-    if( ! i ){
-        puts("ic_parse_expr_operator: i was null");
+    /* operator token */
+    struct ic_token *token = 0;
+
+    if( ! token_list ){
+        puts("ic_parse_expr_operator: token_list was null");
         return 0;
     }
 
@@ -548,7 +395,7 @@ static struct ic_expr * ic_parse_expr_operator(struct ic_old_tokens *tokens, uns
     }
 
     /* grab our left token */
-    left = ic_parse_expr_single_token(tokens, i);
+    left = ic_parse_expr_single_token(token_list);
     if( ! left ){
         puts("ic_parse_expr_operator: left call to ic_parse_expr_single_token failed");
         free(expr);
@@ -556,20 +403,14 @@ static struct ic_expr * ic_parse_expr_operator(struct ic_old_tokens *tokens, uns
     }
 
     /* op handling */
-    op_start = &(tokens->tokens[*i]);
-    op_len = ic_parse_token_length(tokens->tokens, *i);
-    if( ! op_len ){
-        puts("ic_parse_expr_operator: op call to ic_parse_token_length failed");
-        free(expr);
-        free(left);
+    token = ic_token_list_next_important(token_list);
+    if( ! token ){
+        puts("ic_parse_expr_operator: operator call to token list next important failed");
         return 0;
     }
 
-    /* skip past operator */
-    ic_parse_token_advance(i, op_len);
-
     /* our right expr can be more complex */
-    right = ic_parse_expr(tokens, i);
+    right = ic_parse_expr(token_list);
     if( ! right ){
         puts("ic_parse_expr_operator: right call to ic_parse_exprfailed");
         free(expr);
@@ -578,7 +419,7 @@ static struct ic_expr * ic_parse_expr_operator(struct ic_old_tokens *tokens, uns
     }
 
     /* initialise our operator */
-    if( ! ic_expr_operator_init_binary(operator, left, right, op_start, op_len) ){
+    if( ! ic_expr_operator_init_binary(operator, left, right, token) ){
         puts("ic_parse_expr_operator: call to ic_expr_operator_init_binary failed");
         free(expr);
         free(left);
@@ -586,36 +427,21 @@ static struct ic_expr * ic_parse_expr_operator(struct ic_old_tokens *tokens, uns
         return 0;    /* an operator is made up of
      *  single-token operator expr
      */
-
-
     }
 
     return expr;
 }
 
-struct ic_expr * ic_parse_expr(struct ic_old_tokens *tokens, unsigned int *i){
-    /* pointer used to peek at start of next token */
-    char *next = 0;
+struct ic_expr * ic_parse_expr(struct ic_token_list *token_list){
+    /* current token */
+    struct ic_token *token = 0;
+    /* next token */
+    struct ic_token *next_token = 0;
 
-#ifdef DEBUG_PARSE_EXPR
-    /* used for debugging */
-    unsigned int dist = 0;
-#endif
-
-    if( ! tokens ){
-        puts("ic_parse_expr: tokens was null");
+    if( ! token_list ){
+        puts("ic_parse_expr: token_list was null");
         return 0;
     }
-    if( ! i ){
-        puts("ic_parse_expr: i was null");
-        return 0;
-    }
-
-#ifdef DEBUG_PARSE_EXPR
-    dist = ic_parse_token_length(tokens->tokens, *i);
-    printf("\nic_parse_expr: considering token '%.*s'\n", dist, &(tokens->tokens[*i]));
-    printf("context : '%s'\n", &(tokens->tokens[*i]));
-#endif
 
     /* rules
      *
@@ -635,35 +461,37 @@ struct ic_expr * ic_parse_expr(struct ic_old_tokens *tokens, unsigned int *i){
      * otherwise call single token
      */
 
-    next = ic_parse_peek_next(tokens, i);
-    if( ! next ){
+    token = ic_token_list_peek_important(token_list);
+    if( ! token ){
         /* this in theory could mean out final token is an identifier
          * however this is illegal in practice as all expr/stmt must
          * appears inside a body ending with `end`
          * so this is indeed an error
          */
-        puts("ic_parse_expr: call to ic_parse_peek_next failed");
+        puts("ic_parse_expr: call to ic_token_list_peek failed");
         return 0;
     }
 
-#ifdef DEBUG_PARSE_EXPR
-    printf("ic_parse_expr: peeking at next token '%c'\n", *next);
-    printf("context : '%s'\n", next);
-#endif
-
-    /* if we peek ahead and see a binary operator
-     * then parse a binary operation expression
-     */
-    if( ic_parse_operatorish(next) ){
-        return ic_parse_expr_operator(tokens, i);
-    }
-
-    /* if we see an open bracket this is a function call */
-    if( *next == '(' ){
-        return ic_parse_expr_fcall(tokens, i);
+    next_token = ic_token_list_peek_ahead_important(token_list);
+    if( ! next_token ){
+        puts("ic_parse_expr: call to ic_token_list_peek_ahead failed");
+        return 0;
     }
 
     /* otherwise default to next token */
-    return ic_parse_expr_single_token(tokens, i);
+    /* if we peek ahead and see a binary operator
+     * then parse a binary operation expression
+     */
+    if( ic_token_isoperator(next_token) ){
+        return ic_parse_expr_operator(token_list);
+    }
+
+    /* if we see an open bracket this is a function call */
+    if( next_token->id == IC_LRBRACKET ){
+        return ic_parse_expr_fcall(token_list);
+    }
+
+    return ic_parse_expr_single_token(token_list);
 }
+
 

@@ -1,6 +1,8 @@
 TODO:
 -----
 
+* decide on comma handling, currently skipped in parsing
+* tokens should be used throughout parsing; passing around strings is lame, tokens should also be recorded against every ast node for traceability
 * allow 'return' from void functions, this needs support at both parse and analyse levels
 * decide on void type handling
 * tidy up type_ref / symbol -> type handling, we now have kludge_get_type_from_type_ref and kludge_get_type_from_symbol
