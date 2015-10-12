@@ -1,0 +1,37 @@
+type Node<T>
+    next  :: Maybe<Node<T>>
+    value :: T
+end
+
+fn value<T>(n::Node<T>) -> T
+    return n.value
+end
+
+fn next<T>(n::Node<T>) -> Maybe<Node<T>>
+    return n.node
+end
+
+type LinkedList<T>
+    head :: Node<T>
+end
+
+fn getNth<T>(l::LinkedList<T>, nth::Int) -> Maybe<T>
+    let n::Node<T> = l.head
+
+    # [1..nth) means we take steps
+    # from 1, and we stop at n (exclusive)
+    for i in [1..nth)
+        match n.next
+            case Node
+                n = n.next
+            end
+            else
+                return Empty
+            end
+        end
+    end
+
+    return n
+end
+
+
