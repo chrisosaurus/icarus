@@ -18,8 +18,8 @@ end
 fn getNth<T>(l::LinkedList<T>, nth::Int) -> Maybe<T>
     let n::Node<T> = l.head
 
-    # [1..nth) means we take steps
-    # from 1, and we stop at n (exclusive)
+    # [1..nth) means from 1 (inclusive) to nth (exclusive)
+    # this is equiv. to the pythonic range(1, nth - 1)
     for i in [1..nth)
         match n.next
             case Node

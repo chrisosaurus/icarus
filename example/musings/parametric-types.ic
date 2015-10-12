@@ -5,13 +5,13 @@ type Foo<T>
     a::T
     b::Int
 
-    fn Foo(t::T) -> Foo
+    fn Foo<T>(t::T) -> Foo<T>
         return Foo(t 10)
     end
 end
 
 fn main()
-    let f::Foo<String> = Foo<String>("hello")
+    let f::Foo<String> = Foo("hello")
 
 end
 
