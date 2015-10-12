@@ -1,0 +1,23 @@
+builtin type Void
+
+builtin type Bool
+builtin fn print(Bool)
+builtin fn equal(Bool, Bool) -> Bool
+builtin fn not(Bool) -> Bool
+builtin fn and(Bool, Bool) -> Bool
+builtin fn or(Bool, Bool) -> Bool
+
+builtin type Int
+builtin fn print(Int)
+builtin fn equal(Int, Int) -> Bool
+builtin fn plus(Int, Int) -> Int
+builtin fn minus(Int, Int) -> Int
+builtin fn multiply(Int, Int) -> Int
+builtin fn divide(Int, Int) -> Int
+builtin fn modulo(Int, Int) -> Int
+
+builtin type String
+builtin fn print(String)
+builtin fn equal(String, String) -> Bool
+
+
