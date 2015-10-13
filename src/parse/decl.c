@@ -7,6 +7,17 @@
 /* ignore unused parameter warnings */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
+struct ic_decl * ic_parse_builtin_decl(struct ic_token_list *token_list){
+#ifdef DEBUG_PARSE
+    puts("ic_parse_builtin_decl called");
+#endif
+
+    puts("ic_parse_builtin_decl: UNIMPLEMENTED");
+
+    /* FIXME */
+    return 0;
+}
+
 struct ic_decl * ic_parse_type_decl(struct ic_token_list *token_list){
     /* parsed field */
     struct ic_field *field = 0;

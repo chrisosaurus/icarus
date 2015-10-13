@@ -58,14 +58,15 @@ struct ic_body * ic_parse_body(struct ic_token_list *token_list);
 
 /**** parse/decl.c ****/
 
+struct ic_decl * ic_parse_func_decl(struct ic_token_list *token_list);
+
+struct ic_decl * ic_parse_builtin_decl(struct ic_token_list *token_list);
+
 struct ic_decl * ic_parse_type_decl(struct ic_token_list *token_list);
 
 struct ic_decl * ic_parse_enum_decl(struct ic_token_list *token_list);
 
 struct ic_decl * ic_parse_union_decl(struct ic_token_list *token_list);
-
-struct ic_decl * ic_parse_func_decl(struct ic_token_list *token_list);
-
 
 /**** parse.c ****/
 
