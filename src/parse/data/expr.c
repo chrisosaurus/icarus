@@ -1,7 +1,7 @@
 #include <stdio.h> /* puts, printf */
 #include <stdlib.h> /* calloc */
 
-#include "expression.h"
+#include "expr.h"
 #include "../../data/symbol.h"
 #include "../../data/pvector.h"
 #include "../parse.h"

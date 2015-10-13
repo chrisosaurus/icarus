@@ -3,7 +3,7 @@
 
 #include "body.h"
 #include "../../data/pvector.h"
-#include "statement.h"
+#include "stmt.h"
 
 /* allocate and initialise a new ic_body
  *

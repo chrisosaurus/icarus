@@ -1,7 +1,7 @@
 #include <stdio.h> /* puts */
 #include <stdlib.h> /* calloc */
 
-#include "statement.h"
+#include "stmt.h"
 #include "../../data/symbol.h"
 #include "body.h"
 #include "../parse.h"

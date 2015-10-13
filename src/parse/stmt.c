@@ -4,7 +4,7 @@
 
 #include "data/ast.h"
 #include "parse.h"
-#include "data/statement.h"
+#include "data/stmt.h"
 #include "../lex/lexer.h"
 
 /* ignore unused parameter warnings */

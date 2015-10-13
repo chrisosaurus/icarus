@@ -3,9 +3,9 @@
 
 #include "data/ast.h"
 #include "data/body.h"
-#include "data/expression.h"
+#include "data/expr.h"
 #include "../lex/lexer.h"
-#include "data/statement.h"
+#include "data/stmt.h"
 
 #define LENGTH(x) (sizeof(x) / sizeof(x[0]))
 

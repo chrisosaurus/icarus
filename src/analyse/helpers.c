@@ -3,7 +3,7 @@
 #include <string.h> /* strcmp */
 
 #include "../data/set.h"
-#include "../parse/data/statement.h"
+#include "../parse/data/stmt.h"
 #include "helpers.h"
 #include "data/slot.h"
 

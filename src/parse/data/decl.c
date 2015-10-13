@@ -5,7 +5,7 @@
 #include "decl.h"
 #include "field.h"
 #include "../../data/pvector.h"
-#include "statement.h"
+#include "stmt.h"
 #include "../../data/symbol.h"
 #include "../../data/string.h"
 #include "../parse.h"
