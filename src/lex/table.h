@@ -28,8 +28,11 @@ struct ic_table_entry table[] = {
     { "return",     6,      IC_RETURN },
     { "let",        3,      IC_LET },
 
-    { "type",       4,      IC_TYPE },
+    { "builtin",    7,      IC_BUILTIN },
     { "fn",         2,      IC_FUNC },
+    { "type",       4,      IC_TYPE },
+    { "union",      5,      IC_UNION },
+    { "enum",       4,      IC_ENUM },
 
     { "->",         2,      IC_ARROW },
     { "==",         2,      IC_EQUAL },

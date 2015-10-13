@@ -20,8 +20,9 @@ enum ic_token_id {
     IC_RETURN,
     IC_LET,
 
-    IC_TYPE,
+    IC_BUILTIN,
     IC_FUNC,
+    IC_TYPE,
     IC_ENUM,
     IC_UNION,
 

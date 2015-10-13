@@ -302,11 +302,14 @@ void ic_token_print(struct ic_token *token){
             fputs("let", stdout);
             break;
 
-        case IC_TYPE:
-            fputs("type", stdout);
+        case IC_BUILTIN:
+            fputs("builtin", stdout);
             break;
         case IC_FUNC:
             fputs("fn", stdout);
+            break;
+        case IC_TYPE:
+            fputs("type", stdout);
             break;
         case IC_ENUM:
             fputs("enum", stdout);
@@ -407,11 +410,14 @@ void ic_token_id_print_debug(enum ic_token_id id){
             fputs("IC_LET", stdout);
             break;
 
-        case IC_TYPE:
-            fputs("IC_TYPE", stdout);
+        case IC_BUILTIN:
+            fputs("IC_BUILTIN", stdout);
             break;
         case IC_FUNC:
             fputs("IC_FUNC", stdout);
+            break;
+        case IC_TYPE:
+            fputs("IC_TYPE", stdout);
             break;
         case IC_ENUM:
             fputs("IC_ENUM", stdout);
