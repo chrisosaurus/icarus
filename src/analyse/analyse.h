@@ -13,23 +13,23 @@
  */
 struct ic_kludge * ic_analyse(struct ic_ast *ast);
 
-/* takes a type_decl and performs analysis
+/* takes a decl_type and performs analysis
  *
  * FIXME need a way of signalling and passing errors
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_analyse_type_decl(struct ic_kludge *kludge, struct ic_type_decl *tdecl);
+unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type *tdecl);
 
-/* takes a func_decl and performs analysis
+/* takes a decl_func and performs analysis
  *
  * FIXME need a way of signalling and passing errors
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_analyse_func_decl(struct ic_kludge *kludge, struct ic_func_decl *fdecl);
+unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func *fdecl);
 
 #endif
 

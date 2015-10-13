@@ -6,14 +6,14 @@
 
 void basic(void){
     struct ic_field *field = 0;
-    struct ic_type_decl *tdecl = 0;
+    struct ic_decl_type *tdecl = 0;
     struct ic_ast *ast;
     /* fake indent level */
     unsigned int fake_indent = 0;
 
 
-    /* test type_decl */
-    tdecl = ic_type_decl_new("Foo", 3);
+    /* test decl_type */
+    tdecl = ic_decl_type_new("Foo", 3);
     assert(tdecl);
 
     /* check type name is correct */
@@ -28,16 +28,16 @@ void basic(void){
     /* add some fields */
     field = ic_field_new("a", 1, "Int", 3);
     assert(field);
-    assert( 1 == ic_type_decl_add_field(tdecl, field) );
+    assert( 1 == ic_decl_type_add_field(tdecl, field) );
 
     field = ic_field_new("b", 1, "String", 6);
     assert(field);
-    assert( 1 == ic_type_decl_add_field(tdecl, field) );
+    assert( 1 == ic_decl_type_add_field(tdecl, field) );
 
     printf("Should see:\ntype Foo\n    a::Int\n    b::String\nend\n");
 
     /* output type */
-    ic_type_decl_print(tdecl, &fake_indent);
+    ic_decl_type_print(tdecl, &fake_indent);
 
 
     /* test ast itself */
@@ -54,7 +54,7 @@ void basic(void){
      * more thoroughly
      */
 
-    assert( 1 == ic_type_decl_destroy(tdecl, 1) );
+    assert( 1 == ic_decl_type_destroy(tdecl, 1) );
     assert( 1 == ic_ast_destroy(ast, 1) );
 }
 

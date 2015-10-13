@@ -29,7 +29,7 @@ struct ic_expr_func_call {
      * FIXME eventually migrate to ic_func as this
      *      could be a call to an fdecl or a builtin
      */
-    struct ic_func_decl *fdecl;
+    struct ic_decl_func *fdecl;
 };
 
 /* allocate and initialise a new func call
@@ -61,7 +61,7 @@ unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned
  * returns 1 on success
  * returns 1 on failure
  */
-unsigned int ic_expr_func_call_set_fdecl(struct ic_expr_func_call *fcall, struct ic_func_decl *fdecl);
+unsigned int ic_expr_func_call_set_fdecl(struct ic_expr_func_call *fcall, struct ic_decl_func *fdecl);
 
 /* add a new argument to this function call
  *
@@ -124,7 +124,7 @@ struct ic_symbol *ic_expr_identifier_symbol(struct ic_expr_identifier *identifie
 /* print this identifier */
 void ic_expr_identifier_print(struct ic_expr_identifier * identifier, unsigned int *indent_level);
 
-enum ic_expr_constant_type {
+enum ic_expr_constant_tag {
     ic_expr_constant_type_integer,
     ic_expr_constant_type_string
 };
@@ -133,7 +133,7 @@ enum ic_expr_constant_type {
  * either a string or an int
  */
 struct ic_expr_constant {
-    enum ic_expr_constant_type type;
+    enum ic_expr_constant_tag tag;
     union {
         long int integer;
         struct ic_string string;
@@ -144,14 +144,14 @@ struct ic_expr_constant {
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr_constant * ic_expr_constant_new(enum ic_expr_constant_type type);
+struct ic_expr_constant * ic_expr_constant_new(enum ic_expr_constant_tag tag);
 
 /* initialise an existing constant
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, enum ic_expr_constant_type type);
+unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, enum ic_expr_constant_tag tag);
 
 /* destroy const
  *
@@ -181,7 +181,7 @@ struct ic_string * ic_expr_constant_get_string(struct ic_expr_constant *constant
 /* print this constant */
 void ic_expr_constant_print(struct ic_expr_constant *constant, unsigned int *indent_level);
 
-enum ic_expr_operator_type {
+enum ic_expr_operator_tag {
     ic_expr_operator_type_unary,
     ic_expr_operator_type_binary
 };
@@ -192,7 +192,7 @@ enum ic_expr_operator_type {
  * maps to a function call
  */
 struct ic_expr_operator {
-    enum ic_expr_operator_type type;
+    enum ic_expr_operator_tag tag;
     /* token for the operator */
     struct ic_token *token;
     /* unary operators will only have a first
@@ -235,7 +235,7 @@ unsigned int ic_expr_operator_init_binary(struct ic_expr_operator *operator, str
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, enum ic_expr_operator_type type, struct ic_expr *first, struct ic_expr *second, struct ic_token *token);
+unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, enum ic_expr_operator_tag tag, struct ic_expr *first, struct ic_expr *second, struct ic_token *token);
 
 /* destroy operator
  *
@@ -250,7 +250,7 @@ unsigned int ic_expr_operator_destroy(struct ic_expr_operator *op, unsigned int 
 void ic_expr_operator_print(struct ic_expr_operator *op, unsigned int *indent_level);
 
 
-enum ic_expr_type {
+enum ic_expr_tag {
     ic_expr_type_func_call,
     ic_expr_type_identifier,
     ic_expr_type_constant,
@@ -258,7 +258,7 @@ enum ic_expr_type {
 };
 
 struct ic_expr{
-    enum ic_expr_type type;
+    enum ic_expr_tag tag;
     union {
         struct ic_expr_func_call fcall;
         struct ic_expr_identifier id;
@@ -273,7 +273,7 @@ struct ic_expr{
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr * ic_expr_new(enum ic_expr_type type);
+struct ic_expr * ic_expr_new(enum ic_expr_tag tag);
 
 /* initialise an existing ic_expr
  * will not initialise union members
@@ -281,7 +281,7 @@ struct ic_expr * ic_expr_new(enum ic_expr_type type);
  * returns 1 on success
  * returns 0 on failure
  */
-int ic_expr_init(struct ic_expr *expr, enum ic_expr_type type);
+int ic_expr_init(struct ic_expr *expr, enum ic_expr_tag tag);
 
 /* destroy expr
  *

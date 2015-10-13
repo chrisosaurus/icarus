@@ -136,7 +136,7 @@ unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned
  * returns 1 on success
  * returns 1 on failure
  */
-unsigned int ic_expr_func_call_set_fdecl(struct ic_expr_func_call *fcall, struct ic_func_decl *fdecl){
+unsigned int ic_expr_func_call_set_fdecl(struct ic_expr_func_call *fcall, struct ic_decl_func *fdecl){
     if( ! fcall ){
         puts("ic_expr_func_call_set_fdecl: fcall was null");
         return 0;
@@ -366,7 +366,7 @@ struct ic_symbol *ic_expr_identifier_symbol(struct ic_expr_identifier *identifie
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr_constant * ic_expr_constant_new(enum ic_expr_constant_type type){
+struct ic_expr_constant * ic_expr_constant_new(enum ic_expr_constant_tag tag){
     struct ic_expr_constant * constant = 0;
 
     /* alloc */
@@ -377,7 +377,7 @@ struct ic_expr_constant * ic_expr_constant_new(enum ic_expr_constant_type type){
     }
 
     /* init */
-    if( ! ic_expr_constant_init(constant, type) ){
+    if( ! ic_expr_constant_init(constant, tag) ){
         puts("ic_expr_constant_new: call to ic_expr_constant_init failed");
         return 0;
     }
@@ -391,14 +391,14 @@ struct ic_expr_constant * ic_expr_constant_new(enum ic_expr_constant_type type){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_expr_constant_init(struct ic_expr_constant *constant, enum ic_expr_constant_type type){
+unsigned int ic_expr_constant_init(struct ic_expr_constant *constant, enum ic_expr_constant_tag tag){
     if( ! constant ){
         puts("ic_expr_constant_init: constant was null");
         return 0;
     }
 
     /* for now our only job is to set the type */
-    constant->type = type;
+    constant->tag = tag;
 
     /* victory */
     return 1;
@@ -417,7 +417,7 @@ unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, unsigne
         return 0;
     }
 
-    switch( constant->type ){
+    switch( constant->tag ){
         case ic_expr_constant_type_integer:
             /* nothing to do */
             break;
@@ -456,7 +456,7 @@ long int * ic_expr_constant_get_integer(struct ic_expr_constant *constant){
     }
 
     /* check type before handing out pointer */
-    if( constant->type != ic_expr_constant_type_integer ){
+    if( constant->tag != ic_expr_constant_type_integer ){
         puts("ic_expr_constant_get_integer: not an integer");
         return 0;
     }
@@ -478,7 +478,7 @@ struct ic_string * ic_expr_constant_get_string(struct ic_expr_constant *constant
     }
 
     /* check type before handing out pointer */
-    if( constant->type != ic_expr_constant_type_string ){
+    if( constant->tag != ic_expr_constant_type_string ){
         puts("ic_expr_constant_get_string: not an string");
         return 0;
     }
@@ -504,7 +504,7 @@ void ic_expr_constant_print(struct ic_expr_constant *constant, unsigned int *ind
         return;
     }
 
-    switch( constant->type ){
+    switch( constant->tag ){
         case ic_expr_constant_type_string:
             /* pull out our string */
             string = ic_expr_constant_get_string(constant);
@@ -642,7 +642,7 @@ unsigned int ic_expr_operator_init_binary(struct ic_expr_operator *operator, str
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, enum ic_expr_operator_type type, struct ic_expr *first, struct ic_expr *second, struct ic_token *token){
+unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, enum ic_expr_operator_tag tag, struct ic_expr *first, struct ic_expr *second, struct ic_token *token){
     if( ! operator ){
         puts("ic_expr_operator_init_binary: operator was null");
         return 0;
@@ -658,7 +658,7 @@ unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, enum ic_ex
         return 0;
     }
 
-    if( type == ic_expr_operator_type_binary ){
+    if( tag == ic_expr_operator_type_binary ){
         if( ! second ){
             puts("ic_expr_operator_init_binary: second was null");
             return 0;
@@ -671,7 +671,7 @@ unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, enum ic_ex
 
     /* assign sub expressions */
     operator->first = first;
-    operator->type = type;
+    operator->tag = tag;
 
     /* success */
     return 1;
@@ -737,7 +737,7 @@ void ic_expr_operator_print(struct ic_expr_operator *op, unsigned int *indent_le
         return;
     }
 
-    switch( op->type ){
+    switch( op->tag ){
         case ic_expr_operator_type_unary:
             /* print prefix
              * print:
@@ -773,7 +773,7 @@ void ic_expr_operator_print(struct ic_expr_operator *op, unsigned int *indent_le
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr * ic_expr_new(enum ic_expr_type type){
+struct ic_expr * ic_expr_new(enum ic_expr_tag tag){
     struct ic_expr *expr = 0;
 
     /* alloc */
@@ -784,7 +784,7 @@ struct ic_expr * ic_expr_new(enum ic_expr_type type){
     }
 
     /* init */
-    if( ! ic_expr_init(expr, type) ){
+    if( ! ic_expr_init(expr, tag) ){
         puts("ic_expr_new: call to ic_expr_init failed");
         return 0;
     }
@@ -798,14 +798,14 @@ struct ic_expr * ic_expr_new(enum ic_expr_type type){
  * returns 1 on success
  * returns 0 on failure
  */
-int ic_expr_init(struct ic_expr *expr, enum ic_expr_type type){
+int ic_expr_init(struct ic_expr *expr, enum ic_expr_tag tag){
     if( ! expr ){
         puts("ic_expr_init: expr was null");
         return 0;
     }
 
     /* we only initialise the type */
-    expr->type = type;
+    expr->tag = tag;
 
     /* we do NOT initialise the union members */
 
@@ -826,7 +826,7 @@ unsigned int ic_expr_destroy(struct ic_expr *expr, unsigned int free_expr){
     }
 
     /* dispatch on type */
-    switch( expr->type ){
+    switch( expr->tag ){
         case ic_expr_type_func_call:
             /* free = 0 as member */
             if( ! ic_expr_func_call_destroy( &(expr->u.fcall), 0 ) ){
@@ -884,7 +884,7 @@ struct ic_expr_func_call * ic_expr_get_fcall(struct ic_expr *expr){
     }
 
     /* check type before breaking into union */
-    if( expr->type != ic_expr_type_func_call ){
+    if( expr->tag != ic_expr_type_func_call ){
         puts("ic_expr_get_fcall: type was incorrect");
         return 0;
     }
@@ -906,7 +906,7 @@ struct ic_expr_identifier * ic_expr_get_identifier(struct ic_expr *expr){
     }
 
     /* check type before breaking into union */
-    if( expr->type != ic_expr_type_identifier ){
+    if( expr->tag != ic_expr_type_identifier ){
         puts("ic_expr_get_identifier: type was incorrect");
         return 0;
     }
@@ -947,7 +947,7 @@ struct ic_expr_constant * ic_expr_get_constant(struct ic_expr *expr){
     }
 
     /* check type before breaking into union */
-    if( expr->type != ic_expr_type_constant ){
+    if( expr->tag != ic_expr_type_constant ){
         puts("ic_expr_get_constant: type was incorrect");
         return 0;
     }
@@ -969,7 +969,7 @@ struct ic_expr_operator * ic_expr_get_operator(struct ic_expr *expr){
     }
 
     /* check type before breaking into union */
-    if( expr->type != ic_expr_type_operator ){
+    if( expr->tag != ic_expr_type_operator ){
         puts("ic_expr_get_operator: type was incorrect");
         return 0;
     }
@@ -989,7 +989,7 @@ void ic_expr_print(struct ic_expr *expr, unsigned int *indent_level){
         return;
     }
 
-    switch( expr->type ){
+    switch( expr->tag ){
 
         case ic_expr_type_func_call:
             ic_expr_func_call_print(&(expr->u.fcall), indent_level);

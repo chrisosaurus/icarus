@@ -34,10 +34,7 @@ testing debt:
 technical debt:
 -----
 
-* lexer output will (probably) need to keep track of newlines
-* lexer output is a space separated char array of 'tokens' (strings), which means string/symbol comparison is done all over parse/analyse, would prefer an enum token type
-* lexer token type should include original line text, source file and location
-* `fdecl`, `tdecl`, `type_decl`, `func_decl` are all intermixed
+* `fdecl`, `tdecl`, `decl_type`, `decl_func` are all intermixed
 * parse functions don't seem to check their arguments as well as analyse does
 * see docs/coding.md 'Error handling' section
 * parsing of '.' and ',' are not satisfactory, they are currently being caught as identifiers as the 'operator' code is only really for binary operators
@@ -48,7 +45,6 @@ technical debt:
 * ic_dict interface set/insert is non-ideal, see linear_hash upstream TODO
 * ic_scope insert interface is non-ideal
 * ic_scope lacks an exists
-* ic_type_decl and ic_func_decl should really be renamed to ic_decl_type and ic_decl_func to match naming conventions.
 
 
 considerations:
@@ -57,7 +53,7 @@ considerations:
 * consider const correctness
 * consider how to deal with builtin types (int, string) and functions (print)
 * consider const-correctness on read only args
-* `ic_analyse_type_decl` currently allows co-recursive types `type Foo a::Bar end` `type bar a::Foo end`, is this allowed?
+* `ic_analyse_decl_type` currently allows co-recursive types `type Foo a::Bar end` `type bar a::Foo end`, is this allowed?
  * consider allowing free_data param to ic_pvector_destroy that is passed to (*destroy_item) rather than defaulting to true
 
 

@@ -161,7 +161,7 @@ unsigned int ic_stmt_if_length(struct ic_stmt_if *sif);
 void ic_stmt_if_print(struct ic_stmt_if *sif, unsigned int *indent_level);
 
 
-enum ic_stmt_type {
+enum ic_stmt_tag {
     ic_stmt_type_ret,
     ic_stmt_type_let,
     ic_stmt_type_if,
@@ -169,7 +169,7 @@ enum ic_stmt_type {
 };
 
 struct ic_stmt {
-    enum ic_stmt_type type;
+    enum ic_stmt_tag tag;
     union {
         struct ic_stmt_ret ret;
         struct ic_stmt_let let;
@@ -192,14 +192,14 @@ struct ic_stmt {
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_stmt * ic_stmt_new(enum ic_stmt_type type);
+struct ic_stmt * ic_stmt_new(enum ic_stmt_tag tag);
 
 /* initialise an existing ic_stmt
  *
  * returns 1 on success
  * returns 0 on failure
  */
-int ic_stmt_init(struct ic_stmt *stmt, enum ic_stmt_type type);
+int ic_stmt_init(struct ic_stmt *stmt, enum ic_stmt_tag tag);
 
 /* destroy stmt
  *

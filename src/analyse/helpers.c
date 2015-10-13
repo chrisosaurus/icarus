@@ -194,7 +194,7 @@ ERROR:
  * returns 1 on success (pass)
  * returns 0 on failure
  */
-unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_func_decl *fdecl){
+unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_decl_func *fdecl){
     /* index into body */
     unsigned int i = 0;
     /* len of body */
@@ -257,7 +257,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
          *  1) if fcall then check exists, and bind
          *  2) if variable used then check type, and bind
          */
-        switch( stmt->type ){
+        switch( stmt->tag ){
             case ic_stmt_type_ret:
                 /* infer type of expression
                  * check returned value matches declared return type
@@ -396,7 +396,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                 break;
 
             default:
-                printf("ic_analyse_body: impossible stmt->type '%d'\n", stmt->type);
+                printf("ic_analyse_body: impossible stmt->tag '%d'\n", stmt->tag);
                 goto ERROR;
                 break;
         }
@@ -441,7 +441,7 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
     struct ic_expr_constant *cons  = 0;
     struct ic_expr_operator *op  = 0;
 
-    struct ic_func_decl *fdecl = 0;
+    struct ic_decl_func *fdecl = 0;
 
     if( ! kludge ){
         puts("ic_analyse_infer: kludge was null");
@@ -458,12 +458,12 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
         return 0;
     }
 
-    switch( expr->type ){
+    switch( expr->tag ){
 
         case ic_expr_type_func_call:
             /*
              *  infer addone(1) -> addone(Int)->Int -> Int
-             *  expr->type == func_call
+             *  expr->tag == func_call
              *  fc = expr->u.fcall
              *  fstr = str(fc)
              *      TODO note that icarus fcalls are dependent on arg types
@@ -476,7 +476,7 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
 
             /*
              *  infer Foo(1 "hello") -> Foo(Int String) -> Foo
-             *  expr->type == func_call
+             *  expr->tag == func_call
              *  fc = expr->u.fcall
              *  fstr = str(fc)
              *      TODO note that icarus fcalls are dependent on arg types
@@ -545,7 +545,7 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
         case ic_expr_type_identifier:
             /*
              *  infer f -> typeof contents of f
-             *  expr->type = identifier
+             *  expr->tag = identifier
              *  id = expr->u.id
              *  name = str(id)
              *  variable = get variable within scope name
@@ -600,10 +600,10 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
                 return 0;
             }
 
-            switch( cons->type ){
+            switch( cons->tag ){
                 /*
                  *  infer 1 -> Int
-                 *  expr->type == constant
+                 *  expr->tag == constant
                  *  cons = expr->u.cons
                  *  cons->type == integer
                  *  return integer
@@ -620,7 +620,7 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
 
                 /*
                  *  infer "hello" -> String
-                 *  expr->type == constant
+                 *  expr->tag == constant
                  *  cons = expr->u.cons
                  *  cons->type == string
                  *  return string
@@ -651,7 +651,7 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
             break;
 
         default:
-            printf("ic_analyse_infer: unknown expr->type '%d'\n", expr->type);
+            printf("ic_analyse_infer: unknown expr->tag '%d'\n", expr->tag);
             return 0;
             break;
     }
@@ -824,7 +824,7 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
 /* create a function signature string from a function call
  *
  * this function must be compatible with the one produced
- * by `ic_func_decl_str`
+ * by `ic_decl_func_str`
  *      foo(Int Int)
  *
  * returns char * on success

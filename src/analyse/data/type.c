@@ -8,7 +8,7 @@
  * returns new type on success
  * returns 0 on failure
  */
-struct ic_type * ic_type_new_tdecl(struct ic_type_decl *decl){
+struct ic_type * ic_type_new_tdecl(struct ic_decl_type *decl){
     struct ic_type *type = 0;
 
     if( ! decl ){
@@ -35,7 +35,7 @@ struct ic_type * ic_type_new_tdecl(struct ic_type_decl *decl){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_type_init_tdecl(struct ic_type *type, struct ic_type_decl *decl){
+unsigned int ic_type_init_tdecl(struct ic_type *type, struct ic_decl_type *decl){
     if( ! type ){
         puts("ic_type_init_tdecl: type was null");
         return 0;
@@ -46,7 +46,7 @@ unsigned int ic_type_init_tdecl(struct ic_type *type, struct ic_type_decl *decl)
         return 0;
     }
 
-    type->type = ic_type_user;
+    type->tag = ic_type_user;
     type->u.decl = decl;
 
     return 1;
@@ -95,7 +95,7 @@ unsigned int ic_type_init_builtin(struct ic_type *type, struct ic_type_builtin *
         return 0;
     }
 
-    type->type = ic_type_builtin;
+    type->tag = ic_type_builtin;
     type->u.builtin = builtin;
 
     return 1;
@@ -116,7 +116,7 @@ unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type){
         return 0;
     }
 
-    switch( type->type ){
+    switch( type->tag ){
         case ic_type_builtin:
             /* FIXME builtin leaked */
             type->u.builtin = 0;
@@ -148,7 +148,7 @@ struct ic_symbol * ic_type_name(struct ic_type *type){
         return 0;
     }
 
-    switch( type->type ){
+    switch( type->tag ){
         case ic_type_builtin:
             return type->u.builtin->name;
             break;
@@ -179,7 +179,7 @@ unsigned int ic_type_isvoid(struct ic_type *type){
         return 0;
     }
 
-    if( type->type != ic_type_builtin ){
+    if( type->tag != ic_type_builtin ){
         return 0;
     }
 

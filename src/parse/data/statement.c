@@ -453,7 +453,7 @@ void ic_stmt_if_print(struct ic_stmt_if *sif, unsigned int *indent_level){
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_stmt * ic_stmt_new(enum ic_stmt_type type){
+struct ic_stmt * ic_stmt_new(enum ic_stmt_tag tag){
     struct ic_stmt * stmt = 0;
 
     /* alloc */
@@ -464,7 +464,7 @@ struct ic_stmt * ic_stmt_new(enum ic_stmt_type type){
     }
 
     /* init */
-    if( ! ic_stmt_init(stmt, type) ){
+    if( ! ic_stmt_init(stmt, tag) ){
         puts("ic_stmt_new: call to ic_stmt_init failed");
         return 0;
     }
@@ -477,14 +477,14 @@ struct ic_stmt * ic_stmt_new(enum ic_stmt_type type){
  * returns 1 on success
  * returns 0 on failure
  */
-int ic_stmt_init(struct ic_stmt *stmt, enum ic_stmt_type type){
+int ic_stmt_init(struct ic_stmt *stmt, enum ic_stmt_tag tag){
     if( ! stmt ){
         puts("ic_stmt_init: stmt was null");
         return 0;
     }
 
     /* only initialise type */
-    stmt->type = type;
+    stmt->tag = tag;
 
     /* do not touch union */
 
@@ -505,7 +505,7 @@ unsigned int ic_stmt_destroy(struct ic_stmt *stmt, unsigned int free_stmt){
     }
 
     /* dispatch for appropritte subtype */
-    switch( stmt->type ){
+    switch( stmt->tag ){
         case ic_stmt_type_ret:
             /* do not free as member */
             if( ! ic_stmt_ret_destroy( &(stmt->u.ret), 0 ) ){
@@ -568,7 +568,7 @@ struct ic_stmt_ret * ic_stmt_get_ret(struct ic_stmt *stmt){
     }
 
     /* check type before giving out */
-    if( stmt->type != ic_stmt_type_ret ){
+    if( stmt->tag != ic_stmt_type_ret ){
         puts("ic_stmt_get_ret: not of the correct type");
         return 0;
     }
@@ -590,7 +590,7 @@ struct ic_stmt_let * ic_stmt_get_let(struct ic_stmt *stmt){
     }
 
     /* check type before giving out */
-    if( stmt->type != ic_stmt_type_let ){
+    if( stmt->tag != ic_stmt_type_let ){
         puts("ic_stmt_get_let: not of the correct type");
         return 0;
     }
@@ -612,7 +612,7 @@ struct ic_stmt_if * ic_stmt_get_sif(struct ic_stmt *stmt){
     }
 
     /* check type before giving out */
-    if( stmt->type != ic_stmt_type_if ){
+    if( stmt->tag != ic_stmt_type_if ){
         puts("ic_stmt_get_sif: not of the correct type");
         return 0;
     }
@@ -634,7 +634,7 @@ struct ic_expr * ic_stmt_get_expr(struct ic_stmt *stmt){
     }
 
     /* check type before giving out */
-    if( stmt->type != ic_stmt_type_expr ){
+    if( stmt->tag != ic_stmt_type_expr ){
         puts("ic_stmt_get_expr: not of the correct type");
         return 0;
     }
@@ -654,7 +654,7 @@ void ic_stmt_print(struct ic_stmt *stmt, unsigned int *indent_level){
         return;
     }
 
-    switch( stmt->type ){
+    switch( stmt->tag ){
         case ic_stmt_type_ret:
             ic_stmt_ret_print( &(stmt->u.ret), indent_level );
             break;

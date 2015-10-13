@@ -24,7 +24,7 @@ struct ic_decl * ic_parse_decl_type(struct ic_token_list *token_list){
     /* our resulting ic_decl */
     struct ic_decl *decl = 0;
     /* our tdecl within the decl */
-    struct ic_type_decl *tdecl = 0;
+    struct ic_decl_type *tdecl = 0;
     /* used to mark success of while loop */
     int success = 0;
     /* current token we are looking at */
@@ -47,7 +47,7 @@ struct ic_decl * ic_parse_decl_type(struct ic_token_list *token_list){
     }
 
     /* allocate and init our decl */
-    decl = ic_decl_new(ic_decl_type_decl);
+    decl = ic_decl_new(ic_decl_decl_type);
     if( ! decl ){
         puts("ic_parse_decl_type: call to ic_decl_new failed");
         return 0;
@@ -69,8 +69,8 @@ struct ic_decl * ic_parse_decl_type(struct ic_token_list *token_list){
     }
 
     /* initialise our tdecl */
-    if( ! ic_type_decl_init(tdecl, ic_token_get_string(token), ic_token_get_string_length(token)) ){
-        puts("ic_parse_decl_type: call to ic_type_decl_init failed");
+    if( ! ic_decl_type_init(tdecl, ic_token_get_string(token), ic_token_get_string_length(token)) ){
+        puts("ic_parse_decl_type: call to ic_decl_type_init failed");
         free(decl);
         return 0;
     }
@@ -99,8 +99,8 @@ struct ic_decl * ic_parse_decl_type(struct ic_token_list *token_list){
         }
 
         /* and store it */
-        if( ! ic_type_decl_add_field(tdecl, field) ){
-            puts("ic_parse_decl_type: call to ic_type_decl_add_field failed");
+        if( ! ic_decl_type_add_field(tdecl, field) ){
+            puts("ic_parse_decl_type: call to ic_decl_type_add_field failed");
 
             /* free field and all contents */
             if( ! ic_field_destroy(field, 1) ){
@@ -174,7 +174,7 @@ struct ic_decl * ic_parse_decl_func(struct ic_token_list *token_list){
     /* our resulting ic_decl */
     struct ic_decl *decl = 0;
     /* our tdecl within the decl */
-    struct ic_func_decl *fdecl = 0;
+    struct ic_decl_func *fdecl = 0;
     /* used to mark success of while loop */
     int success  = 0;
     /* pointer used for each stmt within body */
@@ -204,12 +204,12 @@ struct ic_decl * ic_parse_decl_func(struct ic_token_list *token_list){
     /* check we really are at a `function` token */
     token = ic_token_list_expect_important(token_list, IC_FUNC);
     if( ! token ){
-        puts("ic_parse_type_decl: call to ic_token_list_next failed for func");
+        puts("ic_parse_decl_type: call to ic_token_list_next failed for func");
         return 0;
     }
 
     /* allocate and init our decl */
-    decl = ic_decl_new(ic_decl_func_decl);
+    decl = ic_decl_new(ic_decl_decl_func);
     if( ! decl ){
         puts("ic_parse_decl_func: call to ic_decl_new failed");
         return 0;
@@ -226,7 +226,7 @@ struct ic_decl * ic_parse_decl_func(struct ic_token_list *token_list){
     /* get out function name token */
     token = ic_token_list_next_important(token_list);
     if( ! token ){
-        puts("ic_parse_type_decl: call to ic_token_list_next failed for func name");
+        puts("ic_parse_decl_type: call to ic_token_list_next failed for func name");
         return 0;
     }
 
@@ -238,8 +238,8 @@ struct ic_decl * ic_parse_decl_func(struct ic_token_list *token_list){
     }
 
     /* initialise our fdecl */
-    if( ! ic_func_decl_init(fdecl, ic_token_get_string(token), ic_token_get_string_length(token)) ){
-        puts("ic_parse_decl_func: call to ic_func_decl_init failed");
+    if( ! ic_decl_func_init(fdecl, ic_token_get_string(token), ic_token_get_string_length(token)) ){
+        puts("ic_parse_decl_func: call to ic_decl_func_init failed");
         free(decl);
         return 0;
     }
@@ -248,7 +248,7 @@ struct ic_decl * ic_parse_decl_func(struct ic_token_list *token_list){
     /* opening bracket */
     token = ic_token_list_expect_important(token_list, IC_LRBRACKET);
     if( ! token ){
-        puts("ic_parse_type_decl: call to ic_token_list_next failed for '('");
+        puts("ic_parse_decl_type: call to ic_token_list_next failed for '('");
         return 0;
     }
 
@@ -269,8 +269,8 @@ struct ic_decl * ic_parse_decl_func(struct ic_token_list *token_list){
         }
 
         /* save it */
-        if( ! ic_func_decl_add_arg(fdecl, arg) ){
-            puts("ic_parse_decl_func: call to if_func_decl_add_arg failed");
+        if( ! ic_decl_func_add_arg(fdecl, arg) ){
+            puts("ic_parse_decl_func: call to if_decl_func_add_arg failed");
             free(decl);
             return 0;
         }
@@ -278,7 +278,7 @@ struct ic_decl * ic_parse_decl_func(struct ic_token_list *token_list){
 
     token = ic_token_list_expect_important(token_list, IC_RRBRACKET);
     if( ! token ){
-        puts("ic_parse_type_decl: call to ic_token_list_next failed for ')'");
+        puts("ic_parse_decl_type: call to ic_token_list_next failed for ')'");
         return 0;
     }
 
@@ -292,7 +292,7 @@ struct ic_decl * ic_parse_decl_func(struct ic_token_list *token_list){
      */
     token = ic_token_list_peek_important(token_list);
     if( ! token ){
-        puts("ic_parse_type_decl: call to ic_token_list_next failed when looking for return type or body");
+        puts("ic_parse_decl_type: call to ic_token_list_next failed when looking for return type or body");
         return 0;
     }
 
@@ -300,7 +300,7 @@ struct ic_decl * ic_parse_decl_func(struct ic_token_list *token_list){
         /* consume arrow */
         token = ic_token_list_next_important(token_list);
         if( ! token ){
-            puts("ic_parse_type_decl: call to ic_token_list_next_important failed when trying to consume arrow");
+            puts("ic_parse_decl_type: call to ic_token_list_next_important failed when trying to consume arrow");
             return 0;
         }
 
@@ -309,21 +309,21 @@ struct ic_decl * ic_parse_decl_func(struct ic_token_list *token_list){
          */
         token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
         if( ! token ){
-            puts("ic_parse_type_decl: call to ic_token_list_next failed when looking for return type after arrow");
+            puts("ic_parse_decl_type: call to ic_token_list_next failed when looking for return type after arrow");
             return 0;
         }
 
         /* add to our fdecl */
-        if( ! ic_func_decl_set_return( fdecl, ic_token_get_string(token), ic_token_get_string_length(token)) ){
-            puts("ic_parse_decl_func: call to ic_func_decl_set_return failed");
+        if( ! ic_decl_func_set_return( fdecl, ic_token_get_string(token), ic_token_get_string_length(token)) ){
+            puts("ic_parse_decl_func: call to ic_decl_func_set_return failed");
             free(decl);
             return 0;
         }
 
     } else {
         /* add Void type to our fdecl */
-        if( ! ic_func_decl_set_return(fdecl, "Void", 4) ){
-            puts("ic_parse_decl_func: call to ic_func_decl_set_return failed for 'Void'");
+        if( ! ic_decl_func_set_return(fdecl, "Void", 4) ){
+            puts("ic_parse_decl_func: call to ic_decl_func_set_return failed for 'Void'");
             free(decl);
             return 0;
         }
@@ -349,8 +349,8 @@ struct ic_decl * ic_parse_decl_func(struct ic_token_list *token_list){
         }
 
         /* save to our body */
-        if( ! ic_func_decl_add_stmt(fdecl, stmt) ){
-            puts("ic_parse_decl_func: call to ic_func_decl_add_stmt failed");
+        if( ! ic_decl_func_add_stmt(fdecl, stmt) ){
+            puts("ic_parse_decl_func: call to ic_decl_func_add_stmt failed");
             free(decl);
             return 0;
         }

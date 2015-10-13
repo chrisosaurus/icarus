@@ -15,18 +15,18 @@ In Icarus the concept of a type has a few moving parts
 
 at parse time we have:
 * ic_type_ref - a reference to a type, built during parse
-* ic_type_decl - the information captured for a user declared type
+* ic_decl_type - the information captured for a user declared type
 
 at the analysis phase we have:
 * ic_type_builtin - the information needed for a builtin
-* ic_type - the concept of a type, either builtin or user defined, and points to ic_type_decl or ic_type_builtin
+* ic_type - the concept of a type, either builtin or user defined, and points to ic_decl_type or ic_type_builtin
 
 
 eventually we want the following dep. diagram:
 
     ic_type_builin - a builtin type
         ^
-        |      ic_type_decl - a user defined type
+        |      ic_decl_type - a user defined type
         |            ^
         |            |
          \          /

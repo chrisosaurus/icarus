@@ -7,17 +7,17 @@
 int main(void){
     struct ic_field *field = 0;
     struct ic_decl *decl = 0;
-    struct ic_type_decl *tdecl = 0;
-    struct ic_func_decl *fdecl = 0;
+    struct ic_decl_type *tdecl = 0;
+    struct ic_decl_func *fdecl = 0;
     /* fake indent level */
     unsigned int fake_indent = 0;
 
 
     /* test type decl */
-    decl = ic_decl_new(ic_decl_type_decl);
+    decl = ic_decl_new(ic_decl_decl_type);
     assert(decl);
     /* check type */
-    assert( decl->type == ic_decl_type_decl );
+    assert( decl->tag == ic_decl_decl_type );
 
     /* check that trying to pull out the wrong type is an error */
     assert( 0 == ic_decl_get_fdecl(decl) );
@@ -27,11 +27,11 @@ int main(void){
     assert(tdecl);
 
     /* initialise tdecl */
-    assert( 1 == ic_type_decl_init(tdecl, "Foo", 3) );
+    assert( 1 == ic_decl_type_init(tdecl, "Foo", 3) );
 
     /* add a single field */
     field = ic_field_new("bar", 3, "Baz", 3);
-    assert( 1 == ic_type_decl_add_field(tdecl, field) );
+    assert( 1 == ic_decl_type_add_field(tdecl, field) );
 
     /* test display */
     printf("Expected:\ntype Foo\n    bar::Baz\nend\n");
@@ -44,10 +44,10 @@ int main(void){
 
 
     /* test func decl */
-    decl = ic_decl_new(ic_decl_func_decl);
+    decl = ic_decl_new(ic_decl_decl_func);
     assert(decl);
     /* check type */
-    assert( decl->type == ic_decl_func_decl );
+    assert( decl->tag == ic_decl_decl_func );
 
     /* check that trying to pull out the wrong type is an error */
     assert( 0 == ic_decl_get_tdecl(decl) );
@@ -57,11 +57,11 @@ int main(void){
     assert(fdecl);
 
     /* initialise fdecl */
-    assert( 1 == ic_func_decl_init(fdecl, "Foo", 3) );
+    assert( 1 == ic_decl_func_init(fdecl, "Foo", 3) );
 
     /* add a single field */
     field = ic_field_new("bar", 3, "Baz", 3);
-    assert( 1 == ic_func_decl_add_arg(fdecl, field) );
+    assert( 1 == ic_decl_func_add_arg(fdecl, field) );
 
     /* test display */
     printf("Expected:\n# Foo(Baz)\nfn Foo(bar::Baz) -> Void\nend\n");

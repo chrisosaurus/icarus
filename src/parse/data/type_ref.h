@@ -3,7 +3,7 @@
 
 #include "../../data/symbol.h"
 
-enum ic_type_ref_type {
+enum ic_type_ref_tag {
     /* a type field had 3 states: */
 
     /* unknown
@@ -31,7 +31,7 @@ enum ic_type_ref_type {
 };
 
 struct ic_type_ref {
-    enum ic_type_ref_type type; /* heh */
+    enum ic_type_ref_tag tag;
     union {
         /* no value for unknown */
         struct ic_symbol sym; /* value for ic_type_symbol */

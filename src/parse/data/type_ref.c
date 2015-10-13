@@ -44,7 +44,7 @@ unsigned int ic_type_ref_init(struct ic_type_ref *type){
     /* default to unknown types
      * other type_type(s) are set via methods
      */
-    type->type = ic_type_ref_unknown;
+    type->tag = ic_type_ref_unknown;
 
     return 1;
 }
@@ -127,7 +127,7 @@ unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_typ
     }
 
     /* cleanup depends on type_type */
-    switch( type->type ){
+    switch( type->tag ){
         case ic_type_ref_unknown:
             /* nothing to do */
             break;
@@ -174,7 +174,7 @@ unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, un
     /* only allowed to set to symbol if current set
      * to unknown
      */
-    switch( type->type ){
+    switch( type->tag ){
         case ic_type_ref_unknown:
             /* nothing to do */
             break;
@@ -192,7 +192,7 @@ unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, un
     }
 
     /* set to type symbol */
-    type->type = ic_type_ref_symbol;
+    type->tag = ic_type_ref_symbol;
 
     /* set our symbol from the provider char * and len */
     if( ! ic_symbol_init(&(type->u.sym), type_str, type_len) ){
@@ -216,7 +216,7 @@ struct ic_symbol * ic_type_ref_get_symbol(struct ic_type_ref *type){
         return 0;
     }
 
-    switch( type->type ){
+    switch( type->tag ){
         case ic_type_ref_unknown:
             /* error, nothing to return */
             puts("ic_type_get_symbol: type was of type unknown");
@@ -243,7 +243,7 @@ void ic_type_ref_print(struct ic_type_ref *type){
         puts("ic_type_print: type was null");
         return;
     }
-    switch( type->type ){
+    switch( type->tag ){
         case ic_type_ref_unknown:
             /* nothing to do */
             break;

@@ -95,7 +95,7 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *tdecl);
+unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *tdecl);
 
 /* add a new func decl to this kludge
  * this will insert into dict_fname and also
@@ -104,7 +104,7 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *fdecl);
+unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_decl_func *fdecl);
 
 /* retrieve ic_type by string
  *
@@ -132,14 +132,14 @@ struct ic_type * ic_kludge_get_type_from_typeref(struct ic_kludge *kludge, struc
  * returns * on success
  * returns 0 on failure
  */
-struct ic_func_decl * ic_kludge_get_fdecl(struct ic_kludge *kludge, char *fdecl_str);
+struct ic_decl_func * ic_kludge_get_fdecl(struct ic_kludge *kludge, char *fdecl_str);
 
 /* retrieve func decl by symbol
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_func_decl * ic_kludge_get_fdecl_from_symbol(struct ic_kludge *kludge, struct ic_symbol *fdecl);
+struct ic_decl_func * ic_kludge_get_fdecl_from_symbol(struct ic_kludge *kludge, struct ic_symbol *fdecl);
 
 /* check if an existing identifier is taken either within the kludge or the provided sope
  *

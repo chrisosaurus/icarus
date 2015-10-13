@@ -140,15 +140,15 @@ static unsigned int ic_kludge_populate_from_ast(struct ic_kludge *kludge, struct
         }
 
         /* dispatch on type to appropriate kludge_add function */
-        switch(decl->type){
-            case ic_decl_func_decl:
+        switch(decl->tag){
+            case ic_decl_decl_func:
                 if( ! ic_kludge_add_fdecl(kludge, &(decl->u.fdecl)) ){
                     puts("ic_kludge_populate_from_ast: call to ic_kludge_add_fdecl failed");
                     return 0;
                 }
                 break;
 
-            case ic_decl_type_decl:
+            case ic_decl_decl_type:
                 if( ! ic_kludge_add_tdecl(kludge, &(decl->u.tdecl)) ){
                     puts("ic_kludge_populate_from_ast: call to ic_kludge_add_tdecl failed");
                     return 0;
@@ -431,7 +431,7 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *tdecl){
+unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *tdecl){
     char * str = 0;
     struct ic_type *type = 0;
 
@@ -447,9 +447,9 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *
     /* cache str
      * do not need to free as this char* is stored on the tdecl
      */
-    str = ic_type_decl_str(tdecl);
+    str = ic_decl_type_str(tdecl);
     if( ! str ){
-        puts("ic_kludge_add_tdecl: call to ic_type_decl_str failed");
+        puts("ic_kludge_add_tdecl: call to ic_decl_type_str failed");
         return 0;
     }
 
@@ -489,7 +489,7 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_type_decl *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *fdecl){
+unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_decl_func *fdecl){
     char * str = 0;
 
     if( ! kludge ){
@@ -504,9 +504,9 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_func_decl *
     /* cache str
      * do not need to free as this char* is stored on the fdecl
      */
-    str = ic_func_decl_str(fdecl);
+    str = ic_decl_func_str(fdecl);
     if( ! str ){
-        puts("ic_kludge_add_fdecl: call to ic_func_decl_str failed");
+        puts("ic_kludge_add_fdecl: call to ic_decl_func_str failed");
         return 0;
     }
 
@@ -595,7 +595,7 @@ struct ic_type * ic_kludge_get_type_from_typeref(struct ic_kludge *kludge, struc
         return 0;
     }
 
-    if( type_ref->type != ic_type_ref_symbol ){
+    if( type_ref->tag != ic_type_ref_symbol ){
         puts("ic_kludge_get_type_from_typeref: type ref was not of type symbol");
         return 0;
     }
@@ -608,7 +608,7 @@ struct ic_type * ic_kludge_get_type_from_typeref(struct ic_kludge *kludge, struc
  * returns * on success
  * returns 0 on failure
  */
-struct ic_func_decl * ic_kludge_get_fdecl(struct ic_kludge *kludge, char *fdecl_str){
+struct ic_decl_func * ic_kludge_get_fdecl(struct ic_kludge *kludge, char *fdecl_str){
     if( ! kludge ){
         puts("ic_kludge_get_fdecl: kludge was null");
         return 0;
@@ -627,7 +627,7 @@ struct ic_func_decl * ic_kludge_get_fdecl(struct ic_kludge *kludge, char *fdecl_
  * returns * on success
  * returns 0 on failure
  */
-struct ic_func_decl * ic_kludge_get_fdecl_from_symbol(struct ic_kludge *kludge, struct ic_symbol *fdecl){
+struct ic_decl_func * ic_kludge_get_fdecl_from_symbol(struct ic_kludge *kludge, struct ic_symbol *fdecl){
     char *fdecl_str = 0;
 
     if( ! kludge ){

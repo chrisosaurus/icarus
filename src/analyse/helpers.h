@@ -30,7 +30,7 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
  * returns 1 on success (pass)
  * returns 0 on failure
  */
-unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_func_decl *fdecl);
+unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_decl_func *fdecl);
 
 
 /* takes an expr and returns the inferred type
@@ -76,7 +76,7 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
 /* create a function signature string from a function call
  *
  * this function must be compatible with the one produced
- * by `ic_func_decl_str`
+ * by `ic_decl_func_str`
  *      foo(Int Int)
  *
  * returns char * on success

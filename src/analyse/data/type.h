@@ -9,19 +9,19 @@
  *
  * an ic_type can either be:
  *  - a builtin - FIXME no current support for builtins
- *  - a user defined type - ic_type_decl
+ *  - a user defined type - ic_decl_type
  */
 
-enum ic_type_type {
+enum ic_type_tag {
     ic_type_builtin,
     ic_type_user
 };
 
 struct ic_type {
-    enum ic_type_type type;
+    enum ic_type_tag tag;
     union {
         struct ic_type_builtin *builtin;
-        struct ic_type_decl *decl;
+        struct ic_decl_type *decl;
     } u;
 };
 
@@ -30,14 +30,14 @@ struct ic_type {
  * returns new type on success
  * returns 0 on failure
  */
-struct ic_type * ic_type_new_tdecl(struct ic_type_decl *decl);
+struct ic_type * ic_type_new_tdecl(struct ic_decl_type *decl);
 
 /* init an existing type representing a tdecl
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_type_init_tdecl(struct ic_type *type, struct ic_type_decl *decl);
+unsigned int ic_type_init_tdecl(struct ic_type *type, struct ic_decl_type *decl);
 /* alloc and init a new type representing a builtin
  *
  * returns new type on success
