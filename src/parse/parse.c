@@ -24,11 +24,11 @@ static struct ic_parse_table_entry {
     struct ic_decl * (*func)(struct ic_token_list *token_list);
 } ic_parse_table [] = {
     /* token          function    */
-    {  IC_BUILTIN,    ic_parse_builtin_decl  },
-    {  IC_FUNC,       ic_parse_func_decl  },
-    {  IC_TYPE,       ic_parse_type_decl  },
-    {  IC_ENUM,       ic_parse_enum_decl  },
-    {  IC_UNION,      ic_parse_union_decl },
+    {  IC_BUILTIN,    ic_parse_decl_builtin  },
+    {  IC_FUNC,       ic_parse_decl_func     },
+    {  IC_TYPE,       ic_parse_decl_type     },
+    {  IC_ENUM,       ic_parse_decl_enum     },
+    {  IC_UNION,      ic_parse_decl_union    },
 };
 
 struct ic_ast * ic_parse(struct ic_token_list *token_list){
