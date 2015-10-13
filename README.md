@@ -102,7 +102,7 @@ Hidden in the output we see the new lexer output:
 
 Hidden elsewhere in the output we can see the parser reconstructing the program from it's current understanding (based on new lexer):
 
-   parser output:
+    parser output:
     ----------------
     type Foo
         a::Int
