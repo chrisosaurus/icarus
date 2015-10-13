@@ -3,12 +3,12 @@ TODO:
 
 * decide on comma handling, currently skipped in parsing
 * tokens should be used throughout parsing; passing around strings is lame, tokens should also be recorded against every ast node for traceability
+* tokens should be used on any externally triggerable errors (users in a program's source that a user can fix)
 * allow 'return' from void functions, this needs support at both parse and analyse levels
 * decide on void type handling
 * tidy up type_ref / symbol -> type handling, we now have kludge_get_type_from_type_ref and kludge_get_type_from_symbol
 * document parse function interfaces
 * write remaining parse code
-* it will be useful for callers of ic_parse_check_token to be able to distinguish between error (null tokens, dist failed) and comparison failures (the token was not as expected)
 * add escaping support to lexing string (escaping " with \)
 * add kludge testing
 * an fcall should also store the found function (fdecl or fbuiltin) (post analysis)
@@ -34,10 +34,11 @@ testing debt:
 technical debt:
 -----
 
+* the parse module was written using the old lexer system and then retrofitted to the new, it could probably use some refactoring now that the lex output is more sane
+* token_list api needs some cleanup, no one ever really uses the non _important calls
 * `fdecl`, `tdecl`, `decl_type`, `decl_func` are all intermixed
 * parse functions don't seem to check their arguments as well as analyse does
 * see docs/coding.md 'Error handling' section
-* parsing of '.' and ',' are not satisfactory, they are currently being caught as identifiers as the 'operator' code is only really for binary operators
 * all objects (esp. containers) need destructors (see `./scripts/destruct_audit.sh` for current list)
 * add pvector/parray destructor helper which takes a function * and iterates through it's contents passing to function
 * add shims to allow ic_pvector_destroy to be called on each type
@@ -50,11 +51,9 @@ technical debt:
 considerations:
 -----
 
-* consider const correctness
-* consider how to deal with builtin types (int, string) and functions (print)
 * consider const-correctness on read only args
 * `ic_analyse_decl_type` currently allows co-recursive types `type Foo a::Bar end` `type bar a::Foo end`, is this allowed?
- * consider allowing free_data param to ic_pvector_destroy that is passed to (*destroy_item) rather than defaulting to true
+* consider allowing free_data param to ic_pvector_destroy that is passed to (*destroy_item) rather than defaulting to true
 
 
 
