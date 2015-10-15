@@ -66,6 +66,12 @@ test: clean $(OBJ) $(TESTO) test_custom test_success cleanobj
 
 
 test_custom: $(OBJ)
+	@echo -e "\n\ncompiling t/custom/test_token_print.c to bin/t/custom/test_token_print"
+	@mkdir -p `dirname bin/t/custom/test_token_print`
+	@${CC} t/custom/test_token_print.c -o bin/t/custom/test_token_print ${CFLAGS} ${LDFLAGS} ${OBJ}
+	@echo running test_token_print.pl
+	t/custom/test_token_print.pl
+
 	@echo -e "\n\ncompiling t/custom/test_lex_simple.c to bin/t/custom/test_lex_simple"
 	@mkdir -p `dirname bin/t/custom/test_lex_simple`
 	@${CC} t/custom/test_lex_simple.c -o bin/t/custom/test_lex_simple ${CFLAGS} ${LDFLAGS} ${OBJ}
