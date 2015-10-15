@@ -46,7 +46,7 @@ int main(void){
 
         printf("%d : ", i);
         token->id = i;
-        ic_token_print_debug(token);
+        ic_token_print(token);
         puts("");
     }
     puts("---------");
