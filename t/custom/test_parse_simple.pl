@@ -8,12 +8,7 @@ my $path = "bin/t/custom/test_parse_simple";
 die "Could not find '$path'\n" unless -e $path;
 
 my $output = `$path`;
-
 my $exit_status = $?;
-if( $exit_status != 0 ){
-    die "exit_status was '$exit_status', expected 0";
-}
-
 my $expected = <<EOF;
 
 parser output:
@@ -61,12 +56,16 @@ end
 
 EOF
 
-unless( $output eq $expected ){
+if( $exit_status != 0 || $output ne $expected ){
     say "Output was not as expected";
     say "=======\nExpected:\n$expected";
     say "=======\nGot:\n$output";
     say "=======\n";
-    die "Output not as expected";
+    if( $exit_status != 0 ){
+        die "exit_status was '$exit_status', expected 0";
+    } else {
+        die "Output not as expected";
+    }
 }
 
 say "test_parse_example: successs";
