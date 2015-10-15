@@ -264,7 +264,7 @@ struct ic_expr_faccess {
      *   { { {foo(), a}, b}, c}
      */
     struct ic_expr * left;
-    struct ic_expr_identifier * right;
+    struct ic_expr * right;
 };
 
 /* allocate and initialise a field access
@@ -272,14 +272,14 @@ struct ic_expr_faccess {
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr_faccess * ic_expr_faccess_new(struct ic_expr *left, struct ic_expr_identifier *right);
+struct ic_expr_faccess * ic_expr_faccess_new(struct ic_expr *left, struct ic_expr *right);
 
 /* initialise an existing field access
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_expr_faccess_init(struct ic_expr_faccess *faccess, struct ic_expr *left, struct ic_expr_identifier *right);
+unsigned int ic_expr_faccess_init(struct ic_expr_faccess *faccess, struct ic_expr *left, struct ic_expr *right);
 
 /* destroy fieldaccess
  *

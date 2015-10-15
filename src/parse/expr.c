@@ -450,8 +450,6 @@ static struct ic_expr * ic_parse_expr_fieldaccess(struct ic_token_list *token_li
     struct ic_expr *left = 0;
     /* our right child, this must be an identifier */
     struct ic_expr *right = 0;
-    /* the identifier we unpack into */
-    struct ic_expr_identifier *right_id = 0;
 
     /* operator token */
     struct ic_token *token = 0;
@@ -492,15 +490,9 @@ static struct ic_expr * ic_parse_expr_fieldaccess(struct ic_token_list *token_li
         return 0;
     }
 
+    /* check it is an identifier */
     if( right->tag != ic_expr_type_identifier ){
         puts("ic_parse_expr_faccess: right token was not an identifier");
-        return 0;
-    }
-
-    /* check it is an identifier, and unpack */
-    right_id = ic_expr_get_identifier(right);
-    if( ! right_id ){
-        puts("ic_parse_expr_faccess: call to ic_expr_get_identifier failed");
         return 0;
     }
 
@@ -512,7 +504,7 @@ static struct ic_expr * ic_parse_expr_fieldaccess(struct ic_token_list *token_li
     }
 
     /* init our faccess */
-    if( ! ic_expr_faccess_init(faccess, left, right_id) ){
+    if( ! ic_expr_faccess_init(faccess, left, right) ){
         puts("ic_parse_expr_faccess: call to ic_expr_faccess_init failed");
         free(expr);
         free(left);

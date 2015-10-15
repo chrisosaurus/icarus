@@ -771,7 +771,7 @@ void ic_expr_operator_print(struct ic_expr_operator *op, unsigned int *indent_le
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr_faccess * ic_expr_faccess_new(struct ic_expr *left, struct ic_expr_identifier *right){
+struct ic_expr_faccess * ic_expr_faccess_new(struct ic_expr *left, struct ic_expr *right){
     struct ic_expr_faccess *faccess = 0;
 
     if( ! left ){
@@ -803,7 +803,7 @@ struct ic_expr_faccess * ic_expr_faccess_new(struct ic_expr *left, struct ic_exp
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_expr_faccess_init(struct ic_expr_faccess *faccess, struct ic_expr *left, struct ic_expr_identifier *right){
+unsigned int ic_expr_faccess_init(struct ic_expr_faccess *faccess, struct ic_expr *left, struct ic_expr *right){
     if( ! faccess ){
         puts("ic_expr_faccess_init: faccess was null");
         return 0;
@@ -816,6 +816,11 @@ unsigned int ic_expr_faccess_init(struct ic_expr_faccess *faccess, struct ic_exp
 
     if( ! right ){
         puts("ic_expr_faccess_init: right was null");
+        return 0;
+    }
+
+    if( right->tag != ic_expr_type_identifier ){
+        puts("ic_expr_faccess_init: right was not an identifier");
         return 0;
     }
 
@@ -853,8 +858,8 @@ unsigned int ic_expr_faccess_destroy(struct ic_expr_faccess *faccess, unsigned i
 
     if( faccess->right ){
         /* free = 1 as pointer */
-        if( ! ic_expr_identifier_destroy( faccess->right, 1 ) ){
-            puts("ic_expr_operator_destroy: second : call to ic_expr_identifier_destroy failed");
+        if( ! ic_expr_destroy( faccess->right, 1 ) ){
+            puts("ic_expr_operator_destroy: second : call to ic_expr_destroy failed");
             return 0;
         }
     }
@@ -878,7 +883,7 @@ void ic_expr_faccess_print(struct ic_expr_faccess *faccess, unsigned int *indent
 
     ic_expr_print(faccess->left, indent_level);
     fputs(" . ", stdout);
-    ic_expr_identifier_print(faccess->right, &fake_indent);
+    ic_expr_print(faccess->right, &fake_indent);
 }
 
 
