@@ -19,6 +19,7 @@ TODO:
 bugs:
 -----
 
+* multiple argument functions are currently broken
 * `,` vs space separated args (in decl and call) needs to be implemented correctly
 
 
