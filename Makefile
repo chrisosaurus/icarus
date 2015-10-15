@@ -66,17 +66,17 @@ test: clean $(OBJ) $(TESTO) test_custom test_success cleanobj
 
 
 test_custom: $(OBJ)
-	@echo -e "\n\ncompiling t/custom/test_lex_example.c to bin/t/custom/test_lex_example"
-	@mkdir -p `dirname bin/t/custom/test_lex_example`
-	@${CC} t/custom/test_lex_example.c -o bin/t/custom/test_lex_example ${CFLAGS} ${LDFLAGS} ${OBJ}
-	@echo running test_lex_example.pl
-	t/custom/test_lex_example.pl
+	@echo -e "\n\ncompiling t/custom/test_lex_simple.c to bin/t/custom/test_lex_simple"
+	@mkdir -p `dirname bin/t/custom/test_lex_simple`
+	@${CC} t/custom/test_lex_simple.c -o bin/t/custom/test_lex_simple ${CFLAGS} ${LDFLAGS} ${OBJ}
+	@echo running test_lex_simple.pl
+	t/custom/test_lex_simple.pl
 
-	@echo -e "\n\ncompiling t/custom/test_parse_example.c to bin/t/custom/test_parse_example"
-	@mkdir -p `dirname bin/t/custom/test_parse_example`
-	@${CC} t/custom/test_parse_example.c -o bin/t/custom/test_parse_example ${CFLAGS} ${LDFLAGS} ${OBJ}
-	@echo running test_parse_example.pl
-	t/custom/test_parse_example.pl
+	@echo -e "\n\ncompiling t/custom/test_parse_simple.c to bin/t/custom/test_parse_simple"
+	@mkdir -p `dirname bin/t/custom/test_parse_simple`
+	@${CC} t/custom/test_parse_simple.c -o bin/t/custom/test_parse_simple ${CFLAGS} ${LDFLAGS} ${OBJ}
+	@echo running test_parse_simple.pl
+	t/custom/test_parse_simple.pl
 
 # compile and run each test
 $(TESTO) : $(TESTOUT)/% : %.c

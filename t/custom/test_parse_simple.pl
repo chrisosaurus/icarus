@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use v5.10;
 
-my $path = "bin/t/custom/test_lex_example";
+my $path = "bin/t/custom/test_parse_simple";
 
 die "Could not find '$path'\n" unless -e $path;
 
@@ -16,44 +16,47 @@ if( $exit_status != 0 ){
 
 my $expected = <<EOF;
 
-lexer output:
+parser output:
 ----------------
-# user defined type with 2 fields, an Int and a String
 type Foo
     a::Int
     b::String
 end
 
-fn d(i::Int)
+# d(Int)
+fn d(i::Int) -> Void
     print(i)
 end
 
-fn d(s::String)
+# d(String)
+fn d(s::String) -> Void
     print(s)
 end
 
-# break apart a Foo and call d on each field
-fn d(f::Foo)
-    d(f.a)
-    d(f.b)
+# d(Foo)
+fn d(f::Foo) -> Void
+    d(f . a)
+    d(f . b)
 end
 
-# simple function to test return values
+# add_one(Int)
 fn add_one(i::Int) -> Int
     return i + 1
 end
 
-# entry point for program
-fn main()
+# main()
+fn main() -> Void
     let f::Foo = Foo(add_one(1) "hello")
-
     d(f)
 end
 
-# temporary hack to allow type and function analysis to pass
-fn print(s::String) end
-fn print(i::Int) end
+# print(String)
+fn print(s::String) -> Void
+end
 
+# print(Int)
+fn print(i::Int) -> Void
+end
 ----------------
 
 EOF
@@ -66,5 +69,5 @@ unless( $output eq $expected ){
     die "Output not as expected";
 }
 
-say "test_lex_example: successs";
+say "test_parse_example: successs";
 
