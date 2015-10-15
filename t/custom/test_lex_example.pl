@@ -8,6 +8,12 @@ my $path = "bin/t/custom/test_lex_example";
 die "Could not find '$path'\n" unless -e $path;
 
 my $output = `$path`;
+
+my $exit_status = $?;
+if( $exit_status != 0 ){
+    die "exit_status was '$exit_status', expected 0";
+}
+
 my $expected = <<EOF;
 
 lexer output:
