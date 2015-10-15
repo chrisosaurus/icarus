@@ -14,11 +14,9 @@ int main(void){
     struct ic_token *token = 0;
 
     /* char to pass to ic_token_new to keep happy */
-    char ch = 0;
+    char *ch = "hello";
 
-    unsigned int skip = 0;
-
-    token = ic_token_new(0, &ch, 0, &ch, 0);
+    token = ic_token_new(0, ch, 0, ch, 0);
     if( ! token ){
         puts("test_lex_print: token construction failed");
         exit(1);
@@ -28,24 +26,27 @@ int main(void){
     puts("---------");
     /* iterate through all tokens that do not store data */
     for( i=0; i<IC_TOKEN_LEN; ++i ){
-        skip = 0;
-        switch( i ){
-            case IC_IDENTIFIER:
-            case IC_LITERAL_INTEGER:
-            case IC_LITERAL_STRING:
-            case IC_COMMENT:
-                skip = 1;
-                break;
-            default:
-                skip = 0;
-                break;
-        }
-        if( skip ){
-            continue;
-        }
-
         printf("%d : ", i);
         token->id = i;
+
+        /* make sure to attach payloads before printing */
+        switch( i ){
+            case IC_IDENTIFIER:
+            case IC_LITERAL_STRING:
+            case IC_COMMENT:
+                if( ! ic_token_set_string(token, ch, 5) ){
+                    puts("test_lex_print: failed to set string");
+                    exit(1);
+                }
+                break;
+            case IC_LITERAL_INTEGER:
+                if( ! ic_token_set_integer(token, 14) ){
+                    puts("test_lex_print: failed to set integer");
+                    exit(1);
+                }
+                break;
+        }
+
         ic_token_print(token);
         puts("");
     }

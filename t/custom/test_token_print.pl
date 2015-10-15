@@ -12,6 +12,10 @@ my $exit_status = $?;
 my $expected = <<EOF;
 print testing
 ---------
+0 : hello
+1 : 14
+2 : "hello"
+3 : #hello
 4 : 
 
 5 :  
