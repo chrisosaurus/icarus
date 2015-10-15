@@ -78,6 +78,12 @@ test_custom: $(OBJ)
 	@echo running test_parse_simple.pl
 	t/custom/test_parse_simple.pl
 
+	@echo -e "\n\ncompiling t/custom/test_analyse_current.c to bin/t/custom/test_analyse_current"
+	@mkdir -p `dirname bin/t/custom/test_analyse_current`
+	@${CC} t/custom/test_analyse_current.c -o bin/t/custom/test_analyse_current ${CFLAGS} ${LDFLAGS} ${OBJ}
+	@echo running test_analyse_current.pl
+	t/custom/test_analyse_current.pl
+
 # compile and run each test
 $(TESTO) : $(TESTOUT)/% : %.c
 	@echo -e "\n\ncompiling $< to $@"

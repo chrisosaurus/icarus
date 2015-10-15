@@ -72,6 +72,13 @@ int main(int argc, char **argv){
         puts("main: ic_kludge_destroy call failed");
     }
 
+    /* FIXME is token_list cleaned up correctly ? */
+#if 0
+    if( ! ic_token_list_destroy(token_list, 1) ){
+        puts("ic_token_list_destroy failed");
+    }
+#endif
+
 #if 0
     /* FIXME ic_kludge_destroy will destroy ast
      * so no need to call both once the above is active
