@@ -1,0 +1,37 @@
+# user defined type with 2 fields, an Int and a String
+type Foo
+    a::Int
+    b::String
+end
+
+fn d(i::Int)
+    print(i)
+end
+
+fn d(s::String)
+    print(s)
+end
+
+# break apart a Foo and call d on each field
+fn d(f::Foo)
+    d(f)
+    d(f)
+end
+
+# simple function to test return values
+fn add_one(i::Int) -> Int
+    return i
+end
+
+# entry point for program
+fn main()
+    let f::Foo = Foo(add_one(1))
+
+    d(f)
+end
+
+# temporary hack to allow type and function analysis to pass
+fn print(s::String) end
+fn print(i::Int) end
+fn Foo(i::Int) -> Foo end
+
