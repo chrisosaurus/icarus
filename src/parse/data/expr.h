@@ -8,6 +8,7 @@
 
 struct ic_expr;
 
+
 /* an application of a function
  */
 struct ic_expr_func_call {
@@ -124,6 +125,7 @@ struct ic_symbol *ic_expr_identifier_symbol(struct ic_expr_identifier *identifie
 /* print this identifier */
 void ic_expr_identifier_print(struct ic_expr_identifier * identifier, unsigned int *indent_level);
 
+
 enum ic_expr_constant_tag {
     ic_expr_constant_type_integer,
     ic_expr_constant_type_string
@@ -180,6 +182,7 @@ struct ic_string * ic_expr_constant_get_string(struct ic_expr_constant *constant
 
 /* print this constant */
 void ic_expr_constant_print(struct ic_expr_constant *constant, unsigned int *indent_level);
+
 
 enum ic_expr_operator_tag {
     ic_expr_operator_type_unary,
@@ -250,11 +253,53 @@ unsigned int ic_expr_operator_destroy(struct ic_expr_operator *op, unsigned int 
 void ic_expr_operator_print(struct ic_expr_operator *op, unsigned int *indent_level);
 
 
+struct ic_expr_faccess {
+    /* a field access is made up of a left expr and a right identifier
+     * a.b
+     * foo().c
+     *
+     * these can be chained
+     * foo().a.b.c
+     * which would be 3 field access
+     *   { { {foo(), a}, b}, c}
+     */
+    struct ic_expr * left;
+    struct ic_expr_identifier * right;
+};
+
+/* allocate and initialise a field access
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr_faccess * ic_expr_faccess_new(struct ic_expr *left, struct ic_expr_identifier *right);
+
+/* initialise an existing field access
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_faccess_init(struct ic_expr_faccess *faccess, struct ic_expr *left, struct ic_expr_identifier *right);
+
+/* destroy fieldaccess
+ *
+ * will free op if `free_faccess` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_faccess_destroy(struct ic_expr_faccess *faccess, unsigned int free_faccess);
+
+/* print this fieldaccess */
+void ic_expr_faccess_print(struct ic_expr_faccess *faccess, unsigned int *indent_level);
+
+
 enum ic_expr_tag {
     ic_expr_type_func_call,
     ic_expr_type_identifier,
     ic_expr_type_constant,
-    ic_expr_type_operator
+    ic_expr_type_operator,
+    ic_expr_type_field_access
 };
 
 struct ic_expr{
@@ -264,6 +309,7 @@ struct ic_expr{
         struct ic_expr_identifier id;
         struct ic_expr_constant cons;
         struct ic_expr_operator op;
+        struct ic_expr_faccess faccess;
     } u;
 };
 
@@ -323,6 +369,14 @@ struct ic_expr_constant * ic_expr_get_constant(struct ic_expr *expr);
  * returns 0 on failure
  */
 struct ic_expr_operator * ic_expr_get_operator(struct ic_expr *expr);
+
+/* return pointer to fieldaccess within,
+ * will only succeed if expr is of the correct type
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_expr_faccess * ic_expr_get_faccess(struct ic_expr *expr);
 
 /* print this expr */
 void ic_expr_print(struct ic_expr *expr, unsigned int *indent_level);

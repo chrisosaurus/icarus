@@ -18,13 +18,6 @@
 
 /**** shared helper methods (parse.c) ****/
 
-/* check if the current token looks like an operator
- *
- * returns 1 for true
- * returns 0 for false
- */
-int ic_parse_operatorish(struct ic_token_list *token_list);
-
 /* print levels worth of indent levels
  * an indent level is defined in parse.c
  */

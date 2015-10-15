@@ -766,6 +766,121 @@ void ic_expr_operator_print(struct ic_expr_operator *op, unsigned int *indent_le
     }
 }
 
+/* allocate and initialise a field access
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr_faccess * ic_expr_faccess_new(struct ic_expr *left, struct ic_expr_identifier *right){
+    struct ic_expr_faccess *faccess = 0;
+
+    if( ! left ){
+        puts("ic_expr_faccess_new: left was null");
+        return 0;
+    }
+
+    if( ! right ){
+        puts("ic_expr_faccess_new: right was null");
+        return 0;
+    }
+
+    faccess = calloc(1, sizeof(struct ic_expr_faccess));
+    if( ! faccess ){
+        puts("ic_expr_faccess_new: call to calloc failed");
+        return 0;
+    }
+
+    if( ! ic_expr_faccess_init(faccess, left, right) ){
+        puts("ic_expr_faccess_new: call to ic_expr_faccess_init failed");
+        return 0;
+    }
+
+    return faccess;
+}
+
+/* initialise an existing field access
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_faccess_init(struct ic_expr_faccess *faccess, struct ic_expr *left, struct ic_expr_identifier *right){
+    if( ! faccess ){
+        puts("ic_expr_faccess_init: faccess was null");
+        return 0;
+    }
+
+    if( ! left ){
+        puts("ic_expr_faccess_init: left was null");
+        return 0;
+    }
+
+    if( ! right ){
+        puts("ic_expr_faccess_init: right was null");
+        return 0;
+    }
+
+    /* just attach left and right
+     * this pushes all the work onto our caller
+     */
+    faccess->left = left;
+    faccess->right = right;
+
+    return 1;
+}
+
+/* destroy fieldaccess
+ *
+ * will free op if `free_faccess` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_faccess_destroy(struct ic_expr_faccess *faccess, unsigned int free_faccess){
+    if( ! faccess ){
+        puts("ic_expr_faccess_destroy: faccess was null");
+        return 0;
+    }
+
+    /* FIXME are we sure we should free left and right? */
+
+    if( faccess->left ){
+        /* free = 1 as pointer */
+        if( ! ic_expr_destroy( faccess->left, 1 ) ){
+            puts("ic_expr_faccess_destroy: first : call to ic_expr_destroy failed");
+            return 0;
+        }
+    }
+
+    if( faccess->right ){
+        /* free = 1 as pointer */
+        if( ! ic_expr_identifier_destroy( faccess->right, 1 ) ){
+            puts("ic_expr_operator_destroy: second : call to ic_expr_identifier_destroy failed");
+            return 0;
+        }
+    }
+
+    if( free_faccess ){
+        free(faccess);
+    }
+
+    return 1;
+}
+
+/* print this fieldaccess */
+void ic_expr_faccess_print(struct ic_expr_faccess *faccess, unsigned int *indent_level){
+    /* fake indent for printing of right */
+    unsigned int fake_indent = 0;
+
+    if( ! faccess ){
+        puts("ic_expr_faccess_print: faccess was null");
+        return;
+    }
+
+    ic_expr_print(faccess->left, indent_level);
+    fputs(" . ", stdout);
+    ic_expr_identifier_print(faccess->right, &fake_indent);
+}
+
 
 /* allocate and initialise a new ic_expr
  * will not initialise union members
@@ -855,6 +970,14 @@ unsigned int ic_expr_destroy(struct ic_expr *expr, unsigned int free_expr){
             /* free = 0 as member */
             if( ! ic_expr_operator_destroy( &(expr->u.op), 0 ) ){
                 puts("ic_expr_destroy: call to ic_expr_operator_destroy failed");
+                return 0;
+            }
+            break;
+
+        case ic_expr_type_field_access:
+            /* free = 0 as member */
+            if( ! ic_expr_faccess_destroy( &(expr->u.faccess), 0 ) ){
+                puts("ic_expr_destroy: call to ic_expr_faccess_destroy failed");
                 return 0;
             }
             break;
@@ -978,6 +1101,28 @@ struct ic_expr_operator * ic_expr_get_operator(struct ic_expr *expr){
     return &(expr->u.op);
 }
 
+/* return pointer to fieldaccess within,
+ * will only succeed if expr is of the correct type
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_expr_faccess * ic_expr_get_faccess(struct ic_expr *expr){
+    if( ! expr ){
+        puts("ic_expr_get_faccess: expr was null");
+        return 0;
+    }
+
+    /* check type before breaking into union */
+    if( expr->tag != ic_expr_type_field_access ){
+        puts("ic_expr_get_faccess: type was incorrect");
+        return 0;
+    }
+
+    /* all is clear, give them what they want */
+    return &(expr->u.faccess);
+}
+
 /* print this expr */
 void ic_expr_print(struct ic_expr *expr, unsigned int *indent_level){
     if( ! expr ){
@@ -1005,6 +1150,10 @@ void ic_expr_print(struct ic_expr *expr, unsigned int *indent_level){
 
         case ic_expr_type_operator:
             ic_expr_operator_print(&(expr->u.op), indent_level);
+            break;
+
+        case ic_expr_type_field_access:
+            ic_expr_faccess_print(&(expr->u.faccess), indent_level);
             break;
 
         default:

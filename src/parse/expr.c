@@ -432,6 +432,100 @@ static struct ic_expr * ic_parse_expr_operator(struct ic_token_list *token_list)
     return expr;
 }
 
+/* consume token
+ * returns ic_expr* on success
+ * returns 0 on failure
+ */
+static struct ic_expr * ic_parse_expr_fieldaccess(struct ic_token_list *token_list){
+    /* our eventual return value */
+    struct ic_expr *expr = 0;
+
+    /* our internal field access */
+    struct ic_expr_faccess *faccess = 0;
+
+    /* a field access is made up of
+     * left_expr single-token
+     */
+    /* our left child */
+    struct ic_expr *left = 0;
+    /* our right child, this must be an identifier */
+    struct ic_expr *right = 0;
+    /* the identifier we unpack into */
+    struct ic_expr_identifier *right_id = 0;
+
+    /* operator token */
+    struct ic_token *token = 0;
+
+    if( ! token_list ){
+        puts("ic_parse_expr_faccess: token_list was null");
+        return 0;
+    }
+
+    /* build our new expr */
+    expr = ic_expr_new(ic_expr_type_field_access);
+    if( ! expr ){
+        puts("ic_parse_expr_faccess: call to ic_expr_new failed");
+        return 0;
+    }
+
+    /* grab our left token */
+    left = ic_parse_expr_single_token(token_list);
+    if( ! left ){
+        puts("ic_parse_expr_faccess: left call to ic_parse_expr_single_token failed");
+        free(expr);
+        return 0;
+    }
+
+    /* op handling */
+    token = ic_token_list_next_important(token_list);
+    if( ! token ){
+        puts("ic_parse_expr_faccess: operator call to token list next important failed");
+        return 0;
+    }
+
+    /* our right expr can only be an identifier */
+    right = ic_parse_expr_single_token(token_list);
+    if( ! right ){
+        puts("ic_parse_expr_faccess: right call to ic_parse_expr failed");
+        free(expr);
+        free(left);
+        return 0;
+    }
+
+    if( right->tag != ic_expr_type_identifier ){
+        puts("ic_parse_expr_faccess: right token was not an identifier");
+        return 0;
+    }
+
+    /* check it is an identifier, and unpack */
+    right_id = ic_expr_get_identifier(right);
+    if( ! right_id ){
+        puts("ic_parse_expr_faccess: call to ic_expr_get_identifier failed");
+        return 0;
+    }
+
+    /* get our internal faccess */
+    faccess = ic_expr_get_faccess(expr);
+    if( ! faccess ){
+        puts("ic_parse_expr_faccess: call to ic_expr_get_faccess failed");
+        return 0;
+    }
+
+    /* init our faccess */
+    if( ! ic_expr_faccess_init(faccess, left, right_id) ){
+        puts("ic_parse_expr_faccess: call to ic_expr_faccess_init failed");
+        free(expr);
+        free(left);
+        free(right);
+        return 0;    /* an operator is made up of
+     *  single-token operator expr
+     */
+    }
+
+    return expr;
+}
+
+
 struct ic_expr * ic_parse_expr(struct ic_token_list *token_list){
     /* current token */
     struct ic_token *token = 0;
@@ -479,10 +573,23 @@ struct ic_expr * ic_parse_expr(struct ic_token_list *token_list){
     }
 
     /* otherwise default to next token */
+    /* if we peek ahead and see a period then this is a field access */
+    if( next_token->id == IC_PERIOD ){
+        /* FIXME this will not be sane for nested field access
+         * foo().a.b.c
+         *
+         * we want to be able to hit a . and grab our last item and then make a field access at that point
+         * rather than having to peek ahead and then work it out
+         * this would make next_token no longer needed, and make operator handling more sane
+         */
+        return ic_parse_expr_fieldaccess(token_list);
+    }
+
     /* if we peek ahead and see a binary operator
      * then parse a binary operation expression
      */
     if( ic_token_isoperator(next_token) ){
+        /* FIXME this peeking ahead is non-ideal, see above comments under IC_PERIOD */
         return ic_parse_expr_operator(token_list);
     }
 

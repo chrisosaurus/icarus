@@ -1,6 +1,7 @@
 TODO:
 -----
 
+* remove parse/expr.c next_token usage, see IC_PERIOD handling comments in parse/expr.c
 * decide on comma handling, currently skipped in parsing
 * tokens should be used throughout parsing; passing around strings is lame, tokens should also be recorded against every ast node for traceability
 * tokens should be used on any externally triggerable errors (users in a program's source that a user can fix)
@@ -34,6 +35,7 @@ testing debt:
 technical debt:
 -----
 
+* figure out ownership of left/right or first/second for expr_faccess/expr_operator
 * the parse module was written using the old lexer system and then retrofitted to the new, it could probably use some refactoring now that the lex output is more sane
 * token_list api needs some cleanup, no one ever really uses the non _important calls
 * `fdecl`, `tdecl`, `decl_type`, `decl_func` are all intermixed

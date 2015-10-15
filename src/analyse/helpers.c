@@ -650,6 +650,11 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
             return 0;
             break;
 
+        case ic_expr_type_field_access:
+            puts("ic_analyse_infer: ic_expr_type_field_access unimplemented");
+            return 0;
+            break;
+
         default:
             printf("ic_analyse_infer: unknown expr->tag '%d'\n", expr->tag);
             return 0;

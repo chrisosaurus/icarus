@@ -246,7 +246,9 @@ unsigned int ic_token_isoperator(struct ic_token *token){
             return 1;
 
         case IC_PERIOD:
-            return 1;
+            /* a period is not an operator
+             * it is a field access */
+            return 0;
 
         default:
             break;
