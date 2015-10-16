@@ -4,6 +4,8 @@
 #include "../../data/symbol.h"
 #include "../../data/dict.h"
 
+struct ic_slot;
+
 /* this is a scope used in the analyse phase
  * this is not intended for runtime usage
  *
@@ -15,7 +17,7 @@ struct ic_scope {
     struct ic_scope *parent;
 
     /* map of variables in a scope
-     * variable name (char*) -> contents
+     * variable name (char*) -> slot
      * FIXME contents are undefined
      */
     struct ic_dict contents;
@@ -54,7 +56,7 @@ unsigned int ic_scope_destroy(struct ic_scope *scope, unsigned int free_scope);
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_scope_insert(struct ic_scope *scope, char *key, void *data);
+unsigned int ic_scope_insert(struct ic_scope *scope, char *key, struct ic_slot *data);
 
 /* retrieve contents by string
  *
@@ -64,7 +66,7 @@ unsigned int ic_scope_insert(struct ic_scope *scope, char *key, void *data);
  * returns * on success
  * returns 0 on failure
  */
-void * ic_scope_get(struct ic_scope *scope, char *key);
+struct ic_slot * ic_scope_get(struct ic_scope *scope, char *key);
 
 /* retrieve contents by symbol
  *
@@ -74,7 +76,7 @@ void * ic_scope_get(struct ic_scope *scope, char *key);
  * returns * on success
  * returns 0 on failure
  */
-void * ic_scope_get_from_symbol(struct ic_scope *scope, struct ic_symbol *key);
+struct ic_slot * ic_scope_get_from_symbol(struct ic_scope *scope, struct ic_symbol *key);
 
 /* retrieve contents by string
  *
@@ -84,7 +86,7 @@ void * ic_scope_get_from_symbol(struct ic_scope *scope, struct ic_symbol *key);
  * returns * on success
  * returns 0 on failure
  */
-void * ic_scope_get_nofollow(struct ic_scope *scope, char *key);
+struct ic_slot * ic_scope_get_nofollow(struct ic_scope *scope, char *key);
 
 /* add a new type decl to this scope
  * this will insert into dict_tname and also

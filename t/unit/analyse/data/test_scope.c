@@ -2,15 +2,16 @@
 #include <assert.h> /* assert */
 #include <stdio.h> /* puts */
 
+#include "../../../../src/analyse/data/slot.h"
 #include "../../../../src/analyse/data/scope.h"
 
 void normal(void){
     struct ic_scope *parent;
     struct ic_scope *scope;
 
-    int data_1 = 1;
-    int data_2 = 2;
-    int data_3 = 3;
+    struct ic_slot data_1;
+    struct ic_slot data_2;
+    struct ic_slot data_3;
 
     puts("testing scope");
 

@@ -102,7 +102,7 @@ unsigned int ic_scope_destroy(struct ic_scope *scope, unsigned int free_scope){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_scope_insert(struct ic_scope *scope, char *key, void *data){
+unsigned int ic_scope_insert(struct ic_scope *scope, char *key, struct ic_slot *data){
     if( ! scope ){
         puts("ic_scope_insert: scope was null");
         return 0;
@@ -134,8 +134,8 @@ unsigned int ic_scope_insert(struct ic_scope *scope, char *key, void *data){
  * returns * on success
  * returns 0 on failure
  */
-void * ic_scope_get(struct ic_scope *scope, char *key){
-    void *data = 0;
+struct ic_slot * ic_scope_get(struct ic_scope *scope, char *key){
+    struct ic_slot *data = 0;
 
     if( ! scope ){
         puts("ic_scope_get: scope was null");
@@ -168,7 +168,7 @@ void * ic_scope_get(struct ic_scope *scope, char *key){
  * returns * on success
  * returns 0 on failure
  */
-void * ic_scope_get_from_symbol(struct ic_scope *scope, struct ic_symbol *key){
+struct ic_slot * ic_scope_get_from_symbol(struct ic_scope *scope, struct ic_symbol *key){
     char *key_chars = 0;
 
     if( ! scope ){
@@ -198,7 +198,7 @@ void * ic_scope_get_from_symbol(struct ic_scope *scope, struct ic_symbol *key){
  * returns * on success
  * returns 0 on failure
  */
-void * ic_scope_get_nofollow(struct ic_scope *scope, char *key){
+struct ic_slot * ic_scope_get_nofollow(struct ic_scope *scope, char *key){
     if( ! scope ){
         puts("ic_scope_get_nofollow: scope was null");
         return 0;
