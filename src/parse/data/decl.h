@@ -121,7 +121,7 @@ struct ic_decl_type {
      * used for looking up the type of a field by name
      * this is filled in during analyse time by
      *  ic_analyse_decl_type
-     * FIXME populate
+     *  FIXME populate
      */
     struct ic_dict field_dict;
 };
@@ -178,7 +178,14 @@ char * ic_decl_type_str(struct ic_decl_type *tdecl);
  * returns * on success
  * returns 0 on failure
  */
-struct ic_type * ic_decl_type_field_type(struct ic_decl_type *tdecl, char * field_name);
+struct ic_type * ic_decl_type_get_field_type(struct ic_decl_type *tdecl, char * field_name);
+
+/* add field to field_dict
+ *
+ * returns 0 on success
+ * returns 1 on failure
+ */
+unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char * field_name, struct ic_type *type);
 
 enum ic_decl_tag {
     ic_decl_decl_func,

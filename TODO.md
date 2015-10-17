@@ -1,6 +1,8 @@
 TODO:
 -----
 
+* finished population of decl_type.field_dict
+* think through type_ref interface, and storing ic_type when found on fields/type_refs during ic_analyse_decl_type/ic_analyse_field_list
 * remove parse/expr.c next_token usage, see IC_PERIOD handling comments in parse/expr.c
 * decide on comma handling, currently skipped in parsing
 * tokens should be used throughout parsing; passing around strings is lame, tokens should also be recorded against every ast node for traceability

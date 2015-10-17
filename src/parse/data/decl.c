@@ -638,26 +638,55 @@ char * ic_decl_type_str(struct ic_decl_type *tdecl){
  * returns * on success
  * returns 0 on failure
  */
-struct ic_type * ic_decl_type_field_type(struct ic_decl_type *tdecl, char * field_name){
+struct ic_type * ic_decl_type_get_field_type(struct ic_decl_type *tdecl, char * field_name){
     struct ic_type *type = 0;
 
     if( ! tdecl ){
-        puts("ic_type_field_type: tdecl was null");
+        puts("ic_decl_type_get_field_type: tdecl was null");
         return 0;
     }
 
     if( ! field_name ){
-        puts("ic_type_field_type: field_name was null");
+        puts("ic_decl_type_get_field_type: field_name was null");
         return 0;
     }
 
     type = ic_dict_get( &(tdecl->field_dict), field_name );
     if( ! type ){
-        printf("ic_type_field_type: failed to get type for field name '%s' from dict\n", field_name);
+        printf("ic_decl_type_get_field_type: failed to get type for field name '%s' from dict\n", field_name);
         return 0;
     }
 
     return type;
+}
+
+/* add field to field_dict
+ *
+ * returns 1 on success
+ * returns j on failure
+ */
+unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char * field_name, struct ic_type *type){
+    if( ! tdecl ){
+        puts("ic_decl_type_add_field_type: tdecl was null");
+        return 0;
+    }
+
+    if( ! field_name ){
+        puts("ic_decl_type_add_field_type: field_name was null");
+        return 0;
+    }
+
+    if( ! type ){
+        puts("ic_decl_type_add_field_type: type was null");
+        return 0;
+    }
+
+    if( ! ic_dict_insert( &(tdecl->field_dict), field_name, type ) ){
+        printf("ic_decl_type_add_field_type: failed to insert type for field name '%s' into dict\n", field_name);
+        return 0;
+    }
+
+    return 1;
 }
 
 /* allocate and initialise a new ic_decl
