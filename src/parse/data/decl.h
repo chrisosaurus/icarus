@@ -121,7 +121,6 @@ struct ic_decl_type {
      * used for looking up the type of a field by name
      * this is filled in during analyse time by
      *  ic_analyse_decl_type
-     *  FIXME populate
      */
     struct ic_dict field_dict;
 };

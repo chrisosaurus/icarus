@@ -100,6 +100,17 @@ unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type 
     /* name of current type we are trying to declare */
     char *this_type = 0;
 
+    /* current offset into field */
+    unsigned int i = 0;
+    /* cached len of field */
+    unsigned int len = 0;
+    /* current field */
+    struct ic_field *field = 0;
+
+    struct ic_symbol *type_sym = 0;
+    char *type_str = 0;
+    struct ic_type *field_type = 0;
+
     if( ! kludge ){
         puts("ic_analyse_decl_type: kludge was null");
         return 0;
@@ -122,7 +133,52 @@ unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type 
         goto ERROR;
     }
 
-    /* FIXME fill in field_dict */
+    /* fill in field_dict
+     * FIXME this is iterating through fields twice
+     * FIXME it is also fetching type from string twice
+     */
+    len = ic_pvector_length(&(tdecl->fields));
+    for( i=0; i<len; ++i ){
+        field = ic_pvector_get(&(tdecl->fields), i);
+        if( ! field ){
+            puts("ic_analyse_field_list: call to ic_pvector_get failed");
+            goto ERROR;
+        }
+
+        /* what we are really doing here is:
+         *
+         *  a) convert type to string representation
+         *  b) checking that this is not a self-recursive type
+         *  c) check that this field's type exists
+         *
+         *  FIXME check / consider this
+         *  FIXME duplicated code from analyse_field_list
+         */
+        type_sym = ic_type_ref_get_symbol(&(field->type));
+        if( ! type_sym ){
+            puts("ic_analyse_decl_type call to ic_type_ref_get_symbol_failed");
+            goto ERROR;
+        }
+
+        type_str = ic_symbol_contents(type_sym);
+        if( ! type_str ){
+            puts("ic_analyse_decl_type call to ic_symbol_contents failed");
+            goto ERROR;
+        }
+
+        /* check that this field's type exists */
+        field_type = ic_kludge_get_type(kludge, type_str);
+        if( ! field_type ){
+            puts("ic_analyse_decl_type call to ic_kludge_get_type failed");
+            goto ERROR;
+        }
+
+        /* insert this type into field_dict */
+        if( ! ic_decl_type_add_field_type(tdecl, ic_symbol_contents(&(field->name)), field_type) ){
+            puts("ic_analyse_decl_type call to ic_decl_type_add_field_type failed");
+            goto ERROR;
+        }
+    }
 
     return 1;
 
