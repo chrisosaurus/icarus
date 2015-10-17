@@ -440,6 +440,7 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
     struct ic_expr_identifier *id = 0;
     struct ic_expr_constant *cons  = 0;
     struct ic_expr_operator *op  = 0;
+    struct ic_expr_faccess *faccess  = 0;
 
     struct ic_decl_func *fdecl = 0;
 
@@ -651,8 +652,36 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
             break;
 
         case ic_expr_type_field_access:
-            puts("ic_analyse_infer: ic_expr_type_field_access unimplemented");
-            return 0;
+            faccess = ic_expr_get_faccess(expr);
+            if( ! faccess ){
+                puts("ic_analyse_infer: ic_expr_get_faccess: ic_analyse_infer failed");
+                return 0;
+            }
+
+            /* take the left and evaluate to a type */
+            type = ic_analyse_infer(kludge, scope, faccess->left);
+            if( ! type ){
+                puts("ic_analyse_infer: field_access: ic_analyse_infer failed");
+                return 0;
+            }
+
+            /* take the thing on the right which is an identifier */
+            id = ic_expr_get_identifier(faccess->right);
+            if( ! id ){
+                puts("ic_analyse_infer: field_access: ic_expr_get_identifier failed");
+                return 0;
+            }
+
+            /* get the type of this identifier as field on type
+             * FIXME line is a bit too busy
+             */
+            type = ic_decl_type_get_field_type(ic_type_get_decl(type), ic_symbol_contents(ic_expr_identifier_symbol(id)));
+            if( ! type ){
+                puts("ic_analyse_infer: field_access: ic_decl_type_get_field failed");
+                return 0;
+            }
+
+            return type;
             break;
 
         default:

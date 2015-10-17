@@ -137,6 +137,44 @@ unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type){
     return 1;
 }
 
+/* get builtin from type
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type_builtin * ic_type_get_builtin(struct ic_type *type){
+    if( ! type ){
+        puts("ic_type_get_builtin: type was null");
+        return 0;
+    }
+
+    if( type->tag != ic_type_builtin ){
+        puts("ic_type_get_builtin: type was not a builtin");
+        return 0;
+    }
+
+    return type->u.builtin;
+}
+
+/* get decl from type
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type * ic_type_get_decl(struct ic_type *type){
+        if( ! type ){
+        puts("ic_type_get_decl: type was null");
+        return 0;
+        }
+
+        if( type->tag != ic_type_user ){
+            puts("ic_type_get_decl: type was not a user declared type");
+            return 0;
+        }
+
+        return type->u.decl;
+}
+
 /* return a symbol representing the name of this type
  *
  * returns ic_symbol * on sucess

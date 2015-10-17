@@ -182,8 +182,8 @@ struct ic_type * ic_decl_type_get_field_type(struct ic_decl_type *tdecl, char * 
 
 /* add field to field_dict
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char * field_name, struct ic_type *type);
 

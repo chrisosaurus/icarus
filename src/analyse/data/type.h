@@ -63,6 +63,20 @@ unsigned int ic_type_init_builtin(struct ic_type *type, struct ic_type_builtin *
  */
 unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type);
 
+/* get builtin from type
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type_builtin * ic_type_get_builtin(struct ic_type *type);
+
+/* get decl from type
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type * ic_type_get_decl(struct ic_type *type);
+
 /* return a symbol representing the name of this type
  *
  * returns ic_symbol * on sucess
