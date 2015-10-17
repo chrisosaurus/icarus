@@ -481,6 +481,12 @@ unsigned int ic_decl_type_init(struct ic_decl_type *tdecl, char *name_src, unsig
         return 0;
     }
 
+    /* init field dict */
+    if( ! ic_dict_init( &(tdecl->field_dict) ) ){
+        puts("ic_decl_type_init: call to ic_dict_init for field_dict failed");
+        return 0;
+    }
+
     return 1;
 }
 
@@ -522,7 +528,7 @@ unsigned int ic_decl_type_destroy(struct ic_decl_type *tdecl, unsigned int free_
     for( i=0; i<len; ++i ){
         field = ic_pvector_get( &(tdecl->fields), i );
         if( ! field ){
-            puts("ic_type_type_destroy: call to ic_pvector_get failed");
+            puts("ic_decl_type_destroy: call to ic_pvector_get failed");
             return 0;
         }
 
@@ -530,9 +536,15 @@ unsigned int ic_decl_type_destroy(struct ic_decl_type *tdecl, unsigned int free_
          * free_field set to 1
          */
         if( ! ic_field_destroy(field, 1) ){
-            puts("ic_type_type_destroy: call to ic_field_destroy failed");
+            puts("ic_decl_type_destroy: call to ic_field_destroy failed");
             return 0;
         }
+    }
+
+    /* destroy field_dict */
+    if( ! ic_dict_destroy( &(tdecl->field_dict), 0, 0 ) ){
+        puts("ic_decl_type_destroy: call to ic_dict_destroy failed");
+        return 0;
     }
 
     /* only free if caller asked */
@@ -621,6 +633,32 @@ char * ic_decl_type_str(struct ic_decl_type *tdecl){
     return ic_symbol_contents(&(tdecl->name));
 }
 
+/* get the type of a field by name
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type * ic_decl_type_field_type(struct ic_decl_type *tdecl, char * field_name){
+    struct ic_type *type = 0;
+
+    if( ! tdecl ){
+        puts("ic_type_field_type: tdecl was null");
+        return 0;
+    }
+
+    if( ! field_name ){
+        puts("ic_type_field_type: field_name was null");
+        return 0;
+    }
+
+    type = ic_dict_get( &(tdecl->field_dict), field_name );
+    if( ! type ){
+        printf("ic_type_field_type: failed to get type for field name '%s' from dict\n", field_name);
+        return 0;
+    }
+
+    return type;
+}
 
 /* allocate and initialise a new ic_decl
  *

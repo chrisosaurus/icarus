@@ -122,6 +122,8 @@ unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type 
         goto ERROR;
     }
 
+    /* FIXME fill in field_dict */
+
     return 1;
 
 ERROR:

@@ -5,6 +5,7 @@
 #include "field.h"
 #include "../../data/symbol.h"
 #include "../../data/pvector.h"
+#include "../../data/dict.h"
 
 struct ic_decl_func {
     /* fn name(args...) -> ret_type
@@ -112,8 +113,17 @@ char * ic_decl_func_str(struct ic_decl_func *fdecl);
  */
 struct ic_decl_type {
     struct ic_symbol name;
+
     /* a pointer vector of field(s) */
     struct ic_pvector fields;
+
+    /* a map from (char *) -> type *
+     * used for looking up the type of a field by name
+     * this is filled in during analyse time by
+     *  ic_analyse_decl_type
+     * FIXME populate
+     */
+    struct ic_dict field_dict;
 };
 
 /* allocate and return a new decl_type
@@ -162,6 +172,13 @@ void ic_decl_type_print(struct ic_decl_type *tdecl, unsigned int *indent_level);
  * returns 0 on failure
  */
 char * ic_decl_type_str(struct ic_decl_type *tdecl);
+
+/* get the type of a field by name
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type * ic_decl_type_field_type(struct ic_decl_type *tdecl, char * field_name);
 
 enum ic_decl_tag {
     ic_decl_decl_func,
