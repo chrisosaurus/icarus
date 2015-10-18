@@ -73,6 +73,7 @@ Pony:
 
 * I had been considering forcing conditional expressions to be boolean, Pony helped convince me
 * I was unsure of `if cond then ... end`, but Pony convinced me
+* pony enforces mixed operator expressions to be brackets, e.g. `1+2*3/4` must be written bracketed, such as `((1+2)*3/4)`
 
 
 Prolog:

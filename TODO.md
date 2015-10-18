@@ -38,6 +38,7 @@ testing debt:
 technical debt:
 -----
 
+* parsing of operators and field access is currently incorrect
 * figure out ownership of left/right or first/second for expr_faccess/expr_operator
 * the parse module was written using the old lexer system and then retrofitted to the new, it could probably use some refactoring now that the lex output is more sane
 * token_list api needs some cleanup, no one ever really uses the non _important calls
