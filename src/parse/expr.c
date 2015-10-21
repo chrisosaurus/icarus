@@ -28,7 +28,7 @@
  * returns ic_expr* on success
  * renurns 0 on failure
  */
-static struct ic_expr * ic_parse_expr_fcall(struct ic_token_list *token_list){
+static struct ic_expr * ic_parse_expr_fcall(struct ic_token_list *token_list, struct ic_expr *func_name){
     /* our eventual return value */
     struct ic_expr * expr = 0;
     /* temporary used for capturing the argument expression */
@@ -41,6 +41,16 @@ static struct ic_expr * ic_parse_expr_fcall(struct ic_token_list *token_list){
         return 0;
     }
 
+    if( ! func_name ){
+        puts("ic_parse_expr_fcall: func_name was null");
+        return 0;
+    }
+
+    if( func_name->tag != ic_expr_type_identifier ){
+        puts("ic_parse_expr_fcall: func_name was not an identifier");
+        return 0;
+    }
+
     /* build our return expr */
     expr = ic_expr_new(ic_expr_type_func_call);
     if( ! expr ){
@@ -48,16 +58,8 @@ static struct ic_expr * ic_parse_expr_fcall(struct ic_token_list *token_list){
         return 0;
     }
 
-    /* find our function name */
-    token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
-    if( ! token ){
-        puts("ic_parse_expr_fcall: failed to get function name");
-        free(expr);
-        return 0;
-    }
-
     /* build our function */
-    if( ! ic_expr_func_call_init( &(expr->u.fcall), ic_token_get_string(token), ic_token_get_string_length(token)) ){
+    if( ! ic_expr_func_call_init( &(expr->u.fcall), func_name) ){
         puts("ic_parse_expr_fcall: call to ic_expr_func_call_init failed");
         free(expr);
         return 0;
@@ -354,7 +356,7 @@ static struct ic_expr * ic_parse_expr_single_token(struct ic_token_list *token_l
  * returns ic_expr* on success
  * returns 0 on failure
  */
-static struct ic_expr * ic_parse_expr_operator(struct ic_token_list *token_list){
+static struct ic_expr * ic_parse_expr_operator(struct ic_token_list *token_list, struct ic_expr *left){
     /* our eventual return value */
     struct ic_expr *expr = 0;
     /* our internal operator */
@@ -363,8 +365,6 @@ static struct ic_expr * ic_parse_expr_operator(struct ic_token_list *token_list)
     /* an operator is made up of
      *  single-token operator expr
      */
-    /* our left child */
-    struct ic_expr *left = 0;
     /* our operator char* and len */
     char *op_start = 0;
     unsigned int op_len = 0;
@@ -394,14 +394,6 @@ static struct ic_expr * ic_parse_expr_operator(struct ic_token_list *token_list)
         return 0;
     }
 
-    /* grab our left token */
-    left = ic_parse_expr_single_token(token_list);
-    if( ! left ){
-        puts("ic_parse_expr_operator: left call to ic_parse_expr_single_token failed");
-        free(expr);
-        return 0;
-    }
-
     /* op handling */
     token = ic_token_list_next_important(token_list);
     if( ! token ){
@@ -414,7 +406,6 @@ static struct ic_expr * ic_parse_expr_operator(struct ic_token_list *token_list)
     if( ! right ){
         puts("ic_parse_expr_operator: right call to ic_parse_exprfailed");
         free(expr);
-        free(left);
         return 0;
     }
 
@@ -422,7 +413,6 @@ static struct ic_expr * ic_parse_expr_operator(struct ic_token_list *token_list)
     if( ! ic_expr_operator_init_binary(operator, left, right, token) ){
         puts("ic_parse_expr_operator: call to ic_expr_operator_init_binary failed");
         free(expr);
-        free(left);
         free(right);
         return 0;    /* an operator is made up of
      *  single-token operator expr
@@ -436,7 +426,7 @@ static struct ic_expr * ic_parse_expr_operator(struct ic_token_list *token_list)
  * returns ic_expr* on success
  * returns 0 on failure
  */
-static struct ic_expr * ic_parse_expr_fieldaccess(struct ic_token_list *token_list){
+static struct ic_expr * ic_parse_expr_fieldaccess(struct ic_token_list *token_list, struct ic_expr *left){
     /* our eventual return value */
     struct ic_expr *expr = 0;
 
@@ -446,8 +436,6 @@ static struct ic_expr * ic_parse_expr_fieldaccess(struct ic_token_list *token_li
     /* a field access is made up of
      * left_expr single-token
      */
-    /* our left child */
-    struct ic_expr *left = 0;
     /* our right child, this must be an identifier */
     struct ic_expr *right = 0;
 
@@ -466,14 +454,6 @@ static struct ic_expr * ic_parse_expr_fieldaccess(struct ic_token_list *token_li
         return 0;
     }
 
-    /* grab our left token */
-    left = ic_parse_expr_single_token(token_list);
-    if( ! left ){
-        puts("ic_parse_expr_faccess: left call to ic_parse_expr_single_token failed");
-        free(expr);
-        return 0;
-    }
-
     /* op handling */
     token = ic_token_list_next_important(token_list);
     if( ! token ){
@@ -486,7 +466,6 @@ static struct ic_expr * ic_parse_expr_fieldaccess(struct ic_token_list *token_li
     if( ! right ){
         puts("ic_parse_expr_faccess: right call to ic_parse_expr failed");
         free(expr);
-        free(left);
         return 0;
     }
 
@@ -521,8 +500,9 @@ static struct ic_expr * ic_parse_expr_fieldaccess(struct ic_token_list *token_li
 struct ic_expr * ic_parse_expr(struct ic_token_list *token_list){
     /* current token */
     struct ic_token *token = 0;
-    /* next token */
-    struct ic_token *next_token = 0;
+
+    /* the expression we have built so far */
+    struct ic_expr *current = 0;
 
     if( ! token_list ){
         puts("ic_parse_expr: token_list was null");
@@ -539,76 +519,104 @@ struct ic_expr * ic_parse_expr(struct ic_token_list *token_list){
      *      else -> identifier
      */
 
-    /* rules:
-     *  peek at next token and check for
-     *  ( -> function call
-     *  operator -> operator
-     *
-     * otherwise call single token
-     */
-
-    /* FIXME plans for new operator and field access parsing
-     * we need to have a pointer to the last expr parsed, we will call this `last`
+    /* we need to have a pointer to the last expr parsed, we will call this `current`
      * we will no longer need to peek ahead at next
      *
-     * if token is an operator:
-     *      left = clone(last)
-     *      right = parse_single()
-     *      opify(last, op, left, right)
+     * forever :
+     *      if token is an operator:
+     *           current = operator(current)
+     *           continue
      *
-     * if token is a field access:
-     *      left = clone(last)
-     *      right = parse_single()
-     *      faccessify(last, left, right)
+     *      if token is a field access:
+     *           current = fieldaccess(current)
+     *           continue
      *
-     * else:
-     *      try other things
+     *      if token is a l bracket:
+     *          current = fcall(current)
+     *          continue
+     *
+     *      if current:
+     *          # expression ended
+     *          return current
+     *
+     *      # otherwise a single token
+     *      current = single()
+     *
      */
 
-    token = ic_token_list_peek_important(token_list);
-    if( ! token ){
-        /* this in theory could mean out final token is an identifier
-         * however this is illegal in practice as all expr/stmt must
-         * appears inside a body ending with `end`
-         * so this is indeed an error
-         */
-        puts("ic_parse_expr: call to ic_token_list_peek failed");
-        return 0;
+    while( 1 ){
+        token = ic_token_list_peek_important(token_list);
+        if( ! token ){
+            /* this in theory could mean out final token is an identifier
+             * however this is illegal in practice as all expr/stmt must
+             * appears inside a body ending with `end`
+             * so this is indeed an error
+             */
+            puts("ic_parse_expr: call to ic_token_list_peek failed");
+            return 0;
+        }
+
+        if( token->id == IC_PERIOD ){
+            /* field access time */
+
+            if( ! current ){
+                puts("ic_parse_expr: encountered field access with no left expr");
+                return 0;
+            }
+
+            current = ic_parse_expr_fieldaccess(token_list, current);
+            if( ! current ){
+                puts("ic_parse_expr: call to ic_parse_expr_field_access failed");
+                return 0;
+            }
+
+            continue;
+
+        } else if( ic_token_isoperator(token) ){
+            /* field access time */
+
+            if( ! current ){
+                puts("ic_parse_expr: encountered operator with no left expr");
+                return 0;
+            }
+
+            current = ic_parse_expr_operator(token_list, current);
+            if( ! current ){
+                puts("ic_parse_expr: call to ic_parse_expr_operator failed");
+                return 0;
+            }
+
+            continue;
+
+        } else if( token->id == IC_LRBRACKET ){
+            /* this is a function call */
+
+            if( ! current ){
+                puts("ic_parse_expr: encountered function call with no left expr");
+                return 0;
+            }
+
+            current = ic_parse_expr_fcall(token_list, current);
+            if( ! current ){
+                puts("ic_parse_expr: call to ic_parse_expr_fcall failed");
+                return 0;
+            }
+
+            continue;
+
+        } else if( current ){
+            /* we already have an expr in current
+             * and we did not see a field access or operator
+             * so this expression has ended
+             */
+            return current;
+        }
+
+        /* otherwise parse a single token and continue */
+        current = ic_parse_expr_single_token(token_list);
     }
 
-    next_token = ic_token_list_peek_ahead_important(token_list);
-    if( ! next_token ){
-        puts("ic_parse_expr: call to ic_token_list_peek_ahead failed");
-        return 0;
-    }
-
-    /* otherwise default to next token */
-    /* if we peek ahead and see a period then this is a field access */
-    if( next_token->id == IC_PERIOD ){
-        /* FIXME this will not be sane for nested field access
-         * foo().a.b.c
-         *
-         * we want to be able to hit a . and grab our last item and then make a field access at that point
-         * rather than having to peek ahead and then work it out
-         * this would make next_token no longer needed, and make operator handling more sane
-         */
-        return ic_parse_expr_fieldaccess(token_list);
-    }
-
-    /* if we peek ahead and see a binary operator
-     * then parse a binary operation expression
-     */
-    if( ic_token_isoperator(next_token) ){
-        /* FIXME this peeking ahead is non-ideal, see above comments under IC_PERIOD */
-        return ic_parse_expr_operator(token_list);
-    }
-
-    /* if we see an open bracket this is a function call */
-    if( next_token->id == IC_LRBRACKET ){
-        return ic_parse_expr_fcall(token_list);
-    }
-
-    return ic_parse_expr_single_token(token_list);
+    puts("ic_parse_expr: impossible case");
+    return 0;
 }
-
 

@@ -15,11 +15,11 @@
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr_func_call * ic_expr_func_call_new(char *name, unsigned int name_len){
+struct ic_expr_func_call * ic_expr_func_call_new(struct ic_expr *func_name){
     struct ic_expr_func_call *fcall = 0;
 
-    if( ! name ){
-        puts("ic_expr_func_call_new: name was null");
+    if( ! func_name ){
+        puts("ic_expr_func_call_new: func_name was null");
         return 0;
     }
 
@@ -29,7 +29,7 @@ struct ic_expr_func_call * ic_expr_func_call_new(char *name, unsigned int name_l
         return 0;
     }
 
-    if( ! ic_expr_func_call_init(fcall, name, name_len) ){
+    if( ! ic_expr_func_call_init(fcall, func_name) ){
         puts("ic_expr_func_call_init: call to ic_expr_func_call_init failed");
         free(fcall);
         return 0;
@@ -43,23 +43,18 @@ struct ic_expr_func_call * ic_expr_func_call_new(char *name, unsigned int name_l
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, char *name, unsigned int name_len){
+unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, struct ic_expr *func_name){
     if( ! fcall ){
         puts("ic_expr_func_call_init: fcall was null");
         return 0;
     }
 
-    if( ! name ){
-        puts("ic_expr_func_call_init: name was null");
+    if( ! func_name ){
+        puts("ic_expr_func_call_init: func_name was null");
         return 0;
     }
 
     /* call init on components */
-
-    if( ! ic_symbol_init( &(fcall->fname), name, name_len ) ){
-        puts("ic_expr_func_call_init: call to ic_symbol_init failed");
-        return 0;
-    }
 
     if( ! ic_pvector_init( &(fcall->args), 0 ) ){
         puts("ic_expr_func_call_init: call to ic_pvector_init failed");
@@ -70,6 +65,8 @@ unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, char *name,
     fcall->string = 0;
     /* fdecl is used in the analyse phase */
     fcall->fdecl = 0;
+    /* set our func_name */
+    fcall->fname = func_name;
 
     return 1;
 
@@ -93,8 +90,8 @@ unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned
     }
 
     /* free = 0 as member */
-    if( ! ic_symbol_destroy( &(fcall->fname), 0 ) ){
-        puts("ic_expr_func_call_destroy: call to ic_symbol_destroy failed");
+    if( ! ic_expr_destroy( fcall->fname, 0 ) ){
+        puts("ic_expr_func_call_destroy: call to ic_expr_destroy failed");
         return 0;
     }
 
@@ -211,6 +208,36 @@ unsigned int ic_expr_func_call_length(struct ic_expr_func_call *fcall){
     return ic_pvector_length( &(fcall->args) );
 }
 
+/* get internal symbol for function name
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol * ic_expr_func_call_get_symbol(struct ic_expr_func_call *fcall){
+    struct ic_expr_identifier *id = 0;
+    struct ic_symbol *symbol = 0;
+
+    if( ! fcall ){
+        puts("ic_expr_func_call_get_symbol: fcall was null");
+        return 0;
+    }
+
+    id = ic_expr_get_identifier(fcall->fname);
+    if( ! id ){
+        puts("ic_expr_func_call_get_symbol: call to ic_expr_get_identifier failed");
+        return 0;
+    }
+
+    symbol = ic_expr_identifier_symbol(id);
+    if( ! symbol ){
+        puts("ic_expr_func_call_get_symbol: call to ic_expr_identifier_symbol failed");
+        return 0;
+    }
+
+    return symbol;
+}
+
+
 /* print this func call */
 void ic_expr_func_call_print(struct ic_expr_func_call *fcall, unsigned int *indent_level){
     /* our eventual return value */
@@ -239,7 +266,7 @@ void ic_expr_func_call_print(struct ic_expr_func_call *fcall, unsigned int *inde
     ic_parse_print_indent(*indent_level);
 
     /* print function name */
-    ic_symbol_print(&(fcall->fname));
+    ic_expr_print(fcall->fname, &fake_indent);
 
     /* print bracket */
     fputs("(", stdout);

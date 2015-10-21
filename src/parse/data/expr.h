@@ -12,7 +12,9 @@ struct ic_expr;
 /* an application of a function
  */
 struct ic_expr_func_call {
-    struct ic_symbol fname;
+    /* ic_expr for function name */
+    struct ic_expr *fname;
+
     /* this is a pvector of ic_expr *
      */
     struct ic_pvector args;
@@ -38,14 +40,14 @@ struct ic_expr_func_call {
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr_func_call * ic_expr_func_call_new(char *name, unsigned int name_len);
+struct ic_expr_func_call * ic_expr_func_call_new(struct ic_expr *func_name);
 
 /* intialise an existing func call
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, char *name, unsigned int name_len);
+unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, struct ic_expr *func_name);
 
 /* destroy fcall
  *
@@ -82,6 +84,13 @@ struct ic_expr * ic_expr_func_call_get_arg(struct ic_expr_func_call *fcall, unsi
  * returns 0 on failure
  */
 unsigned int ic_expr_func_call_length(struct ic_expr_func_call *fcall);
+
+/* get internal symbol for function name
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol * ic_expr_func_call_get_symbol(struct ic_expr_func_call *fcall);
 
 /* print this func call */
 void ic_expr_func_call_print(struct ic_expr_func_call *fcall, unsigned int *indent_level);

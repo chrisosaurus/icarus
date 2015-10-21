@@ -906,7 +906,7 @@ char * ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, st
     }
 
     /* append function name */
-    if( ! ic_string_append_symbol(str, &(fcall->fname)) ){
+    if( ! ic_string_append_symbol(str, ic_expr_func_call_get_symbol(fcall)) ){
         puts("ic_analyse_fcall_str: call to ic_string_append_symbol for 'fname' failed");
         goto ERROR;
     }
