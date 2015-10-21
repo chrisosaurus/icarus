@@ -547,6 +547,24 @@ struct ic_expr * ic_parse_expr(struct ic_token_list *token_list){
      * otherwise call single token
      */
 
+    /* FIXME plans for new operator and field access parsing
+     * we need to have a pointer to the last expr parsed, we will call this `last`
+     * we will no longer need to peek ahead at next
+     *
+     * if token is an operator:
+     *      left = clone(last)
+     *      right = parse_single()
+     *      opify(last, op, left, right)
+     *
+     * if token is a field access:
+     *      left = clone(last)
+     *      right = parse_single()
+     *      faccessify(last, left, right)
+     *
+     * else:
+     *      try other things
+     */
+
     token = ic_token_list_peek_important(token_list);
     if( ! token ){
         /* this in theory could mean out final token is an identifier

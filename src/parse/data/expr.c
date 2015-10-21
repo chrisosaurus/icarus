@@ -1,5 +1,6 @@
 #include <stdio.h> /* puts, printf */
 #include <stdlib.h> /* calloc */
+#include <string.h> /* memset */
 
 #include "expr.h"
 #include "../../data/symbol.h"
@@ -930,6 +931,86 @@ int ic_expr_init(struct ic_expr *expr, enum ic_expr_tag tag){
     /* we do NOT initialise the union members */
 
     return 1;
+}
+
+/* clone an ic_expr and then zero the old
+ *
+ * this will allocate and initialise a new ic_expr
+ * based on the value in the provided expr
+ *
+ * this will 'zero out' the provided expression after cloning
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr * ic_expr_clone(struct ic_expr *expr){
+    struct ic_expr *new = 0;
+
+    if( ! expr ){
+        puts("ic_expr_clone: expr was null");
+        return 0;
+    }
+
+    new = ic_expr_new(expr->tag);
+    if( ! new ){
+        puts("ic_expr_clone: call to ic_expr_new failed");
+        return 0;
+    }
+
+    /* memcpy over data */
+    memcpy(new, expr, sizeof(struct ic_expr));
+
+    /* zero out expr */
+    memset(expr, 0, sizeof(struct ic_expr));
+
+    return expr;
+}
+
+/* takes an existing expr and converts it to a binary operator
+ *
+ * this will overwrite any data already here
+ * make sure you have cloned or zerod the existing data first
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_opify(struct ic_expr *expr, struct ic_expr *first, struct ic_expr *second, struct ic_token *token){
+    if( ! expr ){
+        puts("ic_expr_opify: expr was null");
+        return 0;
+    }
+
+    expr->tag = ic_expr_type_operator;
+    if( ! ic_expr_operator_init_binary(&(expr->u.op), first, second, token) ){
+        puts("ic_expr_opify: call to ic_expr_operator_init_binary failed");
+        return 0;
+    }
+
+    return 1;
+}
+
+/* takes an existing expr and converts it to a faccess
+ *
+ * this will overwrite any data already here
+ * make sure you have cloned or zerod the existing data first
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_faccessify(struct ic_expr *expr, struct ic_expr *left, struct ic_expr *right){
+    if( ! expr ){
+        puts("ic_expr_faccessify: expr was null");
+        return 0;
+    }
+
+    expr->tag = ic_expr_type_field_access;
+    if( ! ic_expr_faccess_init(&(expr->u.faccess), left, right) ){
+        puts("ic_expr_faccessify: call to ic_expr_faccess_init failed");
+        return 0;
+    }
+
+    return 1;
+
 }
 
 /* destroy expr
