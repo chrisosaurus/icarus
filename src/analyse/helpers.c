@@ -413,6 +413,116 @@ ERROR:
     return 0;
 }
 
+static struct ic_type * ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr){
+
+    struct ic_expr_func_call *fcall = 0;
+    struct ic_symbol *sym = 0;
+    char *ch = 0;
+    struct ic_slot *slot = 0;
+    struct ic_type *type = 0;
+    struct ic_decl_func *fdecl = 0;
+
+    if( ! kludge ){
+        puts("ic_analyse_infer_fcall: kludge was null");
+        return 0;
+    }
+
+    if( ! scope ){
+        puts("ic_analyse_infer_fcall: scope was null");
+        return 0;
+    }
+
+    if( ! expr ){
+        puts("ic_analyse_infer_fcall: expr was null");
+        return 0;
+    }
+
+    if( expr->tag != ic_expr_type_func_call ){
+        puts("ic_analyse_infer_fcall: expr was not a func call");
+        return 0;
+    }
+
+    /*
+     *  infer addone(1) -> addone(Int)->Int -> Int
+     *  expr->tag == func_call
+     *  fc = expr->u.fcall
+     *  fstr = str(fc)
+     *      TODO note that icarus fcalls are dependent on arg types
+     *           so we need to infer arg types by calling ic_analyse_infer on the arguments
+     *  fdecl = kludge get fdecl from fstr
+     *  tstr = fdecl->ret_type
+     *  type = kludge get tdecl from tstr
+     *  return type
+     */
+
+    /*
+     *  infer Foo(1 "hello") -> Foo(Int String) -> Foo
+     *  expr->tag == func_call
+     *  fc = expr->u.fcall
+     *  fstr = str(fc)
+     *      TODO note that icarus fcalls are dependent on arg types
+     *           so we need to infer arg types by calling ic_analyse_infer on the arguments
+     *  fdecl = kludge get fdecl from fstr
+     *  tstr = fdecl->ret_type
+     *  type = kludge get tdecl from tstr
+     *  return type
+     */
+
+
+    /* first convert the fcall to an fdecl */
+
+    /* FIXME bind fcall to fdecl
+     * FIXME no appropriate field on fdecl
+     */
+
+    fcall = ic_expr_get_fcall(expr);
+    if( ! fcall ){
+        puts("ic_analyse_infer_fcall: call to ic_expr_get_fcall failed");
+        return 0;
+    }
+
+    ch = ic_analyse_fcall_str(kludge, scope, fcall);
+    if( ! ch ){
+        puts("ic_analyse_infer_fcall: call to ic_analyse_fcall_str failed");
+        return 0;
+    }
+
+    fdecl = ic_kludge_get_fdecl(kludge, ch);
+    if( ! fdecl ){
+        /* FIXME return type not found
+         * need helpful error message
+         */
+        printf("ic_analyse_infer_fcall: error finding fdecl for fcall '%s'\n", ch);
+        return 0;
+    }
+
+    /* now convert the fdecl to a return type */
+
+    /* now we have to get the return type for this func */
+    sym = fdecl->ret_type;
+    if( ! sym ){
+        puts("ic_analyse_infer_fcall: failed to get fdecl->ret_type");
+        return 0;
+    }
+
+    ch = ic_symbol_contents(sym);
+    if( ! sym ){
+        puts("ic_analyse_infer_fcall: call to ic_symbol_contents failed for ret_type");
+        return 0;
+    }
+
+    /* FIXME bind type to fcall
+     * no appropriate field on fcall
+     */
+    type = ic_kludge_get_type(kludge, ch);
+    if( ! type ){
+        printf("ic_analyse_infer_fcall: could not find return type '%s'\n", ch);
+        return 0;
+    }
+
+    return type;
+}
+
 /* takes an expr and returns the inferred type
  *
  * FIXME need a way of signalling error and passing errors
@@ -436,7 +546,6 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
     struct ic_slot *slot = 0;
     struct ic_type *type = 0;
 
-    struct ic_expr_func_call *fcall = 0;
     struct ic_expr_identifier *id = 0;
     struct ic_expr_constant *cons  = 0;
     struct ic_expr_operator *op  = 0;
@@ -488,55 +597,9 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
              *  return type
              */
 
-
-            /* first convert the fcall to an fdecl */
-
-            /* FIXME bind fcall to fdecl
-             * FIXME no appropriate field on fdecl
-             */
-
-            fcall = ic_expr_get_fcall(expr);
-            if( ! fcall ){
-                puts("ic_analyse_infer: fcall: call to ic_expr_get_fcall failed");
-                return 0;
-            }
-
-            ch = ic_analyse_fcall_str(kludge, scope, fcall);
-            if( ! ch ){
-                puts("ic_analyse_infer: fcall: call to ic_analyse_fcall_str failed");
-                return 0;
-            }
-
-            fdecl = ic_kludge_get_fdecl(kludge, ch);
-            if( ! fdecl ){
-                /* FIXME return type not found
-                 * need helpful error message
-                 */
-                printf("ic_analyse_infer: fcall: error finding fdecl for fcall '%s'\n", ch);
-                return 0;
-            }
-
-            /* now convert the fdecl to a return type */
-
-            /* now we have to get the return type for this func */
-            sym = fdecl->ret_type;
-            if( ! sym ){
-                puts("ic_analyse_infer: fcall: failed to get fdecl->ret_type");
-                return 0;
-            }
-
-            ch = ic_symbol_contents(sym);
-            if( ! sym ){
-                puts("ic_analyse_infer: fcall: call to ic_symbol_contents failed for ret_type");
-                return 0;
-            }
-
-            /* FIXME bind type to fcall
-             * no appropriate field on fcall
-             */
-            type = ic_kludge_get_type(kludge, ch);
+            type = ic_analyse_infer_fcall(kludge, scope, expr);
             if( ! type ){
-                printf("ic_analyse_infer: fcall: could not find return type '%s'\n", ch);
+                puts("ic_analyse_infer: call to ic_analyse_infer_fcall failed");
                 return 0;
             }
 
