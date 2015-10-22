@@ -602,7 +602,7 @@ static struct ic_type * ic_analyse_infer_identifier(struct ic_kludge *kludge, st
     }
 
     if( expr->tag != ic_expr_type_identifier ){
-        puts("ic_analyse_infer_identifier: expr was not a identifier");
+        puts("ic_analyse_infer_identifier: expr was not an identifier");
         return 0;
     }
 
@@ -676,7 +676,7 @@ static struct ic_type * ic_analyse_infer_constant(struct ic_kludge *kludge, stru
     }
 
     if( expr->tag != ic_expr_type_constant ){
-        puts("ic_analyse_infer_constant: expr was not a field_access");
+        puts("ic_analyse_infer_constant: expr was not a constant");
         return 0;
     }
 
@@ -728,6 +728,34 @@ static struct ic_type * ic_analyse_infer_constant(struct ic_kludge *kludge, stru
     }
 
     puts("ic_analyse_infer_constant: impossible case");
+    return 0;
+}
+
+static struct ic_type * ic_analyse_infer_operator(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr){
+    struct ic_expr_constant *cons  = 0;
+    struct ic_type *type = 0;
+
+    if( ! kludge ){
+        puts("ic_analyse_infer_operator: kludge was null");
+        return 0;
+    }
+
+    if( ! scope ){
+        puts("ic_analyse_infer_operator: scope was null");
+        return 0;
+    }
+
+    if( ! expr ){
+        puts("ic_analyse_infer_operator: expr was null");
+        return 0;
+    }
+
+    if( expr->tag != ic_expr_type_operator ){
+        puts("ic_analyse_infer_operator: expr was not a operator");
+        return 0;
+    }
+
+    puts("ic_analyse_infer_operator: not yet implemented");
     return 0;
 }
 
@@ -838,7 +866,12 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
 
 
         case ic_expr_type_operator:
-            puts("ic_analyse_infer: ic_expr_type_operator unimplemented");
+            type = ic_analyse_infer_operator(kludge, scope, expr);
+            if( ! type ){
+                puts("ic_analyse_infer: call to ic_analyse_infer_operator failed");
+                return 0;
+            }
+
             return 0;
             break;
 
