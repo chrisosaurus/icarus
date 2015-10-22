@@ -12,11 +12,15 @@ Goals
 Work so far
 ===========
 
-So far Icarus only has a lexer and basic parser (syntactic analysis),
-work is progressing on the analyse (semantic analyse) stage,
-there are no backends yet.
+Icarus is aiming to support a functional subset as a proof of concept,
+the initial target for this can be seen in `example/simple.ic` (reproduced below).
 
-Here we have the output of the various stages written so far.
+For this target the following systems are currently 'complete':
+
+    * lexer
+    * parser (syntactic analysis)
+    * analsye (semantic analysis)
+
 
 We have the contents of `example/simple.ic`:
 
