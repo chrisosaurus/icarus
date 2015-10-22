@@ -63,6 +63,16 @@ ic_analyse: call to ic_analyse_decl_func failed
 analysis failed
 ",
 
+'fn foo() -> Int return "hello" end'
+=>
+"ic_analyse_body: ret: returned type did not match declared
+ic_analyse_body: unimplemented in error case
+ic_analyse_decl_func: call to ic_analyse_body for validating body failed
+ic_analyse_decl_func: error
+ic_analyse: call to ic_analyse_decl_func failed
+analysis failed
+",
+
 );
 
 for my $key (keys %invalid_programs){
