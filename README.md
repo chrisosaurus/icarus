@@ -16,7 +16,7 @@ So far Icarus only has a lexer and basic parser (syntactic analysis),
 work is progressing on the analyse (semantic analyse) stage,
 there are no backends yet.
 
-Here is an example of the lex and parse steps in action:
+Here we have the output of the various stages written so far.
 
 We have the contents of `example/simple.ic`:
 
@@ -144,4 +144,20 @@ Hidden elsewhere in the output we can see the parser reconstructing the program 
     fn print(i::Int) -> Void
     end
     ----------------
+
+Finally the analyse step's outputs showing no errors, but making it clear that it isn't complete yet
+
+
+    warning: ic_analyse_body: implementation pending
+    warning: ic_analyse_body: implementation pending
+    warning: ic_analyse_body: implementation pending
+    warning: ic_analyse_body: implementation pending
+    warning: ic_analyse_body: implementation pending
+    warning: ic_analyse_body: implementation pending
+    warning: ic_analyse_body: implementation pending
+    warning: ic_analyse_body: implementation pending
+    warning: ic_analyse_body: implementation pending
+    warning: main implementation pending, icarus is currently only partially functional
+    analysis complete
+
 
