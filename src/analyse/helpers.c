@@ -656,6 +656,80 @@ static struct ic_type * ic_analyse_infer_identifier(struct ic_kludge *kludge, st
     return type;
 }
 
+static struct ic_type * ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr){
+    struct ic_expr_constant *cons  = 0;
+    struct ic_type *type = 0;
+
+    if( ! kludge ){
+        puts("ic_analyse_infer_constant: kludge was null");
+        return 0;
+    }
+
+    if( ! scope ){
+        puts("ic_analyse_infer_constant: scope was null");
+        return 0;
+    }
+
+    if( ! expr ){
+        puts("ic_analyse_infer_constant: expr was null");
+        return 0;
+    }
+
+    if( expr->tag != ic_expr_type_constant ){
+        puts("ic_analyse_infer_constant: expr was not a field_access");
+        return 0;
+    }
+
+    cons = ic_expr_get_constant(expr);
+    if( ! cons ){
+        puts("ic_analyse_infer_constant: call to ic_expr_get_constant failed");
+        return 0;
+    }
+
+    switch( cons->tag ){
+        /*
+         *  infer 1 -> Int
+         *  expr->tag == constant
+         *  cons = expr->u.cons
+         *  cons->type == integer
+         *  return integer
+         */
+        case ic_expr_constant_type_integer:
+            /* FIXME decide on type case sensitivity */
+            type = ic_kludge_get_type(kludge, "Int");
+            if( ! type ){
+                puts("ic_analyse_infer_constant: Int: call to ic_kludge_get_type failed");
+                return 0;
+            }
+            return type;
+            break;
+
+        /*
+         *  infer "hello" -> String
+         *  expr->tag == constant
+         *  cons = expr->u.cons
+         *  cons->type == string
+         *  return string
+         */
+        case ic_expr_constant_type_string:
+            /* FIXME decide on type case sensitivity */
+            type = ic_kludge_get_type(kludge, "String");
+            if( ! type ){
+                puts("ic_analyse_infer_constant: String: call to ic_kludge_get_type failed");
+                return 0;
+            }
+            return type;
+            break;
+
+        default:
+            puts("ic_analyse_infer_constant: impossible and unexpected constant, neither integer not string");
+            return 0;
+            break;
+    }
+
+    puts("ic_analyse_infer_constant: impossible case");
+    return 0;
+}
 
 /* takes an expr and returns the inferred type
  *
@@ -675,15 +749,7 @@ static struct ic_type * ic_analyse_infer_identifier(struct ic_kludge *kludge, st
  * returns 0 on failure
  */
 struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr){
-    struct ic_symbol *sym = 0;
-    char *ch = 0;
-    struct ic_slot *slot = 0;
     struct ic_type *type = 0;
-
-    struct ic_expr_constant *cons  = 0;
-    struct ic_expr_operator *op  = 0;
-
-    struct ic_decl_func *fdecl = 0;
 
     if( ! kludge ){
         puts("ic_analyse_infer: kludge was null");
@@ -738,6 +804,7 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
             return type;
             break;
 
+
         case ic_expr_type_identifier:
             /*
              *  infer f -> typeof contents of f
@@ -755,66 +822,26 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
                 return 0;
             }
 
-            /* return type */
             return type;
             break;
 
+
         case ic_expr_type_constant:
-            cons = ic_expr_get_constant(expr);
-            if( ! cons ){
-                puts("ic_analyse_infer: constant: call to ic_expr_get_constant failed");
+            type = ic_analyse_infer_constant(kludge, scope, expr);
+            if( ! type ){
+                puts("ic_analyse_infer: call to ic_analyse_infer_constant failed");
                 return 0;
             }
 
-            switch( cons->tag ){
-                /*
-                 *  infer 1 -> Int
-                 *  expr->tag == constant
-                 *  cons = expr->u.cons
-                 *  cons->type == integer
-                 *  return integer
-                 */
-                case ic_expr_constant_type_integer:
-                    /* FIXME decide on type case sensitivity */
-                    type = ic_kludge_get_type(kludge, "Int");
-                    if( ! type ){
-                        puts("ic_analyse_infer: constant: Int: call to ic_kludge_get_type failed");
-                        return 0;
-                    }
-                    return type;
-                    break;
-
-                /*
-                 *  infer "hello" -> String
-                 *  expr->tag == constant
-                 *  cons = expr->u.cons
-                 *  cons->type == string
-                 *  return string
-                 */
-                case ic_expr_constant_type_string:
-                    /* FIXME decide on type case sensitivity */
-                    type = ic_kludge_get_type(kludge, "String");
-                    if( ! type ){
-                        puts("ic_analyse_infer: constant: String: call to ic_kludge_get_type failed");
-                        return 0;
-                    }
-                    return type;
-                    break;
-
-                default:
-                    puts("ic_analyse_infer: constant: impossible and unexpected constant, neither integer not string");
-                    return 0;
-                    break;
-            }
-
-            puts("ic_analyse_infer: constant: impossible case");
-            return 0;
+            return type;
             break;
+
 
         case ic_expr_type_operator:
             puts("ic_analyse_infer: ic_expr_type_operator unimplemented");
             return 0;
             break;
+
 
         case ic_expr_type_field_access:
             type = ic_analyse_infer_faccess(kludge, scope, expr);
@@ -825,6 +852,7 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
 
             return type;
             break;
+
 
         default:
             printf("ic_analyse_infer: unknown expr->tag '%d'\n", expr->tag);
