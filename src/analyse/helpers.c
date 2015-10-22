@@ -264,13 +264,13 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                  */
                 ret = ic_stmt_get_ret(stmt);
                 if( ! ret ){
-                    puts("ic_analyse_body: failed to infer returned type");
+                    puts("ic_analyse_body: call ot ic_stmt_get_ret failed");
                     goto ERROR;
                 }
 
                 expr = ret->ret;
                 if( ! expr ){
-                    puts("ic_analyse_body: failed to infer returned type");
+                    puts("ic_analyse_body: failed to pull out ret expr");
                     goto ERROR;
                 }
 
