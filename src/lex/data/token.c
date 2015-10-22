@@ -89,6 +89,116 @@ unsigned int ic_token_set_string(struct ic_token *token, char *string, unsigned 
     return 1;
 }
 
+/* get string representation of token
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+char * ic_token_get_representation(struct ic_token *token){
+    if( ! token ){
+        puts("ic_token_get_representation: token was null");
+        return 0;
+    }
+
+    switch( token->id ){
+        case IC_IDENTIFIER:
+        case IC_LITERAL_INTEGER:
+        case IC_LITERAL_STRING:
+        case IC_COMMENT:
+            puts("ic_token_get_representation: payload types are not supported");
+            return 0;
+            break;
+
+        case IC_NEWLINE:
+            return "\n";
+            break;
+        case IC_WHITESPACE:
+            return " ";
+            break;
+
+        case IC_END:
+            return "end";
+            break;
+
+        case IC_IF:
+            return "if";
+            break;
+        case IC_ELSE:
+            return "else";
+            break;
+        case IC_THEN:
+            return "then";
+            break;
+        case IC_RETURN:
+            return "return";
+            break;
+        case IC_LET:
+            return "let";
+            break;
+
+        case IC_BUILTIN:
+            return "builtin";
+            break;
+        case IC_FUNC:
+            return "fn";
+            break;
+        case IC_TYPE:
+            return "type";
+            break;
+        case IC_ENUM:
+            return "enum";
+            break;
+        case IC_UNION:
+            return "union";
+            break;
+
+        case IC_ARROW:
+            return "->";
+            break;
+        case IC_EQUAL:
+            return "==";
+            break;
+        case IC_ASSIGN:
+            return "=";
+            break;
+        case IC_DOUBLECOLON:
+            return "::";
+            break;
+        case IC_PERIOD:
+            return ".";
+            break;
+        case IC_COMMA:
+            return ",";
+            break;
+
+        case IC_PLUS:
+            return "+";
+            break;
+        case IC_MINUS:
+            return "-";
+            break;
+        case IC_DIVIDE:
+            return "/";
+            break;
+        case IC_MULTIPLY:
+            return "*";
+            break;
+
+
+        case IC_LRBRACKET:
+            return "(";
+            break;
+        case IC_RRBRACKET:
+            return ")";
+            break;
+
+        default:
+            printf("ic_token_get_representation: ERROR, unknown token id '%d'\n", token->id);
+            return 0;
+            break;
+    }
+}
+
 /* get string data on token
  *
  * returns * on success
@@ -96,7 +206,7 @@ unsigned int ic_token_set_string(struct ic_token *token, char *string, unsigned 
  */
 char * ic_token_get_string(struct ic_token *token){
     if( ! token ){
-        puts("ic_token_get_string_length: token was null");
+        puts("ic_token_get_string: token was null");
         return 0;
     }
 
@@ -258,6 +368,7 @@ unsigned int ic_token_isoperator(struct ic_token *token){
 }
 
 void ic_token_print(struct ic_token *token){
+    char * str = 0;
     if( ! token ){
         puts("ic_token_print: token was null");
         return;
@@ -277,91 +388,14 @@ void ic_token_print(struct ic_token *token){
             printf("#%.*s", token->u.str.len, token->u.str.string);
             break;
 
-        case IC_NEWLINE:
-            fputs("\n", stdout);
-            break;
-        case IC_WHITESPACE:
-            fputs(" ", stdout);
-            break;
-
-        case IC_END:
-            fputs("end", stdout);
-            break;
-
-        case IC_IF:
-            fputs("if", stdout);
-            break;
-        case IC_ELSE:
-            fputs("else", stdout);
-            break;
-        case IC_THEN:
-            fputs("then", stdout);
-            break;
-        case IC_RETURN:
-            fputs("return", stdout);
-            break;
-        case IC_LET:
-            fputs("let", stdout);
-            break;
-
-        case IC_BUILTIN:
-            fputs("builtin", stdout);
-            break;
-        case IC_FUNC:
-            fputs("fn", stdout);
-            break;
-        case IC_TYPE:
-            fputs("type", stdout);
-            break;
-        case IC_ENUM:
-            fputs("enum", stdout);
-            break;
-        case IC_UNION:
-            fputs("union", stdout);
-            break;
-
-        case IC_ARROW:
-            fputs("->", stdout);
-            break;
-        case IC_EQUAL:
-            fputs("==", stdout);
-            break;
-        case IC_ASSIGN:
-            fputs("=", stdout);
-            break;
-        case IC_DOUBLECOLON:
-            fputs("::", stdout);
-            break;
-        case IC_PERIOD:
-            fputs(".", stdout);
-            break;
-        case IC_COMMA:
-            fputs(",", stdout);
-            break;
-
-        case IC_PLUS:
-            fputs("+", stdout);
-            break;
-        case IC_MINUS:
-            fputs("-", stdout);
-            break;
-        case IC_DIVIDE:
-            fputs("/", stdout);
-            break;
-        case IC_MULTIPLY:
-            fputs("*", stdout);
-            break;
-
-
-        case IC_LRBRACKET:
-            fputs("(", stdout);
-            break;
-        case IC_RRBRACKET:
-            fputs(")", stdout);
-            break;
-
         default:
-            printf("ic_token_print: ERROR, unknown token id '%d'\n", token->id);
+            str = ic_token_get_representation(token);
+            if( ! str ){
+                puts("ic_token_print: call to ic_token_get_representation failed");
+                return;
+            }
+
+            fputs(str, stdout);
             break;
     }
 }

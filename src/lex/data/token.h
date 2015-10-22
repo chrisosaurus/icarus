@@ -89,6 +89,13 @@ unsigned int ic_token_init(struct ic_token *token, enum ic_token_id id, char *li
  */
 unsigned int ic_token_set_string(struct ic_token *token, char *string, unsigned int len);
 
+/* get string representation of token
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+char * ic_token_get_representation(struct ic_token *token);
+
 /* get string data on token
  *
  * returns * on success
