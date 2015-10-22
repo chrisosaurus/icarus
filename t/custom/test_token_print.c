@@ -18,7 +18,7 @@ int main(void){
 
     token = ic_token_new(0, ch, 0, ch, 0);
     if( ! token ){
-        puts("test_lex_print: token construction failed");
+        puts("test_token_print: token construction failed");
         exit(1);
     }
 
@@ -35,13 +35,13 @@ int main(void){
             case IC_LITERAL_STRING:
             case IC_COMMENT:
                 if( ! ic_token_set_string(token, ch, 5) ){
-                    puts("test_lex_print: failed to set string");
+                    puts("test_token_print: failed to set string");
                     exit(1);
                 }
                 break;
             case IC_LITERAL_INTEGER:
                 if( ! ic_token_set_integer(token, 14) ){
-                    puts("test_lex_print: failed to set integer");
+                    puts("test_token_print: failed to set integer");
                     exit(1);
                 }
                 break;
@@ -66,7 +66,7 @@ int main(void){
     puts("---------");
 
     if(! ic_token_destroy(token, 1) ){
-        puts("test_lex_print: token destruction failed");
+        puts("test_token_print: token destruction failed");
         exit(1);
     }
 

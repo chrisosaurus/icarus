@@ -18,19 +18,19 @@ int main(void){
 
     source = ic_read_slurp(filename);
     if( ! source ){
-        puts("test_parse_example: slurping failed");
+        puts("test_analyse_current: slurping failed");
         exit(1);
     }
 
     token_list = ic_lex(filename, source);
     if( ! token_list ){
-        puts("test_parse_example: lexing failed");
+        puts("test_analyse_current: lexing failed");
         exit(1);
     }
 
     ast = ic_parse(token_list);
     if( ! ast ){
-        puts("test_parse_example: parsing failed");
+        puts("test_analyse_current: parsing failed");
         exit(1);
     }
 
@@ -55,7 +55,7 @@ int main(void){
     /* FIXME is token_list cleaned up correctly ? */
 #if 0
     if( ! ic_token_list_destroy(token_list, 1) ){
-        puts("test_parse_example: ic_token_list_destroy failed");
+        puts("test_analyse_current: ic_token_list_destroy failed");
     }
 #endif
 
