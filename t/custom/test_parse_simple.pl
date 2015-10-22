@@ -56,6 +56,10 @@ end
 # Foo(Int String)
 fn Foo(i::Int s::String) -> Foo
 end
+
+# plus(Int Int)
+fn plus(a::Int b::Int) -> Int
+end
 ----------------
 
 EOF

@@ -49,6 +49,7 @@ end
 fn print(s::String) end
 fn print(i::Int) end
 fn Foo(i::Int s::String) -> Foo end
+fn plus(a::Int b::Int) -> Int end
 
 ----------------
 
