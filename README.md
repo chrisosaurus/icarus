@@ -52,10 +52,16 @@ We have the contents of `example/simple.ic`:
 
     # entry point for program
     fn main()
-        let f::Foo = Foo(add_one(1), "hello")
+        let f::Foo = Foo(add_one(1) "hello")
 
         d(f)
     end
+
+    # temporary hack to allow type and function analysis to pass
+    fn print(s::String) end
+    fn print(i::Int) end
+    fn Foo(i::Int s::String) -> Foo end
+    fn plus(a::Int b::Int) -> Int end
 
 We can see what Icarus makes of this by running:
 
@@ -100,6 +106,8 @@ Hidden in the output we see the new lexer output:
     # temporary hack to allow type and function analysis to pass
     fn print(s::String) end
     fn print(i::Int) end
+    fn Foo(i::Int s::String) -> Foo end
+    fn plus(a::Int b::Int) -> Int end
 
     ----------------
 
@@ -146,6 +154,14 @@ Hidden elsewhere in the output we can see the parser reconstructing the program 
 
     # print(Int)
     fn print(i::Int) -> Void
+    end
+
+    # Foo(Int String)
+    fn Foo(i::Int s::String) -> Foo
+    end
+
+    # plus(Int Int)
+    fn plus(a::Int b::Int) -> Int
     end
     ----------------
 
