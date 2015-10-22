@@ -414,11 +414,15 @@ ERROR:
 }
 
 static struct ic_type * ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr){
+    /* our resulting type */
+    struct ic_type *type = 0;
+    /* our fcall we unwrap */
     struct ic_expr_func_call *fcall = 0;
+
+    /* temporaries */
     struct ic_symbol *sym = 0;
     char *ch = 0;
     struct ic_slot *slot = 0;
-    struct ic_type *type = 0;
     struct ic_decl_func *fdecl = 0;
 
     if( ! kludge ){
@@ -523,8 +527,11 @@ static struct ic_type * ic_analyse_infer_fcall(struct ic_kludge *kludge, struct 
 }
 
 static struct ic_type * ic_analyse_infer_faccess(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr){
+    /* our resulting type */
     struct ic_type *type = 0;
+    /* our field access we unwrap */
     struct ic_expr_faccess *faccess  = 0;
+    /* temporary */
     struct ic_expr_identifier *id = 0;
 
     if( ! kludge ){
@@ -580,10 +587,14 @@ static struct ic_type * ic_analyse_infer_faccess(struct ic_kludge *kludge, struc
 }
 
 static struct ic_type * ic_analyse_infer_identifier(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr){
+    /* our resulting type */
     struct ic_type *type = 0;
+    /* our identifier value we unwrap */
     struct ic_expr_identifier *id = 0;
-    struct ic_symbol *sym = 0;
+
+    /* temporary intermediaries */
     char *ch = 0;
+    struct ic_symbol *sym = 0;
     struct ic_slot *slot = 0;
 
     if( ! kludge ){
@@ -657,7 +668,9 @@ static struct ic_type * ic_analyse_infer_identifier(struct ic_kludge *kludge, st
 }
 
 static struct ic_type * ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr){
+    /* the cons value we unwrap */
     struct ic_expr_constant *cons  = 0;
+    /* our resulting type */
     struct ic_type *type = 0;
 
     if( ! kludge ){
@@ -732,7 +745,7 @@ static struct ic_type * ic_analyse_infer_constant(struct ic_kludge *kludge, stru
 }
 
 static struct ic_type * ic_analyse_infer_operator(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr){
-    struct ic_expr_constant *cons  = 0;
+    /* our resulting type */
     struct ic_type *type = 0;
 
     if( ! kludge ){
@@ -756,7 +769,7 @@ static struct ic_type * ic_analyse_infer_operator(struct ic_kludge *kludge, stru
     }
 
     /* infer operator
-     * get operator symbol (e.g. '+')
+     * get operator str (e.g. '+')
      * get operator mapped symbol (e.g. 'plus')
      * construct an fcall of this operator
      *      operator(1 + 2) => fcall(plus 1 2)
