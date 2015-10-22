@@ -947,7 +947,7 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
                 return 0;
             }
 
-            return 0;
+            return type;
             break;
 
 
