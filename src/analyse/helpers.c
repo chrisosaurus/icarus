@@ -527,9 +527,29 @@ static struct ic_type * ic_analyse_infer_faccess(struct ic_kludge *kludge, struc
     struct ic_expr_faccess *faccess  = 0;
     struct ic_expr_identifier *id = 0;
 
+    if( ! kludge ){
+        puts("ic_analyse_infer_faccess: kludge was null");
+        return 0;
+    }
+
+    if( ! scope ){
+        puts("ic_analyse_infer_faccess: scope was null");
+        return 0;
+    }
+
+    if( ! expr ){
+        puts("ic_analyse_infer_faccess: expr was null");
+        return 0;
+    }
+
+    if( expr->tag != ic_expr_type_field_access ){
+        puts("ic_analyse_infer_faccess: expr was not a field_access");
+        return 0;
+    }
+
     faccess = ic_expr_get_faccess(expr);
     if( ! faccess ){
-        puts("ic_analyse_infer: ic_er_faccess: ic_analyse_infer failed");
+        puts("ic_analyse_infer_faccess: ic_er_faccess: ic_analyse_infer failed");
         return 0;
     }
 
@@ -559,6 +579,84 @@ static struct ic_type * ic_analyse_infer_faccess(struct ic_kludge *kludge, struc
     return type;
 }
 
+static struct ic_type * ic_analyse_infer_identifier(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr){
+    struct ic_type *type = 0;
+    struct ic_expr_identifier *id = 0;
+    struct ic_symbol *sym = 0;
+    char *ch = 0;
+    struct ic_slot *slot = 0;
+
+    if( ! kludge ){
+        puts("ic_analyse_infer_identifier: kludge was null");
+        return 0;
+    }
+
+    if( ! scope ){
+        puts("ic_analyse_infer_identifier: scope was null");
+        return 0;
+    }
+
+    if( ! expr ){
+        puts("ic_analyse_infer_identifier: expr was null");
+        return 0;
+    }
+
+    if( expr->tag != ic_expr_type_identifier ){
+        puts("ic_analyse_infer_identifier: expr was not a identifier");
+        return 0;
+    }
+
+    /*
+     *  infer f -> typeof contents of f
+     *  expr->tag = identifier
+     *  id = expr->u.id
+     *  name = str(id)
+     *  variable = get variable within scope name
+     *  type = get type of variable
+     *  return type
+     */
+
+    /* get symbol */
+    id = ic_expr_get_identifier(expr);
+    if( ! id ){
+        puts("ic_analyse_infer_identifier: ic_expr_type_identifier: call to ic_expr_get_identifier failed");
+        return 0;
+    }
+
+    sym = ic_expr_identifier_symbol(id);
+    if( ! sym ){
+        puts("ic_analyse_infer_identifier: ic_expr_type_identifier: call to ic_expr_identifier_symbol failed");
+        return 0;
+    }
+
+    /* char* representation */
+    ch = ic_symbol_contents(sym);
+    if( ! ch ){
+        puts("ic_analyse_infer_identifier: ic_expr_type_identifier: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    /* get slot from identifier (variable) name */
+    slot = ic_scope_get(scope, ch);
+    if( ! slot ){
+        /* FIXME unknown identifier
+         * need helpful output here
+         */
+        printf("ic_analyse_infer_identifier: unknown identifier '%s', not in scope\n", ch);
+        return 0;
+    }
+
+    type = slot->type;
+    if( ! type ){
+        printf("ic_analyse_infer_identifier: error fetching identifier '%s', no type found\n", ch);
+        return 0;
+    }
+
+    /* return type */
+    return type;
+}
+
+
 /* takes an expr and returns the inferred type
  *
  * FIXME need a way of signalling error and passing errors
@@ -582,7 +680,6 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
     struct ic_slot *slot = 0;
     struct ic_type *type = 0;
 
-    struct ic_expr_identifier *id = 0;
     struct ic_expr_constant *cons  = 0;
     struct ic_expr_operator *op  = 0;
 
@@ -652,39 +749,9 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
              *  return type
              */
 
-            /* get symbol */
-            id = ic_expr_get_identifier(expr);
-            if( ! id ){
-                puts("ic_analyse_infer: ic_expr_type_identifier: call to ic_expr_get_identifier failed");
-                return 0;
-            }
-
-            sym = ic_expr_identifier_symbol(id);
-            if( ! sym ){
-                puts("ic_analyse_infer: ic_expr_type_identifier: call to ic_expr_identifier_symbol failed");
-                return 0;
-            }
-
-            /* char* representation */
-            ch = ic_symbol_contents(sym);
-            if( ! ch ){
-                puts("ic_analyse_infer: ic_expr_type_identifier: call to ic_symbol_contents failed");
-                return 0;
-            }
-
-            /* get slot from identifier (variable) name */
-            slot = ic_scope_get(scope, ch);
-            if( ! slot ){
-                /* FIXME unknown identifier
-                 * need helpful output here
-                 */
-                printf("ic_analyse_infer: unknown identifier '%s', not in scope\n", ch);
-                return 0;
-            }
-
-            type = slot->type;
+            type = ic_analyse_infer_identifier(kludge, scope, expr);
             if( ! type ){
-                printf("ic_analyse_infer: error fetching identifier '%s', no type found\n", ch);
+                puts("ic_analyse_infer: call to ic_analyse_infer_identifier failed");
                 return 0;
             }
 
