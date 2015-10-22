@@ -95,5 +95,5 @@ for my $key (keys %invalid_programs){
 
 unlink $filename;
 
-say "test_parse_example: successs";
+say "test_analyse_invalid successs";
 
