@@ -413,11 +413,9 @@ ERROR:
     return 0;
 }
 
-static struct ic_type * ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr){
+static struct ic_type * ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall){
     /* our resulting type */
     struct ic_type *type = 0;
-    /* our fcall we unwrap */
-    struct ic_expr_func_call *fcall = 0;
 
     /* temporaries */
     struct ic_symbol *sym = 0;
@@ -435,13 +433,8 @@ static struct ic_type * ic_analyse_infer_fcall(struct ic_kludge *kludge, struct 
         return 0;
     }
 
-    if( ! expr ){
-        puts("ic_analyse_infer_fcall: expr was null");
-        return 0;
-    }
-
-    if( expr->tag != ic_expr_type_func_call ){
-        puts("ic_analyse_infer_fcall: expr was not a func call");
+    if( ! fcall ){
+        puts("ic_analyse_infer_fcall: fcall was null");
         return 0;
     }
 
@@ -477,12 +470,6 @@ static struct ic_type * ic_analyse_infer_fcall(struct ic_kludge *kludge, struct 
     /* FIXME bind fcall to fdecl
      * FIXME no appropriate field on fdecl
      */
-
-    fcall = ic_expr_get_fcall(expr);
-    if( ! fcall ){
-        puts("ic_analyse_infer_fcall: call to ic_expr_get_fcall failed");
-        return 0;
-    }
 
     ch = ic_analyse_fcall_str(kludge, scope, fcall);
     if( ! ch ){
@@ -526,11 +513,9 @@ static struct ic_type * ic_analyse_infer_fcall(struct ic_kludge *kludge, struct 
     return type;
 }
 
-static struct ic_type * ic_analyse_infer_faccess(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr){
+static struct ic_type * ic_analyse_infer_faccess(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_faccess *faccess){
     /* our resulting type */
     struct ic_type *type = 0;
-    /* our field access we unwrap */
-    struct ic_expr_faccess *faccess  = 0;
     /* temporary */
     struct ic_expr_identifier *id = 0;
 
@@ -544,19 +529,8 @@ static struct ic_type * ic_analyse_infer_faccess(struct ic_kludge *kludge, struc
         return 0;
     }
 
-    if( ! expr ){
-        puts("ic_analyse_infer_faccess: expr was null");
-        return 0;
-    }
-
-    if( expr->tag != ic_expr_type_field_access ){
-        puts("ic_analyse_infer_faccess: expr was not a field_access");
-        return 0;
-    }
-
-    faccess = ic_expr_get_faccess(expr);
     if( ! faccess ){
-        puts("ic_analyse_infer_faccess: ic_er_faccess: ic_analyse_infer failed");
+        puts("ic_analyse_infer_faccess: faccess was null");
         return 0;
     }
 
@@ -586,11 +560,9 @@ static struct ic_type * ic_analyse_infer_faccess(struct ic_kludge *kludge, struc
     return type;
 }
 
-static struct ic_type * ic_analyse_infer_identifier(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr){
+static struct ic_type * ic_analyse_infer_identifier(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_identifier *id){
     /* our resulting type */
     struct ic_type *type = 0;
-    /* our identifier value we unwrap */
-    struct ic_expr_identifier *id = 0;
 
     /* temporary intermediaries */
     char *ch = 0;
@@ -607,13 +579,8 @@ static struct ic_type * ic_analyse_infer_identifier(struct ic_kludge *kludge, st
         return 0;
     }
 
-    if( ! expr ){
-        puts("ic_analyse_infer_identifier: expr was null");
-        return 0;
-    }
-
-    if( expr->tag != ic_expr_type_identifier ){
-        puts("ic_analyse_infer_identifier: expr was not an identifier");
+    if( ! id ){
+        puts("ic_analyse_infer_identifier: id was null");
         return 0;
     }
 
@@ -626,13 +593,6 @@ static struct ic_type * ic_analyse_infer_identifier(struct ic_kludge *kludge, st
      *  type = get type of variable
      *  return type
      */
-
-    /* get symbol */
-    id = ic_expr_get_identifier(expr);
-    if( ! id ){
-        puts("ic_analyse_infer_identifier: ic_expr_type_identifier: call to ic_expr_get_identifier failed");
-        return 0;
-    }
 
     sym = ic_expr_identifier_symbol(id);
     if( ! sym ){
@@ -667,9 +627,7 @@ static struct ic_type * ic_analyse_infer_identifier(struct ic_kludge *kludge, st
     return type;
 }
 
-static struct ic_type * ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr){
-    /* the cons value we unwrap */
-    struct ic_expr_constant *cons  = 0;
+static struct ic_type * ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_constant *cons){
     /* our resulting type */
     struct ic_type *type = 0;
 
@@ -683,19 +641,8 @@ static struct ic_type * ic_analyse_infer_constant(struct ic_kludge *kludge, stru
         return 0;
     }
 
-    if( ! expr ){
-        puts("ic_analyse_infer_constant: expr was null");
-        return 0;
-    }
-
-    if( expr->tag != ic_expr_type_constant ){
-        puts("ic_analyse_infer_constant: expr was not a constant");
-        return 0;
-    }
-
-    cons = ic_expr_get_constant(expr);
     if( ! cons ){
-        puts("ic_analyse_infer_constant: call to ic_expr_get_constant failed");
+        puts("ic_analyse_infer_constant: cons was null");
         return 0;
     }
 
@@ -744,9 +691,13 @@ static struct ic_type * ic_analyse_infer_constant(struct ic_kludge *kludge, stru
     return 0;
 }
 
-static struct ic_type * ic_analyse_infer_operator(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr){
+static struct ic_type * ic_analyse_infer_operator(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_operator *op){
     /* our resulting type */
     struct ic_type *type = 0;
+
+    /* temporaries */
+    char * op_str = 0;
+    struct ic_symbol * mapped_op_sym = 0;
 
     if( ! kludge ){
         puts("ic_analyse_infer_operator: kludge was null");
@@ -758,13 +709,13 @@ static struct ic_type * ic_analyse_infer_operator(struct ic_kludge *kludge, stru
         return 0;
     }
 
-    if( ! expr ){
-        puts("ic_analyse_infer_operator: expr was null");
+    if( ! op ){
+        puts("ic_analyse_infer_operator: op was null");
         return 0;
     }
 
-    if( expr->tag != ic_expr_type_operator ){
-        puts("ic_analyse_infer_operator: expr was not an operator");
+    if( op->fcall ){
+        puts("ic_analyse_infer_operator: this operator already had an fcall set");
         return 0;
     }
 
@@ -778,10 +729,48 @@ static struct ic_type * ic_analyse_infer_operator(struct ic_kludge *kludge, stru
      * return that value
      */
 
-    /* FIXME implement */
-    puts("ic_analyse_infer_operator: not yet implemented");
-
+/* FIXME finish implementation */
+    puts("ic_analyse_infer_operator: unimplemented");
     return 0;
+
+/* FIXME need to set */
+    op_str = 0;
+    if( ! op_str ){
+        puts("ic_analyse_infer_operator: call to FIXME failed");
+        return 0;
+    }
+
+/* FIXME need to set */
+    mapped_op_sym = 0;
+    if( ! mapped_op_sym ){
+        puts("ic_analyse_infer_operator: call to FIXME failed");
+        return 0;
+    }
+
+/* FIXME need to pass in func_name */
+    op->fcall = ic_expr_func_call_new(0);
+    if( ! op->fcall ){
+        puts("ic_analyse_infer_operator: call to ic_expr_func_call_new failed");
+        return 0;
+    }
+
+    if( ! ic_expr_func_call_add_arg( op->fcall, op->first ) ){
+        puts("ic_analyse_infer_operator: call to ic_expr_func_call_add_arg failed for first");
+        return 0;
+    }
+
+    if( ! ic_expr_func_call_add_arg( op->fcall, op->second ) ){
+        puts("ic_analyse_infer_operator: call to ic_expr_func_call_add_arg failed for second");
+        return 0;
+    }
+
+    type = ic_analyse_infer_fcall(kludge, scope, op->fcall);
+    if( ! type ){
+        puts("ic_analyse_infer_operator: call to ic_analyse_infer_fcall failed for second");
+        return 0;
+    }
+
+    return type;
 }
 
 /* takes an expr and returns the inferred type
@@ -802,7 +791,15 @@ static struct ic_type * ic_analyse_infer_operator(struct ic_kludge *kludge, stru
  * returns 0 on failure
  */
 struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr){
+    /* our resulting type */
     struct ic_type *type = 0;
+
+    /* unwrapped values */
+    struct ic_expr_constant *cons  = 0;
+    struct ic_expr_operator *op = 0;
+    struct ic_expr_identifier *id = 0;
+    struct ic_expr_func_call *fcall = 0;
+    struct ic_expr_faccess *faccess  = 0;
 
     if( ! kludge ){
         puts("ic_analyse_infer: kludge was null");
@@ -848,7 +845,13 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
              *  return type
              */
 
-            type = ic_analyse_infer_fcall(kludge, scope, expr);
+            fcall = ic_expr_get_fcall(expr);
+            if( ! fcall ){
+                puts("ic_analyse_infer: call to ic_expr_get_fcall failed");
+                return 0;
+            }
+
+            type = ic_analyse_infer_fcall(kludge, scope, fcall);
             if( ! type ){
                 puts("ic_analyse_infer: call to ic_analyse_infer_fcall failed");
                 return 0;
@@ -869,7 +872,13 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
              *  return type
              */
 
-            type = ic_analyse_infer_identifier(kludge, scope, expr);
+            id = ic_expr_get_identifier(expr);
+            if( ! id ){
+                puts("ic_analyse_infer: call to ic_expr_get_identifier failed");
+                return 0;
+            }
+
+            type = ic_analyse_infer_identifier(kludge, scope, id);
             if( ! type ){
                 puts("ic_analyse_infer: call to ic_analyse_infer_identifier failed");
                 return 0;
@@ -880,7 +889,14 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
 
 
         case ic_expr_type_constant:
-            type = ic_analyse_infer_constant(kludge, scope, expr);
+
+            cons = ic_expr_get_constant(expr);
+            if( ! cons ){
+                puts("ic_analyse_infer: call to ic_expr_get_constant failed");
+                return 0;
+            }
+
+            type = ic_analyse_infer_constant(kludge, scope, cons);
             if( ! type ){
                 puts("ic_analyse_infer: call to ic_analyse_infer_constant failed");
                 return 0;
@@ -891,7 +907,14 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
 
 
         case ic_expr_type_operator:
-            type = ic_analyse_infer_operator(kludge, scope, expr);
+
+            op = ic_expr_get_operator(expr);
+            if( ! op ){
+                puts("ic_analyse_infer: call to ic_expr_get_operator failed");
+                return 0;
+            }
+
+            type = ic_analyse_infer_operator(kludge, scope, op);
             if( ! type ){
                 puts("ic_analyse_infer: call to ic_analyse_infer_operator failed");
                 return 0;
@@ -902,7 +925,14 @@ struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *sco
 
 
         case ic_expr_type_field_access:
-            type = ic_analyse_infer_faccess(kludge, scope, expr);
+
+            faccess = ic_expr_get_faccess(expr);
+            if( ! faccess ){
+                puts("ic_analyse_infer: call to ic_expr_get_faccess failed");
+                return 0;
+            }
+
+            type = ic_analyse_infer_faccess(kludge, scope, faccess);
             if( ! type ){
                 puts("ic_analyse_infer: call to ic_analyse_infer_faccess failed");
                 return 0;
