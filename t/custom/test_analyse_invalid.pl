@@ -73,6 +73,17 @@ ic_analyse: call to ic_analyse_decl_func failed
 analysis failed
 ",
 
+'fn foo() return "hello" end'
+=>
+"ic_analyse_body: ret: returned type did not match declared
+ic_analyse_body: unimplemented in error case
+ic_analyse_decl_func: call to ic_analyse_body for validating body failed
+ic_analyse_decl_func: error
+ic_analyse: call to ic_analyse_decl_func failed
+analysis failed
+",
+
+
 );
 
 for my $key (keys %invalid_programs){
@@ -90,6 +101,9 @@ for my $key (keys %invalid_programs){
 
     # check exit code and output
     if( $exit_status == 0 || $output ne $expected ){
+        say "When running program";
+        say "=======\nSource\n$source";
+        say "=======\n";
         say "Output was not as expected";
         say "=======\nExpected:\n$expected";
         say "=======\nGot:\n$output";
