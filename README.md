@@ -17,9 +17,9 @@ the initial target for this can be seen in `example/simple.ic` (reproduced below
 
 For this target the following systems are currently 'complete':
 
-    * lexer
-    * parser (syntactic analysis)
-    * analsye (semantic analysis)
+* lexer
+* parser (syntactic analysis)
+* analsye (semantic analysis)
 
 
 We have the contents of `example/simple.ic`:
