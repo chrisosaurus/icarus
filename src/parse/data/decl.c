@@ -396,6 +396,14 @@ char * ic_decl_func_str(struct ic_decl_func *fdecl){
     /* iterate through args appending the type name to our string representation
      */
     for( i=0; i<len; ++i ){
+        /* insert a space if we are not the first argument */
+        if( i > 0 ){
+            if( ! ic_string_append_char(fstr, " ", 1) ){
+                puts("ic_decl_func_str: arg: call to ic_string_append_char failed");
+                return 0;
+            }
+        }
+
         /* capture our field */
         field = ic_pvector_get( &(fdecl->args), i );
         if( ! field ){

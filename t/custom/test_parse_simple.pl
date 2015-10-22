@@ -52,6 +52,10 @@ end
 # print(Int)
 fn print(i::Int) -> Void
 end
+
+# Foo(Int String)
+fn Foo(i::Int s::String) -> Foo
+end
 ----------------
 
 EOF

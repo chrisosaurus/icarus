@@ -48,6 +48,7 @@ end
 # temporary hack to allow type and function analysis to pass
 fn print(s::String) end
 fn print(i::Int) end
+fn Foo(i::Int s::String) -> Foo end
 
 ----------------
 

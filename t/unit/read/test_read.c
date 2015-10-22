@@ -39,6 +39,7 @@ end\n\
 # temporary hack to allow type and function analysis to pass\n\
 fn print(s::String) end\n\
 fn print(i::Int) end\n\
+fn Foo(i::Int s::String) -> Foo end\n\
 \n\
 ";
 
