@@ -698,6 +698,10 @@ static struct ic_type * ic_analyse_infer_operator(struct ic_kludge *kludge, stru
     /* temporaries */
     char * op_str = 0;
     struct ic_symbol * mapped_op_sym = 0;
+    char * mapped_op_str = 0;
+    unsigned int mapped_op_len = 0;
+    struct ic_expr *expr = 0;
+    struct ic_expr_identifier *id = 0;
 
     if( ! kludge ){
         puts("ic_analyse_infer_operator: kludge was null");
@@ -722,6 +726,7 @@ static struct ic_type * ic_analyse_infer_operator(struct ic_kludge *kludge, stru
     /* infer operator
      * get operator str (e.g. '+')
      * get operator mapped symbol (e.g. 'plus')
+     * build an identifier from this to satisfy the fcall constrctor
      * construct an fcall of this operator
      *      operator(1 + 2) => fcall(plus 1 2)
      * save this fcall on the op
@@ -741,12 +746,36 @@ static struct ic_type * ic_analyse_infer_operator(struct ic_kludge *kludge, stru
         return 0;
     }
 
-/* FIXME finish implementation */
-    puts("ic_analyse_infer_operator: unimplemented");
-    return 0;
+    mapped_op_str = ic_symbol_contents(mapped_op_sym);
+    if( ! mapped_op_str ){
+        puts("ic_analyse_infer_operator: call to ic_symbol_contents failed");
+        return 0;
+    }
 
-/* FIXME need to pass in func_name */
-    op->fcall = ic_expr_func_call_new(0);
+    mapped_op_len = ic_symbol_length(mapped_op_sym);
+    if( ! mapped_op_len ){
+        puts("ic_analyse_infer_operator: call to ic_symbol_length failed");
+        return 0;
+    }
+
+    expr = ic_expr_new(ic_expr_type_identifier);
+    if( ! expr ){
+        puts("ic_analyse_infer_operator: call to ic_expr_new failed");
+        return 0;
+    }
+
+    id = ic_expr_get_identifier(expr);
+    if( ! id ){
+        puts("ic_analyse_infer_operator: call to ic_expr_get_identifier failed");
+        return 0;
+    }
+
+    if( ! ic_expr_identifier_init(id, mapped_op_str, mapped_op_len) ){
+        puts("ic_analyse_infer_operator: call to ic_expr_identifier_init failed");
+        return 0;
+    }
+
+    op->fcall = ic_expr_func_call_new(expr);
     if( ! op->fcall ){
         puts("ic_analyse_infer_operator: call to ic_expr_func_call_new failed");
         return 0;
