@@ -751,11 +751,23 @@ static struct ic_type * ic_analyse_infer_operator(struct ic_kludge *kludge, stru
     }
 
     if( expr->tag != ic_expr_type_operator ){
-        puts("ic_analyse_infer_operator: expr was not a operator");
+        puts("ic_analyse_infer_operator: expr was not an operator");
         return 0;
     }
 
+    /* infer operator
+     * get operator symbol (e.g. '+')
+     * get operator mapped symbol (e.g. 'plus')
+     * construct an fcall of this operator
+     *      operator(1 + 2) => fcall(plus 1 2)
+     * save this fcall on the op
+     * call infer_fcall on this fcall
+     * return that value
+     */
+
+    /* FIXME implement */
     puts("ic_analyse_infer_operator: not yet implemented");
+
     return 0;
 }
 
