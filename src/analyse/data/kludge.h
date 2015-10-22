@@ -141,6 +141,15 @@ struct ic_decl_func * ic_kludge_get_fdecl(struct ic_kludge *kludge, char *fdecl_
  */
 struct ic_decl_func * ic_kludge_get_fdecl_from_symbol(struct ic_kludge *kludge, struct ic_symbol *fdecl);
 
+/* retrieve the function name that this operator maps to
+ *
+ * '+' -> symbol('plus')
+ *
+ * returns * on success
+ * returns 0 on error
+ */
+struct ic_symbol * ic_kludge_get_operator(struct ic_kludge *kludge, char *sym_str);
+
 /* check if an existing identifier is taken either within the kludge or the provided sope
  *
  * if scope is not provided (null) then it will not be checked (and no error will be raised)

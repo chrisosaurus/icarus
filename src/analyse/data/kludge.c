@@ -649,6 +649,35 @@ struct ic_decl_func * ic_kludge_get_fdecl_from_symbol(struct ic_kludge *kludge, 
     return ic_kludge_get_fdecl(kludge, fdecl_str);
 }
 
+/* retrieve the function name that this operator maps to
+ *
+ * '+' -> symbol('plus')
+ *
+ * returns * on success
+ * returns 0 on error
+ */
+struct ic_symbol * ic_kludge_get_operator(struct ic_kludge *kludge, char *sym_str){
+    struct ic_symbol *symbol = 0;
+
+    if( ! kludge ){
+        puts("ic_kludge_get_operator: kludge was null");
+        return 0;
+    }
+
+    if( ! sym_str ){
+        puts("ic_kludge_get_operator: sym_str was null");
+        return 0;
+    }
+
+    symbol = ic_dict_get( &(kludge->dict_op), sym_str );
+    if( ! symbol ){
+        puts("ic_kludge_get_operator: call to ic_dict_get failed");
+        return 0;
+    }
+
+    return symbol;
+}
+
 /* check if an existing identifier is taken either within the kludge or the provided scope
  *
  * if scope is not provided (null) then it will not be checked (and no error will be raised)
