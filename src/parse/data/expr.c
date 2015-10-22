@@ -701,6 +701,8 @@ unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, enum ic_ex
     operator->first = first;
     operator->tag = tag;
 
+    operator->fcall = 0;
+
     /* success */
     return 1;
 
@@ -731,6 +733,13 @@ unsigned int ic_expr_operator_destroy(struct ic_expr_operator *op, unsigned int 
         /* free = 1 as pointer */
         if( ! ic_expr_destroy( op->second, 1 ) ){
             puts("ic_expr_operator_destroy: second : call to ic_expr_destroy failed");
+            return 0;
+        }
+    }
+
+    if( op->fcall ){
+        if( ! ic_expr_func_call_destroy( op->fcall, 1 ) ){
+            puts("ic_expr_operator_destroy: second : call to ic_expr_func_calldestroy failed");
             return 0;
         }
     }

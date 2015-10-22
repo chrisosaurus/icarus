@@ -205,13 +205,20 @@ enum ic_expr_operator_tag {
  */
 struct ic_expr_operator {
     enum ic_expr_operator_tag tag;
+
     /* token for the operator */
     struct ic_token *token;
+
     /* unary operators will only have a first
      * binary operators will have a first and second
      */
     struct ic_expr * first;
     struct ic_expr * second;
+
+    /* the function call that this operator maps to
+     * this is populated at analyse level
+     */
+    struct ic_expr_func_call *fcall;
 };
 
 /* allocate and initialise a new unary op
