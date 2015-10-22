@@ -20,4 +20,9 @@ builtin type String
 builtin fn print(String)
 builtin fn equal(String, String) -> Bool
 
+builtin op + plus
+builtin op - minus
+builtin op * times
+builtin op / divide
+builtin op % modulo
 
