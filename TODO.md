@@ -1,6 +1,7 @@
 TODO:
 -----
 
+* src/core.ic should be used to populate kludge, remove hardcoded entries from kludge.c
 * analyse should check for a `main` entry point
 * analyse needs to check for failing to return from a non-void function
 * finished population of decl_type.field_dict
