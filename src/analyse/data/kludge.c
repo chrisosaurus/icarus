@@ -678,6 +678,42 @@ struct ic_symbol * ic_kludge_get_operator(struct ic_kludge *kludge, char *sym_st
     return symbol;
 }
 
+/* retrieve the function name that this operator maps to
+ *
+ * symbol('+') -> symbol('plus')
+ *
+ * returns * on success
+ * returns 0 on error
+ */
+struct ic_symbol * ic_kludge_get_operator_from_symbol(struct ic_kludge *kludge, struct ic_symbol *symbol){
+    struct ic_symbol *result = 0;
+    char * str = 0;
+
+    if( ! kludge ){
+        puts("ic_kludge_get_operator: kludge was null");
+        return 0;
+    }
+
+    if( ! symbol ){
+        puts("ic_kludge_get_operator: symbol was null");
+        return 0;
+    }
+
+    str = ic_symbol_contents(symbol);
+    if( ! str ){
+        puts("ic_kludge_get_operator: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    result = ic_kludge_get_operator(kludge, str);
+    if( ! result ){
+        puts("ic_kludge_get_operator: call to ic_kludge_get_operator failed");
+        return 0;
+    }
+
+    return result;
+}
+
 /* check if an existing identifier is taken either within the kludge or the provided scope
  *
  * if scope is not provided (null) then it will not be checked (and no error will be raised)
