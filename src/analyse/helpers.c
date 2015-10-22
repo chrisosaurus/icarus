@@ -729,23 +729,21 @@ static struct ic_type * ic_analyse_infer_operator(struct ic_kludge *kludge, stru
      * return that value
      */
 
+    op_str = ic_token_get_representation( op->token );
+    if( ! op_str ){
+        puts("ic_analyse_infer_operator: call to ic_token_get_representation failed");
+        return 0;
+    }
+
+    mapped_op_sym = ic_kludge_get_operator(kludge, op_str);
+    if( ! mapped_op_sym ){
+        puts("ic_analyse_infer_operator: call to ic_kludge_get_operator failed");
+        return 0;
+    }
+
 /* FIXME finish implementation */
     puts("ic_analyse_infer_operator: unimplemented");
     return 0;
-
-/* FIXME need to set */
-    op_str = 0;
-    if( ! op_str ){
-        puts("ic_analyse_infer_operator: call to FIXME failed");
-        return 0;
-    }
-
-/* FIXME need to set */
-    mapped_op_sym = 0;
-    if( ! mapped_op_sym ){
-        puts("ic_analyse_infer_operator: call to FIXME failed");
-        return 0;
-    }
 
 /* FIXME need to pass in func_name */
     op->fcall = ic_expr_func_call_new(0);
