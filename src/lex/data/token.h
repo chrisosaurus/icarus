@@ -21,6 +21,7 @@ enum ic_token_id {
     IC_LET,
 
     IC_BUILTIN,
+    IC_OP,
     IC_FUNC,
     IC_TYPE,
     IC_ENUM,

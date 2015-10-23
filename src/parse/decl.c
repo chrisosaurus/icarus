@@ -8,14 +8,61 @@
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
 struct ic_decl * ic_parse_decl_builtin(struct ic_token_list *token_list){
+    /* our resulting ic_decl */
+    struct ic_decl *decl = 0;
+    /* current token we are looking at */
+    struct ic_token *token = 0;
+
 #ifdef DEBUG_PARSE
     puts("ic_parse_decl_builtin called");
 #endif
 
-    puts("ic_parse_decl_builtin: UNIMPLEMENTED");
+    if( ! token_list ){
+        puts("ic_parse_decl_builtin: token_list was null");
+        return 0;
+    }
 
-    /* FIXME */
-    return 0;
+    /* check we really are at a `builtin` token */
+    token = ic_token_list_expect_important(token_list, IC_BUILTIN);
+    if( ! token ){
+        puts("ic_parse_decl_builtin: call to ic_token_list_next failed for builtin");
+        return 0;
+    }
+
+    token = ic_token_list_peek_important(token_list);
+    if( ! token ){
+        puts("ic_parse_decl_builtin: call to ic_token_list_peek_important failed for builtin");
+        return 0;
+    }
+
+    switch( token->id ){
+        case IC_FUNC:
+            decl = ic_parse_decl_func_header(token_list);
+            if( ! decl ){
+                puts("ic_parse_decl_builtin: call to ic_parse_decl_func_header failed");
+                return 0;
+            }
+            break;
+
+        case IC_TYPE:
+            decl = ic_parse_decl_type_header(token_list);
+            if( ! decl ){
+                puts("ic_parse_decl_builtin: call to ic_parse_decl_type_header failed");
+                return 0;
+            }
+            break;
+
+        case IC_OP:
+            puts("ic_parse_decl_builtin: op not yet supported");
+            break;
+
+        default:
+            puts("ic_parse_decl_builtin: unexpected id found, none of: func, type or op");
+            return 0;
+            break;
+    }
+
+    return decl;
 }
 
 struct ic_decl * ic_parse_decl_type(struct ic_token_list *token_list){

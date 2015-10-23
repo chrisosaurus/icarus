@@ -139,6 +139,9 @@ char * ic_token_get_representation(struct ic_token *token){
         case IC_BUILTIN:
             return "builtin";
             break;
+        case IC_OP:
+            return "op";
+            break;
         case IC_FUNC:
             return "fn";
             break;
@@ -448,6 +451,9 @@ void ic_token_id_print_debug(enum ic_token_id id){
 
         case IC_BUILTIN:
             fputs("IC_BUILTIN", stdout);
+            break;
+        case IC_OP:
+            fputs("IC_OP", stdout);
             break;
         case IC_FUNC:
             fputs("IC_FUNC", stdout);

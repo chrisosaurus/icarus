@@ -29,6 +29,7 @@ struct ic_table_entry table[] = {
     { "let",        3,      IC_LET },
 
     { "builtin",    7,      IC_BUILTIN },
+    { "op",         2,      IC_OP },
     { "fn",         2,      IC_FUNC },
     { "type",       4,      IC_TYPE },
     { "union",      5,      IC_UNION },
