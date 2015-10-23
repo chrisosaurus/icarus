@@ -141,18 +141,25 @@ static unsigned int ic_kludge_populate_from_ast(struct ic_kludge *kludge, struct
 
         /* dispatch on type to appropriate kludge_add function */
         switch(decl->tag){
-            case ic_decl_decl_func:
+            case ic_decl_tag_func:
+            case ic_decl_tag_builtin_func:
                 if( ! ic_kludge_add_fdecl(kludge, &(decl->u.fdecl)) ){
                     puts("ic_kludge_populate_from_ast: call to ic_kludge_add_fdecl failed");
                     return 0;
                 }
                 break;
 
-            case ic_decl_decl_type:
+            case ic_decl_tag_type:
+            case ic_decl_tag_builtin_type:
                 if( ! ic_kludge_add_tdecl(kludge, &(decl->u.tdecl)) ){
                     puts("ic_kludge_populate_from_ast: call to ic_kludge_add_tdecl failed");
                     return 0;
                 }
+                break;
+
+            case ic_decl_tag_builtin_op:
+                puts("ic_kludge_populate_from_ast: builtin op not yet supported");
+                return 0;
                 break;
 
             default:

@@ -47,7 +47,7 @@ struct ic_decl * ic_parse_decl_type(struct ic_token_list *token_list){
     }
 
     /* allocate and init our decl */
-    decl = ic_decl_new(ic_decl_decl_type);
+    decl = ic_decl_new(ic_decl_tag_type);
     if( ! decl ){
         puts("ic_parse_decl_type: call to ic_decl_new failed");
         return 0;
@@ -209,7 +209,7 @@ struct ic_decl * ic_parse_decl_func(struct ic_token_list *token_list){
     }
 
     /* allocate and init our decl */
-    decl = ic_decl_new(ic_decl_decl_func);
+    decl = ic_decl_new(ic_decl_tag_func);
     if( ! decl ){
         puts("ic_parse_decl_func: call to ic_decl_new failed");
         return 0;

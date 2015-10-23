@@ -14,10 +14,10 @@ int main(void){
 
 
     /* test type decl */
-    decl = ic_decl_new(ic_decl_decl_type);
+    decl = ic_decl_new(ic_decl_tag_type);
     assert(decl);
     /* check type */
-    assert( decl->tag == ic_decl_decl_type );
+    assert( decl->tag == ic_decl_tag_type );
 
     /* check that trying to pull out the wrong type is an error */
     assert( 0 == ic_decl_get_fdecl(decl) );
@@ -44,10 +44,10 @@ int main(void){
 
 
     /* test func decl */
-    decl = ic_decl_new(ic_decl_decl_func);
+    decl = ic_decl_new(ic_decl_tag_func);
     assert(decl);
     /* check type */
-    assert( decl->tag == ic_decl_decl_func );
+    assert( decl->tag == ic_decl_tag_func );
 
     /* check that trying to pull out the wrong type is an error */
     assert( 0 == ic_decl_get_tdecl(decl) );

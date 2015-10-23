@@ -187,8 +187,11 @@ struct ic_type * ic_decl_type_get_field_type(struct ic_decl_type *tdecl, char * 
 unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char * field_name, struct ic_type *type);
 
 enum ic_decl_tag {
-    ic_decl_decl_func,
-    ic_decl_decl_type
+    ic_decl_tag_func,
+    ic_decl_tag_type,
+    ic_decl_tag_builtin_func,
+    ic_decl_tag_builtin_type,
+    ic_decl_tag_builtin_op
 };
 
 struct ic_decl {

@@ -773,7 +773,8 @@ unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl){
      * so we have to handle the free bewlo
      */
     switch( decl->tag ){
-        case ic_decl_decl_func:
+        case ic_decl_tag_func:
+        case ic_decl_tag_builtin_func:
             /* destroy all elements but not not (0) free fdecl itself */
             if( ! ic_decl_func_destroy(&(decl->u.fdecl), 0) ){
                 puts("ic_decl_destroy: call to ic_decl_func_destroy failed");
@@ -781,13 +782,20 @@ unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl){
             }
             break;
 
-        case ic_decl_decl_type:
+        case ic_decl_tag_type:
+        case ic_decl_tag_builtin_type:
             /* destroy all elements but not not (0) free tdecl itself */
             if( ! ic_decl_type_destroy(&(decl->u.tdecl), 0) ){
                 puts("ic_decl_destroy: call to ic_decl_type_destroy failed");
                 return 0;
             }
             break;
+
+        case ic_decl_tag_builtin_op:
+            puts("ic_decl_destroy: builtin op destruction not yet defined");
+            return 0;
+            break;
+
 
         default:
             puts("ic_decl_destroy: impossible decl type, aborting");
@@ -817,7 +825,7 @@ struct ic_decl_func * ic_decl_get_fdecl(struct ic_decl *decl){
     }
 
     /* check we are the right type */
-    if( decl->tag != ic_decl_decl_func ){
+    if( decl->tag != ic_decl_tag_func && decl->tag != ic_decl_tag_builtin_func ){
         return 0;
     }
 
@@ -838,7 +846,7 @@ struct ic_decl_type * ic_decl_get_tdecl(struct ic_decl *decl){
     }
 
     /* check we are the right type */
-    if( decl->tag != ic_decl_decl_type ){
+    if( decl->tag != ic_decl_tag_type && decl->tag != ic_decl_tag_builtin_type ){
         return 0;
     }
 
@@ -858,12 +866,22 @@ void ic_decl_print(struct ic_decl *decl, unsigned int *indent_level){
     }
 
     switch( decl->tag ){
-        case ic_decl_decl_func:
+        case ic_decl_tag_func:
             ic_decl_func_print( ic_decl_get_fdecl(decl), indent_level );
             break;
-        case ic_decl_decl_type:
+        case ic_decl_tag_type:
             ic_decl_type_print( ic_decl_get_tdecl(decl), indent_level );
             break;
+        case ic_decl_tag_builtin_func:
+            puts("ic_decl_print: printing of builtin funcs not yet supported");
+            break;
+        case ic_decl_tag_builtin_type:
+            puts("ic_decl_print: printing of builtin type not yet supported");
+            break;
+        case ic_decl_tag_builtin_op:
+            puts("ic_decl_print: printing of builtin op not yet supported");
+            break;
+
         default:
             puts("ic_decl_print: impossible type!");
             break;
