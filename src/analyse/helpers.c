@@ -100,6 +100,7 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
          *  a) convert type to string representation
          *  b) checking that this is not a self-recursive type
          *  c) check that this field's type exists
+         *  d) check this is not the void type
          *
          *  FIXME check / consider this
          */
@@ -141,6 +142,12 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
                     type_str,
                     unit,
                     unit_name);
+            goto ERROR;
+        }
+
+        /* check this is not the void type */
+        if( field_type->u.decl->isvoid ){
+            puts("ic_analyse_field_list: void type used in field list");
             goto ERROR;
         }
 

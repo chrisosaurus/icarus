@@ -92,6 +92,15 @@ ic_analyse: call to ic_analyse_decl_func failed
 analysis failed
 ",
 
+'builtin type Void
+fn foo(v::Void) end'
+=>
+'ic_analyse_field_list: void type used in field list
+ic_analyse_decl_func: call to ic_analyse_field_list for validating argument list failed
+ic_analyse_decl_func: error
+ic_analyse: call to ic_analyse_decl_func failed
+analysis failed
+',
 
 );
 
