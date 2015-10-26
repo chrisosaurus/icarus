@@ -123,6 +123,11 @@ struct ic_decl_type {
      *  ic_analyse_decl_type
      */
     struct ic_dict field_dict;
+
+    /* 1 if this is the void type
+     * 0 if this is not the void type
+     */
+    unsigned int isvoid;
 };
 
 /* allocate and return a new decl_type
@@ -154,6 +159,13 @@ unsigned int ic_decl_type_init(struct ic_decl_type *tdecl, char *name_src, unsig
  * returns 0 on failure
  */
 unsigned int ic_decl_type_destroy(struct ic_decl_type *tdecl, unsigned int free_tdecl);
+
+/* mark the supplied decl as the void type
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_mark_void(struct ic_decl_type *tdecl);
 
 /* add a new field to types list of fields
  *

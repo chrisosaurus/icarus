@@ -60,6 +60,15 @@ end
 # plus(Int Int)
 fn plus(a::Int b::Int) -> Int
 end
+
+type Int
+end
+
+type String
+end
+
+type Void
+end
 ----------------
 
 EOF

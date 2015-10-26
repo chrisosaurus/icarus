@@ -2,7 +2,6 @@
 #define IC_TYPE_H
 
 #include "../../parse/data/decl.h"
-#include "type_builtin.h"
 
 /* an instance of a type
  * ic_type has a single instance for each type within a kludge (FIXME consider type scoping)
@@ -13,14 +12,12 @@
  */
 
 enum ic_type_tag {
-    ic_type_builtin,
     ic_type_user
 };
 
 struct ic_type {
     enum ic_type_tag tag;
     union {
-        struct ic_type_builtin *builtin;
         struct ic_decl_type *decl;
     } u;
 };
@@ -38,37 +35,17 @@ struct ic_type * ic_type_new_tdecl(struct ic_decl_type *decl);
  * returns 0 on failure
  */
 unsigned int ic_type_init_tdecl(struct ic_type *type, struct ic_decl_type *decl);
-/* alloc and init a new type representing a builtin
- *
- * returns new type on success
- * returns 0 on failure
- */
-struct ic_type * ic_type_new_builtin(struct ic_type_builtin *builtin);
-
-/* init an existing type representing a builtin
- *
- * returns 1 on success
- * returns 0 on failure
- */
-unsigned int ic_type_init_builtin(struct ic_type *type, struct ic_type_builtin *builtin);
 
 /* destroy a type
  *
  * will only free the type if `free_type` is truthy
  *
- * will NOT free any decl or builtin objects
+ * will NOT free any decl objects
  *
  * returns 1 on success
  * returns 0 on failure
  */
 unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type);
-
-/* get builtin from type
- *
- * returns * on success
- * returns 0 on failure
- */
-struct ic_type_builtin * ic_type_get_builtin(struct ic_type *type);
 
 /* get decl from type
  *

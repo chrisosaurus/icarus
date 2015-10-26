@@ -31,8 +31,11 @@ fn main()
 end
 
 # temporary hack to allow type and function analysis to pass
-fn print(s::String) end
-fn print(i::Int) end
-fn Foo(i::Int s::String) -> Foo end
-fn plus(a::Int b::Int) -> Int end
+builtin fn print(s::String)
+builtin fn print(i::Int)
+builtin fn Foo(i::Int s::String) -> Foo
+builtin fn plus(a::Int b::Int) -> Int
+builtin type Int
+builtin type String
+builtin type Void
 

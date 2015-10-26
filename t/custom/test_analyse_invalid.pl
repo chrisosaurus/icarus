@@ -14,7 +14,8 @@ die "Could not find '$path'\n" unless -e $path;
 # and their expected outputs
 # all programs must have an exit code of 1
 my %invalid_programs = (
-'fn main() 1 + 2 end'
+'builtin type Int
+fn main() 1 + 2 end'
 =>
 "ic_analyse_infer_fcall: error finding fdecl for fcall 'plus(Int Int)'
 ic_analyse_infer_operator: call to ic_analyse_infer_fcall failed for second
@@ -39,7 +40,9 @@ ic_analyse: call to ic_analyse_decl_func failed
 analysis failed
 ",
 
-'fn main() let a::Int = foo() end
+'builtin type Int
+builtin type String
+fn main() let a::Int = foo() end
 fn foo() -> String end'
 =>
 "ic_analyse_let: let init type did not match declared type
@@ -51,7 +54,9 @@ ic_analyse: call to ic_analyse_decl_func failed
 analysis failed
 ",
 
-'fn main() let a::Int = 1 + 2 end
+'builtin type Int
+builtin type String
+fn main() let a::Int = 1 + 2 end
 fn plus(a::Int b::Int) -> String end'
 =>
 "ic_analyse_let: let init type did not match declared type
@@ -63,7 +68,9 @@ ic_analyse: call to ic_analyse_decl_func failed
 analysis failed
 ",
 
-'fn foo() -> Int return "hello" end'
+'builtin type Int
+builtin type String
+fn foo() -> Int return "hello" end'
 =>
 "ic_analyse_body: ret: returned type did not match declared
 ic_analyse_body: unimplemented in error case
@@ -73,7 +80,9 @@ ic_analyse: call to ic_analyse_decl_func failed
 analysis failed
 ",
 
-'fn foo() return "hello" end'
+'builtin type Void
+builtin type String
+fn foo() return "hello" end'
 =>
 "ic_analyse_body: ret: returned type did not match declared
 ic_analyse_body: unimplemented in error case

@@ -52,60 +52,11 @@ unsigned int ic_type_init_tdecl(struct ic_type *type, struct ic_decl_type *decl)
     return 1;
 }
 
-/* alloc and init a new type representing a builtin
- *
- * returns new type on success
- * returns 0 on failure
- */
-struct ic_type * ic_type_new_builtin(struct ic_type_builtin *builtin){
-    struct ic_type *type = 0;
-
-    if( ! builtin ){
-        puts("ic_type_new_builtin: builtin was null");
-        return 0;
-    }
-
-    type = calloc(1, sizeof(struct ic_type));
-    if( ! type ){
-        puts("ic_type_new_builtin: call to calloc failed");
-        return 0;
-    }
-
-    if( ! ic_type_init_builtin(type, builtin) ){
-        puts("ic_type_new_builtin: call to ic_type_init_tdecl failed");
-        return 0;
-    }
-
-    return type;
-}
-
-/* init an existing type representing a builtin
- *
- * returns 1 on success
- * returns 0 on failure
- */
-unsigned int ic_type_init_builtin(struct ic_type *type, struct ic_type_builtin *builtin){
-    if( ! type ){
-        puts("ic_type_init_builtin: type was null");
-        return 0;
-    }
-
-    if( ! builtin ){
-        puts("ic_type_init_builtin: builtin was null");
-        return 0;
-    }
-
-    type->tag = ic_type_builtin;
-    type->u.builtin = builtin;
-
-    return 1;
-}
-
 /* destroy a type
  *
  * will only free the type if `free_type` is truthy
  *
- * will NOT free any decl or builtin objects
+ * will NOT free any decl objects
  *
  * returns 1 on success
  * returns 0 on failure
@@ -117,11 +68,6 @@ unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type){
     }
 
     switch( type->tag ){
-        case ic_type_builtin:
-            /* FIXME builtin leaked */
-            type->u.builtin = 0;
-            break;
-
         case ic_type_user:
             type->u.decl = 0;
             break;
@@ -135,25 +81,6 @@ unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type){
     }
 
     return 1;
-}
-
-/* get builtin from type
- *
- * returns * on success
- * returns 0 on failure
- */
-struct ic_type_builtin * ic_type_get_builtin(struct ic_type *type){
-    if( ! type ){
-        puts("ic_type_get_builtin: type was null");
-        return 0;
-    }
-
-    if( type->tag != ic_type_builtin ){
-        puts("ic_type_get_builtin: type was not a builtin");
-        return 0;
-    }
-
-    return type->u.builtin;
 }
 
 /* get decl from type
@@ -187,9 +114,6 @@ struct ic_symbol * ic_type_name(struct ic_type *type){
     }
 
     switch( type->tag ){
-        case ic_type_builtin:
-            return type->u.builtin->name;
-            break;
 
         case ic_type_user:
             return &(type->u.decl->name);
@@ -217,11 +141,11 @@ unsigned int ic_type_isvoid(struct ic_type *type){
         return 0;
     }
 
-    if( type->tag != ic_type_builtin ){
+    if( type->tag != ic_type_user ){
         return 0;
     }
 
-    return type->u.builtin->isvoid;
+    return type->u.decl->isvoid;
 }
 
 /* are these 2 types the equal

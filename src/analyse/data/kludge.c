@@ -1,10 +1,10 @@
 #include <stdio.h> /* puts */
 #include <stdlib.h> /* calloc */
+#include <string.h> /* strncmpy */
 
 #include "../../data/pvector.h"
 #include "../../parse/data/decl.h"
 #include "kludge.h"
-#include "type_builtin.h"
 #include "type.h"
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -40,72 +40,6 @@ static unsigned int ic_kludge_populate_operators(struct ic_kludge *kludge){
         /* insert into dict_op */
         if( ! ic_dict_insert(&(kludge->dict_op), operators[i], sym) ){
             printf("ic_kludge_populate_operators: ic_dict_insert failed for type '%s', i '%d'\n", operators[i], i);
-            return 0;
-        }
-
-    }
-
-    return 1;
-}
-
-/* populate kludge with builtins
- *
- * returns 1 on success
- * returns 0 on failure
- */
-static unsigned int ic_kludge_populate_builtins (struct ic_kludge *kludge){
-    unsigned int i = 0;
-    struct ic_symbol *sym = 0;
-    char *types[] =        { "Void", "Int", "String" };
-    unsigned int lens[] =  { 4,      3,      6       };
-    struct ic_type_builtin *builtin = 0;
-    struct ic_type *type = 0;
-
-    for( i=0; i<3; ++i ){
-        /* construct symbol for type
-         * FIXME symbol leaked
-         */
-        sym = ic_symbol_new(types[i], lens[i]);
-        if( ! sym ){
-            printf("ic_kludge_populate_builtins: ic_symbol_new failed for type '%s', i '%d'\n", types[i], i);
-            return 0;
-        }
-
-        /* construct ic_type_builtin
-         * FIXME builtin leaked
-         */
-        builtin = ic_type_builtin_new(sym);
-        if( ! builtin ){
-            printf("ic_kludge_populate_builtins: ic_type_builtin_new failed for type '%s', i '%d'\n", types[i], i);
-            return 0;
-        }
-
-        if( i == 0 ){
-            /* mark as void if this is the first type */
-            if( ! ic_type_builtin_mark_void(builtin) ){
-                printf("ic_kludge_populate_builtins: ic_type_builtin_mark_void failed for type '%s', i '%d'\n", types[i], i);
-                return 0;
-            }
-        }
-
-        /* insert into kludge->tbuiltins */
-        if( -1 == ic_pvector_append(&(kludge->tbuiltins), builtin) ){
-            printf("ic_kludge_populate_builtins: ic_pvector_append failed for type '%s', i '%d'\n", types[i], i);
-            return 0;
-        }
-
-        /* build ic_type
-         * FIXME this ic_type is leaked
-         */
-        type = ic_type_new_builtin(builtin);
-        if( ! type ){
-            printf("ic_kludge_populate_builtins: ic_type_new failed for type '%s', i '%d'\n", types[i], i);
-            return 0;
-        }
-
-        /* insert into dict_tname */
-        if( ! ic_dict_insert(&(kludge->dict_tname), types[i], type) ){
-            printf("ic_kludge_populate_builtins: ic_dict_insert failed for type '%s', i '%d'\n", types[i], i);
             return 0;
         }
 
@@ -273,12 +207,6 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast){
     /* populate dict_op */
     if( ! ic_kludge_populate_operators(kludge) ){
         puts("ic_kludge_init: errors: call to ic_kludge_populate_operators failed");
-        return 0;
-    }
-
-    /* populate tbuiltins */
-    if( ! ic_kludge_populate_builtins(kludge) ){
-        puts("ic_kludge_init: errors: call to ic_kludge_populate_builtins failed");
         return 0;
     }
 
@@ -471,6 +399,12 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *
     if( ! type ){
         puts("ic_kludge_add_tdecl: call to ic_type_new_tdecl failed");
         return 0;
+    }
+
+    /* if this is the void type then mark it as so */
+    if( ! strncmp(str, "Void", 4) ){
+        if( ! ic_decl_type_mark_void(tdecl) ){
+        }
     }
 
     /* insert into dict tname
