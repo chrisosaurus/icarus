@@ -23,26 +23,26 @@ int main(void){
     }
 
     /* populate from core.ic */
-    core_source = ic_read_slurp("src/core.ic");
+    core_source = ic_read_slurp("src/stdlib/core.ic");
     if( ! core_source ){
-        puts("slurping failed for src/core.ic");
+        puts("slurping failed for src/stdlib/core.ic");
         exit(1);
     }
 
-    core_token_list = ic_lex("src/core.ic", core_source);
+    core_token_list = ic_lex("src/stdlib/core.ic", core_source);
     if( ! core_token_list ){
-        puts("lexing failed for src/core.ic");
+        puts("lexing failed for src/stdlib/core.ic");
         exit(1);
     }
 
     core_ast = ic_parse(core_token_list);
     if( ! core_ast ){
-        puts("parsing failed for src/core.ic");
+        puts("parsing failed for src/stdlib/core.ic");
         exit(1);
     }
 
     if( ! ic_kludge_populate(kludge, core_ast) ){
-        puts("call to ic_kludge_populate failed for src/core.ic");
+        puts("call to ic_kludge_populate failed for src/stdlib/core.ic");
         exit(1);
     }
 
