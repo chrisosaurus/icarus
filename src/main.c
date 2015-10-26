@@ -97,6 +97,7 @@ int main(int argc, char **argv){
     puts("analysis complete");
 
     /* clean up time */
+
     if( ! ic_kludge_destroy(kludge, 1) ){
         puts("main: ic_kludge_destroy call failed");
     }
@@ -109,8 +110,6 @@ int main(int argc, char **argv){
         puts("main: ic_ast_destroy call failed");
     }
 
-    /* FIXME are token_list and core_token_list cleaned up correctly ? */
-#if 0
     if( ! ic_token_list_destroy(token_list, 1) ){
         puts("ic_token_list_destroy failed");
     }
@@ -118,7 +117,6 @@ int main(int argc, char **argv){
     if( ! ic_token_list_destroy(core_token_list, 1) ){
         puts("ic_token_list_destroy failed");
     }
-#endif
 
     free(source);
     free(core_source);
