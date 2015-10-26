@@ -149,26 +149,6 @@ Hidden elsewhere in the output we can see the parser reconstructing the program 
 
 Finally the analyse step's outputs showing no errors, but making it clear that it isn't complete yet
 
-    warning: ic_analyse_body: implementation pending
-    warning: ic_analyse_body: implementation pending
-    warning: ic_analyse_body: implementation pending
-    warning: ic_analyse_body: implementation pending
-    warning: ic_analyse_body: implementation pending
-    warning: ic_analyse_body: implementation pending
-    warning: ic_analyse_body: implementation pending
-    warning: ic_analyse_body: implementation pending
-    warning: ic_analyse_body: implementation pending
-    warning: ic_analyse_body: implementation pending
-    warning: ic_analyse_body: implementation pending
-    warning: ic_analyse_body: implementation pending
-    warning: ic_analyse_body: implementation pending
-    warning: ic_analyse_body: implementation pending
-    warning: ic_analyse_body: implementation pending
-    warning: ic_analyse_body: implementation pending
-    warning: ic_analyse_body: implementation pending
-    warning: ic_analyse_body: implementation pending
-    warning: ic_analyse_body: implementation pending
-    warning: ic_analyse_body: implementation pending
     warning: main implementation pending, icarus is currently only partially functional
     analysis complete
 

@@ -411,7 +411,6 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
         /* FIXME */
     }
 
-    puts("warning: ic_analyse_body: implementation pending");
     return 1;
 
 ERROR:

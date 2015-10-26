@@ -16,21 +16,7 @@ die "Could not find '$path'\n" unless -e $path;
 my %invalid_programs = (
 'fn main() foo() end'
 =>
-"warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-ic_analyse_infer_fcall: error finding fdecl for fcall 'foo()'
+"ic_analyse_infer_fcall: error finding fdecl for fcall 'foo()'
 ic_analyse_infer: call to ic_analyse_infer_fcall failed
 ic_analyse_body: expr: call to ic_analyse_infer failed
 ic_analyse_body: unimplemented in error case
@@ -43,21 +29,7 @@ analysis failed
 'fn main() let a::Int = foo() end
 fn foo() -> String end'
 =>
-"warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-ic_analyse_let: let init type did not match declared type
+"ic_analyse_let: let init type did not match declared type
 ic_analyse_body: call to ic_analyse_let failed
 ic_analyse_body: unimplemented in error case
 ic_analyse_decl_func: call to ic_analyse_body for validating body failed
@@ -68,21 +40,7 @@ analysis failed
 
 'fn main() let a::String = 1 + 2 end'
 =>
-"warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-ic_analyse_let: let init type did not match declared type
+"ic_analyse_let: let init type did not match declared type
 ic_analyse_body: call to ic_analyse_let failed
 ic_analyse_body: unimplemented in error case
 ic_analyse_decl_func: call to ic_analyse_body for validating body failed
@@ -93,21 +51,7 @@ analysis failed
 
 'fn foo() -> Int return "hello" end'
 =>
-"warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-ic_analyse_body: ret: returned type did not match declared
+"ic_analyse_body: ret: returned type did not match declared
 ic_analyse_body: unimplemented in error case
 ic_analyse_decl_func: call to ic_analyse_body for validating body failed
 ic_analyse_decl_func: error
@@ -117,21 +61,7 @@ analysis failed
 
 'fn foo() return "hello" end'
 =>
-"warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-ic_analyse_body: ret: returned type did not match declared
+"ic_analyse_body: ret: returned type did not match declared
 ic_analyse_body: unimplemented in error case
 ic_analyse_decl_func: call to ic_analyse_body for validating body failed
 ic_analyse_decl_func: error
@@ -141,21 +71,7 @@ analysis failed
 
 'fn foo(v::Void) end'
 =>
-'warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-ic_analyse_field_list: void type used in field list
+'ic_analyse_field_list: void type used in field list
 ic_analyse_decl_func: call to ic_analyse_field_list for validating argument list failed
 ic_analyse_decl_func: error
 ic_analyse: call to ic_analyse_decl_func failed

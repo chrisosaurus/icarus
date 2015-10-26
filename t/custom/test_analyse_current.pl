@@ -10,26 +10,6 @@ die "Could not find '$path'\n" unless -e $path;
 my $output = `$path`;
 my $exit_status = $?;
 my $expected = <<EOF;
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
-warning: ic_analyse_body: implementation pending
 (partial) analyse was a success
 EOF
 
