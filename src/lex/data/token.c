@@ -136,6 +136,9 @@ char * ic_token_get_representation(struct ic_token *token){
             return "let";
             break;
 
+        case IC_IMPORT:
+            return "import";
+            break;
         case IC_BUILTIN:
             return "builtin";
             break;
@@ -359,6 +362,7 @@ unsigned int ic_token_isoperator(struct ic_token *token){
         case IC_MINUS:
         case IC_DIVIDE:
         case IC_MULTIPLY:
+        case IC_MODULO:
             return 1;
 
         case IC_PERIOD:
@@ -452,6 +456,9 @@ void ic_token_id_print_debug(enum ic_token_id id){
             fputs("IC_LET", stdout);
             break;
 
+        case IC_IMPORT:
+            fputs("IC_IMPORT", stdout);
+            break;
         case IC_BUILTIN:
             fputs("IC_BUILTIN", stdout);
             break;

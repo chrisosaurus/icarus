@@ -28,6 +28,7 @@ struct ic_table_entry table[] = {
     { "return",     6,      IC_RETURN },
     { "let",        3,      IC_LET },
 
+    { "import",     6,      IC_IMPORT },
     { "builtin",    7,      IC_BUILTIN },
     { "op",         2,      IC_OP },
     { "fn",         2,      IC_FUNC },
