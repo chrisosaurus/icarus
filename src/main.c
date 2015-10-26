@@ -88,6 +88,8 @@ int main(int argc, char **argv){
         exit(1);
     }
 
+    puts("\nanalyse output:");
+    puts("----------------");
     if( ! ic_analyse(kludge) ){
         puts("analysis failed");
         exit(1);
@@ -95,6 +97,7 @@ int main(int argc, char **argv){
 
     puts("warning: main implementation pending, icarus is currently only partially functional");
     puts("analysis complete");
+    puts("----------------\n");
 
     /* clean up time */
 
