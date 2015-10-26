@@ -57,11 +57,10 @@ We have the contents of `example/simple.ic`:
         d(f)
     end
 
-    # temporary hack to allow type and function analysis to pass
-    fn print(s::String) end
-    fn print(i::Int) end
-    fn Foo(i::Int s::String) -> Foo end
-    fn plus(a::Int b::Int) -> Int end
+    # hack to work around lack of constructors
+    builtin fn Foo(a::Int b::String) -> Foo
+
+
 
 We can see what Icarus makes of this by running:
 
@@ -103,11 +102,8 @@ Hidden in the output we see the new lexer output:
         d(f)
     end
 
-    # temporary hack to allow type and function analysis to pass
-    fn print(s::String) end
-    fn print(i::Int) end
-    fn Foo(i::Int s::String) -> Foo end
-    fn plus(a::Int b::Int) -> Int end
+    # hack to work around lack of constructors
+    builtin fn Foo(a::Int b::String) -> Foo
 
     ----------------
 
@@ -148,21 +144,7 @@ Hidden elsewhere in the output we can see the parser reconstructing the program 
         d(f)
     end
 
-    # print(String)
-    fn print(s::String) -> Void
-    end
-
-    # print(Int)
-    fn print(i::Int) -> Void
-    end
-
-    # Foo(Int String)
-    fn Foo(i::Int s::String) -> Foo
-    end
-
-    # plus(Int Int)
-    fn plus(a::Int b::Int) -> Int
-    end
+    builtin fn plus(a::Int b::Int) -> Int end
     ----------------
 
 Finally the analyse step's outputs showing no errors, but making it clear that it isn't complete yet

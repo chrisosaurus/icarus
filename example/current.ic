@@ -31,10 +31,5 @@ fn main()
 end
 
 # temporary hack to allow type and function analysis to pass
-builtin fn print(s::String)
-builtin fn print(i::Int)
 builtin fn Foo(i::Int) -> Foo
-builtin type Int
-builtin type String
-builtin type Void
 

@@ -48,12 +48,13 @@ static unsigned int ic_kludge_populate_operators(struct ic_kludge *kludge){
     return 1;
 }
 
-/* takes an ast and breaks it down to populate the supplied kludge
+/* populate the kludge from the provided ast
+ * this call will break apart the ast to populate the
+ * fields stored on kludge
  *
- * returns 1 on success
- * return 0 on failure
+ * this will NOT perform any analysis
  */
-static unsigned int ic_kludge_populate_from_ast(struct ic_kludge *kludge, struct ic_ast *ast){
+unsigned int ic_kludge_populate(struct ic_kludge *kludge, struct ic_ast *ast){
     /* offset */
     unsigned int i = 0;
     /* cached len */
@@ -69,7 +70,7 @@ static unsigned int ic_kludge_populate_from_ast(struct ic_kludge *kludge, struct
     for( i=0; i<len; ++i ){
         decl = ic_ast_get(ast, i);
         if( ! decl ){
-            puts("ic_kludge_populate_from_ast: call to ic_ast_get failed");
+            puts("ic_kludge_populate: call to ic_ast_get failed");
             return 0;
         }
 
@@ -78,7 +79,7 @@ static unsigned int ic_kludge_populate_from_ast(struct ic_kludge *kludge, struct
             case ic_decl_tag_func:
             case ic_decl_tag_builtin_func:
                 if( ! ic_kludge_add_fdecl(kludge, &(decl->u.fdecl)) ){
-                    puts("ic_kludge_populate_from_ast: call to ic_kludge_add_fdecl failed");
+                    puts("ic_kludge_populate: call to ic_kludge_add_fdecl failed");
                     return 0;
                 }
                 break;
@@ -86,18 +87,18 @@ static unsigned int ic_kludge_populate_from_ast(struct ic_kludge *kludge, struct
             case ic_decl_tag_type:
             case ic_decl_tag_builtin_type:
                 if( ! ic_kludge_add_tdecl(kludge, &(decl->u.tdecl)) ){
-                    puts("ic_kludge_populate_from_ast: call to ic_kludge_add_tdecl failed");
+                    puts("ic_kludge_populate: call to ic_kludge_add_tdecl failed");
                     return 0;
                 }
                 break;
 
             case ic_decl_tag_builtin_op:
-                puts("ic_kludge_populate_from_ast: builtin op not yet supported");
+                puts("ic_kludge_populate: builtin op not yet supported");
                 return 0;
                 break;
 
             default:
-                puts("ic_kludge_populate_from_ast: decl had impossible type");
+                puts("ic_kludge_populate: decl had impossible type");
                 return 0;
                 break;
         }
@@ -108,23 +109,15 @@ static unsigned int ic_kludge_populate_from_ast(struct ic_kludge *kludge, struct
 
 /* alloc and init a new kludge
  *
- * this call will break apart the ast to populate the
- * fields stored on kludge
- *
  * this will NOT perform any analysis
  *
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_kludge * ic_kludge_new(struct ic_ast *ast){
+struct ic_kludge * ic_kludge_new(void){
     struct ic_kludge *kludge = 0;
 
-    if( ! ast ){
-        puts("ic_kludge_new: ast was null");
-        return 0;
-    }
-
-    /* alloc */
+     /* alloc */
     kludge = calloc(1, sizeof(struct ic_kludge));
     if( ! kludge ){
         puts("ic_kludge_new: call to calloc failed");
@@ -132,7 +125,7 @@ struct ic_kludge * ic_kludge_new(struct ic_ast *ast){
     }
 
     /* init */
-    if( ! ic_kludge_init(kludge, ast) ){
+    if( ! ic_kludge_init(kludge) ){
         puts("ic_kludge_new: call to ic_kludge_init failed");
         free(kludge);
         return 0;
@@ -144,21 +137,14 @@ struct ic_kludge * ic_kludge_new(struct ic_ast *ast){
 
 /* init an existing kludge
  *
- * this call will break apart the ast to populate the
- * fields stored on kludge
- *
  * this will NOT perform any analysis
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast){
+unsigned int ic_kludge_init(struct ic_kludge *kludge){
     if( ! kludge ){
         puts("ic_kludge_init: kludge was null");
-        return 0;
-    }
-    if( ! ast ){
-        puts("ic_kludge_init: ast was null");
         return 0;
     }
 
@@ -210,20 +196,6 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast){
         return 0;
     }
 
-    /* ast ast */
-    kludge->aast = ast;
-
-    /* populate kludge fiels from ast:
-     *      dict_tname
-     *      dict_fsig
-     *      tdecls
-     *      fdecls
-     */
-    if( ! ic_kludge_populate_from_ast(kludge, ast) ){
-        puts("ic_kludge_init: errors: call to ic_kludge_populate_from_ast failed");
-        return 0;
-    }
-
     return 1;
 }
 
@@ -249,12 +221,11 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
      * for example each fdecl will be in:
      *  fict_fsig
      *  fdecls
-     *  aast
      *
      * destroying all three would be an error
      *
      * this means that we do not need to destroy the items stored in the following as
-     *  their elements will be freed via ic_ast_destroy on kludge->aast :
+     *  their elements will be freed via ic_ast_destroy:
      *      dict_tname
      *      dict_fsig
      *      tdecls
@@ -266,7 +237,7 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
     /* cleanup dict_tname
      * ic_dict_destroy(*dict, free_dict, free_data);
      * do not free_dict as it is a member of kludge
-     * do not free_data as it is freed when aast is freed
+     * do not free_data as it is freed when ast is freed
      */
     if( ! ic_dict_destroy( &(kludge->dict_tname), 0, 0 ) ){
         puts("ic_kludge_destroy: call to ic_dict_destroy for dict_tname failed");
@@ -276,7 +247,7 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
     /* cleanup dict_fsig
      * ic_dict_destroy(*dict, free_dict, free_data);
      * do not free_dict as it is a member of kludge
-     * do not free_data as it is freed when aast is freed
+     * do not free_data as it is freed when ast is freed
      */
     if( ! ic_dict_destroy( &(kludge->dict_fsig), 0, 0 ) ){
         puts("ic_kludge_destroy: call to ic_dict_destroy for dict_fsig failed");
@@ -286,7 +257,7 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
     /* cleanup dict_op
      * ic_dict_destroy(*dict, free_dict, free_data);
      * do not free_dict as it is a member of kludge
-     * do not free_data as it is freed when aast is freed
+     * do not free_data as it is freed when ast is freed
      *
      * FIXME currently leaking symbols in value
      */
@@ -338,16 +309,6 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
          * here we just throw a fit as we have no way of cleaning up these errors
          */
         puts("ic_kludge_destroy: found an error we wanted to destroy, but no way to destroy it");
-        return 0;
-    }
-
-    /* call ast_destroy on our annotated ast
-     *       annotated AST
-     *       struct ic_ast *aast;
-     *
-     */
-    if( ! ic_ast_destroy( kludge->aast, 1 ) ){
-        puts("ic_kludge_destroy: asst - call to ic_ast_destroy failed");
         return 0;
     }
 

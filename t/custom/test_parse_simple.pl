@@ -45,19 +45,7 @@ fn main() -> Void
     d(f)
 end
 
-builtin fn print(s::String) -> Void
-
-builtin fn print(i::Int) -> Void
-
-builtin fn Foo(i::Int s::String) -> Foo
-
-builtin fn plus(a::Int b::Int) -> Int
-
-builtin type Int
-
-builtin type String
-
-builtin type Void
+builtin fn Foo(a::Int b::String) -> Foo
 ----------------
 
 EOF

@@ -18,6 +18,18 @@ warning: ic_analyse_body: implementation pending
 warning: ic_analyse_body: implementation pending
 warning: ic_analyse_body: implementation pending
 warning: ic_analyse_body: implementation pending
+warning: ic_analyse_body: implementation pending
+warning: ic_analyse_body: implementation pending
+warning: ic_analyse_body: implementation pending
+warning: ic_analyse_body: implementation pending
+warning: ic_analyse_body: implementation pending
+warning: ic_analyse_body: implementation pending
+warning: ic_analyse_body: implementation pending
+warning: ic_analyse_body: implementation pending
+warning: ic_analyse_body: implementation pending
+warning: ic_analyse_body: implementation pending
+warning: ic_analyse_body: implementation pending
+warning: ic_analyse_body: implementation pending
 (partial) analyse was a success
 EOF
 

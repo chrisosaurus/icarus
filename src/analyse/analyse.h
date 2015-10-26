@@ -3,15 +3,14 @@
 
 #include "data/kludge.h"
 
-/* takes an ast and performs analysis on it
- * this returns a kludge
+/* takes a kludge and performs analysis on it
  *
  * see kludge->errors for errors
  *
- * returns kludge on success
+ * returns 1 on success
  * returns 0 on failure
  */
-struct ic_kludge * ic_analyse(struct ic_ast *ast);
+unsigned int ic_analyse(struct ic_kludge *kludge);
 
 /* takes a decl_type and performs analysis
  *

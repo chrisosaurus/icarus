@@ -50,34 +50,25 @@ struct ic_kludge {
      * FIXME no error type yet
      */
     struct ic_pvector errors;
-
-    /* annotated AST */
-    struct ic_ast *aast;
 };
 
 /* alloc and init a new kludge
- *
- * this call will break apart the ast to populate the
- * fields stored on kludge
  *
  * this will NOT perform any analysis
  *
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_kludge * ic_kludge_new(struct ic_ast *ast);
+struct ic_kludge * ic_kludge_new(void);
 
 /* init an existing kludge
- *
- * this call will break apart the ast to populate the
- * fields stored on kludge
  *
  * this will NOT perform any analysis
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast);
+unsigned int ic_kludge_init(struct ic_kludge *kludge);
 
 /* destroy kludge
  *
@@ -87,6 +78,14 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge, struct ic_ast *ast);
  * returns 0 on failure
  */
 unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludge);
+
+/* populate the kludge from the provided ast
+ * this call will break apart the ast to populate the
+ * fields stored on kludge
+ *
+ * this will NOT perform any analysis
+ */
+unsigned int ic_kludge_populate(struct ic_kludge *kludge, struct ic_ast *ast);
 
 /* add a new type decl to this kludge
  * this will insert into tdecls

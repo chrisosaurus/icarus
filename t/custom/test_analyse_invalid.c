@@ -9,9 +9,9 @@
 #include "../../src/analyse/analyse.h" /* ic_kludge */
 
 int main(int argc, char **argv){
-    char *filename = 0, *source = 0;
-    struct ic_token_list *token_list = 0;
-    struct ic_ast *ast = 0;
+    char *filename = 0, *source = 0, *core_source = 0;
+    struct ic_token_list *token_list = 0, *core_token_list = 0;
+    struct ic_ast *ast = 0, *core_ast = 0;
     struct ic_kludge *kludge = 0;
 
     if( argc < 2 ){
@@ -23,6 +23,37 @@ int main(int argc, char **argv){
     }
 
     filename = argv[1];
+
+    kludge = ic_kludge_new();
+    if( ! kludge ){
+        puts("call to ic_kludge_new failed");
+        exit(1);
+    }
+
+    /* populate from core.ic */
+    core_source = ic_read_slurp("src/core.ic");
+    if( ! core_source ){
+        puts("slurping failed for src/core.ic");
+        exit(1);
+    }
+
+    core_token_list = ic_lex("src/core.ic", core_source);
+    if( ! core_token_list ){
+        puts("lexing failed for src/core.ic");
+        exit(1);
+    }
+
+    core_ast = ic_parse(core_token_list);
+    if( ! core_ast ){
+        puts("parsing failed for src/core.ic");
+        exit(1);
+    }
+
+    if( ! ic_kludge_populate(kludge, core_ast) ){
+        puts("call to ic_kludge_populate failed for src/core.ic");
+        exit(1);
+    }
+
 
     source = ic_read_slurp(filename);
     if( ! source ){
@@ -42,11 +73,12 @@ int main(int argc, char **argv){
         exit(1);
     }
 
-    /* kludge section currently commented out as it is incomplete
-     * and doesn't yet pass testing
-     */
-    kludge = ic_analyse(ast);
-    if( ! kludge ){
+    if( ! ic_kludge_populate(kludge, ast) ){
+        puts("call to ic_kludge_populate failed");
+        exit(1);
+    }
+
+    if( ! ic_analyse(kludge) ){
         puts("analysis failed");
         exit(1);
     }

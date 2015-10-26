@@ -6,15 +6,14 @@
 #include "analyse.h"
 #include "data/slot.h"
 
-/* takes an ast and performs analysis on it
- * this returns a kludge
+/* takes a kludge and performs analysis on it
  *
  * see kludge->errors for errors
  *
- * returns kludge on success
+ * returns 1 on success
  * returns 0 on failure
  */
-struct ic_kludge * ic_analyse(struct ic_ast *ast){
+unsigned int ic_analyse(struct ic_kludge *kludge){
     /* our offset into various lists */
     unsigned int i = 0;
     /* cached len of various lists */
@@ -25,24 +24,13 @@ struct ic_kludge * ic_analyse(struct ic_ast *ast){
     /* the current func we are analysing */
     struct ic_decl_func *fdecl = 0;
 
-    /* our mighty kludge */
-    struct ic_kludge *kludge = 0;
-
     /* steps:
-     *      create kludge from ast
      *      for each type call ic_analyse_decl_type
      *      for each func call ic_analyse_decl_func
      */
 
-    if( ! ast ){
-        puts("ic_analyse: ast null");
-        return 0;
-    }
-
-    /* create kludge from ast */
-    kludge = ic_kludge_new(ast);
     if( ! kludge ){
-        puts("ic_analyse: call to ic_kludge_new failed");
+        puts("ic_analyse: kludge was null");
         return 0;
     }
 
@@ -76,7 +64,7 @@ struct ic_kludge * ic_analyse(struct ic_ast *ast){
         }
     }
 
-    return kludge;
+    return 1;
 
 ERROR:
     /* destroy kludge

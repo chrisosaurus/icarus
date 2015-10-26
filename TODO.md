@@ -1,7 +1,7 @@
 TODO:
 -----
 
-* src/core.ic should be used to populate kludge, remove hardcoded entries from kludge.c
+* only operators are still remaining for kludge.c harcoding to be nuked
 * remove ic_type, as builtin and user defined types now both use ic_decl_type
 * analyse should check for a `main` entry point
 * analyse needs to check for failing to return from a non-void function

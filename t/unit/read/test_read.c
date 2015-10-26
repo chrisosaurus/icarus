@@ -36,14 +36,8 @@ fn main()\n\
     d(f)\n\
 end\n\
 \n\
-# temporary hack to allow type and function analysis to pass\n\
-builtin fn print(s::String)\n\
-builtin fn print(i::Int)\n\
-builtin fn Foo(i::Int s::String) -> Foo\n\
-builtin fn plus(a::Int b::Int) -> Int\n\
-builtin type Int\n\
-builtin type String\n\
-builtin type Void\n\
+# hack to work around lack of constructors\n\
+builtin fn Foo(a::Int b::String) -> Foo\n\
 \n\
 ";
 
