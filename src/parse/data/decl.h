@@ -85,6 +85,8 @@ unsigned int ic_decl_func_add_stmt(struct ic_decl_func *fdecl, struct ic_stmt *s
 
 /* print decl_func */
 void ic_decl_func_print(struct ic_decl_func *fdecl, unsigned int *indent_level);
+void ic_decl_func_print_header(struct ic_decl_func *fdecl, unsigned int *indent_level);
+void ic_decl_func_print_body(struct ic_decl_func *fdecl, unsigned int *indent_level);
 
 /* return a string representation of this function signature
  *
@@ -176,6 +178,8 @@ unsigned int ic_decl_type_add_field(struct ic_decl_type *tdecl, struct ic_field 
 
 /* print the decl_type to stdout */
 void ic_decl_type_print(struct ic_decl_type *tdecl, unsigned int *indent_level);
+void ic_decl_type_print_header(struct ic_decl_type *tdecl, unsigned int *indent_level);
+void ic_decl_type_print_body(struct ic_decl_type *tdecl, unsigned int *indent_level);
 
 /* get the char * contents of the name
  *

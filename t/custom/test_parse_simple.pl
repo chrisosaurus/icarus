@@ -45,30 +45,19 @@ fn main() -> Void
     d(f)
 end
 
-# print(String)
-fn print(s::String) -> Void
-end
+builtin fn print(s::String) -> Void
 
-# print(Int)
-fn print(i::Int) -> Void
-end
+builtin fn print(i::Int) -> Void
 
-# Foo(Int String)
-fn Foo(i::Int s::String) -> Foo
-end
+builtin fn Foo(i::Int s::String) -> Foo
 
-# plus(Int Int)
-fn plus(a::Int b::Int) -> Int
-end
+builtin fn plus(a::Int b::Int) -> Int
 
-type Int
-end
+builtin type Int
 
-type String
-end
+builtin type String
 
-type Void
-end
+builtin type Void
 ----------------
 
 EOF

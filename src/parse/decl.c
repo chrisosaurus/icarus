@@ -42,6 +42,7 @@ struct ic_decl * ic_parse_decl_builtin(struct ic_token_list *token_list){
                 puts("ic_parse_decl_builtin: call to ic_parse_decl_func_header failed");
                 return 0;
             }
+            decl->tag = ic_decl_tag_builtin_func;
             break;
 
         case IC_TYPE:
@@ -50,6 +51,7 @@ struct ic_decl * ic_parse_decl_builtin(struct ic_token_list *token_list){
                 puts("ic_parse_decl_builtin: call to ic_parse_decl_type_header failed");
                 return 0;
             }
+            decl->tag = ic_decl_tag_builtin_type;
             break;
 
         case IC_OP:

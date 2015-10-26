@@ -265,14 +265,6 @@ unsigned int ic_decl_func_add_stmt(struct ic_decl_func *fdecl, struct ic_stmt *s
 
 /* print decl_func */
 void ic_decl_func_print(struct ic_decl_func *fdecl, unsigned int *indent_level){
-    /* offset into args
-     * re-used as offset into body
-     * */
-    unsigned int i = 0;
-    /* len of args
-     * re-used as len of body
-     */
-    unsigned int len = 0;
 
     if( ! fdecl ){
         puts("ic_decl_func_print: fdecl was null");
@@ -287,7 +279,7 @@ void ic_decl_func_print(struct ic_decl_func *fdecl, unsigned int *indent_level){
     /* guarantee generation of function string */
     if( ! ic_decl_func_str(fdecl) ){
         puts("ERROR ERROR");
-        puts("ic_decl_func_print: call to ic_decl_func_str failed");
+        puts("ic_decl_func_print_header: call to ic_decl_func_str failed");
         return;
     }
 
@@ -295,6 +287,27 @@ void ic_decl_func_print(struct ic_decl_func *fdecl, unsigned int *indent_level){
     fputs("# ", stdout);
     ic_string_print(&(fdecl->string));
     puts("");
+
+    ic_decl_func_print_header(fdecl, indent_level);
+    ic_decl_func_print_body(fdecl, indent_level);
+}
+
+void ic_decl_func_print_header(struct ic_decl_func *fdecl, unsigned int *indent_level){
+    /* offset into args */
+    unsigned int i = 0;
+    /* len of args */
+    unsigned int len = 0;
+
+
+    if( ! fdecl ){
+        puts("ic_decl_func_print_header: fdecl was null");
+        return;
+    }
+
+    if( ! indent_level ){
+        puts("ic_decl_func_print_header: indent_level was null");
+        return;
+    }
 
     /* print `function`, name, and opening bracket */
     printf("fn %s(", ic_symbol_contents( &(fdecl->name) ));
@@ -325,10 +338,18 @@ void ic_decl_func_print(struct ic_decl_func *fdecl, unsigned int *indent_level){
         /* otherwise print Void */
         puts("Void");
     }
+}
 
-    /* get length of body */
-    len = ic_body_length( &(fdecl->body) );
+void ic_decl_func_print_body(struct ic_decl_func *fdecl, unsigned int *indent_level){
+    if( ! fdecl ){
+        puts("ic_decl_func_print_body: fdecl was null");
+        return;
+    }
 
+    if( ! indent_level ){
+        puts("ic_decl_func_print_body: indent_level was null");
+        return;
+    }
 
     /* print body
      * body will handle indent_level incr and decr for us
@@ -608,8 +629,6 @@ unsigned int ic_decl_type_add_field(struct ic_decl_type *tdecl, struct ic_field 
 
 /* print the decl_type to stdout */
 void ic_decl_type_print(struct ic_decl_type *tdecl, unsigned int *indent_level){
-    unsigned int i = 0;
-
     if( ! tdecl ){
         puts("ic_decl_type_print: tdecl was null");
         return;
@@ -619,8 +638,36 @@ void ic_decl_type_print(struct ic_decl_type *tdecl, unsigned int *indent_level){
         return;
     }
 
+    ic_decl_type_print_header(tdecl, indent_level);
+    ic_decl_type_print_body(tdecl, indent_level);
+}
+
+void ic_decl_type_print_header(struct ic_decl_type *tdecl, unsigned int *indent_level){
+    if( ! tdecl ){
+        puts("ic_decl_type_print_header: tdecl was null");
+        return;
+    }
+    if( ! indent_level ){
+        puts("ic_decl_type_print_header: indent_level was null");
+        return;
+    }
+
     /* print type and name */
     printf ("type %s\n", ic_symbol_contents(&(tdecl->name)) );
+}
+
+void ic_decl_type_print_body(struct ic_decl_type *tdecl, unsigned int *indent_level){
+    unsigned int i = 0;
+
+    if( ! tdecl ){
+        puts("ic_decl_type_print_body: tdecl was null");
+        return;
+    }
+    if( ! indent_level ){
+        puts("ic_decl_type_print_body: indent_level was null");
+        return;
+    }
+
 
     /* increment indent level before body */
     ++ *indent_level;
@@ -891,10 +938,12 @@ void ic_decl_print(struct ic_decl *decl, unsigned int *indent_level){
             ic_decl_type_print( ic_decl_get_tdecl(decl), indent_level );
             break;
         case ic_decl_tag_builtin_func:
-            puts("ic_decl_print: printing of builtin funcs not yet supported");
+            fputs("builtin ", stdout);
+            ic_decl_func_print_header( ic_decl_get_fdecl(decl), indent_level );
             break;
         case ic_decl_tag_builtin_type:
-            puts("ic_decl_print: printing of builtin type not yet supported");
+            fputs("builtin ", stdout);
+            ic_decl_type_print_header( ic_decl_get_tdecl(decl), indent_level );
             break;
         case ic_decl_tag_builtin_op:
             puts("ic_decl_print: printing of builtin op not yet supported");
