@@ -24,9 +24,8 @@ For this target the following systems are currently 'complete':
 
 We have the contents of `example/simple.ic`:
 
-
-    example/simple.ic contents:
-    ----------------
+     example/simple.ic contents:
+     ----------------
     # user defined type with 2 fields, an Int and a String
     type Foo
         a::Int
@@ -61,7 +60,8 @@ We have the contents of `example/simple.ic`:
 
     # hack to work around lack of constructors
     builtin fn Foo(a::Int b::String) -> Foo
-    ----------------
+;
+     ----------------
 
 
 
@@ -147,7 +147,8 @@ Hidden elsewhere in the output we can see the parser reconstructing the program 
         d(f)
     end
 
-    builtin fn plus(a::Int b::Int) -> Int end
+    builtin fn Foo(a::Int b::String) -> Foo
+
     ----------------
 
 Finally the analyse step's outputs showing no errors, but making it clear that it isn't complete yet
@@ -156,6 +157,7 @@ Finally the analyse step's outputs showing no errors, but making it clear that i
     ----------------
     warning: main implementation pending, icarus is currently only partially functional
     analysis complete
+
     ----------------
 
 
