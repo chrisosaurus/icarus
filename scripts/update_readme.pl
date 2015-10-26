@@ -9,6 +9,13 @@ my $readme_path = "README.md";
 my $example_path = "example/simple.ic";
 my $command = "make example";
 
+# make a backup of readme first
+my $out = `cp $readme_path "$readme_path.bkp"`;
+if( $? ){
+    die "failed to cp : $out : $!\n";
+}
+
+
 # run our command (make example) and capture output
 my $output = `$command`;
 my $ret = $?;

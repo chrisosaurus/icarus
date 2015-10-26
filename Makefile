@@ -108,5 +108,9 @@ $(TESTO) : $(TESTOUT)/% : %.c
 test_success:
 	@echo -e "\n\ntesting success\n"
 
-.PHONY: all clean cleanobj icarus test test_custom example
+readme:
+	@echo -e "\n\ngenerating README.md"
+	perl scripts/update_readme.pl
+
+.PHONY: all clean cleanobj icarus test test_custom example readme
 

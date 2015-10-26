@@ -10,3 +10,4 @@ bin/*
 
 *coverall.sh
 
+*.bkp
