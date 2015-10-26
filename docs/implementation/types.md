@@ -17,25 +17,9 @@ at parse time we have:
 * ic_type_ref - a reference to a type, built during parse
 * ic_decl_type - the information captured for a user declared type
 
-at the analysis phase we have:
-* ic_type_builtin - the information needed for a builtin
-* ic_type - the concept of a type, either builtin or user defined, and points to ic_decl_type or ic_type_builtin
-
-
 eventually we want the following dep. diagram:
 
-    ic_type_builin - a builtin type
-        ^
-        |      ic_decl_type - a user defined type
-        |            ^
-        |            |
-         \          /
-          \        /
-           \      /
-            \    /
-             \  /
-              \/
-            ic_type - a type, one instance per type (Int, String, Foo, Bar, ...)
+            ic_decl_type - a type definition
              ^   ^
              |    \
              |     \   (reference via the symbol -> ic_type dict, not explicit)
@@ -66,16 +50,5 @@ In icarus a type_ref has 3 possible states:
 * error - a user fixable error occurred during inference
 
 during the analyse phase an ic_type_ref will be converted into an ic_type *
-
-
-ic_type
--------
-
-ic_type is an abstraction over both builtin and user defined types
-
-an ic_type thus has 2 states:
-
-* builtin - this type is a builtin type defined in the icarus source code
-* user - this type is a type defined by the user in their program source
 
 
