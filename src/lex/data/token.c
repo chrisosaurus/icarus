@@ -186,6 +186,9 @@ char * ic_token_get_representation(struct ic_token *token){
         case IC_MULTIPLY:
             return "*";
             break;
+        case IC_MODULO:
+            return "%";
+            break;
 
 
         case IC_LRBRACKET:
@@ -498,6 +501,9 @@ void ic_token_id_print_debug(enum ic_token_id id){
             break;
         case IC_MULTIPLY:
             fputs("IC_MULTIPLY", stdout);
+            break;
+        case IC_MODULO:
+            fputs("IC_MODULO", stdout);
             break;
 
         case IC_LRBRACKET:

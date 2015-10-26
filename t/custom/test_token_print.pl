@@ -41,8 +41,9 @@ print testing
 25 : -
 26 : /
 27 : *
-28 : (
-29 : )
+28 : %
+29 : (
+30 : )
 ---------
 
 print debug testing
@@ -75,8 +76,9 @@ print debug testing
 25 : IC_MINUS
 26 : IC_DIVIDE
 27 : IC_MULTIPLY
-28 : IC_LRBRACKET
-29 : IC_RRBRACKET
+28 : IC_MODULO
+29 : IC_LRBRACKET
+30 : IC_RRBRACKET
 ---------
 EOF
 

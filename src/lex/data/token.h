@@ -38,6 +38,7 @@ enum ic_token_id {
     IC_MINUS,
     IC_DIVIDE,
     IC_MULTIPLY,
+    IC_MODULO,
 
     IC_LRBRACKET, /* ( left round bracket */
     IC_RRBRACKET, /* ) right round backet */

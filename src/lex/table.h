@@ -46,6 +46,7 @@ struct ic_table_entry table[] = {
     { "-",          1,      IC_MINUS },
     { "/",          1,      IC_DIVIDE },
     { "*",          1,      IC_MULTIPLY },
+    { "%",          1,      IC_MODULO },
 
     { "(",          1,      IC_LRBRACKET },
     { ")",          1,      IC_RRBRACKET },
