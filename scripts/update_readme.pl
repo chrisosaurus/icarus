@@ -42,21 +42,21 @@ die "Failed to match expected format\n" unless $output =~ m{
 
     ^lexer \s output:\n
     ^----------------\n
-    (?<lexer_output> .*? )
+    (?<lexer_output> .*? )\n
     ^----------------\n
 
     \s*
 
     ^parser \s output:\n
     ^----------------\n
-    (?<parser_output> .*? )
+    (?<parser_output> .*? )\n
     ^----------------\n
 
     \s*
 
     ^analyse \s output:\n
     ^----------------\n
-    (?<analyse_output> .*? )
+    (?<analyse_output> .*? )\n
     ^----------------\n
 
 }xms;
@@ -82,10 +82,10 @@ die "Failed to build new README : example block\n" unless $readme_contents =~ s/
     .*?
     ^\s+----------------\n
 /
-     example\/simple.ic contents:
-     ----------------
-$example_contents;
-     ----------------
+    example\/simple.ic contents:
+    ----------------
+$example_contents
+    ----------------
 /xms;
 
 die "Failed to build new README : lexer block\n" unless $readme_contents =~ s/
