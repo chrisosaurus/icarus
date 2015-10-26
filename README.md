@@ -25,6 +25,8 @@ For this target the following systems are currently 'complete':
 We have the contents of `example/simple.ic`:
 
 
+    example/simple.ic contents:
+    ----------------
     # user defined type with 2 fields, an Int and a String
     type Foo
         a::Int
@@ -59,6 +61,7 @@ We have the contents of `example/simple.ic`:
 
     # hack to work around lack of constructors
     builtin fn Foo(a::Int b::String) -> Foo
+    ----------------
 
 
 
