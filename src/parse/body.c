@@ -1,4 +1,5 @@
 #include <stdio.h> /* puts */
+#include <stdlib.h>
 
 #include "data/body.h"
 #include "parse.h"
@@ -45,30 +46,35 @@ struct ic_body * ic_parse_body(struct ic_token_list *token_list){
         stmt = ic_parse_stmt(token_list);
         if( ! stmt ){
             puts("ic_parse_body: call to ic_parse_stmt failed");
-            return 0;
+            goto ERROR;
         }
 
         /* store this stmt in the body */
         if( -1 == ic_body_append(body, stmt) ){
             puts("ic_parse_body: call to ic_body_append failed");
-            return 0;
+            goto ERROR;
         }
     }
+
     /* consume end */
     token = ic_token_list_expect_important(token_list, IC_END);
     if( ! token ){
         puts("ic_parse_body: unable to find end token");
-        return 0;
+        goto ERROR;
     }
 
     /* if success is 1 then we hit an end token */
     if( success ){
-            /* victory */
+        /* victory */
         return body;
     }
 
-    /* otherwise another error occurred */
-    puts("ic_parse_body: call to ic_parse_this_is_not_the_end encountered an error");
+    puts("ic_parse_body: unknown error");
+
+ERROR:
+    /* FIXME free here probably isn't enough... */
+    free(body);
+
     return 0;
 }
 

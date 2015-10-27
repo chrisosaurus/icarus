@@ -28,7 +28,7 @@ struct ic_decl_func {
      */
     struct ic_symbol *ret_type;
 
-    struct ic_body body;
+    struct ic_body *body;
 
     /* the string representation of this function decl */
     struct ic_string string;

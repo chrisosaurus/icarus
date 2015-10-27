@@ -435,12 +435,6 @@ struct ic_decl * ic_parse_decl_func_header(struct ic_token_list *token_list){
 struct ic_decl * ic_parse_decl_func_body(struct ic_token_list *token_list, struct ic_decl *decl){
     /* our tdecl within the decl */
     struct ic_decl_func *fdecl = 0;
-    /* used to mark success of while loop */
-    int success  = 0;
-    /* pointer used for each stmt within body */
-    struct ic_stmt *stmt = 0;
-    /* current token */
-    struct ic_token *token = 0;
 
     /* fn name(args...) -> return_type
      *      body...
@@ -464,55 +458,19 @@ struct ic_decl * ic_parse_decl_func_body(struct ic_token_list *token_list, struc
         return 0;
     }
 
-    /* parse body */
-
-    /* iterate through all tokens
-     * until `end`
-     */
-    while( (token = ic_token_list_peek_important(token_list)) ){
-        if( token->id == IC_END ){
-            success = 1;
-            break;
-        }
-
-        /* leave stmt parsing up to the experts */
-        stmt = ic_parse_stmt(token_list);
-        if( ! stmt ){
-            puts("ic_parse_decl_func_body: call to ic_parse_stmt failed");
-            free(decl);
-            return 0;
-        }
-
-        /* save to our body */
-        if( ! ic_decl_func_add_stmt(fdecl, stmt) ){
-            puts("ic_parse_decl_func_body: call to ic_decl_func_add_stmt failed");
-            free(decl);
-            return 0;
-        }
-    }
-
-    /* consume end token */
-    token = ic_token_list_expect_important(token_list, IC_END);
-    if( ! token ){
-        puts("ic_parse_decl_func_body: call to ic_token_list_expect for end failed");
+    if( fdecl->body ){
+        puts("ic_parse_decl_func_body: body was already set");
         return 0;
     }
 
-    /* if success is 1 then we found an `end` token */
-    if( success ){
-        /* victory ! */
-        return decl;
+    /* parse body */
+    fdecl->body = ic_parse_body(token_list);
+    if( ! fdecl->body ){
+        puts("ic_parse_decl_func_body: call to ic_parse_body failed");
+        return 0;
     }
 
-    /* this means we ran out of tokens
-     * or that some other error occured
-     *
-     * this is an error case as `end` should cause the
-     * successful return
-     */
-    puts("ic_parse_decl_func_body: error occurred in ic_parse_this_is_not_the_end");
-    free(decl);
-    return 0;
+    return decl;
 }
 
 

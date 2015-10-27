@@ -81,10 +81,7 @@ unsigned int ic_decl_func_init(struct ic_decl_func *fdecl, char *name, unsigned 
     fdecl->ret_type = 0;
 
     /* initialise our empty body */
-    if( ! ic_body_init( &(fdecl->body) ) ){
-        puts("ic_decl_func_init: call to ic_body_init failed");
-        return 0;
-    }
+    fdecl->body = 0;
 
     return 1;
 }
@@ -158,12 +155,14 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
         }
     }
 
-    /* free body contents but do not free body itself
-     * since it is an element on fdecl
-     */
-    if( ! ic_body_destroy(&(fdecl->body), 0) ){
-        puts("ic_decl_type_destroy: for body call to ic_body_destroy failed");
-        return 0;
+    if( fdecl->body ){
+        /* free body contents but do not free body itself
+         * since it is an element on fdecl
+         */
+        if( ! ic_body_destroy(fdecl->body, 0) ){
+            puts("ic_decl_type_destroy: for body call to ic_body_destroy failed");
+            return 0;
+        }
     }
 
     /* only free if caller asked */
@@ -254,8 +253,13 @@ unsigned int ic_decl_func_add_stmt(struct ic_decl_func *fdecl, struct ic_stmt *s
         return 0;
     }
 
+    if( ! fdecl->body ){
+        puts("ic_decl_func_add_stmt: body was null");
+        return 0;
+    }
+
     /* add our element */
-    if( -1 == ic_body_append( &(fdecl->body), stmt ) ){
+    if( -1 == ic_body_append( fdecl->body, stmt ) ){
         puts("ic_decl_func_add_stmt: call to ic_body_append failed");
         return 0;
     }
@@ -351,10 +355,12 @@ void ic_decl_func_print_body(struct ic_decl_func *fdecl, unsigned int *indent_le
         return;
     }
 
-    /* print body
-     * body will handle indent_level incr and decr for us
-     */
-    ic_body_print( &(fdecl->body), indent_level);
+    if( fdecl->body ){
+        /* print body
+         * body will handle indent_level incr and decr for us
+         */
+        ic_body_print( fdecl->body, indent_level);
+    }
 
     /* print end\n */
     puts("end");

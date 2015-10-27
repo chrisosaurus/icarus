@@ -234,7 +234,12 @@ unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func 
         goto ERROR;
     }
 
-    if( fdecl->body.scope ){
+    if( ! fdecl->body ){
+        puts("ic_analyse_decl_func: fdecl had no body");
+        goto ERROR;
+    }
+
+    if( fdecl->body->scope ){
         puts("ic_analyse_decl_func: scope was already set on body");
         goto ERROR;
     }
@@ -242,7 +247,7 @@ unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func 
     /* store scope
      * FIXME this scope is currently leaked
      */
-    fdecl->body.scope = scope;
+    fdecl->body->scope = scope;
 
     /* insert each arg as a lot into a scope
      * FIXME this is gross as it means we are iterating through args twice
@@ -296,7 +301,7 @@ unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func 
     }
 
     /* check body */
-    if( ! ic_analyse_body( "func declaration", this_func, kludge, &(fdecl->body), fdecl) ){
+    if( ! ic_analyse_body( "func declaration", this_func, kludge, fdecl->body, fdecl) ){
         puts("ic_analyse_decl_func: call to ic_analyse_body for validating body failed");
         goto ERROR;
     }
