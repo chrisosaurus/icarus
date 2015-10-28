@@ -3,8 +3,8 @@ Goal
 
 at any interface / boundary we want an explicit contract where both ends know the following:
 
-1) what am I allowed to do with this data
-2) what can my 'donator' (caller) do with this data
+1. what am I allowed to do with this data
+2. what can my 'donator' (caller) do with this data
 
 permissions
 ===========
