@@ -182,7 +182,7 @@ here foo says it needs a storable mutable, however in NO BRANCH does it either s
 this should be an error or at the very least a warning (warnings are useful when you want to compile partial code)
 
 
-Alising
+Aliasing
 =======
 
 We do allow aliasing, as long as the alias never violates the permissions
