@@ -206,3 +206,40 @@ we then mutate the original value via `&b = 14`.
 note that as per 'minimal permissions' the `foo(@a)` would raise a warning/error due to not using the storable perm.
 
 
+Making mutation visible
+======================
+
+The above means that possible mutation is obvious
+
+for example
+
+    fn main()
+        let a = 14
+        let l = List()
+
+        # here I am really calling append(&l, @a)
+        # so I must make sure to pass a mutable l, otherwise append could not modify it
+        # I am also saying that this function is allowed to store a
+        # and thus may mutate it now or later
+        # this also now means that anyone I give &l to may also store or mutate a through the
+        # interface to &l
+        &l.append(@a)
+
+        print(a)
+
+        add_one_to_all(&l)
+
+        print(a)
+    end
+
+    fn add_one_to_all(&l::List)
+        for &item in &l
+            &item += 1
+        end
+    end
+
+this program will output '14' and then '15'
+
+note that `&l.append(@a)` is really saying 'append may store or mutate a, and a may now be stored and mutated through &l`
+
+
