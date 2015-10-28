@@ -65,32 +65,32 @@ Permissions can be converted as long as the resulting type does not give away 'm
 
 note that any conversion to frozen is a copy, so all types can be converted to frozen safely (without giving away rights to the existing value, as frozen sets rights for a *new* value)
 
-    frozen a         -> frozen a
-                     -> immut a
-                     -> storable immut a
-                     -> mut a
-                     -> storable mut a
+    frozen x         -> frozen x
+                     -> immut x
+                     -> storable immut x
+                     -> mut x
+                     -> storable mut x
 
 
-    immut a          -> frozen a
-                     -> immut a
+    immut x          -> frozen x
+                     -> immut x
 
 
-    storable immut a -> frozen a
-                     -> immut a
-                     -> storable immut a
+    storable immut x -> frozen x
+                     -> immut x
+                     -> storable immut x
 
 
-    mut a            -> frozen a
-                     -> immut a
-                     -> mut a
+    mut x            -> frozen x
+                     -> immut x
+                     -> mut x
 
 
-    storable mut a   -> frozen a
-                     -> immut a
-                     -> shared immut a
-                     -> mut a
-                     -> storable mut a
+    storable mut x   -> frozen x
+                     -> immut x
+                     -> shared immut x
+                     -> mut x
+                     -> storable mut x
 
 
 Default
@@ -108,11 +108,11 @@ The syntax needs to capture these permissions, ideally in a clear and visually o
 sigils
 ------
 
-     a = frozen a
-    $a = immut a
-    %a = storable immut a
-    &a = mut a
-    @a = storable mut a
+     x = frozen x
+    $x = immut x
+    %x = storable immut x
+    &x = mut x
+    @x = storable mut x
 
 
 Local
@@ -120,16 +120,16 @@ Local
 
 Since our goal is only about capturing a contract between interfaces, what a body does to local only variables is not of great concern
 
-    fn foo(&a::Int)
-        let b = 15
-        b += 1
-        b += 8
-        &a = b
+    fn foo(&x::Int)
+        let y = 15
+        y += 1
+        y += 8
+        &x = y
     end
 
-here this foo happily reassigns the internal variable b, mutating as happy as can be
+here this foo happily reassigns the internal variable y, mutating as happy as can be
 
-until finally mutating a, at this point this mutation has external side effects so we must capture this via permissions.
+until finally mutating x, at this point this mutation has external side effects so we must capture this via permissions.
 
 
 Decay
@@ -137,28 +137,28 @@ Decay
 
 By default variables decay to frozen
 
-    fn bar(a::Int)
-        print(a)
+    fn bar(x::Int)
+        print(x)
     end
 
-    fn baz(&a::Int)
-        print(a)
+    fn baz(&x::Int)
+        print(x)
     end
 
-    fn foo(&a::Int)
-        bar(a)
-        baz(&a)
+    fn foo(&x::Int)
+        bar(x)
+        baz(&x)
     end
 
     fn main()
-        let a = 14
-        foo(&a)
+        let x = 14
+        foo(&x)
     end
 
-the call `bar(a)` is giving a frozen variable
-the call `baz(&a)` is preventing this decay by explicitly passing a mutable reference
+the call `bar(x)` is giving a frozen variable
+the call `baz(&x)` is preventing this decay by explicitly passing a mutable reference
 
-I am unsure about the `let a = 14` and then `foo(&a)` within main
+I am unsure about the `let x = 14` and then `foo(&x)` within main
 
 
 Minimal permissions
@@ -167,15 +167,15 @@ Minimal permissions
 The compiler will also try enforce that you don't do silly things with permissions / sigils
 
     fn main()
-        let @a = 14
+        let @x = 14
     end
 
-here the `let @a` is needless, as the `a` is frozen and therefore I already have that permission,
+here the `let @x` is needless, as the `x` is frozen and therefore I already have that permission,
 this should be an error or at the very least a warning.
 
 
-    fn foo(@a::Int)
-        print(a)
+    fn foo(@x::Int)
+        print(x)
     end
 
 here foo says it needs a storable mutable, however in NO BRANCH does it either store or mutate
@@ -187,23 +187,23 @@ Aliasing
 
 We do allow aliasing, as long as the alias never violates the permissions
 
-    fn foo(@a::Int)
-        let &b = a
-        &b = 14
+    fn foo(@x::Int)
+        let &y = x
+        &y = 14
     end
 
     fn main()
-        let a = 5
-        foo(@a)
-        print(a)
+        let x = 5
+        foo(@x)
+        print(x)
     end
 
 this problem will output `14`
 
-the `let &b = a` is making an alias to a with the mutable permission,
-we then mutate the original value via `&b = 14`.
+the `let &y = x` is making an alias to x with the mutable permission,
+we then mutate the original value via `&y = 14`.
 
-note that as per 'minimal permissions' the `foo(@a)` would raise a warning/error due to not using the storable perm.
+note that as per 'minimal permissions' the `foo(@x)` would raise a warning/error due to not using the storable perm.
 
 
 Making mutation visible
@@ -214,22 +214,22 @@ The above means that possible mutation is obvious
 for example
 
     fn main()
-        let a = 14
+        let x = 14
         let l = List()
 
-        # here I am really calling append(&l, @a)
+        # here I am really calling append(&l, @x)
         # so I must make sure to pass a mutable l, otherwise append could not modify it
-        # I am also saying that this function is allowed to store a
+        # I am also saying that this function is allowed to store x
         # and thus may mutate it now or later
-        # this also now means that anyone I give &l to may also store or mutate a through the
+        # this also now means that anyone I give &l to may also store or mutate x through the
         # interface to &l
-        &l.append(@a)
+        &l.append(@x)
 
-        print(a)
+        print(x)
 
         add_one_to_all(&l)
 
-        print(a)
+        print(x)
     end
 
     fn add_one_to_all(&l::List)
@@ -240,7 +240,7 @@ for example
 
 this program will output '14' and then '15'
 
-note that `&l.append(@a)` is really saying 'append may store or mutate a, and a may now be stored and mutated through &l`
+note that `&l.append(@x)` is really saying 'append may store or mutate x, and a may now be stored and mutated through &l`
 
 
 
@@ -254,13 +254,13 @@ safe decay
 for example the builtin function print only needs to be able to read, it will never write or store
 
     # builtin print function for an Int
-    builtin fn print($a::Int)
+    builtin fn print($x::Int)
 
 and thus a call to this function has to give at least the 'immut' right
 
     fn main()
-        let a = 4
-        print(a)
+        let x = 4
+        print(x)
     end
 
 note there that I am really passing a frozen in, as the contract for a frozen is at least the contract for an immut
@@ -271,8 +271,8 @@ I think it should be safe to pass in a frozen to (almost?) any function, regardl
 However I think passing in another explicit permission should be an error
 
     fn main2()
-        let a = 4
-        print(&a)
+        let x = 4
+        print(&x)
     end
 
 here this should be an error or at the least a warning,
@@ -285,10 +285,10 @@ maybe unsafe / useless decay
 There is an interesting potential special case around containers
 
     fn main()
-        let a = 5
+        let x = 5
         let l = List()
 
-        l.append(a)
+        l.append(x)
     end
 
 here I am creating a list, but when I call append I pass in both the list and the value as frozen
@@ -297,7 +297,7 @@ this is interesting as it is technically not a violation of the permissions syst
 
 However as we know how append works, we know that this call is useless
 
-it will take a frozen l and frozen a, it will then store that frozen a on the frozen l, it will then return
+it will take a frozen l and frozen x, it will then store that frozen x on the frozen l, it will then return
 
 overall this makes no actual observable changes
 
