@@ -243,3 +243,65 @@ this program will output '14' and then '15'
 note that `&l.append(@a)` is really saying 'append may store or mutate a, and a may now be stored and mutated through &l`
 
 
+
+Automatic decay
+==============
+
+A function has to specify the minimum permissions that is requires to work, and a function cannot work beyond those
+
+safe decay
+----------
+for example the builtin function print only needs to be able to read, it will never write or store
+
+    # builtin print function for an Int
+    builtin fn print($a::Int)
+
+and thus a call to this function has to give at least the 'immut' right
+
+    fn main()
+        let a = 4
+        print(a)
+    end
+
+note there that I am really passing a frozen in, as the contract for a frozen is at least the contract for an immut
+
+
+I think it should be safe to pass in a frozen to (almost?) any function, regardless of the rights it wants
+
+However I think passing in another explicit permission should be an error
+
+    fn main2()
+        let a = 4
+        print(&a)
+    end
+
+here this should be an error or at the least a warning,
+as I am explicitly handing in a mutable but it only needs an immut
+
+
+maybe unsafe / useless decay
+----------------------------
+
+There is an interesting potential special case around containers
+
+    fn main()
+        let a = 5
+        let l = List()
+
+        l.append(a)
+    end
+
+here I am creating a list, but when I call append I pass in both the list and the value as frozen
+
+this is interesting as it is technically not a violation of the permissions system, as a frozen l can still be mutated, and a frozen a can still be stored.
+
+However as we know how append works, we know that this call is useless
+
+it will take a frozen l and frozen a, it will then store that frozen a on the frozen l, it will then return
+
+overall this makes no actual observable changes
+
+we may want to allow a syntax to prevent this kind of useless decay,
+however there may also be cases where we want to do this, to get around a broken interface asking for rights we don't want to give away.
+
+
