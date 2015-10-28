@@ -127,7 +127,7 @@ Arguments passed to function by default pass an immutable reference
     ....
 
     let x = 5
-    foo(5)
+    foo(x)
 
 is a function taking an immutable reference to an int,
 any attempts to mutate a will result in a compile time error,
