@@ -182,3 +182,25 @@ here foo says it needs a storable mutable, however in NO BRANCH does it either s
 this should be an error or at the very least a warning (warnings are useful when you want to compile partial code)
 
 
+Alising
+=======
+
+We do allow aliasing, as long as the alias never violates the permissions
+
+    fn foo(@a::Int)
+        let &b = a
+        &b = 14
+    end
+
+    fn main()
+        let a = 5
+        foo(@a)
+        print(a)
+    end
+
+this problem will output `14`
+
+the `let &b = a` is making an alias to a with the mutable permission,
+we then mutate the original value via `&b = 14`.
+
+
