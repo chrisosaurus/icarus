@@ -203,4 +203,6 @@ this problem will output `14`
 the `let &b = a` is making an alias to a with the mutable permission,
 we then mutate the original value via `&b = 14`.
 
+note that as per 'minimal permissions' the `foo(@a)` would raise a warning/error due to not using the storable perm.
+
 
