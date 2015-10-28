@@ -14,7 +14,7 @@ In this proposal we consider a more rich and complex set of permissions
 
 Frozen:
 
-- unique copy
+- unique copy (every time a frozen is passed it is copied)
 - you can write
 - you can read
 - you can store
