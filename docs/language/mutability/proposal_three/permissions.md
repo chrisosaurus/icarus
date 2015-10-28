@@ -57,13 +57,13 @@ Storable Mutable:
 - 'donator' can write, read, and store
 
 
-| Permission          | receiver can write | receiver can read | receiver can store | donator can read/write/store |
-| ---                 | ---                | ---               | ---                | ---                          |
-| Frozen              | yes                | yes               | yes                | no                           |
-| Immutable           | no                 | yes               | no                 | yes                          |
-| Storable Immutable  | no                 | yes               | yes                | yes                          |
-| Mutable             | yes                | yes               | no                 | yes                          |
-| Storabge Mutable    | yes                | yes               | yes                | yes                          |
+| Permission              | receiver can write | receiver can read | receiver can store | donator can read/write/store |
+| ---                     | ---                | ---               | ---                | ---                          |
+| **Frozen**              | yes                | yes               | yes                | no                           |
+| **Immutable**           | no                 | yes               | no                 | yes                          |
+| **Storable Immutable**  | no                 | yes               | yes                | yes                          |
+| **Mutable**             | yes                | yes               | no                 | yes                          |
+| **Storabge Mutable**    | yes                | yes               | yes                | yes                          |
 
 
 Conversions
@@ -101,14 +101,14 @@ note that any conversion to frozen is a copy, so all types can be converted to f
                      -> storable mut x
 
 
-| Permission          | **To** | Frozen | Immutable | Storable Immutable | Mutable | Storable Mutable |
-| ---                 | ---    | ---    | ---       | ---                | ---     | ---              |
-| **From**            | ---    | ---    | ---       | ---                | ---     | ---              |
-| Frozen              | ---    | yes    | yes       | yes                | yes     | yes              |
-| Immutable           | ---    | yes    | yes       | no                 | no      | no               |
-| Storable Immutable  | ---    | yes    | yes       | yes                | no      | no               |
-| Mutable             | ---    | yes    | yes       | no                 | yes     | no               |
-| Storable Mutable    | ---    | yes    | yes       | yes                | yes     | yes              |
+| Permission              | To | Frozen | Immutable | Storable Immutable | Mutable | Storable Mutable |
+| ---                     | ---| ---    | ---       | ---                | ---     | ---              |
+| **From**                | ---| ---    | ---       | ---                | ---     | ---              |
+| **Frozen**              | ---| yes    | yes       | yes                | yes     | yes              |
+| **Immutable**           | ---| yes    | yes       | no                 | no      | no               |
+| **Storable Immutable**  | ---| yes    | yes       | yes                | no      | no               |
+| **Mutable**             | ---| yes    | yes       | no                 | yes     | no               |
+| **Storable Mutable**    | ---| yes    | yes       | yes                | yes     | yes              |
 
 
 Default
