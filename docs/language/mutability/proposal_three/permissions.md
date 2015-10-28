@@ -132,3 +132,31 @@ here this foo happily reassigns the internal variable b, mutating as happy as ca
 until finally mutating a, at this point this mutation has external side effects so we must capture this via permissions.
 
 
+Decay
+=====
+
+By default variables decay to frozen
+
+    fn bar(a::Int)
+        print(a)
+    end
+
+    fn baz(&a::Int)
+        print(a)
+    end
+
+    fn foo(&a::Int)
+        bar(a)
+        baz(&a)
+    end
+
+    fn main()
+        let a = 14
+        foo(&a)
+    end
+
+the call `bar(a)` is giving a frozen variable
+the call `baz(&a)` is preventing this decay by explicitly passing a mutable reference
+
+I am unsure about the `let a = 14` and then `foo(&a)` within main
+
