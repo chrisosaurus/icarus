@@ -160,3 +160,25 @@ the call `baz(&a)` is preventing this decay by explicitly passing a mutable refe
 
 I am unsure about the `let a = 14` and then `foo(&a)` within main
 
+
+Minimal permissions
+===================
+
+The compiler will also try enforce that you don't do silly things with permissions / sigils
+
+    fn main()
+        let @a = 14
+    end
+
+here the `let @a` is needless, as the `a` is frozen and therefore I already have that permission,
+this should be an error or at the very least a warning.
+
+
+    fn foo(@a::Int)
+        print(a)
+    end
+
+here foo says it needs a storable mutable, however in NO BRANCH does it either store or mutate
+this should be an error or at the very least a warning (warnings are useful when you want to compile partial code)
+
+
