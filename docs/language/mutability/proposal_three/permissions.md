@@ -1,4 +1,4 @@
-Goal
+Goals
 ====
 
 at any interface / boundary we want an explicit contract where both ends know the following:
