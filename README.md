@@ -19,7 +19,7 @@ For this target the following systems are currently 'complete':
 
 * lexer
 * parser (syntactic analysis)
-* analsye (semantic analysis)
+* analyse (semantic analysis)
 
 
 We have the contents of `example/simple.ic`:
