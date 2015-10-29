@@ -376,7 +376,7 @@ I think this means we end up with a few different types, depending on the interf
     # a List type for storing mutables
     builtin type ListMut<T>
     builtin fn append<T>(&l::ListMut<T>, @t::T)
-    builtin fn get<T>(l::ListMut<T>) -> %t::T
+    builtin fn get<T>(l::ListMut<T>) -> &t::T
 
     # a List type for storing immutables
     builtin type ListStorableImmut<T>
@@ -399,5 +399,19 @@ I think this means we end up with a few different types, depending on the interf
     builtin fn get<T>(&l::ListFrozen<T>) -> @t::T
 
 this has the potential to get very ugly....
+
+another alternative is to provide different get methods
+
+    # a List type for storing immutables
+    builtin type ListImmut<T>
+    builtin fn append<T>(&l::ListImmut<T>, %t::T)
+    builtin fn get<T>(l::ListImmut<T>) -> $t::T
+    builtin fn getStorable<T>(l::ListImmut<T>) -> %t::T
+
+    # a List type for storing mutables
+    builtin type ListMut<T>
+    builtin fn append<T>(&l::ListMut<T>, @t::T)
+    builtin fn get<T>(l::ListMut<T>) -> &t::T
+    builtin fn getStorable<T>(l::ListMut<T>) -> @t::T
 
 
