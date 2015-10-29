@@ -400,7 +400,8 @@ I think this means we end up with a few different types, depending on the interf
 
 this has the potential to get very ugly....
 
-another alternative is to provide different get methods
+another alternative is to provide different get methods,
+and dispatch on permissions
 
     # a List type for storing immutables
     builtin type ListImmut<T>
@@ -412,8 +413,8 @@ another alternative is to provide different get methods
     builtin type ListMut<T>
     builtin fn append<T>(&l::ListMut<T>, @t::T)
     builtin fn get<T>(&l::ListMut<T>) -> &t::T
-    builtin fn getStorable<T>(&l::ListMut<T>) -> @t::T
     builtin fn get<T>(l::ListMut<T>) -> $t::T
+    builtin fn getStorable<T>(&l::ListMut<T>) -> @t::T
     builtin fn getStorable<T>(l::ListMut<T>) -> %t::T
 
 
