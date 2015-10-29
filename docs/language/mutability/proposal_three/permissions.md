@@ -57,6 +57,9 @@ Storable Mutable:
 - 'donator' can write, read, and store
 
 
+permission table
+----------------
+
 | Permission              | receiver can write | receiver can read | receiver can store | donator can read/write/store |
 | ---                     | ---                | ---               | ---                | ---                          |
 | **Frozen**              | yes                | yes               | yes                | no                           |
@@ -100,6 +103,8 @@ note that any conversion to frozen is a copy, so all types can be converted to f
                      -> mut x
                      -> storable mut x
 
+conversion table
+----------------
 
 | Permission              | To | Frozen | Immutable | Storable Immutable | Mutable | Storable Mutable |
 | ---                     | ---| ---    | ---       | ---                | ---     | ---              |
@@ -109,6 +114,7 @@ note that any conversion to frozen is a copy, so all types can be converted to f
 | **Storable Immutable**  | ---| yes    | yes       | yes                | no      | no               |
 | **Mutable**             | ---| yes    | yes       | no                 | yes     | no               |
 | **Storable Mutable**    | ---| yes    | yes       | yes                | yes     | yes              |
+
 
 
 Default
