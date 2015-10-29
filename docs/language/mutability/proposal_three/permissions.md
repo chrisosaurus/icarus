@@ -408,7 +408,7 @@ example using ListMut
         end
     end
 
-    fn add_int_to_each(&list::ListMut<Int>)
+    fn add_one_to_each(&list::ListMut<Int>)
         for &i in &list
             &i += 1
         end
@@ -435,6 +435,9 @@ This is mostly the same as the type conversion table, the only differences are:
 
 Considerations
 ==============
+
+immutable not (always) being interesting
+----------------------------------------
 
 the immutable permission is not very interesting, yet it has a sigil and thus visible noise
 
@@ -488,4 +491,106 @@ the above snippet is not really more explicit than
         end
     end
 
+a (maybe) more important case
+-----------------------------
+
+a case where the difference between frozen and immut is more obvious is here,
+note that i resort back to the usual notation of `x` being `frozen x` and `$y` being `immut y`
+
+    fn main()
+        let list = ListMut<Int>
+        let x = 14
+        &list.append(@x)
+
+        print($x)
+        add_one_to_each(&list)
+        print($x)
+    end
+
+    fn add_one_to_each(&list::ListMut<Int>)
+        for &i in &list
+            &i += 1
+        end
+    end
+
+the calls
+
+        print($x)
+        add_one_to_each(&list)
+        print($x)
+
+are interesting, as the call to `add_one_to_each` mutates `x` stored inside `&list`
+
+so this code, as it stands, is expected to print
+
+    14
+    15
+
+if we changed this code to be
+
+        print(x)
+        add_one_to_each(&list)
+        print(x)
+
+this code would still print the same
+
+    14
+    15
+
+as the mutation to `x` happens before the call to print where we freeze it
+
+to get around this we would have to freeze `x` *before* the call to add_one_to_all
+
+    fn main()
+        let list = ListMut<Int>
+        let x = 14
+        &list.append(@x)
+
+        let y = x
+        print(y)
+        add_one_to_each(&list)
+        print(y)
+    end
+
+    fn add_one_to_each(&list::ListMut<Int>)
+        for &i in &list
+            &i += 1
+        end
+    end
+
+this would output
+
+    14
+    14
+
+notice that we could also do this via an intermediary
+
+    fn main()
+        let list = ListMut<Int>
+        let x = 14
+        &list.append(@x)
+
+        do_stuff(x, &list)
+    end
+
+    fn add_one_to_each(&list::ListMut<Int>)
+        for &i in &list
+            &i += 1
+        end
+    end
+
+    fn do_stuff(y::Int, &List::ListMut<Int>)
+        print(y)
+        add_one_to_each(&list)
+        print(y)
+    end
+
+here the freezing happens at the point of the do_stuff call.
+
+thoughts
+--------
+
+This may mean that in *most* cases we do not care about the distinction between frozen and immut
+
+are we sure that frozen should be the default?
 
