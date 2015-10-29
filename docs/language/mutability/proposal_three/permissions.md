@@ -66,7 +66,7 @@ permission table
 | **Immutable**           | no                 | yes               | no                 | yes                          |
 | **Storable Immutable**  | no                 | yes               | yes                | yes                          |
 | **Mutable**             | yes                | yes               | no                 | yes                          |
-| **Storabge Mutable**    | yes                | yes               | yes                | yes                          |
+| **Storable Mutable**    | yes                | yes               | yes                | yes                          |
 
 
 Conversions
