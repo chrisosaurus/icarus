@@ -351,7 +351,7 @@ above we agreed this means `x` can now be mutated through `&l`
 
 however, can `x` be mutated through `l` ?
 
-    let &val = l.get(0)
+    let &val = $l.get(0)
 
 here we have fetched out a stored value via get, get doesn't mutate so doesn't need `&l`
 
@@ -371,7 +371,7 @@ I think this means we end up with a few different types, depending on the interf
     # a List type for storing immutables
     builtin type ListImmut<T>
     builtin fn append<T>(&l::ListImmut<T>, %t::T)
-    builtin fn get<T>(l::ListImmut<T>) -> $t::T
+    builtin fn get<T>($l::ListImmut<T>) -> $t::T
 
     # a List type for storing mutables
     builtin type ListMut<T>
@@ -381,7 +381,7 @@ I think this means we end up with a few different types, depending on the interf
     # a List type for storing immutables
     builtin type ListStorableImmut<T>
     builtin fn append<T>(&l::ListStorableImmut<T>, %t::T)
-    builtin fn get<T>(l::ListStorableImmut<T>) -> %t::T
+    builtin fn get<T>($l::ListStorableImmut<T>) -> %t::T
 
     # a List type for storing mutables
     builtin type ListStorableMut<T>
@@ -392,9 +392,9 @@ I think this means we end up with a few different types, depending on the interf
     builtin type ListFrozen<T>
     builtin fn append<T>(&l::ListFrozen<T>, t::T)
     # but then what does it hand out?
-    builtin fn get<T>(l::ListFrozen<T>) -> t::T
-    builtin fn get<T>(l::ListFrozen<T>) -> $t::T
-    builtin fn get<T>(l::ListFrozen<T>) -> %t::T
+    builtin fn get<T>($l::ListFrozen<T>) -> t::T
+    builtin fn get<T>($l::ListFrozen<T>) -> $t::T
+    builtin fn get<T>($l::ListFrozen<T>) -> %t::T
     builtin fn get<T>(&l::ListFrozen<T>) -> &t::T
     builtin fn get<T>(&l::ListFrozen<T>) -> @t::T
 
@@ -406,15 +406,15 @@ and dispatch on permissions
     # a List type for storing immutables
     builtin type ListImmut<T>
     builtin fn append<T>(&l::ListImmut<T>, %t::T)
-    builtin fn get<T>(l::ListImmut<T>) -> $t::T
-    builtin fn getStorable<T>(l::ListImmut<T>) -> %t::T
+    builtin fn get<T>($l::ListImmut<T>) -> $t::T
+    builtin fn getStorable<T>($l::ListImmut<T>) -> %t::T
 
     # a List type for storing mutables
     builtin type ListMut<T>
     builtin fn append<T>(&l::ListMut<T>, @t::T)
     builtin fn get<T>(&l::ListMut<T>) -> &t::T
-    builtin fn get<T>(l::ListMut<T>) -> $t::T
+    builtin fn get<T>($l::ListMut<T>) -> $t::T
     builtin fn getStorable<T>(&l::ListMut<T>) -> @t::T
-    builtin fn getStorable<T>(l::ListMut<T>) -> %t::T
+    builtin fn getStorable<T>($l::ListMut<T>) -> %t::T
 
 
