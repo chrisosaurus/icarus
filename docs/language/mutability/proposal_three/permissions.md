@@ -359,3 +359,45 @@ we now have a pointer to `x` which we can mutate through
 
 and in doing so we are able to mutate the `x` value that is stored inside of `l`.
 
+containers
+==========
+
+I think that a container should not be able to give away any mutable permissions if it is itself immutable
+
+a container that is mutable (but not storable) may be still able to hand out storable mutable references
+
+I think this means we end up with a few different types, depending on the interface we want
+
+    # a List type for storing immutables
+    builtin type ListImmut<T>
+    builtin fn append<T>(&l::ListImmut<T>, %t::T)
+    builtin fn get<T>(l::ListImmut<T>) -> $t::T
+
+    # a List type for storing mutables
+    builtin type ListMut<T>
+    builtin fn append<T>(&l::ListMut<T>, @t::T)
+    builtin fn get<T>(l::ListMut<T>) -> %t::T
+
+    # a List type for storing immutables
+    builtin type ListStorableImmut<T>
+    builtin fn append<T>(&l::ListStorableImmut<T>, %t::T)
+    builtin fn get<T>(&l::ListStorableImmut<T>) -> %t::T
+
+    # a List type for storing mutables
+    builtin type ListStorableMut<T>
+    builtin fn append<T>(&l::ListStorableMut<T>, @t::T)
+    builtin fn get<T>(&l::ListStorableMut<T>) -> @t::T
+
+    # a List type for storing Frozens
+    builtin type ListFrozen<T>
+    builtin fn append<T>(&l::ListFrozen<T>, t::T)
+    # but then what does it hand out?
+    builtin fn get<T>(&l::ListFrozen<T>) -> t::T
+    builtin fn get<T>(&l::ListFrozen<T>) -> $t::T
+    builtin fn get<T>(&l::ListFrozen<T>) -> %t::T
+    builtin fn get<T>(&l::ListFrozen<T>) -> &t::T
+    builtin fn get<T>(&l::ListFrozen<T>) -> @t::T
+
+this has the potential to get very ugly....
+
+
