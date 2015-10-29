@@ -329,3 +329,31 @@ we may want to allow a syntax to prevent this kind of useless decay,
 however there may also be cases where we want to do this, to get around a broken interface asking for rights we don't want to give away.
 
 
+Storage
+======
+
+There are also some potentially interesting cases around storage
+
+multiple arguments
+------------------
+
+    foo(&w, &x, @y, @z)
+
+as this means that `y` and `z` may be stored and mutated either on or through `w`, `x` and each other (`y` could be stored on `z` or vice versa)
+
+
+unexplored cases
+----------------
+
+    &l.append(@x)
+
+above we agreed this means `x` can now be mutated through `&l`
+
+however, can `x` be mutated through `l` ?
+
+    let &val = l.get(0)
+
+here we have fetched out a stored value via get, get doesn't mutate so doesn't need `&l`
+
+we now have a pointer to `x` which we can mutate through
+
