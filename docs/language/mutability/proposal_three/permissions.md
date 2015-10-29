@@ -357,3 +357,5 @@ here we have fetched out a stored value via get, get doesn't mutate so doesn't n
 
 we now have a pointer to `x` which we can mutate through
 
+and in doing so we are able to mutate the `x` value that is stored inside of `l`.
+
