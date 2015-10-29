@@ -418,14 +418,16 @@ example using ListMut
 greater permissions
 --------------------
 
-| Permission              | Contents | Frozen | Immutable | Storable Immutable | Mutable | Storable Mutable |
-| ---                     | ---      | ---    | ---       | ---                | ---     | ---              |
-| **Container**           | ---      | ---    | ---       | ---                | ---     | ---              |
-| **Frozen**              | ---      | yes    | yes       | yes                | yes     | yes              |
-| **Immutable**           | ---      | yes    | yes       | yes                | no      | no               |
-| **Storable Immutable**  | ---      | yes    | yes       | yes                | no      | no               |
-| **Mutable**             | ---      | yes    | yes       | yes                | yes     | yes              |
-| **Storable Mutable**    | ---      | yes    | yes       | yes                | yes     | yes              |
+here is a table showing what permissions we can `get` out from a container of a given permission
+
+| Permission              | Can get out | Frozen | Immutable | Storable Immutable | Mutable | Storable Mutable |
+| ---                     | ---         | ---    | ---       | ---                | ---     | ---              |
+| **Container**           | ---         | ---    | ---       | ---                | ---     | ---              |
+| **Frozen**              | ---         | yes    | yes       | yes                | yes     | yes              |
+| **Immutable**           | ---         | yes    | yes       | yes                | no      | no               |
+| **Storable Immutable**  | ---         | yes    | yes       | yes                | no      | no               |
+| **Mutable**             | ---         | yes    | yes       | yes                | yes     | yes              |
+| **Storable Mutable**    | ---         | yes    | yes       | yes                | yes     | yes              |
 
 This is mostly the same as the type conversion table, the only differences are:
 
