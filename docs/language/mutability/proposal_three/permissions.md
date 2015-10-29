@@ -116,6 +116,26 @@ conversion table
 | **Storable Mutable**    | ---| yes    | yes       | yes                | yes     | yes              |
 
 
+explicit
+--------
+
+conversions must be explicit
+
+for example this is wrong
+
+    fn foo($y::Int) ... end
+
+    let x = 5
+    foo(x)
+
+this is illegal, despite a conversion from frozen x to immutable x being allowed
+
+we can instead do this as long as we make it explicit
+
+    fn foo($y::Int) ... end
+
+    let x = 5
+    foo($x)
 
 Default
 =======
@@ -280,53 +300,28 @@ for example the builtin function print only needs to be able to read, it will ne
     # builtin print function for an Int
     builtin fn print($x::Int)
 
-and thus a call to this function has to give at least the 'immut' right
+and thus a call to this function has to give the immut right
+
+here we call it (illegally) but supplying a frozen
 
     fn main()
         let x = 4
         print(x)
     end
 
-note there that I am really passing a frozen in, as the contract for a frozen is at least the contract for an immut
-
-
-I think it should be safe to pass in a frozen to (almost?) any function, regardless of the rights it wants
-
-However I think passing in another explicit permission should be an error
-
-    fn main2()
-        let x = 4
-        print(&x)
-    end
-
-here this should be an error or at the least a warning,
-as I am explicitly handing in a mutable but it only needs an immut
-
-
-maybe unsafe / useless decay
-----------------------------
-
-There is an interesting potential special case around containers
+we can fix this either by explicitely converting to immut
 
     fn main()
-        let x = 5
-        let l = List()
-
-        l.append(x)
+        let x = 4
+        print($x)
     end
 
-here I am creating a list, but when I call append I pass in both the list and the value as frozen
+or we can make a wrapper function which does this for us
 
-this is interesting as it is technically not a violation of the permissions system, as a frozen l can still be mutated, and a frozen a can still be stored.
+    fn print(y::Int) print($y) end
 
-However as we know how append works, we know that this call is useless
+This is safe as a conversion from frozen to immmut is safe
 
-it will take a frozen l and frozen x, it will then store that frozen x on the frozen l, it will then return
-
-overall this makes no actual observable changes
-
-we may want to allow a syntax to prevent this kind of useless decay,
-however there may also be cases where we want to do this, to get around a broken interface asking for rights we don't want to give away.
 
 
 Storage
@@ -342,8 +337,8 @@ multiple arguments
 as this means that `y` and `z` may be stored and mutated either on or through `w`, `x` and each other (`y` could be stored on `z` or vice versa)
 
 
-unexplored cases
-----------------
+leakage
+-------
 
     &l.append(@x)
 
@@ -353,11 +348,14 @@ however, can `x` be mutated through `l` ?
 
     let &val = $l.get(0)
 
-here we have fetched out a stored value via get, get doesn't mutate so doesn't need `&l`
-
+here we have fetched out a stored value via get, get doesn't mutate so only needs $l.
 we now have a pointer to `x` which we can mutate through
-
 and in doing so we are able to mutate the `x` value that is stored inside of `l`.
+
+I think this is a violation of the permission system, I do not think you should be able to take
+a type with a given permission and extract a type from it with `greater` permissions.
+
+Note that `greater permissions` has to have a specific definition immediately discussed below under `containers`.
 
 containers
 ==========
@@ -368,40 +366,8 @@ a container that is mutable (but not storable) may be still able to hand out sto
 
 I think this means we end up with a few different types, depending on the interface we want
 
-    # a List type for storing immutables
-    builtin type ListImmut<T>
-    builtin fn append<T>(&l::ListImmut<T>, %t::T)
-    builtin fn get<T>($l::ListImmut<T>) -> $t::T
-
-    # a List type for storing mutables
-    builtin type ListMut<T>
-    builtin fn append<T>(&l::ListMut<T>, @t::T)
-    builtin fn get<T>(&l::ListMut<T>) -> &t::T
-
-    # a List type for storing immutables
-    builtin type ListStorableImmut<T>
-    builtin fn append<T>(&l::ListStorableImmut<T>, %t::T)
-    builtin fn get<T>($l::ListStorableImmut<T>) -> %t::T
-
-    # a List type for storing mutables
-    builtin type ListStorableMut<T>
-    builtin fn append<T>(&l::ListStorableMut<T>, @t::T)
-    builtin fn get<T>(&l::ListStorableMut<T>) -> @t::T
-
-    # a List type for storing Frozens
-    builtin type ListFrozen<T>
-    builtin fn append<T>(&l::ListFrozen<T>, t::T)
-    # but then what does it hand out?
-    builtin fn get<T>($l::ListFrozen<T>) -> t::T
-    builtin fn get<T>($l::ListFrozen<T>) -> $t::T
-    builtin fn get<T>($l::ListFrozen<T>) -> %t::T
-    builtin fn get<T>(&l::ListFrozen<T>) -> &t::T
-    builtin fn get<T>(&l::ListFrozen<T>) -> @t::T
-
-this has the potential to get very ugly....
-
-another alternative is to provide different get methods,
-and dispatch on permissions
+we can do this by providing various get methods and dispatching on a combination
+of type and permission
 
     # a List type for storing immutables
     builtin type ListImmut<T>
@@ -416,5 +382,110 @@ and dispatch on permissions
     builtin fn get<T>($l::ListMut<T>) -> $t::T
     builtin fn getStorable<T>(&l::ListMut<T>) -> @t::T
     builtin fn getStorable<T>($l::ListMut<T>) -> %t::T
+
+
+example using ListMut
+
+    fn main()
+        let list = ListMut<Int>
+
+        # populate list
+        for i in [1..100]
+            &list.append(@i)
+        end
+
+        # mutate list
+        add_one_to_each(&list)
+
+        # print out list
+        print_list($list)
+
+    end
+
+    fn print_list($list::ListMut<Int>)
+        for $i in $list
+            print($i)
+        end
+    end
+
+    fn add_int_to_each(&list::ListMut<Int>)
+        for &i in &list
+            &i += 1
+        end
+    end
+
+
+greater permissions
+--------------------
+
+| Permission              | Contents | Frozen | Immutable | Storable Immutable | Mutable | Storable Mutable |
+| ---                     | ---      | ---    | ---       | ---                | ---     | ---              |
+| **Container**           | ---      | ---    | ---       | ---                | ---     | ---              |
+| **Frozen**              | ---      | yes    | yes       | yes                | yes     | yes              |
+| **Immutable**           | ---      | yes    | yes       | yes                | no      | no               |
+| **Storable Immutable**  | ---      | yes    | yes       | yes                | no      | no               |
+| **Mutable**             | ---      | yes    | yes       | yes                | yes     | yes              |
+| **Storable Mutable**    | ---      | yes    | yes       | yes                | yes     | yes              |
+
+This is mostly the same as the type conversion table, the only differences are:
+
+- a 'immutable container' may give away a 'storable immutable reference', as long as it was stored in it with those permissions
+- a 'mutable container' may give away a 'storable mutable reference', as long as it was stored in it with those permissions
+
+
+Considerations
+==============
+
+the immutable permission is not very interesting, yet it has a sigil and thus visible noise
+
+obviously a storable immutable should require a sigil, as you are giving away a permanent immut reference
+
+however an immutable reference is only temporary, for the duration of the callee
+
+Consider a snippet similar to above
+
+    fn main()
+        let list = ListMut<Int>
+
+        # populate list
+        for i in [1..100]
+            &list.append(@i)
+        end
+
+        # print out list
+        print_list($list)
+
+    end
+
+    fn print_list($list::ListMut<Int>)
+        for $i in $list
+            print($i)
+        end
+    end
+
+there are a lot of immutable sigils (`$`), however as a caller of print_list you could argue that you don't actually care
+
+forcing the user to also expose a conversion function `fn print_list(list::ListMut<Int>) print_list($list) end` is gross
+
+the above snippet is not really more explicit than
+
+    fn main()
+        let list = ListMut<Int>
+
+        # populate list
+        for i in [1..100]
+            &list.append(@i)
+        end
+
+        # print out list
+        print_list(list)
+
+    end
+
+    fn print_list(list::ListMut<Int>)
+        for i in list
+            print(i)
+        end
+    end
 
 
