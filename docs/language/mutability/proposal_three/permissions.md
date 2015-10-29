@@ -413,5 +413,7 @@ another alternative is to provide different get methods
     builtin fn append<T>(&l::ListMut<T>, @t::T)
     builtin fn get<T>(&l::ListMut<T>) -> &t::T
     builtin fn getStorable<T>(&l::ListMut<T>) -> @t::T
+    builtin fn get<T>(l::ListMut<T>) -> $t::T
+    builtin fn getStorable<T>(l::ListMut<T>) -> %t::T
 
 
