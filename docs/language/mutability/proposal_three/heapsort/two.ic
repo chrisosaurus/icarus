@@ -1,0 +1,142 @@
+# an attempt to write heapsort under prop. 3
+# with a slight twist: there is no frozen
+# instead the default is immut ref
+#  a immut ref
+# %a storable immut ref
+# &a mut ref
+# %a storable mut ref
+
+# 0 based heap
+# so parent is (i-1)/2
+# left child is 2i + 1
+# right child is 2i + 2
+
+fn lchild(i::Int) -> Int
+    return (2 * i) + 1
+end
+
+fn rchild(i::Int) -> Int
+    return (2 * i) + 1
+end
+
+fn parent(i::Int) -> Int
+    # relying on integer truncation
+    return (i - 1) / 2
+end
+
+# inplace heapify of array
+fn heapify<T>(&arr::Array<T)
+    let len = arr.length()
+    for i in 1..(len-1)
+        pushup(&arr, i)
+    end
+fn
+
+# take a place in the array, and keep pushing it up until it cannot go up anymore
+fn pushup<T>(&arr::Array<T>, index::Int)
+    if index <= 0
+        return
+    end
+
+    let v = arr.get(index)
+    let pv = arr.get(parent(index))
+
+    if v > pv
+        &arr.swap(index, parent(index))
+        pushup(&arr, parent(index))
+    end
+end
+
+fn max<T>(a::T, b::T, c::T) -> T
+    if a >= b
+        if a >= c
+            return a
+        end
+    else
+        if b >= c
+            return b
+        end
+    end
+
+    return c
+end
+
+# given an item in index
+# return the index it should be swapped with
+# or return current index if no swap is needed
+fn heapmax(arr::Array<T>, index::Int, until::Int) -> Int
+    let lcindex = lchild(index)
+    let rcindex = rchild(index)
+
+    # lchild is out of range, so only index
+    if lcindex > until
+        return index
+    end
+
+    if rcindex > until
+        if arr.get(index) >= arr.get(lcindex)
+            return index
+        else
+            return lcindex
+        end
+    end
+
+    if arr.get(index) >= arr.get(lcindex)
+        if arr.get(index) >= arr.get(rcindex)
+            return index
+        end
+    else
+        if arr.get(lcindex) >= arr.get(rcindex)
+            return lcindex
+        end
+    end
+
+    return rcindex
+end
+
+# take a place in the array, and keep pushing it down until it cannot go down anymore
+fn pushdown<T>(&arr::Array<T>, index::Int, until::Int)
+    if index >= until
+        return
+    end
+
+    let swap_index = heapmax(arr, index, until)
+    if swap_index == index
+        return
+    end
+
+    &arr.swap(i, swap_index)
+    pushdown(&arr, swap_index, until)
+end
+
+# in place heap sort given a heap
+fn sortheap<T>(&arr::Array<T>)
+    let len = arr.length()
+    for i in (len-1) .. 0
+        # swap head and tail
+        &arr.swap(0, i)
+
+        #maintain heap property from 0 until i-1
+        pushdown(&arr, 0, i-1)
+    end
+fn
+
+# inplace heapsort
+fn heapsort<T>(&arr::Array<T>)
+    heapify(&arr)
+    sortheap(&arr)
+end
+
+fn print_array<T>(arr::Array<T>)
+    for i in arr
+        print(i)
+    end
+end
+
+fn main()
+    let arr = MakeArray()
+    heapsort(&arr)
+    print_array(arr)
+end
+
+
