@@ -15,7 +15,7 @@ fn lchild(i::Int) -> Int
 end
 
 fn rchild(i::Int) -> Int
-    return (2 * i) + 1
+    return (2 * i) + 2
 end
 
 fn parent(i::Int) -> Int
