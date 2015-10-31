@@ -134,7 +134,7 @@ fn print_array<T>(arr::Array<T>)
 end
 
 fn main()
-    let arr = MakeArray()
+    let &arr = MakeArray()
     heapsort(&arr)
     print_array(arr)
 end
