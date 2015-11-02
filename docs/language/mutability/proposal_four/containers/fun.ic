@@ -1,0 +1,31 @@
+
+type Foo<T>
+    &b::Bar<T>
+end
+
+type Bar<T>
+    &i::T
+end
+
+type Baz
+    &i::Int
+    &s::String
+end
+
+fn increment(&b::Baz)
+    &b.i += 1
+    &b.s.append(" world")
+end
+
+fn main()
+    let &x = Foo(Bar(14))
+    &x.b.i += 1
+    # outputs 15
+    print(x.b.i)
+
+    let &y = Foo(Bar(Baz(22, "hello"))
+    &y.b.i.increment()
+    # outputs {23, "hello world"}::Baz
+    print(y.b.i)
+end
+
