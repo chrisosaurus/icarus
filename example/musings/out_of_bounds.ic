@@ -1,0 +1,47 @@
+
+# will Icarus support checks on list access at compile time ?
+
+fn foo(&l::List<Int>)
+    let i = len(l)
+    l[i] # compile time error?
+
+    for i in [0..len]
+        l[i] # compile time error?
+    end
+end
+
+# broken
+fn listncpy(l::List<Int>, n::Int) -> List<Int>
+    let &result = List<Int>
+    for i in [0..n)
+        &result.append(l[i]) # what if n is > len? ERROR?
+    end
+end
+
+# working
+fn listncpy(l::List<Int>, n::Int) -> List<Int>
+    let &result = List<Int>
+    let upto = n
+
+    if n > len(l)
+        upto = len(l)
+    end
+
+    for i in [0..upto)
+        &result.append(l[i])
+    end
+
+end
+
+# working
+fn listncpy(l::List<Int>, n::Int) -> List<Int>
+    let &result = List<Int>
+    let upto = min(n,len(l))
+
+    for i in [0..upto)
+        &result.append(l[i])
+    end
+
+end
+
+
