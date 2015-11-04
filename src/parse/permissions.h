@@ -16,32 +16,39 @@ unsigned int ic_parse_perm(enum ic_token_id);
 /* return a string representation of this permission */
 char * ic_parse_perm_str(unsigned int permissions);
 
+/* check if given permissions is default
+ *
+ * returns 1 if is default
+ * returns 0 otherwise
+ */
+unsigned int ic_parse_perm_is_default(unsigned int permissions);
+
 /* check if the given permissions has read
  *
  * returns 1 if can read
  * returns 0 otherwise
  */
-unsigned int ic_perm_has_read(unsigned int permissions);
+unsigned int ic_parse_perm_has_read(unsigned int permissions);
 
 /* check if the given permissions has write
  *
  * returns 1 if can write
  * returns 0 otherwise
  */
-unsigned int ic_perm_has_write(unsigned int permissions);
+unsigned int ic_parse_perm_has_write(unsigned int permissions);
 
 /* check if the given permissions has store
  *
  * returns 1 if can store
  * returns 0 otherwise
  */
-unsigned int ic_perm_has_store(unsigned int permissions);
+unsigned int ic_parse_perm_has_store(unsigned int permissions);
 
 /* check if the given permissions has unique
  *
  * returns 1 if can unique
  * returns 0 otherwise
  */
-unsigned int ic_perm_has_unique(unsigned int permissions);
+unsigned int ic_parse_perm_has_unique(unsigned int permissions);
 
 #endif
