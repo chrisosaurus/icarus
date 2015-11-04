@@ -55,7 +55,7 @@ if however you purposefully want to allow a mutation through x to be seen throug
 
     fn main()
         let &z = 1
-        safe(&z, $z)
+        unsafe(&z, $z)
     end
 
 here y is now `$y` which is a readonly reference,
