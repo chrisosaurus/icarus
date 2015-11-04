@@ -6,6 +6,7 @@
 #include "../../data/symbol.h"
 #include "../../data/pvector.h"
 #include "../parse.h"
+#include "../permissions.h"
 
 /* ignore unused parameter */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -1175,6 +1176,11 @@ void ic_expr_identifier_print(struct ic_expr_identifier * identifier, unsigned i
 
     /* print out indent */
     ic_parse_print_indent(*indent_level);
+
+    /* print out permission if not default */
+    if( ! ic_parse_perm_is_default(identifier->permissions) ){
+        printf("%s", ic_parse_perm_str(identifier->permissions));
+    }
 
     /* print our identifier */
     ic_symbol_print(&(identifier->identifier));
