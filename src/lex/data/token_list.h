@@ -68,6 +68,22 @@ unsigned int ic_token_list_length(struct ic_token_list *list);
  */
 struct ic_token * ic_token_list_peek(struct ic_token_list *list);
 
+/* peek ahead and see if we are at the end of a line
+ * note for this set we exclude all other whitespace
+ *
+ * if we are here
+ *              v
+ *  "hello world    \n"
+ *
+ * then we consider this the end of the line
+ *
+ * as the remaining characters until eol are not important
+ *
+ * returns 1 if this is the end of a line
+ * returns 0 otherwise
+ */
+unsigned int ic_token_list_peek_iseol(struct ic_token_list *list);
+
 /* peek at important next token
  * will skip all non-important tokens
  *

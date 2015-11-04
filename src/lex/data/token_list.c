@@ -168,6 +168,49 @@ struct ic_token * ic_token_list_peek(struct ic_token_list *list){
     return token;
 }
 
+/* peek ahead and see if we are at the end of a line
+ * note for this set we exclude all other whitespace
+ *
+ * if we are here
+ *              v
+ *  "hello world    \n"
+ *
+ * then we consider this the end of the line
+ *
+ * as the remaining characters until eol are not important
+ *
+ * returns 1 if this is the end of a line
+ * returns 0 otherwise
+ */
+unsigned int ic_token_list_peek_iseol(struct ic_token_list *list){
+    struct ic_token *token = 0;
+    if( ! list ){
+        puts("ic_token_list_peek_iseol: list was null");
+        return 0;
+    }
+
+    while( (token = ic_token_list_peek(list)) ){
+        switch( token->id ){
+            case IC_WHITESPACE:
+                /* consume and keep going */
+                token = ic_token_list_next(list);
+                break;
+
+            case IC_COMMENT:
+                /* a commend always continues until eol */
+            case IC_NEWLINE:
+                return 1;
+                break;
+
+            default:
+                return 0;
+                break;
+        }
+    }
+
+    return 0;
+}
+
 /* peek at next imporatant token
  * will skip any non-imporant
  *
