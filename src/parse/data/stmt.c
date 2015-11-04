@@ -129,7 +129,7 @@ void ic_stmt_ret_print(struct ic_stmt_ret *ret, unsigned int *indent_level){
  * returns pointers on success
  * returns 0 on failure
  */
-struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *type_src, unsigned int type_len){
+struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *type_src, unsigned int type_len, unsigned int permissions){
     struct ic_stmt_let *let = 0;
 
     /* alloc */
@@ -142,14 +142,11 @@ struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *ty
     /* hand over for init
      * NB: we leave arg checking up to init
      */
-    if( ! ic_stmt_let_init(let, id_src, id_len, type_src, type_len) ){
+    if( ! ic_stmt_let_init(let, id_src, id_len, type_src, type_len, permissions) ){
         puts("ic_stmt_let_new: call to ic_stmt_let_init failed");
         free(let);
         return 0;
     }
-
-    /* for now we are always immut */
-    let->mut = 0;
 
     return let;
 }
@@ -160,7 +157,7 @@ struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *ty
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned int id_len, char *type_src, unsigned int type_len){
+unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned int id_len, char *type_src, unsigned int type_len, unsigned int permissions){
     if( ! let ){
         puts("ic_stmt_let_init: let was null");
         return 0;
@@ -190,6 +187,8 @@ unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned in
 
     /* zero out init */
     let->init = 0;
+
+    let->permissions = permissions;
 
     return 1;
 }

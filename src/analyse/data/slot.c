@@ -11,7 +11,7 @@
  * returns 1 on success
  * returns 0 on failure
  */
-struct ic_slot * ic_slot_new(struct ic_symbol *name, struct ic_type *type, bool mutable, bool reference){
+struct ic_slot * ic_slot_new(struct ic_symbol *name, struct ic_type *type, unsigned int permissions, bool reference){
     struct ic_slot *slot = 0;
 
     slot = calloc(1, sizeof(struct ic_slot));
@@ -20,7 +20,7 @@ struct ic_slot * ic_slot_new(struct ic_symbol *name, struct ic_type *type, bool 
         return 0;
     }
 
-    if( ! ic_slot_init(slot, name, type, mutable, reference) ){
+    if( ! ic_slot_init(slot, name, type, permissions, reference) ){
         puts("ic_slot_new: call to ic_slot_init failed");
         return 0;
     }
@@ -33,7 +33,7 @@ struct ic_slot * ic_slot_new(struct ic_symbol *name, struct ic_type *type, bool 
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct ic_type *type, bool mutable, bool reference){
+unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct ic_type *type, unsigned int permissions, bool reference){
     if( ! slot ){
         puts("ic_slot_init: slot was null");
         return 0;
@@ -51,7 +51,7 @@ unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct i
 
     slot->name = name;
     slot->type = type;
-    slot->mutable = mutable;
+    slot->permissions = permissions;
     slot->reference = reference;
 
     return 1;

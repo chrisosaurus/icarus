@@ -52,11 +52,7 @@ void ic_stmt_ret_print(struct ic_stmt_ret *ret, unsigned int *indent_level);
  *  let identifier::type = init
  */
 struct ic_stmt_let {
-    /* flag specifying if we have let a mutable variable
-     *  let &a::Int = expr # mutable
-     *  let b::Int = expr # immutable
-     */
-    unsigned int mut;
+    unsigned int permissions;
     struct ic_symbol identifier;
     struct ic_symbol type;
     /* FIXME making this an ic_expr *
@@ -72,7 +68,7 @@ struct ic_stmt_let {
  * returns pointers on success
  * returns 0 on failure
  */
-struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *type_src, unsigned int type_len);
+struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *type_src, unsigned int type_len, unsigned int permissions);
 
 /* initialise an existing let
  * does not touch the init expression
@@ -80,7 +76,7 @@ struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *ty
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned int id_len, char *type_src, unsigned int type_len);
+unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned int id_len, char *type_src, unsigned int type_len, unsigned int permissions);
 
 /* destroy let
  *

@@ -1110,7 +1110,7 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
      *
      *                (name, type, mut, ref)
      */
-    slot = ic_slot_new(&(let->identifier), type, let->mut, 0);
+    slot = ic_slot_new(&(let->identifier), type, let->permissions, 0);
     if( ! slot ){
         puts("ic_analyse_let: call to ic_slot_new failed");
         return 0;

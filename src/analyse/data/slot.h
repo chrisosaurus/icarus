@@ -43,11 +43,7 @@ struct ic_slot {
      */
     struct ic_type *type;
 
-    /* is this slot mutable?
-     * an argument is immutable
-     * a variable is mutable
-     */
-    bool mutable;
+    unsigned int permissions;
 
     /* is this slot a reference?
      * was this slot declared with a &
@@ -61,14 +57,14 @@ struct ic_slot {
  * returns 1 on success
  * returns 0 on failure
  */
-struct ic_slot * ic_slot_new(struct ic_symbol *name, struct ic_type *type, bool mutable, bool reference);
+struct ic_slot * ic_slot_new(struct ic_symbol *name, struct ic_type *type, unsigned int permissions, bool reference);
 
 /* init an existing slot
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct ic_type *type, bool mutable, bool reference);
+unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct ic_type *type, unsigned int permissions, bool reference);
 
 /* destroy slot
  * will only free slot if `free_slot` is true
