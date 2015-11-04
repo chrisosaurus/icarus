@@ -1,0 +1,28 @@
+
+fn foo(a::Int)
+end
+
+fn foo($a::Int)
+end
+
+fn foo(%a::Int)
+end
+
+fn foo(&a::Int)
+end
+
+fn foo(@a::Int)
+end
+
+fn foo(*a::Int)
+end
+
+fn main()
+    let @a::Int = 5
+    foo(@a)
+    foo(&a)
+    foo(%a)
+    foo($a)
+    foo(a)
+end
+
