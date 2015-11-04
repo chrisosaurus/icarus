@@ -1,6 +1,8 @@
 TODO:
 -----
 
+* permissions are still not correctly taken into account when parsing expressions
+* the analysis system currently has no idea about permissions
 * only operators are still remaining for kludge.c harcoding to be nuked
 * remove ic_type, as builtin and user defined types now both use ic_decl_type
 * analyse should check for a `main` entry point
@@ -41,6 +43,7 @@ testing debt:
 technical debt:
 -----
 
+* we changed _type to _tag for enums, but we didn't fix this values, e.g. ic_expr_tag has values of ic_expr_type_*
 * figure out ownership of left/right or first/second for expr_faccess/expr_operator
 * the parse module was written using the old lexer system and then retrofitted to the new, it could probably use some refactoring now that the lex output is more sane
 * token_list api needs some cleanup, no one ever really uses the non _important calls

@@ -6,6 +6,7 @@
 #include "../parse/data/stmt.h"
 #include "helpers.h"
 #include "data/slot.h"
+#include "../parse/permissions.h"
 
 /* ignored unused parameter and variables */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -776,7 +777,7 @@ static struct ic_type * ic_analyse_infer_operator(struct ic_kludge *kludge, stru
         return 0;
     }
 
-    if( ! ic_expr_identifier_init(id, mapped_op_str, mapped_op_len) ){
+    if( ! ic_expr_identifier_init(id, mapped_op_str, mapped_op_len, 0) ){
         puts("ic_analyse_infer_operator: call to ic_expr_identifier_init failed");
         return 0;
     }
@@ -1152,6 +1153,9 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
  * by `ic_decl_func_str`
  *      foo(Int Int)
  *
+ * and
+ *      bar(&Int String)
+ *
  * returns char * on success
  * returns 0 on failure
  */
@@ -1168,6 +1172,10 @@ char * ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, st
     struct ic_type *expr_type = 0;
     /* current arg type's name */
     struct ic_symbol *type_name = 0;
+    /* current arg's permissions */
+    unsigned int arg_perms = 0;
+    /* permission string for arg */
+    char *arg_perm_str = 0;
 
     if( ! kludge ){
         puts("ic_analyse_fcall_str: kludge was null");
@@ -1226,23 +1234,44 @@ char * ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, st
             goto ERROR;
         }
 
+        /* if this argument is an identifier
+         * then we must also check it's permissions
+         */
+        if( expr->tag == ic_expr_type_identifier ){
+            /* get this argument's permissions */
+            arg_perms = expr->u.id.permissions;
+
+            /* if the permissions are not the default
+             * then we also need to add them
+             */
+            if( ! ic_parse_perm_is_default(arg_perms) ){
+                arg_perm_str = ic_parse_perm_str(arg_perms);
+
+                /* append our permissions */
+                if( ! ic_string_append_cstr(str, arg_perm_str) ){
+                    printf("ic_analyse_fcall_str: call to ic_string_append_cstr for permissions failed for argument '%d'\n", i);
+                    goto ERROR;
+                }
+            }
+        }
+
         /* current arg's type */
         expr_type = ic_analyse_infer(kludge, scope, expr);
         if( ! expr_type ){
-            printf("ic_analyse_fcall_str: call to ic_analyse_infer failed for argument '%i'\n", i);
+            printf("ic_analyse_fcall_str: call to ic_analyse_infer failed for argument '%d'\n", i);
             goto ERROR;
         }
 
         /* current arg's type's name */
         type_name = ic_type_name(expr_type);
         if( ! type_name ){
-            printf("ic_analyse_fcall_str: call to ic_type_name failed for argument '%i'\n", i);
+            printf("ic_analyse_fcall_str: call to ic_type_name failed for argument '%d'\n", i);
             goto ERROR;
         }
 
         /* append our argument type */
         if( ! ic_string_append_symbol(str, type_name) ){
-            printf("ic_analyse_fcall_str: call to ic_string_append_symbol for 'arg' '%i' failed\n", i);
+            printf("ic_analyse_fcall_str: call to ic_string_append_symbol for 'arg' '%d' failed\n", i);
             goto ERROR;
         }
     }

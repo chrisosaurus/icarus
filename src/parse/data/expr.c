@@ -299,7 +299,7 @@ void ic_expr_func_call_print(struct ic_expr_func_call *fcall, unsigned int *inde
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr_identifier * ic_expr_identifier_new(char *id, unsigned int id_len){
+struct ic_expr_identifier * ic_expr_identifier_new(char *id, unsigned int id_len, unsigned int permissions){
     struct ic_expr_identifier * identifier = 0;
 
     if( ! id ){
@@ -315,7 +315,7 @@ struct ic_expr_identifier * ic_expr_identifier_new(char *id, unsigned int id_len
     }
 
     /* initialise */
-    if( ! ic_expr_identifier_init(identifier, id, id_len) ){
+    if( ! ic_expr_identifier_init(identifier, id, id_len, permissions) ){
         puts("ic_expr_identifier_new: call to ic_expr_identifier_init failed");
         free(identifier);
         return 0;
@@ -329,7 +329,7 @@ struct ic_expr_identifier * ic_expr_identifier_new(char *id, unsigned int id_len
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, char *id, unsigned int id_len){
+unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, char *id, unsigned int id_len, unsigned int permissions){
     if( ! identifier ){
         puts("ic_expr_identifier_init: identifier was null");
         return 0;
@@ -345,6 +345,8 @@ unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, cha
         puts("ic_expr_identifier_init: call to ic_symbol_init failed");
         return 0;
     }
+
+    identifier->permissions = permissions;
 
     return 1;
 }

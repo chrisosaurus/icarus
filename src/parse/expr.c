@@ -4,6 +4,7 @@
 #include <limits.h> /* LONG_MIN, LONG_MAX */
 
 #include "parse.h"
+#include "permissions.h"
 
 /* ignore unused parameter warnings */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -135,6 +136,8 @@ static struct ic_expr * ic_parse_expr_identifier(struct ic_token_list *token_lis
     unsigned int iter = 0;
     /* current char in identifier we are checking */
     char ch = 0;
+    /* permissions */
+    unsigned int permissions = 0;
 
     /* current token */
     struct ic_token *token = 0;
@@ -142,6 +145,28 @@ static struct ic_expr * ic_parse_expr_identifier(struct ic_token_list *token_lis
     if( ! token_list ){
         puts("ic_parse_expr_identifier: token_list was null");
         return 0;
+    }
+
+    /* check for permissions */
+    token = ic_token_list_peek_important(token_list);
+    if( ! token ){
+        puts("ic_parse_expr_identifier: failed to peek at permissions");
+        free(expr);
+        return 0;
+    }
+
+    if( ic_token_ispermission(token) ){
+        /* consume permissions token */
+        token = ic_token_list_next_important(token_list);
+        if( ! token ){
+            puts("ic_parse_expr_identifier: failed to get permissions");
+            free(expr);
+            return 0;
+        }
+
+        permissions = ic_parse_perm(token->id);
+    } else {
+        permissions = ic_parse_perm(IC_PERM_DEFAULT);
     }
 
     token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
@@ -167,7 +192,7 @@ static struct ic_expr * ic_parse_expr_identifier(struct ic_token_list *token_lis
     }
 
     /* initialise our id */
-    if( ! ic_expr_identifier_init(id, ic_token_get_string(token), ic_token_get_string_length(token)) ){
+    if( ! ic_expr_identifier_init(id, ic_token_get_string(token), ic_token_get_string_length(token), permissions) ){
         puts("ic_parse_expr_identifier: call to ic_expr_identifier_init failed");
         free(expr);
         return 0;

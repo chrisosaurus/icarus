@@ -100,6 +100,7 @@ void ic_expr_func_call_print(struct ic_expr_func_call *fcall, unsigned int *inde
  */
 struct ic_expr_identifier{
     struct ic_symbol identifier;
+    unsigned int permissions;
 };
 
 /* allocate and initialise a new identifier
@@ -107,13 +108,13 @@ struct ic_expr_identifier{
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr_identifier * ic_expr_identifier_new(char *id, unsigned int id_len);
+struct ic_expr_identifier * ic_expr_identifier_new(char *id, unsigned int id_len, unsigned int permissions);
 
 /* initialise an existing identifier
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, char *id, unsigned int id_len);
+unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, char *id, unsigned int id_len, unsigned int permissions);
 
 /* destroy identifier
  *
