@@ -9,6 +9,7 @@
 #include "../../data/symbol.h"
 #include "../../data/string.h"
 #include "../parse.h"
+#include "../permissions.h"
 
 /* FIXME crutch for unused param */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -385,6 +386,8 @@ char * ic_decl_func_str(struct ic_decl_func *fdecl){
     struct ic_field *field = 0;
     /* temporary symbol for current field type */
     struct ic_symbol *cur_type = 0;
+    /* permission str */
+    char *perm_str = 0;
 
     if( ! fdecl ){
         puts("ic_decl_func_str: fdecl was null");
@@ -432,6 +435,24 @@ char * ic_decl_func_str(struct ic_decl_func *fdecl){
             return 0;
         }
 
+        /* add any permissions
+         * only need to show if not default
+         */
+        if( ! ic_parse_perm_is_default(field->permissions) ){
+            perm_str = ic_parse_perm_str(field->permissions);
+
+            if( ! perm_str ){
+                puts("ic_decl_func_str: arg: call to ic_parse_perm_str failed");
+                return 0;
+            }
+
+            if( ! ic_string_append_cstr(fstr, perm_str) ){
+                puts("ic_decl_func_str: arg: call to ic_string_append_cstr failed");
+                return 0;
+            }
+        }
+
+        /* add type */
         cur_type = ic_type_ref_get_symbol(&(field->type));
         if( ! cur_type ){
             puts("ic_decl_func_str: arg: call to ic_type_get_symbol failed");
