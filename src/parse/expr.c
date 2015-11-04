@@ -521,6 +521,74 @@ static struct ic_expr * ic_parse_expr_fieldaccess(struct ic_token_list *token_li
     return expr;
 }
 
+/* consume token
+ * returns ic_expr* on success
+ * returns 0 on failure
+ */
+static struct ic_expr * ic_parse_expr_perm(struct ic_token_list *token_list){
+    /* our eventual return value */
+    struct ic_expr *expr = 0;
+
+    /* our internal field identifier */
+    struct ic_expr_identifier *id = 0;
+
+    /* our permissions */
+    unsigned int permissions = 0;
+
+    /* operator token */
+    struct ic_token *token = 0;
+
+    if( ! token_list ){
+        puts("ic_parse_expr_perm: token_list was null");
+        return 0;
+    }
+
+    /* build our new expr */
+    expr = ic_expr_new(ic_expr_type_identifier);
+    if( ! expr ){
+        puts("ic_parse_expr_perm: call to ic_expr_new failed");
+        return 0;
+    }
+
+    /* permission handling */
+    token = ic_token_list_next_important(token_list);
+    if( ! token ){
+        puts("ic_parse_expr_perm: operator call to token list next important failed");
+        return 0;
+    }
+
+    /* check if op */
+    if( ! ic_token_ispermission(token) ){
+        puts("ic_parse_expr_perm: permission not found");
+        return 0;
+    }
+
+    /* set perm */
+    permissions = ic_parse_perm(token->id);
+
+    /* make parse_expr_identifier do the hard work */
+    expr = ic_parse_expr_identifier(token_list);
+    if( ! expr ){
+        puts("ic_parse_expr_perm: call to ic_parse_expr_identifier failed");
+        return 0;
+    }
+
+    if( expr->tag != ic_expr_type_identifier ){
+        puts("ic_parse_expr_perm: call to ic_parse_expr_identifier gave back a non-identifier");
+        return 0;
+    }
+
+    /* get our internal identifier */
+    id = ic_expr_get_identifier(expr);
+    if( ! id ){
+        puts("ic_parse_expr_perm: call to ic_expr_get_identifier failed");
+        return 0;
+    }
+
+    id->permissions = permissions;
+
+    return expr;
+}
 
 struct ic_expr * ic_parse_expr(struct ic_token_list *token_list){
     /* current token */
@@ -571,21 +639,17 @@ struct ic_expr * ic_parse_expr(struct ic_token_list *token_list){
 
     while( 1 ){
         /* fcalls can span across lines
+         * field accesses can span across lines
          *
-         * field accesses and operators can only under certain cases
-         *
-         *      instance.
-         *      field
+         * operators can only under certain cases
          *
          *      left +
          *      right
          *
-         * are both allowed
+         * is allowed
          *
-         * however the following 2 are illegal
          *
-         *      instance
-         *      .field
+         * however the following is illegal
          *
          *      left
          *      +right
@@ -600,6 +664,22 @@ struct ic_expr * ic_parse_expr(struct ic_token_list *token_list){
              */
             puts("ic_parse_expr: call to ic_token_list_peek failed");
             return 0;
+        }
+
+        /* if we see a permission */
+        if( ic_token_ispermission(token) ){
+            /* if we have no current then we are a perm */
+            if( ! current ){
+                return ic_parse_expr_perm(token_list);
+            }
+
+            /* if there is an eol between here and the perm
+             * then the perm is on the next line
+             * this expression is thus terminated
+             */
+            if( ic_token_list_peek_iseol(token_list) ){
+                return current;
+            }
         }
 
         if( token->id == IC_PERIOD ){

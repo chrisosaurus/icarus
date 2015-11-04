@@ -1,7 +1,6 @@
 TODO:
 -----
 
-* permissions are still not correctly taken into account when parsing expressions
 * the analysis system currently has no idea about permissions
 * only operators are still remaining for kludge.c harcoding to be nuked
 * remove ic_type, as builtin and user defined types now both use ic_decl_type
