@@ -1,0 +1,28 @@
+
+fn add_one(&list::List<Int>)
+    for &item in &list
+        &item += 1
+    end
+end
+
+# here print_list takes a `list`
+# print_list is guaranteed `value semantics` on this `list`
+# that is, `list` cannot mutate under print_list for the duration of the call
+fn print_list(list::List<Int>)
+    # likewise here `item` has value semantics
+    # it cannot mutate under print_list for the duration of the for loop
+    for item in list
+        print(item)
+    end
+end
+
+fn main()
+    let &list::List<Int> = make_interesting_list()
+
+    add_one(&list)
+
+    # here we pass list and we make the guarantee that
+    # it is 'stable' for the duration of the print_list call
+    print_list(list)
+end
+
