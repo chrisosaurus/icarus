@@ -21,7 +21,7 @@ Immutable / value (default):
 - value semantics
 - you cannot write
 - you can read
-- you not store
+- you can store
 - 'donator' cannot write, read, and store
 - this is guaranteed to not mutate 'under you', you can think of this as 'pass by value'
 
