@@ -2,7 +2,23 @@
 
 #include "permissions.h"
 
-#define IC_UNIQUE 0x08 /* 1000 */
+/* IMMUT:
+ * immut permissions means this variable is 'stable'
+ * it cannot be mutated while you hold this
+ *
+ * STORE:
+ * a store permission means you are allowed to store it
+ * in a way that escapes the lifetime of your function call
+ *
+ * WRITE:
+ * write means you may write *through* the reference
+ * to mutate the underlying object
+ *
+ * READ:
+ * read means you may read
+ */
+
+#define IC_IMMUT  0x08 /* 1000 */
 #define IC_STORE  0x04 /* 0100 */
 #define IC_WRITE  0x02 /* 0010 */
 #define IC_READ   0x01 /* 0001 */
@@ -16,13 +32,13 @@
 
 /* map of token_id to permission */
 unsigned int ic_parse_perm_map[] = {
-    /*               UNIQUE      READ      WRITE      STORE    */
-    [IC_VALUE]     = IC_UNIQUE | IC_READ | 0        | IC_STORE  ,
-    [IC_DOLLAR]    = 0         | IC_READ | 0        | 0         ,
-    [IC_PERCENT]   = 0         | IC_READ | 0        | IC_STORE  ,
-    [IC_AMPERSAND] = 0         | IC_READ | IC_WRITE | 0         ,
-    [IC_AT]        = 0         | IC_READ | IC_WRITE | IC_STORE  ,
-    [IC_ASTERISK]  = 0         | 0       | 0        | 0         ,
+    /*               IMMUT      READ      WRITE      STORE    */
+    [IC_VALUE]     = IC_IMMUT | IC_READ | 0        | IC_STORE  ,
+    [IC_DOLLAR]    = 0        | IC_READ | 0        | 0         ,
+    [IC_PERCENT]   = 0        | IC_READ | 0        | IC_STORE  ,
+    [IC_AMPERSAND] = 0        | IC_READ | IC_WRITE | 0         ,
+    [IC_AT]        = 0        | IC_READ | IC_WRITE | IC_STORE  ,
+    [IC_ASTERISK]  = 0        | 0       | 0        | 0         ,
 };
 
 /* get permissions for this token_id */
@@ -164,12 +180,12 @@ unsigned int ic_parse_perm_has_store(unsigned int permissions){
     return 0 != (permissions & IC_STORE);
 }
 
-/* check if the given permissions has unique
+/* check if the given permissions has immut
  *
  * returns 1 if can unique
  * returns 0 otherwise
  */
-unsigned int ic_parse_perm_has_unique(unsigned int permissions){
-    return 0 != (permissions & IC_UNIQUE);
+unsigned int ic_parse_perm_has_immut(unsigned int permissions){
+    return 0 != (permissions & IC_IMMUT);
 }
 
