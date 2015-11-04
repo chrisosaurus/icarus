@@ -27,6 +27,23 @@ unsigned int ic_parse_perm(enum ic_token_id id){
 
     return ic_parse_perm_map[id];
 }
+/* check if the provided decay is valid
+ *
+ * a valid decay is one where every bit set in `to` is also
+ * set in `from`
+ *
+ * returns 1 if this is a valid decay
+ * returns 0 otherwise
+ */
+unsigned int ic_parse_perm_is_valid_decay(unsigned int from, unsigned int to){
+    /* for a decay to be valid every bit set in `to` must also
+     * be set in `from`
+     */
+    if( (from & to) == to ){
+        return 1;
+    }
+    return 0;
+}
 
 /* return a string representation of this permission */
 char * ic_parse_perm_str(unsigned int permissions){

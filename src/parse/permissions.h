@@ -16,6 +16,16 @@ unsigned int ic_parse_perm(enum ic_token_id);
 /* return a string representation of this permission */
 char * ic_parse_perm_str(unsigned int permissions);
 
+/* check if the provided decay is valid
+ *
+ * a valid decay is one where every bit set in `to` is also
+ * set in `from`
+ *
+ * returns 1 if this is a valid decay
+ * returns 0 otherwise
+ */
+unsigned int ic_parse_perm_is_valid_decay(unsigned int from, unsigned int to);
+
 /* check if given permissions is default
  *
  * returns 1 if is default
