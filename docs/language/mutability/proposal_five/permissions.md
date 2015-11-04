@@ -79,8 +79,6 @@ Conversions
 
 Permissions can be converted (downgraded) as long as the resulting type does not give away 'more' permissions to the same value
 
-note that any conversion to frozen is a copy, so all types can be converted to frozen safely (without giving away rights to the existing value, as frozen sets rights for a *new* value)
-
     immut x             -> immut x
                         -> readonly x
                         -> storable readonly x
@@ -118,6 +116,8 @@ fixme
 -----
 
 conversion to/from immut needs to be thought out more, it should be safe for any type to become an immut
+
+it *should* be safe to convert an immut to any type as well, currently we disallow conversion to mutable and storable mutable, this needs thought.
 
 Default
 =======
