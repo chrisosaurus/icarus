@@ -374,6 +374,44 @@ unsigned int ic_string_append_char(struct ic_string *to, char *from, unsigned in
 
 }
 
+/* append the contents of `from` to `to`
+ * caller must ensure `from` is a c-string (null terminated)
+ *
+ * this will resize `to` to guarantee there is enough space
+ *
+ * this will also make sure the final character internally is a \0
+ * even if the character at from[from_len - 1] != '\0'
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_string_append_cstr(struct ic_string *to, char *from){
+    unsigned int len = 0;
+
+    if( ! to ){
+        puts("ic_string_append_cstr: to was null");
+        return 0;
+    }
+
+    if( ! from ){
+        puts("ic_string_append_cstr: from was null");
+        return 0;
+    }
+
+    len = strlen(from);
+    if( ! len ){
+        puts("ic_string_append_cstr: call to strlen failed or 0 length string given");
+        return 0;
+    }
+
+    if( ! ic_string_append_char(to, from, len) ){
+        puts("ic_string_append_cstr: call to ic_string_append_char failed");
+        return 0;
+    }
+
+    return 1;
+}
+
 /* print this string */
 void ic_string_print(struct ic_string *string){
     char *con;

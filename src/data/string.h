@@ -136,6 +136,19 @@ unsigned int ic_string_append_symbol(struct ic_string *to, struct ic_symbol *fro
  */
 unsigned int ic_string_append_char(struct ic_string *to, char *from, unsigned int from_len);
 
+/* append the contents of `from` to `to`
+ * caller must ensure `from` is a c-string (null terminated)
+ *
+ * this will resize `to` to guarantee there is enough space
+ *
+ * this will also make sure the final character internally is a \0
+ * even if the character at from[from_len - 1] != '\0'
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_string_append_cstr(struct ic_string *to, char *from);
+
 /* print this string */
 void ic_string_print(struct ic_string *string);
 
