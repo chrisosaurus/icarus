@@ -3,15 +3,11 @@
 
 #include "../lex/data/token.h"
 
-/* value is a permission but NOT a token
- * so doesn't exist in token.h
- */
-#define IC_VALUE (1 + IC_ASTERISK)
-/* our default permission is IC_VALUE */
-#define IC_PERM_DEFAULT IC_VALUE
-
 /* get permissions for this token_id */
 unsigned int ic_parse_perm(enum ic_token_id);
+
+/* get default permissions */
+unsigned int ic_parse_perm_default(void);
 
 /* return a string representation of this permission */
 char * ic_parse_perm_str(unsigned int permissions);

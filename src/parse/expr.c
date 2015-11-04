@@ -166,7 +166,7 @@ static struct ic_expr * ic_parse_expr_identifier(struct ic_token_list *token_lis
 
         permissions = ic_parse_perm(token->id);
     } else {
-        permissions = ic_parse_perm(IC_PERM_DEFAULT);
+        permissions = ic_parse_perm_default();
     }
 
     token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);

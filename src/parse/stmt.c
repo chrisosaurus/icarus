@@ -146,7 +146,7 @@ static struct ic_stmt * ic_parse_stmt_let(struct ic_token_list *token_list){
 
         permissions = ic_parse_perm(token->id);
     } else {
-        permissions = ic_parse_perm(IC_PERM_DEFAULT);
+        permissions = ic_parse_perm_default();
     }
 
     /* consume identifier */

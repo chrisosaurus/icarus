@@ -7,6 +7,13 @@
 #define IC_WRITE  0x02 /* 0010 */
 #define IC_READ   0x01 /* 0001 */
 
+/* value is a permission but NOT a token
+ *    * so doesn't exist in token.h
+ *       */
+#define IC_VALUE (1 + IC_ASTERISK)
+/* our default permission is IC_VALUE */
+#define IC_PERM_DEFAULT IC_VALUE
+
 /* map of token_id to permission */
 unsigned int ic_parse_perm_map[] = {
     /*               UNIQUE      READ      WRITE      STORE    */
@@ -27,6 +34,12 @@ unsigned int ic_parse_perm(enum ic_token_id id){
 
     return ic_parse_perm_map[id];
 }
+
+/* get default permissions */
+unsigned int ic_parse_perm_default(void){
+    return ic_parse_perm(IC_PERM_DEFAULT);
+}
+
 /* check if the provided decay is valid
  *
  * a valid decay is one where every bit set in `to` is also

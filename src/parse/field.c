@@ -45,7 +45,7 @@ struct ic_field * ic_parse_field(struct ic_token_list *token_list){
         permissions = ic_parse_perm(token->id);
     } else {
         /* otherwise fallback to default permission */
-        permissions = ic_parse_perm(IC_PERM_DEFAULT);
+        permissions = ic_parse_perm_default();
     }
 
     /* capture field name
