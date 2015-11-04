@@ -2,6 +2,7 @@
 #include <stdio.h> /* puts, printf */
 
 #include "field.h"
+#include "../permissions.h"
 
 /* allocate and return a new field
  * takes 2 tokens as char * and len pairs
@@ -9,7 +10,7 @@
  * returns new ic_field * on success
  * returns 0 on failure
  */
-struct ic_field * ic_field_new(char *name_src, unsigned int name_len, char *type_src, unsigned int type_len){
+struct ic_field * ic_field_new(char *name_src, unsigned int name_len, char *type_src, unsigned int type_len, unsigned int permissions){
     struct ic_field *field = 0;
 
     /* allocate space for our field */
@@ -19,7 +20,7 @@ struct ic_field * ic_field_new(char *name_src, unsigned int name_len, char *type
         return 0;
     }
 
-    if( ! ic_field_init(field, name_src, name_len, type_src, type_len) ){
+    if( ! ic_field_init(field, name_src, name_len, type_src, type_len, permissions) ){
         puts("ic_field_new: call to ic_field_init failed");
         free(field);
         return 0;
@@ -34,7 +35,7 @@ struct ic_field * ic_field_new(char *name_src, unsigned int name_len, char *type
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int name_len, char *type_src, unsigned int type_len){
+unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int name_len, char *type_src, unsigned int type_len, unsigned int permissions){
     if( ! field ){
         puts("ic_field_init: field was null");
         return 0;
@@ -61,6 +62,8 @@ unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int 
         puts("ic_field_init: call to ic_type_symbol_init for type failed");
         return 0;
     }
+
+    field->permissions = permissions;
 
     return 1;
 }
@@ -107,11 +110,20 @@ unsigned int ic_field_destroy(struct ic_field *field, unsigned int free_field){
 
 /* print the field to stdout */
 void ic_field_print(struct ic_field *field){
+    char *perm_str;
+
     if( ! field ){
         puts("ic_field_print: field was null");
         return;
     }
-    printf("%s::", ic_symbol_contents(&(field->name)) );
+
+    perm_str = ic_parse_perm_str(field->permissions);
+    if( ! perm_str ){
+        puts("ic_field_print: call to ic_parse_perm_str failed");
+        return;
+    }
+
+    printf("%s%s::", perm_str, ic_symbol_contents(&(field->name)) );
     ic_type_ref_print(&(field->type));
 }
 

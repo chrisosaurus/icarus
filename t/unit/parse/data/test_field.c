@@ -9,7 +9,7 @@ int main(void){
     struct ic_field init_me;
 
     /* test new */
-    field = ic_field_new("b", 1, "String", 6);
+    field = ic_field_new("b", 1, "String", 6, 0);
     assert(field);
 
     assert( ! strncmp("b",
@@ -20,8 +20,10 @@ int main(void){
                 ic_symbol_contents( ic_type_ref_get_symbol(&(field->type)) ),
                 6) );
 
+    assert( field->permissions == 0 );
+
     /* test init */
-    assert( ic_field_init(&init_me, "hello", 5, "Int", 3) );
+    assert( ic_field_init(&init_me, "hello", 5, "Int", 3, 2) );
 
     assert( ! strncmp("hello",
                 ic_symbol_contents(&(init_me.name)),
@@ -30,6 +32,8 @@ int main(void){
     assert( ! strncmp("Int",
                 ic_symbol_contents( ic_type_ref_get_symbol(&(init_me.type)) ),
                 3) );
+
+    assert( init_me.permissions == 2 );
 
     /* 'test' printing */
     printf("Should see:\nb::String\n");

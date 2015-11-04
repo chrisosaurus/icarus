@@ -26,11 +26,11 @@ void basic(void){
 
 
     /* add some fields */
-    field = ic_field_new("a", 1, "Int", 3);
+    field = ic_field_new("a", 1, "Int", 3, 0);
     assert(field);
     assert( 1 == ic_decl_type_add_field(tdecl, field) );
 
-    field = ic_field_new("b", 1, "String", 6);
+    field = ic_field_new("b", 1, "String", 6, 0);
     assert(field);
     assert( 1 == ic_decl_type_add_field(tdecl, field) );
 

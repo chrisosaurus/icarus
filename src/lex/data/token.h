@@ -152,6 +152,13 @@ unsigned int ic_token_destroy(struct ic_token *token, unsigned int free_token);
  */
 unsigned int ic_token_isoperator(struct ic_token *token);
 
+/* check if token is a permission
+ *
+ * returns 1 if it is a permission
+ * returns 0 if not
+ */
+unsigned int ic_token_ispermission(struct ic_token *token);
+
 void ic_token_print(struct ic_token *token);
 
 void ic_token_id_print_debug(enum ic_token_id id);

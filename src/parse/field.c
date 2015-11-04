@@ -2,6 +2,7 @@
 #include <string.h> /* strncmp */
 
 #include "parse.h"
+#include "permissions.h"
 
 struct ic_field * ic_parse_field(struct ic_token_list *token_list){
     /* the field we build and return */
@@ -13,12 +14,38 @@ struct ic_field * ic_parse_field(struct ic_token_list *token_list){
     char *type = 0;
     unsigned int type_len = 0;
 
+    /* our eventual field permissions */
+    unsigned int permissions = 0;
+
     /* current token */
     struct ic_token *token = 0;
 
     if( ! token_list ){
         puts("ic_parse_field: token_list was null");
         return 0;
+    }
+
+    /* check for permission */
+    token = ic_token_list_peek_important(token_list);
+    if( ! token ){
+        puts("ic_parse_field: failed to peek at permission slot");
+        return 0;
+    }
+
+    /* if we found a valid permission
+     * then consume and process
+     */
+    if( ic_token_ispermission(token) ){
+        token = ic_token_list_next_important(token_list);
+        if( ! token ){
+            puts("ic_parse_field: failed to get permission slot");
+            return 0;
+        }
+
+        permissions = ic_parse_perm(token->id);
+    } else {
+        /* otherwise fallback to default permission */
+        permissions = ic_parse_perm(IC_PERM_DEFAULT);
     }
 
     /* capture field name
@@ -63,7 +90,7 @@ struct ic_field * ic_parse_field(struct ic_token_list *token_list){
         return 0;
     }
 
-    field = ic_field_new(name, name_len, type, type_len);
+    field = ic_field_new(name, name_len, type, type_len, permissions);
     if( ! field ){
         puts("ic_parse_field: call to ic_field_new failed");
         return 0;

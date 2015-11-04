@@ -30,7 +30,7 @@ int main(void){
     assert( 1 == ic_decl_type_init(tdecl, "Foo", 3) );
 
     /* add a single field */
-    field = ic_field_new("bar", 3, "Baz", 3);
+    field = ic_field_new("bar", 3, "Baz", 3, 0);
     assert( 1 == ic_decl_type_add_field(tdecl, field) );
 
     /* test display */
@@ -60,7 +60,7 @@ int main(void){
     assert( 1 == ic_decl_func_init(fdecl, "Foo", 3) );
 
     /* add a single field */
-    field = ic_field_new("bar", 3, "Baz", 3);
+    field = ic_field_new("bar", 3, "Baz", 3, 0);
     assert( 1 == ic_decl_func_add_arg(fdecl, field) );
 
     /* test display */

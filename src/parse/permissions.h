@@ -3,23 +3,45 @@
 
 #include "../lex/data/token.h"
 
-#define IC_UNIQUE 0x08 /* 1000 */
-#define IC_STORE  0x04 /* 0100 */
-#define IC_WRITE  0x02 /* 0010 */
-#define IC_READ   0x01 /* 0001 */
-
-/* value is our default permission */
+/* value is a permission but NOT a token
+ * so doesn't exist in token.h
+ */
 #define IC_VALUE (1 + IC_ASTERISK)
+/* our default permission is IC_VALUE */
+#define IC_PERM_DEFAULT IC_VALUE
 
-/* map of 'token' to permission */
-int ic_parse_perm_map[] = {
-    /*               UNIQUE      READ      WRITE      STORE    */
-    [IC_VALUE]     = IC_UNIQUE | IC_READ | 0        | IC_STORE  ,
-    [IC_DOLLAR]    = 0         | IC_READ | 0        | 0         ,
-    [IC_PERCENT]   = 0         | IC_READ | 0        | IC_STORE  ,
-    [IC_AMPERSAND] = 0         | IC_READ | IC_WRITE | 0         ,
-    [IC_AT]        = 0         | IC_READ | IC_WRITE | IC_STORE  ,
-    [IC_ASTERISK]  = 0         | 0       | 0        | 0         ,
-};
+/* get permissions for this token_id */
+unsigned int ic_parse_perm(enum ic_token_id);
+
+/* return a string representation of this permission */
+char * ic_parse_perm_str(unsigned int permissions);
+
+/* check if the given permissions has read
+ *
+ * returns 1 if can read
+ * returns 0 otherwise
+ */
+unsigned int ic_perm_has_read(unsigned int permissions);
+
+/* check if the given permissions has write
+ *
+ * returns 1 if can write
+ * returns 0 otherwise
+ */
+unsigned int ic_perm_has_write(unsigned int permissions);
+
+/* check if the given permissions has store
+ *
+ * returns 1 if can store
+ * returns 0 otherwise
+ */
+unsigned int ic_perm_has_store(unsigned int permissions);
+
+/* check if the given permissions has unique
+ *
+ * returns 1 if can unique
+ * returns 0 otherwise
+ */
+unsigned int ic_perm_has_unique(unsigned int permissions);
 
 #endif

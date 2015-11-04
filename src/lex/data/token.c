@@ -386,6 +386,32 @@ unsigned int ic_token_isoperator(struct ic_token *token){
     return 0;
 }
 
+/* check if token is a permission
+ *
+ * returns 1 if it is a permission
+ * returns 0 if not
+ */
+unsigned int ic_token_ispermission(struct ic_token *token){
+    if( ! token ){
+        puts("ic_token_ispermission: token was null");
+        return 0;
+    }
+
+    switch( token->id ){
+        case IC_DOLLAR:
+        case IC_PERCENT:
+        case IC_AMPERSAND:
+        case IC_AT:
+        case IC_ASTERISK:
+            return 1;
+
+        default:
+            break;
+    }
+
+    return 0;
+}
+
 void ic_token_print(struct ic_token *token){
     char * str = 0;
     if( ! token ){
