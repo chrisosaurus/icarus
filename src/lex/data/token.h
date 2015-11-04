@@ -7,12 +7,13 @@ enum ic_token_id {
     /* the top tokens are given explicit numbers
      * as these are used as indicies into the 'permissions'
      * table
+     * DO NOT modify these values without also checking parse/permissions.h
      */
-    IC_DOLLAR = 0,
-    IC_PERCENT = 1,
+    IC_DOLLAR    = 0,
+    IC_PERCENT   = 1,
     IC_AMPERSAND = 2,
-    IC_AT = 3,
-    IC_ASTERISK = 4,
+    IC_AT        = 3,
+    IC_ASTERISK  = 4,
 
     IC_IDENTIFIER, /* no entry in table[], payload */
     IC_LITERAL_INTEGER, /* no entry in table[], payload */
