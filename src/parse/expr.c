@@ -570,6 +570,27 @@ struct ic_expr * ic_parse_expr(struct ic_token_list *token_list){
      */
 
     while( 1 ){
+        /* fcalls can span across lines
+         *
+         * field accesses and operators can only under certain cases
+         *
+         *      instance.
+         *      field
+         *
+         *      left +
+         *      right
+         *
+         * are both allowed
+         *
+         * however the following 2 are illegal
+         *
+         *      instance
+         *      .field
+         *
+         *      left
+         *      +right
+         */
+
         token = ic_token_list_peek_important(token_list);
         if( ! token ){
             /* this in theory could mean out final token is an identifier
@@ -632,7 +653,7 @@ struct ic_expr * ic_parse_expr(struct ic_token_list *token_list){
         } else if( current ){
             /* we already have an expr in current
              * and we did not see a field access or operator
-             * so this expression has ended
+             * then this expression has ended
              */
             return current;
         }
