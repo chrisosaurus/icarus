@@ -140,10 +140,10 @@ sigils
     @x = storable mut x
 
 
-Decay
-=====
+Downgrade
+=========
 
-By default variables decay to immut
+By default variables Downgrade to immut
 
     fn bar(x::Int)
         print(x)
@@ -164,7 +164,11 @@ By default variables decay to immut
     end
 
 the call `bar(x)` is giving an immut ref
-the call `baz(&x)` is preventing this decay by explicitly passing a mutable reference
+the call `baz(&x)` is preventing this downgrade by explicitly passing a mutable reference
+
+
+This is to say that an unqualified variable usage (`x`, `y`) is always using the default permissions
+and you must qualify it (`$x`, `&x`, ...) for other permissions.
 
 
 Minimal permissions
@@ -248,12 +252,6 @@ this program will output '14' and then '15'
 
 note that `&l.append(@x)` is really saying 'append may store or mutate x, and a may now be stored and mutated through &l`
 
-
-
-Automatic decay
-==============
-
-A function has to specify the minimum permissions that is requires to work, and a function cannot work beyond those
 
 
 containers
