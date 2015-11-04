@@ -4,6 +4,16 @@
 #include "../../data/pvector.h"
 
 enum ic_token_id {
+    /* the top tokens are given explicit numbers
+     * as these are used as indicies into the 'permissions'
+     * table
+     */
+    IC_DOLLAR = 0,
+    IC_PERCENT = 1,
+    IC_AMPERSAND = 2,
+    IC_AT = 3,
+    IC_ASTERISK = 4,
+
     IC_IDENTIFIER, /* no entry in table[], payload */
     IC_LITERAL_INTEGER, /* no entry in table[], payload */
     IC_LITERAL_STRING, /* no entry in table[], payload */
@@ -38,8 +48,6 @@ enum ic_token_id {
     IC_PLUS,
     IC_MINUS,
     IC_DIVIDE,
-    IC_MULTIPLY,
-    IC_MODULO,
 
     IC_LRBRACKET, /* ( left round bracket */
     IC_RRBRACKET, /* ) right round backet */

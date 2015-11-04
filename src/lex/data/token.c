@@ -186,13 +186,22 @@ char * ic_token_get_representation(struct ic_token *token){
         case IC_DIVIDE:
             return "/";
             break;
-        case IC_MULTIPLY:
-            return "*";
+
+        case IC_DOLLAR:
+            return "$";
             break;
-        case IC_MODULO:
+        case IC_PERCENT:
             return "%";
             break;
-
+        case IC_AMPERSAND:
+            return "&";
+            break;
+        case IC_AT:
+            return "@";
+            break;
+        case IC_ASTERISK:
+            return "*";
+            break;
 
         case IC_LRBRACKET:
             return "(";
@@ -361,8 +370,8 @@ unsigned int ic_token_isoperator(struct ic_token *token){
         case IC_PLUS:
         case IC_MINUS:
         case IC_DIVIDE:
-        case IC_MULTIPLY:
-        case IC_MODULO:
+        case IC_ASTERISK:
+        case IC_PERCENT:
             return 1;
 
         case IC_PERIOD:
@@ -506,11 +515,21 @@ void ic_token_id_print_debug(enum ic_token_id id){
         case IC_DIVIDE:
             fputs("IC_DIVIDE", stdout);
             break;
-        case IC_MULTIPLY:
-            fputs("IC_MULTIPLY", stdout);
+
+        case IC_DOLLAR:
+            fputs("IC_DOLLAR", stdout);
             break;
-        case IC_MODULO:
-            fputs("IC_MODULO", stdout);
+        case IC_PERCENT:
+            fputs("IC_PERCENT", stdout);
+            break;
+        case IC_AMPERSAND:
+            fputs("IC_AMPERSAND", stdout);
+            break;
+        case IC_AT:
+            fputs("IC_AT", stdout);
+            break;
+        case IC_ASTERISK:
+            fputs("IC_ASTERISK", stdout);
             break;
 
         case IC_LRBRACKET:

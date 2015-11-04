@@ -12,75 +12,81 @@ my $exit_status = $?;
 my $expected = <<EOF;
 print testing
 ---------
-0 : hello
-1 : 14
-2 : "hello"
-3 : #hello
-4 : 
+0 : \$
+1 : %
+2 : &
+3 : @
+4 : *
+5 : hello
+6 : 14
+7 : "hello"
+8 : #hello
+9 : 
 
-5 :  
-6 : end
-7 : if
-8 : else
-9 : then
-10 : return
-11 : let
-12 : import
-13 : builtin
-14 : op
-15 : fn
-16 : type
-17 : enum
-18 : union
-19 : ->
-20 : ==
-21 : =
-22 : ::
-23 : .
-24 : ,
-25 : +
-26 : -
-27 : /
-28 : *
-29 : %
-30 : (
-31 : )
+10 :  
+11 : end
+12 : if
+13 : else
+14 : then
+15 : return
+16 : let
+17 : import
+18 : builtin
+19 : op
+20 : fn
+21 : type
+22 : enum
+23 : union
+24 : ->
+25 : ==
+26 : =
+27 : ::
+28 : .
+29 : ,
+30 : +
+31 : -
+32 : /
+33 : (
+34 : )
 ---------
 
 print debug testing
 ---------
-0 : IC_IDENTIFIER
-1 : IC_LITERAL_INTEGER
-2 : IC_LITERAL_STRING
-3 : IC_COMMENT
-4 : IC_NEWLINE
-5 : IC_WHITSPACE
-6 : IC_END
-7 : IC_IF
-8 : IC_ELSE
-9 : IC_THEN
-10 : IC_RETURN
-11 : IC_LET
-12 : IC_IMPORT
-13 : IC_BUILTIN
-14 : IC_OP
-15 : IC_FUNC
-16 : IC_TYPE
-17 : IC_ENUM
-18 : IC_UNION
-19 : IC_ARROW
-20 : IC_EQUAL
-21 : IC_ASSIGN
-22 : IC_DOUBLECOLON
-23 : IC_PERIOD
-24 : IC_COMMA
-25 : IC_PLUS
-26 : IC_MINUS
-27 : IC_DIVIDE
-28 : IC_MULTIPLY
-29 : IC_MODULO
-30 : IC_LRBRACKET
-31 : IC_RRBRACKET
+0 : IC_DOLLAR
+1 : IC_PERCENT
+2 : IC_AMPERSAND
+3 : IC_AT
+4 : IC_ASTERISK
+5 : IC_IDENTIFIER
+6 : IC_LITERAL_INTEGER
+7 : IC_LITERAL_STRING
+8 : IC_COMMENT
+9 : IC_NEWLINE
+10 : IC_WHITSPACE
+11 : IC_END
+12 : IC_IF
+13 : IC_ELSE
+14 : IC_THEN
+15 : IC_RETURN
+16 : IC_LET
+17 : IC_IMPORT
+18 : IC_BUILTIN
+19 : IC_OP
+20 : IC_FUNC
+21 : IC_TYPE
+22 : IC_ENUM
+23 : IC_UNION
+24 : IC_ARROW
+25 : IC_EQUAL
+26 : IC_ASSIGN
+27 : IC_DOUBLECOLON
+28 : IC_PERIOD
+29 : IC_COMMA
+30 : IC_PLUS
+31 : IC_MINUS
+32 : IC_DIVIDE
+33 : IC_LRBRACKET
+34 : IC_RRBRACKET
 ---------
 EOF
 

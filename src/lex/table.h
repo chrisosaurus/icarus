@@ -46,8 +46,12 @@ struct ic_table_entry table[] = {
     { "+",          1,      IC_PLUS },
     { "-",          1,      IC_MINUS },
     { "/",          1,      IC_DIVIDE },
-    { "*",          1,      IC_MULTIPLY },
-    { "%",          1,      IC_MODULO },
+
+    { "$",          1,      IC_DOLLAR },
+    { "%",          1,      IC_PERCENT },
+    { "&",          1,      IC_AMPERSAND },
+    { "@",          1,      IC_AT },
+    { "*",          1,      IC_ASTERISK },
 
     { "(",          1,      IC_LRBRACKET },
     { ")",          1,      IC_RRBRACKET },
