@@ -1,4 +1,4 @@
-Alising
+Aliasing
 ========
 
 
