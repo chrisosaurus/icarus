@@ -259,7 +259,58 @@ containers
 
 A container should not be able to give away any mutable permissions if it is itself immutable
 
-FIXME need to update this section
+a container that is mutable (but not storable) may be still able to hand out storable mutable references
+
+I think this means we end up with a few different types, depending on the interface we want
+
+we can do this by providing various get methods and dispatching on a combination
+of type and permission (the Icarus analyse phase already handles this and correctly
+pairs functions calls up with their declarations/definitions).
+
+    # a List type for storing immutables
+    builtin type ListImmut<T>
+    builtin fn append<T>(&l::ListImmut<T>, %t::T)
+    builtin fn get<T>(l::ListImmut<T>) -> t::T
+    builtin fn getStorable<T>(l::ListImmut<T>) -> %t::T
+
+    # a List type for storing mutables
+    builtin type ListMut<T>
+    builtin fn append<T>(&l::ListMut<T>, @t::T)
+    builtin fn get<T>(&l::ListMut<T>) -> &t::T
+    builtin fn get<T>(l::ListMut<T>) -> t::T
+    builtin fn getStorable<T>(&l::ListMut<T>) -> @t::T
+    builtin fn getStorable<T>(l::ListMut<T>) -> %t::T
+
+example using ListMut
+
+    fn main()
+        let &list = ListMut<Int>
+
+        # populate list
+        for @i in [1..100]
+            &list.append(@i)
+        end
+
+        # mutate list
+        add_one_to_each(&list)
+
+        # print out list
+        print_list(list)
+
+    end
+
+    fn print_list(list::ListMut<Int>)
+        for i in list
+            print(i)
+        end
+    end
+
+    fn add_one_to_each(&list::ListMut<Int>)
+        for &i in &list
+            &i += 1
+        end
+    end
+
 
 Thoughts
 ========
