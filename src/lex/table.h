@@ -43,8 +43,6 @@ struct ic_table_entry table[] = {
     { ".",          1,      IC_PERIOD },
     { ",",          1,      IC_COMMA },
 
-    { "+",          1,      IC_PLUS },
-    { "-",          1,      IC_MINUS },
     { "/",          1,      IC_DIVIDE },
 
     { "$",          1,      IC_DOLLAR },
@@ -52,6 +50,9 @@ struct ic_table_entry table[] = {
     { "&",          1,      IC_AMPERSAND },
     { "@",          1,      IC_AT },
     { "*",          1,      IC_ASTERISK },
+    { "^",          1,      IC_CARET },
+    { "+",          1,      IC_PLUS },
+    { "-",          1,      IC_MINUS },
 
     { "(",          1,      IC_LRBRACKET },
     { ")",          1,      IC_RRBRACKET },

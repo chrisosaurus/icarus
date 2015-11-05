@@ -14,6 +14,9 @@ enum ic_token_id {
     IC_AMPERSAND = 2,
     IC_AT        = 3,
     IC_ASTERISK  = 4,
+    IC_CARET     = 5,
+    IC_PLUS      = 6,
+    IC_MINUS     = 7,
 
     IC_IDENTIFIER, /* no entry in table[], payload */
     IC_LITERAL_INTEGER, /* no entry in table[], payload */
@@ -46,8 +49,6 @@ enum ic_token_id {
     IC_PERIOD,
     IC_COMMA,
 
-    IC_PLUS,
-    IC_MINUS,
     IC_DIVIDE,
 
     IC_LRBRACKET, /* ( left round bracket */

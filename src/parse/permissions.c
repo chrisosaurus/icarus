@@ -24,13 +24,16 @@
 #define IC_READ   0x01 /* 0001 */
 
 /* value is a permission but NOT a token
- *    * so doesn't exist in token.h
- *       */
-#define IC_VALUE (1 + IC_ASTERISK)
+ * so doesn't exist in token.h
+ */
+#define IC_VALUE (1 + IC_MINUS)
+
 /* our default permission is IC_VALUE */
 #define IC_PERM_DEFAULT IC_VALUE
 
-/* map of token_id to permission */
+/* map of token_id to permission
+ * Note that we have a few 'spare'
+ */
 unsigned int ic_parse_perm_map[] = {
     /*               IMMUT      READ      WRITE      STORE    */
     [IC_VALUE]     = IC_IMMUT | IC_READ | 0        | IC_STORE  ,
@@ -39,6 +42,9 @@ unsigned int ic_parse_perm_map[] = {
     [IC_AMPERSAND] = 0        | IC_READ | IC_WRITE | 0         ,
     [IC_AT]        = 0        | IC_READ | IC_WRITE | IC_STORE  ,
     [IC_ASTERISK]  = 0        | 0       | 0        | 0         ,
+    [IC_CARET]     = 0        | 0       | 0        | 0         ,
+    [IC_PLUS]      = 0        | 0       | 0        | 0         ,
+    [IC_MINUS]     = 0        | 0       | 0        | 0         ,
 };
 
 /* get permissions for this token_id */
@@ -56,16 +62,16 @@ unsigned int ic_parse_perm_default(void){
     return ic_parse_perm(IC_PERM_DEFAULT);
 }
 
-/* check if the provided decay is valid
+/* check if the provided decay is downgrade
  *
- * a valid decay is one where every bit set in `to` is also
+ * a downgrade decay is one where every bit set in `to` is also
  * set in `from`
  *
- * returns 1 if this is a valid decay
+ * returns 1 if this is a valid downgrade
  * returns 0 otherwise
  */
-unsigned int ic_parse_perm_is_valid_decay(unsigned int from, unsigned int to){
-    /* for a decay to be valid every bit set in `to` must also
+unsigned int ic_parse_perm_is_valid_downgrade(unsigned int from, unsigned int to){
+    /* for a downgrade to be valid every bit set in `to` must also
      * be set in `from`
      */
     if( (from & to) == to ){
@@ -128,6 +134,18 @@ char * ic_parse_perm_str(unsigned int permissions){
 
         case IC_ASTERISK:
             str = "*";
+            break;
+
+        case IC_CARET:
+            str = "^";
+            break;
+
+        case IC_PLUS:
+            str = "+";
+            break;
+
+        case IC_MINUS:
+            str = "-";
             break;
 
         default:

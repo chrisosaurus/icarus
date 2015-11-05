@@ -177,12 +177,6 @@ char * ic_token_get_representation(struct ic_token *token){
             return ",";
             break;
 
-        case IC_PLUS:
-            return "+";
-            break;
-        case IC_MINUS:
-            return "-";
-            break;
         case IC_DIVIDE:
             return "/";
             break;
@@ -201,6 +195,15 @@ char * ic_token_get_representation(struct ic_token *token){
             break;
         case IC_ASTERISK:
             return "*";
+            break;
+        case IC_CARET:
+            return "^";
+            break;
+        case IC_PLUS:
+            return "+";
+            break;
+        case IC_MINUS:
+            return "-";
             break;
 
         case IC_LRBRACKET:
@@ -403,6 +406,9 @@ unsigned int ic_token_ispermission(struct ic_token *token){
         case IC_AMPERSAND:
         case IC_AT:
         case IC_ASTERISK:
+        case IC_CARET:
+        case IC_PLUS:
+        case IC_MINUS:
             return 1;
 
         default:
@@ -532,12 +538,6 @@ void ic_token_id_print_debug(enum ic_token_id id){
             fputs("IC_COMMA", stdout);
             break;
 
-        case IC_PLUS:
-            fputs("IC_PLUS", stdout);
-            break;
-        case IC_MINUS:
-            fputs("IC_MINUS", stdout);
-            break;
         case IC_DIVIDE:
             fputs("IC_DIVIDE", stdout);
             break;
@@ -556,6 +556,15 @@ void ic_token_id_print_debug(enum ic_token_id id){
             break;
         case IC_ASTERISK:
             fputs("IC_ASTERISK", stdout);
+            break;
+        case IC_CARET:
+            fputs("IC_CARET", stdout);
+            break;
+        case IC_PLUS:
+            fputs("IC_PLUS", stdout);
+            break;
+        case IC_MINUS:
+            fputs("IC_MINUS", stdout);
             break;
 
         case IC_LRBRACKET:
