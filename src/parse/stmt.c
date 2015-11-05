@@ -6,7 +6,6 @@
 #include "parse.h"
 #include "data/stmt.h"
 #include "../lex/lexer.h"
-#include "permissions.h"
 
 /* ignore unused parameter warnings */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -128,26 +127,8 @@ static struct ic_stmt * ic_parse_stmt_let(struct ic_token_list *token_list){
         return 0;
     }
 
-    /* check for permissions */
-    token = ic_token_list_peek_important(token_list);
-    if( ! token ){
-        puts("ic_parse_stmt_let: failed to peek at permissions token");
-        free(stmt);
-        return 0;
-    }
-
-    if( ic_token_ispermission(token) ){
-        token = ic_token_list_next_important(token_list);
-        if( ! token ){
-            puts("ic_parse_stmt_let: failed to get permissions token");
-            free(stmt);
-            return 0;
-        }
-
-        permissions = ic_parse_perm(token->id);
-    } else {
-        permissions = ic_parse_perm_default();
-    }
+    /* parse permissions, if they are there */
+    permissions = ic_parse_permissions(token_list);
 
     /* consume identifier */
     token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
@@ -395,3 +376,4 @@ struct ic_stmt * ic_parse_stmt(struct ic_token_list *token_list){
 
     return ret;
 }
+

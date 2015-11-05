@@ -73,5 +73,7 @@ struct ic_decl * ic_parse_decl_union(struct ic_token_list *token_list);
 
 struct ic_ast * ic_parse(struct ic_token_list *token_list);
 
+unsigned int ic_parse_permissions(struct ic_token_list *token_list);
+
 #endif
 

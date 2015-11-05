@@ -4,7 +4,6 @@
 #include <limits.h> /* LONG_MIN, LONG_MAX */
 
 #include "parse.h"
-#include "permissions.h"
 
 /* ignore unused parameter warnings */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -147,27 +146,8 @@ static struct ic_expr * ic_parse_expr_identifier(struct ic_token_list *token_lis
         return 0;
     }
 
-    /* check for permissions */
-    token = ic_token_list_peek_important(token_list);
-    if( ! token ){
-        puts("ic_parse_expr_identifier: failed to peek at permissions");
-        free(expr);
-        return 0;
-    }
-
-    if( ic_token_ispermission(token) ){
-        /* consume permissions token */
-        token = ic_token_list_next_important(token_list);
-        if( ! token ){
-            puts("ic_parse_expr_identifier: failed to get permissions");
-            free(expr);
-            return 0;
-        }
-
-        permissions = ic_parse_perm(token->id);
-    } else {
-        permissions = ic_parse_perm_default();
-    }
+    /* parse permissions if present */
+    permissions = ic_parse_permissions(token_list);
 
     token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
     if( ! token ){
@@ -550,21 +530,7 @@ static struct ic_expr * ic_parse_expr_perm(struct ic_token_list *token_list){
         return 0;
     }
 
-    /* permission handling */
-    token = ic_token_list_next_important(token_list);
-    if( ! token ){
-        puts("ic_parse_expr_perm: operator call to token list next important failed");
-        return 0;
-    }
-
-    /* check if op */
-    if( ! ic_token_ispermission(token) ){
-        puts("ic_parse_expr_perm: permission not found");
-        return 0;
-    }
-
-    /* set perm */
-    permissions = ic_parse_perm(token->id);
+    permissions = ic_parse_permissions(token_list);
 
     /* make parse_expr_identifier do the hard work */
     expr = ic_parse_expr_identifier(token_list);

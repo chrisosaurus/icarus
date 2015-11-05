@@ -2,7 +2,6 @@
 #include <string.h> /* strncmp */
 
 #include "parse.h"
-#include "permissions.h"
 
 struct ic_field * ic_parse_field(struct ic_token_list *token_list){
     /* the field we build and return */
@@ -25,28 +24,7 @@ struct ic_field * ic_parse_field(struct ic_token_list *token_list){
         return 0;
     }
 
-    /* check for permission */
-    token = ic_token_list_peek_important(token_list);
-    if( ! token ){
-        puts("ic_parse_field: failed to peek at permission slot");
-        return 0;
-    }
-
-    /* if we found a valid permission
-     * then consume and process
-     */
-    if( ic_token_ispermission(token) ){
-        token = ic_token_list_next_important(token_list);
-        if( ! token ){
-            puts("ic_parse_field: failed to get permission slot");
-            return 0;
-        }
-
-        permissions = ic_parse_perm(token->id);
-    } else {
-        /* otherwise fallback to default permission */
-        permissions = ic_parse_perm_default();
-    }
+    permissions = ic_parse_permissions(token_list);
 
     /* capture field name
      * a::Int

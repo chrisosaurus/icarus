@@ -5,6 +5,7 @@
 #include "../lex/lexer.h"
 #include "data/ast.h"
 #include "parse.h"
+#include "permissions.h"
 
 /* indent level defined as 4 spaces */
 #define INDENT_PER_LEVEL 4
@@ -153,6 +154,42 @@ void ic_parse_print_indent(unsigned int levels){
      * levels * INDENT_PER_LEVELS
      */
     printf("%*s", levels * INDENT_PER_LEVEL, "");
+}
+
+unsigned int ic_parse_permissions(struct ic_token_list *token_list){
+    unsigned int permissions = 0;
+    struct ic_token *token = 0;
+
+    if( ! token_list ){
+        puts("ic_parse_permissions: token_list was null");
+        return 0;
+    }
+
+    /* check for permissions */
+    token = ic_token_list_peek_important(token_list);
+    if( ! token ){
+        puts("ic_parse_stmt_let: failed to peek at permissions token");
+        return 0;
+    }
+
+    /* if we find it */
+    if( ic_token_ispermission(token) ){
+        /* consume it */
+        token = ic_token_list_next_important(token_list);
+        if( ! token ){
+            puts("ic_parse_stmt_let: failed to get permissions token");
+            return 0;
+        }
+
+        /* set permissions from it */
+        permissions = ic_parse_perm(token->id);
+    } else {
+
+        /* otherwise, use defaults */
+        permissions = ic_parse_perm_default();
+    }
+
+    return permissions;
 }
 
 
