@@ -379,6 +379,11 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
 
                 break;
 
+            case ic_stmt_type_assign:
+                puts("ic_analyyse_body: assignment not yet supported");
+                return 0;
+                break;
+
             case ic_stmt_type_expr:
                 /* infer expr type */
                 expr = ic_stmt_get_expr(stmt);

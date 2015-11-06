@@ -284,6 +284,156 @@ void ic_stmt_let_print(struct ic_stmt_let *let, unsigned int *indent_level){
     puts("");
 }
 
+/* allocate and initialise a new assign
+ * does not touch init ic_expr
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_stmt_assign * ic_stmt_assign_new(struct ic_expr *left, struct ic_expr *right){
+    struct ic_stmt_assign *assign = 0;
+
+    if( ! left ){
+        puts("ic_stmt_assign_new: left was null");
+        return 0;
+    }
+
+    if( ! right ){
+        puts("ic_stmt_assign_new: right was null");
+        return 0;
+    }
+
+    /* alloc */
+    assign = calloc(1, sizeof(struct ic_stmt_assign));
+    if( ! assign ){
+        puts("ic_stmt_assign_new: calloc failed");
+        return 0;
+    }
+
+    /* hand over for init
+     * NB: we leave arg checking up to init
+     */
+    if( ! ic_stmt_assign_init(assign, left, right) ){
+        puts("ic_stmt_assign_new: call to ic_stmt_assign_init failed");
+        free(assign);
+        return 0;
+    }
+
+    return assign;
+}
+
+/* initialise an existing assign
+ * does not touch the init expression
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_assign_init(struct ic_stmt_assign *assign, struct ic_expr *left, struct ic_expr *right){
+    if( ! assign ){
+        puts("ic_stmt_assign_init: assign was null");
+        return 0;
+    }
+
+    if( ! left ){
+        puts("ic_stmt_assign_init: left was null");
+        return 0;
+    }
+
+    if( ! right ){
+        puts("ic_stmt_assign_init: right was null");
+        return 0;
+    }
+
+    assign->left = left;
+    assign->right = right;
+
+    return 1;
+}
+
+/* destroy assign
+ *
+ * will only free assign if `free_assign` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_assign_destroy(struct ic_stmt_assign *assign, unsigned int free_assign){
+    if( ! assign ){
+        puts("ic_stmt_assign_destroy: assign was null");
+        return 0;
+    }
+
+    /* FIXME who frees left and right ? */
+
+    if( free_assign ){
+        free(assign);
+    }
+
+    return 1;
+}
+
+/* get the left ic_expr * contained within
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr * ic_stmt_assign_get_left(struct ic_stmt_assign *assign){
+    if( ! assign ){
+        puts("ic_stmt_assign_left: assign was null");
+        return 0;
+    }
+
+    return assign->left;
+}
+
+/* get the right ic_expr * contained within
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr * ic_stmt_assign_get_right(struct ic_stmt_assign *assign){
+    if( ! assign ){
+        puts("ic_stmt_assign_get_right: assign was null");
+        return 0;
+    }
+
+    return assign->right;
+}
+
+/* print this assign */
+void ic_stmt_assign_print(struct ic_stmt_assign *assign, unsigned int *indent_level){
+    /* our fake indent for our subexpr */
+    unsigned int fake_indent = 0;
+
+    if( ! assign ){
+        puts("ic_stmt_assign_init: assign was null");
+        return;
+    }
+
+    if( ! indent_level ){
+        puts("ic_stmt_assign_print: indent_level was null");
+        return;
+    }
+
+    /* output indent */
+    ic_parse_print_indent(*indent_level);
+
+    /* want to output
+     * left = right
+     */
+
+    fake_indent = 0;
+    ic_expr_print(assign->left, &fake_indent);
+
+    fputs(" = ", stdout);
+
+    fake_indent = 0;
+    ic_expr_print(assign->right, &fake_indent);
+
+    /* statements are displayed on their own line */
+    puts("");
+}
+
 
 /* allocate and initialise a new ic_stmtm_if
  * this will initialise the body
@@ -598,6 +748,28 @@ struct ic_stmt_let * ic_stmt_get_let(struct ic_stmt *stmt){
     return &(stmt->u.let);
 }
 
+/* get a pointer to the assign within
+ * will only succeed if ic_stmt is of the correct type
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_stmt_assign * ic_stmt_get_assign(struct ic_stmt *stmt){
+    if( ! stmt ){
+        puts("ic_stmt_get_assign: stmt was null");
+        return 0;
+    }
+
+    /* check type before giving out */
+    if( stmt->tag != ic_stmt_type_assign ){
+        puts("ic_stmt_get_assign: not of the correct type");
+        return 0;
+    }
+
+    /* otherwise give them what they asked for */
+    return &(stmt->u.assign);
+}
+
 /* get a pointer to the sif within
  * will only succeed if ic_stmt is of the correct type
  *
@@ -660,6 +832,10 @@ void ic_stmt_print(struct ic_stmt *stmt, unsigned int *indent_level){
 
         case ic_stmt_type_let:
             ic_stmt_let_print( &(stmt->u.let), indent_level );
+            break;
+
+        case ic_stmt_type_assign:
+            ic_stmt_assign_print( &(stmt->u.assign), indent_level );
             break;
 
         case ic_stmt_type_if:

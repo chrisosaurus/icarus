@@ -97,6 +97,59 @@ struct ic_expr * ic_stmt_let_get_expr(struct ic_stmt_let *let);
 /* print this let */
 void ic_stmt_let_print(struct ic_stmt_let *let, unsigned int *indent_level);
 
+
+/* an assignment statement
+ *  x = y
+ *  FIXME need to have permissions on expressions
+ */
+struct ic_stmt_assign {
+    struct ic_expr *left;
+    struct ic_expr *right;
+};
+
+/* allocate and initialise a new assign
+ * does not touch init ic_expr
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_stmt_assign * ic_stmt_assign_new(struct ic_expr *left, struct ic_expr *right);
+
+/* initialise an existing assign
+ * does not touch the init expression
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_assign_init(struct ic_stmt_assign *assign, struct ic_expr *left, struct ic_expr *right);
+
+/* destroy assign
+ *
+ * will only free assign if `free_assign` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_assign_destroy(struct ic_stmt_assign *assign, unsigned int free_assign);
+
+/* get the left ic_expr * contained within
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr * ic_stmt_assign_get_left(struct ic_stmt_assign *assign);
+
+/* get the right ic_expr * contained within
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr * ic_stmt_assign_get_right(struct ic_stmt_assign *assign);
+
+/* print this assign */
+void ic_stmt_assign_print(struct ic_stmt_assign *assign, unsigned int *indent_level);
+
+
 /* an if statement
  *  if expr
  *      body
@@ -160,6 +213,7 @@ void ic_stmt_if_print(struct ic_stmt_if *sif, unsigned int *indent_level);
 enum ic_stmt_tag {
     ic_stmt_type_ret,
     ic_stmt_type_let,
+    ic_stmt_type_assign,
     ic_stmt_type_if,
     ic_stmt_type_expr
 };
@@ -169,6 +223,7 @@ struct ic_stmt {
     union {
         struct ic_stmt_ret ret;
         struct ic_stmt_let let;
+        struct ic_stmt_assign assign;
         struct ic_stmt_if sif;
         /* a statement can just be an expression in
          * void context
@@ -221,6 +276,14 @@ struct ic_stmt_ret * ic_stmt_get_ret(struct ic_stmt *stmt);
  * returns 0 on failure
  */
 struct ic_stmt_let * ic_stmt_get_let(struct ic_stmt *stmt);
+
+/* get a pointer to the assign within
+ * will only succeed if ic_stmt is of the correct type
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_stmt_assign * ic_stmt_get_assign(struct ic_stmt *stmt);
 
 /* get a pointer to the sif within
  * will only succeed if ic_stmt is of the correct type
