@@ -284,20 +284,55 @@ static struct ic_stmt * ic_parse_stmt_if(struct ic_token_list *token_list){
 static struct ic_stmt * ic_parse_stmt_expr(struct ic_token_list *token_list){
     /* out eventual return value */
     struct ic_stmt *stmt = 0;
+    /* our expr */
+    struct ic_expr *expr = 0;
+    /* out possible right expr */
+    struct ic_expr *right = 0;
+    /* our stmt type */
+    enum ic_stmt_tag tag = ic_stmt_type_expr;
+    /* our next token */
+    struct ic_token *token = 0;
+
+    expr = ic_parse_expr(token_list);
+    if( ! expr ){
+        puts("ic_parse_stmt_expr: call to ic_parse_expr failed");
+        return 0;
+    }
+
+    /* check for possible assignment */
+    token = ic_token_list_peek_important(token_list);
+    if( token && token->id == IC_ASSIGN ){
+        /* if so, consume */
+        token = ic_token_list_expect_important(token_list, IC_ASSIGN);
+        if( ! token ){
+            puts("ic_parse_stmt_expr: failed to grab assign");
+            return 0;
+        }
+
+        right = ic_parse_expr(token_list);
+
+        if( ! right ){
+            puts("ic_parse_stmt_expr: call to ic_parse_expr failed for right side of assignment");
+            return 0;
+        }
+
+        tag = ic_stmt_type_assign;
+    }
 
     /* allocate and initialise */
-    stmt = ic_stmt_new(ic_stmt_type_expr);
+    stmt = ic_stmt_new(tag);
     if( ! stmt ){
         puts("ic_parse_stmt_expr: call to ic_stmt_new failed");
         return 0;
     }
 
-    /* here we really just wrap ic_parse_expr */
-    stmt->u.expr = ic_parse_expr(token_list);
-    if( ! stmt->u.expr ){
-        puts("ic_parse_stmt_expr: call to ic_parse_expr failed");
-        free(stmt);
-        return 0;
+    /* if we have a right then we have 2 exprs, we are an assign */
+    if( right ){
+        stmt->u.assign.left = expr;
+        stmt->u.assign.right = right;
+    } else {
+        /* here we really just wrap ic_parse_expr */
+        stmt->u.expr = expr;
     }
 
     return stmt;

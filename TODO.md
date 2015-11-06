@@ -1,7 +1,7 @@
 TODO:
 -----
 
-* add assignment
+* assignment not yet supported at analyse stage
 * the analysis system currently has no idea about permissions
 * only operators are still remaining for kludge.c harcoding to be nuked
 * remove ic_type, as builtin and user defined types now both use ic_decl_type
