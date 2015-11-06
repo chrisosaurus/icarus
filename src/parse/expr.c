@@ -328,6 +328,7 @@ static struct ic_expr * ic_parse_expr_constant_integer(struct ic_token_list *tok
 static struct ic_expr * ic_parse_expr_single_token(struct ic_token_list *token_list){
     /* current token */
     struct ic_token *token = 0;
+    struct ic_expr *expr = 0;
 
     if( ! token_list ){
         puts("ic_parse_expr_single_token: token_list was null");
@@ -347,14 +348,31 @@ static struct ic_expr * ic_parse_expr_single_token(struct ic_token_list *token_l
      */
 
     if( token->id == IC_LITERAL_STRING ){
-        return ic_parse_expr_constant_string(token_list);
+        expr =  ic_parse_expr_constant_string(token_list);
+        if( ! expr ){
+            puts("ic_parse_expr_single_token: call to ic_parse_expr_constant_string failed");
+            return 0;
+        }
+        return expr;
     }
 
     if( token->id == IC_LITERAL_INTEGER ){
-        return ic_parse_expr_constant_integer(token_list);
+        expr =  ic_parse_expr_constant_integer(token_list);
+        if( ! expr ){
+            puts("ic_parse_expr_single_token: call to ic_parse_expr_constant_integer failed");
+            return 0;
+        }
+        return expr;
     }
+
     /* otherwise assume this is just an identifier */
-    return ic_parse_expr_identifier(token_list);
+    expr = ic_parse_expr_identifier(token_list);
+    if( ! expr ){
+        puts("ic_parse_expr_single_token: call to ic_parse_expr_identifier failed");
+        return 0;
+    }
+
+    return expr;
 }
 
 /* consume token
@@ -706,6 +724,10 @@ struct ic_expr * ic_parse_expr(struct ic_token_list *token_list){
 
         /* otherwise parse a single token and continue */
         current = ic_parse_expr_single_token(token_list);
+        if( ! current ){
+            puts("ic_parse_expr: call to ic_parse_expr_single_token failed");
+            return 0;
+        }
     }
 
     puts("ic_parse_expr: impossible case");

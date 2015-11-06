@@ -244,7 +244,7 @@ unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func 
      */
     fdecl->body.scope = scope;
 
-    /* insert each arg as a lot into a scope
+    /* insert each arg as a slot into a scope
      * FIXME this is gross as it means we are iterating through args twice
      * once above for ic_analyse_field_list
      * and again here
