@@ -3,6 +3,7 @@
 Icarus is a toy language exploring static verifiability
 
 I am currently exploring a few potential options for how Icarus' "permissions" (ownership, aliasing,mutation) system will work.
+
 The current proposal can be seen in [docs/language/mutability/proposal_five/permissions.md](https://github.com/mkfifo/icarus/blob/master/docs/language/mutability/proposal_five/permissions.md)
 
 Goals
