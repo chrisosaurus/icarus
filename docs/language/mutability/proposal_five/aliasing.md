@@ -34,7 +34,7 @@ Safe aliasing
 safe is given two references here, but the second one `y` has
 immutable permissions, this gives it value semantics.
 
-This guarantee on `y` means `safe` knows it cannot mutate under it for the duration of the call,
+This guarantee on `y` means `safe` knows it cannot mutate under it (for the lifetime of that reference),
 so the mutation through `x` cannot mutate `y`.
 
 so this program will output
