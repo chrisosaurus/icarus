@@ -26,7 +26,7 @@ struct ic_kludge {
     /* dict Func sig (char *)  -> Func decl */
     struct ic_dict dict_fsig;
 
-    /* dict Op name (char*) -> Func name (symbol *)
+    /* dict Op name (char*) -> Op name (symbol *)
      * e.g.
      * + -> symbol(Plus)
      */
@@ -104,6 +104,14 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *
  * returns 0 on failure
  */
 unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_decl_func *fdecl);
+
+/* add a new op decl to this kludge
+ * this will insert into dict_op and also
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_kludge_add_op(struct ic_kludge *kludge, struct ic_decl_op *op);
 
 /* retrieve ic_type by string
  *

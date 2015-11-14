@@ -9,45 +9,6 @@
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
-/* populate kludge with operators
- *
- * returns 1 on success
- * returns 0 on failure
- */
-static unsigned int ic_kludge_populate_operators(struct ic_kludge *kludge){
-    unsigned int i = 0;
-    struct ic_symbol *sym= 0;
-
-    /* here we have tables showing
-     * operators: the from operator (char *)
-     * functions: the to function (char *)
-     * lengths:   length of function char * (unsigned int)
-     */
-
-    /*                              0      1        2       3      4      5     6    */
-    char          *operators[] = { "!",   "==",    "+",    "and", "&&",  "or", "||" };
-    char          *functions[] = { "not", "equal", "plus", "and", "and", "or", "or" };
-    unsigned int     lengths[] = { 3,     5,       4,      3,     3,     2,    2,   };
-
-    for( i=0; i<7; ++i ){
-        /* create symbol for function, this is our value */
-        sym = ic_symbol_new(functions[i], lengths[i]);
-        if( ! sym ){
-            printf("ic_kludge_populate_operators: call to ic_symbol_new failed for type '%s', i '%d'\n", operators[i], i);
-            return 0;
-        }
-
-        /* insert into dict_op */
-        if( ! ic_dict_insert(&(kludge->dict_op), operators[i], sym) ){
-            printf("ic_kludge_populate_operators: ic_dict_insert failed for type '%s', i '%d'\n", operators[i], i);
-            return 0;
-        }
-
-    }
-
-    return 1;
-}
-
 /* populate the kludge from the provided ast
  * this call will break apart the ast to populate the
  * fields stored on kludge
@@ -93,8 +54,10 @@ unsigned int ic_kludge_populate(struct ic_kludge *kludge, struct ic_ast *ast){
                 break;
 
             case ic_decl_tag_builtin_op:
-                puts("ic_kludge_populate: builtin op not yet supported");
-                return 0;
+                if( ! ic_kludge_add_op(kludge, &(decl->u.op)) ){
+                    puts("ic_kludge_populate: call to ic_kludge_add_op failed");
+                    return 0;
+                }
                 break;
 
             default:
@@ -187,12 +150,6 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge){
     /* pvector error */
     if( ! ic_pvector_init( &(kludge->errors), 0 ) ){
         puts("ic_kludge_init: errors: call to ic_pvector_init failed");
-        return 0;
-    }
-
-    /* populate dict_op */
-    if( ! ic_kludge_populate_operators(kludge) ){
-        puts("ic_kludge_init: errors: call to ic_kludge_populate_operators failed");
         return 0;
     }
 
@@ -434,6 +391,58 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_decl_func *
 
     return 1;
 }
+
+/* add a new op decl to this kludge
+ * this will insert into dict_op and also
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_kludge_add_op(struct ic_kludge *kludge, struct ic_decl_op *op){
+    char *from_str = 0;
+    struct ic_symbol *to_sym = 0;
+
+    if( ! kludge ){
+        puts("ic_kludge_add_op: kludge was null");
+        return 0;
+    }
+
+    if( ! op ){
+        puts("ic_kludge_add_op: kludge was null");
+        return 0;
+    }
+
+    /* cache str
+     * do not need to free as this char* is stored on the fdecl
+     */
+    from_str = ic_symbol_contents( &(op->from) );
+    if( ! from_str ){
+        puts("ic_kludge_add_op: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    /* check for exists first to aid diagnostics */
+    if( ic_dict_exists( &(kludge->dict_fsig), from_str ) ){
+        printf("ic_kludge_add_op: operator '%s' already exists on this kludge\n", from_str);
+        return 0;
+    }
+
+    /* create symbol for function, this is our value */
+    to_sym = &(op->to);
+    if( ! to_sym ){
+        puts("ic_kludge_add_op: fetching to_sym failed");
+        return 0;
+    }
+
+    /* insert into dict_op */
+    if( ! ic_dict_insert(&(kludge->dict_op), from_str, to_sym) ){
+        puts("ic_kludge_add_op: ic_dict_insert failed");
+        return 0;
+    }
+
+    return 1;
+}
+
 
 /* retrieve ic_type by string
  *
