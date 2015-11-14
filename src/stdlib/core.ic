@@ -20,9 +20,9 @@ builtin type String
 builtin fn print(a::String)
 builtin fn equal(a::String b::String) -> Bool
 
-#builtin op + plus
-#builtin op - minus
-#builtin op * times
-#builtin op / divide
-#builtin op % modulo
+builtin op + plus
+builtin op - minus
+builtin op * times
+builtin op / divide
+builtin op % modulo
 

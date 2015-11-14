@@ -783,6 +783,144 @@ unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char * fiel
     return 1;
 }
 
+/* allocate and return a new decl_op
+ *
+ * returns new ic_field * on success
+ * returns 0 on failure
+ */
+struct ic_decl_op * ic_decl_op_new(char *from_src, unsigned int from_len, char *to_src, unsigned int to_len){
+    struct ic_decl_op *op = 0;
+
+    if( ! from_src ){
+        puts("ic_decl_op_new: from_src was null");
+        return 0;
+    }
+
+    if( ! from_len ){
+        puts("ic_decl_op_new: from_len was 0");
+        return 0;
+    }
+
+    if( ! to_src ){
+        puts("ic_decl_op_new: to_src was null");
+        return 0;
+    }
+
+    if( ! to_len ){
+        puts("ic_decl_op_new: to_len was 0");
+        return 0;
+    }
+
+    op = calloc(1, sizeof(struct ic_decl_op));
+    if( ! op ){
+        puts("ic_decl_op_new: call to calloc failed");
+        return 0;
+    }
+
+    if( ! ic_decl_op_init(op, from_src, from_len, to_src, to_len) ){
+        puts("ic_decl_op_new: call to ic_decl_op_init failed");
+        return 0;
+    }
+
+    return op;
+}
+
+/* initialise an existing decl_op
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_op_init(struct ic_decl_op *op, char *from_src, unsigned int from_len, char *to_src, unsigned int to_len){
+    if( ! op ){
+        puts("ic_decl_op_init: top was null");
+        return 0;
+    }
+
+    if( ! from_src ){
+        puts("ic_decl_op_init: from_src was null");
+        return 0;
+    }
+
+    if( ! from_len ){
+        puts("ic_decl_op_init: from_len was 0");
+        return 0;
+    }
+
+    if( ! to_src ){
+        puts("ic_decl_op_init: to_src was null");
+        return 0;
+    }
+
+    if( ! to_len ){
+        puts("ic_decl_op_init: to_len was 0");
+        return 0;
+    }
+
+    if( ! ic_symbol_init( &(op->from), from_src, from_len ) ){
+        puts("ic_decl_op_init: call to ic_symbol_init for 'from' failed");
+        return 0;
+    }
+
+    if( ! ic_symbol_init( &(op->to), to_src, to_len ) ){
+        puts("ic_decl_op_init: call to ic_symbol_init for 'to' failed");
+        return 0;
+    }
+
+    return 1;
+}
+
+/* calls destroy on every element within
+ *
+ * this will only free the op if `free_op` is truthy
+ *
+ * the caller must determine if it is appropriate
+ * or not to call free(decl)
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_op_destroy(struct ic_decl_op *op, unsigned int free_op){
+    if( ! op ){
+        puts("ic_decl_op_destroy: op was null");
+        return 0;
+    }
+
+    if( ! ic_symbol_destroy( &(op->from), 0) ){
+        puts("ic_decl_op_destroy: call to ic_symbol_destroy failed for 'from'");
+        return 0;
+    }
+
+    if( ! ic_symbol_destroy( &(op->to), 0) ){
+        puts("ic_decl_op_destroy: call to ic_symbol_destroy failed for 'to'");
+        return 0;
+    }
+
+    if( free_op ){
+        free(op);
+    }
+
+    return 1;
+}
+
+/* print the decl_op to stdout */
+void ic_decl_op_print(struct ic_decl_op *op, unsigned int *indent_level){
+    if( ! op ){
+        puts("ic_decl_op_print: op was null");
+        return;
+    }
+
+    fputs("op ", stdout);
+
+    ic_symbol_print(&(op->from));
+
+    fputs(" ", stdout);
+
+    ic_symbol_print(&(op->from));
+
+    /* trailing \n */
+    puts("");
+}
+
 /* allocate and initialise a new ic_decl
  *
  * NOTE: this call will NOT initialise the contents of the union
@@ -878,10 +1016,11 @@ unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl){
             break;
 
         case ic_decl_tag_builtin_op:
-            puts("ic_decl_destroy: builtin op destruction not yet defined");
-            return 0;
+            if( ! ic_decl_op_destroy(&(decl->u.op), 0) ){
+                puts("ic_decl_destroy: call to ic_decl_op_destroy failed");
+                return 0;
+            }
             break;
-
 
         default:
             puts("ic_decl_destroy: impossible decl type, aborting");
@@ -940,8 +1079,30 @@ struct ic_decl_type * ic_decl_get_tdecl(struct ic_decl *decl){
     return &(decl->u.tdecl);
 }
 
+/* returns pointer to ic_decl_op element
+ * this function will only success if the decl is of type decl_op
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_decl_op * ic_decl_get_op(struct ic_decl *decl){
+    if( ! decl ){
+        puts("ic_decl_get_op: decl was null");
+        return 0;
+    }
+
+    /* check we are the right type */
+    if( decl->tag != ic_decl_tag_builtin_op ){
+        return 0;
+    }
+
+    /* unbox */
+    return &(decl->u.op);
+}
+
 /* print contents of ic_decl */
 void ic_decl_print(struct ic_decl *decl, unsigned int *indent_level){
+
     if( ! decl ){
         puts("ic_decl_print: decl was null");
         return;
@@ -967,7 +1128,8 @@ void ic_decl_print(struct ic_decl *decl, unsigned int *indent_level){
             ic_decl_type_print_header( ic_decl_get_tdecl(decl), indent_level );
             break;
         case ic_decl_tag_builtin_op:
-            puts("ic_decl_print: printing of builtin op not yet supported");
+            fputs("builtin ", stdout);
+            ic_decl_op_print( ic_decl_get_op(decl), indent_level );
             break;
 
         default:

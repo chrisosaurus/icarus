@@ -202,6 +202,45 @@ struct ic_type * ic_decl_type_get_field_type(struct ic_decl_type *tdecl, char * 
  */
 unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char * field_name, struct ic_type *type);
 
+
+/* an op decl is only a mapping of a symbol (say '+')
+ * to another (say 'plus')
+ */
+struct ic_decl_op {
+    struct ic_symbol from;
+    struct ic_symbol to;
+};
+
+/* allocate and return a new decl_op
+ *
+ * returns new ic_field * on success
+ * returns 0 on failure
+ */
+struct ic_decl_op * ic_decl_op_new(char *from_src, unsigned int from_len, char *to_src, unsigned int to_len);
+
+/* initialise an existing decl_op
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_op_init(struct ic_decl_op *op, char *from_src, unsigned int from_len, char *to_src, unsigned int to_len);
+
+/* calls destroy on every element within
+ *
+ * this will only free the op if `free_op` is truthy
+ *
+ * the caller must determine if it is appropriate
+ * or not to call free(decl)
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_op_destroy(struct ic_decl_op *op, unsigned int free_op);
+
+/* print the decl_op to stdout */
+void ic_decl_op_print(struct ic_decl_op *op, unsigned int *indent_level);
+
+
 enum ic_decl_tag {
     ic_decl_tag_func,
     ic_decl_tag_type,
@@ -215,6 +254,7 @@ struct ic_decl {
     union {
         struct ic_decl_func fdecl;
         struct ic_decl_type tdecl;
+        struct ic_decl_op op;
     } u;
 };
 
@@ -265,6 +305,15 @@ struct ic_decl_func * ic_decl_get_fdecl(struct ic_decl *decl);
  * returns 0 on failure
  */
 struct ic_decl_type * ic_decl_get_tdecl(struct ic_decl *decl);
+
+/* returns pointer to ic_decl_op element
+* this function will only success if the decl is of type decl_op
+*
+* returns pointer on success
+* returns 0 on failure
+*/
+struct ic_decl_op * ic_decl_get_op(struct ic_decl *decl);
+
 
 /* print contents of ic_decl */
 void ic_decl_print(struct ic_decl *decl, unsigned int *indent_level);

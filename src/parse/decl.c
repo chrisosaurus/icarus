@@ -25,7 +25,7 @@ struct ic_decl * ic_parse_decl_builtin(struct ic_token_list *token_list){
     /* check we really are at a `builtin` token */
     token = ic_token_list_expect_important(token_list, IC_BUILTIN);
     if( ! token ){
-        puts("ic_parse_decl_builtin: call to ic_token_list_next failed for builtin");
+        puts("ic_parse_decl_builtin: call to ic_token_list_expect_important failed for builtin");
         return 0;
     }
 
@@ -55,7 +55,12 @@ struct ic_decl * ic_parse_decl_builtin(struct ic_token_list *token_list){
             break;
 
         case IC_OP:
-            puts("ic_parse_decl_builtin: op not yet supported");
+            decl = ic_parse_decl_op(token_list);
+            if( ! decl ){
+                puts("ic_parse_decl_builtin: call to ic_parse_decl_op failed");
+                return 0;
+            }
+            decl->tag = ic_decl_tag_builtin_op;
             break;
 
         default:
@@ -107,7 +112,7 @@ struct ic_decl * ic_parse_decl_type_header(struct ic_token_list *token_list){
     /* check we really are at a `type` token */
     token = ic_token_list_expect_important(token_list, IC_TYPE);
     if( ! token ){
-        puts("ic_parse_decl_type_header: call to ic_token_list_next failed for func");
+        puts("ic_parse_decl_type_header: call to ic_token_list_expect_important failed for TYPE");
         return 0;
     }
 
@@ -304,7 +309,7 @@ struct ic_decl * ic_parse_decl_func_header(struct ic_token_list *token_list){
     /* check we really are at a `function` token */
     token = ic_token_list_expect_important(token_list, IC_FUNC);
     if( ! token ){
-        puts("ic_parse_decl_type_header: call to ic_token_list_next failed for func");
+        puts("ic_parse_decl_type_header: call to ic_token_list_expect_important failed for FUNC");
         return 0;
     }
 
@@ -348,7 +353,7 @@ struct ic_decl * ic_parse_decl_func_header(struct ic_token_list *token_list){
     /* opening bracket */
     token = ic_token_list_expect_important(token_list, IC_LRBRACKET);
     if( ! token ){
-        puts("ic_parse_decl_type_header: call to ic_token_list_next failed for '('");
+        puts("ic_parse_decl_type_header: call to ic_token_list_expect_important failed for '('");
         return 0;
     }
 
@@ -378,7 +383,7 @@ struct ic_decl * ic_parse_decl_func_header(struct ic_token_list *token_list){
 
     token = ic_token_list_expect_important(token_list, IC_RRBRACKET);
     if( ! token ){
-        puts("ic_parse_decl_type_header: call to ic_token_list_next failed for ')'");
+        puts("ic_parse_decl_type_header: call to ic_token_list_expect_important failed for ')'");
         return 0;
     }
 
@@ -514,4 +519,104 @@ struct ic_decl * ic_parse_decl_func_body(struct ic_token_list *token_list, struc
     return 0;
 }
 
+struct ic_decl * ic_parse_decl_op(struct ic_token_list *token_list){
+    struct ic_decl *decl = 0;
+    /* our op within the decl */
+    struct ic_decl_op *op = 0;
+    /* current token */
+    struct ic_token *token = 0;
+
+    char *from_str = 0;
+    unsigned int from_len = 0;
+    char *to_str = 0;
+    unsigned int to_len = 0;
+
+    /* builtin op from to
+     * builtin op +    plus
+     */
+
+#ifdef DEBUG_PARSE
+    puts("ic_parse_decl_op called");
+#endif
+
+    /* allocate and init our decl */
+    decl = ic_decl_new(ic_decl_tag_builtin_op);
+    if( ! decl ){
+        puts("ic_parse_decl_op: call to ic_decl_new failed");
+        return 0;
+    }
+
+    /* fetch our op from within decl */
+    op = ic_decl_get_op(decl);
+    if( ! op ){
+        puts("ic_parse_decl_op: call to ic_decl_get_op failed");
+        free(decl);
+        return 0;
+    }
+
+    /* check we really are at an `op` token */
+    token = ic_token_list_expect_important(token_list, IC_OP);
+    if( ! token ){
+        puts("ic_parse_decl_op: call to ic_token_list_expect_important failed for OP");
+        return 0;
+    }
+
+
+    /* get from symbol */
+    token = ic_token_list_next_important(token_list);
+    if( ! token ){
+        puts("ic_parse_decl_op: call to ic_token_list_next_important failed for op");
+        return 0;
+    }
+
+    if( ! ic_token_isoperator(token) ){
+        puts("ic_parse_decl_op: token was not an operator");
+        ic_token_print_debug(token);
+        return 0;
+    }
+
+    /* get the parts we need */
+    from_str = ic_token_get_representation(token);
+    if( ! from_str ){
+        puts("ic_parse_decl_op: call to ic_token_get_representation failed for from");
+        return 0;
+    }
+
+    from_len = strlen(from_str);
+    if( ! from_len ){
+        puts("ic_parse_decl_op: call to strlen failed for from");
+        return 0;
+    }
+
+
+    /* get to symbol */
+    token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
+    if( ! token ){
+        puts("ic_parse_decl_op: call to ic_token_list_expect_important failed for IDENTIFIER");
+        return 0;
+    }
+
+    /* get the parts we need */
+    to_str = ic_token_get_string(token);
+    if( ! to_str ){
+        puts("ic_parse_decl_op: call to ic_token_get_string failed for 'to'");
+        return 0;
+    }
+
+    to_len = ic_token_get_string_length(token);
+    if( ! to_len ){
+        puts("ic_parse_decl_op: call to ic_token_get_string_length failed for 'to'");
+        return 0;
+    }
+
+
+    /* init op */
+    if( ! ic_decl_op_init(op, from_str, from_len, to_str, to_len) ){
+        puts("ic_parse_decl_op: call to ic_decl_op_init failed");
+        return 0;
+    }
+
+    /* done */
+    return decl;
+}
 
