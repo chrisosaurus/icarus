@@ -690,6 +690,15 @@ unsigned int ic_stmt_destroy(struct ic_stmt *stmt, unsigned int free_stmt){
 
             break;
 
+        case ic_stmt_type_assign:
+            /* do not free as member */
+            if( ! ic_stmt_assign_destroy( &(stmt->u.assign), 0 ) ){
+                puts("ic_stmt_destroy: call to ic_stmt_assign_destroy failed");
+                return 0;
+            }
+
+            break;
+
         default:
             puts("ic_stmt_destroy: impossible stmt type");
             return 0;

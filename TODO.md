@@ -1,7 +1,6 @@
 TODO:
 -----
 
-* assignment not yet supported at analyse stage
 * removing mandated type form let
 * the analysis system currently has no idea about permissions
 * remove ic_type, as builtin and user defined types now both use ic_decl_type

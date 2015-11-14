@@ -219,6 +219,8 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
     struct ic_stmt_ret *ret = 0;
     /* if from stmt */
     struct ic_stmt_if *sif = 0;
+    /* assign from stmt */
+    struct ic_stmt_assign *assign = 0;
     /* new scope for body of if */
     struct ic_scope *if_scope = 0;
 
@@ -380,8 +382,65 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                 break;
 
             case ic_stmt_type_assign:
-                puts("ic_analyyse_body: assignment not yet supported");
-                return 0;
+                /* a = b
+                 * we need to know that both a and b are of the same type
+                 *
+                 * FIXME eventually we will need to take permissions into account
+                 */
+
+                /* pull out assignment stmt */
+                assign = ic_stmt_get_assign(stmt);
+                if( ! assign ){
+                    puts("ic_analyse_body: if: call to ic_stmt_get_assign failed");
+                    goto ERROR;
+                }
+
+                /* left expr */
+                expr = ic_stmt_assign_get_left(assign);
+                if( ! expr ){
+                    puts("ic_analyse_body: if: call to ic_stmt_assign_get_left failed");
+                    goto ERROR;
+                }
+
+                /* get type of left */
+                type = ic_analyse_infer(kludge, body->scope, expr);
+                if( ! type ){
+                    puts("ic_analyse_body: expr: call to ic_analyse_infer failed");
+                    goto ERROR;
+                }
+
+                /* if either type is void then this is an error */
+                if( ic_type_isvoid(type) ){
+                    puts("ic_analyse_body: attempt to assign to void variable");
+                    goto ERROR;
+                }
+
+                /* right expr */
+                expr = ic_stmt_assign_get_right(assign);
+                if( ! expr ){
+                    puts("ic_analyse_body: if: call to ic_stmt_assign_get_right failed");
+                    goto ERROR;
+                }
+
+                /* get type of right */
+                other_type = ic_analyse_infer(kludge, body->scope, expr);
+                if( ! other_type ){
+                    puts("ic_analyse_body: expr: call to ic_analyse_infer failed");
+                    goto ERROR;
+                }
+
+                /* if either type is void then this is an error */
+                if( ic_type_isvoid(other_type) ){
+                    puts("ic_analyse_body: attempt to assign void value");
+                    goto ERROR;
+                }
+
+                /* both types must be the same */
+                if( ! ic_type_equal(type, other_type) ){
+                    puts("ic_analyse_body: assignment between invalid types");
+                    goto ERROR;
+                }
+
                 break;
 
             case ic_stmt_type_expr:
@@ -400,9 +459,9 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
 
                 /* check if type is non-void so we can warn */
                 if( ! ic_type_isvoid(type) ){
-                /* warn about non-void in void context
-                 * FIXME make this more useful
-                 */
+                    /* warn about non-void in void context
+                     * FIXME make this more useful
+                     */
                     puts("Warning: usage of non-void expression in void context");
                 }
 
