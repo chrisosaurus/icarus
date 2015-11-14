@@ -26,7 +26,9 @@ end\n\
 \n\
 # simple function to test return values\n\
 fn add_one(i::Int) -> Int\n\
-    return i + 1\n\
+    let tmp::Int = i\n\
+    tmp = i + 1\n\
+    return tmp\n\
 end\n\
 \n\
 # entry point for program\n\

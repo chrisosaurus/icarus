@@ -36,7 +36,9 @@ end
 
 # add_one(Int)
 fn add_one(i::Int) -> Int
-    return i + 1
+    let tmp::Int = i
+    tmp = i + 1
+    return tmp
 end
 
 # main()

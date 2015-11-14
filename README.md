@@ -52,7 +52,9 @@ We have the contents of `example/simple.ic`:
 
     # simple function to test return values
     fn add_one(i::Int) -> Int
-        return i + 1
+        let tmp::Int = i
+        tmp = i + 1
+        return tmp
     end
 
     # entry point for program
@@ -99,7 +101,9 @@ Hidden in the output we see the new lexer output:
 
     # simple function to test return values
     fn add_one(i::Int) -> Int
-        return i + 1
+        let tmp::Int = i
+        tmp = i + 1
+        return tmp
     end
 
     # entry point for program
@@ -142,7 +146,9 @@ Hidden elsewhere in the output we can see the parser reconstructing the program 
 
     # add_one(Int)
     fn add_one(i::Int) -> Int
-        return i + 1
+        let tmp::Int = i
+        tmp = i + 1
+        return tmp
     end
 
     # main()
