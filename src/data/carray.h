@@ -1,5 +1,5 @@
-#ifndef ICARUS_carray_H
-#define ICARUS_carray_H
+#ifndef ICARUS_CARRAY_H
+#define ICARUS_CARRAY_H
 
 /* character array
  * a dynamic bounds checked array
