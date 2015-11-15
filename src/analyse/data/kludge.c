@@ -319,9 +319,17 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *
         return 0;
     }
 
-    /* if this is the void type then mark it as so */
     if( ! strncmp(str, "Void", 4) ){
+        /* if this is the void type then mark it as so */
         if( ! ic_decl_type_mark_void(tdecl) ){
+            puts("ic_kludge_add_tdecl: call to ic_decl_type_mark_void failed");
+            return 0;
+        }
+    } else if( ! strncmp(str, "Bool", 4) ){
+        /* if this is the bool type then mark it as so */
+        if( ! ic_decl_type_mark_bool(tdecl) ){
+            puts("ic_kludge_add_tdecl: call to ic_decl_type_mark_bool failed");
+            return 0;
         }
     }
 

@@ -68,6 +68,13 @@ struct ic_symbol * ic_type_name(struct ic_type *type);
  */
 unsigned int ic_type_isvoid(struct ic_type *type);
 
+/* is this type bool
+ *
+ * returns 1 if provided type is Bool
+ * returns 0 if provided type is NOT Bool
+ */
+unsigned int ic_type_isbool(struct ic_type *type);
+
 /* are these 2 types the equal
  *
  * returns 1 if they are equal

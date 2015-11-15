@@ -352,7 +352,9 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                     goto ERROR;
                 }
 
-                /* FIXME may want to check if this expression can be interpreted as boolean */
+                /* this expression must be of type bool */
+                if( ic_type_isbool(type) ){
+                }
 
                 /* check if body
                  * and if produces a new scope, so we must construct one and attach it

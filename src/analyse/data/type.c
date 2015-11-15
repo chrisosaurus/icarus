@@ -148,6 +148,25 @@ unsigned int ic_type_isvoid(struct ic_type *type){
     return type->u.decl->isvoid;
 }
 
+/* is this type bool
+ *
+ * returns 1 if provided type is Void
+ * returns 0 if provided type is NOT void
+ */
+unsigned int ic_type_isbool(struct ic_type *type){
+    if( ! type ){
+        puts("ic_type_isbool: type was null");
+        return 0;
+    }
+
+    if( type->tag != ic_type_user ){
+        return 0;
+    }
+
+    return type->u.decl->isbool;
+}
+
+
 /* are these 2 types the equal
  *
  * returns 1 if they are equal

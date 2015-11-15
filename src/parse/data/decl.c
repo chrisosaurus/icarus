@@ -538,6 +538,7 @@ unsigned int ic_decl_type_init(struct ic_decl_type *tdecl, char *name_src, unsig
     }
 
     tdecl->isvoid = 0;
+    tdecl->isbool = 0;
 
     return 1;
 }
@@ -623,6 +624,23 @@ unsigned int ic_decl_type_mark_void(struct ic_decl_type *tdecl){
 
     return 1;
 }
+
+/* mark supplied tdecl as being the bool type
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_mark_bool(struct ic_decl_type *tdecl){
+    if( ! tdecl ){
+        puts("ic_decl_type_mark_bool: tdecl was null");
+        return 0;
+    }
+
+    tdecl->isbool = 1;
+
+    return 1;
+}
+
 
 /* add a new field to types list of fields
  *
