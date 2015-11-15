@@ -245,9 +245,12 @@ static struct ic_stmt * ic_parse_stmt_if(struct ic_token_list *token_list){
         return 0;
     }
 
-    /* FIXME parse if condition
-     * continue parsing until we encounter 'then'
-     */
+    /* parse if condition */
+    expr = ic_parse_expr(token_list);
+    if( ! expr ){
+        puts("ic_parse_stmt_if: call to ic_parse_expr failed");
+        return 0;
+    }
 
     /* save our expr on the body stmt */
     stmt->u.sif.expr = expr;

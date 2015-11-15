@@ -592,6 +592,8 @@ void ic_stmt_if_print(struct ic_stmt_if *sif, unsigned int *indent_level){
     ic_body_print( sif->body, indent_level );
 
     /* statements are displayed on their own line */
+    /* print indent */
+    ic_parse_print_indent(*indent_level);
     puts("end");
 }
 
