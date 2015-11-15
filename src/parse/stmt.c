@@ -267,7 +267,154 @@ static struct ic_stmt * ic_parse_stmt_if(struct ic_token_list *token_list){
     /* save our body on the stmt */
     stmt->u.sif.body = body;
 
-    /* FIXME consume end */
+    /* ic_parse_body consumes our `end` for us */
+
+    return stmt;
+}
+
+/* consume token
+ * returns ic_stmt* on success
+ * returns 0 on failure
+ */
+static struct ic_stmt * ic_parse_stmt_for(struct ic_token_list *token_list){
+    /* out eventual return value */
+    struct ic_stmt *stmt = 0;
+    /* our expression */
+    struct ic_expr *expr = 0;
+    /* our iterator expression */
+    struct ic_expr *iterator = 0;
+    /* our body */
+    struct ic_body *body = 0;
+
+    /* current token */
+    struct ic_token *token = 0;
+
+    /* there are a few cases of if we care about at this point
+     *
+     *  for expr in iterator
+     *      body
+     *  end
+     */
+
+    stmt = ic_stmt_new(ic_stmt_type_for);
+    if( ! stmt ){
+        puts("ic_parse_stmt_for: call to ic_stmt_new failed");
+        return 0;
+    }
+
+    /* consume for */
+    token = ic_token_list_expect_important(token_list, IC_FOR);
+    if( ! token ){
+        puts("ic_parse_stmt_for: Failed to find `for` token");
+        free(stmt);
+        return 0;
+    }
+
+    /* parse expression */
+    expr = ic_parse_expr(token_list);
+    if( ! expr ){
+        puts("ic_parse_stmt_for: call to ic_parse_expr failed for expression");
+        return 0;
+    }
+
+    /* save our expr on the body stmt */
+    stmt->u.sfor.expr = expr;
+
+    /* consume in */
+    token = ic_token_list_expect_important(token_list, IC_IN);
+    if( ! token ){
+        puts("ic_parse_stmt_for: Failed to find `in` token");
+        free(stmt);
+        return 0;
+    }
+
+
+    /* parse iterator */
+    iterator = ic_parse_expr(token_list);
+    if( ! iterator ){
+        puts("ic_parse_stmt_for: call to ic_parse_expr failed for iterator");
+        return 0;
+    }
+
+    /* save our iterator on the body stmt */
+    stmt->u.sfor.iterator = iterator;
+
+    /* FIXME check types for expr and iterator */
+
+    /* parse our body */
+    body = ic_parse_body(token_list);
+    if( ! body ){
+        puts("ic_parse_stmt_for: call to ic_parse_body failed");
+        return 0;
+    }
+
+    /* save our body on the stmt */
+    stmt->u.sfor.body = body;
+
+    /* ic_parse_body consumes our `end` for us */
+
+    return stmt;
+}
+
+/* consume token
+ * returns ic_stmt* on success
+ * returns 0 on failure
+ */
+static struct ic_stmt * ic_parse_stmt_while(struct ic_token_list *token_list){
+    /* out eventual return value */
+    struct ic_stmt *stmt = 0;
+    /* our condition expression */
+    struct ic_expr *expr = 0;
+    /* our body */
+    struct ic_body *body = 0;
+
+    /* current token */
+    struct ic_token *token = 0;
+
+    /* there are a few cases of if we care about at this point
+     *
+     *  while expr
+     *      body
+     *  end
+     */
+
+    stmt = ic_stmt_new(ic_stmt_type_while);
+    if( ! stmt ){
+        puts("ic_parse_stmt_while: call to ic_stmt_new failed");
+        return 0;
+    }
+
+    /* consume while */
+    token = ic_token_list_expect_important(token_list, IC_WHILE);
+    if( ! token ){
+        puts("ic_parse_stmt_while: Failed to find `if` token");
+        free(stmt);
+        return 0;
+    }
+
+    /* parse if condition */
+    expr = ic_parse_expr(token_list);
+    if( ! expr ){
+        puts("ic_parse_stmt_while: call to ic_parse_expr failed");
+        return 0;
+    }
+
+    /* save our expr on the body stmt */
+    stmt->u.swhile.expr = expr;
+
+    /* FIXME check that our 'expr' has the type Bool */
+
+    /* parse our body */
+    body = ic_parse_body(token_list);
+    if( ! body ){
+        puts("ic_parse_stmt_while: call to ic_parse_body failed");
+        return 0;
+    }
+
+    /* save our body on the stmt */
+    stmt->u.swhile.body = body;
+
+    /* ic_parse_body consumes our `end` for us */
 
     return stmt;
 }
@@ -342,9 +489,11 @@ static struct ic_parse_table_entry {
     struct ic_stmt * (*func)(struct ic_token_list *token_list);
 } ic_parse_table [] = {
     /* id          function    */
-    {  IC_IF,      ic_parse_stmt_if  },
-    {  IC_LET,     ic_parse_stmt_let },
-    {  IC_RETURN,  ic_parse_stmt_ret }
+    {  IC_IF,      ic_parse_stmt_if     },
+    {  IC_FOR,     ic_parse_stmt_for    },
+    {  IC_WHILE,   ic_parse_stmt_while  },
+    {  IC_LET,     ic_parse_stmt_let    },
+    {  IC_RETURN,  ic_parse_stmt_ret    }
     /* otherwise we default to ic_parse_stmt_expr */
 };
 
