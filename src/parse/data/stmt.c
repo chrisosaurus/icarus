@@ -492,21 +492,21 @@ unsigned int ic_stmt_if_init(struct ic_stmt_if *sif){
  */
 unsigned int ic_stmt_if_destroy(struct ic_stmt_if *sif, unsigned int free_if){
     if( ! sif ){
-        puts("ic_stmt_if_detroy: sif was null");
+        puts("ic_stmt_if_destroy: sif was null");
         return 0;
     }
 
     if( sif->expr ){
         /* free_expr = 1 as pointer member */
         if( ! ic_expr_destroy( sif->expr, 1 ) ){
-            puts("ic_stmt_if_detroy: call to ic_expr_destroy failed");
+            puts("ic_stmt_if_destroy: call to ic_expr_destroy failed");
             return 0;
         }
     }
 
     /* free_body = 0 as member */
     if( ! ic_body_destroy( sif->body, 0 ) ){
-        puts("ic_stmt_if_detroy: call to ic_body_destroy failed");
+        puts("ic_stmt_if_destroy: call to ic_body_destroy failed");
         return 0;
     }
 
@@ -597,6 +597,355 @@ void ic_stmt_if_print(struct ic_stmt_if *sif, unsigned int *indent_level){
     puts("end");
 }
 
+/* allocate and initialise a new ic_stmt_for
+ * this will initialise the body
+ * but will NOT initialise the expression OR the iterator
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_stmt_for * ic_stmt_for_new(void){
+    struct ic_stmt_for *sfor = 0;
+
+    /* alloc */
+    sfor = calloc(1, sizeof(struct ic_stmt_for));
+    if( ! sfor ){
+        puts("ic_stmt_for_new: calloc failed");
+        return 0;
+    }
+
+    /* init */
+    if( ! ic_stmt_for_init(sfor) ){
+        puts("ic_stmt_for_new: call to ic_stmt_for_init failed");
+        free(sfor);
+        return 0;
+    }
+
+    return sfor;
+}
+
+/* initialise an existing new ic_stmt_for
+ * this will initialise the body
+ * but will NOT initialise the expression
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_for_init(struct ic_stmt_for *sfor){
+    if( ! sfor ){
+        puts("ic_stmt_for_init: sfor was null");
+        return 0;
+    }
+
+    /* just zero out expr, iterator and body*/
+    sfor->expr = 0;
+    sfor->iterator = 0;
+    sfor->body = 0;
+
+    /* return success */
+    return 1;
+}
+
+/* destroy for
+ *
+ * only frees stmt_for if `free_for` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_for_destroy(struct ic_stmt_for *sfor, unsigned int free_for){
+    if( ! sfor ){
+        puts("ic_stmt_for_destroy: sfor was null");
+        return 0;
+    }
+
+    if( sfor->expr ){
+        /* free_expr = 1 as pointer member */
+        if( ! ic_expr_destroy( sfor->expr, 1 ) ){
+            puts("ic_stmt_for_destroy: call to ic_expr_destroy failed for expr");
+            return 0;
+        }
+    }
+
+    if( sfor->iterator ){
+        /* free_expr = 1 as pointer member */
+        if( ! ic_expr_destroy( sfor->iterator, 1 ) ){
+            puts("ic_stmt_for_destroy: call to ic_expr_destroy failed for iterator");
+            return 0;
+        }
+    }
+
+    /* free_body = 0 as member */
+    if( ! ic_body_destroy( sfor->body, 0 ) ){
+        puts("ic_stmt_for_destroy: call to ic_body_destroy failed");
+        return 0;
+    }
+
+    if( free_for ){
+        free(sfor);
+    }
+
+    return 1;
+}
+
+/* returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr * ic_stmt_for_get_expr(struct ic_stmt_for *sfor){
+    if( ! sfor ){
+        puts("ic_stmt_for_get_expr: sfor was null");
+        return 0;
+    }
+
+    /* return our expr innards */
+    return sfor->expr;
+}
+
+/* returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr * ic_stmt_for_get_iterator(struct ic_stmt_for *sfor){
+    if( ! sfor ){
+        puts("ic_stmt_for_get_iterator: sfor was null");
+        return 0;
+    }
+
+    /* return our iterator innards */
+    return sfor->iterator;
+}
+
+/* get statement of offset i within the body
+ *
+ * returns pointer to element on success
+ * returns 0 on failure
+ */
+struct ic_stmt * ic_stmt_for_get_stmt(struct ic_stmt_for *sfor, unsigned int i){
+    if( ! sfor ){
+        puts("ic_stmt_for_get_stmt: sfor was null");
+        return 0;
+    }
+
+    /* let body do the lifting */
+    return ic_body_get( sfor->body, i );
+}
+
+/* get length of body
+ *
+ * returns length on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_for_length(struct ic_stmt_for *sfor){
+    if( ! sfor ){
+        puts("ic_stmt_for_length: sfor was null");
+        return 0;
+    }
+
+    /* let body do the lifting */
+    return ic_body_length( sfor->body );
+}
+
+/* print this for */
+void ic_stmt_for_print(struct ic_stmt_for *sfor, unsigned int *indent_level){
+    /* our fake indent for our subexpr */
+    unsigned int fake_indent = 0;
+
+    if( ! sfor ){
+        puts("ic_stmt_for_print: sfor was null");
+        return;
+    }
+    if( ! indent_level ){
+        puts("ic_stmt_for_print: indent_level was null");
+        return;
+    }
+
+    /* print indent */
+    ic_parse_print_indent(*indent_level);
+
+    /* we want to print
+     *  for expr in iterator
+     *      body
+     *  end
+     */
+    fputs("for ", stdout);
+    ic_expr_print( sfor->expr, &fake_indent );
+    fputs(" in ", stdout);
+    ic_expr_print( sfor->iterator, &fake_indent );
+    puts("");
+
+    /* print body
+     * body will handle incr and decr of the indent level
+     */
+    ic_body_print( sfor->body, indent_level );
+
+    /* statements are displayed on their own line */
+    /* print indent */
+    ic_parse_print_indent(*indent_level);
+    puts("end");
+}
+
+
+/* allocate and initialise a new ic_stmt_while
+ * this will initialise the body
+ * but will NOT initialise the expression
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_stmt_while * ic_stmt_while_new(void){
+    struct ic_stmt_while *swhile = 0;
+
+    /* alloc */
+    swhile = calloc(1, sizeof(struct ic_stmt_while));
+    if( ! swhile ){
+        puts("ic_stmt_while_new: calloc failed");
+        return 0;
+    }
+
+    /* init */
+    if( ! ic_stmt_while_init(swhile) ){
+        puts("ic_stmt_while_new: call to ic_stmt_while_init failed");
+        free(swhile);
+        return 0;
+    }
+
+    return swhile;
+}
+
+/* initialise an existing new ic_stmt_while
+ * this will initialise the body
+ * but will NOT initialise the expression
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_while_init(struct ic_stmt_while *swhile){
+    if( ! swhile ){
+        puts("ic_stmt_while_init: swhile was null");
+        return 0;
+    }
+
+    /* just zero out expr and body*/
+    swhile->expr = 0;
+    swhile->body = 0;
+
+    /* return success */
+    return 1;
+}
+
+/* destroy while
+ *
+ * only frees stmt_while if `free_while` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_while_destroy(struct ic_stmt_while *swhile, unsigned int free_while){
+    if( ! swhile ){
+            puts("ic_stmt_while_destroy: swhile was null");
+        return 0;
+    }
+
+    if( swhile->expr ){
+        /* free_expr = 1 as pointer member */
+        if( ! ic_expr_destroy( swhile->expr, 1 ) ){
+            puts("ic_stmt_while_destroy: call to ic_expr_destroy failed");
+            return 0;
+        }
+    }
+
+    /* free_body = 0 as member */
+    if( ! ic_body_destroy( swhile->body, 0 ) ){
+        puts("ic_stmt_while_destroy: call to ic_body_destroy failed");
+        return 0;
+    }
+
+    if( free_while ){
+        free(swhile);
+    }
+
+    return 1;
+}
+
+/* returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr * ic_stmt_while_get_expr(struct ic_stmt_while *swhile){
+    if( ! swhile ){
+        puts("ic_stmt_while_get_expr: swhile was null");
+        return 0;
+    }
+
+    /* return our expr innards */
+    return swhile->expr;
+}
+
+/* get statement of offset i within the body
+ *
+ * returns pointer to element on success
+ * returns 0 on failure
+ */
+struct ic_stmt * ic_stmt_while_get_stmt(struct ic_stmt_while *swhile, unsigned int i){
+    if( ! swhile ){
+        puts("ic_stmt_while_get_stmt: swhile was null");
+        return 0;
+    }
+
+    /* let body do the lifting */
+    return ic_body_get( swhile->body, i );
+}
+
+/* get length of body
+ *
+ * returns length on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_while_length(struct ic_stmt_while *swhile){
+    if( ! swhile ){
+        puts("ic_stmt_while_length: swhile was null");
+        return 0;
+    }
+
+    /* let body do the lifting */
+    return ic_body_length( swhile->body );
+}
+
+/* print this if */
+void ic_stmt_while_print(struct ic_stmt_while *swhile, unsigned int *indent_level){
+    /* our fake indent for our subexpr */
+    unsigned int fake_indent = 0;
+
+    if( ! swhile ){
+        puts("ic_stmt_while_print: swhile was null");
+        return;
+    }
+    if( ! indent_level ){
+        puts("ic_stmt_while_print: indent_level was null");
+        return;
+    }
+
+    /* print indent */
+    ic_parse_print_indent(*indent_level);
+
+    /* we want to print
+     *  while expr
+     *      body
+     *  end
+     */
+    fputs("while ", stdout);
+    ic_expr_print( swhile->expr, &fake_indent );
+    puts("");
+
+    /* print body
+     * body will handle incr and decr of the indent level
+     */
+    ic_body_print( swhile->body, indent_level );
+
+    /* statements are displayed on their own line */
+    /* print indent */
+    ic_parse_print_indent(*indent_level);
+    puts("end");
+}
+
 
 /* allocate and initialise anew ic_stmt
  * will not initialise union members
@@ -677,6 +1026,22 @@ unsigned int ic_stmt_destroy(struct ic_stmt *stmt, unsigned int free_stmt){
             /* do not free as member */
             if( ! ic_stmt_if_destroy( &(stmt->u.sif), 0 ) ){
                 puts("ic_stmt_destroy: call to ic_stmt_if_destroy failed");
+                return 0;
+            }
+            break;
+
+        case ic_stmt_type_for:
+            /* do not free as member */
+            if( ! ic_stmt_for_destroy( &(stmt->u.sfor), 0 ) ){
+                puts("ic_stmt_destroy: call to ic_stmt_for_destroy failed");
+                return 0;
+            }
+            break;
+
+        case ic_stmt_type_while:
+            /* do not free as member */
+            if( ! ic_stmt_while_destroy( &(stmt->u.swhile), 0 ) ){
+                puts("ic_stmt_destroy: call to ic_stmt_while_destroy failed");
                 return 0;
             }
             break;
@@ -803,6 +1168,50 @@ struct ic_stmt_if * ic_stmt_get_sif(struct ic_stmt *stmt){
     return &(stmt->u.sif);
 }
 
+/* get a pointer to the sfor within
+ * will only succeed if ic_stmt is of the correct type
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_stmt_for * ic_stmt_get_sfor(struct ic_stmt *stmt){
+    if( ! stmt ){
+        puts("ic_stmt_get_sfor: stmt was null");
+        return 0;
+    }
+
+    /* check type before giving out */
+    if( stmt->tag != ic_stmt_type_for ){
+        puts("ic_stmt_get_sfor: not of the correct type");
+        return 0;
+    }
+
+    /* otherwise give them what they asked for */
+    return &(stmt->u.sfor);
+}
+
+/* get a pointer to the swhile within
+ * will only succeed if ic_stmt is of the correct type
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_stmt_while * ic_stmt_get_swhile(struct ic_stmt *stmt){
+    if( ! stmt ){
+        puts("ic_stmt_get_swhile: stmt was null");
+        return 0;
+    }
+
+    /* check type before giving out */
+    if( stmt->tag != ic_stmt_type_while ){
+        puts("ic_stmt_get_swhile: not of the correct type");
+        return 0;
+    }
+
+    /* otherwise give them what they asked for */
+    return &(stmt->u.swhile);
+}
+
 /* get a pointer to the expr within
  * will only succeed if ic_stmt is of the correct type
  *
@@ -853,6 +1262,14 @@ void ic_stmt_print(struct ic_stmt *stmt, unsigned int *indent_level){
             ic_stmt_if_print( &(stmt->u.sif), indent_level );
             break;
 
+        case ic_stmt_type_for:
+            ic_stmt_for_print( &(stmt->u.sfor), indent_level );
+            break;
+
+        case ic_stmt_type_while:
+            ic_stmt_while_print( &(stmt->u.swhile), indent_level );
+            break;
+
         case ic_stmt_type_expr:
             ic_expr_print( stmt->u.expr, indent_level );
             /* statements are displayed on their own line */
@@ -864,5 +1281,6 @@ void ic_stmt_print(struct ic_stmt *stmt, unsigned int *indent_level){
             return;
     }
 }
+
 
 
