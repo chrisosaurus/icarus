@@ -138,6 +138,9 @@ char * ic_token_get_representation(struct ic_token *token){
         case IC_FOR:
             return "for";
             break;
+        case IC_IN:
+            return "in";
+            break;
         case IC_WHILE:
             return "while";
             break;
@@ -507,6 +510,9 @@ void ic_token_id_print_debug(enum ic_token_id id){
             break;
         case IC_FOR:
             fputs("IC_FOR", stdout);
+            break;
+        case IC_IN:
+            fputs("IC_IN", stdout);
             break;
         case IC_WHILE:
             fputs("IC_WHILE", stdout);

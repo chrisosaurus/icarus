@@ -29,6 +29,7 @@ struct ic_table_entry table[] = {
     { "return",     6,      IC_RETURN },
     { "let",        3,      IC_LET },
     { "for",        3,      IC_FOR },
+    { "in",         2,      IC_IN },
     { "while",      5,      IC_WHILE },
 
     { "import",     6,      IC_IMPORT },

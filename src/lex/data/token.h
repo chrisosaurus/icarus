@@ -34,6 +34,7 @@ enum ic_token_id {
     IC_RETURN,
     IC_LET,
     IC_FOR,
+    IC_IN,
     IC_WHILE,
 
     IC_IMPORT,
