@@ -381,6 +381,16 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
 
                 break;
 
+            case ic_stmt_type_for:
+                puts("ic_analyse_body: 'for' analysis is currently unsupported");
+                goto ERROR;
+                break;
+
+            case ic_stmt_type_while:
+                puts("ic_analyse_body: 'while' analysis is currently unsupported");
+                goto ERROR;
+                break;
+
             case ic_stmt_type_assign:
                 /* a = b
                  * we need to know that both a and b are of the same type

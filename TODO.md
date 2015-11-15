@@ -1,7 +1,8 @@
 TODO:
 -----
 
-* for and while stmts exist at parse data level but still are not parsing
+* `for` analysis case unimplemented
+* `while` analysis case unimplemented
 * removing mandated type form let
 * the analysis system currently has no idea about permissions
 * remove ic_type, as builtin and user defined types now both use ic_decl_type
