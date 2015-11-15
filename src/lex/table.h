@@ -24,7 +24,7 @@ struct ic_table_entry table[] = {
     { "end",        3,      IC_END },
 
     { "if",         2,      IC_IF },
-    { "then",       4,      IC_THEN },
+    { "else",       4,      IC_IF },
     { "return",     6,      IC_RETURN },
     { "let",        3,      IC_LET },
 

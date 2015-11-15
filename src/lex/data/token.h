@@ -30,7 +30,6 @@ enum ic_token_id {
 
     IC_IF,
     IC_ELSE,
-    IC_THEN,
     IC_RETURN,
     IC_LET,
 

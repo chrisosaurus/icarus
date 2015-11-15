@@ -126,9 +126,6 @@ char * ic_token_get_representation(struct ic_token *token){
         case IC_ELSE:
             return "else";
             break;
-        case IC_THEN:
-            return "then";
-            break;
         case IC_RETURN:
             return "return";
             break;
@@ -486,9 +483,6 @@ void ic_token_id_print_debug(enum ic_token_id id){
             break;
         case IC_ELSE:
             fputs("IC_ELSE", stdout);
-            break;
-        case IC_THEN:
-            fputs("IC_THEN", stdout);
             break;
         case IC_RETURN:
             fputs("IC_RETURN", stdout);
