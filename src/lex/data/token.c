@@ -123,6 +123,9 @@ char * ic_token_get_representation(struct ic_token *token){
         case IC_IF:
             return "if";
             break;
+        case IC_ELSIF:
+            return "elsif";
+            break;
         case IC_ELSE:
             return "else";
             break;
@@ -131,6 +134,12 @@ char * ic_token_get_representation(struct ic_token *token){
             break;
         case IC_LET:
             return "let";
+            break;
+        case IC_FOR:
+            return "for";
+            break;
+        case IC_WHILE:
+            return "while";
             break;
 
         case IC_IMPORT:
@@ -484,6 +493,9 @@ void ic_token_id_print_debug(enum ic_token_id id){
         case IC_IF:
             fputs("IC_IF", stdout);
             break;
+        case IC_ELSIF:
+            fputs("IC_ELSIF", stdout);
+            break;
         case IC_ELSE:
             fputs("IC_ELSE", stdout);
             break;
@@ -492,6 +504,12 @@ void ic_token_id_print_debug(enum ic_token_id id){
             break;
         case IC_LET:
             fputs("IC_LET", stdout);
+            break;
+        case IC_FOR:
+            fputs("IC_FOR", stdout);
+            break;
+        case IC_WHILE:
+            fputs("IC_WHILE", stdout);
             break;
 
         case IC_IMPORT:

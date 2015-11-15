@@ -24,9 +24,12 @@ struct ic_table_entry table[] = {
     { "end",        3,      IC_END },
 
     { "if",         2,      IC_IF },
-    { "else",       4,      IC_IF },
+    { "elsif",      5,      IC_ELSIF },
+    { "else",       4,      IC_ELSE },
     { "return",     6,      IC_RETURN },
     { "let",        3,      IC_LET },
+    { "for",        3,      IC_FOR },
+    { "while",      5,      IC_WHILE },
 
     { "import",     6,      IC_IMPORT },
     { "builtin",    7,      IC_BUILTIN },

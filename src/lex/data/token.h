@@ -29,9 +29,12 @@ enum ic_token_id {
     IC_END,
 
     IC_IF,
+    IC_ELSIF,
     IC_ELSE,
     IC_RETURN,
     IC_LET,
+    IC_FOR,
+    IC_WHILE,
 
     IC_IMPORT,
     IC_BUILTIN,
