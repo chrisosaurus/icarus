@@ -42,6 +42,7 @@ testing debt:
 technical debt:
 -----
 
+* having ops from core.ic AND in isoperator is a bit gross
 * we changed _type to _tag for enums, but we didn't fix this values, e.g. ic_expr_tag has values of ic_expr_type_*
 * figure out ownership of left/right or first/second for expr_faccess/expr_operator
 * the parse module was written using the old lexer system and then retrofitted to the new, it could probably use some refactoring now that the lex output is more sane

@@ -25,4 +25,5 @@ builtin op - minus
 builtin op * times
 builtin op / divide
 builtin op % modulo
+builtin op == equal
 

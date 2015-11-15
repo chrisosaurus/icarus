@@ -374,6 +374,9 @@ unsigned int ic_token_isoperator(struct ic_token *token){
         case IC_PERCENT:
             return 1;
 
+        case IC_EQUAL:
+            return 1;
+
         case IC_PERIOD:
             /* a period is not an operator
              * it is a field access */
