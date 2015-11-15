@@ -82,4 +82,7 @@ unsigned int ic_type_isbool(struct ic_type *type);
  */
 unsigned int ic_type_equal(struct ic_type *a, struct ic_type *b);
 
+/* print debug information about a type */
+void ic_type_print(struct ic_type *type);
+
 #endif

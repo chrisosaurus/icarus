@@ -160,6 +160,7 @@ unsigned int ic_type_isbool(struct ic_type *type){
     }
 
     if( type->tag != ic_type_user ){
+        puts("isbool: not user");
         return 0;
     }
 
@@ -184,5 +185,17 @@ unsigned int ic_type_equal(struct ic_type *a, struct ic_type *b){
     }
 
     return a == b;
+}
+
+/* print debug information about a type */
+void ic_type_print(struct ic_type *type){
+    unsigned int fake_indent = 0;
+
+    if( ! type ){
+        puts("ic_type_print_debug: type was null");
+        return;
+    }
+
+    ic_decl_type_print(type->u.decl, &fake_indent);
 }
 

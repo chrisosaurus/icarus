@@ -211,7 +211,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
     struct ic_stmt *stmt = 0;
     /* expr from stmt */
     struct ic_expr *expr = 0;
-    /* type of expression */
+    /* type  expression */
     struct ic_type *type = 0;
     /* another type when we need to juggle */
     struct ic_type *other_type = 0;
@@ -349,11 +349,15 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                  */
                 if( ic_type_isvoid(type) ){
                     puts("ic_analyse_body: if: void expression used as if condition");
+                    ic_type_print(type);
                     goto ERROR;
                 }
 
                 /* this expression must be of type bool */
-                if( ic_type_isbool(type) ){
+                if( ! ic_type_isbool(type) ){
+                    puts("ic_analyse_body: if: expression was not of type bool");
+                    ic_type_print(type);
+                    goto ERROR;
                 }
 
                 /* check if body
