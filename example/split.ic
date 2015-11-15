@@ -1,0 +1,17 @@
+builtin fn index_of(str::String, c::Char) -> Maybe<Int>
+
+fn split(str::String, c::Char) -> [String]
+    let idx = index_of(s, c)
+    match idx
+        Int
+            let before = s[0,   idx]
+            let after  = s[idx, len(s)]
+            return [before, after]
+        end
+        else
+            return [str]
+        end
+    end
+end
+
+

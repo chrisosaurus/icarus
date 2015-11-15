@@ -16,7 +16,7 @@ type Bar
 end
 
 fn baz(f::Foo)
-    if f.a == 0 then
+    if f.a == 0
         display(f)
     else
         display(f.b.c)
