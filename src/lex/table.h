@@ -47,6 +47,9 @@ struct ic_table_entry table[] = {
     { ".",          1,      IC_PERIOD },
     { ",",          1,      IC_COMMA },
 
+    { "&&",         2,      IC_AND },
+    { "||",         2,      IC_OR },
+
     { "/",          1,      IC_DIVIDE },
 
     { "$",          1,      IC_DOLLAR },

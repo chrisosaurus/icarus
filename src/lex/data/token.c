@@ -185,6 +185,12 @@ char * ic_token_get_representation(struct ic_token *token){
         case IC_COMMA:
             return ",";
             break;
+        case IC_AND:
+            return "&&";
+            break;
+        case IC_OR:
+            return "||";
+            break;
 
         case IC_DIVIDE:
             return "/";
@@ -387,6 +393,8 @@ unsigned int ic_token_isoperator(struct ic_token *token){
             return 1;
 
         case IC_EQUAL:
+        case IC_AND:
+        case IC_OR:
             return 1;
 
         case IC_PERIOD:
@@ -557,6 +565,12 @@ void ic_token_id_print_debug(enum ic_token_id id){
             break;
         case IC_COMMA:
             fputs("IC_COMMA", stdout);
+            break;
+        case IC_AND:
+            fputs("IC_AND", stdout);
+            break;
+        case IC_OR:
+            fputs("IC_OR", stdout);
             break;
 
         case IC_DIVIDE:

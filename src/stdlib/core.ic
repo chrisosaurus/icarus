@@ -26,4 +26,6 @@ builtin op * times
 builtin op / divide
 builtin op % modulo
 builtin op == equal
+builtin op && and
+builtin op || or
 

@@ -51,6 +51,8 @@ enum ic_token_id {
     IC_DOUBLECOLON, /* :: double colon */
     IC_PERIOD,
     IC_COMMA,
+    IC_AND,
+    IC_OR,
 
     IC_DIVIDE,
 

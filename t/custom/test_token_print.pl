@@ -49,9 +49,11 @@ print testing
 33 : ::
 34 : .
 35 : ,
-36 : /
-37 : (
-38 : )
+36 : &&
+37 : ||
+38 : /
+39 : (
+40 : )
 ---------
 
 print debug testing
@@ -92,9 +94,11 @@ print debug testing
 33 : IC_DOUBLECOLON
 34 : IC_PERIOD
 35 : IC_COMMA
-36 : IC_DIVIDE
-37 : IC_LRBRACKET
-38 : IC_RRBRACKET
+36 : IC_AND
+37 : IC_OR
+38 : IC_DIVIDE
+39 : IC_LRBRACKET
+40 : IC_RRBRACKET
 ---------
 EOF
 
