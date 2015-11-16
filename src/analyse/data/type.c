@@ -196,6 +196,7 @@ void ic_type_print(struct ic_type *type){
         return;
     }
 
-    ic_decl_type_print(type->u.decl, &fake_indent);
+    fputs("found: ", stdout);
+    ic_decl_type_print_header(type->u.decl, &fake_indent);
 }
 
