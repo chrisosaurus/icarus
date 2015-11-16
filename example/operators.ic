@@ -1,0 +1,27 @@
+
+fn main()
+    let x::Int = 5
+    let y::Int = 5
+
+    # the following currently fails to parse
+    if x == 5 && y == 4
+        print("hello world")
+    end
+
+    # however this parses fine
+    if and(x == 5, y == 4)
+        print("hello world")
+    end
+
+    # as does this
+    if equal(x, 5) && equal(y, 4)
+        print("hello world")
+    end
+
+    # we also want to be able to parse this
+    if x == 5 and y == 4
+        print("hello world")
+    end
+
+end
+
