@@ -177,7 +177,8 @@ unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned in
     /* zero out init */
     let->init = 0;
 
-    let->type = 0;
+    let->declared_type = 0;
+    let->inferred_type = 0;
 
     let->permissions = permissions;
 
@@ -204,8 +205,8 @@ unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let)
     }
 
     /* free = 1 as pointer */
-    if( let->type ){
-        if( ! ic_symbol_destroy( let->type, 1 ) ){
+    if( let->declared_type ){
+        if( ! ic_symbol_destroy( let->declared_type, 1 ) ){
             puts("ic_stmt_let_destroy: type called to ic_symbol_destroy failed");
             return 0;
         }
@@ -227,39 +228,86 @@ unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let)
     return 1;
 }
 
-/* set type on this let
+/* set declared type on this let
  *
- * this is an error if type is already set
+ * this sets the symbol `declared_type`
+ *
+ * this is used for types declared in source,
+ * this is set at parse time
+ *
+ * this is an error if either types have already been set
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_stmt_let_set_type(struct ic_stmt_let *let, char *type_src, unsigned int type_len){
+unsigned int ic_stmt_let_set_declared_type(struct ic_stmt_let *let, char *type_src, unsigned int type_len){
     if( ! let ){
-        puts("ic_stmt_let_set_type: let was null");
+        puts("ic_stmt_let_set_declared_type: let was null");
         return 0;
     }
 
     if( ! type_src ){
-        puts("ic_stmt_let_set_type: type_src was null");
+        puts("ic_stmt_let_set_declared_type: type_src was null");
         return 0;
     }
 
     if( ! type_len ){
-        puts("ic_stmt_let_set_type: type_len was 0");
+        puts("ic_stmt_let_set_declared_type: type_len was 0");
         return 0;
     }
 
-    if( let->type ){
-        puts("ic_stmt_let_set_type: type was already set");
+    if( let->declared_type ){
+        puts("ic_stmt_let_set_declared_type: let already had declared type");
         return 0;
     }
 
-    let->type = ic_symbol_new(type_src, type_len);
-    if( ! let->type ){
-        puts("ic_smtm_let_init: call to ic_symbol_new for type failed");
+    if( let->inferred_type ){
+        puts("ic_stmt_let_set_declared_type: let already had declared type");
         return 0;
     }
+
+    let->declared_type = ic_symbol_new(type_src, type_len);
+    if( ! let->declared_type ){
+        puts("ic_smtm_let_declared_init: call to ic_symbol_new for type failed");
+        return 0;
+    }
+
+    return 1;
+}
+
+/* set inferred type on this let
+ *
+ * this sets the type ref `inferred_type`
+ *
+ * this is used for the type we know of
+ * at analsyis time, this could be from
+ * the declared type in source or via
+ * the type of the init. expr.
+ *
+ * this is set at analysis time
+ *
+ * this is an error if inferred type is already set
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_let_set_inferred_type(struct ic_stmt_let *let, struct ic_type *type){
+    if( ! let ){
+        puts("ic_stmt_let_set_inferred_type: let was null");
+        return 0;
+    }
+
+    if( ! type ){
+        puts("ic_stmt_let_set_inferred_type: type was null");
+        return 0;
+    }
+
+    if( let->inferred_type ){
+        puts("ic_stmt_let_set_inferred_type: let already had inferred type");
+        return 0;
+    }
+
+    let->inferred_type = type;
 
     return 1;
 }
@@ -305,9 +353,9 @@ void ic_stmt_let_print(struct ic_stmt_let *let, unsigned int *indent_level){
     ic_symbol_print( &(let->identifier) );
 
     /* declared type on let is optional */
-    if( let->type ){
+    if( let->declared_type ){
         fputs("::", stdout);
-        ic_symbol_print( let->type );
+        ic_symbol_print( let->declared_type );
     }
 
     fputs(" = ", stdout);

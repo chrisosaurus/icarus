@@ -1174,16 +1174,16 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
 
 
     /* if let->type is set we must compare it to the init expr */
-    if( let->type ){
+    if( let->declared_type ){
         /* we need to take the let->type (symbol) and convert it to a full
          * ic_type
          */
-        if( ! ic_symbol_length(let->type) ){
+        if( ! ic_symbol_length(let->declared_type) ){
             puts("ic_analyse_let: using let->type failed");
             return 0;
         }
 
-        type_str = ic_symbol_contents(let->type);
+        type_str = ic_symbol_contents(let->declared_type);
         /* FIXME eventually this declared type will be optional */
         if( ! type_str ){
             puts("ic_analyse_let: call to ic_symbol_contents failed");
@@ -1202,11 +1202,12 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
     } else {
         /* if no type is declared then we use the one from out init expr */
         type = init_type;
+    }
 
-        /* FIXME we also want to (somehow) record the type on let
-         * however storing it on the current ic_symbol let->type
-         * isn't correct
-         */
+    /* either way we set the type we now have for this let */
+    if( ! ic_stmt_let_set_inferred_type(let, type) ){
+        puts("ic_analyse_let: call to ic_stmt_let_inferred_type failed");
+        return 0;
     }
 
     /*

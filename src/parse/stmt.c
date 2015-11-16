@@ -185,8 +185,8 @@ static struct ic_stmt * ic_parse_stmt_let(struct ic_token_list *token_list){
         }
 
         /* set type */
-        if( ! ic_stmt_let_set_type(let, type_start, type_len) ){
-            puts("ic_parse_stmt_let: call to ic_stmt_let_set_type failed");
+        if( ! ic_stmt_let_set_declared_type(let, type_start, type_len) ){
+            puts("ic_parse_stmt_let: call to ic_stmt_let_set_declared_type failed");
             free(stmt);
             return 0;
         }

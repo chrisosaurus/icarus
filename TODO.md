@@ -1,7 +1,6 @@
 TODO:
 -----
 
-* after analysis the inferred type of a let is not yet recorded on that let
 * `for` analysis case unimplemented
 * `while` analysis case unimplemented
 * removing mandated type form let

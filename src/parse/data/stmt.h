@@ -53,14 +53,24 @@ void ic_stmt_ret_print(struct ic_stmt_ret *ret, unsigned int *indent_level);
  */
 struct ic_stmt_let {
     unsigned int permissions;
+
     struct ic_symbol identifier;
-    /* type is optional at parse time
+
+    /* type is optionally declared at parse time
      * and may be set instead at analyse time
      * via inference
      *
-     * if this is null then we have not yet set a type
+     * if this is null then we did not have a type
+     * declared at parse time
      */
-    struct ic_symbol * type;
+    struct ic_symbol *declared_type;
+
+    /* type we know of at analysis time
+     * this could either be via the declared type
+     * or inferred from the init expr.
+     */
+    struct ic_type *inferred_type;
+
     /* FIXME making this an ic_expr *
      * to simplify interface between
      * parse stmt and parse expr
@@ -93,14 +103,37 @@ unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned in
  */
 unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let);
 
-/* set type on this let
+/* set declared type on this let
  *
- * this is an error if type is already set
+ * this sets the symbol `declared_type`
+ *
+ * this is used for types declared in source,
+ * this is set at parse time
+ *
+ * this is an error if either types have already been set
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_stmt_let_set_type(struct ic_stmt_let *let, char *type_src, unsigned int type_len);
+unsigned int ic_stmt_let_set_declared_type(struct ic_stmt_let *let, char *type_src, unsigned int type_len);
+
+/* set inferred type on this let
+ *
+ * this sets the type ref `inferred_type`
+ *
+ * this is used for the type we know of
+ * at analsyis time, this could be from
+ * the declared type in source or via
+ * the type of the init. expr.
+ *
+ * this is set at analysis time
+ *
+ * this is an error if inferred type is already set
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_let_set_inferred_type(struct ic_stmt_let *let, struct ic_type *type);
 
 /* get the ic_expr * contained within
  *
