@@ -1202,6 +1202,7 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
     } else {
         /* if no type is declared then we use the one from out init expr */
         type = init_type;
+
         /* FIXME we also want to (somehow) record the type on let
          * however storing it on the current ic_symbol let->type
          * isn't correct

@@ -20,7 +20,7 @@ end
 
 # simple function to test return values
 fn add_one(i::Int) -> Int
-    let tmp::Int = i
+    let tmp = i
     tmp = i + 1
     return tmp
 end
