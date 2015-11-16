@@ -129,7 +129,7 @@ void ic_stmt_ret_print(struct ic_stmt_ret *ret, unsigned int *indent_level){
  * returns pointers on success
  * returns 0 on failure
  */
-struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *type_src, unsigned int type_len, unsigned int permissions){
+struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, unsigned int permissions){
     struct ic_stmt_let *let = 0;
 
     /* alloc */
@@ -142,7 +142,7 @@ struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *ty
     /* hand over for init
      * NB: we leave arg checking up to init
      */
-    if( ! ic_stmt_let_init(let, id_src, id_len, type_src, type_len, permissions) ){
+    if( ! ic_stmt_let_init(let, id_src, id_len, permissions) ){
         puts("ic_stmt_let_new: call to ic_stmt_let_init failed");
         free(let);
         return 0;
@@ -157,7 +157,7 @@ struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *ty
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned int id_len, char *type_src, unsigned int type_len, unsigned int permissions){
+unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned int id_len, unsigned int permissions){
     if( ! let ){
         puts("ic_stmt_let_init: let was null");
         return 0;
@@ -168,25 +168,16 @@ unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned in
         return 0;
     }
 
-    if( ! type_src ){
-        puts("ic_stmt_let_init: type_src was null");
-        return 0;
-    }
-
     /* dispatch to symbol init for id */
     if( ! ic_symbol_init( &(let->identifier), id_src, id_len ) ){
         puts("ic_smtm_let_init: call to ic_symbol_init for id failed");
         return 0;
     }
 
-    /* dispatch to symbol init for type */
-    if( ! ic_symbol_init( &(let->type), type_src, type_len ) ){
-        puts("ic_smtm_let_init: call to ic_symbol_init for type failed");
-        return 0;
-    }
-
     /* zero out init */
     let->init = 0;
+
+    let->type = 0;
 
     let->permissions = permissions;
 
@@ -212,10 +203,12 @@ unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let)
         return 0;
     }
 
-    /* free = 0 as member */
-    if( ! ic_symbol_destroy( &(let->type), 0 ) ){
-        puts("ic_stmt_let_destroy: type called to ic_symbol_destroy failed");
-        return 0;
+    /* free = 1 as pointer */
+    if( let->type ){
+        if( ! ic_symbol_destroy( let->type, 1 ) ){
+            puts("ic_stmt_let_destroy: type called to ic_symbol_destroy failed");
+            return 0;
+        }
     }
 
     if( let->init ){
@@ -229,6 +222,43 @@ unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let)
     /* if asked nicely */
     if( free_let ){
         free(let);
+    }
+
+    return 1;
+}
+
+/* set type on this let
+ *
+ * this is an error if type is already set
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_let_set_type(struct ic_stmt_let *let, char *type_src, unsigned int type_len){
+    if( ! let ){
+        puts("ic_stmt_let_set_type: let was null");
+        return 0;
+    }
+
+    if( ! type_src ){
+        puts("ic_stmt_let_set_type: type_src was null");
+        return 0;
+    }
+
+    if( ! type_len ){
+        puts("ic_stmt_let_set_type: type_len was 0");
+        return 0;
+    }
+
+    if( let->type ){
+        puts("ic_stmt_let_set_type: type was already set");
+        return 0;
+    }
+
+    let->type = ic_symbol_new(type_src, type_len);
+    if( ! let->type ){
+        puts("ic_smtm_let_init: call to ic_symbol_new for type failed");
+        return 0;
     }
 
     return 1;
@@ -273,8 +303,12 @@ void ic_stmt_let_print(struct ic_stmt_let *let, unsigned int *indent_level){
     fputs("let ", stdout);
 
     ic_symbol_print( &(let->identifier) );
-    fputs("::", stdout);
-    ic_symbol_print( &(let->type) );
+
+    /* declared type on let is optional */
+    if( let->type ){
+        fputs("::", stdout);
+        ic_symbol_print( let->type );
+    }
 
     fputs(" = ", stdout);
 

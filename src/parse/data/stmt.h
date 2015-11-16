@@ -54,7 +54,13 @@ void ic_stmt_ret_print(struct ic_stmt_ret *ret, unsigned int *indent_level);
 struct ic_stmt_let {
     unsigned int permissions;
     struct ic_symbol identifier;
-    struct ic_symbol type;
+    /* type is optional at parse time
+     * and may be set instead at analyse time
+     * via inference
+     *
+     * if this is null then we have not yet set a type
+     */
+    struct ic_symbol * type;
     /* FIXME making this an ic_expr *
      * to simplify interface between
      * parse stmt and parse expr
@@ -68,7 +74,7 @@ struct ic_stmt_let {
  * returns pointers on success
  * returns 0 on failure
  */
-struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *type_src, unsigned int type_len, unsigned int permissions);
+struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, unsigned int permissions);
 
 /* initialise an existing let
  * does not touch the init expression
@@ -76,7 +82,7 @@ struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, char *ty
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned int id_len, char *type_src, unsigned int type_len, unsigned int permissions);
+unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned int id_len, unsigned int permissions);
 
 /* destroy let
  *
@@ -86,6 +92,15 @@ unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned in
  * returns 0 on failure
  */
 unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let);
+
+/* set type on this let
+ *
+ * this is an error if type is already set
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_let_set_type(struct ic_stmt_let *let, char *type_src, unsigned int type_len);
 
 /* get the ic_expr * contained within
  *

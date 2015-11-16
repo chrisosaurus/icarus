@@ -1156,32 +1156,56 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
         return 0;
     }
 
-    /* we need to take the let->type (symbol) and convert it to a full
-     * ic_type
-     *
-     * FIXME later on let->type may be null and we will instead
-     * need to run inference against the init
-     */
-    if( ! ic_symbol_length(&(let->type)) ){
-        puts("ic_analyse_let: let was lacking a type, inference not yet supported");
+    /* we have to get the init expr first as the let may not include a type declaration */
+
+    /* infer the type of init expression if one exists */
+    init_expr = let->init;
+    /* FIXME eventually such an expr will be optional */
+    if( ! init_expr ){
+        puts("ic_analyse_let: init_expr was null");
         return 0;
     }
 
-    type_str = ic_symbol_contents(&(let->type));
-    /* FIXME eventually this declared type will be optional */
-    if( ! type_str ){
-        puts("ic_analyse_let: call to ic_symbol_contents failed");
+    init_type = ic_analyse_infer(kludge, body->scope, init_expr);
+    if( ! init_type ){
+        puts("ic_analyse_let: call to ic_analyse_infer on init_expr failed");
         return 0;
     }
 
-    /* fetch type from kludge */
-    type = ic_kludge_get_type(kludge, type_str);
-    if( ! type ){
-        /* FIXME type not found
-         * need helpful error message
+
+    /* if let->type is set we must compare it to the init expr */
+    if( let->type ){
+        /* we need to take the let->type (symbol) and convert it to a full
+         * ic_type
          */
-        printf("ic_analyse_let: failed to find type '%s'\n", type_str);
-        return 0;
+        if( ! ic_symbol_length(let->type) ){
+            puts("ic_analyse_let: using let->type failed");
+            return 0;
+        }
+
+        type_str = ic_symbol_contents(let->type);
+        /* FIXME eventually this declared type will be optional */
+        if( ! type_str ){
+            puts("ic_analyse_let: call to ic_symbol_contents failed");
+            return 0;
+        }
+
+        /* fetch type from kludge */
+        type = ic_kludge_get_type(kludge, type_str);
+        if( ! type ){
+            /* FIXME type not found
+             * need helpful error message
+             */
+            printf("ic_analyse_let: failed to find type '%s'\n", type_str);
+            return 0;
+        }
+    } else {
+        /* if no type is declared then we use the one from out init expr */
+        type = init_type;
+        /* FIXME we also want to (somehow) record the type on let
+         * however storing it on the current ic_symbol let->type
+         * isn't correct
+         */
     }
 
     /*
@@ -1201,20 +1225,6 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
      */
     if( ! ic_scope_insert( body->scope, ic_symbol_contents(&(let->identifier)), slot ) ){
         puts("ic_analyse_let: call to ic_scope_insert failed");
-        return 0;
-    }
-
-    /* infer the type of init expression if one exists */
-    init_expr = let->init;
-    /* FIXME eventually such an expr will be optional */
-    if( ! init_expr ){
-        puts("ic_analyse_let: init_expr was null");
-        return 0;
-    }
-
-    init_type = ic_analyse_infer(kludge, body->scope, init_expr);
-    if( ! init_type ){
-        puts("ic_analyse_let: call to ic_analyse_infer on init_expr failed");
         return 0;
     }
 

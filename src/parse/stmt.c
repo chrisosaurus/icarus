@@ -84,10 +84,14 @@ static struct ic_stmt * ic_parse_stmt_let(struct ic_token_list *token_list){
     /* current let forms
      *      let identifier::type = expression
      *
-     * in the future we may expand to
+     * in the future we may expand to support all of:
+     *      let identifier::type = expression
      *      let identifier
      *      let identifier::type
      *      let identifier = expression
+     *
+     * in the case where no initialisers expression is provided,
+     * what do we init. to?
      */
 
     /* out eventual return value */
@@ -146,35 +150,46 @@ static struct ic_stmt * ic_parse_stmt_let(struct ic_token_list *token_list){
         return 0;
     }
 
-    /* check for `::` */
-    token = ic_token_list_expect_important(token_list, IC_DOUBLECOLON);
-    if( ! token ){
-        puts("ic_parse_stmt_let: Failed to find let doublecolon token");
-        free(stmt);
-        return 0;
-    }
-
-    /* consume type */
-    token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
-    if( ! token ){
-        puts("ic_parse_stmt_let: Failed to find let identifier token");
-        free(stmt);
-        return 0;
-    }
-
-    type_start = ic_token_get_string(token);
-    type_len = ic_token_get_string_length(token);
-    if( ! type_start || ! type_len ){
-        puts("ic_parse_stmt_let: Failed to extract type identifier");
-        free(stmt);
-        return 0;
-    }
-
     /* initialise our let */
-    if( ! ic_stmt_let_init(let, id_start, id_len, type_start, type_len, permissions) ){
+    if( ! ic_stmt_let_init(let, id_start, id_len, permissions) ){
         puts("ic_parse_stmt_let: call to ic_stmt_let_init failed");
         free(stmt);
         return 0;
+    }
+
+    /* check for optional `::` */
+    token = ic_token_list_peek_important(token_list);
+    if( token->id == IC_DOUBLECOLON ){
+        /* consume `::` */
+        token = ic_token_list_expect_important(token_list, IC_DOUBLECOLON);
+        if( ! token ){
+            puts("ic_parse_stmt_let: Failed to find let doublecolon token");
+            free(stmt);
+            return 0;
+        }
+
+        /* consume type */
+        token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
+        if( ! token ){
+            puts("ic_parse_stmt_let: Failed to find let identifier token");
+            free(stmt);
+            return 0;
+        }
+
+        type_start = ic_token_get_string(token);
+        type_len = ic_token_get_string_length(token);
+        if( ! type_start || ! type_len ){
+            puts("ic_parse_stmt_let: Failed to extract type identifier");
+            free(stmt);
+            return 0;
+        }
+
+        /* set type */
+        if( ! ic_stmt_let_set_type(let, type_start, type_len) ){
+            puts("ic_parse_stmt_let: call to ic_stmt_let_set_type failed");
+            free(stmt);
+            return 0;
+        }
     }
 
     /* check for `=` */
