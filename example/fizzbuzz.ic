@@ -4,7 +4,7 @@ fn is_div(a::Int, b::Int) -> Bool
 end
 
 fn fizzbuzz(from::Int, to::Int)
-    for num in range(from to)
+    for num in range(from, to)
         let &arr::Vector<String>
 
         if is_div(num, 3)
