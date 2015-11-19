@@ -1,6 +1,6 @@
 
 fn is_div(a::Int, b::Int) -> Bool
-    return not(a % b)
+    return (a % b) == 0
 end
 
 fn fizzbuzz(from::Int, to::Int)
