@@ -309,7 +309,7 @@ struct ic_decl * ic_parse_decl_func_header(struct ic_token_list *token_list){
     /* check we really are at a `function` token */
     token = ic_token_list_expect_important(token_list, IC_FUNC);
     if( ! token ){
-        puts("ic_parse_decl_type_header: call to ic_token_list_expect_important failed for FUNC");
+        puts("ic_parse_decl_func_header: call to ic_token_list_expect_important failed for FUNC");
         return 0;
     }
 
@@ -331,7 +331,7 @@ struct ic_decl * ic_parse_decl_func_header(struct ic_token_list *token_list){
     /* get our function name token */
     token = ic_token_list_next_important(token_list);
     if( ! token ){
-        puts("ic_parse_decl_type_header: call to ic_token_list_next failed for func name");
+        puts("ic_parse_decl_func_header: call to ic_token_list_next failed for func name");
         return 0;
     }
 
@@ -353,7 +353,7 @@ struct ic_decl * ic_parse_decl_func_header(struct ic_token_list *token_list){
     /* opening bracket */
     token = ic_token_list_expect_important(token_list, IC_LRBRACKET);
     if( ! token ){
-        puts("ic_parse_decl_type_header: call to ic_token_list_expect_important failed for '('");
+        puts("ic_parse_decl_func_header: call to ic_token_list_expect_important failed for '('");
         return 0;
     }
 
@@ -373,14 +373,14 @@ struct ic_decl * ic_parse_decl_func_header(struct ic_token_list *token_list){
             /* consume */
             token = ic_token_list_expect_important(token_list, IC_COMMA);
             if( ! token ){
-                puts("ic_parse_decl_type_header: call to ic_token_list_expect_important failed for ','");
+                puts("ic_parse_decl_func_header: call to ic_token_list_expect_important failed for ','");
                 return 0;
             }
 
             /* move token along one just in case */
             token = ic_token_list_peek_important(token_list);
             if( ! token ){
-                puts("ic_parse_decl_type_header: call to ic_token_list_peek_important failed after ','");
+                puts("ic_parse_decl_func_header: call to ic_token_list_peek_important failed after ','");
                 return 0;
             }
         }
@@ -403,7 +403,7 @@ struct ic_decl * ic_parse_decl_func_header(struct ic_token_list *token_list){
 
     token = ic_token_list_expect_important(token_list, IC_RRBRACKET);
     if( ! token ){
-        puts("ic_parse_decl_type_header: call to ic_token_list_expect_important failed for ')'");
+        puts("ic_parse_decl_func_header: call to ic_token_list_expect_important failed for ')'");
         return 0;
     }
 
@@ -432,7 +432,7 @@ struct ic_decl * ic_parse_decl_func_header(struct ic_token_list *token_list){
         /* consume arrow */
         token = ic_token_list_next_important(token_list);
         if( ! token ){
-            puts("ic_parse_decl_type_header: call to ic_token_list_next_important failed when trying to consume arrow");
+            puts("ic_parse_decl_func_header: call to ic_token_list_next_important failed when trying to consume arrow");
             return 0;
         }
 
@@ -441,7 +441,7 @@ struct ic_decl * ic_parse_decl_func_header(struct ic_token_list *token_list){
          */
         token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
         if( ! token ){
-            puts("ic_parse_decl_type_header: call to ic_token_list_next failed when looking for return type after arrow");
+            puts("ic_parse_decl_func_header: call to ic_token_list_next failed when looking for return type after arrow");
             return 0;
         }
 
