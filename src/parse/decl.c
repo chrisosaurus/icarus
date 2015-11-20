@@ -365,6 +365,24 @@ struct ic_decl * ic_parse_decl_func_header(struct ic_token_list *token_list){
             break;
         }
 
+        /* if we see a comma then just skip over it
+         * FIXME this makes commas optional, decide if this is correct
+         */
+        if( token->id == IC_COMMA ){
+            /* consume */
+            token = ic_token_list_expect_important(token_list, IC_COMMA);
+            if( ! token ){
+                puts("ic_parse_decl_type_header: call to ic_token_list_expect_important failed for ','");
+                return 0;
+            }
+            /* move token along one just in case */
+            token = ic_token_list_peek_important(token_list);
+            if( ! token ){
+                puts("ic_parse_decl_type_header: call to ic_token_list_peek_important failed after ','");
+                return 0;
+            }
+        }
+
         /* parse argument */
         arg = ic_parse_field(token_list);
         if( ! arg ){

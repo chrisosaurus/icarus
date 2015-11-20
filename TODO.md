@@ -11,7 +11,6 @@ TODO:
 * finished population of decl_type.field_dict
 * think through type_ref interface, and storing ic_type when found on fields/type_refs during ic_analyse_decl_type/ic_analyse_field_list
 * remove parse/expr.c next_token usage, see IC_PERIOD handling comments in parse/expr.c
-* decide on comma handling, currently skipped in parsing
 * tokens should be used throughout parsing; passing around strings is lame, tokens should also be recorded against every ast node for traceability
 * tokens should be used on any externally triggerable errors (users in a program's source that a user can fix)
 * allow 'return' from void functions, this needs support at both parse and analyse levels
@@ -68,6 +67,7 @@ considerations:
 * consider const-correctness on read only args
 * `ic_analyse_decl_type` currently allows co-recursive types `type Foo a::Bar end` `type bar a::Foo end`, is this allowed?
 * consider allowing free_data param to ic_pvector_destroy that is passed to (*destroy_item) rather than defaulting to true
+* decide on comma handling, currently skipped in parsing
 
 
 
