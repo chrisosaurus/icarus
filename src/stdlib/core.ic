@@ -19,6 +19,11 @@ builtin fn modulo(a::Int b::Int) -> Int
 builtin type String
 builtin fn print(a::String)
 builtin fn equal(a::String b::String) -> Bool
+builtin fn concat(a::String b::String) -> String
+# we probably want a way to express that `plus` is an alias for `concat`
+# here we use `concat` as the primitive and `plus` as the alias
+# as `concat` is more descriptive
+fn plus(a::String b::String) -> String return concat(a, b) end
 
 builtin op + plus
 builtin op - minus
