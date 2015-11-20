@@ -1,0 +1,35 @@
+# this example assumes you have tuples
+
+# v1 - doctest has little meaning
+# example: [2, 3] -> [(22, 222), (33, 333)]
+fn makeSpecialTuples(list::[Int]) -> [(Int, Int)]
+    let &out::[(Int, Int)]
+    for item in list
+        &out.append((item * 11, item * 111))
+    end
+    return out
+end
+
+# v2 - doctest has significant meaning
+# list::[2, 3] -> tuples::[(22, 222), (33, 333)]
+fn makeSpecialTuples(list) -> tuples
+  let &progress::tuples
+  for item in list
+      &progress.append((item * 11, item * 111))
+  end
+  tuples = progress
+end
+
+
+
+
+# v3 - a list comprehension version of v1
+fn makeSpecialTuples(list::[Int]) -> [(Int, Int)]
+    return [ (item * 11, item * 111) for item in list ]
+end
+
+# v4 - a list comprehension version of v2
+# example: list::[2, 3] -> tuples::[(22, 222), (33, 333)]
+fn makeSpecialTuples(list) -> tuples
+    tuples = [(item * 11, item * 111) for item in list ]
+end
