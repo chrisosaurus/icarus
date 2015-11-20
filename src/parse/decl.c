@@ -362,6 +362,7 @@ struct ic_decl * ic_parse_decl_func_header(struct ic_token_list *token_list){
      */
     while( (token = ic_token_list_peek_important(token_list)) ){
         if( token->id == IC_RRBRACKET ){
+            /* a right bracket `)` is the end of our arg list */
             break;
         }
 
@@ -375,6 +376,7 @@ struct ic_decl * ic_parse_decl_func_header(struct ic_token_list *token_list){
                 puts("ic_parse_decl_type_header: call to ic_token_list_expect_important failed for ','");
                 return 0;
             }
+
             /* move token along one just in case */
             token = ic_token_list_peek_important(token_list);
             if( ! token ){
