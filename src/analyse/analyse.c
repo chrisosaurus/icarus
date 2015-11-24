@@ -49,7 +49,7 @@ unsigned int ic_analyse(struct ic_kludge *kludge){
         }
     }
 
-    /* for each func call analyst_decl_func */
+    /* for each func call analyse_decl_func */
     len = ic_pvector_length(&(kludge->fdecls));
     for( i=0; i<len; ++i ){
         fdecl = ic_pvector_get(&(kludge->fdecls), i);
@@ -62,6 +62,17 @@ unsigned int ic_analyse(struct ic_kludge *kludge){
             puts("ic_analyse: call to ic_analyse_decl_func failed");
             goto ERROR;
         }
+    }
+
+    /* check for main entry point
+     * we must check last as this could have been added as part of an include
+     *
+     * FIXME may need to support multiple signatures for main
+     */
+    fdecl = ic_kludge_get_fdecl(kludge, "main()");
+    if( ! fdecl ){
+        puts("ic_analyse: failed to find a main function");
+        goto ERROR;
     }
 
     return 1;

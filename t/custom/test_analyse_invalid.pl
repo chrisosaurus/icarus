@@ -88,6 +88,12 @@ ic_analyse: call to ic_analyse_decl_func failed
 analysis failed
 ',
 
+'fn foo() let a::Int = 5 a = 6 end'
+=>
+'ic_analyse: failed to find a main function
+analysis failed
+',
+
 );
 
 for my $key (keys %invalid_programs){

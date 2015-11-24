@@ -3,10 +3,8 @@ TODO:
 
 * `for` analysis case unimplemented
 * `while` analysis case unimplemented
-* removing mandated type form let
 * the analysis system currently has no idea about permissions
 * remove ic_type, as builtin and user defined types now both use ic_decl_type
-* analyse should check for a `main` entry point
 * analyse needs to check for failing to return from a non-void function
 * finished population of decl_type.field_dict
 * think through type_ref interface, and storing ic_type when found on fields/type_refs during ic_analyse_decl_type/ic_analyse_field_list
