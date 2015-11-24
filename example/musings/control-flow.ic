@@ -52,5 +52,41 @@ fn main()
             body
     end
 
+
+    for item in iterator
+        body
+    end
+
+    for (index, item) in enumerate(iterator)
+        body
+    end
+
+    for index in [0..10]
+        body
+    end
+
+    # FIXME do we want a more 'traditional' for?
+    # in the above for loops is it safe for the body to modify the iterator?
+    #   default answer = no
+    # in this below for loop it must be safe to modify i in the body
+    for i=0; i<10; ++i
+        body
+    end
+
+
+    # currently an expr in a while MUST result to a boolean
+    # and currently assignments do NOT return a value
+    # so this makes the icarus 'while' weaker than other language's
+    # whiles
+    while expr
+        body
+    end
+
+
+    # FIXME is a do while block needed?
+    do
+        body
+    while expr
+
 end
 
