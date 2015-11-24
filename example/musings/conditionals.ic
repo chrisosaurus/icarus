@@ -1,0 +1,56 @@
+
+fn main()
+
+    if expr
+        body
+    elsif expr
+        # FIXME need to decide on elseif/elif/whatever
+        # would rather keep it a single token (so avoiding 'else if')
+        body
+    else
+        body
+    end
+
+    # sugar for if/elsif/else
+    # FIXME need to have a keyword before each case (is 'test' okay?)
+    # OR have an end block between them, which I think is worse
+    cond
+        test expr
+            body
+        test expr
+            body
+        test expr
+            body
+        else
+            body
+    end
+
+    # testing on value
+    # no default fallthrough (implicit 'break')
+    # do we want to allow an explicit fallthrough? ('fallthrough' / 'next' ?)
+    switch expr
+        case expr
+            body
+        case expr
+            body
+        case expr
+            body
+        else
+            body
+    end
+
+    # testing on type
+    # do we need a keyword before each type?
+    match expr
+        TypeA a
+            body
+        TypeB b
+            body
+        TypeC c
+            body
+        else
+            body
+    end
+
+end
+
