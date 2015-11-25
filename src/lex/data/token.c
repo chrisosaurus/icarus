@@ -109,6 +109,13 @@ char * ic_token_get_representation(struct ic_token *token){
             return 0;
             break;
 
+        case IC_TRUE:
+            return "True";
+            break;
+        case IC_FALSE:;
+            return "False";
+            break;
+
         case IC_NEWLINE:
             return "\n";
             break;
@@ -488,6 +495,13 @@ void ic_token_id_print_debug(enum ic_token_id id){
         case IC_COMMENT:
             /* FIXME add payload */
             fputs("IC_COMMENT", stdout);
+            break;
+
+        case IC_TRUE:
+            fputs("IC_TRUE", stdout);
+            break;
+        case IC_FALSE:
+            fputs("IC_TRUE", stdout);
             break;
 
         case IC_NEWLINE:

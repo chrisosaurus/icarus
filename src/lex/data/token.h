@@ -23,6 +23,9 @@ enum ic_token_id {
     IC_LITERAL_STRING, /* no entry in table[], payload */
     IC_COMMENT, /* no entry in table[], payload */
 
+    IC_TRUE,
+    IC_FALSE,
+
     IC_NEWLINE,
     IC_WHITESPACE,
 

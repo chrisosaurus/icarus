@@ -21,6 +21,9 @@ struct ic_table_entry table[] = {
     { "\t",         1,      IC_WHITESPACE },
     { " ",          1,      IC_WHITESPACE },
 
+    { "True",       4,      IC_TRUE },
+    { "False",      5,      IC_FALSE },
+
     { "end",        3,      IC_END },
 
     { "if",         2,      IC_IF },
