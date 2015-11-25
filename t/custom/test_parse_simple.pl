@@ -41,9 +41,18 @@ fn add_one(i::Int) -> Int
     return tmp
 end
 
+# maybe_add_one(Int Bool)
+fn maybe_add_one(i::Int b::Bool) -> Int
+    if b and i == 2
+        i = i + 1
+    end
+    return i
+end
+
 # main()
 fn main() -> Void
     let f::Foo = Foo(add_one(1) "hello")
+    f . a = maybe_add_one(f . a 1 == 1)
     d(f)
 end
 

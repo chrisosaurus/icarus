@@ -669,8 +669,6 @@ struct ic_expr * ic_parse_expr(struct ic_token_list *token_list){
         if( token->id == IC_ASSIGN) {
             /* if we see an assignment then this is as assignment
              *
-             * FIXME later on this could mean an equality test
-             *
              * for assignment we return current, and our caller must deal with it,
              * this is because assignment is a stmt and not an expr
              */

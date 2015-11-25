@@ -47,7 +47,12 @@ struct ic_table_entry table[] = {
     { ".",          1,      IC_PERIOD },
     { ",",          1,      IC_COMMA },
 
+    /* here we require a space after the `and` and `or` operators
+     * to distinguish from their functions `and(` and `or(`
+     */
+    { "and ",       4,      IC_AND },
     { "&&",         2,      IC_AND },
+    { "or ",        3,      IC_AND },
     { "||",         2,      IC_OR },
 
     { "/",          1,      IC_DIVIDE },

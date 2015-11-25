@@ -42,7 +42,6 @@ technical debt:
 -----
 
 * not satisfied with complex expr parsing `if y == 4 && x == 5 ... end`
-* it would be nice to be able to use `and` and `or` over `&&` and `||`, however this makes `and(...)` parse `and` as IC_AND rather than IC_IDENTIFIER
 * having ops from core.ic AND in isoperator is a bit gross
 * we changed _type to _tag for enums, but we didn't fix this values, e.g. ic_expr_tag has values of ic_expr_type_*
 * figure out ownership of left/right or first/second for expr_faccess/expr_operator

@@ -25,9 +25,22 @@ fn add_one(i::Int) -> Int
     return tmp
 end
 
+fn maybe_add_one(i::Int, b::Bool) -> Int
+    # FIXME this doesn't work `if i == 2 and b`
+    # due to lack of operator precedence
+    if b and i == 2
+        i = i + 1
+    end
+
+    return i
+end
+
 # entry point for program
 fn main()
     let f::Foo = Foo(add_one(1) "hello")
+
+    # making up for lack of boolean literals
+    f.a = maybe_add_one(f.a, 1 == 1)
 
     d(f)
 end

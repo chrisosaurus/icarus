@@ -186,10 +186,10 @@ char * ic_token_get_representation(struct ic_token *token){
             return ",";
             break;
         case IC_AND:
-            return "&&";
+            return "and";
             break;
         case IC_OR:
-            return "||";
+            return "or";
             break;
 
         case IC_DIVIDE:

@@ -31,9 +31,22 @@ fn add_one(i::Int) -> Int\n\
     return tmp\n\
 end\n\
 \n\
+fn maybe_add_one(i::Int, b::Bool) -> Int\n\
+    # FIXME this doesn't work `if i == 2 and b`\n\
+    # due to lack of operator precedence\n\
+    if b and i == 2\n\
+        i = i + 1\n\
+    end\n\
+\n\
+    return i\n\
+end\n\
+\n\
 # entry point for program\n\
 fn main()\n\
     let f::Foo = Foo(add_one(1) \"hello\")\n\
+\n\
+    # making up for lack of boolean literals\n\
+    f.a = maybe_add_one(f.a, 1 == 1)\n\
 \n\
     d(f)\n\
 end\n\
