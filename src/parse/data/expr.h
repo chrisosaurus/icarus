@@ -136,7 +136,8 @@ void ic_expr_identifier_print(struct ic_expr_identifier * identifier, unsigned i
 
 enum ic_expr_constant_tag {
     ic_expr_constant_type_integer,
-    ic_expr_constant_type_string
+    ic_expr_constant_type_string,
+    ic_expr_constant_type_boolean
 };
 
 /* a constant
@@ -147,6 +148,7 @@ struct ic_expr_constant {
     union {
         long int integer;
         struct ic_string string;
+        unsigned int boolean;
     } u;
 };
 
@@ -161,7 +163,7 @@ struct ic_expr_constant * ic_expr_constant_new(enum ic_expr_constant_tag tag);
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, enum ic_expr_constant_tag tag);
+unsigned int ic_expr_constant_init(struct ic_expr_constant *constant, enum ic_expr_constant_tag tag);
 
 /* destroy const
  *
@@ -170,7 +172,7 @@ unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, enum ic
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_expr_constant_init(struct ic_expr_constant *constant, unsigned int free_const);
+unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, unsigned int free_const);
 
 /* return pointer to integer within,
  * will only succeed if constant is of the correct type
@@ -187,6 +189,14 @@ long int * ic_expr_constant_get_integer(struct ic_expr_constant *constant);
  * returns 0 on failure
  */
 struct ic_string * ic_expr_constant_get_string(struct ic_expr_constant *constant);
+
+/* return pointer boolean within,
+ * will only succeed if constant is of the correct type
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+unsigned int * ic_expr_constant_get_boolean(struct ic_expr_constant *constant);
 
 /* print this constant */
 void ic_expr_constant_print(struct ic_expr_constant *constant, unsigned int *indent_level);

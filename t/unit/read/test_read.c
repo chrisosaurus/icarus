@@ -45,8 +45,7 @@ end\n\
 fn main()\n\
     let f::Foo = Foo(add_one(1) \"hello\")\n\
 \n\
-    # making up for lack of boolean literals\n\
-    f.a = maybe_add_one(f.a, 1 == 1)\n\
+    f.a = maybe_add_one(f.a, True)\n\
 \n\
     d(f)\n\
 end\n\

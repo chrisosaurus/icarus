@@ -89,23 +89,18 @@ unsigned int ic_token_set_string(struct ic_token *token, char *string, unsigned 
     return 1;
 }
 
-/* get string representation of token
+/* get string representation of token id
  *
  * returns * on success
  * returns 0 on failure
  */
-char * ic_token_get_representation(struct ic_token *token){
-    if( ! token ){
-        puts("ic_token_get_representation: token was null");
-        return 0;
-    }
-
-    switch( token->id ){
+char * ic_token_id_get_representation(enum ic_token_id id){
+    switch( id ){
         case IC_IDENTIFIER:
         case IC_LITERAL_INTEGER:
         case IC_LITERAL_STRING:
         case IC_COMMENT:
-            puts("ic_token_get_representation: payload types are not supported");
+            puts("ic_token_id_get_representation: payload types are not supported");
             return 0;
             break;
 
@@ -236,10 +231,23 @@ char * ic_token_get_representation(struct ic_token *token){
             break;
 
         default:
-            printf("ic_token_get_representation: ERROR, unknown token id '%d'\n", token->id);
+            printf("ic_token_id_get_representation: ERROR, unknown token id '%d'\n", id);
             return 0;
             break;
     }
+}
+/* get string representation of token
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+char * ic_token_get_representation(struct ic_token *token){
+    if( ! token ){
+        puts("ic_token_get_representation: token was null");
+        return 0;
+    }
+
+    return ic_token_id_get_representation(token->id);
 }
 
 /* get string data on token
@@ -408,6 +416,29 @@ unsigned int ic_token_isoperator(struct ic_token *token){
             /* a period is not an operator
              * it is a field access */
             return 0;
+
+        default:
+            break;
+    }
+
+    return 0;
+}
+
+/* check if token is a boolean
+ *
+ * returns 1 if it is a boolean
+ * returns 0 if not
+ */
+unsigned int ic_token_isboolean(struct ic_token *token){
+    if( ! token ){
+        puts("ic_token_isboolean: token was null");
+        return 0;
+    }
+
+    switch( token->id ){
+        case IC_TRUE:
+        case IC_FALSE:
+            return 1;
 
         default:
             break;

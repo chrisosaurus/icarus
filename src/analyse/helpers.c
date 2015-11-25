@@ -738,6 +738,7 @@ static struct ic_type * ic_analyse_infer_constant(struct ic_kludge *kludge, stru
     }
 
     switch( cons->tag ){
+
         /*
          *  infer 1 -> Int
          *  expr->tag == constant
@@ -767,6 +768,16 @@ static struct ic_type * ic_analyse_infer_constant(struct ic_kludge *kludge, stru
             type = ic_kludge_get_type(kludge, "String");
             if( ! type ){
                 puts("ic_analyse_infer_constant: String: call to ic_kludge_get_type failed");
+                return 0;
+            }
+            return type;
+            break;
+
+        case ic_expr_constant_type_boolean:
+            /* FIXME decide on type case sensitivity */
+            type = ic_kludge_get_type(kludge, "Bool");
+            if( ! type ){
+                puts("ic_analyse_infer_constant: Bool: call to ic_kludge_get_type failed");
                 return 0;
             }
             return type;

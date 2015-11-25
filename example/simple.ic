@@ -39,8 +39,7 @@ end
 fn main()
     let f::Foo = Foo(add_one(1) "hello")
 
-    # making up for lack of boolean literals
-    f.a = maybe_add_one(f.a, 1 == 1)
+    f.a = maybe_add_one(f.a, True)
 
     d(f)
 end

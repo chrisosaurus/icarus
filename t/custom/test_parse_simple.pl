@@ -52,7 +52,7 @@ end
 # main()
 fn main() -> Void
     let f::Foo = Foo(add_one(1), "hello")
-    f . a = maybe_add_one(f . a, 1 == 1)
+    f . a = maybe_add_one(f . a, True)
     d(f)
 end
 

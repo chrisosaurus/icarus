@@ -255,6 +255,7 @@ static struct ic_expr * ic_parse_expr_constant_string(struct ic_token_list *toke
 }
 
 /* consume token and make an int
+ *
  * returns ic_expr* on success
  * returns 0 on failure
  */
@@ -317,10 +318,87 @@ static struct ic_expr * ic_parse_expr_constant_integer(struct ic_token_list *tok
     return expr;
 }
 
+/* consume token and make a boolean
+ *
+ * returns ic_expr* on success
+ * returns 0 on failure
+ */
+static struct ic_expr * ic_parse_expr_constant_boolean(struct ic_token_list *token_list){
+    /* our eventual return value */
+    struct ic_expr * expr = 0;
+    /* our constant */
+    struct ic_expr_constant *cons = 0;
+    /* pointer to our boolean value */
+    unsigned int *boolean = 0;
+
+    /* current token */
+    struct ic_token *token = 0;
+
+    if( ! token_list ){
+        puts("ic_parse_expr_constant_boolean: token_list was null");
+        return 0;
+    }
+
+    token = ic_token_list_next_important(token_list);
+    if( ! token ){
+        puts("ic_parse_expr_constant_boolean: unable to find next important token");
+        return 0;
+    }
+
+    if( ! ic_token_isboolean(token) ){
+        puts("ic_parse_expr_constant_boolean: next token was not a boolean");
+        return 0;
+    }
+
+    /* build our return expr */
+    expr = ic_expr_new(ic_expr_type_constant);
+    if( ! expr ){
+        puts("ic_parse_expr_constant_boolean: call to ic_expr_new failed");
+        return 0;
+    }
+
+    /* unpack our constant */
+    cons = ic_expr_get_constant(expr);
+    if( ! cons ){
+        puts("ic_parse_expr_constant_boolean: call to ic_expr_get_constant failed");
+        free(expr);
+        return 0;
+    }
+
+    /* initialise our constant */
+    if( ! ic_expr_constant_init(cons, ic_expr_constant_type_boolean) ){
+        puts("ic_parse_expr_constant_boolean: call to ic_expr_constant_init failed");
+        free(expr);
+        return 0;
+    }
+
+    /* get out our ic_integer */
+    boolean = ic_expr_constant_get_boolean(cons);
+    if( ! boolean ){
+        puts("ic_parse_expr_constant_boolean: call to ic_expr_constant_get_boolean failed");
+        free(expr);
+        return 0;
+    }
+
+    if( token->id == IC_TRUE ){
+        *boolean = 1;
+    } else if( token->id == IC_FALSE ){
+        *boolean = 0;
+    } else {
+        puts("ic_parse_expr_constant_boolean: not true or false, I was lied to");
+        free(expr);
+        return 0;
+    }
+
+    /* victory */
+    return expr;
+}
+
 /* used to parse an expression that is not made up off more than one token:
  *  number
  *  string
  *  identifier
+ *  boolean
  *
  * this is useful if we know the next thing is say an operator but we want
  * to constrain parsing up until it
@@ -360,6 +438,15 @@ static struct ic_expr * ic_parse_expr_single_token(struct ic_token_list *token_l
         expr =  ic_parse_expr_constant_integer(token_list);
         if( ! expr ){
             puts("ic_parse_expr_single_token: call to ic_parse_expr_constant_integer failed");
+            return 0;
+        }
+        return expr;
+    }
+
+    if( ic_token_isboolean(token) ){
+        expr =  ic_parse_expr_constant_boolean(token_list);
+        if( ! expr ){
+            puts("ic_parse_expr_single_token: call to ic_parse_expr_constant_boolean failed");
             return 0;
         }
         return expr;

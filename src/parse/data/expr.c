@@ -518,6 +518,27 @@ struct ic_string * ic_expr_constant_get_string(struct ic_expr_constant *constant
     return &(constant->u.string);
 }
 
+/* return pointer boolean within,
+ * will only succeed if constant is of the correct type
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+unsigned int * ic_expr_constant_get_boolean(struct ic_expr_constant *constant){
+    if( ! constant ){
+        puts("ic_expr_constant_get_boolean: constant was null");
+        return 0;
+    }
+
+    /* check type before handing out pointer */
+    if( constant->tag != ic_expr_constant_type_boolean ){
+        puts("ic_expr_constant_get_boolean: not an boolean");
+        return 0;
+    }
+
+    /* give them what they want */
+    return &(constant->u.boolean);
+}
 
 /* print this constant */
 void ic_expr_constant_print(struct ic_expr_constant *constant, unsigned int *indent_level){
@@ -525,6 +546,10 @@ void ic_expr_constant_print(struct ic_expr_constant *constant, unsigned int *ind
     struct ic_string *string = 0;
     /* pointer to long int if we need it */
     long int *integer = 0;
+    /* boolean */
+    unsigned int *boolean = 0;
+    /* output */
+    char *output = 0;
 
     if( ! constant ){
         puts("ic_expr_constant_print: constant was null");
@@ -564,6 +589,30 @@ void ic_expr_constant_print(struct ic_expr_constant *constant, unsigned int *ind
 
             /* print out long integer */
             printf("%ld", *integer);
+            break;
+
+        case ic_expr_constant_type_boolean:
+            ic_parse_print_indent(*indent_level);
+
+            /* pull out our boolean */
+            boolean = ic_expr_constant_get_boolean(constant);
+            if( ! boolean ){
+                puts("ic_expr_constant_print: call to ic_expr_constant_get_boolean failed");
+                return;
+            }
+
+            if( *boolean ){
+                output = ic_token_id_get_representation(IC_TRUE);
+            } else {
+                output = ic_token_id_get_representation(IC_FALSE);
+            }
+
+            if( ! output ){
+                printf("ic_expr_constant_print: failed to get representation for boolean '%d'\n", *boolean);
+                return;
+            }
+
+            printf("%s", output);
             break;
 
         default:

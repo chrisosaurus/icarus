@@ -110,6 +110,13 @@ unsigned int ic_token_init(struct ic_token *token, enum ic_token_id id, char *li
  */
 unsigned int ic_token_set_string(struct ic_token *token, char *string, unsigned int len);
 
+/* get string representation of token id
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+char * ic_token_id_get_representation(enum ic_token_id id);
+
 /* get string representation of token
  *
  * returns * on success
@@ -160,6 +167,13 @@ unsigned int ic_token_destroy(struct ic_token *token, unsigned int free_token);
  * returns 0 if not
  */
 unsigned int ic_token_isoperator(struct ic_token *token);
+
+/* check if token is a boolean
+ *
+ * returns 1 if it is a boolean
+ * returns 0 if not
+ */
+unsigned int ic_token_isboolean(struct ic_token *token);
 
 /* check if token is a permission
  *
