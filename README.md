@@ -57,15 +57,28 @@ We have the contents of `example/simple.ic`:
         return tmp
     end
 
+    fn maybe_add_one(i::Int, b::Bool) -> Int
+        # FIXME this doesn't work `if i == 2 and b`
+        # due to lack of operator precedence
+        if b and i == 2
+            i = i + 1
+        end
+
+        return i
+    end
+
     # entry point for program
     fn main()
         let f::Foo = Foo(add_one(1) "hello")
+
+        # making up for lack of boolean literals
+        f.a = maybe_add_one(f.a, 1 == 1)
 
         d(f)
     end
 
     # hack to work around lack of constructors
-    builtin fn Foo(a::Int b::String) -> Foo
+    builtin fn Foo(a::Int, b::String) -> Foo
 
     ----------------
 
@@ -106,15 +119,28 @@ Hidden in the output we see the new lexer output:
         return tmp
     end
 
+    fn maybe_add_one(i::Int, b::Bool) -> Int
+        # FIXME this doesn't work `if i == 2 and b`
+        # due to lack of operator precedence
+        if b andi == 2
+            i = i + 1
+        end
+
+        return i
+    end
+
     # entry point for program
     fn main()
         let f::Foo = Foo(add_one(1) "hello")
+
+        # making up for lack of boolean literals
+        f.a = maybe_add_one(f.a, 1 == 1)
 
         d(f)
     end
 
     # hack to work around lack of constructors
-    builtin fn Foo(a::Int b::String) -> Foo
+    builtin fn Foo(a::Int, b::String) -> Foo
 
     ----------------
 
@@ -151,13 +177,22 @@ Hidden elsewhere in the output we can see the parser reconstructing the program 
         return tmp
     end
 
+    # maybe_add_one(Int Bool)
+    fn maybe_add_one(i::Int, b::Bool) -> Int
+        if b and i == 2
+            i = i + 1
+        end
+        return i
+    end
+
     # main()
     fn main() -> Void
-        let f::Foo = Foo(add_one(1) "hello")
+        let f::Foo = Foo(add_one(1), "hello")
+        f . a = maybe_add_one(f . a, 1 == 1)
         d(f)
     end
 
-    builtin fn Foo(a::Int b::String) -> Foo
+    builtin fn Foo(a::Int, b::String) -> Foo
     ----------------
 
 Finally the analyse step's outputs showing no errors, but making it clear that it isn't complete yet
