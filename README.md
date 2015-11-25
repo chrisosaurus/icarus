@@ -71,8 +71,7 @@ We have the contents of `example/simple.ic`:
     fn main()
         let f::Foo = Foo(add_one(1) "hello")
 
-        # making up for lack of boolean literals
-        f.a = maybe_add_one(f.a, 1 == 1)
+        f.a = maybe_add_one(f.a, True)
 
         d(f)
     end
@@ -133,8 +132,7 @@ Hidden in the output we see the new lexer output:
     fn main()
         let f::Foo = Foo(add_one(1) "hello")
 
-        # making up for lack of boolean literals
-        f.a = maybe_add_one(f.a, 1 == 1)
+        f.a = maybe_add_one(f.a, True)
 
         d(f)
     end
@@ -188,7 +186,7 @@ Hidden elsewhere in the output we can see the parser reconstructing the program 
     # main()
     fn main() -> Void
         let f::Foo = Foo(add_one(1), "hello")
-        f . a = maybe_add_one(f . a, 1 == 1)
+        f . a = maybe_add_one(f . a, True)
         d(f)
     end
 
