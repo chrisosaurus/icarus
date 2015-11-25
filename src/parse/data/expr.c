@@ -282,9 +282,9 @@ void ic_expr_func_call_print(struct ic_expr_func_call *fcall, unsigned int *inde
 
         ic_expr_print(arg, &fake_indent);
 
-        /* if we are not the last argument then print a space */
+        /* if we are not the last argument then print a comma and space */
         if( i < (len - 1) ){
-            fputs(" ", stdout);
+            fputs(", ", stdout);
         }
     }
 
