@@ -18,14 +18,11 @@ TODO:
 * write remaining parse code
 * add escaping support to lexing string (escaping " with \)
 * add kludge testing
-* an fcall should also store the found function (fdecl or fbuiltin) (post analysis)
 * symbol interning
 
 
 bugs:
 -----
-
-* `,` vs space separated args (in decl and call) needs to be implemented correctly
 
 
 testing debt:
@@ -64,7 +61,7 @@ considerations:
 * consider const-correctness on read only args
 * `ic_analyse_decl_type` currently allows co-recursive types `type Foo a::Bar end` `type bar a::Foo end`, is this allowed?
 * consider allowing free_data param to ic_pvector_destroy that is passed to (*destroy_item) rather than defaulting to true
-* decide on comma handling, currently skipped in parsing
+* decide on comma handling, currently skipped in parsing, and inserted in printing
 
 
 

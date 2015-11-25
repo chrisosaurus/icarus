@@ -573,6 +573,12 @@ static struct ic_type * ic_analyse_infer_fcall(struct ic_kludge *kludge, struct 
         return 0;
     }
 
+    /* record this found fdecl on the fcall */
+    if( ! ic_expr_func_call_set_fdecl(fcall, fdecl) ){
+        puts("ic_analyse_infer_fcall: call to ic_expr_func_call_set_fdecl failed");
+        return 0;
+    }
+
     /* now convert the fdecl to a return type */
 
     /* now we have to get the return type for this func */
@@ -588,9 +594,7 @@ static struct ic_type * ic_analyse_infer_fcall(struct ic_kludge *kludge, struct 
         return 0;
     }
 
-    /* FIXME bind type to fcall
-     * no appropriate field on fcall
-     */
+    /* get return type from this function we found */
     type = ic_kludge_get_type(kludge, ch);
     if( ! type ){
         printf("ic_analyse_infer_fcall: could not find return type '%s'\n", ch);

@@ -29,8 +29,6 @@ struct ic_expr_func_call {
      * this is set at the analyse phase
      *
      * FIXME not currently used
-     * FIXME eventually migrate to ic_func as this
-     *      could be a call to an fdecl or a builtin
      */
     struct ic_decl_func *fdecl;
 };
