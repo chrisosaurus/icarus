@@ -319,11 +319,11 @@ void ic_decl_func_print_header(struct ic_decl_func *fdecl, unsigned int *indent_
     for( i=0; i < len; ++i ){
         ic_field_print( ic_pvector_get( &(fdecl->args), i ) );
 
-        /* print a space between each arg
+        /* print a comma and space between each arg
          * but only if we are not the last arg
          */
         if( i < (len - 1) ){
-            printf(" ");
+            printf(", ");
         }
     }
 

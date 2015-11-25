@@ -52,7 +52,7 @@ fn main()\n\
 end\n\
 \n\
 # hack to work around lack of constructors\n\
-builtin fn Foo(a::Int b::String) -> Foo\n\
+builtin fn Foo(a::Int, b::String) -> Foo\n\
 \n\
 ";
 

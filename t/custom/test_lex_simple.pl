@@ -61,7 +61,7 @@ fn main()
 end
 
 # hack to work around lack of constructors
-builtin fn Foo(a::Int b::String) -> Foo
+builtin fn Foo(a::Int, b::String) -> Foo
 
 ----------------
 

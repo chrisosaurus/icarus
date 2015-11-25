@@ -42,7 +42,7 @@ fn add_one(i::Int) -> Int
 end
 
 # maybe_add_one(Int Bool)
-fn maybe_add_one(i::Int b::Bool) -> Int
+fn maybe_add_one(i::Int, b::Bool) -> Int
     if b and i == 2
         i = i + 1
     end
@@ -56,7 +56,7 @@ fn main() -> Void
     d(f)
 end
 
-builtin fn Foo(a::Int b::String) -> Foo
+builtin fn Foo(a::Int, b::String) -> Foo
 ----------------
 
 EOF
