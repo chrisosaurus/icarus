@@ -430,7 +430,7 @@ unsigned int ic_kludge_add_op(struct ic_kludge *kludge, struct ic_decl_op *op){
     }
 
     /* check for exists first to aid diagnostics */
-    if( ic_dict_exists( &(kludge->dict_fsig), from_str ) ){
+    if( ic_dict_exists( &(kludge->dict_op), from_str ) ){
         printf("ic_kludge_add_op: operator '%s' already exists on this kludge\n", from_str);
         return 0;
     }
