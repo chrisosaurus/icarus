@@ -54,9 +54,7 @@ struct ic_table_entry table[] = {
      * to distinguish from their functions `and(` and `or(`
      */
     { "and ",       4,      IC_AND },
-    { "&&",         2,      IC_AND },
-    { "or ",        3,      IC_AND },
-    { "||",         2,      IC_OR },
+    { "or ",        3,      IC_OR },
 
     { "/",          1,      IC_DIVIDE },
 
