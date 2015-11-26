@@ -1,6 +1,8 @@
 TODO:
 -----
 
+* add ability to bracket arbitrary expressions
+* make lack of operator precedence clear - mandate bracketing to make order explicit (same repeated op is fine)
 * `for` analysis case unimplemented
 * `while` analysis case unimplemented
 * the analysis system currently has no idea about permissions
