@@ -96,12 +96,12 @@ unsigned int ic_b2c_generate(struct ic_kludge *kludge, FILE *f){
 
 unsigned int ic_b2c_generate_builtins(struct ic_kludge *kludge, FILE *f){
     if( ! kludge ){
-        puts("ic_b2d_generate_builtins: kludge was null");
+        puts("ic_b2c_generate_builtins: kludge was null");
         return 0;
     }
 
     if( ! f ){
-        puts("ic_b2d_generate_builtins: file was null");
+        puts("ic_b2c_generate_builtins: file was null");
         return 0;
     }
 
@@ -116,12 +116,12 @@ unsigned int ic_b2c_generate_types_pre(struct ic_kludge *kludge, FILE *f){
     char *type_name = 0;
 
     if( ! kludge ){
-        puts("ic_b2d_generate_types_pre: kludge was null");
+        puts("ic_b2c_generate_types_pre: kludge was null");
         return 0;
     }
 
     if( ! f ){
-        puts("ic_b2d_generate_types_pre: file was null");
+        puts("ic_b2c_generate_types_pre: file was null");
         return 0;
     }
 
@@ -134,17 +134,20 @@ unsigned int ic_b2c_generate_types_pre(struct ic_kludge *kludge, FILE *f){
             return 0;
         }
 
+        type_name = ic_decl_type_str(type);
+
         /* FIXME skip builtins
          * FIXME no way to tell currently
          */
-
-        type_name = ic_decl_type_str(type);
+        if( 0 ){
+            printf("Skipping type '%s' as builtin\n", type_name);
+        }
 
         /* generate */
         fprintf(f, "typedef struct %s %s;\n", type_name, type_name);
     }
 
-    puts("ic_b2d_generate_types_pre: implementation pending");
+    puts("ic_b2c_generate_types_pre: implementation pending");
     return 1;
 }
 
@@ -155,12 +158,12 @@ unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f){
     char *type_name = 0;
 
     if( ! kludge ){
-        puts("ic_b2d_generate_types: kludge was null");
+        puts("ic_b2c_generate_types: kludge was null");
         return 0;
     }
 
     if( ! f ){
-        puts("ic_b2d_generate_types: file was null");
+        puts("ic_b2c_generate_types: file was null");
         return 0;
     }
 
@@ -173,17 +176,20 @@ unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f){
             return 0;
         }
 
+        type_name = ic_decl_type_str(type);
+
         /* FIXME skip builtins
          * FIXME no way to tell currently
          */
-
-        type_name = ic_decl_type_str(type);
+        if( 0 ){
+            printf("Skipping type '%s' as builtin\n", type_name);
+        }
 
         /* FIXME generate */
         printf("Skipping type '%s'\n", type_name);
     }
 
-    puts("ic_b2d_generate_types: implementation pending");
+    puts("ic_b2c_generate_types: implementation pending");
     return 1;
 }
 
@@ -194,12 +200,12 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
     char *func_name = 0;
 
     if( ! kludge ){
-        puts("ic_b2d_generate_functions_pre: kludge was null");
+        puts("ic_b2c_generate_functions_pre: kludge was null");
         return 0;
     }
 
     if( ! f ){
-        puts("ic_b2d_generate_functions_pre: file was null");
+        puts("ic_b2c_generate_functions_pre: file was null");
         return 0;
     }
 
@@ -212,17 +218,20 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
             return 0;
         }
 
+        func_name = ic_string_contents(&(func->string));
+
         /* FIXME skip builtins
          * FIXME no way to tell currently
          */
-
-        func_name = ic_string_contents(&(func->string));
+        if( 0 ){
+            printf("Skipping func '%s' as builtin\n", func_name);
+        }
 
         /* FIXME generate */
         printf("Pre: Skipping func '%s'\n", func_name);
     }
 
-    puts("ic_b2d_generate_functions_pre: implementation");
+    puts("ic_b2c_generate_functions_pre: implementation");
     return 1;
 }
 
@@ -233,12 +242,12 @@ unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f){
     char *func_name = 0;
 
     if( ! kludge ){
-        puts("ic_b2d_generate_functions: kludge was null");
+        puts("ic_b2c_generate_functions: kludge was null");
         return 0;
     }
 
     if( ! f ){
-        puts("ic_b2d_generate_functions: file was null");
+        puts("ic_b2c_generate_functions: file was null");
         return 0;
     }
 
@@ -251,28 +260,31 @@ unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f){
             return 0;
         }
 
+        func_name = ic_string_contents(&(func->string));
+
         /* FIXME skip builtins
          * FIXME no way to tell currently
          */
-
-        func_name = ic_string_contents(&(func->string));
+        if( 0 ){
+            printf("Skipping func '%s' as builtin\n", func_name);
+        }
 
         /* FIXME generate */
         printf("Skipping func '%s'\n", func_name);
     }
 
-    puts("ic_b2d_generate_functions: implementation");
+    puts("ic_b2c_generate_functions: implementation");
     return 1;
 }
 
 unsigned int ic_b2c_generate_entry(struct ic_kludge *kludge, FILE *f){
     if( ! kludge ){
-        puts("ic_b2d_generate_entry: kludge was null");
+        puts("ic_b2c_generate_entry: kludge was null");
         return 0;
     }
 
     if( ! f ){
-        puts("ic_b2d_generate_entry: file was null");
+        puts("ic_b2c_generate_entry: file was null");
         return 0;
     }
 
