@@ -7,6 +7,7 @@ unsigned int ic_b2c_generate(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_builtins(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_types_pre(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f);
+unsigned int ic_b2c_generate_types_body(struct ic_kludge *kludge, struct ic_decl_type *tdecl, FILE *f);
 unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_entry(struct ic_kludge *kludge, FILE *f);
@@ -185,11 +186,55 @@ unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f){
             printf("Skipping type '%s' as builtin\n", type_name);
         }
 
-        /* FIXME generate */
-        printf("Skipping type '%s'\n", type_name);
+        /* generate */
+        fprintf(f, "typedef struct %s {\n", type_name);
+        if( ! ic_b2c_generate_types_body(kludge, type, f) ){
+            puts("ic_b2c_generate_types: call to ic_b2c_generate_types_body failed");
+            return 0;
+        }
+        fprintf(f, "} %s;\n", type_name);
     }
 
-    puts("ic_b2c_generate_types: implementation pending");
+    return 1;
+}
+
+unsigned int ic_b2c_generate_types_body(struct ic_kludge *kludge, struct ic_decl_type *tdecl, FILE *f){
+    struct ic_field *field = 0;
+    unsigned int n_fields = 0;
+    unsigned int i = 0;
+    char *field_type = 0;
+    char *field_name = 0;
+
+    if( ! kludge ){
+        puts("ic_b2c_generate_types_body: kludge was null");
+        return 0;
+    }
+
+    if( ! tdecl ){
+        puts("ic_b2c_generate_types_body: tdecl was null");
+        return 0;
+    }
+
+    if( ! f ){
+        puts("ic_b2c_generate_types_body: file was null");
+        return 0;
+    }
+
+    n_fields = ic_pvector_length(&(tdecl->fields));
+
+    for( i=0; i<n_fields; ++i ){
+        field = ic_pvector_get(&(tdecl->fields), i);
+        if( ! field ){
+            puts("ic_b2c_generate_types_body: call to ic_pvector_get failed");
+        }
+
+        field_name = ic_symbol_contents(&(field->name));
+        field_type = ic_symbol_contents( ic_type_ref_get_symbol(&(field->type)) );
+
+        /* generate */
+        fprintf(f, "\t%s *%s;\n", field_type, field_name);
+    }
+
     return 1;
 }
 
