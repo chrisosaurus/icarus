@@ -52,6 +52,7 @@ clean: cleanobj
 	@find . -iname '*.gcda' -delete
 	@find . -iname '*.gcov' -delete
 	@find . -iname '*.gcno' -delete
+	@rm -f out.c
 
 # run icarus over our simple example
 example: icarus
@@ -112,5 +113,8 @@ readme:
 	@echo -e "\n\ngenerating README.md"
 	perl scripts/update_readme.pl
 
-.PHONY: all clean cleanobj icarus test test_custom example readme
+compile: clean icarus
+	./icarus example/simple.ic out.c
+
+.PHONY: all clean cleanobj icarus test test_custom example readme compile
 

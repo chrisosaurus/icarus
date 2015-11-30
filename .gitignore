@@ -11,3 +11,6 @@ bin/*
 *coverall.sh
 
 *.bkp
+
+out.c
+

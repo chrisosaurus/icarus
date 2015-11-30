@@ -8,8 +8,12 @@
 #include "parse/data/ast.h" /* ic_ast structure */
 #include "analyse/analyse.h" /* ic_kludge */
 
+/* backends */
+#include "backends/2c/2c.h"
+
 int main(int argc, char **argv){
     char *filename = 0, *source = 0, *core_source = 0;
+    char *out_filename = 0;
     struct ic_token_list *token_list = 0, *core_token_list = 0;
     struct ic_ast *ast = 0, *core_ast = 0;
     struct ic_kludge *kludge = 0;
@@ -17,9 +21,13 @@ int main(int argc, char **argv){
     if( argc < 2 ){
         puts("No source file specified");
         exit(1);
-    } else if( argc > 2 ){
-        puts("Too many arguments supplied, only source file was expected");
+    } else if( argc > 3 ){
+        puts("Too many arguments supplied, only source file and possible output target are expected");
         exit(1);
+    }
+
+    if( argc == 3 ){
+        out_filename = argv[2];
     }
 
     kludge = ic_kludge_new();
@@ -98,6 +106,16 @@ int main(int argc, char **argv){
     puts("warning: main implementation pending, icarus is currently only partially functional");
     puts("analysis complete");
     puts("----------------\n");
+
+    /* backend time
+     * only compile if user specifies out_filename
+     */
+    if( out_filename ){
+        if( ! ic_b2c_compile(kludge, out_filename) ){
+            puts("compilation failed");
+            exit(1);
+        }
+    }
 
     /* clean up time */
 
