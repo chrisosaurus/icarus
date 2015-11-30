@@ -139,7 +139,7 @@ unsigned int ic_b2c_generate_types_pre(struct ic_kludge *kludge, FILE *f){
 
         /* skip builtins */
         if( ic_decl_type_isbuiltin(type) ){
-            printf("Skipping type '%s' as builtin\n", type_name);
+            // printf("Skipping type '%s' as builtin\n", type_name);
             continue;
         }
 
@@ -180,7 +180,7 @@ unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f){
 
         /* skip builtins */
         if( ic_decl_type_isbuiltin(type) ){
-            printf("Skipping type '%s' as builtin\n", type_name);
+            //printf("Skipping type '%s' as builtin\n", type_name);
             continue;
         }
 
@@ -265,7 +265,7 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
 
         /* skip builtins */
         if( ic_decl_func_isbuiltin(func) ){
-            printf("Skipping func '%s' as builtin\n", func_name);
+            // printf("Skipping func '%s' as builtin\n", func_name);
             continue;
         }
 
@@ -306,7 +306,7 @@ unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f){
 
         /* skip builtins */
         if( ic_decl_func_isbuiltin(func) ){
-            printf("Skipping func '%s' as builtin\n", func_name);
+            // printf("Skipping func '%s' as builtin\n", func_name);
             continue;
         }
 
