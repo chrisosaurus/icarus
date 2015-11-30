@@ -113,6 +113,7 @@ unsigned int ic_b2c_generate_types_pre(struct ic_kludge *kludge, FILE *f){
     struct ic_decl_type *type = 0;
     unsigned int n_types = 0;
     unsigned int i = 0;
+    char *type_name = 0;
 
     if( ! kludge ){
         puts("ic_b2d_generate_types_pre: kludge was null");
@@ -137,8 +138,10 @@ unsigned int ic_b2c_generate_types_pre(struct ic_kludge *kludge, FILE *f){
          * FIXME no way to tell currently
          */
 
-        /* FIXME generate */
-        printf("Pre: Skipping type '%s'\n", ic_decl_type_str(type));
+        type_name = ic_decl_type_str(type);
+
+        /* generate */
+        fprintf(f, "typedef struct %s %s;\n", type_name, type_name);
     }
 
     puts("ic_b2d_generate_types_pre: implementation pending");
@@ -149,6 +152,7 @@ unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f){
     struct ic_decl_type *type = 0;
     unsigned int n_types = 0;
     unsigned int i = 0;
+    char *type_name = 0;
 
     if( ! kludge ){
         puts("ic_b2d_generate_types: kludge was null");
@@ -173,8 +177,10 @@ unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f){
          * FIXME no way to tell currently
          */
 
+        type_name = ic_decl_type_str(type);
+
         /* FIXME generate */
-        printf("Skipping type '%s'\n", ic_decl_type_str(type));
+        printf("Skipping type '%s'\n", type_name);
     }
 
     puts("ic_b2d_generate_types: implementation pending");
@@ -185,6 +191,7 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
     struct ic_decl_func *func = 0;
     unsigned int n_funcs = 0;
     unsigned int i = 0;
+    char *func_name = 0;
 
     if( ! kludge ){
         puts("ic_b2d_generate_functions_pre: kludge was null");
@@ -209,8 +216,10 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
          * FIXME no way to tell currently
          */
 
+        func_name = ic_string_contents(&(func->string));
+
         /* FIXME generate */
-        printf("Pre: Skipping func '%s'\n", ic_string_contents(&(func->string)));
+        printf("Pre: Skipping func '%s'\n", func_name);
     }
 
     puts("ic_b2d_generate_functions_pre: implementation");
@@ -221,6 +230,7 @@ unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f){
     struct ic_decl_func *func = 0;
     unsigned int n_funcs = 0;
     unsigned int i = 0;
+    char *func_name = 0;
 
     if( ! kludge ){
         puts("ic_b2d_generate_functions: kludge was null");
@@ -245,8 +255,10 @@ unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f){
          * FIXME no way to tell currently
          */
 
+        func_name = ic_string_contents(&(func->string));
+
         /* FIXME generate */
-        printf("Skipping func '%s'\n", ic_string_contents(&(func->string)));
+        printf("Skipping func '%s'\n", func_name);
     }
 
     puts("ic_b2d_generate_functions: implementation");
