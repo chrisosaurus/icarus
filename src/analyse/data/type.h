@@ -62,6 +62,13 @@ struct ic_decl_type * ic_type_get_decl(struct ic_type *type);
  */
 struct ic_symbol * ic_type_name(struct ic_type *type);
 
+/* mark as builtin
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_type_mark_builtin(struct ic_type *type);
+
 /* check if type is builtin
  *
  * returns 1 if builtin

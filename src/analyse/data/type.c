@@ -132,6 +132,21 @@ struct ic_symbol * ic_type_name(struct ic_type *type){
     return 0;
 }
 
+/* mark as builtin
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_type_mark_builtin(struct ic_type *type){
+    if( ! type ){
+        puts("ic_type_mark_builtin: type was null");
+        return 0;
+    }
+
+    type->tag = ic_type_builtin;
+    return 1;
+}
+
 /* check if type is builtin
  *
  * returns 1 if builtin

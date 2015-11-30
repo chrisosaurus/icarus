@@ -137,11 +137,10 @@ unsigned int ic_b2c_generate_types_pre(struct ic_kludge *kludge, FILE *f){
 
         type_name = ic_decl_type_str(type);
 
-        /* FIXME skip builtins
-         * FIXME no way to tell currently
-         */
-        if( 0 ){
+        /* skip builtins */
+        if( ic_decl_type_isbuiltin(type) ){
             printf("Skipping type '%s' as builtin\n", type_name);
+            continue;
         }
 
         /* generate */
@@ -179,11 +178,10 @@ unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f){
 
         type_name = ic_decl_type_str(type);
 
-        /* FIXME skip builtins
-         * FIXME no way to tell currently
-         */
-        if( 0 ){
+        /* skip builtins */
+        if( ic_decl_type_isbuiltin(type) ){
             printf("Skipping type '%s' as builtin\n", type_name);
+            continue;
         }
 
         /* generate */
