@@ -265,15 +265,14 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
 
         func_name = ic_string_contents(&(func->string));
 
-        /* FIXME skip builtins
-         * FIXME no way to tell currently
-         */
-        if( 0 ){
+        /* skip builtins */
+        if( ic_decl_func_isbuiltin(func) ){
             printf("Skipping func '%s' as builtin\n", func_name);
+            continue;
         }
 
         /* FIXME generate */
-        printf("Pre: Skipping func '%s'\n", func_name);
+        printf("Pre: Skipping func '%s' as unimplemented\n", func_name);
     }
 
     puts("ic_b2c_generate_functions_pre: implementation");
@@ -307,15 +306,14 @@ unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f){
 
         func_name = ic_string_contents(&(func->string));
 
-        /* FIXME skip builtins
-         * FIXME no way to tell currently
-         */
-        if( 0 ){
+        /* skip builtins */
+        if( ic_decl_func_isbuiltin(func) ){
             printf("Skipping func '%s' as builtin\n", func_name);
+            continue;
         }
 
         /* FIXME generate */
-        printf("Skipping func '%s'\n", func_name);
+        printf("Skipping func '%s' as unimplemented\n", func_name);
     }
 
     puts("ic_b2c_generate_functions: implementation");

@@ -80,6 +80,7 @@ unsigned int ic_decl_func_init(struct ic_decl_func *fdecl, char *name, unsigned 
 
     /* initialise return type to 0 (void) */
     fdecl->ret_type = 0;
+    fdecl->builtin = 0;
 
     /* initialise our empty body */
     if( ! ic_body_init( &(fdecl->body) ) ){
@@ -262,6 +263,37 @@ unsigned int ic_decl_func_add_stmt(struct ic_decl_func *fdecl, struct ic_stmt *s
     }
 
     return 1;
+}
+
+/* mark this fdecl as being a builtin
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_func_mark_builtin(struct ic_decl_func *fdecl){
+    if( ! fdecl ){
+        puts("ic_decl_func_mark_builtin: fdecl was null");
+        return 0;
+    }
+
+    /* to mark fdecl itself */
+    fdecl->builtin = 1;
+
+    return 1;
+}
+
+/* test if builtin
+ *
+ * returns 1 if builtin
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_func_isbuiltin(struct ic_decl_func *fdecl){
+    if( ! fdecl ){
+        puts("ic_decl_func_isbuiltin: fdecl was null");
+        return 0;
+    }
+
+    return fdecl->builtin == 1;
 }
 
 /* print decl_func */
@@ -539,6 +571,7 @@ unsigned int ic_decl_type_init(struct ic_decl_type *tdecl, char *name_src, unsig
 
     tdecl->isvoid = 0;
     tdecl->isbool = 0;
+    tdecl->builtin = 0;
 
     return 1;
 }
@@ -664,6 +697,37 @@ unsigned int ic_decl_type_add_field(struct ic_decl_type *tdecl, struct ic_field 
     }
 
     return 1;
+}
+
+/* mark this tdecl as being a builtin
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_mark_builtin(struct ic_decl_type *tdecl){
+    if( ! tdecl ){
+        puts("ic_decl_type_mark_builtin: tdecl was null");
+        return 0;
+    }
+
+    /* to mark fdecl itself */
+    tdecl->builtin = 1;
+
+    return 1;
+}
+
+/* test if builtin
+ *
+ * returns 1 if builtin
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_isbuiltin(struct ic_decl_type *tdecl){
+    if( ! tdecl ){
+        puts("ic_decl_type_isbuiltin: tdecl was null");
+        return 0;
+    }
+
+    return tdecl->builtin == 1;
 }
 
 /* print the decl_type to stdout */
@@ -1116,6 +1180,42 @@ struct ic_decl_op * ic_decl_get_op(struct ic_decl *decl){
 
     /* unbox */
     return &(decl->u.op);
+}
+
+/* mark this decl as being a builtin
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_mark_builtin(struct ic_decl *decl){
+    if( ! decl ){
+        puts("ic_decl_mark_builtin: decl was null");
+        return 0;
+    }
+
+    switch( decl->tag ){
+        case ic_decl_tag_func:
+            decl->tag = ic_decl_tag_builtin_func;
+            if( ! ic_decl_func_mark_builtin(&(decl->u.fdecl)) ){
+                puts("ic_decl_mark_builtin: call to ic_decl_func_mark_builtin failed");
+                return 0;
+            }
+            break;
+
+        case ic_decl_tag_type:
+            decl->tag = ic_decl_tag_builtin_type;
+            if( ! ic_decl_type_mark_builtin(&(decl->u.tdecl)) ){
+                puts("ic_decl_mark_builtin: call to ic_decl_type_mark_builtin failed");
+                return 0;
+            }
+            break;
+
+        default:
+            puts("ic_decl_mark_builtin: unknown tag");
+            return 0;
+    }
+
+    return 1;
 }
 
 /* print contents of ic_decl */

@@ -7,12 +7,13 @@
  * ic_type has a single instance for each type within a kludge (FIXME consider type scoping)
  *
  * an ic_type can either be:
- *  - a builtin - FIXME no current support for builtins
+ *  - a builtin - builtin type
  *  - a user defined type - ic_decl_type
  */
 
 enum ic_type_tag {
-    ic_type_user
+    ic_type_user,
+    ic_type_builtin
 };
 
 struct ic_type {
@@ -60,6 +61,13 @@ struct ic_decl_type * ic_type_get_decl(struct ic_type *type);
  * returns 0 on failure
  */
 struct ic_symbol * ic_type_name(struct ic_type *type);
+
+/* check if type is builtin
+ *
+ * returns 1 if builtin
+ * returns 0 otherwise
+ */
+unsigned int ic_type_isbuiltin(struct ic_type *type);
 
 /* is this type void
  *

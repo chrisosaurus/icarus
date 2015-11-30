@@ -32,6 +32,9 @@ struct ic_decl_func {
 
     /* the string representation of this function decl */
     struct ic_string string;
+
+    /* 1 for builtin, 0 for not */
+    unsigned int builtin;
 };
 
 /* allocate and initialise a new decl_func
@@ -82,6 +85,20 @@ unsigned int ic_decl_func_set_return(struct ic_decl_func *fdecl, char *type, uns
  * returns 0 on failure
  */
 unsigned int ic_decl_func_add_stmt(struct ic_decl_func *fdecl, struct ic_stmt *stmt);
+
+/* mark this fdecl as being a builtin
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_func_mark_builtin(struct ic_decl_func *fdecl);
+
+/* test if builtin
+ *
+ * returns 1 if builtin
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_func_isbuiltin(struct ic_decl_func *fdecl);
 
 /* print decl_func */
 void ic_decl_func_print(struct ic_decl_func *fdecl, unsigned int *indent_level);
@@ -135,6 +152,9 @@ struct ic_decl_type {
      * 0 if this is not the bool type
      */
     unsigned int isbool;
+
+    /* 1 for builtin, 0 for not */
+    unsigned int builtin;
 };
 
 /* allocate and return a new decl_type
@@ -187,6 +207,20 @@ unsigned int ic_decl_type_mark_bool(struct ic_decl_type *tdecl);
  * returns 0 on failure
  */
 unsigned int ic_decl_type_add_field(struct ic_decl_type *tdecl, struct ic_field *field);
+
+/* mark this tdecl as being a builtin
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_mark_builtin(struct ic_decl_type *tdecl);
+
+/* test if builtin
+ *
+ * returns 1 if builtin
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_isbuiltin(struct ic_decl_type *tdecl);
 
 /* print the decl_type to stdout */
 void ic_decl_type_print(struct ic_decl_type *tdecl, unsigned int *indent_level);
@@ -326,6 +360,12 @@ struct ic_decl_type * ic_decl_get_tdecl(struct ic_decl *decl);
 */
 struct ic_decl_op * ic_decl_get_op(struct ic_decl *decl);
 
+/* mark this decl as being a builtin
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_mark_builtin(struct ic_decl *decl);
 
 /* print contents of ic_decl */
 void ic_decl_print(struct ic_decl *decl, unsigned int *indent_level);

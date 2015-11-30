@@ -69,6 +69,7 @@ unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type){
 
     switch( type->tag ){
         case ic_type_user:
+        case ic_type_builtin:
             type->u.decl = 0;
             break;
 
@@ -116,6 +117,7 @@ struct ic_symbol * ic_type_name(struct ic_type *type){
     switch( type->tag ){
 
         case ic_type_user:
+        case ic_type_builtin:
             return &(type->u.decl->name);
             break;
 
@@ -127,6 +129,24 @@ struct ic_symbol * ic_type_name(struct ic_type *type){
 
 
     puts("ic_type_name: impossible case");
+    return 0;
+}
+
+/* check if type is builtin
+ *
+ * returns 1 if builtin
+ * returns 0 otherwise
+ */
+unsigned int ic_type_isbuiltin(struct ic_type *type){
+    if( ! type ){
+        puts("ic_type_isbuiltin: type was null");
+        return 0;
+    }
+
+    if( type->tag == ic_type_builtin ){
+        return 1;
+    }
+
     return 0;
 }
 
