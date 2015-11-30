@@ -5,7 +5,9 @@
 
 unsigned int ic_b2c_generate(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_builtins(struct ic_kludge *kludge, FILE *f);
+unsigned int ic_b2c_generate_types_pre(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f);
+unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_entry(struct ic_kludge *kludge, FILE *f);
 
@@ -61,18 +63,22 @@ unsigned int ic_b2c_generate(struct ic_kludge *kludge, FILE *f){
         return 0;
     }
 
-    /* FIXME want to generate pre-decl for all types
-     * before we define them
-     */
+    /* want to generate pre-decl for all types before we define them */
+    if( ! ic_b2c_generate_types_pre(kludge, f) ){
+        puts("ic_b2c_generate: call to ic_b2c_generate_types_pre failed");
+        return 0;
+    }
+
+    /* want to generate pre-decl for all funcs before we define them */
+    if( ! ic_b2c_generate_functions_pre(kludge, f) ){
+        puts("ic_b2c_generate: call to ic_b2c_generate_functions failed");
+        return 0;
+    }
 
     if( ! ic_b2c_generate_types(kludge, f) ){
         puts("ic_b2c_generate: call to ic_b2c_generate_types failed");
         return 0;
     }
-
-    /* FIXME want to generate pre-decl for all funcs
-     * before we define them
-     */
 
     if( ! ic_b2c_generate_functions(kludge, f) ){
         puts("ic_b2c_generate: call to ic_b2c_generate_functions failed");
@@ -100,6 +106,42 @@ unsigned int ic_b2c_generate_builtins(struct ic_kludge *kludge, FILE *f){
     }
 
     fputs("#include \"backends/2c/builtins.c\"\n", f);
+    return 1;
+}
+
+unsigned int ic_b2c_generate_types_pre(struct ic_kludge *kludge, FILE *f){
+    struct ic_decl_type *type = 0;
+    unsigned int n_types = 0;
+    unsigned int i = 0;
+
+    if( ! kludge ){
+        puts("ic_b2d_generate_types_pre: kludge was null");
+        return 0;
+    }
+
+    if( ! f ){
+        puts("ic_b2d_generate_types_pre: file was null");
+        return 0;
+    }
+
+    n_types = ic_pvector_length(&(kludge->tdecls));
+
+    for( i=0; i<n_types; ++i ){
+        type = ic_pvector_get(&(kludge->tdecls), i);
+        if( ! type ){
+            puts("ic_b2c_generate_types_pre: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        /* FIXME skip builtins
+         * FIXME no way to tell currently
+         */
+
+        /* FIXME generate */
+        printf("Pre: Skipping type '%s'\n", ic_decl_type_str(type));
+    }
+
+    puts("ic_b2d_generate_types_pre: implementation pending");
     return 1;
 }
 
@@ -136,6 +178,42 @@ unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f){
     }
 
     puts("ic_b2d_generate_types: implementation pending");
+    return 1;
+}
+
+unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
+    struct ic_decl_func *func = 0;
+    unsigned int n_funcs = 0;
+    unsigned int i = 0;
+
+    if( ! kludge ){
+        puts("ic_b2d_generate_functions_pre: kludge was null");
+        return 0;
+    }
+
+    if( ! f ){
+        puts("ic_b2d_generate_functions_pre: file was null");
+        return 0;
+    }
+
+    n_funcs = ic_pvector_length(&(kludge->fdecls));
+
+    for( i=0; i<n_funcs; ++i ){
+        func = ic_pvector_get(&(kludge->fdecls), i);
+        if( ! func ){
+            puts("ic_b2c_generate_functions_pre: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        /* FIXME skip builtins
+         * FIXME no way to tell currently
+         */
+
+        /* FIXME generate */
+        printf("Pre: Skipping func '%s'\n", ic_string_contents(&(func->string)));
+    }
+
+    puts("ic_b2d_generate_functions_pre: implementation");
     return 1;
 }
 
