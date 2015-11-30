@@ -1,7 +1,10 @@
+builtin fn println()
+
 builtin type Void
 
 builtin type Bool
 builtin fn print(a::Bool)
+builtin fn println(a::Bool)
 builtin fn equal(a::Bool, b::Bool) -> Bool
 builtin fn not(a::Bool) -> Bool
 builtin fn and(a::Bool, b::Bool) -> Bool
@@ -9,6 +12,7 @@ builtin fn or(a::Bool, b::Bool) -> Bool
 
 builtin type Int
 builtin fn print(a::Int)
+builtin fn println(a::Int)
 builtin fn equal(a::Int, b::Int) -> Bool
 builtin fn plus(a::Int, b::Int) -> Int
 builtin fn minus(a::Int, b::Int) -> Int
@@ -18,6 +22,7 @@ builtin fn modulo(a::Int, b::Int) -> Int
 
 builtin type String
 builtin fn print(a::String)
+builtin fn println(a::String)
 builtin fn equal(a::String, b::String) -> Bool
 builtin fn concat(a::String, b::String) -> String
 # we probably want a way to express that `plus` is an alias for `concat`
