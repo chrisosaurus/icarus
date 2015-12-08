@@ -93,3 +93,29 @@ this builds a tree structure like
 with each `+` being an operator having a `left` and `right` subexpr
 
 
+More power is needed
+====================
+
+We need more power in our current operator implementation
+
+the current implementation handles this fine
+
+    builtin op + plus
+
+which then maps
+
+    1 + 1
+
+to
+
+    plus(1, 1)
+
+
+
+However there are other cases we care about
+
+  !1 # should map to not(1)
+
+  collection[index]         # access(index)
+  collection[index, index]  # slice(index, index)
+
