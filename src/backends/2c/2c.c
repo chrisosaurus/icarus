@@ -273,7 +273,7 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
         printf("Pre: Skipping func '%s' as unimplemented\n", func_name);
     }
 
-    puts("ic_b2c_generate_functions_pre: implementation");
+    puts("ic_b2c_generate_functions_pre: implementation pending");
     return 1;
 }
 
@@ -314,7 +314,7 @@ unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f){
         printf("Skipping func '%s' as unimplemented\n", func_name);
     }
 
-    puts("ic_b2c_generate_functions: implementation");
+    puts("ic_b2c_generate_functions: implementation pending");
     return 1;
 }
 
