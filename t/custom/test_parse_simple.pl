@@ -30,8 +30,8 @@ end
 
 # d(Foo)
 fn d(f::Foo) -> Void
-    d(f . a)
-    d(f . b)
+    d(f.a)
+    d(f.b)
 end
 
 # add_one(Int)
@@ -52,7 +52,7 @@ end
 # main()
 fn main() -> Void
     let f::Foo = Foo(add_one(1), "hello")
-    f . a = maybe_add_one(f . a, True)
+    f.a = maybe_add_one(f.a, True)
     d(f)
 end
 

@@ -971,7 +971,7 @@ void ic_expr_faccess_print(struct ic_expr_faccess *faccess, unsigned int *indent
     }
 
     ic_expr_print(faccess->left, indent_level);
-    fputs(" . ", stdout);
+    fputs(".", stdout);
     ic_expr_print(faccess->right, &fake_indent);
 }
 
