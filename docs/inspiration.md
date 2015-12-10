@@ -56,7 +56,9 @@ Java:
 Julia:
 
 * general inspiration
-* syntax of types and constructors * separation of functions from type * multiple dispatch and function overloading
+* syntax of types and constructors
+* separation of functions from type
+* multiple dispatch and function overloading
 * Nullable
 
 
@@ -72,7 +74,8 @@ Perl:
 Pony:
 
 * I had been considering forcing conditional expressions to be boolean, Pony helped convince me
-* I was unsure of `if cond then ... end`, but Pony convinced me
+* I was unsure of `if cond then ... end`, but Pony convinced me - deprecated,
+  favouring if cond ... end
 * pony enforces mixed operator expressions to be brackets, e.g. `1+2*3/4` must be written bracketed, such as `((1+2)*3/4)`
 
 
