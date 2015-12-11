@@ -25,6 +25,7 @@ TODO:
 
 bugs:
 -----
+* due to "and " and "or " tokens including whitespace, lexer output is incorrect
 
 
 testing debt:
