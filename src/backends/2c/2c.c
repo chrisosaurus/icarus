@@ -3,6 +3,8 @@
 #include "../../analyse/data/type.h"
 #include "2c.h"
 
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 unsigned int ic_b2c_generate(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_builtins(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_types_pre(struct ic_kludge *kludge, FILE *f);
@@ -11,6 +13,7 @@ unsigned int ic_b2c_generate_types_body(struct ic_kludge *kludge, struct ic_decl
 unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f);
 unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f);
+unsigned int ic_b2c_generate_functions_body(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f);
 unsigned int ic_b2c_generate_entry(struct ic_kludge *kludge, FILE *f);
 
 /* taking a processed ast and a string containing the path to
@@ -249,12 +252,12 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
     unsigned int i = 0;
 
     if( ! kludge ){
-        puts("ic_b2c_generate_functions_header: kludge was null");
+        puts("ic_b2c_generate_functions_pre: kludge was null");
         return 0;
     }
 
     if( ! f ){
-        puts("ic_b2c_generate_functions_header: file was null");
+        puts("ic_b2c_generate_functions_pre: file was null");
         return 0;
     }
 
@@ -263,7 +266,7 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
     for( i=0; i<n_funcs; ++i ){
         func = ic_pvector_get(&(kludge->fdecls), i);
         if( ! func ){
-            puts("ic_b2c_generate_functions_header: call to ic_pvector_get failed");
+            puts("ic_b2c_generate_functions_pre: call to ic_pvector_get failed");
             return 0;
         }
 
@@ -393,6 +396,11 @@ unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f){
 
     puts("ic_b2c_generate_functions: implementation pending");
     return 1;
+}
+
+unsigned int ic_b2c_generate_functions_body(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f){
+    puts("ic_b2c_generate_functions_header: unimplemented");
+    return 0;
 }
 
 /* generate code needed to enter into icarus
