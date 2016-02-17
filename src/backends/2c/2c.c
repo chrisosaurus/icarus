@@ -9,6 +9,7 @@ unsigned int ic_b2c_generate_types_pre(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_types_body(struct ic_kludge *kludge, struct ic_decl_type *tdecl, FILE *f);
 unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f);
+unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f);
 unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_entry(struct ic_kludge *kludge, FILE *f);
 
@@ -247,17 +248,13 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
     unsigned int n_funcs = 0;
     unsigned int i = 0;
 
-    char *func_name = 0;
-    char *func_sig_full = 0;
-    char *func_return_type_str = 0;
-
     if( ! kludge ){
-        puts("ic_b2c_generate_functions_pre: kludge was null");
+        puts("ic_b2c_generate_functions_header: kludge was null");
         return 0;
     }
 
     if( ! f ){
-        puts("ic_b2c_generate_functions_pre: file was null");
+        puts("ic_b2c_generate_functions_header: file was null");
         return 0;
     }
 
@@ -266,7 +263,7 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
     for( i=0; i<n_funcs; ++i ){
         func = ic_pvector_get(&(kludge->fdecls), i);
         if( ! func ){
-            puts("ic_b2c_generate_functions_pre: call to ic_pvector_get failed");
+            puts("ic_b2c_generate_functions_header: call to ic_pvector_get failed");
             return 0;
         }
 
@@ -276,47 +273,79 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
             continue;
         }
 
-        func_name = ic_symbol_contents(&(func->name));
-        if( ! func_name ){
-            puts("ic_b2c_generate_functions: call to ic_string_contents failed for name");
+        if( ! ic_b2c_generate_functions_header(kludge, func, f)) {
+            puts("ic_b2c_generate_functions_pre: call to ic_b2c_generate_functions_header failed");
             return 0;
         }
 
-        func_sig_full = ic_decl_func_sig_full(func);
-        if( ! func_sig_full ){
-            puts("ic_b2c_generate_functions: call to ic_decl_func_sig_full failed");
-            return 0;
-        }
-
-        if( func->ret_type ){
-            /* FIXME need to convert to c type */
-            func_return_type_str = ic_symbol_contents(func->ret_type);
-            if( ! func_return_type_str ){
-                puts("ic_b2c_generate_functions: call to ic_symbol_contents failed for return type");
-                return 0;
-            }
-        } else {
-            /* c void */
-            func_return_type_str = "void";
-        }
-
-        /* print comment */
-        fprintf(f, "/* %s */\n", func_sig_full);
-
-        /* return-type func-name( args ... ); */
-
-        /* print return-type, name, and opening bracket */
-        fprintf(f, "%s %s(", func_return_type_str, func_name);
-
-        /* FIXME args */
-        printf("pre: func '%s' only partially implemented (args missing)\n", func_sig_full);
-
-        /* closing brace and \n */
-        fputs(")\n", f);
-
+        /* print trailing ; and \n */
+        fputs(";\n", f);
     }
 
     puts("ic_b2c_generate_functions_pre: implementation pending");
+    return 1;
+}
+
+/* generate function header */
+unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f){
+    char *func_name = 0;
+    char *func_sig_full = 0;
+    char *func_return_type_str = 0;
+
+    if( ! kludge ){
+        puts("ic_b2c_generate_functions_header: kludge was null");
+        return 0;
+    }
+
+    if( ! fdecl ){
+        puts("ic_b2c_generate_functions_header: fdecl was null");
+        return 0;
+    }
+
+    if( ! f ){
+        puts("ic_b2c_generate_functions_header: file was null");
+        return 0;
+    }
+
+    func_name = ic_symbol_contents(&(fdecl->name));
+    if( ! func_name ){
+        puts("ic_b2c_generate_functions: call to ic_string_contents failed for name");
+        return 0;
+    }
+
+    func_sig_full = ic_decl_func_sig_full(fdecl);
+    if( ! func_sig_full ){
+        puts("ic_b2c_generate_functions: call to ic_decl_func_sig_full failed");
+        return 0;
+    }
+
+    if( fdecl->ret_type ){
+        /* FIXME need to convert to c type */
+        func_return_type_str = ic_symbol_contents(fdecl->ret_type);
+        if( ! func_return_type_str ){
+            puts("ic_b2c_generate_functions: call to ic_symbol_contents failed for return type");
+            return 0;
+        }
+    } else {
+        /* c void */
+        func_return_type_str = "void";
+    }
+
+    /* print comment */
+    fprintf(f, "/* %s */\n", func_sig_full);
+
+    /* return-type func-name( args ... ); */
+
+    /* print return-type, name, and opening bracket */
+    fprintf(f, "%s %s(", func_return_type_str, func_name);
+
+    /* FIXME args */
+    printf("pre: func '%s' only partially implemented (args missing)\n", func_sig_full);
+
+    /* closing brace*/
+    fputs(")", f);
+
+    puts("ic_b2c_generate_functions_header: implementation pending");
     return 1;
 }
 
