@@ -633,7 +633,7 @@ char * ic_decl_func_sig_full(struct ic_decl_func *fdecl){
     }
 
     /* final bracket and return arrow */
-    if( ! ic_string_append_char(fstr, ") -> ", 1) ){
+    if( ! ic_string_append_char(fstr, ") -> ", 5) ){
         puts("ic_decl_func_sig_full: closing brace and return arrow: call to ic_string_append_char failed");
         return 0;
     }
