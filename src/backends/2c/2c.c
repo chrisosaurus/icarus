@@ -94,7 +94,7 @@ unsigned int ic_b2c_generate(struct ic_kludge *kludge, FILE *f){
     return 1;
 }
 
-
+/* generate code for builtins */
 unsigned int ic_b2c_generate_builtins(struct ic_kludge *kludge, FILE *f){
     if( ! kludge ){
         puts("ic_b2c_generate_builtins: kludge was null");
@@ -110,6 +110,7 @@ unsigned int ic_b2c_generate_builtins(struct ic_kludge *kludge, FILE *f){
     return 1;
 }
 
+/* generate type declarations */
 unsigned int ic_b2c_generate_types_pre(struct ic_kludge *kludge, FILE *f){
     struct ic_decl_type *type = 0;
     unsigned int n_types = 0;
@@ -151,6 +152,7 @@ unsigned int ic_b2c_generate_types_pre(struct ic_kludge *kludge, FILE *f){
     return 1;
 }
 
+/* generate type definitions */
 unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f){
     struct ic_decl_type *type = 0;
     unsigned int n_types = 0;
@@ -196,6 +198,9 @@ unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f){
     return 1;
 }
 
+/* called by ic_b2c_generate_types
+ * handles actual generate of type definition body
+ */
 unsigned int ic_b2c_generate_types_body(struct ic_kludge *kludge, struct ic_decl_type *tdecl, FILE *f){
     struct ic_field *field = 0;
     unsigned int n_fields = 0;
@@ -236,6 +241,7 @@ unsigned int ic_b2c_generate_types_body(struct ic_kludge *kludge, struct ic_decl
     return 1;
 }
 
+/* generate function declarations */
 unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
     struct ic_decl_func *func = 0;
     unsigned int n_funcs = 0;
@@ -277,6 +283,7 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
     return 1;
 }
 
+/* generate function definitions */
 unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f){
     struct ic_decl_func *func = 0;
     unsigned int n_funcs = 0;
@@ -318,6 +325,9 @@ unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f){
     return 1;
 }
 
+/* generate code needed to enter into icarus
+ * this will generate a c main function
+ */
 unsigned int ic_b2c_generate_entry(struct ic_kludge *kludge, FILE *f){
     if( ! kludge ){
         puts("ic_b2c_generate_entry: kludge was null");
