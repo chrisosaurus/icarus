@@ -246,7 +246,10 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
     struct ic_decl_func *func = 0;
     unsigned int n_funcs = 0;
     unsigned int i = 0;
-    char *func_sig_call = 0;
+
+    char *func_name = 0;
+    char *func_sig_full = 0;
+    char *func_return_type_str = 0;
 
     if( ! kludge ){
         puts("ic_b2c_generate_functions_pre: kludge was null");
@@ -267,29 +270,50 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
             return 0;
         }
 
-        func_sig_call = ic_decl_func_sig_call(func);
-
-        if( ! func_sig_call ){
-          puts("ic_b2c_generate_functions_pre: call to ic_decl_func_sig_call failed");
-          return 0;
-        }
-
         /* skip builtins */
         if( ic_decl_func_isbuiltin(func) ){
             // printf("Skipping func '%s' as builtin\n", func_name);
             continue;
         }
 
-        /* add a comment showing the icarus name */
-        fprintf(f, "/* %s */\n", func_sig_call);
+        func_name = ic_symbol_contents(&(func->name));
+        if( ! func_name ){
+            puts("ic_b2c_generate_functions: call to ic_string_contents failed for name");
+            return 0;
+        }
 
-        /* return-type func-name( args... ) */
-        fprintf(f, "%s %s(", "FIXME", "FIXME");
+        func_sig_full = ic_decl_func_sig_full(func);
+        if( ! func_sig_full ){
+            puts("ic_b2c_generate_functions: call to ic_decl_func_sig_full failed");
+            return 0;
+        }
+
+        if( func->ret_type ){
+            /* FIXME need to convert to c type */
+            func_return_type_str = ic_symbol_contents(func->ret_type);
+            if( ! func_return_type_str ){
+                puts("ic_b2c_generate_functions: call to ic_symbol_contents failed for return type");
+                return 0;
+            }
+        } else {
+            /* c void */
+            func_return_type_str = "void";
+        }
+
+        /* print comment */
+        fprintf(f, "/* %s */\n", func_sig_full);
+
+        /* return-type func-name( args ... ); */
+
+        /* print return-type, name, and opening bracket */
+        fprintf(f, "%s %s(", func_return_type_str, func_name);
 
         /* FIXME args */
+        printf("pre: func '%s' only partially implemented (args missing)\n", func_sig_full);
 
-        /* close function decl */
-        fputs(");\n", f);
+        /* closing brace and \n */
+        fputs(")\n", f);
+
     }
 
     puts("ic_b2c_generate_functions_pre: implementation pending");
