@@ -72,15 +72,15 @@ unsigned int ic_decl_func_init(struct ic_decl_func *fdecl, char *name, unsigned 
         return 0;
     }
 
-    /* initialise empty string fdecl->string */
-    if( ! ic_string_init_empty( &(fdecl->string) ) ){
-        puts("ic_decl_func_init: call to ic_string_init_empty for string failed");
+    /* initialise empty string fdecl->sig_call */
+    if( ! ic_string_init_empty( &(fdecl->sig_call) ) ){
+        puts("ic_decl_func_init: call to ic_string_init_empty for sig_call failed");
         return 0;
     }
 
-    /* initialise empty string fdecl->string_full */
-    if( ! ic_string_init_empty( &(fdecl->string_full) ) ){
-        puts("ic_decl_func_init: call to ic_string_init_empty for string_full failed");
+    /* initialise empty string fdecl->sig_full */
+    if( ! ic_string_init_empty( &(fdecl->sig_full) ) ){
+        puts("ic_decl_func_init: call to ic_string_init_empty for sig_full failed");
         return 0;
     }
 
@@ -126,19 +126,19 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
         return 0;
     }
 
-    /* free string contents but do not free string itself
+    /* free sig_call contents but do not free string itself
      * since it is an element on fdecl
      */
-    if( ! ic_string_destroy(&(fdecl->string), 0) ){
-        puts("ic_decl_type_destroy: for string call to ic_string_destroy failed");
+    if( ! ic_string_destroy(&(fdecl->sig_call), 0) ){
+        puts("ic_decl_type_destroy: for sig_call call to ic_string_destroy failed");
         return 0;
     }
 
-    /* free string_full contents but do not free string itself
+    /* free sig_full contents but do not free string itself
      * since it is an element on fdecl
      */
-    if( ! ic_string_destroy(&(fdecl->string_full), 0) ){
-        puts("ic_decl_type_destroy: for string_full call to ic_string_destroy failed");
+    if( ! ic_string_destroy(&(fdecl->sig_full), 0) ){
+        puts("ic_decl_type_destroy: for sig_full call to ic_string_destroy failed");
         return 0;
     }
 
@@ -314,6 +314,7 @@ unsigned int ic_decl_func_isbuiltin(struct ic_decl_func *fdecl){
  * this will print a reproduction of the function from the ast
  */
 void ic_decl_func_print(struct ic_decl_func *fdecl, unsigned int *indent_level){
+    char *fstr = 0;
 
     if( ! fdecl ){
         puts("ic_decl_func_print: fdecl was null");
@@ -325,17 +326,15 @@ void ic_decl_func_print(struct ic_decl_func *fdecl, unsigned int *indent_level){
         return;
     }
 
+    fstr = ic_decl_func_sig_call(fdecl);
     /* guarantee generation of function string */
-    if( ! ic_decl_func_sig_call(fdecl) ){
-        puts("ERROR ERROR");
+    if( ! fstr ){
         puts("ic_decl_func_print_header: call to ic_decl_func_sig_call failed");
         return;
     }
 
     /* print comment and then function decl string */
-    fputs("# ", stdout);
-    ic_string_print(&(fdecl->string));
-    puts("");
+    printf("# %s\n", fstr);
 
     ic_decl_func_print_header(fdecl, indent_level);
     ic_decl_func_print_body(fdecl, indent_level);
@@ -449,7 +448,7 @@ char * ic_decl_func_sig_call(struct ic_decl_func *fdecl){
     }
 
     /* cache string pointer */
-    fstr = &(fdecl->string);
+    fstr = &(fdecl->sig_call);
 
     /* if a non-zero length fecl->string is found then return it */
     if( ic_string_length(fstr) ){
@@ -563,7 +562,7 @@ char * ic_decl_func_sig_full(struct ic_decl_func *fdecl){
     }
 
     /* cache string pointer */
-    fstr = &(fdecl->string_full);
+    fstr = &(fdecl->sig_full);
 
     /* if a non-zero length fecl->string is found then return it */
     if( ic_string_length(fstr) ){

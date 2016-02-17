@@ -1,6 +1,8 @@
 TODO:
 -----
 
+* rejig _print infra to always have a _str method (or similar) and have _print simply call this
+  to string logic should not be inside _print
 * add ability to bracket arbitrary expressions
 * make lack of operator precedence clear - mandate bracketing to make order explicit (same repeated op is fine)
 * `for` analysis case unimplemented

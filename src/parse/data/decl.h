@@ -30,11 +30,15 @@ struct ic_decl_func {
 
     struct ic_body body;
 
-    /* the string representation of this function decl */
-    struct ic_string string;
+    /* call signature
+     * foo(Int Int)
+     */
+    struct ic_string sig_call;
 
-    /* the full string representation of this function decl */
-    struct ic_string string_full;
+    /* full signature
+     * foo(Int Int) -> Int
+     */
+    struct ic_string sig_full;
 
     /* 1 for builtin, 0 for not */
     unsigned int builtin;
