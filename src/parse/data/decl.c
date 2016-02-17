@@ -78,6 +78,12 @@ unsigned int ic_decl_func_init(struct ic_decl_func *fdecl, char *name, unsigned 
         return 0;
     }
 
+    /* initialise empty string fdecl->string_full */
+    if( ! ic_string_init_empty( &(fdecl->string_full) ) ){
+        puts("ic_decl_func_init: call to ic_string_init_empty for string_full failed");
+        return 0;
+    }
+
     /* initialise return type to 0 (void) */
     fdecl->ret_type = 0;
     fdecl->builtin = 0;
@@ -125,6 +131,14 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
      */
     if( ! ic_string_destroy(&(fdecl->string), 0) ){
         puts("ic_decl_type_destroy: for string call to ic_string_destroy failed");
+        return 0;
+    }
+
+    /* free string_full contents but do not free string itself
+     * since it is an element on fdecl
+     */
+    if( ! ic_string_destroy(&(fdecl->string_full), 0) ){
+        puts("ic_decl_type_destroy: for string_full call to ic_string_destroy failed");
         return 0;
     }
 
@@ -296,7 +310,9 @@ unsigned int ic_decl_func_isbuiltin(struct ic_decl_func *fdecl){
     return fdecl->builtin == 1;
 }
 
-/* print decl_func */
+/* print decl_func
+ * this will print a reproduction of the function from the ast
+ */
 void ic_decl_func_print(struct ic_decl_func *fdecl, unsigned int *indent_level){
 
     if( ! fdecl ){
@@ -310,9 +326,9 @@ void ic_decl_func_print(struct ic_decl_func *fdecl, unsigned int *indent_level){
     }
 
     /* guarantee generation of function string */
-    if( ! ic_decl_func_str(fdecl) ){
+    if( ! ic_decl_func_sig_call(fdecl) ){
         puts("ERROR ERROR");
-        puts("ic_decl_func_print_header: call to ic_decl_func_str failed");
+        puts("ic_decl_func_print_header: call to ic_decl_func_sig_call failed");
         return;
     }
 
@@ -325,6 +341,9 @@ void ic_decl_func_print(struct ic_decl_func *fdecl, unsigned int *indent_level){
     ic_decl_func_print_body(fdecl, indent_level);
 }
 
+/* print decl_func header
+ * this will print a reproduction of the function header from the ast
+ */
 void ic_decl_func_print_header(struct ic_decl_func *fdecl, unsigned int *indent_level){
     /* offset into args */
     unsigned int i = 0;
@@ -373,6 +392,9 @@ void ic_decl_func_print_header(struct ic_decl_func *fdecl, unsigned int *indent_
     }
 }
 
+/* print decl_func body
+ * this will print a reproduction of the function body from the ast
+ */
 void ic_decl_func_print_body(struct ic_decl_func *fdecl, unsigned int *indent_level){
     if( ! fdecl ){
         puts("ic_decl_func_print_body: fdecl was null");
@@ -407,7 +429,7 @@ void ic_decl_func_print_body(struct ic_decl_func *fdecl, unsigned int *indent_le
  * returns char* on success
  * returns 0 on failure
  */
-char * ic_decl_func_str(struct ic_decl_func *fdecl){
+char * ic_decl_func_sig_call(struct ic_decl_func *fdecl){
     /* offset into args pvector */
     unsigned int i = 0;
     /* cached len */
@@ -422,7 +444,7 @@ char * ic_decl_func_str(struct ic_decl_func *fdecl){
     char *perm_str = 0;
 
     if( ! fdecl ){
-        puts("ic_decl_func_str: fdecl was null");
+        puts("ic_decl_func_sig_call: fdecl was null");
         return 0;
     }
 
@@ -439,13 +461,13 @@ char * ic_decl_func_str(struct ic_decl_func *fdecl){
 
     /* fdecl->name */
     if( ! ic_string_append_symbol(fstr, &(fdecl->name)) ){
-        puts("ic_decl_func_str: name: call to ic_string_append_symbol failed");
+        puts("ic_decl_func_sig_call: name: call to ic_string_append_symbol failed");
         return 0;
     }
 
     /* opening bracket */
     if( ! ic_string_append_char(fstr, "(", 1) ){
-        puts("ic_decl_func_str: opening brace: call to ic_string_append_char failed");
+        puts("ic_decl_func_sig_call: opening brace: call to ic_string_append_char failed");
         return 0;
     }
 
@@ -455,7 +477,7 @@ char * ic_decl_func_str(struct ic_decl_func *fdecl){
         /* insert a space if we are not the first argument */
         if( i > 0 ){
             if( ! ic_string_append_char(fstr, " ", 1) ){
-                puts("ic_decl_func_str: arg: call to ic_string_append_char failed");
+                puts("ic_decl_func_sig_call: arg: call to ic_string_append_char failed");
                 return 0;
             }
         }
@@ -463,7 +485,7 @@ char * ic_decl_func_str(struct ic_decl_func *fdecl){
         /* capture our field */
         field = ic_pvector_get( &(fdecl->args), i );
         if( ! field ){
-            puts("ic_decl_func_str: arg: call to ic_pvector_get failed");
+            puts("ic_decl_func_sig_call: arg: call to ic_pvector_get failed");
             return 0;
         }
 
@@ -474,12 +496,12 @@ char * ic_decl_func_str(struct ic_decl_func *fdecl){
             perm_str = ic_parse_perm_str(field->permissions);
 
             if( ! perm_str ){
-                puts("ic_decl_func_str: arg: call to ic_parse_perm_str failed");
+                puts("ic_decl_func_sig_call: arg: call to ic_parse_perm_str failed");
                 return 0;
             }
 
             if( ! ic_string_append_cstr(fstr, perm_str) ){
-                puts("ic_decl_func_str: arg: call to ic_string_append_cstr failed");
+                puts("ic_decl_func_sig_call: arg: call to ic_string_append_cstr failed");
                 return 0;
             }
         }
@@ -487,24 +509,152 @@ char * ic_decl_func_str(struct ic_decl_func *fdecl){
         /* add type */
         cur_type = ic_type_ref_get_symbol(&(field->type));
         if( ! cur_type ){
-            puts("ic_decl_func_str: arg: call to ic_type_get_symbol failed");
+            puts("ic_decl_func_sig_call: arg: call to ic_type_get_symbol failed");
             return 0;
         }
 
         if( ! ic_string_append_symbol(fstr, cur_type) ){
-            puts("ic_decl_func_str: arg: call to ic_string_append_symbol failed");
+            puts("ic_decl_func_sig_call: arg: call to ic_string_append_symbol failed");
             return 0;
         }
     }
 
     /* final bracket */
     if( ! ic_string_append_char(fstr, ")", 1) ){
-        puts("ic_decl_func_str: closing brace: call to ic_string_append_char failed");
+        puts("ic_decl_func_sig_call: closing brace: call to ic_string_append_char failed");
         return 0;
     }
 
     /* we rely on the fdecl storing the string */
-    return ic_string_contents(&(fdecl->string));
+    return ic_string_contents(fstr);
+}
+
+/* return a full string representation of this function signature
+ *
+ * for a function signature
+ *      fn foo(a::Int, b::Int) -> Int
+ *
+ * this function will return
+ *      foo(Int Int) -> Int
+ *
+ * the char* returned is a string stored within fdecl,
+ * this means the caller must not free or mutate this string
+ *
+ * returns char* on success
+ * returns 0 on failure
+ */
+char * ic_decl_func_sig_full(struct ic_decl_func *fdecl){
+    /* offset into args pvector */
+    unsigned int i = 0;
+    /* cached len */
+    unsigned int len = 0;
+    /* cache of string */
+    struct ic_string *fstr = 0;
+    /* each field we consider in args */
+    struct ic_field *field = 0;
+    /* temporary symbol for current field type */
+    struct ic_symbol *cur_type = 0;
+    /* permission str */
+    char *perm_str = 0;
+
+    if( ! fdecl ){
+        puts("ic_decl_func_sig_full: fdecl was null");
+        return 0;
+    }
+
+    /* cache string pointer */
+    fstr = &(fdecl->string_full);
+
+    /* if a non-zero length fecl->string is found then return it */
+    if( ic_string_length(fstr) ){
+        return ic_string_contents(fstr);
+    }
+
+    /* note that we do not check for length as a length of 0 is valid */
+    len = ic_pvector_length(&(fdecl->args));
+
+    /* fdecl->name */
+    if( ! ic_string_append_symbol(fstr, &(fdecl->name)) ){
+        puts("ic_decl_func_sig_full: name: call to ic_string_append_symbol failed");
+        return 0;
+    }
+
+    /* opening bracket */
+    if( ! ic_string_append_char(fstr, "(", 1) ){
+        puts("ic_decl_func_sig_full: opening brace: call to ic_string_append_char failed");
+        return 0;
+    }
+
+    /* iterate through args appending the type name to our string representation
+     */
+    for( i=0; i<len; ++i ){
+        /* insert a space if we are not the first argument */
+        if( i > 0 ){
+            if( ! ic_string_append_char(fstr, " ", 1) ){
+                puts("ic_decl_func_sig_full: arg: call to ic_string_append_char failed");
+                return 0;
+            }
+        }
+
+        /* capture our field */
+        field = ic_pvector_get( &(fdecl->args), i );
+        if( ! field ){
+            puts("ic_decl_func_sig_full: arg: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        /* add any permissions
+         * only need to show if not default
+         */
+        if( ! ic_parse_perm_is_default(field->permissions) ){
+            perm_str = ic_parse_perm_str(field->permissions);
+
+            if( ! perm_str ){
+                puts("ic_decl_func_sig_full: arg: call to ic_parse_perm_str failed");
+                return 0;
+            }
+
+            if( ! ic_string_append_cstr(fstr, perm_str) ){
+                puts("ic_decl_func_sig_full: arg: call to ic_string_append_cstr failed");
+                return 0;
+            }
+        }
+
+        /* add type */
+        cur_type = ic_type_ref_get_symbol(&(field->type));
+        if( ! cur_type ){
+            puts("ic_decl_func_sig_full: arg: call to ic_type_get_symbol failed");
+            return 0;
+        }
+
+        if( ! ic_string_append_symbol(fstr, cur_type) ){
+            puts("ic_decl_func_sig_full: arg: call to ic_string_append_symbol failed");
+            return 0;
+        }
+    }
+
+    /* final bracket and return arrow */
+    if( ! ic_string_append_char(fstr, ") -> ", 1) ){
+        puts("ic_decl_func_sig_full: closing brace and return arrow: call to ic_string_append_char failed");
+        return 0;
+    }
+
+    /* print return type if we have one */
+    if( fdecl->ret_type ){
+        if( ! ic_string_append_symbol(fstr, fdecl->ret_type) ){
+            puts("ic_decl_func_sig_full: return type (nonvoid): call to ic_string_append_symbol failed");
+            return 0;
+        }
+    } else {
+        /* otherwise print Void */
+        if( ! ic_string_append_char(fstr, "Void", 4) ){
+            puts("ic_decl_func_sig_full: return type (void): call to ic_string_append_char failed");
+            return 0;
+        }
+    }
+
+    /* we rely on the fdecl storing the string */
+    return ic_string_contents(fstr);
 }
 
 /* allocate and return a new decl_type

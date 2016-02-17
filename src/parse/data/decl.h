@@ -33,6 +33,9 @@ struct ic_decl_func {
     /* the string representation of this function decl */
     struct ic_string string;
 
+    /* the full string representation of this function decl */
+    struct ic_string string_full;
+
     /* 1 for builtin, 0 for not */
     unsigned int builtin;
 };
@@ -100,12 +103,20 @@ unsigned int ic_decl_func_mark_builtin(struct ic_decl_func *fdecl);
  */
 unsigned int ic_decl_func_isbuiltin(struct ic_decl_func *fdecl);
 
-/* print decl_func */
+/* print decl_func
+ * this will print a reproduction of the function from the ast
+ */
 void ic_decl_func_print(struct ic_decl_func *fdecl, unsigned int *indent_level);
+/* print decl_func header
+ * this will print a reproduction of the function header from the ast
+ */
 void ic_decl_func_print_header(struct ic_decl_func *fdecl, unsigned int *indent_level);
+/* print decl_func body
+ * this will print a reproduction of the function body from the ast
+ */
 void ic_decl_func_print_body(struct ic_decl_func *fdecl, unsigned int *indent_level);
 
-/* return a string representation of this function signature
+/* return a string representation of this function's call signature
  *
  * for a function signature
  *      fn foo(a::Int b::Int) -> Int
@@ -119,7 +130,23 @@ void ic_decl_func_print_body(struct ic_decl_func *fdecl, unsigned int *indent_le
  * returns char* on success
  * returns 0 on failure
  */
-char * ic_decl_func_str(struct ic_decl_func *fdecl);
+char * ic_decl_func_sig_call(struct ic_decl_func *fdecl);
+
+/* return a string representation of this function full signature
+ *
+ * for a function signature
+ *      fn foo(a::Int b::Int) -> Int
+ *
+ * this function will return
+ *      foo(Int Int) -> Int
+ *
+ * the char* returned is a string stored within fdecl,
+ * this means the caller must not free or mutate this string
+ *
+ * returns char* on success
+ * returns 0 on failure
+ */
+char * ic_decl_func_sig_full(struct ic_decl_func *fdecl);
 
 /* a func declaration is a symbol and then a collection of fields
  *  type Foo

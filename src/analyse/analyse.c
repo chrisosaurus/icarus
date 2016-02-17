@@ -224,9 +224,9 @@ unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func 
     }
 
     /* name of this func, useful for error printing */
-    this_func = ic_decl_func_str(fdecl);
+    this_func = ic_decl_func_sig_call(fdecl);
     if( ! this_func ){
-        puts("ic_analyse_decl_func: for this_type: call to ic_decl_func_str failed");
+        puts("ic_analyse_decl_func: for this_type: call to ic_decl_func_sig_call failed");
         return 0;
     }
 

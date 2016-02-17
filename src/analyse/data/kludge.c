@@ -371,9 +371,9 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_decl_func *
     /* cache str
      * do not need to free as this char* is stored on the fdecl
      */
-    str = ic_decl_func_str(fdecl);
+    str = ic_decl_func_sig_call(fdecl);
     if( ! str ){
-        puts("ic_kludge_add_fdecl: call to ic_decl_func_str failed");
+        puts("ic_kludge_add_fdecl: call to ic_decl_func_sig_call failed");
         return 0;
     }
 

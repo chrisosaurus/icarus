@@ -246,7 +246,7 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
     struct ic_decl_func *func = 0;
     unsigned int n_funcs = 0;
     unsigned int i = 0;
-    char *func_name = 0;
+    char *func_sig_call = 0;
 
     if( ! kludge ){
         puts("ic_b2c_generate_functions_pre: kludge was null");
@@ -267,7 +267,12 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
             return 0;
         }
 
-        func_name = ic_string_contents(&(func->string));
+        func_sig_call = ic_decl_func_sig_call(func);
+
+        if( ! func_sig_call ){
+          puts("ic_b2c_generate_functions_pre: call to ic_decl_func_sig_call failed");
+          return 0;
+        }
 
         /* skip builtins */
         if( ic_decl_func_isbuiltin(func) ){
@@ -275,8 +280,16 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
             continue;
         }
 
-        /* FIXME generate */
-        printf("Pre: Skipping func '%s' as unimplemented\n", func_name);
+        /* add a comment showing the icarus name */
+        fprintf(f, "/* %s */\n", func_sig_call);
+
+        /* return-type func-name( args... ) */
+        fprintf(f, "%s %s(", "FIXME", "FIXME");
+
+        /* FIXME args */
+
+        /* close function decl */
+        fputs(");\n", f);
     }
 
     puts("ic_b2c_generate_functions_pre: implementation pending");
