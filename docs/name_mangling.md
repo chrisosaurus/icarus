@@ -74,3 +74,7 @@ the following will also currently clash
   fn bar_a(a::String) => i_bar_a_a_String
   fn bar(a::a_String) => i_bar_a_a_String
 
+Note that the proposed solution also emits any mention of permissions,
+we will most likely want to overload on permissions so mangling will need
+to take them into account
+
