@@ -69,3 +69,8 @@ the following 2 names will currently clash
 
 something as simple as adding a prefix to each type is insufficient.
 
+the following will also currently clash
+
+  fn bar_a(a::String) => i_bar_a_a_String
+  fn bar(a::a_String) => i_bar_a_a_String
+
