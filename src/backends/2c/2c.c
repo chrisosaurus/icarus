@@ -8,12 +8,12 @@
 unsigned int ic_b2c_generate(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_builtins(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_types_pre(struct ic_kludge *kludge, FILE *f);
-unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_types_body(struct ic_kludge *kludge, struct ic_decl_type *tdecl, FILE *f);
+unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f);
 unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f);
-unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_functions_body(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f);
+unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_entry(struct ic_kludge *kludge, FILE *f);
 
 /* taking a processed ast and a string containing the path to
@@ -339,7 +339,7 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
             continue;
         }
 
-        if( ! ic_b2c_generate_functions_header(kludge, func, f)) {
+        if( ! ic_b2c_generate_functions_header(kludge, func, f) ){
             puts("ic_b2c_generate_functions_pre: call to ic_b2c_generate_functions_header failed");
             return 0;
         }
@@ -350,6 +350,11 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
 
     puts("ic_b2c_generate_functions_pre: implementation pending");
     return 1;
+}
+
+unsigned int ic_b2c_generate_functions_body(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f){
+    puts("ic_b2c_generate_functions_body: unimplemented");
+    return 0;
 }
 
 /* generate function definitions */
@@ -390,7 +395,7 @@ unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f){
             continue;
         }
 
-        if( ! ic_b2c_generate_functions_header(kludge, func, f)) {
+        if( ! ic_b2c_generate_functions_header(kludge, func, f) ){
             puts("ic_b2c_generate_functions: call to ic_b2c_generate_functions_header failed");
             return 0;
         }
@@ -398,22 +403,19 @@ unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f){
         /* opening { */
         fputs("{\n", f);
 
-        /* FIXME body */
+        /* generate body */
+        if( ! ic_b2c_generate_functions_body(kludge, func, f) ){
+            puts("ic_b2c_generate_functions: call to ic_b2c_generate_functions_body failed");
+            /* FIXME TODO silencing error for now */
+            // return 0;
+        }
 
         /* closing } */
         fputs("}\n", f);
-
-        /* FIXME generate */
-        printf("Skipping func '%s' as unimplemented\n", func_sig_call);
     }
 
     puts("ic_b2c_generate_functions: implementation pending");
     return 1;
-}
-
-unsigned int ic_b2c_generate_functions_body(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f){
-    puts("ic_b2c_generate_functions_body: unimplemented");
-    return 0;
 }
 
 /* generate code needed to enter into icarus
