@@ -1,6 +1,7 @@
 TODO:
 -----
 
+* uncommented `plus` alias for `concat` in stdlib/core.ic
 * remove FIXME and commented out error handling in 2c once functions_body is implemented : /* FIXME TODO silencing error for now */
 * output generation doesn't handle arguments: /* plus(String String) -> String */ String plus();
 * output generation includes a semi-builtin from src/core.ic: fn plus(a::String, b::String) -> String return concat(a, b) end appearing as String plus();

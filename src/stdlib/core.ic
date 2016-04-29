@@ -25,10 +25,11 @@ builtin fn print(a::String)
 builtin fn println(a::String)
 builtin fn equal(a::String, b::String) -> Bool
 builtin fn concat(a::String, b::String) -> String
+# FIXME - commenting out for now to avoid confusion in compiled output
 # we probably want a way to express that `plus` is an alias for `concat`
 # here we use `concat` as the primitive and `plus` as the alias
 # as `concat` is more descriptive
-fn plus(a::String, b::String) -> String return concat(a, b) end
+# fn plus(a::String, b::String) -> String return concat(a, b) end
 
 builtin op + plus
 builtin op - minus
