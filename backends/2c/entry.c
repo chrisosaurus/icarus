@@ -1,9 +1,6 @@
 
 int main(void){
-    if( ! i_main_a() ){
-        puts("call to i_main_a failed");
-        return 1;
-    }
+    i_main_a();
 
     return 0;
 }
