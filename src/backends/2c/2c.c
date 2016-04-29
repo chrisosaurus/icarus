@@ -247,7 +247,7 @@ unsigned int ic_b2c_generate_types_body(struct ic_kludge *kludge, struct ic_decl
 
 /* generate function header */
 unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f){
-    char *func_name = 0;
+    char *func_sig_mangled = 0;
     char *func_sig_full = 0;
     char *func_return_type_str = 0;
 
@@ -266,9 +266,9 @@ unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct i
         return 0;
     }
 
-    func_name = ic_symbol_contents(&(fdecl->name));
-    if( ! func_name ){
-        puts("ic_b2c_generate_functions: call to ic_string_contents failed for name");
+    func_sig_mangled = ic_decl_func_sig_mangled(fdecl);
+    if( ! func_sig_mangled ){
+        puts("ic_b2c_generate_functions: call to ic_string_contents failed for sig_mangled");
         return 0;
     }
 
@@ -296,7 +296,7 @@ unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct i
     /* return-type func-name( args ... ); */
 
     /* print return-type, name, and opening bracket */
-    fprintf(f, "%s %s(", func_return_type_str, func_name);
+    fprintf(f, "%s %s(", func_return_type_str, func_sig_mangled);
 
     /* FIXME args */
     printf("pre: func '%s' only partially implemented (args missing)\n", func_sig_full);

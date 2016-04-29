@@ -40,6 +40,11 @@ struct ic_decl_func {
      */
     struct ic_string sig_full;
 
+    /* mangled signature
+     * foo(Int Int) -> Int => i_foo_a_Int_Int
+     */
+    struct ic_string sig_mangled;
+
     /* 1 for builtin, 0 for not */
     unsigned int builtin;
 };
@@ -151,6 +156,22 @@ char * ic_decl_func_sig_call(struct ic_decl_func *fdecl);
  * returns 0 on failure
  */
 char * ic_decl_func_sig_full(struct ic_decl_func *fdecl);
+
+/* return a mangled representation of this function full signature
+ *
+ * for a function signature
+ *      fn foo(a::Int b::Int) -> Int
+ *
+ * this function will return
+ *      i_foo_a_Int_Int
+ *
+ * the char* returned is a string stored within fdecl,
+ * this means the caller must not free or mutate this string
+ *
+ * returns char* on success
+ * returns 0 on failure
+ */
+char * ic_decl_func_sig_mangled(struct ic_decl_func *fdecl);
 
 /* a func declaration is a symbol and then a collection of fields
  *  type Foo

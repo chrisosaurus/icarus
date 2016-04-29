@@ -84,6 +84,12 @@ unsigned int ic_decl_func_init(struct ic_decl_func *fdecl, char *name, unsigned 
         return 0;
     }
 
+    /* initialise empty string fdecl->sig_mangled */
+    if( ! ic_string_init_empty( &(fdecl->sig_mangled) ) ){
+        puts("ic_decl_func_init: call to ic_string_init_empty for sig_mangled failed");
+        return 0;
+    }
+
     /* initialise return type to 0 (void) */
     fdecl->ret_type = 0;
     fdecl->builtin = 0;
@@ -139,6 +145,14 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
      */
     if( ! ic_string_destroy(&(fdecl->sig_full), 0) ){
         puts("ic_decl_type_destroy: for sig_full call to ic_string_destroy failed");
+        return 0;
+    }
+
+    /* free sig_mangled contents but do not free string itself
+     * since it is an element on fdecl
+     */
+    if( ! ic_string_destroy(&(fdecl->sig_mangled), 0) ){
+        puts("ic_decl_type_destroy: for sig_full call to ic_string_mangled failed");
         return 0;
     }
 
@@ -648,6 +662,104 @@ char * ic_decl_func_sig_full(struct ic_decl_func *fdecl){
         /* otherwise print Void */
         if( ! ic_string_append_char(fstr, "Void", 4) ){
             puts("ic_decl_func_sig_full: return type (void): call to ic_string_append_char failed");
+            return 0;
+        }
+    }
+
+    /* we rely on the fdecl storing the string */
+    return ic_string_contents(fstr);
+}
+
+/* return a mangled string representation of this function signature
+ *
+ * for a function signature
+ *      fn foo(a::Int, b::Int) -> Int
+ *
+ * this function will return
+ *      i_foo_a_Int_Int
+ *
+ * the char* returned is a string stored within fdecl,
+ * this means the caller must not free or mutate this string
+ *
+ * returns char* on success
+ * returns 0 on failure
+ */
+char * ic_decl_func_sig_mangled(struct ic_decl_func *fdecl){
+    /* offset into args pvector */
+    unsigned int i = 0;
+    /* cached len */
+    unsigned int len = 0;
+    /* cache of string */
+    struct ic_string *fstr = 0;
+    /* each field we consider in args */
+    struct ic_field *field = 0;
+    /* temporary symbol for current field type */
+    struct ic_symbol *cur_type = 0;
+
+    if( ! fdecl ){
+        puts("ic_decl_func_sig_mangled: fdecl was null");
+        return 0;
+    }
+
+    /* cache string pointer */
+    fstr = &(fdecl->sig_mangled);
+
+    /* if a non-zero length fecl->string is found then return it */
+    if( ic_string_length(fstr) ){
+        return ic_string_contents(fstr);
+    }
+
+    /* note that we do not check for length as a length of 0 is valid */
+    len = ic_pvector_length(&(fdecl->args));
+
+    /* `i_` prefix */
+    if( ! ic_string_append_char(fstr, "i_", 2) ){
+        puts("ic_decl_func_sig_mangled: i_ prefix: call to ic_string_append_char failed");
+        return 0;
+    }
+
+    /* fdecl->name */
+    if( ! ic_string_append_symbol(fstr, &(fdecl->name)) ){
+        puts("ic_decl_func_sig_mangled: name: call to ic_string_append_symbol failed");
+        return 0;
+    }
+
+    /* `_a` */
+    if( ! ic_string_append_char(fstr, "_a", 2) ){
+        puts("ic_decl_func_sig_mangled: _a suffix: call to ic_string_append_char failed");
+        return 0;
+    }
+
+    /* iterate through args appending the type name to our string representation
+     */
+    for( i=0; i<len; ++i ){
+        /* insert an `_` before each type */
+        if( ! ic_string_append_char(fstr, "_", 1) ){
+            puts("ic_decl_func_sig_mangled: arg: call to ic_string_append_char failed");
+            return 0;
+        }
+
+        /* capture our field */
+        field = ic_pvector_get( &(fdecl->args), i );
+        if( ! field ){
+            puts("ic_decl_func_sig_mangled: arg: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        /* FIXME TODO name mangling will have to include permission info
+         * see ic_decl_func_sig_full
+         */
+
+        /* get argument type */
+        cur_type = ic_type_ref_get_symbol(&(field->type));
+        if( ! cur_type ){
+            puts("ic_decl_func_sig_mangled: arg: call to ic_type_get_symbol failed");
+            return 0;
+        }
+
+        /* append argument type */
+        if( ! ic_string_append_symbol(fstr, cur_type) ){
+            puts("ic_decl_func_sig_mangled: arg: call to ic_string_append_symbol failed");
             return 0;
         }
     }
