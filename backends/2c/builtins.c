@@ -25,7 +25,7 @@ Int * ic_int_new(long long int integer);
 String * ic_string_new(char *str, unsigned int len);
 
 /* builtin fn println() */
-void ic_println(void){
+void i_println_a(void){
     puts("");
 }
 
@@ -40,7 +40,7 @@ typedef struct Bool{
 } Bool;
 
 /* builtin fn print(a::Bool) */
-void ic_bool_print(Bool *b){
+void i_print_a_Bool(Bool *b){
     if( b->boolean ){
         fputs("True", stdout);
     } else {
@@ -48,9 +48,9 @@ void ic_bool_print(Bool *b){
     }
 }
 /* builtin fn println(a::Bool) */
-void ic_bool_println(Bool *b){
-    ic_bool_print(b);
-    ic_println();
+void i_println_a_Bool(Bool *b){
+    i_print_a_Bool(b);
+    i_println_a();
 }
 Bool * ic_bool_new(unsigned int boolean){
     Bool *b = 0;
@@ -59,7 +59,7 @@ Bool * ic_bool_new(unsigned int boolean){
     return b;
 }
 /* builtin fn equal(a::Bool, b::Bool) -> Bool */
-Bool * ic_bool_equal(Bool *a, Bool *b){
+Bool * i_equal_a_Bool_Bool(Bool *a, Bool *b){
     if( a->boolean == 0 && b->boolean == 0 ){
         /* return truthy boolean */
         return ic_bool_new(1);
@@ -74,7 +74,7 @@ Bool * ic_bool_equal(Bool *a, Bool *b){
     return ic_bool_new(0);
 }
 /* builtin fn not(a::Bool) -> Bool */
-Bool * ic_bool_not(Bool *a){
+Bool * i_not_a_Bool(Bool *a){
     if( a->boolean ){
         /* return falsey boolean */
         return ic_bool_new(0);
@@ -84,7 +84,7 @@ Bool * ic_bool_not(Bool *a){
     }
 }
 /* builtin fn and(a::Bool, b::Bool) -> Bool */
-Bool * ic_bool_and(Bool *a, Bool *b){
+Bool * i_and_a_Bool_Bool(Bool *a, Bool *b){
     if( a->boolean && b->boolean ){
         /* return truthy boolean */
         return ic_bool_new(1);
@@ -93,7 +93,7 @@ Bool * ic_bool_and(Bool *a, Bool *b){
     return ic_bool_new(0);
 }
 /* builtin fn or(a::Bool, b::Bool) -> Bool */
-Bool * ic_bool_or(Bool *a, Bool *b){
+Bool * i_or_a_Bool_Bool(Bool *a, Bool *b){
     if( a->boolean ){
         /* return truthy boolean */
         return ic_bool_new(1);
@@ -121,16 +121,16 @@ Int * ic_int_new(long long int integer){
     return i;
 }
 /* builtin fn print(a::Int) */
-void ic_int_print(Int *i){
+void i_print_a_Int(Int *i){
     printf("%lli", i->integer);
 }
 /* builtin fn println(a::Int) */
-void ic_int_println(Int *i){
-    ic_int_print(i);
-    ic_println();
+void i_println_a_Int(Int *i){
+    i_print_a_Int(i);
+    i_println_a();
 }
 /* builtin fn equal(a::Int, b::Int) -> Bool */
-Bool * ic_int_equal(Int *a, Int *b){
+Bool * i_equal_a_Int_Int(Int *a, Int *b){
     if( a->integer == b->integer ){
         /* return truthy boolean */
         return ic_bool_new(1);
@@ -139,31 +139,31 @@ Bool * ic_int_equal(Int *a, Int *b){
     return ic_bool_new(0);
 }
 /* builtin fn plus(a::Int, b::Int) -> Int */
-Int * ic_int_plus(Int *a, Int *b){
+Int * i_plus_a_Int_Int(Int *a, Int *b){
     Int *i = 0;
     i = ic_int_new(a->integer + b->integer);
     return i;
 }
 /* builtin fn minus(a::Int, b::Int) -> Int */
-Int * ic_int_minus(Int *a, Int *b){
+Int * i_minus_a_Int_Int(Int *a, Int *b){
     Int *i = 0;
     i = ic_int_new(a->integer - b->integer);
     return i;
 }
 /* builtin fn multiply(a::Int, b::Int) -> Int */
-Int * ic_int_multiply(Int *a, Int *b){
+Int * i_multiply_a_Int_Int(Int *a, Int *b){
     Int *i = 0;
     i = ic_int_new(a->integer * b->integer);
     return i;
 }
 /* builtin fn divide(a::Int, b::Int) -> Int */
-Int * ic_int_divide(Int *a, Int *b){
+Int * i_divide_a_Int_Int(Int *a, Int *b){
     Int *i = 0;
     i = ic_int_new(a->integer / b->integer);
     return i;
 }
 /* builtin fn modulo(a::Int, b::Int) -> Int */
-Int * ic_int_modulo(Int *a, Int *b){
+Int * i_modulo_a_Int_Int(Int *a, Int *b){
     Int *i = 0;
     i = ic_int_new(a->integer % b->integer);
     return i;
@@ -185,16 +185,16 @@ String * ic_string_new(char *str, unsigned int len){
     return s;
 }
 /* builtin fn print(a::String) */
-void ic_string_print(String *s){
+void i_print_a_String(String *s){
     printf("%s", s->str);
 }
 /* builtin fn println(a::String) */
-void ic_string_println(String *s){
-    ic_string_print(s);
-    ic_println();
+void i_println_a_String(String *s){
+    i_print_a_String(s);
+    i_println_a();
 }
 /* builtin fn equal(a::String, b::String) -> Bool */
-Bool * ic_string_equal(String *a, String *b){
+Bool * i_equal_a_String_String(String *a, String *b){
     if( strcmp(a->str, b->str) ){
         /* return falsey boolean */
         return ic_bool_new(0);
@@ -203,7 +203,7 @@ Bool * ic_string_equal(String *a, String *b){
     return ic_bool_new(1);
 }
 /* builtin fn concat(a::String, b::String) -> String */
-String * ic_string_concat(String *a, String *b){
+String * i_concat_a_String_String(String *a, String *b){
     String *s = 0;
     s = ic_alloc(sizeof(String));
     s->str = ic_alloc(a->len + b->len - 1);

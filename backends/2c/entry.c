@@ -1,7 +1,7 @@
 
 int main(void){
-    if( ! ic_user_main() ){
-        puts("call to ic_user_main failed");
+    if( ! i_main_a() ){
+        puts("call to i_main_a failed");
         return 1;
     }
 
