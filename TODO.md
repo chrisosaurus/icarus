@@ -1,6 +1,7 @@
 TODO:
 -----
 
+* automate running of milestone/*.ic and compare output to milestone/*.exp - these can serve as tests - need 'template' so we know which we expected to pass and fail
 * uncommented `plus` alias for `concat` in stdlib/core.ic
 * remove FIXME and commented out error handling in 2c once functions_body is implemented : /* FIXME TODO silencing error for now */
 * output generation doesn't handle arguments: /* plus(String String) -> String */ String plus();
