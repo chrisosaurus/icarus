@@ -1,0 +1,8 @@
+fn say_hi()
+  println("hello world")
+end
+
+fn main()
+  say_hi()
+end
+

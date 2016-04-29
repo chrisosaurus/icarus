@@ -1,0 +1,8 @@
+type Foo
+  i::Int
+end
+
+fn main()
+  let f::Foo = Foo(5)
+  println(f.i)
+end

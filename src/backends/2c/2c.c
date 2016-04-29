@@ -399,7 +399,7 @@ unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f){
 }
 
 unsigned int ic_b2c_generate_functions_body(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f){
-    puts("ic_b2c_generate_functions_header: unimplemented");
+    puts("ic_b2c_generate_functions_body: unimplemented");
     return 0;
 }
 

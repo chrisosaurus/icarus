@@ -114,6 +114,7 @@ readme:
 	perl scripts/update_readme.pl
 
 compile: clean icarus
+	rm -f out.c
 	./icarus example/simple.ic out.c
 
 .PHONY: all clean cleanobj icarus test test_custom example readme compile

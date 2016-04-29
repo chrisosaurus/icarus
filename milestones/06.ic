@@ -1,0 +1,13 @@
+type Foo
+  i::Int
+end
+
+fn unpack(f::Foo) -> Int
+ return f.i
+end
+
+fn main()
+  let f::Foo = Foo(3)
+  println(unpack(f))
+end
+

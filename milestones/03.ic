@@ -1,0 +1,11 @@
+fn add_one(i::Int) -> Int
+  let x::Int = 0
+  x = 1 + i
+  return x
+end
+
+fn main()
+  let x::Int = add_one(5)
+  println(x)
+end
+
