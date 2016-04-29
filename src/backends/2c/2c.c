@@ -10,8 +10,8 @@ unsigned int ic_b2c_generate_builtins(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_types_pre(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_types_body(struct ic_kludge *kludge, struct ic_decl_type *tdecl, FILE *f);
-unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f);
+unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_functions_body(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f);
 unsigned int ic_b2c_generate_entry(struct ic_kludge *kludge, FILE *f);
@@ -245,50 +245,6 @@ unsigned int ic_b2c_generate_types_body(struct ic_kludge *kludge, struct ic_decl
     return 1;
 }
 
-/* generate function declarations */
-unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
-    struct ic_decl_func *func = 0;
-    unsigned int n_funcs = 0;
-    unsigned int i = 0;
-
-    if( ! kludge ){
-        puts("ic_b2c_generate_functions_pre: kludge was null");
-        return 0;
-    }
-
-    if( ! f ){
-        puts("ic_b2c_generate_functions_pre: file was null");
-        return 0;
-    }
-
-    n_funcs = ic_pvector_length(&(kludge->fdecls));
-
-    for( i=0; i<n_funcs; ++i ){
-        func = ic_pvector_get(&(kludge->fdecls), i);
-        if( ! func ){
-            puts("ic_b2c_generate_functions_pre: call to ic_pvector_get failed");
-            return 0;
-        }
-
-        /* skip builtins */
-        if( ic_decl_func_isbuiltin(func) ){
-            // printf("Skipping func '%s' as builtin\n", func_name);
-            continue;
-        }
-
-        if( ! ic_b2c_generate_functions_header(kludge, func, f)) {
-            puts("ic_b2c_generate_functions_pre: call to ic_b2c_generate_functions_header failed");
-            return 0;
-        }
-
-        /* print trailing ; and \n */
-        fputs(";\n", f);
-    }
-
-    puts("ic_b2c_generate_functions_pre: implementation pending");
-    return 1;
-}
-
 /* generate function header */
 unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f){
     char *func_name = 0;
@@ -349,6 +305,50 @@ unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct i
     fputs(")", f);
 
     puts("ic_b2c_generate_functions_header: implementation pending");
+    return 1;
+}
+
+/* generate function declarations */
+unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
+    struct ic_decl_func *func = 0;
+    unsigned int n_funcs = 0;
+    unsigned int i = 0;
+
+    if( ! kludge ){
+        puts("ic_b2c_generate_functions_pre: kludge was null");
+        return 0;
+    }
+
+    if( ! f ){
+        puts("ic_b2c_generate_functions_pre: file was null");
+        return 0;
+    }
+
+    n_funcs = ic_pvector_length(&(kludge->fdecls));
+
+    for( i=0; i<n_funcs; ++i ){
+        func = ic_pvector_get(&(kludge->fdecls), i);
+        if( ! func ){
+            puts("ic_b2c_generate_functions_pre: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        /* skip builtins */
+        if( ic_decl_func_isbuiltin(func) ){
+            // printf("Skipping func '%s' as builtin\n", func_name);
+            continue;
+        }
+
+        if( ! ic_b2c_generate_functions_header(kludge, func, f)) {
+            puts("ic_b2c_generate_functions_pre: call to ic_b2c_generate_functions_header failed");
+            return 0;
+        }
+
+        /* print trailing ; and \n */
+        fputs(";\n", f);
+    }
+
+    puts("ic_b2c_generate_functions_pre: implementation pending");
     return 1;
 }
 
