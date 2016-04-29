@@ -390,6 +390,19 @@ unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f){
             continue;
         }
 
+        if( ! ic_b2c_generate_functions_header(kludge, func, f)) {
+            puts("ic_b2c_generate_functions: call to ic_b2c_generate_functions_header failed");
+            return 0;
+        }
+
+        /* opening { */
+        fputs("{\n", f);
+
+        /* FIXME body */
+
+        /* closing } */
+        fputs("}\n", f);
+
         /* FIXME generate */
         printf("Skipping func '%s' as unimplemented\n", func_sig_call);
     }
