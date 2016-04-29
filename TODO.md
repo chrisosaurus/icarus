@@ -2,7 +2,6 @@ TODO:
 -----
 
 * remove FIXME and commented out error handling in 2c once functions_body is implemented : /* FIXME TODO silencing error for now */
-* need name mangling: output generation of main is incorrect: /* main() -> Void */ Void main(); - should be 'void ic_user_main();' in the c implementation
 * output generation doesn't handle arguments: /* plus(String String) -> String */ String plus();
 * output generation includes a semi-builtin from src/core.ic: fn plus(a::String, b::String) -> String return concat(a, b) end appearing as String plus();
 * rejig _print infra to always have a _str method (or similar) and have _print simply call this
