@@ -2,6 +2,8 @@
 
 #include "../../analyse/data/type.h"
 #include "2c.h"
+#include "expr.h"
+#include "stmt.h"
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 

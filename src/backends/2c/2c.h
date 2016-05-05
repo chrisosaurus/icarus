@@ -1,5 +1,5 @@
-#ifndef IC_BACKENDS_2C_HEADER
-#define IC_BACKENDS_2C_HEADER
+#ifndef IC_BACKENDS_2C_H
+#define IC_BACKENDS_2C_H
 
 #include "../../analyse/data/kludge.h"
 
@@ -8,8 +8,8 @@
  *
  * generate a c program
  *
- * returns 0 on success
- * returns 1 on failure
+ * returns 1 on success
+ * returns 0 on failure
  */
 unsigned int ic_b2c_compile(struct ic_kludge *input_kludge, char *out_filename);
 
