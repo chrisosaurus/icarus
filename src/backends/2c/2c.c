@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "../../parse/data/body.h"
 #include "../../analyse/data/type.h"
 #include "2c.h"
 #include "expr.h"
@@ -355,8 +356,44 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f){
 }
 
 unsigned int ic_b2c_generate_functions_body(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f){
-    puts("ic_b2c_generate_functions_body: unimplemented");
-    return 0;
+    /* current stmt in body */
+    struct ic_stmt *stmt = 0;
+    /* index of current stmt in body */
+    unsigned int i = 0;
+    /* length of body */
+    unsigned int len = 0;
+
+    if( ! kludge ){
+      puts("ic_b2c_generate_functions_body: kludge was null");
+      return 0;
+    }
+
+    if( ! fdecl ){
+      puts("ic_b2c_generate_functions_body: fdecl was null");
+      return 0;
+    }
+
+    if( ! f ){
+      puts("ic_b2c_generate_functions_body: f was null");
+      return 0;
+    }
+
+    len = ic_body_length(&(fdecl->body));
+
+    for( i=0; i<len; ++i ){
+        stmt = ic_body_get(&(fdecl->body), i);
+        if( ! stmt ){
+            puts("ic_b2c_generate_functions_body: call to ic_body_get failed");
+            return 0;
+        }
+
+        if( ! ic_b2c_compile_stmt(kludge, stmt, f) ){
+            puts("ic_b2c_generate_functions_body: call to ic_b2c_compile_stmt failed");
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
 /* generate function definitions */
@@ -408,8 +445,7 @@ unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f){
         /* generate body */
         if( ! ic_b2c_generate_functions_body(kludge, func, f) ){
             puts("ic_b2c_generate_functions: call to ic_b2c_generate_functions_body failed");
-            /* FIXME TODO silencing error for now */
-            // return 0;
+            return 0;
         }
 
         /* closing } */
