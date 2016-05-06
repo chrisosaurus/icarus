@@ -2,7 +2,7 @@
 #  a immut ref
 # %a storable immut ref
 # &a mut ref
-# %a storable mut ref
+# @a storable mut ref
 
 type LinkedList<T>
     @node::maybe<LNode<T>>

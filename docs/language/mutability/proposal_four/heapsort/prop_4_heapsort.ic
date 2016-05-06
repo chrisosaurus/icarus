@@ -3,7 +3,7 @@
 #  a immut ref
 # %a storable immut ref
 # &a mut ref
-# %a storable mut ref
+# @a storable mut ref
 
 # 0 based heap
 # so parent is (i-1)/2
