@@ -60,9 +60,17 @@ unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned
  * must not already be set
  *
  * returns 1 on success
- * returns 1 on failure
+ * returns 0 on failure
  */
 unsigned int ic_expr_func_call_set_fdecl(struct ic_expr_func_call *fcall, struct ic_decl_func *fdecl);
+
+/* get fdecl on fcall
+ * must already be set
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_func * ic_expr_func_call_get_fdecl(struct ic_expr_func_call *fcall);
 
 /* add a new argument to this function call
  *

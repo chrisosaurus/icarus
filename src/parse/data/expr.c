@@ -133,7 +133,7 @@ unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned
  * must not already be set
  *
  * returns 1 on success
- * returns 1 on failure
+ * returns 0 on failure
  */
 unsigned int ic_expr_func_call_set_fdecl(struct ic_expr_func_call *fcall, struct ic_decl_func *fdecl){
     if( ! fcall ){
@@ -154,6 +154,26 @@ unsigned int ic_expr_func_call_set_fdecl(struct ic_expr_func_call *fcall, struct
     fcall->fdecl = fdecl;
 
     return 1;
+}
+
+/* get fdecl on fcall
+ * must already be set
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_func * ic_expr_func_call_get_fdecl(struct ic_expr_func_call *fcall){
+    if( ! fcall ){
+        puts("ic_expr_func_call_get_fdecl: fcall was null");
+        return 0;
+    }
+
+    if( ! fcall->fdecl ){
+        puts("ic_expr_func_call_set_fdecl: fdecl was not set");
+        return 0;
+    }
+
+    return fcall->fdecl;
 }
 
 /* add a new argument to this function call
