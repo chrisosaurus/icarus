@@ -205,6 +205,11 @@ unsigned int ic_b2c_compile_expr_constant(struct ic_kludge *input_kludge, struct
       break;
 
     case ic_expr_constant_type_string:
+      /* FIXME leaks memory from string temporary */
+
+      /* create temporary string ... */
+      fputs("ic_string_new(", out );
+
       /* output opening " */
       fputs("\"", out);
 
@@ -213,6 +218,15 @@ unsigned int ic_b2c_compile_expr_constant(struct ic_kludge *input_kludge, struct
 
       /* output closing " */
       fputs("\"", out);
+
+      /* , */
+      fputs(", ", out);
+
+      /* string length */
+      fprintf(out, "%d", ic_string_length(&(constant->u.string)));
+
+      /* output closing ) */
+      fputs(")", out);
 
       return 1;
 
