@@ -193,11 +193,53 @@ unsigned int ic_b2c_compile_expr_constant(struct ic_kludge *input_kludge, struct
     return 0;
   }
 
-  puts("ic_b2c_compile_expr_constant: call for");
-  ic_expr_constant_print(constant, &indent_level);
-  puts("");
+  switch( constant->tag ){
+    case ic_expr_constant_type_integer:
+      puts("ic_b2c_compile_expr_constant: call for");
+      ic_expr_constant_print(constant, &indent_level);
+      puts("");
 
-  puts("ic_b2c_compile_expr_constant: unimplemented");
+      puts("ic_b2c_compile_expr_constant: integer not implemented");
+      return 0;
+
+      break;
+
+    case ic_expr_constant_type_string:
+      /* output opening " */
+      fputs("\"", out);
+
+      /* output string data */
+      fputs(ic_string_contents(&(constant->u.string)), out);
+
+      /* output closing " */
+      fputs("\"", out);
+
+      return 1;
+
+      break;
+
+    case ic_expr_constant_type_boolean:
+      puts("ic_b2c_compile_expr_constant: call for");
+      ic_expr_constant_print(constant, &indent_level);
+      puts("");
+
+      puts("ic_b2c_compile_expr_constant: boolean not implemented");
+      return 0;
+
+      break;
+
+    default:
+      puts("ic_b2c_compile_expr_constant: call for");
+      ic_expr_constant_print(constant, &indent_level);
+      puts("");
+
+      puts("ic_b2c_compile_expr_constant: unknown tag");
+      return 0;
+
+      break;
+  }
+
+  puts("ic_b2c_compile_expr_constant: impossible");
   return 0;
 }
 
