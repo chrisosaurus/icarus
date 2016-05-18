@@ -2,11 +2,11 @@
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
-unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic_expr *expr, FILE *out);
-unsigned int ic_b2c_compile_expr_identifier(struct ic_kludge *input_kludge, struct ic_expr *expr, FILE *out);
-unsigned int ic_b2c_compile_expr_constant(struct ic_kludge *input_kludge, struct ic_expr *expr, FILE *out);
-unsigned int ic_b2c_compile_expr_operator(struct ic_kludge *input_kludge, struct ic_expr *expr, FILE *out);
-unsigned int ic_b2c_compile_expr_faccess(struct ic_kludge *input_kludge, struct ic_expr *expr, FILE *out);
+unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic_expr_func_call *fcall, FILE *out);
+unsigned int ic_b2c_compile_expr_identifier(struct ic_kludge *input_kludge, struct ic_expr_identifier *identifier, FILE *out);
+unsigned int ic_b2c_compile_expr_constant(struct ic_kludge *input_kludge, struct ic_expr_constant *constant, FILE *out);
+unsigned int ic_b2c_compile_expr_operator(struct ic_kludge *input_kludge, struct ic_expr_operator *operator, FILE *out);
+unsigned int ic_b2c_compile_expr_faccess(struct ic_kludge *input_kludge, struct ic_expr_faccess *faccess, FILE *out);
 
 /* compile a given expr to specified file
  *
@@ -35,23 +35,23 @@ unsigned int ic_b2c_compile_expr(struct ic_kludge *input_kludge, struct ic_expr 
 
   switch( expr->tag ){
     case ic_expr_type_func_call:
-      return ic_b2c_compile_expr_fcall(input_kludge, expr, out);
+      return ic_b2c_compile_expr_fcall(input_kludge, &(expr->u.fcall), out);
       break;
 
     case ic_expr_type_identifier:
-      return ic_b2c_compile_expr_identifier(input_kludge, expr, out);
+      return ic_b2c_compile_expr_identifier(input_kludge, &(expr->u.id), out);
       break;
 
     case ic_expr_type_constant:
-      return ic_b2c_compile_expr_identifier(input_kludge, expr, out);
+      return ic_b2c_compile_expr_constant(input_kludge, &(expr->u.cons), out);
       break;
 
     case ic_expr_type_operator:
-      return ic_b2c_compile_expr_operator(input_kludge, expr, out);
+      return ic_b2c_compile_expr_operator(input_kludge, &(expr->u.op), out);
       break;
 
     case ic_expr_type_field_access:
-      return ic_b2c_compile_expr_faccess(input_kludge, expr, out);
+      return ic_b2c_compile_expr_faccess(input_kludge, &(expr->u.faccess), out);
       break;
 
     default:
@@ -70,7 +70,7 @@ unsigned int ic_b2c_compile_expr(struct ic_kludge *input_kludge, struct ic_expr 
   return 0;
 }
 
-unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic_expr *expr, FILE *out){
+unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic_expr_func_call *fcall, FILE *out){
   unsigned int indent_level = 1;
 
   if( ! input_kludge ){
@@ -78,8 +78,8 @@ unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic
     return 0;
   }
 
-  if( ! expr ){
-    puts("ic_b2c_compile_expr_fcall: expr was null");
+  if( ! fcall ){
+    puts("ic_b2c_compile_expr_fcall: fcall was null");
     return 0;
   }
 
@@ -88,20 +88,15 @@ unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic
     return 0;
   }
 
-  if( expr->tag != ic_expr_type_func_call ){
-    puts("ic_b2c_compile_expr_fcall: expr was not of type func_call");
-    return 0;
-  }
-
   puts("ic_b2c_compile_expr_fcall: call for");
-  ic_expr_print(expr, &indent_level);
+  ic_expr_func_call_print(fcall, &indent_level);
   puts("");
 
   puts("ic_b2c_compile_expr_fcall: unimplemented");
   return 0;
 }
 
-unsigned int ic_b2c_compile_expr_identifier(struct ic_kludge *input_kludge, struct ic_expr *expr, FILE *out){
+unsigned int ic_b2c_compile_expr_identifier(struct ic_kludge *input_kludge, struct ic_expr_identifier *identifier, FILE *out){
   unsigned int indent_level = 1;
 
   if( ! input_kludge ){
@@ -109,8 +104,8 @@ unsigned int ic_b2c_compile_expr_identifier(struct ic_kludge *input_kludge, stru
     return 0;
   }
 
-  if( ! expr ){
-    puts("ic_b2c_compile_expr_identifier: expr was null");
+  if( ! identifier ){
+    puts("ic_b2c_compile_expr_identifier: identifier was null");
     return 0;
   }
 
@@ -119,20 +114,15 @@ unsigned int ic_b2c_compile_expr_identifier(struct ic_kludge *input_kludge, stru
     return 0;
   }
 
-  if( expr->tag != ic_expr_type_identifier ){
-    puts("ic_b2c_compile_expr_identifier: expr was not of type identifier");
-    return 0;
-  }
-
   puts("ic_b2c_compile_expr_identifier: call for");
-  ic_expr_print(expr, &indent_level);
+  ic_expr_identifier_print(identifier, &indent_level);
   puts("");
 
   puts("ic_b2c_compile_expr_identifier: unimplemented");
   return 0;
 }
 
-unsigned int ic_b2c_compile_expr_constant(struct ic_kludge *input_kludge, struct ic_expr *expr, FILE *out){
+unsigned int ic_b2c_compile_expr_constant(struct ic_kludge *input_kludge, struct ic_expr_constant *constant, FILE *out){
   unsigned int indent_level = 1;
 
   if( ! input_kludge ){
@@ -140,8 +130,8 @@ unsigned int ic_b2c_compile_expr_constant(struct ic_kludge *input_kludge, struct
     return 0;
   }
 
-  if( ! expr ){
-    puts("ic_b2c_compile_expr_constant: expr was null");
+  if( ! constant ){
+    puts("ic_b2c_compile_expr_constant: constant was null");
     return 0;
   }
 
@@ -150,20 +140,15 @@ unsigned int ic_b2c_compile_expr_constant(struct ic_kludge *input_kludge, struct
     return 0;
   }
 
-  if( expr->tag != ic_expr_type_constant ){
-    puts("ic_b2c_compile_expr_constant: expr was not of type constant");
-    return 0;
-  }
-
   puts("ic_b2c_compile_expr_constant: call for");
-  ic_expr_print(expr, &indent_level);
+  ic_expr_constant_print(constant, &indent_level);
   puts("");
 
   puts("ic_b2c_compile_expr_constant: unimplemented");
   return 0;
 }
 
-unsigned int ic_b2c_compile_expr_operator(struct ic_kludge *input_kludge, struct ic_expr *expr, FILE *out){
+unsigned int ic_b2c_compile_expr_operator(struct ic_kludge *input_kludge, struct ic_expr_operator *operator, FILE *out){
   unsigned int indent_level = 1;
 
   if( ! input_kludge ){
@@ -171,8 +156,8 @@ unsigned int ic_b2c_compile_expr_operator(struct ic_kludge *input_kludge, struct
     return 0;
   }
 
-  if( ! expr ){
-    puts("ic_b2c_compile_expr_operator: expr was null");
+  if( ! operator ){
+    puts("ic_b2c_compile_expr_operator: operator was null");
     return 0;
   }
 
@@ -181,21 +166,15 @@ unsigned int ic_b2c_compile_expr_operator(struct ic_kludge *input_kludge, struct
     return 0;
   }
 
-  if( expr->tag != ic_expr_type_operator ){
-    puts("ic_b2c_compile_expr_operator: expr was not of type operator");
-    return 0;
-  }
-
-
   puts("ic_b2c_compile_expr_operator: call for");
-  ic_expr_print(expr, &indent_level);
+  ic_expr_operator_print(operator, &indent_level);
   puts("");
 
   puts("ic_b2c_compile_expr_operator: unimplemented");
   return 0;
 }
 
-unsigned int ic_b2c_compile_expr_faccess(struct ic_kludge *input_kludge, struct ic_expr *expr, FILE *out){
+unsigned int ic_b2c_compile_expr_faccess(struct ic_kludge *input_kludge, struct ic_expr_faccess *faccess, FILE *out){
   unsigned int indent_level = 1;
 
   if( ! input_kludge ){
@@ -203,8 +182,8 @@ unsigned int ic_b2c_compile_expr_faccess(struct ic_kludge *input_kludge, struct 
     return 0;
   }
 
-  if( ! expr ){
-    puts("ic_b2c_compile_expr_faccess: expr was null");
+  if( ! faccess ){
+    puts("ic_b2c_compile_expr_faccess: faccess was null");
     return 0;
   }
 
@@ -213,13 +192,8 @@ unsigned int ic_b2c_compile_expr_faccess(struct ic_kludge *input_kludge, struct 
     return 0;
   }
 
-  if( expr->tag != ic_expr_type_field_access ){
-    puts("ic_b2c_compile_expr_faccess: expr was not of type field_access");
-    return 0;
-  }
-
   puts("ic_b2c_compile_expr_faccess: call for");
-  ic_expr_print(expr, &indent_level);
+  ic_expr_faccess_print(faccess, &indent_level);
   puts("");
 
   puts("ic_b2c_compile_expr_faccess: unimplemented");
