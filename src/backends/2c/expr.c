@@ -72,6 +72,8 @@ unsigned int ic_b2c_compile_expr(struct ic_kludge *input_kludge, struct ic_expr 
 
 unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic_expr_func_call *fcall, FILE *out){
   unsigned int indent_level = 1;
+  struct ic_decl_func * fdecl = 0;
+  char * fdecl_sig_mangled = 0;
 
   if( ! input_kludge ){
     puts("ic_b2c_compile_expr_fcall: input_kludge was null");
@@ -92,8 +94,35 @@ unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic
   ic_expr_func_call_print(fcall, &indent_level);
   puts("");
 
-  puts("ic_b2c_compile_expr_fcall: unimplemented");
-  return 0;
+  fdecl = ic_expr_func_call_get_fdecl(fcall);
+  if( ! fdecl ){
+    puts("ic_b2c_compile_expr_fcall: call to ic_expr_func_call_get_fdecl failed");
+    return 0;
+  }
+
+  /* find function name to call */
+  fdecl_sig_mangled = ic_decl_func_sig_mangled(fdecl);
+  if( ! fdecl_sig_mangled ){
+    puts("ic_b2c_compile_expr_fcall: call to ic_decl_func_sig_mangled failed");
+    return 0;
+  }
+
+  /* omit function name */
+  fputs(fdecl_sig_mangled, out);
+
+  /* omit opening ( */
+  fputs("(", out);
+
+  /* FIXME omit arguments */
+  puts("ic_b2c_compile_expr_fcall: arg generation incomplete");
+
+  /* omit closing ) */
+  fputs(")", out);
+
+  /* FIXME communicate to caller the need to end (e.g. optionally append `;`) */
+
+  puts("ic_b2c_compile_expr_fcall: implementation pending");
+  return 1;
 }
 
 unsigned int ic_b2c_compile_expr_identifier(struct ic_kludge *input_kludge, struct ic_expr_identifier *identifier, FILE *out){

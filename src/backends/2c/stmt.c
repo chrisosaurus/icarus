@@ -249,6 +249,9 @@ unsigned int ic_b2c_compile_stmt_expr(struct ic_kludge *input_kludge, struct ic_
     return 0;
   }
 
+  /* must close off expr */
+  fputs(";\n", out);
+
   return 1;
 }
 
