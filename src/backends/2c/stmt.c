@@ -279,7 +279,7 @@ unsigned int ic_b2c_compile_stmt_expr(struct ic_kludge *input_kludge, struct ic_
     return 0;
   }
 
-  if( ic_b2c_compile_expr(input_kludge, stmt->u.expr, out) ){
+  if( ! ic_b2c_compile_expr(input_kludge, stmt->u.expr, out) ){
     puts("ic_b2c_compile_stmt_expr: call to ic_b2c_compile_expr failed");
     return 0;
   }
