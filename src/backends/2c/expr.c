@@ -71,9 +71,20 @@ unsigned int ic_b2c_compile_expr(struct ic_kludge *input_kludge, struct ic_expr 
 }
 
 unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic_expr_func_call *fcall, FILE *out){
+  /* indent level used for _print calls for debug
+   * FIXME gross
+   */
   unsigned int indent_level = 1;
-  struct ic_decl_func * fdecl = 0;
-  char * fdecl_sig_mangled = 0;
+  /* function decl */
+  struct ic_decl_func *fdecl = 0;
+  /* mangled function signature, suitable for output */
+  char *fdecl_sig_mangled = 0;
+  /* offset into fcall args pvector */
+  unsigned int i = 0;
+  /* length of fcall args pvector */
+  unsigned int length = 0;
+  /* current arg */
+  struct ic_expr *expr = 0;
 
   if( ! input_kludge ){
     puts("ic_b2c_compile_expr_fcall: input_kludge was null");
@@ -113,8 +124,21 @@ unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic
   /* omit opening ( */
   fputs("(", out);
 
-  /* FIXME omit arguments */
-  puts("ic_b2c_compile_expr_fcall: arg generation incomplete");
+  /* omit arguments */
+  length = ic_expr_func_call_length(fcall);
+
+  for( i=0; i<length; ++i ){
+    expr = ic_expr_func_call_get_arg(fcall, i);
+    if( ! expr ){
+      puts("ic_b2c_compile_expr_fcall: call to ic_expr_func_call_get_arg");
+      return 0;
+    }
+
+    if( ! ic_b2c_compile_expr(input_kludge, expr, out) ){
+      puts("ic_b2c_compile_expr_fcall: call to ic_b2c_compile_expr failed");
+      return 0;
+    }
+  }
 
   /* omit closing ) */
   fputs(")", out);
