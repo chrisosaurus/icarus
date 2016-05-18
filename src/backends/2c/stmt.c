@@ -3,13 +3,13 @@
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
-unsigned int ic_b2c_compile_stmt_ret(struct ic_kludge *input_kludge, struct ic_stmt *stmt, FILE *out);
-unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_stmt *stmt, FILE *out);
-unsigned int ic_b2c_compile_stmt_assign(struct ic_kludge *input_kludge, struct ic_stmt *stmt, FILE *out);
-unsigned int ic_b2c_compile_stmt_if(struct ic_kludge *input_kludge, struct ic_stmt *stmt, FILE *out);
-unsigned int ic_b2c_compile_stmt_for(struct ic_kludge *input_kludge, struct ic_stmt *stmt, FILE *out);
-unsigned int ic_b2c_compile_stmt_while(struct ic_kludge *input_kludge, struct ic_stmt *stmt, FILE *out);
-unsigned int ic_b2c_compile_stmt_expr(struct ic_kludge *input_kludge, struct ic_stmt *stmt, FILE *out);
+unsigned int ic_b2c_compile_stmt_ret(struct ic_kludge *input_kludge, struct ic_stmt_ret *ret, FILE *out);
+unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_stmt_let *let, FILE *out);
+unsigned int ic_b2c_compile_stmt_assign(struct ic_kludge *input_kludge, struct ic_stmt_assign *assign, FILE *out);
+unsigned int ic_b2c_compile_stmt_if(struct ic_kludge *input_kludge, struct ic_stmt_if *sif, FILE *out);
+unsigned int ic_b2c_compile_stmt_for(struct ic_kludge *input_kludge, struct ic_stmt_for *sfor, FILE *out);
+unsigned int ic_b2c_compile_stmt_while(struct ic_kludge *input_kludge, struct ic_stmt_while *swhile, FILE *out);
+unsigned int ic_b2c_compile_stmt_expr(struct ic_kludge *input_kludge, struct ic_expr *expr, FILE *out);
 
 /* compile a given stmt to specified file
  *
@@ -39,31 +39,31 @@ unsigned int ic_b2c_compile_stmt(struct ic_kludge *input_kludge, struct ic_stmt 
   /* dispatch to appropriate sub handler based on stmt type */
   switch( stmt->tag ){
     case ic_stmt_type_ret:
-      return ic_b2c_compile_stmt_ret(input_kludge, stmt, out);
+      return ic_b2c_compile_stmt_ret(input_kludge, &(stmt->u.ret), out);
       break;
 
     case ic_stmt_type_let:
-      return ic_b2c_compile_stmt_let(input_kludge, stmt, out);
+      return ic_b2c_compile_stmt_let(input_kludge, &(stmt->u.let), out);
       break;
 
     case ic_stmt_type_assign:
-      return ic_b2c_compile_stmt_assign(input_kludge, stmt, out);
+      return ic_b2c_compile_stmt_assign(input_kludge, &(stmt->u.assign), out);
       break;
 
     case ic_stmt_type_if:
-      return ic_b2c_compile_stmt_if(input_kludge, stmt, out);
+      return ic_b2c_compile_stmt_if(input_kludge, &(stmt->u.sif), out);
       break;
 
     case ic_stmt_type_for:
-      return ic_b2c_compile_stmt_for(input_kludge, stmt, out);
+      return ic_b2c_compile_stmt_for(input_kludge, &(stmt->u.sfor), out);
       break;
 
     case ic_stmt_type_while:
-      return ic_b2c_compile_stmt_while(input_kludge, stmt, out);
+      return ic_b2c_compile_stmt_while(input_kludge, &(stmt->u.swhile), out);
       break;
 
     case ic_stmt_type_expr:
-      return ic_b2c_compile_stmt_expr(input_kludge, stmt, out);
+      return ic_b2c_compile_stmt_expr(input_kludge, stmt->u.expr, out);
       break;
 
     default:
@@ -78,7 +78,7 @@ unsigned int ic_b2c_compile_stmt(struct ic_kludge *input_kludge, struct ic_stmt 
   return 0;
 }
 
-unsigned int ic_b2c_compile_stmt_ret(struct ic_kludge *input_kludge, struct ic_stmt *stmt, FILE *out){
+unsigned int ic_b2c_compile_stmt_ret(struct ic_kludge *input_kludge, struct ic_stmt_ret *ret, FILE *out){
   unsigned int indent_level = 1;
 
   if( ! input_kludge ){
@@ -86,8 +86,8 @@ unsigned int ic_b2c_compile_stmt_ret(struct ic_kludge *input_kludge, struct ic_s
     return 0;
   }
 
-  if( ! stmt ){
-    puts("ic_b2c_compile_stmt_ret: stmt was null");
+  if( ! ret ){
+    puts("ic_b2c_compile_stmt_ret: ret was null");
     return 0;
   }
 
@@ -96,19 +96,14 @@ unsigned int ic_b2c_compile_stmt_ret(struct ic_kludge *input_kludge, struct ic_s
     return 0;
   }
 
-  if( stmt->tag != ic_stmt_type_ret ){
-    puts("ic_b2c_compile_stmt_ret: stmt was not of type ret");
-    return 0;
-  }
-
   puts("ic_b2c_compile_stmt_ret: called on");
-  ic_stmt_print(stmt, &indent_level);
+  ic_stmt_ret_print(ret, &indent_level);
 
   puts("ic_b2c_compile_stmt_ret: unimplemented");
   return 0;
 }
 
-unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_stmt *stmt, FILE *out){
+unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_stmt_let *let, FILE *out){
   unsigned int indent_level = 1;
 
   if( ! input_kludge ){
@@ -116,8 +111,8 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_s
     return 0;
   }
 
-  if( ! stmt ){
-    puts("ic_b2c_compile_stmt_let: stmt was null");
+  if( ! let ){
+    puts("ic_b2c_compile_stmt_let: let was null");
     return 0;
   }
 
@@ -126,19 +121,14 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_s
     return 0;
   }
 
-  if( stmt->tag != ic_stmt_type_let ){
-    puts("ic_b2c_compile_stmt_let: stmt was not of type let");
-    return 0;
-  }
-
   puts("ic_b2c_compile_stmt_let: called on");
-  ic_stmt_print(stmt, &indent_level);
+  ic_stmt_let_print(let, &indent_level);
 
   puts("ic_b2c_compile_stmt_let: unimplemented");
   return 0;
 }
 
-unsigned int ic_b2c_compile_stmt_assign(struct ic_kludge *input_kludge, struct ic_stmt *stmt, FILE *out){
+unsigned int ic_b2c_compile_stmt_assign(struct ic_kludge *input_kludge, struct ic_stmt_assign *assign, FILE *out){
   unsigned int indent_level = 1;
 
   if( ! input_kludge ){
@@ -146,8 +136,8 @@ unsigned int ic_b2c_compile_stmt_assign(struct ic_kludge *input_kludge, struct i
     return 0;
   }
 
-  if( ! stmt ){
-    puts("ic_b2c_compile_stmt_assign: stmt was null");
+  if( ! assign ){
+    puts("ic_b2c_compile_stmt_assign: assign was null");
     return 0;
   }
 
@@ -156,19 +146,14 @@ unsigned int ic_b2c_compile_stmt_assign(struct ic_kludge *input_kludge, struct i
     return 0;
   }
 
-  if( stmt->tag != ic_stmt_type_assign ){
-    puts("ic_b2c_compile_stmt_assign: stmt was not of type assign");
-    return 0;
-  }
-
   puts("ic_b2c_compile_stmt_assign: called on");
-  ic_stmt_print(stmt, &indent_level);
+  ic_stmt_assign_print(assign, &indent_level);
 
   puts("ic_b2c_compile_stmt_assign: unimplemented");
   return 0;
 }
 
-unsigned int ic_b2c_compile_stmt_if(struct ic_kludge *input_kludge, struct ic_stmt *stmt, FILE *out){
+unsigned int ic_b2c_compile_stmt_if(struct ic_kludge *input_kludge, struct ic_stmt_if *sif, FILE *out){
   unsigned int indent_level = 1;
 
   if( ! input_kludge ){
@@ -176,8 +161,8 @@ unsigned int ic_b2c_compile_stmt_if(struct ic_kludge *input_kludge, struct ic_st
     return 0;
   }
 
-  if( ! stmt ){
-    puts("ic_b2c_compile_stmt_if: stmt was null");
+  if( ! sif ){
+    puts("ic_b2c_compile_stmt_if: sif was null");
     return 0;
   }
 
@@ -186,19 +171,14 @@ unsigned int ic_b2c_compile_stmt_if(struct ic_kludge *input_kludge, struct ic_st
     return 0;
   }
 
-  if( stmt->tag != ic_stmt_type_if ){
-    puts("ic_b2c_compile_stmt_if: stmt was not of type if");
-    return 0;
-  }
-
   puts("ic_b2c_compile_stmt_if: called on");
-  ic_stmt_print(stmt, &indent_level);
+  ic_stmt_if_print(sif, &indent_level);
 
   puts("ic_b2c_compile_stmt_if: unimplemented");
   return 0;
 }
 
-unsigned int ic_b2c_compile_stmt_for(struct ic_kludge *input_kludge, struct ic_stmt *stmt, FILE *out){
+unsigned int ic_b2c_compile_stmt_for(struct ic_kludge *input_kludge, struct ic_stmt_for *sfor, FILE *out){
   unsigned int indent_level = 1;
 
   if( ! input_kludge ){
@@ -206,8 +186,8 @@ unsigned int ic_b2c_compile_stmt_for(struct ic_kludge *input_kludge, struct ic_s
     return 0;
   }
 
-  if( ! stmt ){
-    puts("ic_b2c_compile_stmt_for: stmt was null");
+  if( ! sfor ){
+    puts("ic_b2c_compile_stmt_for: sfor was null");
     return 0;
   }
 
@@ -216,19 +196,14 @@ unsigned int ic_b2c_compile_stmt_for(struct ic_kludge *input_kludge, struct ic_s
     return 0;
   }
 
-  if( stmt->tag != ic_stmt_type_for ){
-    puts("ic_b2c_compile_stmt_for: stmt was not of type for");
-    return 0;
-  }
-
   puts("ic_b2c_compile_stmt_for: called on");
-  ic_stmt_print(stmt, &indent_level);
+  ic_stmt_for_print(sfor, &indent_level);
 
   puts("ic_b2c_compile_stmt_for: unimplemented");
   return 0;
 }
 
-unsigned int ic_b2c_compile_stmt_while(struct ic_kludge *input_kludge, struct ic_stmt *stmt, FILE *out){
+unsigned int ic_b2c_compile_stmt_while(struct ic_kludge *input_kludge, struct ic_stmt_while *swhile, FILE *out){
   unsigned int indent_level = 1;
 
   if( ! input_kludge ){
@@ -236,8 +211,8 @@ unsigned int ic_b2c_compile_stmt_while(struct ic_kludge *input_kludge, struct ic
     return 0;
   }
 
-  if( ! stmt ){
-    puts("ic_b2c_compile_stmt_while: stmt was null");
+  if( ! swhile ){
+    puts("ic_b2c_compile_stmt_while: swhile was null");
     return 0;
   }
 
@@ -246,26 +221,21 @@ unsigned int ic_b2c_compile_stmt_while(struct ic_kludge *input_kludge, struct ic
     return 0;
   }
 
-  if( stmt->tag != ic_stmt_type_while ){
-    puts("ic_b2c_compile_stmt_while: stmt was not of type while");
-    return 0;
-  }
-
   puts("ic_b2c_compile_stmt_while: called on");
-  ic_stmt_print(stmt, &indent_level);
+  ic_stmt_while_print(swhile, &indent_level);
 
   puts("ic_b2c_compile_stmt_while: unimplemented");
   return 0;
 }
 
-unsigned int ic_b2c_compile_stmt_expr(struct ic_kludge *input_kludge, struct ic_stmt *stmt, FILE *out){
+unsigned int ic_b2c_compile_stmt_expr(struct ic_kludge *input_kludge, struct ic_expr *expr, FILE *out){
   if( ! input_kludge ){
     puts("ic_b2c_compile_stmt_expr: input_kludge was null");
     return 0;
   }
 
-  if( ! stmt ){
-    puts("ic_b2c_compile_stmt_expr: stmt was null");
+  if( ! expr ){
+    puts("ic_b2c_compile_stmt_expr: expr was null");
     return 0;
   }
 
@@ -274,12 +244,7 @@ unsigned int ic_b2c_compile_stmt_expr(struct ic_kludge *input_kludge, struct ic_
     return 0;
   }
 
-  if( stmt->tag != ic_stmt_type_expr ){
-    puts("ic_b2c_compile_stmt_expr: stmt was not of type expr");
-    return 0;
-  }
-
-  if( ! ic_b2c_compile_expr(input_kludge, stmt->u.expr, out) ){
+  if( ! ic_b2c_compile_expr(input_kludge, expr, out) ){
     puts("ic_b2c_compile_stmt_expr: call to ic_b2c_compile_expr failed");
     return 0;
   }
