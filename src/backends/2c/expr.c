@@ -14,6 +14,8 @@ unsigned int ic_b2c_compile_expr(struct ic_kludge *input_kludge, struct ic_expr 
 
   puts("ic_b2c_compile_expr: called for");
   ic_expr_print(expr, &indent_level);
+  /* caller of ic_expr_print must add \n */
+  puts("");
 
   puts("ic_b2c_compile_expr: unimplemented");
   return 0;
