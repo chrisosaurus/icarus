@@ -202,3 +202,39 @@ Finally the analyse step's outputs showing no errors, but making it clear that i
     ----------------
 
 
+Compiler
+========
+
+The compiler is still a WIP, currently icarus lacks a true IR stage, but work on a 'hacky compiler' is progressing in order
+to allow the language to be fleshed out some more
+
+if we input the following file (milestone/01.ic)
+
+  fn main()
+    println("hello world")
+  end
+
+we can then compile this via
+
+  ./icarus milestone/01.ic out.c
+
+which will output (to out.c)
+
+  #include "backends/2c/builtins.c"
+  /* main() -> Void */
+  Void i_main_a();
+  /* main() -> Void */
+  Void i_main_a(){
+  i_println_a_String(ic_string_new("hello world", 11));
+  }
+  #include "backends/2c/entry.c"
+
+if we compile and run this, we can see
+
+  gcc out.c
+  ./a.out
+
+the output:
+
+  hello world
+
