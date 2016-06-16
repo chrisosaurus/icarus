@@ -62,7 +62,7 @@ example: icarus
 # run all TESTO
 # cleanobj
 #   this ensures that we do a fresh build every time
-test: clean $(OBJ) $(TESTO) test_custom test_success cleanobj
+test: clean $(OBJ) $(TESTO) test_custom test_success test_milestones cleanobj
 
 
 test_custom: $(OBJ) icarus
@@ -142,6 +142,9 @@ $(TESTO) : $(TESTOUT)/% : %.c
 	@${CC} $< -o $@ ${LDFLAGS} ${OBJ}
 	@echo running test
 	$@
+
+test_milestones:
+	t/milestones/test_milestones.pl
 
 # signal test success
 test_success:

@@ -1,0 +1,7 @@
+00 pass fail-output
+01 pass fail-output
+02 pass fail-output
+03 pass fail-output
+04 fail-compile fail-runtime
+05 fail-compile fail-runtime
+06 fail-compile fail-runtime
