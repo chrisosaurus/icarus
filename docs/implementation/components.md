@@ -10,6 +10,8 @@ Icarus Components
                       |
                    Analyse
                       |
+                  Transform
+                      |
                Select backend
                     / | \
                    /  |  \
@@ -32,6 +34,8 @@ Middleware
 The role of the middleware is to perform any verification and modifications to the AST
 
 Analyze : AST -> Kludge
+
+Transform : Kludge -> ???
 
 Backends
 ========
