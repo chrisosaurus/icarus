@@ -415,7 +415,7 @@ struct ic_stmt {
     } u;
 };
 
-/* allocate and initialise anew ic_stmt
+/* allocate and initialise a new ic_stmt
  * will not initialise union members
  *
  * returns pointer on success

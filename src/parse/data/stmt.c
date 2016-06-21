@@ -1029,7 +1029,7 @@ void ic_stmt_while_print(struct ic_stmt_while *swhile, unsigned int *indent_leve
 }
 
 
-/* allocate and initialise anew ic_stmt
+/* allocate and initialise a new ic_stmt
  * will not initialise union members
  *
  * returns pointer on success
