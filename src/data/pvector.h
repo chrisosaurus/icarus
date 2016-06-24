@@ -36,7 +36,7 @@ unsigned int ic_pvector_init(struct ic_pvector *vec, unsigned int cap);
 
 /* destroy pvector
  *
- * this will only free the pvecto if `free_pvector` is true
+ * this will only free the pvector if `free_pvector` is true
  *
  * takes an optional function which is called once for each argument stored in the pvector
  * it will be called with it's free argument set to true
