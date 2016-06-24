@@ -109,7 +109,7 @@ struct ic_transform_ir_let {
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_transform_ir_let * ic_transform_ir_let_new(void);
+struct ic_transform_ir_let * ic_transform_ir_let_new(enum ic_transform_ir_let_tag tag);
 
 /* initialise an existing let
  *
@@ -118,7 +118,7 @@ struct ic_transform_ir_let * ic_transform_ir_let_new(void);
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_let_init(struct ic_transform_ir_let *let);
+unsigned int ic_transform_ir_let_init(struct ic_transform_ir_let *let, enum ic_transform_ir_let_tag tag);
 
 /* destroy let
  *
@@ -311,7 +311,7 @@ struct ic_transform_ir_stmt {
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_transform_ir_stmt * ic_transform_ir_stmt_new(void);
+struct ic_transform_ir_stmt * ic_transform_ir_stmt_new(enum ic_transform_ir_stmt_tag tag);
 
 /* initialise an existing stmt
  *
@@ -320,7 +320,7 @@ struct ic_transform_ir_stmt * ic_transform_ir_stmt_new(void);
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_stmt_init(struct ic_transform_ir_stmt *stmt);
+unsigned int ic_transform_ir_stmt_init(struct ic_transform_ir_stmt *stmt, enum ic_transform_ir_stmt_tag tag);
 
 /* destroy stmt
  *

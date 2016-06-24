@@ -41,6 +41,32 @@ void basic_let_expr(void){
   puts("success");
 }
 
+void basic_let(void){
+  struct ic_transform_ir_let let;
+  struct ic_transform_ir_let *let_p = 0;
+  struct ic_transform_ir_let_literal *let_lit = 0;
+  struct ic_transform_ir_let_expr *let_expr = 0;
+
+  puts("basic tir let testing");
+
+  let_p = ic_transform_ir_let_new(ic_transform_ir_let_type_literal);
+  assert( let_p );
+
+  let_lit = ic_transform_ir_let_get_literal(let_p);
+  assert(let_lit);
+
+
+  assert( ic_transform_ir_let_init(&let, ic_transform_ir_let_type_fcall) );
+
+  let_expr = ic_transform_ir_let_get_expr(&let);
+  assert(let_expr);
+
+  assert( ic_transform_ir_let_destroy( &let, 0 ) );
+  assert( ic_transform_ir_let_destroy( let_p, 1 ) );
+
+  puts("success");
+}
+
 void basic_assign(void){
   struct ic_transform_ir_assign *assign_p = 0;
   struct ic_transform_ir_assign assign_l;
@@ -109,18 +135,52 @@ void basic_fcall(void){
   puts("success");
 }
 
+void basic_stmt(void){
+  struct ic_transform_ir_stmt stmt_expr;
+  struct ic_transform_ir_stmt *stmt_let = 0;
+  struct ic_transform_ir_stmt *stmt_ret = 0;
+
+  struct ic_transform_ir_expr *expr = 0;
+  struct ic_transform_ir_let *let = 0;
+  struct ic_transform_ir_ret *ret = 0;
+
+  puts("basic tir stmt testing");
+
+  assert( ic_transform_ir_stmt_init(&stmt_expr, ic_transform_ir_type_expr) );
+  expr = ic_transform_ir_stmt_get_expr(&stmt_expr);
+  assert(expr);
+
+  stmt_let = ic_transform_ir_stmt_new(ic_transform_ir_type_let);
+  assert(stmt_let);
+  let = ic_transform_ir_stmt_get_let(stmt_let);
+  assert(let);
+
+  stmt_ret = ic_transform_ir_stmt_new(ic_transform_ir_type_ret);
+  assert(stmt_ret);
+  ret = ic_transform_ir_stmt_get_ret(stmt_ret);
+  assert(ret);
+
+  assert( ic_transform_ir_stmt_destroy( &stmt_expr, 0 ) );
+  assert( ic_transform_ir_stmt_destroy( stmt_let, 1 ) );
+  assert( ic_transform_ir_stmt_destroy( stmt_ret, 1 ) );
+
+  puts("success");
+}
+
+
 int main(void){
   basic_let_literal();
   basic_let_expr();
 
-  /* FIXME TODO: ic_transform_ir_let */
+  basic_let();
+
 
   basic_assign();
   basic_expr();
   basic_ret();
   basic_fcall();
 
-  /* FIXME TODO: ic_transform_ir_stmt */
+  basic_stmt();
 
   return 0;
 }

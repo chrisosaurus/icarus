@@ -144,7 +144,7 @@ unsigned int ic_transform_ir_let_expr_destroy(struct ic_transform_ir_let_expr *l
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_transform_ir_let * ic_transform_ir_let_new(void){
+struct ic_transform_ir_let * ic_transform_ir_let_new(enum ic_transform_ir_let_tag tag){
   struct ic_transform_ir_let *let = 0;
 
   let = calloc(sizeof(struct ic_transform_ir_let), 0);
@@ -153,7 +153,7 @@ struct ic_transform_ir_let * ic_transform_ir_let_new(void){
     return 0;
   }
 
-  if( ! ic_transform_ir_let_init(let) ){
+  if( ! ic_transform_ir_let_init(let, tag) ){
     puts("ir_transform_ir_let_new: call to ic_transform_let_init failed");
     return 0;
   }
@@ -168,11 +168,13 @@ struct ic_transform_ir_let * ic_transform_ir_let_new(void){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_let_init(struct ic_transform_ir_let *let){
+unsigned int ic_transform_ir_let_init(struct ic_transform_ir_let *let, enum ic_transform_ir_let_tag tag){
   if( ! let ){
     puts("ic_transform_ir_let_init: let was null");
     return 0;
   }
+
+  let->tag = tag;
 
   return 1;
 }
@@ -507,7 +509,7 @@ unsigned int ic_transform_ir_fcall_destroy(struct ic_transform_ir_fcall *fcall, 
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_transform_ir_stmt * ic_transform_ir_stmt_new(void){
+struct ic_transform_ir_stmt * ic_transform_ir_stmt_new(enum ic_transform_ir_stmt_tag tag){
   struct ic_transform_ir_stmt *stmt = 0;
 
   stmt = calloc(sizeof(struct ic_transform_ir_stmt), 0);
@@ -516,7 +518,7 @@ struct ic_transform_ir_stmt * ic_transform_ir_stmt_new(void){
     return 0;
   }
 
-  if( ! ic_transform_ir_stmt_init(stmt) ){
+  if( ! ic_transform_ir_stmt_init(stmt, tag) ){
     puts("ir_transform_ir_stmt_new: call to ic_transform_stmt_init failed");
     return 0;
   }
@@ -531,11 +533,13 @@ struct ic_transform_ir_stmt * ic_transform_ir_stmt_new(void){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_stmt_init(struct ic_transform_ir_stmt *stmt){
+unsigned int ic_transform_ir_stmt_init(struct ic_transform_ir_stmt *stmt, enum ic_transform_ir_stmt_tag tag){
   if( ! stmt ){
     puts("ic_transform_ir_stmt_init: stmt was null");
     return 0;
   }
+
+  stmt->tag = tag;
 
   return 1;
 }
