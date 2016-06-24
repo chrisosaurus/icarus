@@ -2,6 +2,7 @@
 #include <stdio.h> /* puts */
 
 #include "tbody.h"
+#include "tcounter.h"
 
 //struct ic_transform_body {
 //  struct ic_pvector *tstmts;
@@ -12,7 +13,7 @@
  * returns 1 on success
  * returns 0 on failure
  */
-struct ic_transform_body * ic_transform_body_new(void){
+struct ic_transform_body * ic_transform_body_new(struct ic_transform_counter *tcounter){
   struct ic_transform_body *tbody = 0;
 
   tbody = calloc( sizeof(struct ic_transform_body), 1 );
@@ -21,7 +22,7 @@ struct ic_transform_body * ic_transform_body_new(void){
     return 0;
   }
 
-  if( ! ic_transform_body_init(tbody) ){
+  if( ! ic_transform_body_init(tbody, tcounter) ){
     puts("ic_transform_body_new: call to ic_transform_body_init failed");
     return 0;
   }
@@ -34,7 +35,7 @@ struct ic_transform_body * ic_transform_body_new(void){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_body_init(struct ic_transform_body *tbody){
+unsigned int ic_transform_body_init(struct ic_transform_body *tbody, struct ic_transform_counter *tcounter){
   if( ! tbody ){
     puts("ic_transform_body_init: tbody was null");
     return 0;
@@ -44,6 +45,8 @@ unsigned int ic_transform_body_init(struct ic_transform_body *tbody){
     puts("ic_transform_body_init: call to ic_pvector_init failed");
     return 0;
   }
+
+  tbody->tcounter = tcounter;
 
   return 1;
 }
@@ -141,4 +144,48 @@ struct ic_transform_ir_stmt * ic_transform_body_get(struct ic_transform_body *tb
   return tstmt;
 }
 
+/* get a unique literal number within this counter
+ *
+ * returns count > 0 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_body_register_literal(struct ic_transform_body *tbody){
+  unsigned int ncount = 0;
+
+  if( ! tbody ){
+    puts("ic_transform_body_register_literal: tbody was null");
+    return 0;
+  }
+
+  ncount = ic_transform_counter_register_literal( tbody->tcounter );
+  if( ! ncount ){
+    puts("ic_transform_body_register_literal: call to ic_transform_counter_register_literal failed");
+    return 0;
+  }
+
+  return ncount;
+}
+
+/* get a unique temporary number within this counter
+ *
+ * returns count > 0 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_body_register_temporary(struct ic_transform_body *tbody){
+  unsigned int ncount = 0;
+
+  if( ! tbody ){
+    puts("ic_transform_body_register_temporary: tbody was null");
+    return 0;
+  }
+
+  ncount = ic_transform_counter_register_temporary( tbody->tcounter );
+  if( ! ncount ){
+    puts("ic_transform_body_register_temporary: call to ic_transform_counter_register_temporary failed");
+    return 0;
+  }
+
+  return ncount;
+
+}
 

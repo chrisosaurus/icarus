@@ -6,6 +6,7 @@
 
 struct ic_transform_body {
   struct ic_pvector tstmts;
+  struct ic_transform_counter *tcounter;
 };
 
 /* allocate and initialise a new tbody
@@ -13,14 +14,14 @@ struct ic_transform_body {
  * returns 1 on success
  * returns 0 on failure
  */
-struct ic_transform_body * ic_transform_body_new(void);
+struct ic_transform_body * ic_transform_body_new(struct ic_transform_counter *tcounter);
 
 /* initialise existing tbody
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_body_init(struct ic_transform_body *tbody);
+unsigned int ic_transform_body_init(struct ic_transform_body *tbody, struct ic_transform_counter *tcounter);
 
 /* destroy tbody
  *
@@ -56,5 +57,18 @@ unsigned int ic_transform_body_length(struct ic_transform_body *tbody);
  */
 struct ic_transform_ir_stmt * ic_transform_body_get(struct ic_transform_body *tbody, unsigned int index);
 
+/* get a unique literal number within this counter
+ *
+ * returns count > 0 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_body_register_literal(struct ic_transform_body *tbody);
+
+/* get a unique temporary number within this counter
+ *
+ * returns count > 0 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_body_register_temporary(struct ic_transform_body *tbody);
 
 #endif //ifndef IC_TRANSFORM_BODY_H
