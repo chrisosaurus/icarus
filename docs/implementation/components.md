@@ -35,11 +35,11 @@ The role of the middleware is to perform any verification and modifications to t
 
 Analyze : AST -> Kludge
 
-Transform : Kludge -> ???
+Transform : Kludge -> Kludge
 
 Backends
 ========
-The backend then takes this AST and does *something* with it
+The backend then takes this Kludge and does *something* with it
 
 Icarus has plans to support multiple backends, some possible ones include:
 
