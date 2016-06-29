@@ -205,8 +205,8 @@ Finally the analyse step's outputs showing no errors, but making it clear that i
 Compiler
 ========
 
-The compiler is still a WIP, currently icarus lacks a true IR stage, but work on a 'hacky compiler' is progressing in order
-to allow the language to be fleshed out some more
+The compiler is still a WIP, currently work on icarus is focussed on adding an IR stage,
+the start of an IR-less compiler can be seen below
 
 if we input the following file (milestone/01.ic):
 
@@ -237,4 +237,9 @@ if we compile and run this, we can see:
 the output:
 
     hello world
+
+Current focus
+=============
+
+The `transform` phase - which outputs the new Icarus Transform IR
 
