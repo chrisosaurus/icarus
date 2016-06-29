@@ -1,8 +1,8 @@
 https://github.com/mkfifo/linear_set
 
-commit 41e17bb273a931d01f736d5e84093990d564a792
+commit 7950fb5a89b5dcfecf1e63ed0192082ae4dd43b4
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Wed Sep 9 13:18:31 2015 +1200
+Date:   Wed Jun 29 15:02:38 2016 +1000
 
-    moving to "on failure" wording
+    replacing usage of // comment
 

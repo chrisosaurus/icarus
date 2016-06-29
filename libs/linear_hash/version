@@ -1,8 +1,8 @@
 https://github.com/mkfifo/linear_hash
 
-commit 05887e86b9dcf88c2e61bd95405636ae32b9b22d
+commit 66e934eb84c615be6a008476de5d0d04b672b13e
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Wed Sep 9 13:18:54 2015 +1200
+Date:   Wed Jun 29 15:00:46 2016 +1000
 
-    moving to "on failure" wording
+    removing additional usage of // comment
 

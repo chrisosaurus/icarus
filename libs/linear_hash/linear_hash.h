@@ -31,7 +31,7 @@
 enum lh_entry_state {
     LH_ENTRY_EMPTY,
     LH_ENTRY_OCCUPIED,
-    LH_ENTRY_DUMMY // was occupied but now delete
+    LH_ENTRY_DUMMY /* was occupied but now delete */
 };
 
 struct lh_entry {
@@ -185,5 +185,5 @@ void * lh_get(const struct lh_table *table, const char *key);
  */
 void *  lh_delete(struct lh_table *table, const char *key);
 
-#endif // ifndef LINEAR_HASH_H
+#endif /* ifndef LINEAR_HASH_H */
 
