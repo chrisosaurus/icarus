@@ -71,4 +71,4 @@ unsigned int ic_transform_body_register_literal(struct ic_transform_body *tbody)
  */
 unsigned int ic_transform_body_register_temporary(struct ic_transform_body *tbody);
 
-#endif //ifndef IC_TRANSFORM_BODY_H
+#endif /* ifndef IC_TRANSFORM_BODY_H */

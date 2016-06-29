@@ -4,10 +4,6 @@
 #include "tbody.h"
 #include "tcounter.h"
 
-//struct ic_transform_body {
-//  struct ic_pvector *tstmts;
-//};
-
 /* allocate and initialise a new tbody
  *
  * returns 1 on success

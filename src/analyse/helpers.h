@@ -84,5 +84,5 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
  */
 char * ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall);
 
-#endif // ifndef ICARUS_ANALYSE_HELPERS_H
+#endif /* ifndef ICARUS_ANALYSE_HELPERS_H */
 
