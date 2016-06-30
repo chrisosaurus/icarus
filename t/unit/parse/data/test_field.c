@@ -2,6 +2,7 @@
 #include <assert.h> /* assert */
 #include <stdio.h> /* printf */
 
+#include "../../../../src/parse/permissions.h"
 #include "../../../../src/parse/data/field.h"
 
 int main(void){
@@ -9,7 +10,7 @@ int main(void){
     struct ic_field init_me;
 
     /* test new */
-    field = ic_field_new("b", 1, "String", 6, 0);
+    field = ic_field_new("b", 1, "String", 6, ic_parse_perm_default());
     assert(field);
 
     assert( ! strncmp("b",
@@ -20,7 +21,7 @@ int main(void){
                 ic_symbol_contents( ic_type_ref_get_symbol(&(field->type)) ),
                 6) );
 
-    assert( field->permissions == 0 );
+    assert( field->permissions == ic_parse_perm_default() );
 
     /* test init */
     assert( ic_field_init(&init_me, "hello", 5, "Int", 3, 2) );
