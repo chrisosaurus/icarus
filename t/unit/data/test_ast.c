@@ -2,6 +2,7 @@
 #include <assert.h> /* assert */
 #include <stdio.h> /* printf */
 
+#include "../../../src/parse/permissions.h"
 #include "../../../src/parse/data/ast.h"
 
 void basic(void){
@@ -26,11 +27,11 @@ void basic(void){
 
 
     /* add some fields */
-    field = ic_field_new("a", 1, "Int", 3, 0);
+    field = ic_field_new("a", 1, "Int", 3, ic_parse_perm_default());
     assert(field);
     assert( 1 == ic_decl_type_add_field(tdecl, field) );
 
-    field = ic_field_new("b", 1, "String", 6, 0);
+    field = ic_field_new("b", 1, "String", 6, ic_parse_perm_default());
     assert(field);
     assert( 1 == ic_decl_type_add_field(tdecl, field) );
 

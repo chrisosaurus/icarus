@@ -34,6 +34,9 @@ int main(void){
                 ic_symbol_contents( ic_type_ref_get_symbol(&(init_me.type)) ),
                 3) );
 
+    /* NB: okay to use int here, as we only set so we can later on assert
+     * that it hasn't silently changed under us
+     */
     assert( init_me.permissions == 2 );
 
     /* 'test' printing */
