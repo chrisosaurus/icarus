@@ -7,6 +7,7 @@
 #include "parse/parse.h" /* ic_parse */
 #include "parse/data/ast.h" /* ic_ast structure */
 #include "analyse/analyse.h" /* ic_kludge */
+#include "transform/transform.h" /* ic_transform */
 
 /* backends */
 #include "backends/2c/2c.h"
@@ -107,10 +108,18 @@ int main(int argc, char **argv){
     puts("analysis complete");
     puts("----------------\n");
 
+    puts("\ntransform output (PENDING):");
+    puts("----------------");
+    if( ! ic_transform(kludge) ){
+        puts("transform failed");
+        exit(1);
+    }
+
     /* backend time
      * only compile if user specifies out_filename
      */
     if( out_filename ){
+        puts("\ncompile output (PENDING):");
         if( ! ic_b2c_compile(kludge, out_filename) ){
             puts("compilation failed");
             exit(1);
