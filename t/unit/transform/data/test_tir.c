@@ -56,7 +56,7 @@ void basic_let(void){
   assert(let_lit);
 
 
-  assert( ic_transform_ir_let_init(&let, ic_transform_ir_let_type_fcall) );
+  assert( ic_transform_ir_let_init(&let, ic_transform_ir_let_type_expr) );
 
   let_expr = ic_transform_ir_let_get_expr(&let);
   assert(let_expr);

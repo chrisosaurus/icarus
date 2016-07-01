@@ -77,6 +77,48 @@ unsigned int ic_transform_body_destroy(struct ic_transform_body *tbody, unsigned
   return 1;
 }
 
+/* iterate through each tir_stmt within tbody and call print
+ *
+ * returns 1 on success
+ * returns 0 on failures
+ */
+unsigned int ic_transform_body_print(struct ic_transform_body *tbody, unsigned int *indent){
+  unsigned int i = 0;
+  unsigned int len = 0;
+  struct ic_transform_ir_stmt *tstmt = 0;
+  unsigned int fake_indent = 0;
+
+  if( ! tbody ){
+    puts("ic_transform_body_print: tbody was null");
+    return 0;
+  }
+
+  if( ! indent ){
+    puts("ic_transform_body_print: indent was null");
+    return 0;
+  }
+
+  len = ic_transform_body_length(tbody);
+
+  for( i=0; i<len; ++i ){
+    tstmt = ic_transform_body_get(tbody, i);
+    if( ! tstmt ){
+      puts("ic_transform_body_print: call to ic_transform_body_get failed");
+      return 0;
+    }
+
+    /* always indent at same level */
+    fake_indent = *indent;
+    if( ! ic_transform_ir_stmt_print(tstmt, &fake_indent) ){
+      puts("ic_transform_body_print: call to ic_transform_stmt_print failed");
+      return 0;
+    }
+  }
+
+  return 1;
+}
+
+
 /* append tstmt to tbody
  *
  * returns 1 on success
@@ -100,7 +142,6 @@ unsigned int ic_transform_body_append(struct ic_transform_body *tbody, struct ic
 
   return 1;
 }
-
 
 /* get length of this tbody
  *

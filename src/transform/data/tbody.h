@@ -34,6 +34,13 @@ unsigned int ic_transform_body_init(struct ic_transform_body *tbody, struct ic_t
  */
 unsigned int ic_transform_body_destroy(struct ic_transform_body *tbody, unsigned int free_tbody);
 
+/* iterate through each tir_stmt within tbody and call print
+ *
+ * returns 1 on success
+ * returns 0 on failures
+ */
+unsigned int ic_transform_body_print(struct ic_transform_body *tbody, unsigned int *indent);
+
 /* append tstmt to tbody
  *
  * returns 1 on success

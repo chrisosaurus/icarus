@@ -1,6 +1,7 @@
 TODO:
 -----
 
+* complete tir print implementations
 * FIXME 2 space vs 4 space indent - c files are mixed - add presubmit test
 * automate running of milestone/*.ic and compare output to milestone/*.exp - these can serve as tests - need 'template' so we know which we expected to pass and fail
 * uncommented `plus` alias for `concat` in stdlib/core.ic

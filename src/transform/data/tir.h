@@ -51,6 +51,13 @@ unsigned int ic_transform_ir_let_literal_init(struct ic_transform_ir_let_literal
  */
 unsigned int ic_transform_ir_let_literal_destroy(struct ic_transform_ir_let_literal *let, unsigned int free_let);
 
+/* print let_literal
+ *
+ * returns 1 on success
+ * return 0 on failure
+ */
+unsigned int ic_transform_ir_let_literal_print(struct ic_transform_ir_let_literal *let, unsigned int *indent);
+
 
 struct ic_transform_ir_let_expr {
   struct ic_symbol *name;
@@ -87,10 +94,17 @@ unsigned int ic_transform_ir_let_expr_init(struct ic_transform_ir_let_expr *let)
  */
 unsigned int ic_transform_ir_let_expr_destroy(struct ic_transform_ir_let_expr *let, unsigned int free_let);
 
+/* print let_expr
+ *
+ * returns 1 on success
+ * return 0 on failure
+ */
+unsigned int ic_transform_ir_let_expr_print(struct ic_transform_ir_let_expr *let, unsigned int *indent);
+
 
 enum ic_transform_ir_let_tag {
   ic_transform_ir_let_type_literal,
-  ic_transform_ir_let_type_fcall
+  ic_transform_ir_let_type_expr
 };
 
 
@@ -130,6 +144,13 @@ unsigned int ic_transform_ir_let_init(struct ic_transform_ir_let *let, enum ic_t
  * returns 0 on failure
  */
 unsigned int ic_transform_ir_let_destroy(struct ic_transform_ir_let *let, unsigned int free_let);
+
+/* print let
+ *
+ * returns 1 on success
+ * return 0 on failure
+ */
+unsigned int ic_transform_ir_let_print(struct ic_transform_ir_let *let, unsigned int *indent);
 
 /* get pointer to internal let_literal
  *
@@ -180,6 +201,12 @@ unsigned int ic_transform_ir_assign_init(struct ic_transform_ir_assign *assign);
  */
 unsigned int ic_transform_ir_assign_destroy(struct ic_transform_ir_assign *assign, unsigned int free_assign);
 
+/* print assign
+ *
+ * returns 1 on success
+ * return 0 on failure
+ */
+unsigned int ic_transform_ir_assign_print(struct ic_transform_ir_assign *assign, unsigned int *indent);
 
 
 struct ic_transform_ir_expr {
@@ -215,6 +242,12 @@ unsigned int ic_transform_ir_expr_init(struct ic_transform_ir_expr *expr);
  */
 unsigned int ic_transform_ir_expr_destroy(struct ic_transform_ir_expr *expr, unsigned int free_expr);
 
+/* print expr
+ *
+ * returns 1 on success
+ * return 0 on failure
+ */
+unsigned int ic_transform_ir_expr_print(struct ic_transform_ir_expr *expr, unsigned int *indent);
 
 
 struct ic_transform_ir_ret {
@@ -250,6 +283,12 @@ unsigned int ic_transform_ir_ret_init(struct ic_transform_ir_ret *ret);
  */
 unsigned int ic_transform_ir_ret_destroy(struct ic_transform_ir_ret *ret, unsigned int free_ret);
 
+/* print ret
+ *
+ * returns 1 on success
+ * return 0 on failure
+ */
+unsigned int ic_transform_ir_ret_print(struct ic_transform_ir_ret *ret, unsigned int *indent);
 
 
 struct ic_transform_ir_fcall {
@@ -287,6 +326,12 @@ unsigned int ic_transform_ir_fcall_init(struct ic_transform_ir_fcall *fcall);
  */
 unsigned int ic_transform_ir_fcall_destroy(struct ic_transform_ir_fcall *fcall, unsigned int free_fcall);
 
+/* print fcall
+ *
+ * returns 1 on success
+ * return 0 on failure
+ */
+unsigned int ic_transform_ir_fcall_print(struct ic_transform_ir_fcall *fcall, unsigned int *indent);
 
 
 enum ic_transform_ir_stmt_tag {
@@ -332,6 +377,13 @@ unsigned int ic_transform_ir_stmt_init(struct ic_transform_ir_stmt *stmt, enum i
  * returns 0 on failure
  */
 unsigned int ic_transform_ir_stmt_destroy(struct ic_transform_ir_stmt *stmt, unsigned int free_stmt);
+
+/* print stmt
+ *
+ * returns 1 on success
+ * return 0 on failure
+ */
+unsigned int ic_transform_ir_stmt_print(struct ic_transform_ir_stmt *stmt, unsigned int *indent);
 
 /* get pointer to internal expr
  *
