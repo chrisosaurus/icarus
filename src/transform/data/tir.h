@@ -19,7 +19,7 @@
 struct ic_transform_ir_let_literal {
     struct ic_symbol *name;
     struct ic_type *type;
-    struct ic_literal *literal;
+    struct ic_expr_constant *literal;
 };
 
 /* allocate and initialise a new let_literal

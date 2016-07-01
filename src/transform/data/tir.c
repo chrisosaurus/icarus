@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../../parse/parse.h"
 #include "tir.h"
 
 /* allocate and initialise a new let_literal
@@ -75,6 +76,7 @@ unsigned int ic_transform_ir_let_literal_destroy(struct ic_transform_ir_let_lite
  * return 0 on failure
  */
 unsigned int ic_transform_ir_let_literal_print(struct ic_transform_ir_let_literal *let, unsigned int *indent) {
+    unsigned int fake_indent = 0;
     if (!let) {
         puts("ic_transform_ir_let_literal_print: let was null");
         return 0;
@@ -85,8 +87,31 @@ unsigned int ic_transform_ir_let_literal_print(struct ic_transform_ir_let_litera
         return 0;
     }
 
-    /* FIXME TODO implement */
-    puts("ic_transform_ir_let_literal_print: UNIMPLEMENTED");
+    if (!let->name || !let->type || !let->literal) {
+        puts("ic_transform_ir_let_literal_print: this let is not ready for printing - has null fields");
+        return 0;
+    }
+
+    ic_parse_print_indent(*indent);
+
+    fputs("let ", stdout);
+
+    /* identifier name */
+    ic_symbol_print(let->name);
+
+    fputs("::", stdout);
+
+    /* type */
+    ic_type_print(let->type);
+
+    fputs(" = ", stdout);
+
+    /* literal */
+    ic_expr_constant_print(let->literal, &fake_indent);
+
+    /* trailing \n */
+    puts("");
+
     return 0;
 }
 
