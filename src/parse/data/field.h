@@ -1,8 +1,8 @@
 #ifndef ICARUS_FIELD_H
 #define ICARUS_FIELD_H
 
-#include "../../data/symbol.h"
 #include "../../data/pvector.h"
+#include "../../data/symbol.h"
 #include "type_ref.h"
 
 /* a field is a combination of a symbol, a type, and a permission
@@ -30,7 +30,7 @@ struct ic_field {
  * returns new ic_field * on success
  * returns 0 on failure
  */
-struct ic_field * ic_field_new(char *name_src, unsigned int name_len, char *type_src, unsigned int type_len, unsigned int permissions);
+struct ic_field *ic_field_new(char *name_src, unsigned int name_len, char *type_src, unsigned int type_len, unsigned int permissions);
 
 /* initialise an existing field
  * takes 2 tokens as char * and len pairs

@@ -15,7 +15,7 @@ struct ic_pvector {
     /* note that we store an array of void*
      * so we must be careful what we actually store here
      */
-    void ** contents;
+    void **contents;
 };
 
 /* allocate a new vector of capacity cap
@@ -23,7 +23,7 @@ struct ic_pvector {
  * returns pvector on success
  * returns 0 on failure
  */
-struct ic_pvector * ic_pvector_new(unsigned int cap);
+struct ic_pvector *ic_pvector_new(unsigned int cap);
 
 /* initialise existing pvector to specified cap
  *
@@ -69,7 +69,7 @@ unsigned int ic_pvector_destroy(struct ic_pvector *vec, unsigned int free_vec, u
  * returns item on success
  * returns 0 on failure
  */
-void * ic_pvector_get(struct ic_pvector *arr, unsigned int pos);
+void *ic_pvector_get(struct ic_pvector *arr, unsigned int pos);
 
 /* append a new item to the end of pvector
  * this will grow pvector if needed

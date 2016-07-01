@@ -31,4 +31,3 @@ unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type 
 unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func *fdecl);
 
 #endif
-

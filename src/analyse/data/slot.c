@@ -1,5 +1,5 @@
+#include <stdio.h>  /* puts */
 #include <stdlib.h> /* calloc */
-#include <stdio.h> /* puts */
 
 #include "slot.h"
 
@@ -11,16 +11,16 @@
  * returns 1 on success
  * returns 0 on failure
  */
-struct ic_slot * ic_slot_new(struct ic_symbol *name, struct ic_type *type, unsigned int permissions, bool reference){
+struct ic_slot *ic_slot_new(struct ic_symbol *name, struct ic_type *type, unsigned int permissions, bool reference) {
     struct ic_slot *slot = 0;
 
     slot = calloc(1, sizeof(struct ic_slot));
-    if( ! slot ){
+    if (!slot) {
         puts("ic_slot_new: call to calloc failed");
         return 0;
     }
 
-    if( ! ic_slot_init(slot, name, type, permissions, reference) ){
+    if (!ic_slot_init(slot, name, type, permissions, reference)) {
         puts("ic_slot_new: call to ic_slot_init failed");
         return 0;
     }
@@ -33,18 +33,18 @@ struct ic_slot * ic_slot_new(struct ic_symbol *name, struct ic_type *type, unsig
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct ic_type *type, unsigned int permissions, bool reference){
-    if( ! slot ){
+unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct ic_type *type, unsigned int permissions, bool reference) {
+    if (!slot) {
         puts("ic_slot_init: slot was null");
         return 0;
     }
 
-    if( ! name ){
+    if (!name) {
         puts("ic_slot_init: name was null");
         return 0;
     }
 
-    if( ! type ){
+    if (!type) {
         puts("ic_slot_init: type was null");
         return 0;
     }
@@ -65,8 +65,8 @@ unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct i
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_slot_destroy(struct ic_slot *slot, unsigned int free_slot){
-    if( ! slot ){
+unsigned int ic_slot_destroy(struct ic_slot *slot, unsigned int free_slot) {
+    if (!slot) {
         puts("ic_slot_destroy: slot was null");
         return 0;
     }
@@ -74,10 +74,9 @@ unsigned int ic_slot_destroy(struct ic_slot *slot, unsigned int free_slot){
     slot->name = 0;
     slot->type = 0;
 
-    if( free_slot ){
+    if (free_slot) {
         free(slot);
     }
 
     return 1;
 }
-

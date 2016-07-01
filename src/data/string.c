@@ -1,4 +1,4 @@
-#include <stdio.h> /* puts, fprintf */
+#include <stdio.h>  /* puts, fprintf */
 #include <stdlib.h> /* calloc */
 #include <string.h> /* strncpy */
 
@@ -15,14 +15,14 @@
  * returns new string on success
  * returns 0 on failure
  */
-struct ic_string * ic_string_new(char *source, unsigned int len){
+struct ic_string *ic_string_new(char *source, unsigned int len) {
     struct ic_string *str = calloc(1, sizeof(struct ic_string));
-    if( ! str ){
+    if (!str) {
         puts("ic_string_new: call to calloc failed");
         return 0;
     }
 
-    if( ! ic_string_init(str, source, len) ){
+    if (!ic_string_init(str, source, len)) {
         puts("ic_string_new: error in call to ic_string_init");
         free(str);
         return 0;
@@ -38,7 +38,7 @@ struct ic_string * ic_string_new(char *source, unsigned int len){
  * returns new string on success
  * returns 0 on failure
  */
-struct ic_string * ic_string_new_empty(void){
+struct ic_string *ic_string_new_empty(void) {
     return ic_string_new("", 0);
 }
 
@@ -46,8 +46,8 @@ struct ic_string * ic_string_new_empty(void){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_string_init(struct ic_string *str, char *source, unsigned int len){
-    if( ! str ){
+unsigned int ic_string_init(struct ic_string *str, char *source, unsigned int len) {
+    if (!str) {
         puts("ic_string_init: pass in string was null");
         return 0;
     }
@@ -55,12 +55,12 @@ unsigned int ic_string_init(struct ic_string *str, char *source, unsigned int le
     /* our passed in len does not include the null terminator
      * but carray must take this into account
      */
-    if( ! ic_carray_init( &(str->backing), (len + 1) ) ){
+    if (!ic_carray_init(&(str->backing), (len + 1))) {
         puts("ic_string_init: call to ic_carray_init failed");
         return 0;
     }
 
-    if( ! str->backing.contents ){
+    if (!str->backing.contents) {
         puts("ic_string_init: results of ic_carray_init were suspicious");
         return 0;
     }
@@ -69,7 +69,7 @@ unsigned int ic_string_init(struct ic_string *str, char *source, unsigned int le
     strncpy(str->backing.contents, source, len);
 
     /* insert null terminator */
-    str->backing.contents[len+1] = '\0';
+    str->backing.contents[len + 1] = '\0';
 
     /* set the number of used chars
      * NB: this does not include the null terminator
@@ -77,14 +77,13 @@ unsigned int ic_string_init(struct ic_string *str, char *source, unsigned int le
     str->used = len;
 
     return 1;
-
 }
 
 /* initialise an existing symbol to empty
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_string_init_empty(struct ic_string *string){
+unsigned int ic_string_init_empty(struct ic_string *string) {
     return ic_string_init(string, "", 0);
 }
 
@@ -98,8 +97,8 @@ unsigned int ic_string_init_empty(struct ic_string *string){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_string_destroy(struct ic_string *str, unsigned int free_str){
-    if( ! str ){
+unsigned int ic_string_destroy(struct ic_string *str, unsigned int free_str) {
+    if (!str) {
         puts("ic_string_destroy: passed in string was null");
         return 0;
     }
@@ -108,13 +107,13 @@ unsigned int ic_string_destroy(struct ic_string *str, unsigned int free_str){
      * note we do not set free_carray as
      * it is an element on us
      */
-    if( ! ic_carray_destroy( &(str->backing), 0 ) ){
+    if (!ic_carray_destroy(&(str->backing), 0)) {
         puts("ic_string_destroy: call to ic_carray_destroy failed");
         return 0;
     }
 
     /* free string if asked */
-    if( free_str ){
+    if (free_str) {
         free(str);
     }
 
@@ -127,8 +126,8 @@ unsigned int ic_string_destroy(struct ic_string *str, unsigned int free_str){
  * returns a char * on success
  * returns 0 on failure
  */
-char * ic_string_contents(struct ic_string *string){
-    if( ! string ){
+char *ic_string_contents(struct ic_string *string) {
+    if (!string) {
         puts("ic_string_contents: null string passed in");
         return 0;
     }
@@ -142,8 +141,8 @@ char * ic_string_contents(struct ic_string *string){
  * returns numbers of characters in string on success
  * returns -1 on failure
  */
-int ic_string_length(struct ic_string *string){
-    if( ! string ){
+int ic_string_length(struct ic_string *string) {
+    if (!string) {
         puts("ic_string_contents: null string passed in");
         return -1;
     }
@@ -164,8 +163,8 @@ int ic_string_length(struct ic_string *string){
  * returns character on success
  * returns 0 on failure
  */
-char ic_string_get(struct ic_string *string, unsigned int offset){
-    if( ! string ){
+char ic_string_get(struct ic_string *string, unsigned int offset) {
+    if (!string) {
         puts("ic_string_get: null string passed in");
         return 0;
     }
@@ -174,8 +173,8 @@ char ic_string_get(struct ic_string *string, unsigned int offset){
      * here we allow for equality as we allow the user
      * to fetch the null terminator
      */
-    if( offset > string->used ){
-        printf("ic_string_get: offset '%d' out of range '%d'\n", offset, string->used );
+    if (offset > string->used) {
+        printf("ic_string_get: offset '%d' out of range '%d'\n", offset, string->used);
         return 0;
     }
 
@@ -194,15 +193,15 @@ char ic_string_get(struct ic_string *string, unsigned int offset){
  * returns 1 on success
  * returns 0 on failure
  */
-char ic_string_set(struct ic_string *string, unsigned int pos, char val){
-    if( ! string ){
+char ic_string_set(struct ic_string *string, unsigned int pos, char val) {
+    if (!string) {
         puts("ic_string_set: null string passed in");
         return 0;
     }
 
     /* check we are within range
      * we do NOT allow the null terminator to be fiddled with through this */
-    if( pos >= string->used ){
+    if (pos >= string->used) {
         puts("ic_string_set: requested pos was out of range");
         return 0;
     }
@@ -210,18 +209,17 @@ char ic_string_set(struct ic_string *string, unsigned int pos, char val){
     /* we do also not allow val to be the null terminator
      * as this would screw with out string constraint
      */
-    if( val == '\0' ){
+    if (val == '\0') {
         puts("ic_string_set: provided val was null terminator");
         return 0;
     }
 
-    if( ! ic_carray_set(&(string->backing), pos, val) ){
+    if (!ic_carray_set(&(string->backing), pos, val)) {
         puts("ic_string_set: call to ic_carray_set failed");
         return 0;
     }
 
     return 1;
-
 }
 
 /* append the contents of `from` to `to`
@@ -230,15 +228,15 @@ char ic_string_set(struct ic_string *string, unsigned int pos, char val){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_string_append(struct ic_string *to, struct ic_string *from){
+unsigned int ic_string_append(struct ic_string *to, struct ic_string *from) {
     unsigned int len = 0;
     unsigned int from_len = 0;
 
-    if( ! to ){
+    if (!to) {
         puts("ic_string_append: to string was null");
         return 0;
     }
-    if( ! from ){
+    if (!from) {
         puts("ic_string_append: from string was null");
         return 0;
     }
@@ -252,7 +250,7 @@ unsigned int ic_string_append(struct ic_string *to, struct ic_string *from){
     len += from_len;
 
     /* make sure our carray is large enough */
-    if( ! ic_carray_ensure(&(to->backing), len) ){
+    if (!ic_carray_ensure(&(to->backing), len)) {
         puts("ic_string_append: call to ic_carray_ensure failed");
         return 0;
     }
@@ -261,10 +259,10 @@ unsigned int ic_string_append(struct ic_string *to, struct ic_string *from){
     to->used = (len - 1);
 
     /* concat the strings together */
-    strncat( ic_string_contents(to), ic_string_contents(from), from_len );
+    strncat(ic_string_contents(to), ic_string_contents(from), from_len);
 
     /* ensure string */
-    if( ! ic_carray_set( &(to->backing), to->used, '\0') ){
+    if (!ic_carray_set(&(to->backing), to->used, '\0')) {
         puts("ic_string_append: call to ic_carray_set failed");
         return 0;
     }
@@ -279,15 +277,15 @@ unsigned int ic_string_append(struct ic_string *to, struct ic_string *from){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_string_append_symbol(struct ic_string *to, struct ic_symbol *from){
+unsigned int ic_string_append_symbol(struct ic_string *to, struct ic_symbol *from) {
     unsigned int len = 0;
     unsigned int from_len = 0;
 
-    if( ! to ){
+    if (!to) {
         puts("ic_string_append_symbol: to string was null");
         return 0;
     }
-    if( ! from ){
+    if (!from) {
         puts("ic_string_append_symbol: from symbol was null");
         return 0;
     }
@@ -301,7 +299,7 @@ unsigned int ic_string_append_symbol(struct ic_string *to, struct ic_symbol *fro
     len += from_len;
 
     /* make sure our carray is large enough */
-    if( ! ic_carray_ensure(&(to->backing), len) ){
+    if (!ic_carray_ensure(&(to->backing), len)) {
         puts("ic_string_append_symbol: call to ic_carray_ensure failed");
         return 0;
     }
@@ -310,17 +308,16 @@ unsigned int ic_string_append_symbol(struct ic_string *to, struct ic_symbol *fro
     to->used = (len - 1);
 
     /* concat the strings together */
-    strncat( ic_string_contents(to), ic_symbol_contents(from), from_len );
+    strncat(ic_string_contents(to), ic_symbol_contents(from), from_len);
 
     /* ensure string */
-    if( ! ic_carray_set( &(to->backing), to->used, '\0') ){
+    if (!ic_carray_set(&(to->backing), to->used, '\0')) {
         puts("ic_string_append_symbol: call to ic_carray_set failed");
         return 0;
     }
 
     /* success */
     return 1;
-
 }
 
 /* append the contents of `from` to `to`
@@ -334,14 +331,14 @@ unsigned int ic_string_append_symbol(struct ic_string *to, struct ic_symbol *fro
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_string_append_char(struct ic_string *to, char *from, unsigned int from_len){
+unsigned int ic_string_append_char(struct ic_string *to, char *from, unsigned int from_len) {
     unsigned int len = 0;
 
-    if( ! to ){
+    if (!to) {
         puts("ic_string_append_char: to string was null");
         return 0;
     }
-    if( ! from ){
+    if (!from) {
         puts("ic_string_append_char: from string was null");
         return 0;
     }
@@ -352,7 +349,7 @@ unsigned int ic_string_append_char(struct ic_string *to, char *from, unsigned in
     len += from_len;
 
     /* make sure our carray is large enough */
-    if( ! ic_carray_ensure(&(to->backing), len) ){
+    if (!ic_carray_ensure(&(to->backing), len)) {
         puts("ic_string_append_char: call to ic_carray_ensure failed");
         return 0;
     }
@@ -361,17 +358,16 @@ unsigned int ic_string_append_char(struct ic_string *to, char *from, unsigned in
     to->used = (len - 1);
 
     /* concat the strings together */
-    strncat( ic_string_contents(to), from, from_len );
+    strncat(ic_string_contents(to), from, from_len);
 
     /* ensure string */
-    if( ! ic_carray_set( &(to->backing), to->used, '\0') ){
+    if (!ic_carray_set(&(to->backing), to->used, '\0')) {
         puts("ic_string_append_char: call to ic_carray_set failed");
         return 0;
     }
 
     /* success */
     return 1;
-
 }
 
 /* append the contents of `from` to `to`
@@ -385,26 +381,26 @@ unsigned int ic_string_append_char(struct ic_string *to, char *from, unsigned in
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_string_append_cstr(struct ic_string *to, char *from){
+unsigned int ic_string_append_cstr(struct ic_string *to, char *from) {
     unsigned int len = 0;
 
-    if( ! to ){
+    if (!to) {
         puts("ic_string_append_cstr: to was null");
         return 0;
     }
 
-    if( ! from ){
+    if (!from) {
         puts("ic_string_append_cstr: from was null");
         return 0;
     }
 
     len = strlen(from);
-    if( ! len ){
+    if (!len) {
         puts("ic_string_append_cstr: call to strlen failed or 0 length string given");
         return 0;
     }
 
-    if( ! ic_string_append_char(to, from, len) ){
+    if (!ic_string_append_char(to, from, len)) {
         puts("ic_string_append_cstr: call to ic_string_append_char failed");
         return 0;
     }
@@ -413,21 +409,19 @@ unsigned int ic_string_append_cstr(struct ic_string *to, char *from){
 }
 
 /* print this string */
-void ic_string_print(struct ic_string *string){
+void ic_string_print(struct ic_string *string) {
     char *con;
 
-    if( ! string ){
+    if (!string) {
         puts("ic_string_print: string was null");
         return;
     }
 
     con = ic_string_contents(string);
-    if( ! con ){
+    if (!con) {
         puts("ic_string_print: call to ic_string_contents failed");
         return;
     }
 
     printf("%s", con);
 }
-
-

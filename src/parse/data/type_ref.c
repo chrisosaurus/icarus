@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "type_ref.h"
 #include "decl.h"
+#include "type_ref.h"
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
@@ -12,16 +12,16 @@
  * returns new type on success
  * returns 0 on failure
  */
-struct ic_type_ref * ic_type_ref_new(void){
+struct ic_type_ref *ic_type_ref_new(void) {
     struct ic_type_ref *type = 0;
 
     type = calloc(1, sizeof(struct ic_type_ref));
-    if( ! type ){
+    if (!type) {
         puts("ic_type_new: call to calloc failed");
         return 0;
     }
 
-    if( ! ic_type_ref_init(type) ){
+    if (!ic_type_ref_init(type)) {
         puts("ic_type_new: call to ic_type_init failed");
         return 0;
     }
@@ -35,8 +35,8 @@ struct ic_type_ref * ic_type_ref_new(void){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_type_ref_init(struct ic_type_ref *type){
-    if( ! type ){
+unsigned int ic_type_ref_init(struct ic_type_ref *type) {
+    if (!type) {
         puts("ic_type_init: type was null");
         return 0;
     }
@@ -55,23 +55,23 @@ unsigned int ic_type_ref_init(struct ic_type_ref *type){
  * returns new type on success
  * returns 0 on failure
  */
-struct ic_type_ref * ic_type_ref_symbol_new(char *type_str, unsigned int type_len){
+struct ic_type_ref *ic_type_ref_symbol_new(char *type_str, unsigned int type_len) {
     struct ic_type_ref *type = 0;
 
-    if( ! type_str ){
+    if (!type_str) {
         puts("ic_type_symbol_new: type_str was null");
         return 0;
     }
 
     /* construct base type */
     type = ic_type_ref_new();
-    if( ! type ){
+    if (!type) {
         puts("ic_type_symbol_new: call to ic_type_new failed");
         return 0;
     }
 
     /* set to symbol */
-    if( ! ic_type_ref_set_symbol(type, type_str, type_len) ){
+    if (!ic_type_ref_set_symbol(type, type_str, type_len)) {
         puts("ic_type_symbol_new: call to ic_type_set_symbol failed");
         /* destroy type
          * free type as allocated with new
@@ -88,24 +88,24 @@ struct ic_type_ref * ic_type_ref_symbol_new(char *type_str, unsigned int type_le
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_type_ref_symbol_init(struct ic_type_ref *type, char *type_str, unsigned int type_len){
-    if( ! type){
+unsigned int ic_type_ref_symbol_init(struct ic_type_ref *type, char *type_str, unsigned int type_len) {
+    if (!type) {
         puts("ic_type_symbol_init: type_str was null");
         return 0;
     }
-    if( ! type_str ){
+    if (!type_str) {
         puts("ic_type_symbol_init: type_str was null");
         return 0;
     }
 
     /* init base type */
-    if( ! ic_type_ref_init(type) ){
+    if (!ic_type_ref_init(type)) {
         puts("ic_type_symbol_init: call to ic_type_init failed");
         return 0;
     }
 
     /* set to symbol */
-    if( ! ic_type_ref_set_symbol(type, type_str, type_len) ){
+    if (!ic_type_ref_set_symbol(type, type_str, type_len)) {
         puts("ic_type_symbol_init: call to ic_type_set_symbol failed");
         return 0;
     }
@@ -120,21 +120,21 @@ unsigned int ic_type_ref_symbol_init(struct ic_type_ref *type, char *type_str, u
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_type){
-    if( ! type ){
+unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_type) {
+    if (!type) {
         puts("ic_type_destroy: type was null");
         return 0;
     }
 
     /* cleanup depends on type_type */
-    switch( type->tag ){
+    switch (type->tag) {
         case ic_type_ref_unknown:
             /* nothing to do */
             break;
 
         case ic_type_ref_symbol:
             /* clean up symbol, do not free as member */
-            if( ! ic_symbol_destroy( &(type->u.sym), 0 ) ){
+            if (!ic_symbol_destroy(&(type->u.sym), 0)) {
                 puts("ic_type_destroy: call to ic_symbol_destroy failed");
                 return 0;
             }
@@ -147,7 +147,7 @@ unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_typ
     }
 
     /* if asked nicely */
-    if( free_type ){
+    if (free_type) {
         free(type);
     }
 
@@ -160,13 +160,13 @@ unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_typ
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, unsigned int type_len){
-    if( ! type ) {
+unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, unsigned int type_len) {
+    if (!type) {
         puts("ic_type_set_symbol: type was null");
         return 0;
     }
 
-    if( ! type_str ) {
+    if (!type_str) {
         puts("ic_type_set_symbol: type_str was null");
         return 0;
     }
@@ -174,7 +174,7 @@ unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, un
     /* only allowed to set to symbol if current set
      * to unknown
      */
-    switch( type->tag ){
+    switch (type->tag) {
         case ic_type_ref_unknown:
             /* nothing to do */
             break;
@@ -195,7 +195,7 @@ unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, un
     type->tag = ic_type_ref_symbol;
 
     /* set our symbol from the provider char * and len */
-    if( ! ic_symbol_init(&(type->u.sym), type_str, type_len) ){
+    if (!ic_symbol_init(&(type->u.sym), type_str, type_len)) {
         puts("ic_type_set_symbol: call to ic_symbol_init failed");
         return 0;
     }
@@ -210,13 +210,13 @@ unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, un
  *
  * returns 0 on failure
  */
-struct ic_symbol * ic_type_ref_get_symbol(struct ic_type_ref *type){
-    if( ! type ){
+struct ic_symbol *ic_type_ref_get_symbol(struct ic_type_ref *type) {
+    if (!type) {
         puts("ic_type_get_symbol: type was null");
         return 0;
     }
 
-    switch( type->tag ){
+    switch (type->tag) {
         case ic_type_ref_unknown:
             /* error, nothing to return */
             puts("ic_type_get_symbol: type was of type unknown");
@@ -238,19 +238,19 @@ struct ic_symbol * ic_type_ref_get_symbol(struct ic_type_ref *type){
 }
 
 /* print this this type */
-void ic_type_ref_print(struct ic_type_ref *type){
-    if( ! type ){
+void ic_type_ref_print(struct ic_type_ref *type) {
+    if (!type) {
         puts("ic_type_print: type was null");
         return;
     }
-    switch( type->tag ){
+    switch (type->tag) {
         case ic_type_ref_unknown:
             /* nothing to do */
             break;
 
         case ic_type_ref_symbol:
             /* if we are of type symbol then just print that symbol */
-            ic_symbol_print( &(type->u.sym) );
+            ic_symbol_print(&(type->u.sym));
             break;
 
         default:
@@ -261,4 +261,3 @@ void ic_type_ref_print(struct ic_type_ref *type){
 
     return;
 }
-

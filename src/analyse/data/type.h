@@ -28,7 +28,7 @@ struct ic_type {
  * returns new type on success
  * returns 0 on failure
  */
-struct ic_type * ic_type_new_tdecl(struct ic_decl_type *decl);
+struct ic_type *ic_type_new_tdecl(struct ic_decl_type *decl);
 
 /* init an existing type representing a tdecl
  *
@@ -53,14 +53,14 @@ unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type);
  * returns * on success
  * returns 0 on failure
  */
-struct ic_decl_type * ic_type_get_decl(struct ic_type *type);
+struct ic_decl_type *ic_type_get_decl(struct ic_type *type);
 
 /* return a symbol representing the name of this type
  *
  * returns ic_symbol * on sucess
  * returns 0 on failure
  */
-struct ic_symbol * ic_type_name(struct ic_type *type);
+struct ic_symbol *ic_type_name(struct ic_type *type);
 
 /* mark as builtin
  *

@@ -1,8 +1,8 @@
 #ifndef ICARU_BODY_H
 #define ICARU_BODY_H
 
-#include "../../data/pvector.h"
 #include "../../analyse/data/scope.h"
+#include "../../data/pvector.h"
 
 /* predeclare ic_stmt to allow use of *ic_stmt
  * as type
@@ -27,7 +27,7 @@ struct ic_body {
  * returns pointer to new ic_body on success
  * returns 0 on failure
  */
-struct ic_body * ic_body_new(void);
+struct ic_body *ic_body_new(void);
 
 /* initialise an existing ic_body
  *
@@ -50,14 +50,14 @@ unsigned int ic_body_destroy(struct ic_body *body, unsigned int free_body);
 /* returns item at offset i on success
  * returns 0 on failure
  */
-struct ic_stmt * ic_body_get(struct ic_body *body, unsigned int i);
+struct ic_stmt *ic_body_get(struct ic_body *body, unsigned int i);
 
 /* append data to body
  *
  * returns index of item on success
  * returns -1 on failure
  */
-int ic_body_append(struct ic_body *body, struct ic_stmt * data);
+int ic_body_append(struct ic_body *body, struct ic_stmt *data);
 
 /* returns length on success
  * returns 0 on failure

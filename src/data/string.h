@@ -29,7 +29,7 @@ struct ic_string {
  * returns new string on success
  * returns 0 on failure
  */
-struct ic_string * ic_string_new(char *source, unsigned int len);
+struct ic_string *ic_string_new(char *source, unsigned int len);
 
 /* build a new empty string
  *
@@ -38,7 +38,7 @@ struct ic_string * ic_string_new(char *source, unsigned int len);
  * returns new string on success
  * returns 0 on failure
  */
-struct ic_string * ic_string_new_empty(void);
+struct ic_string *ic_string_new_empty(void);
 
 /* initialise an existing symbol from a char* and a length
  *
@@ -72,7 +72,7 @@ unsigned int ic_string_destroy(struct ic_string *str, unsigned int free_str);
  * returns a char * on success
  * returns 0 on failure
  */
-char * ic_string_contents(struct ic_string *string);
+char *ic_string_contents(struct ic_string *string);
 
 /* get the strlen of the used slots in the string
  * this length does NOT include the null terminator

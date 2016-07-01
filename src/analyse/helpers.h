@@ -32,7 +32,6 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
  */
 unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_decl_func *fdecl);
 
-
 /* takes an expr and returns the inferred type
  *
  * FIXME need a way of signalling error and passing errors
@@ -50,7 +49,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
  * returns ic_type * on success
  * returns 0 on failure
  */
-struct ic_type * ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr);
+struct ic_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr);
 
 /* check a statement for validity
  *
@@ -82,7 +81,6 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
  * returns char * on success
  * returns 0 on failure
  */
-char * ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall);
+char *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall);
 
 #endif /* ifndef ICARUS_ANALYSE_HELPERS_H */
-

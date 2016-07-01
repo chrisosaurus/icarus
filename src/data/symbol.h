@@ -17,7 +17,7 @@ struct ic_symbol {
  * returns new symbol on success
  * returns 0 on failure
  */
-struct ic_symbol * ic_symbol_new(char *source, unsigned int len);
+struct ic_symbol *ic_symbol_new(char *source, unsigned int len);
 
 /* initialise an existing symbol from a char* and a length
  *
@@ -44,7 +44,7 @@ unsigned int ic_symbol_destroy(struct ic_symbol *sym, unsigned int free_sym);
  * returns a char * on success
  * returns 0 on failure
  */
-char * ic_symbol_contents(struct ic_symbol *symbol);
+char *ic_symbol_contents(struct ic_symbol *symbol);
 
 /* get the strlen of the stores symbol
  * this length does NOT include the null terminator
@@ -64,6 +64,4 @@ char ic_symbol_get(struct ic_symbol *symbol, unsigned int offset);
 /* print this symbol */
 void ic_symbol_print(struct ic_symbol *symbol);
 
-
 #endif
-

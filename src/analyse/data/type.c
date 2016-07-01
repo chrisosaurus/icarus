@@ -1,5 +1,5 @@
+#include <stdio.h>  /* puts */
 #include <stdlib.h> /* calloc */
-#include <stdio.h> /* puts */
 
 #include "type.h"
 
@@ -8,21 +8,21 @@
  * returns new type on success
  * returns 0 on failure
  */
-struct ic_type * ic_type_new_tdecl(struct ic_decl_type *decl){
+struct ic_type *ic_type_new_tdecl(struct ic_decl_type *decl) {
     struct ic_type *type = 0;
 
-    if( ! decl ){
+    if (!decl) {
         puts("ic_type_new_tdecl: decl was null");
         return 0;
     }
 
     type = calloc(1, sizeof(struct ic_type));
-    if( ! type ){
+    if (!type) {
         puts("ic_type_new_tdecl: call to calloc failed");
         return 0;
     }
 
-    if( ! ic_type_init_tdecl(type, decl) ){
+    if (!ic_type_init_tdecl(type, decl)) {
         puts("ic_type_new_tdecl: call to ic_type_init_tdecl failed");
         return 0;
     }
@@ -35,13 +35,13 @@ struct ic_type * ic_type_new_tdecl(struct ic_decl_type *decl){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_type_init_tdecl(struct ic_type *type, struct ic_decl_type *decl){
-    if( ! type ){
+unsigned int ic_type_init_tdecl(struct ic_type *type, struct ic_decl_type *decl) {
+    if (!type) {
         puts("ic_type_init_tdecl: type was null");
         return 0;
     }
 
-    if( ! decl ){
+    if (!decl) {
         puts("ic_type_init_tdecl: decl was null");
         return 0;
     }
@@ -61,13 +61,13 @@ unsigned int ic_type_init_tdecl(struct ic_type *type, struct ic_decl_type *decl)
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type){
-    if( ! type ){
+unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type) {
+    if (!type) {
         puts("ic_type_destroy: type was null");
         return 0;
     }
 
-    switch( type->tag ){
+    switch (type->tag) {
         case ic_type_user:
         case ic_type_builtin:
             type->u.decl = 0;
@@ -77,7 +77,7 @@ unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type){
             break;
     }
 
-    if( free_type ){
+    if (free_type) {
         free(type);
     }
 
@@ -89,18 +89,18 @@ unsigned int ic_type_destroy(struct ic_type *type, unsigned int free_type){
  * returns * on success
  * returns 0 on failure
  */
-struct ic_decl_type * ic_type_get_decl(struct ic_type *type){
-        if( ! type ){
+struct ic_decl_type *ic_type_get_decl(struct ic_type *type) {
+    if (!type) {
         puts("ic_type_get_decl: type was null");
         return 0;
-        }
+    }
 
-        if( type->tag != ic_type_user ){
-            puts("ic_type_get_decl: type was not a user declared type");
-            return 0;
-        }
+    if (type->tag != ic_type_user) {
+        puts("ic_type_get_decl: type was not a user declared type");
+        return 0;
+    }
 
-        return type->u.decl;
+    return type->u.decl;
 }
 
 /* return a symbol representing the name of this type
@@ -108,13 +108,13 @@ struct ic_decl_type * ic_type_get_decl(struct ic_type *type){
  * returns ic_symbol * on sucess
  * returns 0 on failure
  */
-struct ic_symbol * ic_type_name(struct ic_type *type){
-    if( ! type ){
+struct ic_symbol *ic_type_name(struct ic_type *type) {
+    if (!type) {
         puts("ic_type_name: type was null");
         return 0;
     }
 
-    switch( type->tag ){
+    switch (type->tag) {
 
         case ic_type_user:
         case ic_type_builtin:
@@ -127,7 +127,6 @@ struct ic_symbol * ic_type_name(struct ic_type *type){
             break;
     }
 
-
     puts("ic_type_name: impossible case");
     return 0;
 }
@@ -137,8 +136,8 @@ struct ic_symbol * ic_type_name(struct ic_type *type){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_type_mark_builtin(struct ic_type *type){
-    if( ! type ){
+unsigned int ic_type_mark_builtin(struct ic_type *type) {
+    if (!type) {
         puts("ic_type_mark_builtin: type was null");
         return 0;
     }
@@ -152,13 +151,13 @@ unsigned int ic_type_mark_builtin(struct ic_type *type){
  * returns 1 if builtin
  * returns 0 otherwise
  */
-unsigned int ic_type_isbuiltin(struct ic_type *type){
-    if( ! type ){
+unsigned int ic_type_isbuiltin(struct ic_type *type) {
+    if (!type) {
         puts("ic_type_isbuiltin: type was null");
         return 0;
     }
 
-    if( type->tag == ic_type_builtin ){
+    if (type->tag == ic_type_builtin) {
         return 1;
     }
 
@@ -170,13 +169,13 @@ unsigned int ic_type_isbuiltin(struct ic_type *type){
  * returns 1 if provided type is Void
  * returns 0 if provided type is NOT void
  */
-unsigned int ic_type_isvoid(struct ic_type *type){
-    if( ! type ){
+unsigned int ic_type_isvoid(struct ic_type *type) {
+    if (!type) {
         puts("ic_type_isvoid: type was null");
         return 0;
     }
 
-    if( type->tag != ic_type_user ){
+    if (type->tag != ic_type_user) {
         return 0;
     }
 
@@ -188,13 +187,13 @@ unsigned int ic_type_isvoid(struct ic_type *type){
  * returns 1 if provided type is Void
  * returns 0 if provided type is NOT void
  */
-unsigned int ic_type_isbool(struct ic_type *type){
-    if( ! type ){
+unsigned int ic_type_isbool(struct ic_type *type) {
+    if (!type) {
         puts("ic_type_isbool: type was null");
         return 0;
     }
 
-    if( type->tag != ic_type_user ){
+    if (type->tag != ic_type_user) {
         puts("isbool: not user");
         return 0;
     }
@@ -202,19 +201,18 @@ unsigned int ic_type_isbool(struct ic_type *type){
     return type->u.decl->isbool;
 }
 
-
 /* are these 2 types the equal
  *
  * returns 1 if they are equal
  * returns 0 of they are NOT equal
  */
-unsigned int ic_type_equal(struct ic_type *a, struct ic_type *b){
-    if( ! a ){
+unsigned int ic_type_equal(struct ic_type *a, struct ic_type *b) {
+    if (!a) {
         puts("ic_type_equal: type a was null");
         return 0;
     }
 
-    if( ! b ){
+    if (!b) {
         puts("ic_type_equal: type b was null");
         return 0;
     }
@@ -223,10 +221,10 @@ unsigned int ic_type_equal(struct ic_type *a, struct ic_type *b){
 }
 
 /* print debug information about a type */
-void ic_type_print(struct ic_type *type){
+void ic_type_print(struct ic_type *type) {
     unsigned int fake_indent = 0;
 
-    if( ! type ){
+    if (!type) {
         puts("ic_type_print_debug: type was null");
         return;
     }
@@ -234,4 +232,3 @@ void ic_type_print(struct ic_type *type){
     fputs("found: ", stdout);
     ic_decl_type_print_header(type->u.decl, &fake_indent);
 }
-

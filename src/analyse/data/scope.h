@@ -1,8 +1,8 @@
 #ifndef ICARUS_CLUDGE_H
 #define ICARUS_CLUDGE_H
 
-#include "../../data/symbol.h"
 #include "../../data/dict.h"
+#include "../../data/symbol.h"
 
 struct ic_slot;
 
@@ -30,7 +30,7 @@ struct ic_scope {
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_scope * ic_scope_new(struct ic_scope *parent);
+struct ic_scope *ic_scope_new(struct ic_scope *parent);
 
 /* init an existing scope
  *
@@ -66,7 +66,7 @@ unsigned int ic_scope_insert(struct ic_scope *scope, char *key, struct ic_slot *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_slot * ic_scope_get(struct ic_scope *scope, char *key);
+struct ic_slot *ic_scope_get(struct ic_scope *scope, char *key);
 
 /* retrieve contents by symbol
  *
@@ -76,7 +76,7 @@ struct ic_slot * ic_scope_get(struct ic_scope *scope, char *key);
  * returns * on success
  * returns 0 on failure
  */
-struct ic_slot * ic_scope_get_from_symbol(struct ic_scope *scope, struct ic_symbol *key);
+struct ic_slot *ic_scope_get_from_symbol(struct ic_scope *scope, struct ic_symbol *key);
 
 /* retrieve contents by string
  *
@@ -86,7 +86,7 @@ struct ic_slot * ic_scope_get_from_symbol(struct ic_scope *scope, struct ic_symb
  * returns * on success
  * returns 0 on failure
  */
-struct ic_slot * ic_scope_get_nofollow(struct ic_scope *scope, char *key);
+struct ic_slot *ic_scope_get_nofollow(struct ic_scope *scope, char *key);
 
 /* add a new type decl to this scope
  * this will insert into dict_tname and also

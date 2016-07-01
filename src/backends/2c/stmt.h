@@ -3,8 +3,8 @@
 
 #include <stdio.h> /* FILE */
 
-#include "../../parse/data/stmt.h"
 #include "../../analyse/data/kludge.h"
+#include "../../parse/data/stmt.h"
 
 /* compile a given statement to specified file
  *
@@ -16,4 +16,3 @@
 unsigned int ic_b2c_compile_stmt(struct ic_kludge *input_kludge, struct ic_stmt *stmt, FILE *out);
 
 #endif
-

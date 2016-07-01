@@ -1,13 +1,12 @@
 #ifndef ICARUS_EXPRESSION_H
 #define ICARUS_EXPRESSION_H
 
-#include "field.h"
-#include "../../data/symbol.h"
 #include "../../data/pvector.h"
+#include "../../data/symbol.h"
 #include "../../lex/data/token.h"
+#include "field.h"
 
 struct ic_expr;
-
 
 /* an application of a function
  */
@@ -38,7 +37,7 @@ struct ic_expr_func_call {
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr_func_call * ic_expr_func_call_new(struct ic_expr *func_name);
+struct ic_expr_func_call *ic_expr_func_call_new(struct ic_expr *func_name);
 
 /* intialise an existing func call
  *
@@ -70,7 +69,7 @@ unsigned int ic_expr_func_call_set_fdecl(struct ic_expr_func_call *fcall, struct
  * returns * on success
  * returns 0 on failure
  */
-struct ic_decl_func * ic_expr_func_call_get_fdecl(struct ic_expr_func_call *fcall);
+struct ic_decl_func *ic_expr_func_call_get_fdecl(struct ic_expr_func_call *fcall);
 
 /* add a new argument to this function call
  *
@@ -84,7 +83,7 @@ int ic_expr_func_call_add_arg(struct ic_expr_func_call *fcall, struct ic_expr *e
  * returns field at offset on success
  * returns 0 on failure
  */
-struct ic_expr * ic_expr_func_call_get_arg(struct ic_expr_func_call *fcall, unsigned int i);
+struct ic_expr *ic_expr_func_call_get_arg(struct ic_expr_func_call *fcall, unsigned int i);
 
 /* returns number of arguments on success
  * returns 0 on failure
@@ -96,15 +95,14 @@ unsigned int ic_expr_func_call_length(struct ic_expr_func_call *fcall);
  * returns * on success
  * returns 0 on failure
  */
-struct ic_symbol * ic_expr_func_call_get_symbol(struct ic_expr_func_call *fcall);
+struct ic_symbol *ic_expr_func_call_get_symbol(struct ic_expr_func_call *fcall);
 
 /* print this func call */
 void ic_expr_func_call_print(struct ic_expr_func_call *fcall, unsigned int *indent_level);
 
-
 /* a use of an identifier (variable)
  */
-struct ic_expr_identifier{
+struct ic_expr_identifier {
     struct ic_symbol identifier;
     unsigned int permissions;
 };
@@ -114,13 +112,13 @@ struct ic_expr_identifier{
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr_identifier * ic_expr_identifier_new(char *id, unsigned int id_len, unsigned int permissions);
+struct ic_expr_identifier *ic_expr_identifier_new(char *id, unsigned int id_len, unsigned int permissions);
 
 /* initialise an existing identifier
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, char *id, unsigned int id_len, unsigned int permissions);
+unsigned int ic_expr_identifier_init(struct ic_expr_identifier *identifier, char *id, unsigned int id_len, unsigned int permissions);
 
 /* destroy identifier
  *
@@ -129,7 +127,7 @@ unsigned int ic_expr_identifier_init(struct ic_expr_identifier * identifier, cha
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_expr_identifier_destroy(struct ic_expr_identifier * identifier, unsigned int free_id);
+unsigned int ic_expr_identifier_destroy(struct ic_expr_identifier *identifier, unsigned int free_id);
 
 /* get idenifier symbol
  *
@@ -139,8 +137,7 @@ unsigned int ic_expr_identifier_destroy(struct ic_expr_identifier * identifier, 
 struct ic_symbol *ic_expr_identifier_symbol(struct ic_expr_identifier *identifier);
 
 /* print this identifier */
-void ic_expr_identifier_print(struct ic_expr_identifier * identifier, unsigned int *indent_level);
-
+void ic_expr_identifier_print(struct ic_expr_identifier *identifier, unsigned int *indent_level);
 
 enum ic_expr_constant_tag {
     ic_expr_constant_type_integer,
@@ -164,7 +161,7 @@ struct ic_expr_constant {
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr_constant * ic_expr_constant_new(enum ic_expr_constant_tag tag);
+struct ic_expr_constant *ic_expr_constant_new(enum ic_expr_constant_tag tag);
 
 /* initialise an existing constant
  *
@@ -188,7 +185,7 @@ unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, unsigne
  * returns pointers on success
  * returns 0 on failure
  */
-long int * ic_expr_constant_get_integer(struct ic_expr_constant *constant);
+long int *ic_expr_constant_get_integer(struct ic_expr_constant *constant);
 
 /* return pointer to ic_string within,
  * will only succeed if constant is of the correct type
@@ -196,7 +193,7 @@ long int * ic_expr_constant_get_integer(struct ic_expr_constant *constant);
  * returns pointers on success
  * returns 0 on failure
  */
-struct ic_string * ic_expr_constant_get_string(struct ic_expr_constant *constant);
+struct ic_string *ic_expr_constant_get_string(struct ic_expr_constant *constant);
 
 /* return pointer boolean within,
  * will only succeed if constant is of the correct type
@@ -204,11 +201,10 @@ struct ic_string * ic_expr_constant_get_string(struct ic_expr_constant *constant
  * returns pointers on success
  * returns 0 on failure
  */
-unsigned int * ic_expr_constant_get_boolean(struct ic_expr_constant *constant);
+unsigned int *ic_expr_constant_get_boolean(struct ic_expr_constant *constant);
 
 /* print this constant */
 void ic_expr_constant_print(struct ic_expr_constant *constant, unsigned int *indent_level);
-
 
 enum ic_expr_operator_tag {
     ic_expr_operator_type_unary,
@@ -229,8 +225,8 @@ struct ic_expr_operator {
     /* unary operators will only have a first
      * binary operators will have a first and second
      */
-    struct ic_expr * first;
-    struct ic_expr * second;
+    struct ic_expr *first;
+    struct ic_expr *second;
 
     /* the function call that this operator maps to
      * this is populated at analyse level
@@ -243,7 +239,7 @@ struct ic_expr_operator {
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr_operator * ic_expr_operator_new_unary(struct ic_expr *first, struct ic_token *token);
+struct ic_expr_operator *ic_expr_operator_new_unary(struct ic_expr *first, struct ic_token *token);
 
 /* initialise an existing unary op
  *
@@ -257,7 +253,7 @@ unsigned int ic_expr_operator_init_unary(struct ic_expr_operator *operator, stru
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr_operator * ic_expr_operator_new_binary(struct ic_expr *first, struct ic_expr *second, struct ic_token *token);
+struct ic_expr_operator *ic_expr_operator_new_binary(struct ic_expr *first, struct ic_expr *second, struct ic_token *token);
 
 /* initialise an existing binary op
  *
@@ -285,7 +281,6 @@ unsigned int ic_expr_operator_destroy(struct ic_expr_operator *op, unsigned int 
 /* print this operator */
 void ic_expr_operator_print(struct ic_expr_operator *op, unsigned int *indent_level);
 
-
 struct ic_expr_faccess {
     /* a field access is made up of a left expr and a right identifier
      * a.b
@@ -296,8 +291,8 @@ struct ic_expr_faccess {
      * which would be 3 field access
      *   { { {foo(), a}, b}, c}
      */
-    struct ic_expr * left;
-    struct ic_expr * right;
+    struct ic_expr *left;
+    struct ic_expr *right;
 };
 
 /* allocate and initialise a field access
@@ -305,7 +300,7 @@ struct ic_expr_faccess {
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr_faccess * ic_expr_faccess_new(struct ic_expr *left, struct ic_expr *right);
+struct ic_expr_faccess *ic_expr_faccess_new(struct ic_expr *left, struct ic_expr *right);
 
 /* initialise an existing field access
  *
@@ -326,7 +321,6 @@ unsigned int ic_expr_faccess_destroy(struct ic_expr_faccess *faccess, unsigned i
 /* print this fieldaccess */
 void ic_expr_faccess_print(struct ic_expr_faccess *faccess, unsigned int *indent_level);
 
-
 enum ic_expr_tag {
     ic_expr_type_func_call,
     ic_expr_type_identifier,
@@ -335,7 +329,7 @@ enum ic_expr_tag {
     ic_expr_type_field_access
 };
 
-struct ic_expr{
+struct ic_expr {
     enum ic_expr_tag tag;
     union {
         struct ic_expr_func_call fcall;
@@ -352,7 +346,7 @@ struct ic_expr{
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr * ic_expr_new(enum ic_expr_tag tag);
+struct ic_expr *ic_expr_new(enum ic_expr_tag tag);
 
 /* initialise an existing ic_expr
  * will not initialise union members
@@ -372,7 +366,7 @@ int ic_expr_init(struct ic_expr *expr, enum ic_expr_tag tag);
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr * ic_expr_clone(struct ic_expr *expr);
+struct ic_expr *ic_expr_clone(struct ic_expr *expr);
 
 /* takes an existing expr and converts it to a binary operator
  *
@@ -409,7 +403,7 @@ unsigned int ic_expr_destroy(struct ic_expr *expr, unsigned int free_expr);
  * returns pointers on success
  * returns 0 on failure
  */
-struct ic_expr_func_call * ic_expr_get_fcall(struct ic_expr *expr);
+struct ic_expr_func_call *ic_expr_get_fcall(struct ic_expr *expr);
 
 /* return pointer to identifier within,
  * will only succeed if expr is of the correct type
@@ -417,7 +411,7 @@ struct ic_expr_func_call * ic_expr_get_fcall(struct ic_expr *expr);
  * returns pointers on success
  * returns 0 on failure
  */
-struct ic_expr_identifier * ic_expr_get_identifier(struct ic_expr *expr);
+struct ic_expr_identifier *ic_expr_get_identifier(struct ic_expr *expr);
 
 /* return pointer to constant within,
  * will only succeed if expr is of the correct type
@@ -425,7 +419,7 @@ struct ic_expr_identifier * ic_expr_get_identifier(struct ic_expr *expr);
  * returns pointers on success
  * returns 0 on failure
  */
-struct ic_expr_constant * ic_expr_get_constant(struct ic_expr *expr);
+struct ic_expr_constant *ic_expr_get_constant(struct ic_expr *expr);
 
 /* return pointer to operator within,
  * will only succeed if expr is of the correct type
@@ -433,7 +427,7 @@ struct ic_expr_constant * ic_expr_get_constant(struct ic_expr *expr);
  * returns pointers on success
  * returns 0 on failure
  */
-struct ic_expr_operator * ic_expr_get_operator(struct ic_expr *expr);
+struct ic_expr_operator *ic_expr_get_operator(struct ic_expr *expr);
 
 /* return pointer to fieldaccess within,
  * will only succeed if expr is of the correct type
@@ -441,10 +435,9 @@ struct ic_expr_operator * ic_expr_get_operator(struct ic_expr *expr);
  * returns pointers on success
  * returns 0 on failure
  */
-struct ic_expr_faccess * ic_expr_get_faccess(struct ic_expr *expr);
+struct ic_expr_faccess *ic_expr_get_faccess(struct ic_expr *expr);
 
 /* print this expr */
 void ic_expr_print(struct ic_expr *expr, unsigned int *indent_level);
-
 
 #endif

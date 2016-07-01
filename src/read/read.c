@@ -1,5 +1,5 @@
+#include <stdio.h>  /* fopen, fclose, fread */
 #include <stdlib.h> /* malloc */
-#include <stdio.h> /* fopen, fclose, fread */
 
 #include "read.h"
 
@@ -7,7 +7,7 @@
  * returns this buffer on success
  * returns 0 on failure
  */
-char * ic_read_slurp(char *filename){
+char *ic_read_slurp(char *filename) {
     /* file object */
     FILE *f;
     /* size of file (from ftell) */
@@ -21,14 +21,14 @@ char * ic_read_slurp(char *filename){
 
     /* open file */
     f = fopen(filename, "r");
-    if( ! f ){
+    if (!f) {
         puts("ERROR: fopen failed in read_slurp");
         perror("read_slurp::fopen");
         return 0;
     }
 
     /* seek to end of filej */
-    if( fseek(f, 0, SEEK_END) ){
+    if (fseek(f, 0, SEEK_END)) {
         puts("ERROR: fseek SEEK_END failed in read_slurp");
         perror("read_slurp::fseek SEEK_END");
         fclose(f);
@@ -38,7 +38,7 @@ char * ic_read_slurp(char *filename){
     /* get current offset */
     fsize = ftell(f);
     ufsize = fsize;
-    if( fsize < 0 ){
+    if (fsize < 0) {
         puts("ERROR: fstell failed in read_slurp");
         perror("read_slurp::ftell");
         fclose(f);
@@ -46,15 +46,15 @@ char * ic_read_slurp(char *filename){
     }
 
     /* back to the start */
-    if( fseek(f, 0, SEEK_SET) ){
+    if (fseek(f, 0, SEEK_SET)) {
         puts("ERROR: fseek SEEK_SET failed in read_slurp");
         perror("read_slurp::fseek SEEK_SET");
         fclose(f);
         return 0;
     }
 
-    buffer = malloc( ufsize + 1 );
-    if( ! buffer ){
+    buffer = malloc(ufsize + 1);
+    if (!buffer) {
         puts("ERROR: malloc failed in read_slurp");
         fclose(f);
         return 0;
@@ -67,7 +67,7 @@ char * ic_read_slurp(char *filename){
     read = fread(buffer, 1, fsize, f);
 
     /* check read and file size both line up */
-    if( read != ufsize ){
+    if (read != ufsize) {
         printf("ERROR: read_slurp::fread read '%zd' when we expected '%lu'\n", read, ufsize);
         fclose(f);
         free(buffer);
@@ -75,7 +75,7 @@ char * ic_read_slurp(char *filename){
     }
 
     /* close file */
-    if( fclose(f) ){
+    if (fclose(f)) {
         puts("Error: read_flup::fcose failed");
         free(buffer);
         return 0;
@@ -83,4 +83,3 @@ char * ic_read_slurp(char *filename){
 
     return buffer;
 }
-

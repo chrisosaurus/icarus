@@ -51,13 +51,12 @@ struct ic_slot {
     bool reference;
 };
 
-
 /* allocate and init a new slot
  *
  * returns 1 on success
  * returns 0 on failure
  */
-struct ic_slot * ic_slot_new(struct ic_symbol *name, struct ic_type *type, unsigned int permissions, bool reference);
+struct ic_slot *ic_slot_new(struct ic_symbol *name, struct ic_type *type, unsigned int permissions, bool reference);
 
 /* init an existing slot
  *
@@ -75,6 +74,5 @@ unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct i
  * returns 0 on failure
  */
 unsigned int ic_slot_destroy(struct ic_slot *slot, unsigned int free_slot);
-
 
 #endif

@@ -16,7 +16,7 @@ struct ic_carray {
  * returns array on success
  * returns 0 on failure
  */
-struct ic_carray * ic_carray_new(unsigned int len);
+struct ic_carray *ic_carray_new(unsigned int len);
 
 /* initialise an existing array to the specified len
  *

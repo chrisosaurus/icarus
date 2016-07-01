@@ -1,6 +1,6 @@
-#include <stdio.h> /* puts, printf */
-#include <string.h> /* strchr, strncmp */
+#include <stdio.h>  /* puts, printf */
 #include <stdlib.h> /* free */
+#include <string.h> /* strchr, strncmp */
 
 #include "../lex/lexer.h"
 #include "data/ast.h"
@@ -22,23 +22,23 @@
  */
 static struct ic_parse_table_entry {
     enum ic_token_id id;
-    struct ic_decl * (*func)(struct ic_token_list *token_list);
-} ic_parse_table [] = {
+    struct ic_decl *(*func)(struct ic_token_list *token_list);
+} ic_parse_table[] = {
     /* token          function    */
-    {  IC_BUILTIN,    ic_parse_decl_builtin  },
-    {  IC_FUNC,       ic_parse_decl_func     },
-    {  IC_TYPE,       ic_parse_decl_type     },
-    {  IC_ENUM,       ic_parse_decl_enum     },
-    {  IC_UNION,      ic_parse_decl_union    },
+    {IC_BUILTIN, ic_parse_decl_builtin},
+    {IC_FUNC, ic_parse_decl_func},
+    {IC_TYPE, ic_parse_decl_type},
+    {IC_ENUM, ic_parse_decl_enum},
+    {IC_UNION, ic_parse_decl_union},
 };
 
-struct ic_ast * ic_parse(struct ic_token_list *token_list){
+struct ic_ast *ic_parse(struct ic_token_list *token_list) {
 
     /* offset into ic_parse_table */
     unsigned int pt_offset = 0;
 
     /* function to dispatch to */
-    struct ic_decl * (*func)(struct ic_token_list *token_list) = 0;
+    struct ic_decl *(*func)(struct ic_token_list * token_list) = 0;
 
     /* return from call to func */
     struct ic_decl *ret = 0;
@@ -51,7 +51,7 @@ struct ic_ast * ic_parse(struct ic_token_list *token_list){
 
     /* allocate and initialise our ast */
     ast = ic_ast_new();
-    if( ! ast ){
+    if (!ast) {
         puts("ic_parse: call to ic_ast_new failed");
         return 0;
     }
@@ -64,7 +64,7 @@ struct ic_ast * ic_parse(struct ic_token_list *token_list){
      */
 
     /* step through tokens until we run out */
-    while( (token = ic_token_list_peek_important(token_list)) ){
+    while ((token = ic_token_list_peek_important(token_list))) {
         /* we clear func each time so at loop exit we can
          * check if func is set, and if so we know we made a match
          * if func is still 0 at end of loop we know we did not
@@ -72,17 +72,17 @@ struct ic_ast * ic_parse(struct ic_token_list *token_list){
          */
         func = 0;
 
-        for( pt_offset=0; pt_offset < LENGTH(ic_parse_table); ++pt_offset ){
-            if( token->id == ic_parse_table[pt_offset].id ){
+        for (pt_offset = 0; pt_offset < LENGTH(ic_parse_table); ++pt_offset) {
+            if (token->id == ic_parse_table[pt_offset].id) {
 
                 func = ic_parse_table[pt_offset].func;
-                if( ! func ){
-                    fputs( "ic_parse: Error matched with:", stdout);
+                if (!func) {
+                    fputs("ic_parse: Error matched with:", stdout);
                     ic_token_id_print_debug(token->id);
                     puts("  but parse table function was null, bailing");
 
                     /* free ast and all contents */
-                    if( ! ic_ast_destroy(ast, 1) ){
+                    if (!ic_ast_destroy(ast, 1)) {
                         puts("ic_parse: call to ic_ast_destroy failed in error case tidy up");
                     }
                     return 0;
@@ -90,23 +90,23 @@ struct ic_ast * ic_parse(struct ic_token_list *token_list){
 
                 /* call found function and store result to save */
                 ret = func(token_list);
-                if( ! ret ){
+                if (!ret) {
                     /* presume parsing failed */
                     puts("ic_parse: error when calling parsing function");
 
                     /* free ast and all contents */
-                    if( ! ic_ast_destroy(ast, 1) ){
+                    if (!ic_ast_destroy(ast, 1)) {
                         puts("ic_parse: call to ic_ast_destroy failed in error case tidy up");
                     }
                     return 0;
                 }
 
                 /* store ret in our ast */
-                if( -1 == ic_ast_append(ast, ret) ){
+                if (-1 == ic_ast_append(ast, ret)) {
                     puts("ic_parse: call to ic_ast_append failed");
 
                     /* free ast and all contents */
-                    if( ! ic_ast_destroy(ast, 1) ){
+                    if (!ic_ast_destroy(ast, 1)) {
                         puts("ic_parse: call to ic_ast_destroy failed in error case tidy up");
                     }
                     return 0;
@@ -123,7 +123,7 @@ struct ic_ast * ic_parse(struct ic_token_list *token_list){
         }
 
         /* if func is set then it means we had a match */
-        if( func ){
+        if (func) {
             continue;
         }
 
@@ -133,7 +133,7 @@ struct ic_ast * ic_parse(struct ic_token_list *token_list){
         puts(" found, bailing");
 
         /* free ast and all contents */
-        if( ! ic_ast_destroy(ast, 1) ){
+        if (!ic_ast_destroy(ast, 1)) {
             puts("ic_parse: call to ic_ast_destroy failed in error case tidy up");
         }
         return 0;
@@ -149,34 +149,34 @@ struct ic_ast * ic_parse(struct ic_token_list *token_list){
 /* print levels worth of indent levels
  * an indent level is defined in parse.c
  */
-void ic_parse_print_indent(unsigned int levels){
+void ic_parse_print_indent(unsigned int levels) {
     /* print an empty string with width
      * levels * INDENT_PER_LEVELS
      */
     printf("%*s", levels * INDENT_PER_LEVEL, "");
 }
 
-unsigned int ic_parse_permissions(struct ic_token_list *token_list){
+unsigned int ic_parse_permissions(struct ic_token_list *token_list) {
     unsigned int permissions = 0;
     struct ic_token *token = 0;
 
-    if( ! token_list ){
+    if (!token_list) {
         puts("ic_parse_permissions: token_list was null");
         return 0;
     }
 
     /* check for permissions */
     token = ic_token_list_peek_important(token_list);
-    if( ! token ){
+    if (!token) {
         puts("ic_parse_stmt_let: failed to peek at permissions token");
         return 0;
     }
 
     /* if we find it */
-    if( ic_token_ispermission(token) ){
+    if (ic_token_ispermission(token)) {
         /* consume it */
         token = ic_token_list_next_important(token_list);
-        if( ! token ){
+        if (!token) {
             puts("ic_parse_stmt_let: failed to get permissions token");
             return 0;
         }
@@ -191,5 +191,3 @@ unsigned int ic_parse_permissions(struct ic_token_list *token_list){
 
     return permissions;
 }
-
-

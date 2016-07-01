@@ -36,7 +36,7 @@ struct ic_type_ref {
         /* no value for unknown */
         struct ic_symbol sym; /* value for ic_type_symbol */
         /* FIXME need a structure for an error */
-    } u ;
+    } u;
 };
 
 /* allocate and intialise a new type
@@ -45,7 +45,7 @@ struct ic_type_ref {
  * returns new type on success
  * returns 0 on failure
  */
-struct ic_type_ref * ic_type_ref_new(void);
+struct ic_type_ref *ic_type_ref_new(void);
 
 /* intialise a type
  * this will set type.type to unknown
@@ -61,7 +61,7 @@ unsigned int ic_type_ref_init(struct ic_type_ref *type);
  * returns new type on success
  * returns 0 on failure
  */
-struct ic_type_ref * ic_type_ref_symbol_new(char *type_str, unsigned int type_len);
+struct ic_type_ref *ic_type_ref_symbol_new(char *type_str, unsigned int type_len);
 
 /* intialise a type as a  symbol
  *
@@ -94,7 +94,7 @@ unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, un
  *
  * returns 0 on failure
  */
-struct ic_symbol * ic_type_ref_get_symbol(struct ic_type_ref *type);
+struct ic_symbol *ic_type_ref_get_symbol(struct ic_type_ref *type);
 
 /* print this this type */
 void ic_type_ref_print(struct ic_type_ref *type);

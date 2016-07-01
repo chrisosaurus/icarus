@@ -18,10 +18,10 @@
  * read means you may read
  */
 
-#define IC_IMMUT  0x08 /* 1000 */
-#define IC_STORE  0x04 /* 0100 */
-#define IC_WRITE  0x02 /* 0010 */
-#define IC_READ   0x01 /* 0001 */
+#define IC_IMMUT 0x08 /* 1000 */
+#define IC_STORE 0x04 /* 0100 */
+#define IC_WRITE 0x02 /* 0010 */
+#define IC_READ 0x01  /* 0001 */
 
 /* value is a permission but NOT a token
  * so doesn't exist in token.h
@@ -35,21 +35,21 @@
  * Note that we have a few 'spare'
  */
 unsigned int ic_parse_perm_map[] = {
-    /*               IMMUT      READ      WRITE      STORE    */
-    [IC_VALUE]     = IC_IMMUT | IC_READ | 0        | IC_STORE  ,
-    [IC_DOLLAR]    = 0        | IC_READ | 0        | 0         ,
-    [IC_PERCENT]   = 0        | IC_READ | 0        | IC_STORE  ,
-    [IC_AMPERSAND] = 0        | IC_READ | IC_WRITE | 0         ,
-    [IC_AT]        = 0        | IC_READ | IC_WRITE | IC_STORE  ,
-    [IC_ASTERISK]  = 0        | 0       | 0        | 0         ,
-    [IC_CARET]     = 0        | 0       | 0        | 0         ,
-    [IC_PLUS]      = 0        | 0       | 0        | 0         ,
-    [IC_MINUS]     = 0        | 0       | 0        | 0         ,
+        /*               IMMUT      READ      WRITE      STORE    */
+        [IC_VALUE] = IC_IMMUT | IC_READ | 0 | IC_STORE,
+        [IC_DOLLAR] = 0 | IC_READ | 0 | 0,
+        [IC_PERCENT] = 0 | IC_READ | 0 | IC_STORE,
+        [IC_AMPERSAND] = 0 | IC_READ | IC_WRITE | 0,
+        [IC_AT] = 0 | IC_READ | IC_WRITE | IC_STORE,
+        [IC_ASTERISK] = 0 | 0 | 0 | 0,
+        [IC_CARET] = 0 | 0 | 0 | 0,
+        [IC_PLUS] = 0 | 0 | 0 | 0,
+        [IC_MINUS] = 0 | 0 | 0 | 0,
 };
 
 /* get permissions for this token_id */
-unsigned int ic_parse_perm(enum ic_token_id id){
-    if( id > IC_VALUE ){
+unsigned int ic_parse_perm(enum ic_token_id id) {
+    if (id > IC_VALUE) {
         puts("ic_parse_perm: invalid id");
         return 0;
     }
@@ -58,7 +58,7 @@ unsigned int ic_parse_perm(enum ic_token_id id){
 }
 
 /* get default permissions */
-unsigned int ic_parse_perm_default(void){
+unsigned int ic_parse_perm_default(void) {
     return ic_parse_perm(IC_PERM_DEFAULT);
 }
 
@@ -70,18 +70,18 @@ unsigned int ic_parse_perm_default(void){
  * returns 1 if this is a valid downgrade
  * returns 0 otherwise
  */
-unsigned int ic_parse_perm_is_valid_downgrade(unsigned int from, unsigned int to){
+unsigned int ic_parse_perm_is_valid_downgrade(unsigned int from, unsigned int to) {
     /* for a downgrade to be valid every bit set in `to` must also
      * be set in `from`
      */
-    if( (from & to) == to ){
+    if ((from & to) == to) {
         return 1;
     }
     return 0;
 }
 
 /* return a string representation of this permission */
-char * ic_parse_perm_str(unsigned int permissions){
+char *ic_parse_perm_str(unsigned int permissions) {
     /* current index */
     unsigned int i = 0;
     /* length */
@@ -97,21 +97,21 @@ char * ic_parse_perm_str(unsigned int permissions){
      * we instead search first for our token
      * by using the reverse of our map
      */
-    for( i=0; i<len; ++i ){
-        if( permissions == ic_parse_perm_map[i] ){
+    for (i = 0; i < len; ++i) {
+        if (permissions == ic_parse_perm_map[i]) {
             id = i;
             break;
         }
     }
 
-    if( i == len ){
+    if (i == len) {
         /* failed to find */
         printf("ic_parse_perm_str: failed to find token_id for permissions '%d'\n", permissions);
         return 0;
     }
 
     /* otherwise we found a token id */
-    switch( id ){
+    switch (id) {
         case IC_VALUE:
             str = "";
             break;
@@ -154,7 +154,7 @@ char * ic_parse_perm_str(unsigned int permissions){
             break;
     }
 
-    if( ! str ){
+    if (!str) {
         printf("ic_parse_perm_str: failed to match to expected token_id for '%d'\n", id);
         return 0;
     }
@@ -167,7 +167,7 @@ char * ic_parse_perm_str(unsigned int permissions){
  * returns 1 if is default
  * returns 0 otherwise
  */
-unsigned int ic_parse_perm_is_default(unsigned int permissions){
+unsigned int ic_parse_perm_is_default(unsigned int permissions) {
     return permissions == ic_parse_perm_map[IC_PERM_DEFAULT];
 }
 
@@ -176,7 +176,7 @@ unsigned int ic_parse_perm_is_default(unsigned int permissions){
  * returns 1 if can read
  * returns 0 otherwise
  */
-unsigned int ic_parse_perm_has_read(unsigned int permissions){
+unsigned int ic_parse_perm_has_read(unsigned int permissions) {
     return 0 != (permissions & IC_READ);
 }
 
@@ -185,7 +185,7 @@ unsigned int ic_parse_perm_has_read(unsigned int permissions){
  * returns 1 if can write
  * returns 0 otherwise
  */
-unsigned int ic_parse_perm_has_write(unsigned int permissions){
+unsigned int ic_parse_perm_has_write(unsigned int permissions) {
     return 0 != (permissions & IC_WRITE);
 }
 
@@ -194,7 +194,7 @@ unsigned int ic_parse_perm_has_write(unsigned int permissions){
  * returns 1 if can store
  * returns 0 otherwise
  */
-unsigned int ic_parse_perm_has_store(unsigned int permissions){
+unsigned int ic_parse_perm_has_store(unsigned int permissions) {
     return 0 != (permissions & IC_STORE);
 }
 
@@ -203,7 +203,6 @@ unsigned int ic_parse_perm_has_store(unsigned int permissions){
  * returns 1 if can unique
  * returns 0 otherwise
  */
-unsigned int ic_parse_perm_has_immut(unsigned int permissions){
+unsigned int ic_parse_perm_has_immut(unsigned int permissions) {
     return 0 != (permissions & IC_IMMUT);
 }
-

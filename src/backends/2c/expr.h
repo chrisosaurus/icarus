@@ -3,8 +3,8 @@
 
 #include <stdio.h> /* FILE */
 
-#include "../../parse/data/expr.h"
 #include "../../analyse/data/kludge.h"
+#include "../../parse/data/expr.h"
 
 /* compile a given expr to specified file
  *
@@ -16,4 +16,3 @@
 unsigned int ic_b2c_compile_expr(struct ic_kludge *input_kludge, struct ic_expr *expr, FILE *out);
 
 #endif
-

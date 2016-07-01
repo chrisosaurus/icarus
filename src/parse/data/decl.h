@@ -1,11 +1,11 @@
 #ifndef ICARUS_DECL_H
 #define ICARUS_DECL_H
 
+#include "../../data/dict.h"
+#include "../../data/pvector.h"
+#include "../../data/symbol.h"
 #include "body.h"
 #include "field.h"
-#include "../../data/symbol.h"
-#include "../../data/pvector.h"
-#include "../../data/dict.h"
 
 /* predeclare to allow usage of *ic_transform_body
  * within decl_func
@@ -66,7 +66,7 @@ struct ic_decl_func {
  * returns new decl_func on success
  * returns 0 on failure
  */
-struct ic_decl_func * ic_decl_func_new(char *name, unsigned int name_len);
+struct ic_decl_func *ic_decl_func_new(char *name, unsigned int name_len);
 
 /* initialise an existing decl_func
  *
@@ -151,7 +151,7 @@ void ic_decl_func_print_body(struct ic_decl_func *fdecl, unsigned int *indent_le
  * returns char* on success
  * returns 0 on failure
  */
-char * ic_decl_func_sig_call(struct ic_decl_func *fdecl);
+char *ic_decl_func_sig_call(struct ic_decl_func *fdecl);
 
 /* return a string representation of this function full signature
  *
@@ -167,7 +167,7 @@ char * ic_decl_func_sig_call(struct ic_decl_func *fdecl);
  * returns char* on success
  * returns 0 on failure
  */
-char * ic_decl_func_sig_full(struct ic_decl_func *fdecl);
+char *ic_decl_func_sig_full(struct ic_decl_func *fdecl);
 
 /* return a mangled representation of this function full signature
  *
@@ -183,7 +183,7 @@ char * ic_decl_func_sig_full(struct ic_decl_func *fdecl);
  * returns char* on success
  * returns 0 on failure
  */
-char * ic_decl_func_sig_mangled(struct ic_decl_func *fdecl);
+char *ic_decl_func_sig_mangled(struct ic_decl_func *fdecl);
 
 /* a func declaration is a symbol and then a collection of fields
  *  type Foo
@@ -228,7 +228,7 @@ struct ic_decl_type {
  * returns new ic_field * on success
  * returns 0 on failure
  */
-struct ic_decl_type * ic_decl_type_new(char *name_src, unsigned int name_len);
+struct ic_decl_type *ic_decl_type_new(char *name_src, unsigned int name_len);
 
 /* initialise an existing decl_type
  * only needs name and len
@@ -296,22 +296,21 @@ void ic_decl_type_print_body(struct ic_decl_type *tdecl, unsigned int *indent_le
  * returns char * on success
  * returns 0 on failure
  */
-char * ic_decl_type_str(struct ic_decl_type *tdecl);
+char *ic_decl_type_str(struct ic_decl_type *tdecl);
 
 /* get the type of a field by name
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_type * ic_decl_type_get_field_type(struct ic_decl_type *tdecl, char * field_name);
+struct ic_type *ic_decl_type_get_field_type(struct ic_decl_type *tdecl, char *field_name);
 
 /* add field to field_dict
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char * field_name, struct ic_type *type);
-
+unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char *field_name, struct ic_type *type);
 
 /* an op decl is only a mapping of a symbol (say '+')
  * to another (say 'plus')
@@ -326,7 +325,7 @@ struct ic_decl_op {
  * returns new ic_field * on success
  * returns 0 on failure
  */
-struct ic_decl_op * ic_decl_op_new(char *from_src, unsigned int from_len, char *to_src, unsigned int to_len);
+struct ic_decl_op *ic_decl_op_new(char *from_src, unsigned int from_len, char *to_src, unsigned int to_len);
 
 /* initialise an existing decl_op
  *
@@ -349,7 +348,6 @@ unsigned int ic_decl_op_destroy(struct ic_decl_op *op, unsigned int free_op);
 
 /* print the decl_op to stdout */
 void ic_decl_op_print(struct ic_decl_op *op, unsigned int *indent_level);
-
 
 enum ic_decl_tag {
     ic_decl_tag_func,
@@ -376,7 +374,7 @@ struct ic_decl {
  * returns new ic_decl on success
  * returns 0 on failure
  */
-struct ic_decl * ic_decl_new(enum ic_decl_tag tag);
+struct ic_decl *ic_decl_new(enum ic_decl_tag tag);
 
 /* initialise an existing ic_decl
  *
@@ -406,7 +404,7 @@ unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl);
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_decl_func * ic_decl_get_fdecl(struct ic_decl *decl);
+struct ic_decl_func *ic_decl_get_fdecl(struct ic_decl *decl);
 
 /* returns pointer to ic_decl_type element
  * this function will only success if the decl is of type decl_type
@@ -414,7 +412,7 @@ struct ic_decl_func * ic_decl_get_fdecl(struct ic_decl *decl);
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_decl_type * ic_decl_get_tdecl(struct ic_decl *decl);
+struct ic_decl_type *ic_decl_get_tdecl(struct ic_decl *decl);
 
 /* returns pointer to ic_decl_op element
 * this function will only success if the decl is of type decl_op
@@ -422,7 +420,7 @@ struct ic_decl_type * ic_decl_get_tdecl(struct ic_decl *decl);
 * returns pointer on success
 * returns 0 on failure
 */
-struct ic_decl_op * ic_decl_get_op(struct ic_decl *decl);
+struct ic_decl_op *ic_decl_get_op(struct ic_decl *decl);
 
 /* mark this decl as being a builtin
  *

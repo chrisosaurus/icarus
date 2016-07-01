@@ -20,7 +20,7 @@ struct ic_token_list {
  * returns 1 on success
  * returns 0 on failure
  */
-struct ic_token_list * ic_token_list_new(void);
+struct ic_token_list *ic_token_list_new(void);
 
 /* initialise an existing token_list
  *
@@ -51,7 +51,7 @@ unsigned int ic_token_list_append(struct ic_token_list *list, struct ic_token *t
  * returns * on success
  * returns 0 on failure
  */
-struct ic_token * ic_token_list_get(struct ic_token_list *list, unsigned int i);
+struct ic_token *ic_token_list_get(struct ic_token_list *list, unsigned int i);
 
 /* get current length
  *
@@ -66,7 +66,7 @@ unsigned int ic_token_list_length(struct ic_token_list *list);
  * returns * on success
  * returns 0 on failure
  */
-struct ic_token * ic_token_list_peek(struct ic_token_list *list);
+struct ic_token *ic_token_list_peek(struct ic_token_list *list);
 
 /* peek ahead and see if we are at the end of a line
  * note for this set we exclude all other whitespace
@@ -92,35 +92,35 @@ unsigned int ic_token_list_peek_iseol(struct ic_token_list *list);
  * returns * on success
  * returns 0 on failure
  */
-struct ic_token * ic_token_list_peek_important(struct ic_token_list *list);
+struct ic_token *ic_token_list_peek_important(struct ic_token_list *list);
 
 /* peek at next next token
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_token * ic_token_list_peek_ahead(struct ic_token_list *list);
+struct ic_token *ic_token_list_peek_ahead(struct ic_token_list *list);
 
 /* peek at next next important token
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_token * ic_token_list_peek_ahead_important(struct ic_token_list *list);
+struct ic_token *ic_token_list_peek_ahead_important(struct ic_token_list *list);
 
 /* consume next token and return
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_token * ic_token_list_next(struct ic_token_list *list);
+struct ic_token *ic_token_list_next(struct ic_token_list *list);
 
 /* consume up to and including next non-whitespace token and return
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_token * ic_token_list_next_important(struct ic_token_list *list);
+struct ic_token *ic_token_list_next_important(struct ic_token_list *list);
 
 /* peek at token, if it is of the type expected then
  * consume and return it
@@ -130,7 +130,7 @@ struct ic_token * ic_token_list_next_important(struct ic_token_list *list);
  * returns * on success
  * returns 0 on failure
  */
-struct ic_token * ic_token_list_expect(struct ic_token_list *list, enum ic_token_id id);
+struct ic_token *ic_token_list_expect(struct ic_token_list *list, enum ic_token_id id);
 
 /* peek at token, if it is of the type expected then
  * consume and return it
@@ -142,7 +142,7 @@ struct ic_token * ic_token_list_expect(struct ic_token_list *list, enum ic_token
  * returns * on success
  * returns 0 on failure
  */
-struct ic_token * ic_token_list_expect_important(struct ic_token_list *list, enum ic_token_id id);
+struct ic_token *ic_token_list_expect_important(struct ic_token_list *list, enum ic_token_id id);
 
 /* reset token counter, moving back to start
  *

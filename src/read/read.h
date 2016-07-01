@@ -5,6 +5,6 @@
  * returns this buffer on success
  * returns 0 on failure
  */
-char * ic_read_slurp(char *filename);
+char *ic_read_slurp(char *filename);
 
 #endif

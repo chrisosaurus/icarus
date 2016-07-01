@@ -1,8 +1,8 @@
 #ifndef ICARUS_AST_H
 #define ICARUS_AST_H
 
-#include "../../data/symbol.h"
 #include "../../data/pvector.h"
+#include "../../data/symbol.h"
 #include "decl.h"
 
 struct ic_ast {
@@ -14,7 +14,7 @@ struct ic_ast {
  * returns pointer to new ast on success
  * returns 0 on failure
  */
-struct ic_ast * ic_ast_new(void);
+struct ic_ast *ic_ast_new(void);
 
 /* initialise a pre-existing ast
  *
@@ -40,7 +40,7 @@ unsigned int ic_ast_destroy(struct ic_ast *ast, unsigned int free_ast);
  * returns pointer to item on success
  * returns 0 on failure
  */
-struct ic_decl * ic_ast_get(struct ic_ast *ast, unsigned int i);
+struct ic_decl *ic_ast_get(struct ic_ast *ast, unsigned int i);
 
 /* append decl to ast
  * ast will resize to make room

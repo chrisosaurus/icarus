@@ -7,7 +7,7 @@
  * this type is a wrapper around
  *  linear_set.h:struct ls_set
  */
-struct ic_set{
+struct ic_set {
     struct ls_set lss;
 };
 
@@ -16,7 +16,7 @@ struct ic_set{
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_set * ic_set_new(void);
+struct ic_set *ic_set_new(void);
 
 /* init an existing ic_set
  *

@@ -1,4 +1,4 @@
-#include <stdio.h> /* puts */
+#include <stdio.h>  /* puts */
 #include <stdlib.h> /* calloc */
 
 #include "dict.h"
@@ -10,16 +10,16 @@
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_dict * ic_dict_new(void){
+struct ic_dict *ic_dict_new(void) {
     struct ic_dict *dict = 0;
 
     dict = calloc(1, sizeof(struct ic_dict));
-    if( !dict ){
+    if (!dict) {
         puts("ic_dict_new: call to calloc failed");
         return 0;
     }
 
-    if( ! ic_dict_init(dict) ){
+    if (!ic_dict_init(dict)) {
         puts("ic_dict_new: call to ic_dict_init failed");
         free(dict);
         return 0;
@@ -33,8 +33,8 @@ struct ic_dict * ic_dict_new(void){
  * return 1 on success
  * return 0 on failure
  */
-unsigned int ic_dict_init(struct ic_dict *dict){
-    if( ! dict ){
+unsigned int ic_dict_init(struct ic_dict *dict) {
+    if (!dict) {
         puts("ic_dict_init: dict was null");
         return 0;
     }
@@ -47,8 +47,8 @@ unsigned int ic_dict_init(struct ic_dict *dict){
  * returns void *data on success
  * return 0 on failure
  */
-void * ic_dict_get(struct ic_dict *dict, char *key){
-    if( ! dict ){
+void *ic_dict_get(struct ic_dict *dict, char *key) {
+    if (!dict) {
         puts("ic_dict_get: dict was null");
         return 0;
     }
@@ -63,8 +63,8 @@ void * ic_dict_get(struct ic_dict *dict, char *key){
  * returns old data on success
  * returns 0 on failure
  */
-void * ic_dict_set(struct ic_dict *dict, char *key, void *data){
-    if( ! dict ){
+void *ic_dict_set(struct ic_dict *dict, char *key, void *data) {
+    if (!dict) {
         puts("ic_dict_set: dict was null");
         return 0;
     }
@@ -78,8 +78,8 @@ void * ic_dict_set(struct ic_dict *dict, char *key, void *data){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_dict_insert(struct ic_dict *dict, char *key, void *data){
-    if( ! dict ){
+unsigned int ic_dict_insert(struct ic_dict *dict, char *key, void *data) {
+    if (!dict) {
         puts("ic_dict_insert: dict was null");
         return 0;
     }
@@ -92,8 +92,8 @@ unsigned int ic_dict_insert(struct ic_dict *dict, char *key, void *data){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_dict_exists(struct ic_dict *dict, char *key){
-    if( ! dict ){
+unsigned int ic_dict_exists(struct ic_dict *dict, char *key) {
+    if (!dict) {
         puts("ic_dict_exists: dict was null");
         return 0;
     }
@@ -107,8 +107,8 @@ unsigned int ic_dict_exists(struct ic_dict *dict, char *key){
  * returns old data on success
  * returns 0 on failure
  */
-void * ic_dict_delete(struct ic_dict *dict, char *key){
-    if( ! dict ){
+void *ic_dict_delete(struct ic_dict *dict, char *key) {
+    if (!dict) {
         puts("ic_dict_delete: dict was null");
         return 0;
     }
@@ -125,10 +125,10 @@ void * ic_dict_delete(struct ic_dict *dict, char *key){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_dict_destroy(struct ic_dict *dict, unsigned int free_dict, unsigned int free_data){
+unsigned int ic_dict_destroy(struct ic_dict *dict, unsigned int free_dict, unsigned int free_data) {
     unsigned int ret = 0;
 
-    if( ! dict ){
+    if (!dict) {
         puts("ic_dict_destroy: dict was null");
         return 0;
     }
@@ -137,16 +137,14 @@ unsigned int ic_dict_destroy(struct ic_dict *dict, unsigned int free_dict, unsig
      * as part of ic_dict
      */
     ret = lh_destroy(&(dict->lht), 0, free_data);
-    if( ! ret ){
+    if (!ret) {
         puts("ic_dict_destroy: call to lh_destroy failed");
         return 0;
     }
 
-    if( free_dict ){
+    if (free_dict) {
         free(dict);
     }
 
     return 1;
 }
-
-

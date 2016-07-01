@@ -1,5 +1,5 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "tir.h"
 
@@ -10,21 +10,21 @@
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_transform_ir_let_literal * ic_transform_ir_let_literal_new(void){
-  struct ic_transform_ir_let_literal *let = 0;
+struct ic_transform_ir_let_literal *ic_transform_ir_let_literal_new(void) {
+    struct ic_transform_ir_let_literal *let = 0;
 
-  let = calloc(sizeof(struct ic_transform_ir_let_literal), 0);
-  if( ! let ){
-    puts("ir_transform_ir_let_literal_new: call to calloc failed");
-    return 0;
-  }
+    let = calloc(sizeof(struct ic_transform_ir_let_literal), 0);
+    if (!let) {
+        puts("ir_transform_ir_let_literal_new: call to calloc failed");
+        return 0;
+    }
 
-  if( ! ic_transform_ir_let_literal_init(let) ){
-    puts("ir_transform_ir_let_literal_new: call to ic_transform_let_literal_init failed");
-    return 0;
-  }
+    if (!ic_transform_ir_let_literal_init(let)) {
+        puts("ir_transform_ir_let_literal_new: call to ic_transform_let_literal_init failed");
+        return 0;
+    }
 
-  return let;
+    return let;
 }
 
 /* initialise an existing let_literal
@@ -34,17 +34,17 @@ struct ic_transform_ir_let_literal * ic_transform_ir_let_literal_new(void){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_let_literal_init(struct ic_transform_ir_let_literal *let){
-  if( ! let ){
-    puts("ic_transform_ir_let_literal_init: let was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_let_literal_init(struct ic_transform_ir_let_literal *let) {
+    if (!let) {
+        puts("ic_transform_ir_let_literal_init: let was null");
+        return 0;
+    }
 
-  let->name = 0;
-  let->type = 0;
-  let->literal = 0;
+    let->name = 0;
+    let->type = 0;
+    let->literal = 0;
 
-  return 1;
+    return 1;
 }
 
 /* destroy let_literal
@@ -56,17 +56,17 @@ unsigned int ic_transform_ir_let_literal_init(struct ic_transform_ir_let_literal
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_let_literal_destroy(struct ic_transform_ir_let_literal *let, unsigned int free_let){
-  if( ! let ){
-    puts("ic_transform_ir_let_let_literal_destroy: let was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_let_literal_destroy(struct ic_transform_ir_let_literal *let, unsigned int free_let) {
+    if (!let) {
+        puts("ic_transform_ir_let_let_literal_destroy: let was null");
+        return 0;
+    }
 
-  if( free_let ){
-    free(let);
-  }
+    if (free_let) {
+        free(let);
+    }
 
-  return 1;
+    return 1;
 }
 
 /* print let_literal
@@ -74,22 +74,21 @@ unsigned int ic_transform_ir_let_literal_destroy(struct ic_transform_ir_let_lite
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_let_literal_print(struct ic_transform_ir_let_literal *let, unsigned int *indent){
-  if( ! let ){
-    puts("ic_transform_ir_let_literal_print: let was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_let_literal_print(struct ic_transform_ir_let_literal *let, unsigned int *indent) {
+    if (!let) {
+        puts("ic_transform_ir_let_literal_print: let was null");
+        return 0;
+    }
 
-  if( ! indent ){
-    puts("ic_transform_ir_let_literal_print: indent was null");
-    return 0;
-  }
+    if (!indent) {
+        puts("ic_transform_ir_let_literal_print: indent was null");
+        return 0;
+    }
 
-  /* FIXME TODO implement */
-  puts("ic_transform_ir_let_literal_print: UNIMPLEMENTED");
-  return 0;
+    /* FIXME TODO implement */
+    puts("ic_transform_ir_let_literal_print: UNIMPLEMENTED");
+    return 0;
 }
-
 
 /* allocate and initialise a new let_expr
  *
@@ -98,21 +97,21 @@ unsigned int ic_transform_ir_let_literal_print(struct ic_transform_ir_let_litera
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_transform_ir_let_expr * ic_transform_ir_let_expr_new(void){
-  struct ic_transform_ir_let_expr *expr = 0;
+struct ic_transform_ir_let_expr *ic_transform_ir_let_expr_new(void) {
+    struct ic_transform_ir_let_expr *expr = 0;
 
-  expr = calloc(sizeof(struct ic_transform_ir_let_expr), 0);
-  if( ! expr ){
-    puts("ir_transform_ir_let_expr_new: call to calloc failed");
-    return 0;
-  }
+    expr = calloc(sizeof(struct ic_transform_ir_let_expr), 0);
+    if (!expr) {
+        puts("ir_transform_ir_let_expr_new: call to calloc failed");
+        return 0;
+    }
 
-  if( ! ic_transform_ir_let_expr_init(expr) ){
-    puts("ir_transform_ir_let_expr_new: call to ic_transform_let_expr_init failed");
-    return 0;
-  }
+    if (!ic_transform_ir_let_expr_init(expr)) {
+        puts("ir_transform_ir_let_expr_new: call to ic_transform_let_expr_init failed");
+        return 0;
+    }
 
-  return expr;
+    return expr;
 }
 
 /* initialise an existing let_expr
@@ -122,17 +121,17 @@ struct ic_transform_ir_let_expr * ic_transform_ir_let_expr_new(void){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_let_expr_init(struct ic_transform_ir_let_expr *let){
-  if( ! let ){
-    puts("ic_transform_ir_let_expr_init: let was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_let_expr_init(struct ic_transform_ir_let_expr *let) {
+    if (!let) {
+        puts("ic_transform_ir_let_expr_init: let was null");
+        return 0;
+    }
 
-  let->name = 0;
-  let->type = 0;
-  let->expr = 0;
+    let->name = 0;
+    let->type = 0;
+    let->expr = 0;
 
-  return 1;
+    return 1;
 }
 
 /* destroy let_expr
@@ -144,17 +143,17 @@ unsigned int ic_transform_ir_let_expr_init(struct ic_transform_ir_let_expr *let)
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_let_expr_destroy(struct ic_transform_ir_let_expr *let, unsigned int free_let){
-  if( ! let ){
-    puts("ic_transform_ir_let_expr_destroy: let was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_let_expr_destroy(struct ic_transform_ir_let_expr *let, unsigned int free_let) {
+    if (!let) {
+        puts("ic_transform_ir_let_expr_destroy: let was null");
+        return 0;
+    }
 
-  if( free_let ){
-    free(let);
-  }
+    if (free_let) {
+        free(let);
+    }
 
-  return 1;
+    return 1;
 }
 
 /* print let_expr
@@ -162,22 +161,21 @@ unsigned int ic_transform_ir_let_expr_destroy(struct ic_transform_ir_let_expr *l
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_let_expr_print(struct ic_transform_ir_let_expr *let, unsigned int *indent){
-  if( ! let ){
-    puts("ic_transform_ir_let_expr_print: let was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_let_expr_print(struct ic_transform_ir_let_expr *let, unsigned int *indent) {
+    if (!let) {
+        puts("ic_transform_ir_let_expr_print: let was null");
+        return 0;
+    }
 
-  if( ! indent ){
-    puts("ic_transform_ir_let_expr_print: indent was null");
-    return 0;
-  }
+    if (!indent) {
+        puts("ic_transform_ir_let_expr_print: indent was null");
+        return 0;
+    }
 
-  /* FIXME TODO implement */
-  puts("ic_transform_ir_let_expr_print: UNIMPLEMENTED");
-  return 0;
+    /* FIXME TODO implement */
+    puts("ic_transform_ir_let_expr_print: UNIMPLEMENTED");
+    return 0;
 }
-
 
 /* allocate and initialise a new let
  *
@@ -186,21 +184,21 @@ unsigned int ic_transform_ir_let_expr_print(struct ic_transform_ir_let_expr *let
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_transform_ir_let * ic_transform_ir_let_new(enum ic_transform_ir_let_tag tag){
-  struct ic_transform_ir_let *let = 0;
+struct ic_transform_ir_let *ic_transform_ir_let_new(enum ic_transform_ir_let_tag tag) {
+    struct ic_transform_ir_let *let = 0;
 
-  let = calloc(sizeof(struct ic_transform_ir_let), 0);
-  if( ! let ){
-    puts("ir_transform_ir_let_new: call to calloc failed");
-    return 0;
-  }
+    let = calloc(sizeof(struct ic_transform_ir_let), 0);
+    if (!let) {
+        puts("ir_transform_ir_let_new: call to calloc failed");
+        return 0;
+    }
 
-  if( ! ic_transform_ir_let_init(let, tag) ){
-    puts("ir_transform_ir_let_new: call to ic_transform_let_init failed");
-    return 0;
-  }
+    if (!ic_transform_ir_let_init(let, tag)) {
+        puts("ir_transform_ir_let_new: call to ic_transform_let_init failed");
+        return 0;
+    }
 
-  return let;
+    return let;
 }
 
 /* initialise an existing let
@@ -210,15 +208,15 @@ struct ic_transform_ir_let * ic_transform_ir_let_new(enum ic_transform_ir_let_ta
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_let_init(struct ic_transform_ir_let *let, enum ic_transform_ir_let_tag tag){
-  if( ! let ){
-    puts("ic_transform_ir_let_init: let was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_let_init(struct ic_transform_ir_let *let, enum ic_transform_ir_let_tag tag) {
+    if (!let) {
+        puts("ic_transform_ir_let_init: let was null");
+        return 0;
+    }
 
-  let->tag = tag;
+    let->tag = tag;
 
-  return 1;
+    return 1;
 }
 
 /* destroy let
@@ -230,17 +228,17 @@ unsigned int ic_transform_ir_let_init(struct ic_transform_ir_let *let, enum ic_t
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_let_destroy(struct ic_transform_ir_let *let, unsigned int free_let){
-  if( ! let ){
-    puts("ic_transform_ir_let_destroy: let was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_let_destroy(struct ic_transform_ir_let *let, unsigned int free_let) {
+    if (!let) {
+        puts("ic_transform_ir_let_destroy: let was null");
+        return 0;
+    }
 
-  if( free_let ){
-    free(let);
-  }
+    if (free_let) {
+        free(let);
+    }
 
-  return 1;
+    return 1;
 }
 
 /* print let
@@ -248,60 +246,58 @@ unsigned int ic_transform_ir_let_destroy(struct ic_transform_ir_let *let, unsign
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_let_print(struct ic_transform_ir_let *let, unsigned int *indent){
-  if( ! let ){
-    puts("ic_transform_ir_let_print: let was null");
-    return 0;
-  }
-
-  if( ! indent ){
-    puts("ic_transform_ir_let_print: indent was null");
-    return 0;
-  }
-
-  switch( let->tag ){
-    case ic_transform_ir_let_type_literal:
-      if( ! ic_transform_ir_let_literal_print( &(let->u.lit), indent ) ){
-        puts("ic_transform_ir_let_print: call to ic_transform_let_literal_print failed");
+unsigned int ic_transform_ir_let_print(struct ic_transform_ir_let *let, unsigned int *indent) {
+    if (!let) {
+        puts("ic_transform_ir_let_print: let was null");
         return 0;
-      }
-      break;
+    }
 
-    case ic_transform_ir_let_type_expr:
-      if( ! ic_transform_ir_let_expr_print( &(let->u.expr), indent ) ){
-        puts("ic_transform_ir_let_print: call to ic_transform_let_expr_print failed");
+    if (!indent) {
+        puts("ic_transform_ir_let_print: indent was null");
         return 0;
-      }
-      break;
+    }
 
-    default:
-      puts("ic_transform_ir_let_print: impossible let type");
-      return 0;
-      break;
-  }
+    switch (let->tag) {
+        case ic_transform_ir_let_type_literal:
+            if (!ic_transform_ir_let_literal_print(&(let->u.lit), indent)) {
+                puts("ic_transform_ir_let_print: call to ic_transform_let_literal_print failed");
+                return 0;
+            }
+            break;
 
-  return 1;
+        case ic_transform_ir_let_type_expr:
+            if (!ic_transform_ir_let_expr_print(&(let->u.expr), indent)) {
+                puts("ic_transform_ir_let_print: call to ic_transform_let_expr_print failed");
+                return 0;
+            }
+            break;
 
+        default:
+            puts("ic_transform_ir_let_print: impossible let type");
+            return 0;
+            break;
+    }
+
+    return 1;
 }
-
 
 /* get pointer to internal let_literal
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_transform_ir_let_literal * ic_transform_ir_let_get_literal(struct ic_transform_ir_let *let){
-  if( ! let ){
-    puts("ic_transform_ir_let_get_literal: let was null");
-    return 0;
-  }
+struct ic_transform_ir_let_literal *ic_transform_ir_let_get_literal(struct ic_transform_ir_let *let) {
+    if (!let) {
+        puts("ic_transform_ir_let_get_literal: let was null");
+        return 0;
+    }
 
-  if( let->tag != ic_transform_ir_let_type_literal ){
-    puts("ic_transform_ir_let_get_literal: let was not of type literal");
-    return 0;
-  }
+    if (let->tag != ic_transform_ir_let_type_literal) {
+        puts("ic_transform_ir_let_get_literal: let was not of type literal");
+        return 0;
+    }
 
-  return &(let->u.lit);
+    return &(let->u.lit);
 }
 
 /* get pointer to internal let_expr
@@ -309,20 +305,19 @@ struct ic_transform_ir_let_literal * ic_transform_ir_let_get_literal(struct ic_t
  * returns * on success
  * returns 0 on failure
  */
-struct ic_transform_ir_let_expr * ic_transform_ir_let_get_expr(struct ic_transform_ir_let *let){
-  if( ! let ){
-    puts("ic_transform_ir_let_get_expr: let was null");
-    return 0;
-  }
+struct ic_transform_ir_let_expr *ic_transform_ir_let_get_expr(struct ic_transform_ir_let *let) {
+    if (!let) {
+        puts("ic_transform_ir_let_get_expr: let was null");
+        return 0;
+    }
 
-  if( let->tag != ic_transform_ir_let_type_expr ){
-    puts("ic_transform_ir_let_get_expr: let was not of type expr");
-    return 0;
-  }
+    if (let->tag != ic_transform_ir_let_type_expr) {
+        puts("ic_transform_ir_let_get_expr: let was not of type expr");
+        return 0;
+    }
 
-  return &(let->u.expr);
+    return &(let->u.expr);
 }
-
 
 /* allocate and initialise a new assign
  *
@@ -331,21 +326,21 @@ struct ic_transform_ir_let_expr * ic_transform_ir_let_get_expr(struct ic_transfo
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_transform_ir_assign * ic_transform_ir_assign_new(void){
-  struct ic_transform_ir_assign *assign = 0;
+struct ic_transform_ir_assign *ic_transform_ir_assign_new(void) {
+    struct ic_transform_ir_assign *assign = 0;
 
-  assign = calloc(sizeof(struct ic_transform_ir_assign), 0);
-  if( ! assign ){
-    puts("ir_transform_ir_assign_new: call to calloc failed");
-    return 0;
-  }
+    assign = calloc(sizeof(struct ic_transform_ir_assign), 0);
+    if (!assign) {
+        puts("ir_transform_ir_assign_new: call to calloc failed");
+        return 0;
+    }
 
-  if( ! ic_transform_ir_assign_init(assign) ){
-    puts("ir_transform_ir_assign_new: call to ic_transform_assign_init failed");
-    return 0;
-  }
+    if (!ic_transform_ir_assign_init(assign)) {
+        puts("ir_transform_ir_assign_new: call to ic_transform_assign_init failed");
+        return 0;
+    }
 
-  return assign;
+    return assign;
 }
 
 /* initialise an existing assign
@@ -355,16 +350,16 @@ struct ic_transform_ir_assign * ic_transform_ir_assign_new(void){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_assign_init(struct ic_transform_ir_assign *assign){
-  if( ! assign ){
-    puts("ic_transform_ir_let_assign_init: assign was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_assign_init(struct ic_transform_ir_assign *assign) {
+    if (!assign) {
+        puts("ic_transform_ir_let_assign_init: assign was null");
+        return 0;
+    }
 
-  assign->left = 0;
-  assign->right = 0;
+    assign->left = 0;
+    assign->right = 0;
 
-  return 1;
+    return 1;
 }
 
 /* destroy assign
@@ -376,17 +371,17 @@ unsigned int ic_transform_ir_assign_init(struct ic_transform_ir_assign *assign){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_assign_destroy(struct ic_transform_ir_assign *assign, unsigned int free_assign){
-  if( ! assign ){
-    puts("ic_transform_ir_let_assign_destroy: assign was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_assign_destroy(struct ic_transform_ir_assign *assign, unsigned int free_assign) {
+    if (!assign) {
+        puts("ic_transform_ir_let_assign_destroy: assign was null");
+        return 0;
+    }
 
-  if( free_assign ){
-    free(assign);
-  }
+    if (free_assign) {
+        free(assign);
+    }
 
-  return 1;
+    return 1;
 }
 
 /* print assign
@@ -394,22 +389,21 @@ unsigned int ic_transform_ir_assign_destroy(struct ic_transform_ir_assign *assig
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_assign_print(struct ic_transform_ir_assign *assign, unsigned int *indent){
-  if( ! assign ){
-    puts("ic_transform_ir_assign_print: assign was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_assign_print(struct ic_transform_ir_assign *assign, unsigned int *indent) {
+    if (!assign) {
+        puts("ic_transform_ir_assign_print: assign was null");
+        return 0;
+    }
 
-  if( ! indent ){
-    puts("ic_transform_ir_assign_print: indent was null");
-    return 0;
-  }
+    if (!indent) {
+        puts("ic_transform_ir_assign_print: indent was null");
+        return 0;
+    }
 
-  /* FIXME TODO implement */
-  puts("ic_transform_ir_assign_print: UNIMPLEMENTED");
-  return 0;
+    /* FIXME TODO implement */
+    puts("ic_transform_ir_assign_print: UNIMPLEMENTED");
+    return 0;
 }
-
 
 /* allocate and initialise a new expr
  *
@@ -418,21 +412,21 @@ unsigned int ic_transform_ir_assign_print(struct ic_transform_ir_assign *assign,
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_transform_ir_expr * ic_transform_ir_expr_new(void){
-  struct ic_transform_ir_expr *expr = 0;
+struct ic_transform_ir_expr *ic_transform_ir_expr_new(void) {
+    struct ic_transform_ir_expr *expr = 0;
 
-  expr = calloc(sizeof(struct ic_transform_ir_expr), 0);
-  if( ! expr ){
-    puts("ir_transform_ir_expr_new: call to calloc failed");
-    return 0;
-  }
+    expr = calloc(sizeof(struct ic_transform_ir_expr), 0);
+    if (!expr) {
+        puts("ir_transform_ir_expr_new: call to calloc failed");
+        return 0;
+    }
 
-  if( ! ic_transform_ir_expr_init(expr) ){
-    puts("ir_transform_ir_expr_new: call to ic_transform_expr_init failed");
-    return 0;
-  }
+    if (!ic_transform_ir_expr_init(expr)) {
+        puts("ir_transform_ir_expr_new: call to ic_transform_expr_init failed");
+        return 0;
+    }
 
-  return expr;
+    return expr;
 }
 
 /* initialise an existing expr
@@ -442,15 +436,15 @@ struct ic_transform_ir_expr * ic_transform_ir_expr_new(void){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_expr_init(struct ic_transform_ir_expr *expr){
-  if( ! expr ){
-    puts("ic_transform_ir_expr_init: expr was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_expr_init(struct ic_transform_ir_expr *expr) {
+    if (!expr) {
+        puts("ic_transform_ir_expr_init: expr was null");
+        return 0;
+    }
 
-  expr->fcall = 0;
+    expr->fcall = 0;
 
-  return 1;
+    return 1;
 }
 
 /* destroy expr
@@ -462,17 +456,17 @@ unsigned int ic_transform_ir_expr_init(struct ic_transform_ir_expr *expr){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_expr_destroy(struct ic_transform_ir_expr *expr, unsigned int free_expr){
-  if( ! expr ){
-    puts("ic_transform_ir_expr_destroy: expr was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_expr_destroy(struct ic_transform_ir_expr *expr, unsigned int free_expr) {
+    if (!expr) {
+        puts("ic_transform_ir_expr_destroy: expr was null");
+        return 0;
+    }
 
-  if( free_expr ){
-    free(expr);
-  }
+    if (free_expr) {
+        free(expr);
+    }
 
-  return 1;
+    return 1;
 }
 
 /* print expr
@@ -480,22 +474,21 @@ unsigned int ic_transform_ir_expr_destroy(struct ic_transform_ir_expr *expr, uns
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_expr_print(struct ic_transform_ir_expr *expr, unsigned int *indent){
-  if( ! expr ){
-    puts("ic_transform_ir_expr_print: expr was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_expr_print(struct ic_transform_ir_expr *expr, unsigned int *indent) {
+    if (!expr) {
+        puts("ic_transform_ir_expr_print: expr was null");
+        return 0;
+    }
 
-  if( ! indent ){
-    puts("ic_transform_ir_expr_print: indent was null");
-    return 0;
-  }
+    if (!indent) {
+        puts("ic_transform_ir_expr_print: indent was null");
+        return 0;
+    }
 
-  /* FIXME TODO implement */
-  puts("ic_transform_ir_expr_print: UNIMPLEMENTED");
-  return 0;
+    /* FIXME TODO implement */
+    puts("ic_transform_ir_expr_print: UNIMPLEMENTED");
+    return 0;
 }
-
 
 /* allocate and initialise a new ret
  *
@@ -504,21 +497,21 @@ unsigned int ic_transform_ir_expr_print(struct ic_transform_ir_expr *expr, unsig
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_transform_ir_ret * ic_transform_ir_ret_new(void){
-  struct ic_transform_ir_ret *ret = 0;
+struct ic_transform_ir_ret *ic_transform_ir_ret_new(void) {
+    struct ic_transform_ir_ret *ret = 0;
 
-  ret = calloc(sizeof(struct ic_transform_ir_ret), 0);
-  if( ! ret ){
-    puts("ir_transform_ir_ret_new: call to calloc failed");
-    return 0;
-  }
+    ret = calloc(sizeof(struct ic_transform_ir_ret), 0);
+    if (!ret) {
+        puts("ir_transform_ir_ret_new: call to calloc failed");
+        return 0;
+    }
 
-  if( ! ic_transform_ir_ret_init(ret) ){
-    puts("ir_transform_ir_ret_new: call to ic_transform_ret_init failed");
-    return 0;
-  }
+    if (!ic_transform_ir_ret_init(ret)) {
+        puts("ir_transform_ir_ret_new: call to ic_transform_ret_init failed");
+        return 0;
+    }
 
-  return ret;
+    return ret;
 }
 
 /* initialise an existing ret
@@ -528,15 +521,15 @@ struct ic_transform_ir_ret * ic_transform_ir_ret_new(void){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_ret_init(struct ic_transform_ir_ret *ret){
-  if( ! ret ){
-    puts("ic_transform_ir_ret_init: ret was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_ret_init(struct ic_transform_ir_ret *ret) {
+    if (!ret) {
+        puts("ic_transform_ir_ret_init: ret was null");
+        return 0;
+    }
 
-  ret->var = 0;
+    ret->var = 0;
 
-  return 1;
+    return 1;
 }
 
 /* destroy ret
@@ -548,17 +541,17 @@ unsigned int ic_transform_ir_ret_init(struct ic_transform_ir_ret *ret){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_ret_destroy(struct ic_transform_ir_ret *ret, unsigned int free_ret){
-  if( ! ret ){
-    puts("ic_transform_ir_ret_destroy: ret was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_ret_destroy(struct ic_transform_ir_ret *ret, unsigned int free_ret) {
+    if (!ret) {
+        puts("ic_transform_ir_ret_destroy: ret was null");
+        return 0;
+    }
 
-  if( free_ret ){
-    free(ret);
-  }
+    if (free_ret) {
+        free(ret);
+    }
 
-  return 1;
+    return 1;
 }
 
 /* print ret
@@ -566,22 +559,21 @@ unsigned int ic_transform_ir_ret_destroy(struct ic_transform_ir_ret *ret, unsign
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_ret_print(struct ic_transform_ir_ret *ret, unsigned int *indent){
-  if( ! ret ){
-    puts("ic_transform_ir_ret_print: ret was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_ret_print(struct ic_transform_ir_ret *ret, unsigned int *indent) {
+    if (!ret) {
+        puts("ic_transform_ir_ret_print: ret was null");
+        return 0;
+    }
 
-  if( ! indent ){
-    puts("ic_transform_ir_ret_print: indent was null");
-    return 0;
-  }
+    if (!indent) {
+        puts("ic_transform_ir_ret_print: indent was null");
+        return 0;
+    }
 
-  /* FIXME TODO implement */
-  puts("ic_transform_ir_ret_print: UNIMPLEMENTED");
-  return 0;
+    /* FIXME TODO implement */
+    puts("ic_transform_ir_ret_print: UNIMPLEMENTED");
+    return 0;
 }
-
 
 /* allocate and initialise a new fcall
  *
@@ -590,21 +582,21 @@ unsigned int ic_transform_ir_ret_print(struct ic_transform_ir_ret *ret, unsigned
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_transform_ir_fcall * ic_transform_ir_fcall_new(void){
-  struct ic_transform_ir_fcall *fcall = 0;
+struct ic_transform_ir_fcall *ic_transform_ir_fcall_new(void) {
+    struct ic_transform_ir_fcall *fcall = 0;
 
-  fcall = calloc(sizeof(struct ic_transform_ir_fcall), 0);
-  if( ! fcall ){
-    puts("ir_transform_ir_fcall_new: call to calloc failed");
-    return 0;
-  }
+    fcall = calloc(sizeof(struct ic_transform_ir_fcall), 0);
+    if (!fcall) {
+        puts("ir_transform_ir_fcall_new: call to calloc failed");
+        return 0;
+    }
 
-  if( ! ic_transform_ir_fcall_init(fcall) ){
-    puts("ir_transform_ir_fcall_new: call to ic_transform_fcall_init failed");
-    return 0;
-  }
+    if (!ic_transform_ir_fcall_init(fcall)) {
+        puts("ir_transform_ir_fcall_new: call to ic_transform_fcall_init failed");
+        return 0;
+    }
 
-  return fcall;
+    return fcall;
 }
 
 /* initialise an existing fcall
@@ -614,16 +606,16 @@ struct ic_transform_ir_fcall * ic_transform_ir_fcall_new(void){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_fcall_init(struct ic_transform_ir_fcall *fcall){
-  if( ! fcall ){
-    puts("ic_transform_ir_fcall_init: fcall was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_fcall_init(struct ic_transform_ir_fcall *fcall) {
+    if (!fcall) {
+        puts("ic_transform_ir_fcall_init: fcall was null");
+        return 0;
+    }
 
-  fcall->fcall = 0;
-  fcall->args = 0;
+    fcall->fcall = 0;
+    fcall->args = 0;
 
-  return 1;
+    return 1;
 }
 
 /* destroy fcall
@@ -635,17 +627,17 @@ unsigned int ic_transform_ir_fcall_init(struct ic_transform_ir_fcall *fcall){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_fcall_destroy(struct ic_transform_ir_fcall *fcall, unsigned int free_fcall){
-  if( ! fcall ){
-    puts("ic_transform_ir_fcall_destroy: fcall was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_fcall_destroy(struct ic_transform_ir_fcall *fcall, unsigned int free_fcall) {
+    if (!fcall) {
+        puts("ic_transform_ir_fcall_destroy: fcall was null");
+        return 0;
+    }
 
-  if( free_fcall ){
-    free(fcall);
-  }
+    if (free_fcall) {
+        free(fcall);
+    }
 
-  return 1;
+    return 1;
 }
 
 /* print fcall
@@ -653,22 +645,21 @@ unsigned int ic_transform_ir_fcall_destroy(struct ic_transform_ir_fcall *fcall, 
  * fcallurns 1 on success
  * fcallurn 0 on failure
  */
-unsigned int ic_transform_ir_fcall_print(struct ic_transform_ir_fcall *fcall, unsigned int *indent){
-  if( ! fcall ){
-    puts("ic_transform_ir_fcall_print: fcall was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_fcall_print(struct ic_transform_ir_fcall *fcall, unsigned int *indent) {
+    if (!fcall) {
+        puts("ic_transform_ir_fcall_print: fcall was null");
+        return 0;
+    }
 
-  if( ! indent ){
-    puts("ic_transform_ir_fcall_print: indent was null");
-    return 0;
-  }
+    if (!indent) {
+        puts("ic_transform_ir_fcall_print: indent was null");
+        return 0;
+    }
 
-  /* FIXME TODO implement */
-  puts("ic_transform_ir_fcall_print: UNIMPLEMENTED");
-  return 0;
+    /* FIXME TODO implement */
+    puts("ic_transform_ir_fcall_print: UNIMPLEMENTED");
+    return 0;
 }
-
 
 /* allocate and initialise a new stmt
  *
@@ -677,21 +668,21 @@ unsigned int ic_transform_ir_fcall_print(struct ic_transform_ir_fcall *fcall, un
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_transform_ir_stmt * ic_transform_ir_stmt_new(enum ic_transform_ir_stmt_tag tag){
-  struct ic_transform_ir_stmt *stmt = 0;
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_new(enum ic_transform_ir_stmt_tag tag) {
+    struct ic_transform_ir_stmt *stmt = 0;
 
-  stmt = calloc(sizeof(struct ic_transform_ir_stmt), 0);
-  if( ! stmt ){
-    puts("ir_transform_ir_stmt_new: call to calloc failed");
-    return 0;
-  }
+    stmt = calloc(sizeof(struct ic_transform_ir_stmt), 0);
+    if (!stmt) {
+        puts("ir_transform_ir_stmt_new: call to calloc failed");
+        return 0;
+    }
 
-  if( ! ic_transform_ir_stmt_init(stmt, tag) ){
-    puts("ir_transform_ir_stmt_new: call to ic_transform_stmt_init failed");
-    return 0;
-  }
+    if (!ic_transform_ir_stmt_init(stmt, tag)) {
+        puts("ir_transform_ir_stmt_new: call to ic_transform_stmt_init failed");
+        return 0;
+    }
 
-  return stmt;
+    return stmt;
 }
 
 /* initialise an existing stmt
@@ -701,15 +692,15 @@ struct ic_transform_ir_stmt * ic_transform_ir_stmt_new(enum ic_transform_ir_stmt
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_stmt_init(struct ic_transform_ir_stmt *stmt, enum ic_transform_ir_stmt_tag tag){
-  if( ! stmt ){
-    puts("ic_transform_ir_stmt_init: stmt was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_stmt_init(struct ic_transform_ir_stmt *stmt, enum ic_transform_ir_stmt_tag tag) {
+    if (!stmt) {
+        puts("ic_transform_ir_stmt_init: stmt was null");
+        return 0;
+    }
 
-  stmt->tag = tag;
+    stmt->tag = tag;
 
-  return 1;
+    return 1;
 }
 
 /* destroy stmt
@@ -721,17 +712,17 @@ unsigned int ic_transform_ir_stmt_init(struct ic_transform_ir_stmt *stmt, enum i
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_stmt_destroy(struct ic_transform_ir_stmt *stmt, unsigned int free_stmt){
-  if( ! stmt ){
-    puts("ic_transform_ir_stmt_destroy: stmt was null");
-    return 0;
-  }
+unsigned int ic_transform_ir_stmt_destroy(struct ic_transform_ir_stmt *stmt, unsigned int free_stmt) {
+    if (!stmt) {
+        puts("ic_transform_ir_stmt_destroy: stmt was null");
+        return 0;
+    }
 
-  if( free_stmt ){
-    free(stmt);
-  }
+    if (free_stmt) {
+        free(stmt);
+    }
 
-  return 1;
+    return 1;
 }
 
 /* print stmt
@@ -739,46 +730,46 @@ unsigned int ic_transform_ir_stmt_destroy(struct ic_transform_ir_stmt *stmt, uns
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_stmt_print(struct ic_transform_ir_stmt *stmt, unsigned int *indent){
-  if( ! stmt ){
-    puts("ic_transform_ir_stmt_print: stmt was null");
-    return 0;
-  }
-
-  if( ! indent ){
-    puts("ic_transform_ir_stmt_print: indent was null");
-    return 0;
-  }
-
-  switch( stmt->tag ){
-    case ic_transform_ir_type_expr:
-      if( ! ic_transform_ir_expr_print( &(stmt->u.expr), indent ) ){
-        puts("ic_transform_ir_stmt_print: call to ic_transform_ir_expr_print failed");
+unsigned int ic_transform_ir_stmt_print(struct ic_transform_ir_stmt *stmt, unsigned int *indent) {
+    if (!stmt) {
+        puts("ic_transform_ir_stmt_print: stmt was null");
         return 0;
-      }
-      break;
+    }
 
-    case ic_transform_ir_type_let:
-      if( ! ic_transform_ir_let_print( &(stmt->u.let), indent ) ){
-        puts("ic_transform_ir_stmt_print: call to ic_transform_ir_let_print failed");
+    if (!indent) {
+        puts("ic_transform_ir_stmt_print: indent was null");
         return 0;
-      }
-      break;
+    }
 
-    case ic_transform_ir_type_ret:
-      if( ! ic_transform_ir_ret_print( &(stmt->u.ret), indent ) ){
-        puts("ic_transform_ir_stmt_print: call to ic_transform_ir_ret_print failed");
-        return 0;
-      }
-      break;
+    switch (stmt->tag) {
+        case ic_transform_ir_type_expr:
+            if (!ic_transform_ir_expr_print(&(stmt->u.expr), indent)) {
+                puts("ic_transform_ir_stmt_print: call to ic_transform_ir_expr_print failed");
+                return 0;
+            }
+            break;
 
-    default:
-      puts("ic_transform_ir_stmt_print: impossible stmt->tag");
-      return 0;
-      break;
-  }
+        case ic_transform_ir_type_let:
+            if (!ic_transform_ir_let_print(&(stmt->u.let), indent)) {
+                puts("ic_transform_ir_stmt_print: call to ic_transform_ir_let_print failed");
+                return 0;
+            }
+            break;
 
-  return 1;
+        case ic_transform_ir_type_ret:
+            if (!ic_transform_ir_ret_print(&(stmt->u.ret), indent)) {
+                puts("ic_transform_ir_stmt_print: call to ic_transform_ir_ret_print failed");
+                return 0;
+            }
+            break;
+
+        default:
+            puts("ic_transform_ir_stmt_print: impossible stmt->tag");
+            return 0;
+            break;
+    }
+
+    return 1;
 }
 
 /* get pointer to internal expr
@@ -786,18 +777,18 @@ unsigned int ic_transform_ir_stmt_print(struct ic_transform_ir_stmt *stmt, unsig
  * returns * on success
  * returns 0 on failure
  */
-struct ic_transform_ir_expr * ic_transform_ir_stmt_get_expr(struct ic_transform_ir_stmt *stmt){
-  if( ! stmt ){
-    puts("ic_transform_ir_stmt_get_expr: stmt was null");
-    return 0;
-  }
+struct ic_transform_ir_expr *ic_transform_ir_stmt_get_expr(struct ic_transform_ir_stmt *stmt) {
+    if (!stmt) {
+        puts("ic_transform_ir_stmt_get_expr: stmt was null");
+        return 0;
+    }
 
-  if( stmt->tag != ic_transform_ir_type_expr){
-    puts("ic_transform_ir_stmt_get_expr: stmt was not of type expr");
-    return 0;
-  }
+    if (stmt->tag != ic_transform_ir_type_expr) {
+        puts("ic_transform_ir_stmt_get_expr: stmt was not of type expr");
+        return 0;
+    }
 
-  return &(stmt->u.expr);
+    return &(stmt->u.expr);
 }
 
 /* get pointer to internal let
@@ -805,18 +796,18 @@ struct ic_transform_ir_expr * ic_transform_ir_stmt_get_expr(struct ic_transform_
  * returns * on success
  * returns 0 on failure
  */
-struct ic_transform_ir_let * ic_transform_ir_stmt_get_let(struct ic_transform_ir_stmt *stmt){
-  if( ! stmt ){
-    puts("ic_transform_ir_stmt_get_let: stmt was null");
-    return 0;
-  }
+struct ic_transform_ir_let *ic_transform_ir_stmt_get_let(struct ic_transform_ir_stmt *stmt) {
+    if (!stmt) {
+        puts("ic_transform_ir_stmt_get_let: stmt was null");
+        return 0;
+    }
 
-  if( stmt->tag != ic_transform_ir_type_let){
-    puts("ic_transform_ir_stmt_get_let: stmt was not of type let");
-    return 0;
-  }
+    if (stmt->tag != ic_transform_ir_type_let) {
+        puts("ic_transform_ir_stmt_get_let: stmt was not of type let");
+        return 0;
+    }
 
-  return &(stmt->u.let);
+    return &(stmt->u.let);
 }
 
 /* get pointer to internal ret
@@ -824,17 +815,16 @@ struct ic_transform_ir_let * ic_transform_ir_stmt_get_let(struct ic_transform_ir
  * returns * on success
  * returns 0 on failure
  */
-struct ic_transform_ir_ret * ic_transform_ir_stmt_get_ret(struct ic_transform_ir_stmt *stmt){
-  if( ! stmt ){
-    puts("ic_transform_ir_stmt_get_ret: stmt was null");
-    return 0;
-  }
+struct ic_transform_ir_ret *ic_transform_ir_stmt_get_ret(struct ic_transform_ir_stmt *stmt) {
+    if (!stmt) {
+        puts("ic_transform_ir_stmt_get_ret: stmt was null");
+        return 0;
+    }
 
-  if( stmt->tag != ic_transform_ir_type_ret){
-    puts("ic_transform_ir_stmt_get_ret: stmt was not of type ret");
-    return 0;
-  }
+    if (stmt->tag != ic_transform_ir_type_ret) {
+        puts("ic_transform_ir_stmt_get_ret: stmt was not of type ret");
+        return 0;
+    }
 
-  return &(stmt->u.ret);
+    return &(stmt->u.ret);
 }
-

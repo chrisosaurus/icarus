@@ -12,7 +12,7 @@ struct ic_parray {
     /* note that we store an array of void*
      * so we must be careful what we actually store here
      */
-    void ** contents;
+    void **contents;
 };
 
 /* allocate a new array of length len
@@ -20,7 +20,7 @@ struct ic_parray {
  * returns array on success
  * returns 0 on failure
  */
-struct ic_parray * ic_parray_new(unsigned int len);
+struct ic_parray *ic_parray_new(unsigned int len);
 
 /* initialise an existing array to the specified len
  *
@@ -47,7 +47,7 @@ unsigned int ic_parray_destroy(struct ic_parray *arr, unsigned int free_parr);
  * returns item on success
  * returns 0 on failure
  */
-void * ic_parray_get(struct ic_parray *arr, unsigned int pos);
+void *ic_parray_get(struct ic_parray *arr, unsigned int pos);
 
 /* set element at [pos] to val
  *

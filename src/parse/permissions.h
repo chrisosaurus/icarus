@@ -10,7 +10,7 @@ unsigned int ic_parse_perm(enum ic_token_id);
 unsigned int ic_parse_perm_default(void);
 
 /* return a string representation of this permission */
-char * ic_parse_perm_str(unsigned int permissions);
+char *ic_parse_perm_str(unsigned int permissions);
 
 /* check if the provided downgrade is valid
  *

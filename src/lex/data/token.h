@@ -9,19 +9,19 @@ enum ic_token_id {
      * table
      * DO NOT modify these values without also checking parse/permissions.h
      */
-    IC_DOLLAR    = 0,
-    IC_PERCENT   = 1,
+    IC_DOLLAR = 0,
+    IC_PERCENT = 1,
     IC_AMPERSAND = 2,
-    IC_AT        = 3,
-    IC_ASTERISK  = 4,
-    IC_CARET     = 5,
-    IC_PLUS      = 6,
-    IC_MINUS     = 7,
+    IC_AT = 3,
+    IC_ASTERISK = 4,
+    IC_CARET = 5,
+    IC_PLUS = 6,
+    IC_MINUS = 7,
 
-    IC_IDENTIFIER, /* no entry in table[], payload */
+    IC_IDENTIFIER,      /* no entry in table[], payload */
     IC_LITERAL_INTEGER, /* no entry in table[], payload */
-    IC_LITERAL_STRING, /* no entry in table[], payload */
-    IC_COMMENT, /* no entry in table[], payload */
+    IC_LITERAL_STRING,  /* no entry in table[], payload */
+    IC_COMMENT,         /* no entry in table[], payload */
 
     IC_TRUE,
     IC_FALSE,
@@ -49,8 +49,8 @@ enum ic_token_id {
     IC_UNION,
 
     IC_ARROW,
-    IC_EQUAL, /* == */
-    IC_ASSIGN, /* = */
+    IC_EQUAL,       /* == */
+    IC_ASSIGN,      /* = */
     IC_DOUBLECOLON, /* :: double colon */
     IC_PERIOD,
     IC_COMMA,
@@ -94,7 +94,7 @@ struct ic_token {
  * returns * on success
  * returns 0 on failure
  */
-struct ic_token * ic_token_new(enum ic_token_id id, char *line, unsigned int offset, char *file, unsigned int line_num);
+struct ic_token *ic_token_new(enum ic_token_id id, char *line, unsigned int offset, char *file, unsigned int line_num);
 
 /* init an existing token
  *
@@ -115,21 +115,21 @@ unsigned int ic_token_set_string(struct ic_token *token, char *string, unsigned 
  * returns * on success
  * returns 0 on failure
  */
-char * ic_token_id_get_representation(enum ic_token_id id);
+char *ic_token_id_get_representation(enum ic_token_id id);
 
 /* get string representation of token
  *
  * returns * on success
  * returns 0 on failure
  */
-char * ic_token_get_representation(struct ic_token *token);
+char *ic_token_get_representation(struct ic_token *token);
 
 /* get string data on token
  *
  * returns * on success
  * returns 0 on failure
  */
-char * ic_token_get_string(struct ic_token *token);
+char *ic_token_get_string(struct ic_token *token);
 
 /* get string length on token
  *

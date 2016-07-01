@@ -1,10 +1,10 @@
 #ifndef ICARUS_PARSE_H
 #define ICARUS_PARSE_H
 
+#include "../lex/lexer.h"
 #include "data/ast.h"
 #include "data/body.h"
 #include "data/expr.h"
-#include "../lex/lexer.h"
 #include "data/stmt.h"
 
 #define LENGTH(x) (sizeof(x) / sizeof(x[0]))
@@ -15,7 +15,6 @@
  * based on their return types
  */
 
-
 /**** shared helper methods (parse.c) ****/
 
 /* print levels worth of indent levels
@@ -25,18 +24,15 @@ void ic_parse_print_indent(unsigned int levels);
 
 /**** parse/field.c ****/
 
-struct ic_field * ic_parse_field(struct ic_token_list *token_list);
-
+struct ic_field *ic_parse_field(struct ic_token_list *token_list);
 
 /**** parse/expr.c ****/
 
-struct ic_expr * ic_parse_expr(struct ic_token_list *token_list);
-
+struct ic_expr *ic_parse_expr(struct ic_token_list *token_list);
 
 /**** parse/stmt.c ****/
 
-struct ic_stmt * ic_parse_stmt(struct ic_token_list *token_list);
-
+struct ic_stmt *ic_parse_stmt(struct ic_token_list *token_list);
 
 /**** parse/body.c ****/
 
@@ -46,36 +42,34 @@ struct ic_stmt * ic_parse_stmt(struct ic_token_list *token_list);
  * returns * on success
  * returns 0 on failure
  */
-struct ic_body * ic_parse_body(struct ic_token_list *token_list);
-
+struct ic_body *ic_parse_body(struct ic_token_list *token_list);
 
 /**** parse/decl.c ****/
 
-struct ic_decl * ic_parse_decl_builtin(struct ic_token_list *token_list);
+struct ic_decl *ic_parse_decl_builtin(struct ic_token_list *token_list);
 
-struct ic_decl * ic_parse_decl_func(struct ic_token_list *token_list);
+struct ic_decl *ic_parse_decl_func(struct ic_token_list *token_list);
 
-struct ic_decl * ic_parse_decl_func_header(struct ic_token_list *token_list);
+struct ic_decl *ic_parse_decl_func_header(struct ic_token_list *token_list);
 
-struct ic_decl * ic_parse_decl_func_body(struct ic_token_list *token_list, struct ic_decl *decl);
+struct ic_decl *ic_parse_decl_func_body(struct ic_token_list *token_list, struct ic_decl *decl);
 
-struct ic_decl * ic_parse_decl_type(struct ic_token_list *token_list);
+struct ic_decl *ic_parse_decl_type(struct ic_token_list *token_list);
 
-struct ic_decl * ic_parse_decl_type_header(struct ic_token_list *token_list);
+struct ic_decl *ic_parse_decl_type_header(struct ic_token_list *token_list);
 
-struct ic_decl * ic_parse_decl_type_body(struct ic_token_list *token_list, struct ic_decl *decl);
+struct ic_decl *ic_parse_decl_type_body(struct ic_token_list *token_list, struct ic_decl *decl);
 
-struct ic_decl * ic_parse_decl_enum(struct ic_token_list *token_list);
+struct ic_decl *ic_parse_decl_enum(struct ic_token_list *token_list);
 
-struct ic_decl * ic_parse_decl_union(struct ic_token_list *token_list);
+struct ic_decl *ic_parse_decl_union(struct ic_token_list *token_list);
 
-struct ic_decl * ic_parse_decl_op(struct ic_token_list *token_list);
+struct ic_decl *ic_parse_decl_op(struct ic_token_list *token_list);
 
 /**** parse.c ****/
 
-struct ic_ast * ic_parse(struct ic_token_list *token_list);
+struct ic_ast *ic_parse(struct ic_token_list *token_list);
 
 unsigned int ic_parse_permissions(struct ic_token_list *token_list);
 
 #endif
-

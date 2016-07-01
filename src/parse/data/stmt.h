@@ -1,9 +1,9 @@
 #ifndef ICARUS_STATEMENT_H
 #define ICARUS_STATEMENT_H
 
+#include "../../data/symbol.h"
 #include "body.h"
 #include "expr.h"
-#include "../../data/symbol.h"
 
 /* a return statement
  *  return expr
@@ -18,7 +18,7 @@ struct ic_stmt_ret {
  * returns pointers on success
  * returns 0 on failure
  */
-struct ic_stmt_ret * ic_stmt_ret_new(void);
+struct ic_stmt_ret *ic_stmt_ret_new(void);
 
 /* initialise an existing return
  * does not touch the init expression
@@ -42,11 +42,10 @@ unsigned int ic_stmt_ret_destroy(struct ic_stmt_ret *ret, unsigned int free_ret)
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr * ic_stmt_ret_get_expr(struct ic_stmt_ret *ret);
+struct ic_expr *ic_stmt_ret_get_expr(struct ic_stmt_ret *ret);
 
 /* print this return */
 void ic_stmt_ret_print(struct ic_stmt_ret *ret, unsigned int *indent_level);
-
 
 /* a let statement
  *  let identifier::type = init
@@ -84,7 +83,7 @@ struct ic_stmt_let {
  * returns pointers on success
  * returns 0 on failure
  */
-struct ic_stmt_let * ic_stmt_let_new(char *id_src, unsigned int id_len, unsigned int permissions);
+struct ic_stmt_let *ic_stmt_let_new(char *id_src, unsigned int id_len, unsigned int permissions);
 
 /* initialise an existing let
  * does not touch the init expression
@@ -140,11 +139,10 @@ unsigned int ic_stmt_let_set_inferred_type(struct ic_stmt_let *let, struct ic_ty
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr * ic_stmt_let_get_expr(struct ic_stmt_let *let);
+struct ic_expr *ic_stmt_let_get_expr(struct ic_stmt_let *let);
 
 /* print this let */
 void ic_stmt_let_print(struct ic_stmt_let *let, unsigned int *indent_level);
-
 
 /* an assignment statement
  *  x = y
@@ -161,7 +159,7 @@ struct ic_stmt_assign {
  * returns pointers on success
  * returns 0 on failure
  */
-struct ic_stmt_assign * ic_stmt_assign_new(struct ic_expr *left, struct ic_expr *right);
+struct ic_stmt_assign *ic_stmt_assign_new(struct ic_expr *left, struct ic_expr *right);
 
 /* initialise an existing assign
  * does not touch the init expression
@@ -185,18 +183,17 @@ unsigned int ic_stmt_assign_destroy(struct ic_stmt_assign *assign, unsigned int 
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr * ic_stmt_assign_get_left(struct ic_stmt_assign *assign);
+struct ic_expr *ic_stmt_assign_get_left(struct ic_stmt_assign *assign);
 
 /* get the right ic_expr * contained within
  *
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr * ic_stmt_assign_get_right(struct ic_stmt_assign *assign);
+struct ic_expr *ic_stmt_assign_get_right(struct ic_stmt_assign *assign);
 
 /* print this assign */
 void ic_stmt_assign_print(struct ic_stmt_assign *assign, unsigned int *indent_level);
-
 
 /* an if statement
  *  if expr
@@ -215,7 +212,7 @@ struct ic_stmt_if {
  * returns pointers on success
  * returns 0 on failure
  */
-struct ic_stmt_if * ic_stmt_if_new(void);
+struct ic_stmt_if *ic_stmt_if_new(void);
 
 /* initialise an existing new ic_stmt_if
  * this will initialise the body
@@ -238,14 +235,14 @@ unsigned int ic_stmt_if_destroy(struct ic_stmt_if *sif, unsigned int free_if);
 /* returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr * ic_stmt_if_get_expr(struct ic_stmt_if *sif);
+struct ic_expr *ic_stmt_if_get_expr(struct ic_stmt_if *sif);
 
 /* get statement of offset i within the body
  *
  * returns pointer to element on success
  * returns 0 on failure
  */
-struct ic_stmt * ic_stmt_if_get_stmt(struct ic_stmt_if *sif, unsigned int i);
+struct ic_stmt *ic_stmt_if_get_stmt(struct ic_stmt_if *sif, unsigned int i);
 
 /* get length of body
  *
@@ -256,7 +253,6 @@ unsigned int ic_stmt_if_length(struct ic_stmt_if *sif);
 
 /* print this if */
 void ic_stmt_if_print(struct ic_stmt_if *sif, unsigned int *indent_level);
-
 
 /* a for statement
  *  for expr in iterator
@@ -276,7 +272,7 @@ struct ic_stmt_for {
  * returns pointers on success
  * returns 0 on failure
  */
-struct ic_stmt_for * ic_stmt_for_new(void);
+struct ic_stmt_for *ic_stmt_for_new(void);
 
 /* initialise an existing new ic_stmt_for
  * this will initialise the body
@@ -299,19 +295,19 @@ unsigned int ic_stmt_for_destroy(struct ic_stmt_for *sfor, unsigned int free_for
 /* returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr * ic_stmt_for_get_expr(struct ic_stmt_for *sfor);
+struct ic_expr *ic_stmt_for_get_expr(struct ic_stmt_for *sfor);
 
 /* returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr * ic_stmt_for_get_iterator(struct ic_stmt_for *sfor);
+struct ic_expr *ic_stmt_for_get_iterator(struct ic_stmt_for *sfor);
 
 /* get statement of offset i within the body
  *
  * returns pointer to element on success
  * returns 0 on failure
  */
-struct ic_stmt * ic_stmt_for_get_stmt(struct ic_stmt_for *sfor, unsigned int i);
+struct ic_stmt *ic_stmt_for_get_stmt(struct ic_stmt_for *sfor, unsigned int i);
 
 /* get length of body
  *
@@ -322,7 +318,6 @@ unsigned int ic_stmt_for_length(struct ic_stmt_for *sfor);
 
 /* print this for */
 void ic_stmt_for_print(struct ic_stmt_for *sfor, unsigned int *indent_level);
-
 
 /* a while statement
  *  while expr
@@ -341,7 +336,7 @@ struct ic_stmt_while {
  * returns pointers on success
  * returns 0 on failure
  */
-struct ic_stmt_while * ic_stmt_while_new(void);
+struct ic_stmt_while *ic_stmt_while_new(void);
 
 /* initialise an existing new ic_stmt_while
  * this will initialise the body
@@ -364,14 +359,14 @@ unsigned int ic_stmt_while_destroy(struct ic_stmt_while *swhile, unsigned int fr
 /* returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr * ic_stmt_while_get_expr(struct ic_stmt_while *swhile);
+struct ic_expr *ic_stmt_while_get_expr(struct ic_stmt_while *swhile);
 
 /* get statement of offset i within the body
  *
  * returns pointer to element on success
  * returns 0 on failure
  */
-struct ic_stmt * ic_stmt_while_get_stmt(struct ic_stmt_while *swhile, unsigned int i);
+struct ic_stmt *ic_stmt_while_get_stmt(struct ic_stmt_while *swhile, unsigned int i);
 
 /* get length of body
  *
@@ -382,7 +377,6 @@ unsigned int ic_stmt_while_length(struct ic_stmt_while *swhile);
 
 /* print this if */
 void ic_stmt_while_print(struct ic_stmt_while *swhile, unsigned int *indent_level);
-
 
 enum ic_stmt_tag {
     ic_stmt_type_ret,
@@ -397,12 +391,12 @@ enum ic_stmt_tag {
 struct ic_stmt {
     enum ic_stmt_tag tag;
     union {
-        struct ic_stmt_ret    ret;
-        struct ic_stmt_let    let;
+        struct ic_stmt_ret ret;
+        struct ic_stmt_let let;
         struct ic_stmt_assign assign;
-        struct ic_stmt_if     sif;
-        struct ic_stmt_for    sfor;
-        struct ic_stmt_while  swhile;
+        struct ic_stmt_if sif;
+        struct ic_stmt_for sfor;
+        struct ic_stmt_while swhile;
         /* a statement can just be an expression in
          * void context
          *  foo(bar)
@@ -421,7 +415,7 @@ struct ic_stmt {
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_stmt * ic_stmt_new(enum ic_stmt_tag tag);
+struct ic_stmt *ic_stmt_new(enum ic_stmt_tag tag);
 
 /* initialise an existing ic_stmt
  *
@@ -445,7 +439,7 @@ unsigned int ic_stmt_destroy(struct ic_stmt *stmt, unsigned int free_stmt);
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_stmt_ret * ic_stmt_get_ret(struct ic_stmt *stmt);
+struct ic_stmt_ret *ic_stmt_get_ret(struct ic_stmt *stmt);
 
 /* get a pointer to the let within
  * will only succeed if ic_stmt is of the correct type
@@ -453,7 +447,7 @@ struct ic_stmt_ret * ic_stmt_get_ret(struct ic_stmt *stmt);
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_stmt_let * ic_stmt_get_let(struct ic_stmt *stmt);
+struct ic_stmt_let *ic_stmt_get_let(struct ic_stmt *stmt);
 
 /* get a pointer to the assign within
  * will only succeed if ic_stmt is of the correct type
@@ -461,7 +455,7 @@ struct ic_stmt_let * ic_stmt_get_let(struct ic_stmt *stmt);
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_stmt_assign * ic_stmt_get_assign(struct ic_stmt *stmt);
+struct ic_stmt_assign *ic_stmt_get_assign(struct ic_stmt *stmt);
 
 /* get a pointer to the sif within
  * will only succeed if ic_stmt is of the correct type
@@ -469,7 +463,7 @@ struct ic_stmt_assign * ic_stmt_get_assign(struct ic_stmt *stmt);
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_stmt_if * ic_stmt_get_sif(struct ic_stmt *stmt);
+struct ic_stmt_if *ic_stmt_get_sif(struct ic_stmt *stmt);
 
 /* get a pointer to the sfor within
  * will only succeed if ic_stmt is of the correct type
@@ -477,7 +471,7 @@ struct ic_stmt_if * ic_stmt_get_sif(struct ic_stmt *stmt);
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_stmt_for * ic_stmt_get_sfor(struct ic_stmt *stmt);
+struct ic_stmt_for *ic_stmt_get_sfor(struct ic_stmt *stmt);
 
 /* get a pointer to the swhile within
  * will only succeed if ic_stmt is of the correct type
@@ -485,7 +479,7 @@ struct ic_stmt_for * ic_stmt_get_sfor(struct ic_stmt *stmt);
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_stmt_while * ic_stmt_get_swhile(struct ic_stmt *stmt);
+struct ic_stmt_while *ic_stmt_get_swhile(struct ic_stmt *stmt);
 
 /* get a pointer to the expr within
  * will only succeed if ic_stmt is of the correct type
@@ -493,7 +487,7 @@ struct ic_stmt_while * ic_stmt_get_swhile(struct ic_stmt *stmt);
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_expr * ic_stmt_get_expr(struct ic_stmt *stmt);
+struct ic_expr *ic_stmt_get_expr(struct ic_stmt *stmt);
 
 /* print this stmt */
 void ic_stmt_print(struct ic_stmt *stmt, unsigned int *indent_level);

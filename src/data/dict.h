@@ -7,7 +7,7 @@
  * this type is a wrapper around
  *  linear_hash.h:struct lh_table
  */
-struct ic_dict{
+struct ic_dict {
     struct lh_table lht;
 };
 
@@ -16,7 +16,7 @@ struct ic_dict{
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_dict * ic_dict_new(void);
+struct ic_dict *ic_dict_new(void);
 
 /* init an existing ic_dict
  *
@@ -30,7 +30,7 @@ unsigned int ic_dict_init(struct ic_dict *dict);
  * returns void *data on success
  * return 0 on failure
  */
-void * ic_dict_get(struct ic_dict *dict, char *key);
+void *ic_dict_get(struct ic_dict *dict, char *key);
 
 /* set data in dict at key
  * set only works if the key already exists
@@ -39,7 +39,7 @@ void * ic_dict_get(struct ic_dict *dict, char *key);
  * returns old data on success
  * returns 0 on failure
  */
-void * ic_dict_set(struct ic_dict *dict, char *key, void *data);
+void *ic_dict_set(struct ic_dict *dict, char *key, void *data);
 
 /* insert data into dict under key
  * insert will only work if key doesn't already exist
@@ -62,7 +62,7 @@ unsigned int ic_dict_exists(struct ic_dict *dict, char *key);
  * returns old data on success
  * returns 0 on failure
  */
-void * ic_dict_delete(struct ic_dict *dict, char *key);
+void *ic_dict_delete(struct ic_dict *dict, char *key);
 
 /* free an existing ic_dict
  * this will free all memory internal to the hash

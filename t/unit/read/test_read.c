@@ -1,4 +1,4 @@
-#include <stdio.h> /* fopen, puts */
+#include <stdio.h>  /* fopen, puts */
 #include <stdlib.h> /* exit */
 #include <string.h> /* strcmp */
 
@@ -55,14 +55,14 @@ builtin fn Foo(a::Int, b::String) -> Foo\n\
 \n\
 ";
 
-int main(void){
+int main(void) {
     char *filename = "example/simple.ic";
     char *slurped_results;
     FILE *f;
 
     /* check file exists */
     f = fopen(filename, "r");
-    if( ! f ){
+    if (!f) {
         puts("Could not open file for reading");
         perror("test_read");
         exit(1);
@@ -70,12 +70,12 @@ int main(void){
     fclose(f);
 
     slurped_results = ic_read_slurp(filename);
-    if( ! slurped_results ){
+    if (!slurped_results) {
         puts("read_slurp failed");
         exit(1);
     }
 
-    if( strcmp(slurped_results, expected) ){
+    if (strcmp(slurped_results, expected)) {
         puts("strcmp failed, unexpected results");
         printf("got\n%s\n", slurped_results);
         printf("expected:\n%s\n", expected);
@@ -86,4 +86,3 @@ int main(void){
     free(slurped_results);
     return 0;
 }
-

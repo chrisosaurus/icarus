@@ -2,7 +2,7 @@
 
 #include "../../../src/data/parray.h"
 
-void normal(void){
+void normal(void) {
     int i;
     struct ic_parray *arr = ic_parray_new(0);
 
@@ -26,7 +26,7 @@ void normal(void){
     assert(arr->len == 10);
 
     /* check everything within range is settable and gettable */
-    for(i=0; i<10; ++i){
+    for (i = 0; i < 10; ++i) {
         assert(ic_parray_set(arr, i, arr) == 1);
         assert(ic_parray_get(arr, i) == arr);
     }
@@ -35,19 +35,19 @@ void normal(void){
     assert(ic_parray_get(arr, 10) == 0);
     assert(ic_parray_set(arr, 10, arr) == 0);
 
-    assert( 1 == ic_parray_destroy(arr, 1) );
+    assert(1 == ic_parray_destroy(arr, 1));
 }
 
-void abnormal(void){
+void abnormal(void) {
     /* test null parrays */
-    assert( 0 == ic_parray_init(0, 0) );
-    assert( 0 == ic_parray_get(0, 0) );
-    assert( 0 == ic_parray_set(0, 0, 0) );
-    assert( 0 == ic_parray_ensure(0, 0) );
-    assert( 0 == ic_parray_destroy(0, 0) );
+    assert(0 == ic_parray_init(0, 0));
+    assert(0 == ic_parray_get(0, 0));
+    assert(0 == ic_parray_set(0, 0, 0));
+    assert(0 == ic_parray_ensure(0, 0));
+    assert(0 == ic_parray_destroy(0, 0));
 }
 
-int main(void){
+int main(void) {
     normal();
     abnormal();
 

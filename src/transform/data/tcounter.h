@@ -10,8 +10,8 @@
  * where Ns are unique within a function
  */
 struct ic_transform_counter {
-  unsigned int literal_count;
-  unsigned int temporary_count;
+    unsigned int literal_count;
+    unsigned int temporary_count;
 };
 
 /* allocate and initialise a new transform_counter
@@ -19,7 +19,7 @@ struct ic_transform_counter {
  * returns * on success
  * returns 0 on failure
  */
-struct ic_transform_counter * ic_transform_counter_new(void);
+struct ic_transform_counter *ic_transform_counter_new(void);
 
 /* initialise an existing transform_counter
  *

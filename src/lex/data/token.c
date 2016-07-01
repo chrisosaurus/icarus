@@ -1,5 +1,5 @@
+#include <stdio.h>  /* puts */
 #include <stdlib.h> /* calloc, free */
-#include <stdio.h> /* puts */
 
 #include "token.h"
 
@@ -10,16 +10,16 @@
  * returns * on success
  * returns 0 on failure
  */
-struct ic_token * ic_token_new(enum ic_token_id id, char *line, unsigned int offset, char *file, unsigned int line_num){
+struct ic_token *ic_token_new(enum ic_token_id id, char *line, unsigned int offset, char *file, unsigned int line_num) {
     struct ic_token *token = 0;
 
     token = calloc(1, sizeof(struct ic_token));
-    if( ! token ){
+    if (!token) {
         puts("ic_token_new: call to calloc failed");
         return 0;
     }
 
-    if( ! ic_token_init(token, id, line, offset, file, line_num) ){
+    if (!ic_token_init(token, id, line, offset, file, line_num)) {
         puts("ic_token_new: call to ic_token_init failed");
         return 0;
     }
@@ -32,18 +32,18 @@ struct ic_token * ic_token_new(enum ic_token_id id, char *line, unsigned int off
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_token_init(struct ic_token *token, enum ic_token_id id, char *line, unsigned int offset, char *file, unsigned int line_num){
-    if( ! token ){
+unsigned int ic_token_init(struct ic_token *token, enum ic_token_id id, char *line, unsigned int offset, char *file, unsigned int line_num) {
+    if (!token) {
         puts("ic_token_init: token was null");
         return 0;
     }
 
-    if( ! line ){
+    if (!line) {
         puts("ic_token_init: line was null");
         return 0;
     }
 
-    if( ! file ){
+    if (!file) {
         puts("ic_token_init: file was null");
         return 0;
     }
@@ -62,14 +62,14 @@ unsigned int ic_token_init(struct ic_token *token, enum ic_token_id id, char *li
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_token_set_string(struct ic_token *token, char *string, unsigned int len){
-    if( ! token ){
+unsigned int ic_token_set_string(struct ic_token *token, char *string, unsigned int len) {
+    if (!token) {
         puts("ic_token_set_string: token was null");
         return 0;
     }
 
     /* check if token->id allows for a string */
-    switch( token->id ){
+    switch (token->id) {
         case IC_IDENTIFIER:
         case IC_LITERAL_STRING:
         case IC_COMMENT:
@@ -94,8 +94,8 @@ unsigned int ic_token_set_string(struct ic_token *token, char *string, unsigned 
  * returns * on success
  * returns 0 on failure
  */
-char * ic_token_id_get_representation(enum ic_token_id id){
-    switch( id ){
+char *ic_token_id_get_representation(enum ic_token_id id) {
+    switch (id) {
         case IC_IDENTIFIER:
         case IC_LITERAL_INTEGER:
         case IC_LITERAL_STRING:
@@ -241,8 +241,8 @@ char * ic_token_id_get_representation(enum ic_token_id id){
  * returns * on success
  * returns 0 on failure
  */
-char * ic_token_get_representation(struct ic_token *token){
-    if( ! token ){
+char *ic_token_get_representation(struct ic_token *token) {
+    if (!token) {
         puts("ic_token_get_representation: token was null");
         return 0;
     }
@@ -255,14 +255,14 @@ char * ic_token_get_representation(struct ic_token *token){
  * returns * on success
  * returns 0 on failure
  */
-char * ic_token_get_string(struct ic_token *token){
-    if( ! token ){
+char *ic_token_get_string(struct ic_token *token) {
+    if (!token) {
         puts("ic_token_get_string: token was null");
         return 0;
     }
 
     /* check if token->id allows for a string */
-    switch( token->id ){
+    switch (token->id) {
         case IC_IDENTIFIER:
         case IC_LITERAL_STRING:
         case IC_COMMENT:
@@ -285,14 +285,14 @@ char * ic_token_get_string(struct ic_token *token){
  * returns length on success
  * returns 0 on failure
  */
-unsigned int ic_token_get_string_length(struct ic_token *token){
-    if( ! token ){
+unsigned int ic_token_get_string_length(struct ic_token *token) {
+    if (!token) {
         puts("ic_token_get_string_length: token was null");
         return 0;
     }
 
     /* check if token->id allows for a string */
-    switch( token->id ){
+    switch (token->id) {
         case IC_IDENTIFIER:
         case IC_LITERAL_STRING:
         case IC_COMMENT:
@@ -315,14 +315,14 @@ unsigned int ic_token_get_string_length(struct ic_token *token){
  * returns 1 on success
  * returns 0 on failure
  */
-int ic_token_set_integer(struct ic_token *token, int integer){
-    if( ! token ){
+int ic_token_set_integer(struct ic_token *token, int integer) {
+    if (!token) {
         puts("ic_token_set_integer: token was null");
         return 0;
     }
 
     /* check if token->id allows for an integer */
-    switch( token->id ){
+    switch (token->id) {
         case IC_LITERAL_INTEGER:
             /* string allowed */
             break;
@@ -345,14 +345,14 @@ int ic_token_set_integer(struct ic_token *token, int integer){
  * returns * on success
  * returns 0 on failure
  */
-int ic_token_get_integer(struct ic_token *token){
-    if( ! token ){
+int ic_token_get_integer(struct ic_token *token) {
+    if (!token) {
         puts("ic_token_get_integer: token was null");
         return 0;
     }
 
     /* check if token->id allows for an integer */
-    switch( token->id ){
+    switch (token->id) {
         case IC_LITERAL_INTEGER:
             /* string allowed */
             break;
@@ -375,13 +375,13 @@ int ic_token_get_integer(struct ic_token *token){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_token_destroy(struct ic_token *token, unsigned int free_token){
-    if( ! token ){
+unsigned int ic_token_destroy(struct ic_token *token, unsigned int free_token) {
+    if (!token) {
         puts("ic_token_destroy: token was null");
         return 0;
     }
 
-    if( free_token ){
+    if (free_token) {
         free(token);
     }
 
@@ -393,13 +393,13 @@ unsigned int ic_token_destroy(struct ic_token *token, unsigned int free_token){
  * returns 1 if it is an operator
  * returns 0 if not
  */
-unsigned int ic_token_isoperator(struct ic_token *token){
-    if( ! token ){
+unsigned int ic_token_isoperator(struct ic_token *token) {
+    if (!token) {
         puts("ic_token_isoperator: token was null");
         return 0;
     }
 
-    switch( token->id ){
+    switch (token->id) {
         case IC_PLUS:
         case IC_MINUS:
         case IC_DIVIDE:
@@ -429,13 +429,13 @@ unsigned int ic_token_isoperator(struct ic_token *token){
  * returns 1 if it is a boolean
  * returns 0 if not
  */
-unsigned int ic_token_isboolean(struct ic_token *token){
-    if( ! token ){
+unsigned int ic_token_isboolean(struct ic_token *token) {
+    if (!token) {
         puts("ic_token_isboolean: token was null");
         return 0;
     }
 
-    switch( token->id ){
+    switch (token->id) {
         case IC_TRUE:
         case IC_FALSE:
             return 1;
@@ -452,13 +452,13 @@ unsigned int ic_token_isboolean(struct ic_token *token){
  * returns 1 if it is a permission
  * returns 0 if not
  */
-unsigned int ic_token_ispermission(struct ic_token *token){
-    if( ! token ){
+unsigned int ic_token_ispermission(struct ic_token *token) {
+    if (!token) {
         puts("ic_token_ispermission: token was null");
         return 0;
     }
 
-    switch( token->id ){
+    switch (token->id) {
         case IC_DOLLAR:
         case IC_PERCENT:
         case IC_AMPERSAND:
@@ -476,14 +476,14 @@ unsigned int ic_token_ispermission(struct ic_token *token){
     return 0;
 }
 
-void ic_token_print(struct ic_token *token){
-    char * str = 0;
-    if( ! token ){
+void ic_token_print(struct ic_token *token) {
+    char *str = 0;
+    if (!token) {
         puts("ic_token_print: token was null");
         return;
     }
 
-    switch( token->id ){
+    switch (token->id) {
         case IC_IDENTIFIER:
             printf("%.*s", token->u.str.len, token->u.str.string);
             break;
@@ -499,7 +499,7 @@ void ic_token_print(struct ic_token *token){
 
         default:
             str = ic_token_get_representation(token);
-            if( ! str ){
+            if (!str) {
                 puts("ic_token_print: call to ic_token_get_representation failed");
                 return;
             }
@@ -509,8 +509,8 @@ void ic_token_print(struct ic_token *token){
     }
 }
 
-void ic_token_id_print_debug(enum ic_token_id id){
-    switch( id ){
+void ic_token_id_print_debug(enum ic_token_id id) {
+    switch (id) {
         case IC_IDENTIFIER:
             /* FIXME add payload */
             fputs("IC_IDENTIFIER", stdout);
@@ -660,9 +660,8 @@ void ic_token_id_print_debug(enum ic_token_id id){
     }
 }
 
-
-void ic_token_print_debug(struct ic_token *token){
-    if( ! token ){
+void ic_token_print_debug(struct ic_token *token) {
+    if (!token) {
         puts("ic_token_print_debug: token was null");
         return;
     }
@@ -670,17 +669,17 @@ void ic_token_print_debug(struct ic_token *token){
     ic_token_id_print_debug(token->id);
 }
 
-void ic_token_print_line(struct ic_token *token){
+void ic_token_print_line(struct ic_token *token) {
     /* number of chars until line ends */
     unsigned int len = 0;
 
-    if( ! token ){
+    if (!token) {
         puts("ic_token_print_line: token was null");
         return;
     }
 
-    for( len=0; ; ++len ){
-        switch( token->line[len] ){
+    for (len = 0;; ++len) {
+        switch (token->line[len]) {
             case '\0':
             case '\n':
             case '\r':
@@ -697,8 +696,8 @@ END:
     printf("%.*s\n", len, token->line);
 }
 
-void ic_token_debug(struct ic_token *token){
-    if( ! token ){
+void ic_token_debug(struct ic_token *token) {
+    if (!token) {
         puts("ic_token_debug: token was null");
         return;
     }
@@ -708,5 +707,3 @@ void ic_token_debug(struct ic_token *token){
     printf(" found in context: '%.*s'\nline:\n", 10, &(token->line[token->offset]));
     ic_token_print_line(token);
 }
-
-

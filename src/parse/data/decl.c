@@ -1,16 +1,16 @@
+#include <stdio.h>  /* puts, printf */
 #include <stdlib.h> /* calloc */
-#include <stdio.h> /* puts, printf */
 #include <string.h> /* strncpy */
 
-#include "decl.h"
-#include "field.h"
 #include "../../data/pvector.h"
-#include "stmt.h"
-#include "../../data/symbol.h"
 #include "../../data/string.h"
+#include "../../data/symbol.h"
+#include "../../transform/data/tbody.h"
 #include "../parse.h"
 #include "../permissions.h"
-#include "../../transform/data/tbody.h"
+#include "decl.h"
+#include "field.h"
+#include "stmt.h"
 
 /* FIXME crutch for unused param */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -20,23 +20,23 @@
  * returns new decl_func on success
  * returns 0 on failure
  */
-struct ic_decl_func * ic_decl_func_new(char *name, unsigned int name_len){
+struct ic_decl_func *ic_decl_func_new(char *name, unsigned int name_len) {
     struct ic_decl_func *fdecl = 0;
 
-    if( ! name ){
+    if (!name) {
         puts("ic_decl_func_new: name was null");
         return 0;
     }
 
     /* allocate new fdecl */
     fdecl = calloc(1, sizeof(struct ic_decl_func));
-    if( ! fdecl ){
+    if (!fdecl) {
         puts("ic_decl_func_new: calloc failed");
         return 0;
     }
 
     /* initialise */
-    if( ! ic_decl_func_init(fdecl, name, name_len) ){
+    if (!ic_decl_func_init(fdecl, name, name_len)) {
         puts("ic_decl_func_new: call to ic_decl_func_init failed");
         free(fdecl);
         return 0;
@@ -50,43 +50,43 @@ struct ic_decl_func * ic_decl_func_new(char *name, unsigned int name_len){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_func_init(struct ic_decl_func *fdecl, char *name, unsigned int name_len){
-    if( ! fdecl ){
+unsigned int ic_decl_func_init(struct ic_decl_func *fdecl, char *name, unsigned int name_len) {
+    if (!fdecl) {
         puts("ic_decl_func_init: fdecl was null");
         return 0;
     }
 
-    if( ! name ){
+    if (!name) {
         puts("ic_decl_func_init: name was null");
         return 0;
     }
 
     /* initialise name symbol */
-    if( ! ic_symbol_init( &(fdecl->name), name, name_len ) ){
+    if (!ic_symbol_init(&(fdecl->name), name, name_len)) {
         puts("ic_decl_func_init: call to ic_symbol_init for name failed");
         return 0;
     }
 
     /* initialise empty args pvector */
-    if( ! ic_pvector_init( &(fdecl->args), 0 ) ){
+    if (!ic_pvector_init(&(fdecl->args), 0)) {
         puts("ic_decl_func_init: call to ic_pvector_init failed");
         return 0;
     }
 
     /* initialise empty string fdecl->sig_call */
-    if( ! ic_string_init_empty( &(fdecl->sig_call) ) ){
+    if (!ic_string_init_empty(&(fdecl->sig_call))) {
         puts("ic_decl_func_init: call to ic_string_init_empty for sig_call failed");
         return 0;
     }
 
     /* initialise empty string fdecl->sig_full */
-    if( ! ic_string_init_empty( &(fdecl->sig_full) ) ){
+    if (!ic_string_init_empty(&(fdecl->sig_full))) {
         puts("ic_decl_func_init: call to ic_string_init_empty for sig_full failed");
         return 0;
     }
 
     /* initialise empty string fdecl->sig_mangled */
-    if( ! ic_string_init_empty( &(fdecl->sig_mangled) ) ){
+    if (!ic_string_init_empty(&(fdecl->sig_mangled))) {
         puts("ic_decl_func_init: call to ic_string_init_empty for sig_mangled failed");
         return 0;
     }
@@ -99,7 +99,7 @@ unsigned int ic_decl_func_init(struct ic_decl_func *fdecl, char *name, unsigned 
     fdecl->tbody = 0;
 
     /* initialise our empty body */
-    if( ! ic_body_init( &(fdecl->body) ) ){
+    if (!ic_body_init(&(fdecl->body))) {
         puts("ic_decl_func_init: call to ic_body_init failed");
         return 0;
     }
@@ -117,13 +117,13 @@ unsigned int ic_decl_func_init(struct ic_decl_func *fdecl, char *name, unsigned 
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_fdecl){
+unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_fdecl) {
     int i = 0;
     int len = 0;
 
     struct ic_field *field = 0;
 
-    if( ! fdecl ){
+    if (!fdecl) {
         puts("ic_decl_type_destroy: fdecl was null");
         return 0;
     }
@@ -131,7 +131,7 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
     /* free symbol contents but do not free symbol itself
      * since it is an element on fdecl
      */
-    if( ! ic_symbol_destroy(&(fdecl->name), 0) ){
+    if (!ic_symbol_destroy(&(fdecl->name), 0)) {
         puts("ic_decl_type_destroy: for name call to ic_symbol_destroy failed");
         return 0;
     }
@@ -139,7 +139,7 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
     /* free sig_call contents but do not free string itself
      * since it is an element on fdecl
      */
-    if( ! ic_string_destroy(&(fdecl->sig_call), 0) ){
+    if (!ic_string_destroy(&(fdecl->sig_call), 0)) {
         puts("ic_decl_type_destroy: for sig_call call to ic_string_destroy failed");
         return 0;
     }
@@ -147,7 +147,7 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
     /* free sig_full contents but do not free string itself
      * since it is an element on fdecl
      */
-    if( ! ic_string_destroy(&(fdecl->sig_full), 0) ){
+    if (!ic_string_destroy(&(fdecl->sig_full), 0)) {
         puts("ic_decl_type_destroy: for sig_full call to ic_string_destroy failed");
         return 0;
     }
@@ -155,16 +155,16 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
     /* free sig_mangled contents but do not free string itself
      * since it is an element on fdecl
      */
-    if( ! ic_string_destroy(&(fdecl->sig_mangled), 0) ){
+    if (!ic_string_destroy(&(fdecl->sig_mangled), 0)) {
         puts("ic_decl_type_destroy: for sig_full call to ic_string_mangled failed");
         return 0;
     }
 
-    len = ic_pvector_length( &(fdecl->args) );
+    len = ic_pvector_length(&(fdecl->args));
 
-    for( i=0; i<len; ++i ){
-        field = ic_pvector_get( &(fdecl->args), i );
-        if( ! field ){
+    for (i = 0; i < len; ++i) {
+        field = ic_pvector_get(&(fdecl->args), i);
+        if (!field) {
             puts("ic_decl_type_destroy: call to ic_pvector_get failed");
             return 0;
         }
@@ -172,21 +172,21 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
         /* dispatch to field destroy
          * free_field set to 1
          */
-        if( ! ic_field_destroy(field, 1) ){
+        if (!ic_field_destroy(field, 1)) {
             puts("ic_decl_type_destroy: call to ic_field_destroy failed");
             return 0;
         }
     }
 
     /* only need to free if we have a ret_type */
-    if( fdecl->ret_type ){
+    if (fdecl->ret_type) {
         /* free symbol contents and free symbol
          * as our ret type is always allocated
          *
          *    // ic_decl_func_set_return :
          *    fdecl->ret_type = ic_symbol_new(type, type_len);
          */
-        if( ! ic_symbol_destroy(fdecl->ret_type, 1) ){
+        if (!ic_symbol_destroy(fdecl->ret_type, 1)) {
             puts("ic_decl_type_destroy: for ret_type call to ic_symbol_destroy failed");
             return 0;
         }
@@ -195,23 +195,23 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
     /* free body contents but do not free body itself
      * since it is an element on fdecl
      */
-    if( ! ic_body_destroy(&(fdecl->body), 0) ){
+    if (!ic_body_destroy(&(fdecl->body), 0)) {
         puts("ic_decl_type_destroy: for body call to ic_body_destroy failed");
         return 0;
     }
 
-    if( fdecl->tbody ){
-      /* call destroy on transform_body
+    if (fdecl->tbody) {
+        /* call destroy on transform_body
        * free as it is a pointer member
        */
-      if( ! ic_transform_body_destroy( fdecl->tbody, 1 ) ){
-          puts("ic_decl_type_destroy: for tbody call to ic_transform_body_destroy failed");
-          return 0;
-      }
+        if (!ic_transform_body_destroy(fdecl->tbody, 1)) {
+            puts("ic_decl_type_destroy: for tbody call to ic_transform_body_destroy failed");
+            return 0;
+        }
     }
 
     /* only free if caller asked */
-    if( free_fdecl ){
+    if (free_fdecl) {
         free(fdecl);
     }
 
@@ -224,19 +224,19 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_func_add_arg(struct ic_decl_func *fdecl, struct ic_field *field){
-    if( ! fdecl ){
+unsigned int ic_decl_func_add_arg(struct ic_decl_func *fdecl, struct ic_field *field) {
+    if (!fdecl) {
         puts("ic_decl_func_add_arg: fdecl was null");
         return 0;
     }
 
-    if( ! field ){
+    if (!field) {
         puts("ic_decl_func_add_arg: field was null");
         return 0;
     }
 
     /* append field returns -1 on failure */
-    if( -1 == ic_pvector_append( &(fdecl->args), field ) ){
+    if (-1 == ic_pvector_append(&(fdecl->args), field)) {
         puts("ic_decl_func_add_arg: call to ic_pvector_append failed");
         return 0;
     }
@@ -251,22 +251,22 @@ unsigned int ic_decl_func_add_arg(struct ic_decl_func *fdecl, struct ic_field *f
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_func_set_return(struct ic_decl_func *fdecl, char *type, unsigned int type_len){
-    if( ! fdecl ){
+unsigned int ic_decl_func_set_return(struct ic_decl_func *fdecl, char *type, unsigned int type_len) {
+    if (!fdecl) {
         puts("ic_decl_func_set_return: fdecl was null");
         return 0;
     }
-    if( ! type ){
+    if (!type) {
         puts("ic_decl_func_set_return: type was null");
         return 0;
     }
-    if( ! type_len ){
+    if (!type_len) {
         puts("ic_decl_func_set_return: type_len was 0");
         return 0;
     }
 
     /* check we haven't already set */
-    if( fdecl->ret_type ){
+    if (fdecl->ret_type) {
         /* it is an error to re-set the return type */
         puts("ic_decl_func_set_return: attempt to re-set return type");
         return 0;
@@ -274,7 +274,7 @@ unsigned int ic_decl_func_set_return(struct ic_decl_func *fdecl, char *type, uns
 
     /* create our return type */
     fdecl->ret_type = ic_symbol_new(type, type_len);
-    if( ! fdecl->ret_type ){
+    if (!fdecl->ret_type) {
         puts("ic_decl_func_set_return: call to ic_symbol_new failed");
         return 0;
     }
@@ -288,18 +288,18 @@ unsigned int ic_decl_func_set_return(struct ic_decl_func *fdecl, char *type, uns
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_func_add_stmt(struct ic_decl_func *fdecl, struct ic_stmt *stmt){
-    if( ! fdecl ){
+unsigned int ic_decl_func_add_stmt(struct ic_decl_func *fdecl, struct ic_stmt *stmt) {
+    if (!fdecl) {
         puts("ic_decl_func_add_stmt: fdecl was null");
         return 0;
     }
-    if( ! stmt ){
+    if (!stmt) {
         puts("ic_decl_func_add_stmt: stmt was null");
         return 0;
     }
 
     /* add our element */
-    if( -1 == ic_body_append( &(fdecl->body), stmt ) ){
+    if (-1 == ic_body_append(&(fdecl->body), stmt)) {
         puts("ic_decl_func_add_stmt: call to ic_body_append failed");
         return 0;
     }
@@ -312,8 +312,8 @@ unsigned int ic_decl_func_add_stmt(struct ic_decl_func *fdecl, struct ic_stmt *s
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_func_mark_builtin(struct ic_decl_func *fdecl){
-    if( ! fdecl ){
+unsigned int ic_decl_func_mark_builtin(struct ic_decl_func *fdecl) {
+    if (!fdecl) {
         puts("ic_decl_func_mark_builtin: fdecl was null");
         return 0;
     }
@@ -329,8 +329,8 @@ unsigned int ic_decl_func_mark_builtin(struct ic_decl_func *fdecl){
  * returns 1 if builtin
  * returns 0 otherwise
  */
-unsigned int ic_decl_func_isbuiltin(struct ic_decl_func *fdecl){
-    if( ! fdecl ){
+unsigned int ic_decl_func_isbuiltin(struct ic_decl_func *fdecl) {
+    if (!fdecl) {
         puts("ic_decl_func_isbuiltin: fdecl was null");
         return 0;
     }
@@ -341,22 +341,22 @@ unsigned int ic_decl_func_isbuiltin(struct ic_decl_func *fdecl){
 /* print decl_func
  * this will print a reproduction of the function from the ast
  */
-void ic_decl_func_print(struct ic_decl_func *fdecl, unsigned int *indent_level){
+void ic_decl_func_print(struct ic_decl_func *fdecl, unsigned int *indent_level) {
     char *fstr = 0;
 
-    if( ! fdecl ){
+    if (!fdecl) {
         puts("ic_decl_func_print: fdecl was null");
         return;
     }
 
-    if( ! indent_level ){
+    if (!indent_level) {
         puts("ic_decl_func_print: indent_level was null");
         return;
     }
 
     fstr = ic_decl_func_sig_call(fdecl);
     /* guarantee generation of function string */
-    if( ! fstr ){
+    if (!fstr) {
         puts("ic_decl_func_print_header: call to ic_decl_func_sig_call failed");
         return;
     }
@@ -371,36 +371,35 @@ void ic_decl_func_print(struct ic_decl_func *fdecl, unsigned int *indent_level){
 /* print decl_func header
  * this will print a reproduction of the function header from the ast
  */
-void ic_decl_func_print_header(struct ic_decl_func *fdecl, unsigned int *indent_level){
+void ic_decl_func_print_header(struct ic_decl_func *fdecl, unsigned int *indent_level) {
     /* offset into args */
     unsigned int i = 0;
     /* len of args */
     unsigned int len = 0;
 
-
-    if( ! fdecl ){
+    if (!fdecl) {
         puts("ic_decl_func_print_header: fdecl was null");
         return;
     }
 
-    if( ! indent_level ){
+    if (!indent_level) {
         puts("ic_decl_func_print_header: indent_level was null");
         return;
     }
 
     /* print `function`, name, and opening bracket */
-    printf("fn %s(", ic_symbol_contents( &(fdecl->name) ));
+    printf("fn %s(", ic_symbol_contents(&(fdecl->name)));
 
-    len = ic_pvector_length( &(fdecl->args) );
+    len = ic_pvector_length(&(fdecl->args));
 
     /* print arguments */
-    for( i=0; i < len; ++i ){
-        ic_field_print( ic_pvector_get( &(fdecl->args), i ) );
+    for (i = 0; i < len; ++i) {
+        ic_field_print(ic_pvector_get(&(fdecl->args), i));
 
         /* print a comma and space between each arg
          * but only if we are not the last arg
          */
-        if( i < (len - 1) ){
+        if (i < (len - 1)) {
             printf(", ");
         }
     }
@@ -409,7 +408,7 @@ void ic_decl_func_print_header(struct ic_decl_func *fdecl, unsigned int *indent_
     fputs(") -> ", stdout);
 
     /* print return type if we have one */
-    if( fdecl->ret_type ){
+    if (fdecl->ret_type) {
         ic_symbol_print(fdecl->ret_type);
         /* trailing \n */
         puts("");
@@ -422,13 +421,13 @@ void ic_decl_func_print_header(struct ic_decl_func *fdecl, unsigned int *indent_
 /* print decl_func body
  * this will print a reproduction of the function body from the ast
  */
-void ic_decl_func_print_body(struct ic_decl_func *fdecl, unsigned int *indent_level){
-    if( ! fdecl ){
+void ic_decl_func_print_body(struct ic_decl_func *fdecl, unsigned int *indent_level) {
+    if (!fdecl) {
         puts("ic_decl_func_print_body: fdecl was null");
         return;
     }
 
-    if( ! indent_level ){
+    if (!indent_level) {
         puts("ic_decl_func_print_body: indent_level was null");
         return;
     }
@@ -436,7 +435,7 @@ void ic_decl_func_print_body(struct ic_decl_func *fdecl, unsigned int *indent_le
     /* print body
      * body will handle indent_level incr and decr for us
      */
-    ic_body_print( &(fdecl->body), indent_level);
+    ic_body_print(&(fdecl->body), indent_level);
 
     /* print end\n */
     puts("end");
@@ -456,7 +455,7 @@ void ic_decl_func_print_body(struct ic_decl_func *fdecl, unsigned int *indent_le
  * returns char* on success
  * returns 0 on failure
  */
-char * ic_decl_func_sig_call(struct ic_decl_func *fdecl){
+char *ic_decl_func_sig_call(struct ic_decl_func *fdecl) {
     /* offset into args pvector */
     unsigned int i = 0;
     /* cached len */
@@ -470,7 +469,7 @@ char * ic_decl_func_sig_call(struct ic_decl_func *fdecl){
     /* permission str */
     char *perm_str = 0;
 
-    if( ! fdecl ){
+    if (!fdecl) {
         puts("ic_decl_func_sig_call: fdecl was null");
         return 0;
     }
@@ -479,7 +478,7 @@ char * ic_decl_func_sig_call(struct ic_decl_func *fdecl){
     fstr = &(fdecl->sig_call);
 
     /* if a non-zero length fecl->string is found then return it */
-    if( ic_string_length(fstr) ){
+    if (ic_string_length(fstr)) {
         return ic_string_contents(fstr);
     }
 
@@ -487,31 +486,31 @@ char * ic_decl_func_sig_call(struct ic_decl_func *fdecl){
     len = ic_pvector_length(&(fdecl->args));
 
     /* fdecl->name */
-    if( ! ic_string_append_symbol(fstr, &(fdecl->name)) ){
+    if (!ic_string_append_symbol(fstr, &(fdecl->name))) {
         puts("ic_decl_func_sig_call: name: call to ic_string_append_symbol failed");
         return 0;
     }
 
     /* opening bracket */
-    if( ! ic_string_append_char(fstr, "(", 1) ){
+    if (!ic_string_append_char(fstr, "(", 1)) {
         puts("ic_decl_func_sig_call: opening brace: call to ic_string_append_char failed");
         return 0;
     }
 
     /* iterate through args appending the type name to our string representation
      */
-    for( i=0; i<len; ++i ){
+    for (i = 0; i < len; ++i) {
         /* insert a space if we are not the first argument */
-        if( i > 0 ){
-            if( ! ic_string_append_char(fstr, " ", 1) ){
+        if (i > 0) {
+            if (!ic_string_append_char(fstr, " ", 1)) {
                 puts("ic_decl_func_sig_call: arg: call to ic_string_append_char failed");
                 return 0;
             }
         }
 
         /* capture our field */
-        field = ic_pvector_get( &(fdecl->args), i );
-        if( ! field ){
+        field = ic_pvector_get(&(fdecl->args), i);
+        if (!field) {
             puts("ic_decl_func_sig_call: arg: call to ic_pvector_get failed");
             return 0;
         }
@@ -519,15 +518,15 @@ char * ic_decl_func_sig_call(struct ic_decl_func *fdecl){
         /* add any permissions
          * only need to show if not default
          */
-        if( ! ic_parse_perm_is_default(field->permissions) ){
+        if (!ic_parse_perm_is_default(field->permissions)) {
             perm_str = ic_parse_perm_str(field->permissions);
 
-            if( ! perm_str ){
+            if (!perm_str) {
                 puts("ic_decl_func_sig_call: arg: call to ic_parse_perm_str failed");
                 return 0;
             }
 
-            if( ! ic_string_append_cstr(fstr, perm_str) ){
+            if (!ic_string_append_cstr(fstr, perm_str)) {
                 puts("ic_decl_func_sig_call: arg: call to ic_string_append_cstr failed");
                 return 0;
             }
@@ -535,19 +534,19 @@ char * ic_decl_func_sig_call(struct ic_decl_func *fdecl){
 
         /* add type */
         cur_type = ic_type_ref_get_symbol(&(field->type));
-        if( ! cur_type ){
+        if (!cur_type) {
             puts("ic_decl_func_sig_call: arg: call to ic_type_get_symbol failed");
             return 0;
         }
 
-        if( ! ic_string_append_symbol(fstr, cur_type) ){
+        if (!ic_string_append_symbol(fstr, cur_type)) {
             puts("ic_decl_func_sig_call: arg: call to ic_string_append_symbol failed");
             return 0;
         }
     }
 
     /* final bracket */
-    if( ! ic_string_append_char(fstr, ")", 1) ){
+    if (!ic_string_append_char(fstr, ")", 1)) {
         puts("ic_decl_func_sig_call: closing brace: call to ic_string_append_char failed");
         return 0;
     }
@@ -570,7 +569,7 @@ char * ic_decl_func_sig_call(struct ic_decl_func *fdecl){
  * returns char* on success
  * returns 0 on failure
  */
-char * ic_decl_func_sig_full(struct ic_decl_func *fdecl){
+char *ic_decl_func_sig_full(struct ic_decl_func *fdecl) {
     /* offset into args pvector */
     unsigned int i = 0;
     /* cached len */
@@ -584,7 +583,7 @@ char * ic_decl_func_sig_full(struct ic_decl_func *fdecl){
     /* permission str */
     char *perm_str = 0;
 
-    if( ! fdecl ){
+    if (!fdecl) {
         puts("ic_decl_func_sig_full: fdecl was null");
         return 0;
     }
@@ -593,7 +592,7 @@ char * ic_decl_func_sig_full(struct ic_decl_func *fdecl){
     fstr = &(fdecl->sig_full);
 
     /* if a non-zero length fecl->string is found then return it */
-    if( ic_string_length(fstr) ){
+    if (ic_string_length(fstr)) {
         return ic_string_contents(fstr);
     }
 
@@ -601,31 +600,31 @@ char * ic_decl_func_sig_full(struct ic_decl_func *fdecl){
     len = ic_pvector_length(&(fdecl->args));
 
     /* fdecl->name */
-    if( ! ic_string_append_symbol(fstr, &(fdecl->name)) ){
+    if (!ic_string_append_symbol(fstr, &(fdecl->name))) {
         puts("ic_decl_func_sig_full: name: call to ic_string_append_symbol failed");
         return 0;
     }
 
     /* opening bracket */
-    if( ! ic_string_append_char(fstr, "(", 1) ){
+    if (!ic_string_append_char(fstr, "(", 1)) {
         puts("ic_decl_func_sig_full: opening brace: call to ic_string_append_char failed");
         return 0;
     }
 
     /* iterate through args appending the type name to our string representation
      */
-    for( i=0; i<len; ++i ){
+    for (i = 0; i < len; ++i) {
         /* insert a space if we are not the first argument */
-        if( i > 0 ){
-            if( ! ic_string_append_char(fstr, " ", 1) ){
+        if (i > 0) {
+            if (!ic_string_append_char(fstr, " ", 1)) {
                 puts("ic_decl_func_sig_full: arg: call to ic_string_append_char failed");
                 return 0;
             }
         }
 
         /* capture our field */
-        field = ic_pvector_get( &(fdecl->args), i );
-        if( ! field ){
+        field = ic_pvector_get(&(fdecl->args), i);
+        if (!field) {
             puts("ic_decl_func_sig_full: arg: call to ic_pvector_get failed");
             return 0;
         }
@@ -633,15 +632,15 @@ char * ic_decl_func_sig_full(struct ic_decl_func *fdecl){
         /* add any permissions
          * only need to show if not default
          */
-        if( ! ic_parse_perm_is_default(field->permissions) ){
+        if (!ic_parse_perm_is_default(field->permissions)) {
             perm_str = ic_parse_perm_str(field->permissions);
 
-            if( ! perm_str ){
+            if (!perm_str) {
                 puts("ic_decl_func_sig_full: arg: call to ic_parse_perm_str failed");
                 return 0;
             }
 
-            if( ! ic_string_append_cstr(fstr, perm_str) ){
+            if (!ic_string_append_cstr(fstr, perm_str)) {
                 puts("ic_decl_func_sig_full: arg: call to ic_string_append_cstr failed");
                 return 0;
             }
@@ -649,32 +648,32 @@ char * ic_decl_func_sig_full(struct ic_decl_func *fdecl){
 
         /* add type */
         cur_type = ic_type_ref_get_symbol(&(field->type));
-        if( ! cur_type ){
+        if (!cur_type) {
             puts("ic_decl_func_sig_full: arg: call to ic_type_get_symbol failed");
             return 0;
         }
 
-        if( ! ic_string_append_symbol(fstr, cur_type) ){
+        if (!ic_string_append_symbol(fstr, cur_type)) {
             puts("ic_decl_func_sig_full: arg: call to ic_string_append_symbol failed");
             return 0;
         }
     }
 
     /* final bracket and return arrow */
-    if( ! ic_string_append_char(fstr, ") -> ", 5) ){
+    if (!ic_string_append_char(fstr, ") -> ", 5)) {
         puts("ic_decl_func_sig_full: closing brace and return arrow: call to ic_string_append_char failed");
         return 0;
     }
 
     /* print return type if we have one */
-    if( fdecl->ret_type ){
-        if( ! ic_string_append_symbol(fstr, fdecl->ret_type) ){
+    if (fdecl->ret_type) {
+        if (!ic_string_append_symbol(fstr, fdecl->ret_type)) {
             puts("ic_decl_func_sig_full: return type (nonvoid): call to ic_string_append_symbol failed");
             return 0;
         }
     } else {
         /* otherwise print Void */
-        if( ! ic_string_append_char(fstr, "Void", 4) ){
+        if (!ic_string_append_char(fstr, "Void", 4)) {
             puts("ic_decl_func_sig_full: return type (void): call to ic_string_append_char failed");
             return 0;
         }
@@ -698,7 +697,7 @@ char * ic_decl_func_sig_full(struct ic_decl_func *fdecl){
  * returns char* on success
  * returns 0 on failure
  */
-char * ic_decl_func_sig_mangled(struct ic_decl_func *fdecl){
+char *ic_decl_func_sig_mangled(struct ic_decl_func *fdecl) {
     /* offset into args pvector */
     unsigned int i = 0;
     /* cached len */
@@ -710,7 +709,7 @@ char * ic_decl_func_sig_mangled(struct ic_decl_func *fdecl){
     /* temporary symbol for current field type */
     struct ic_symbol *cur_type = 0;
 
-    if( ! fdecl ){
+    if (!fdecl) {
         puts("ic_decl_func_sig_mangled: fdecl was null");
         return 0;
     }
@@ -719,7 +718,7 @@ char * ic_decl_func_sig_mangled(struct ic_decl_func *fdecl){
     fstr = &(fdecl->sig_mangled);
 
     /* if a non-zero length fecl->string is found then return it */
-    if( ic_string_length(fstr) ){
+    if (ic_string_length(fstr)) {
         return ic_string_contents(fstr);
     }
 
@@ -727,35 +726,35 @@ char * ic_decl_func_sig_mangled(struct ic_decl_func *fdecl){
     len = ic_pvector_length(&(fdecl->args));
 
     /* `i_` prefix */
-    if( ! ic_string_append_char(fstr, "i_", 2) ){
+    if (!ic_string_append_char(fstr, "i_", 2)) {
         puts("ic_decl_func_sig_mangled: i_ prefix: call to ic_string_append_char failed");
         return 0;
     }
 
     /* fdecl->name */
-    if( ! ic_string_append_symbol(fstr, &(fdecl->name)) ){
+    if (!ic_string_append_symbol(fstr, &(fdecl->name))) {
         puts("ic_decl_func_sig_mangled: name: call to ic_string_append_symbol failed");
         return 0;
     }
 
     /* `_a` */
-    if( ! ic_string_append_char(fstr, "_a", 2) ){
+    if (!ic_string_append_char(fstr, "_a", 2)) {
         puts("ic_decl_func_sig_mangled: _a suffix: call to ic_string_append_char failed");
         return 0;
     }
 
     /* iterate through args appending the type name to our string representation
      */
-    for( i=0; i<len; ++i ){
+    for (i = 0; i < len; ++i) {
         /* insert an `_` before each type */
-        if( ! ic_string_append_char(fstr, "_", 1) ){
+        if (!ic_string_append_char(fstr, "_", 1)) {
             puts("ic_decl_func_sig_mangled: arg: call to ic_string_append_char failed");
             return 0;
         }
 
         /* capture our field */
-        field = ic_pvector_get( &(fdecl->args), i );
-        if( ! field ){
+        field = ic_pvector_get(&(fdecl->args), i);
+        if (!field) {
             puts("ic_decl_func_sig_mangled: arg: call to ic_pvector_get failed");
             return 0;
         }
@@ -766,13 +765,13 @@ char * ic_decl_func_sig_mangled(struct ic_decl_func *fdecl){
 
         /* get argument type */
         cur_type = ic_type_ref_get_symbol(&(field->type));
-        if( ! cur_type ){
+        if (!cur_type) {
             puts("ic_decl_func_sig_mangled: arg: call to ic_type_get_symbol failed");
             return 0;
         }
 
         /* append argument type */
-        if( ! ic_string_append_symbol(fstr, cur_type) ){
+        if (!ic_string_append_symbol(fstr, cur_type)) {
             puts("ic_decl_func_sig_mangled: arg: call to ic_string_append_symbol failed");
             return 0;
         }
@@ -789,17 +788,17 @@ char * ic_decl_func_sig_mangled(struct ic_decl_func *fdecl){
  * returns new ic_field * on success
  * returns 0 on failure
  */
-struct ic_decl_type * ic_decl_type_new(char *name_src, unsigned int name_len){
-    struct ic_decl_type * tdecl = 0;
+struct ic_decl_type *ic_decl_type_new(char *name_src, unsigned int name_len) {
+    struct ic_decl_type *tdecl = 0;
 
     /* allocate decl_type */
     tdecl = calloc(1, sizeof(struct ic_decl_type));
-    if( ! tdecl ){
+    if (!tdecl) {
         puts("ic_decl_type_new: calloc failed");
         return 0;
     }
 
-    if( ! ic_decl_type_init(tdecl, name_src, name_len) ){
+    if (!ic_decl_type_init(tdecl, name_src, name_len)) {
         puts("ic_decl_type_new: call to ic_decl_type_init failed");
         free(tdecl);
         return 0;
@@ -815,31 +814,31 @@ struct ic_decl_type * ic_decl_type_new(char *name_src, unsigned int name_len){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_init(struct ic_decl_type *tdecl, char *name_src, unsigned int name_len){
-    if( ! tdecl ){
+unsigned int ic_decl_type_init(struct ic_decl_type *tdecl, char *name_src, unsigned int name_len) {
+    if (!tdecl) {
         puts("ic_decl_type_init: tdecl was null");
         return 0;
     }
 
-    if( ! name_src ){
+    if (!name_src) {
         puts("ic_decl_type_init: name_src was null");
         return 0;
     }
 
     /* initialise name */
-    if( ! ic_symbol_init( &(tdecl->name), name_src, name_len ) ){
+    if (!ic_symbol_init(&(tdecl->name), name_src, name_len)) {
         puts("ic_decl_type_init: call to ic_symbol_init for name failed");
         return 0;
     }
 
     /* init fields pvector */
-    if( ! ic_pvector_init( &(tdecl->fields), 0 ) ){
+    if (!ic_pvector_init(&(tdecl->fields), 0)) {
         puts("ic_decl_type_init: call to ic_pvector_init for fields failed");
         return 0;
     }
 
     /* init field dict */
-    if( ! ic_dict_init( &(tdecl->field_dict) ) ){
+    if (!ic_dict_init(&(tdecl->field_dict))) {
         puts("ic_decl_type_init: call to ic_dict_init for field_dict failed");
         return 0;
     }
@@ -861,12 +860,12 @@ unsigned int ic_decl_type_init(struct ic_decl_type *tdecl, char *name_src, unsig
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_destroy(struct ic_decl_type *tdecl, unsigned int free_tdecl){
+unsigned int ic_decl_type_destroy(struct ic_decl_type *tdecl, unsigned int free_tdecl) {
     int i = 0;
     int len = 0;
     struct ic_field *field = 0;
 
-    if( ! tdecl ){
+    if (!tdecl) {
         puts("ic_decl_type_destroy: tdecl was null");
         return 0;
     }
@@ -874,21 +873,21 @@ unsigned int ic_decl_type_destroy(struct ic_decl_type *tdecl, unsigned int free_
     /* free symbol contents but do not free symbol itself
      * since it is an element on tdecl
      */
-    if( ! ic_symbol_destroy(&(tdecl->name), 0) ){
+    if (!ic_symbol_destroy(&(tdecl->name), 0)) {
         puts("ic_decl_type_destroy: call to ic_symbol_destroy failed");
         return 0;
     }
 
-    len = ic_pvector_length( &(tdecl->fields) );
-    if( len == -1 ){
+    len = ic_pvector_length(&(tdecl->fields));
+    if (len == -1) {
         puts("ic_decl_type_destroy: call to ic_body_length failed");
         return 0;
     }
 
     /* loop through each item destroying */
-    for( i=0; i<len; ++i ){
-        field = ic_pvector_get( &(tdecl->fields), i );
-        if( ! field ){
+    for (i = 0; i < len; ++i) {
+        field = ic_pvector_get(&(tdecl->fields), i);
+        if (!field) {
             puts("ic_decl_type_destroy: call to ic_pvector_get failed");
             return 0;
         }
@@ -896,20 +895,20 @@ unsigned int ic_decl_type_destroy(struct ic_decl_type *tdecl, unsigned int free_
         /* dispatch to field destroy
          * free_field set to 1
          */
-        if( ! ic_field_destroy(field, 1) ){
+        if (!ic_field_destroy(field, 1)) {
             puts("ic_decl_type_destroy: call to ic_field_destroy failed");
             return 0;
         }
     }
 
     /* destroy field_dict */
-    if( ! ic_dict_destroy( &(tdecl->field_dict), 0, 0 ) ){
+    if (!ic_dict_destroy(&(tdecl->field_dict), 0, 0)) {
         puts("ic_decl_type_destroy: call to ic_dict_destroy failed");
         return 0;
     }
 
     /* only free if caller asked */
-    if( free_tdecl ){
+    if (free_tdecl) {
         free(tdecl);
     }
 
@@ -922,8 +921,8 @@ unsigned int ic_decl_type_destroy(struct ic_decl_type *tdecl, unsigned int free_
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_mark_void(struct ic_decl_type *tdecl){
-    if( ! tdecl ){
+unsigned int ic_decl_type_mark_void(struct ic_decl_type *tdecl) {
+    if (!tdecl) {
         puts("ic_decl_type_mark_void: tdecl was null");
         return 0;
     }
@@ -938,8 +937,8 @@ unsigned int ic_decl_type_mark_void(struct ic_decl_type *tdecl){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_mark_bool(struct ic_decl_type *tdecl){
-    if( ! tdecl ){
+unsigned int ic_decl_type_mark_bool(struct ic_decl_type *tdecl) {
+    if (!tdecl) {
         puts("ic_decl_type_mark_bool: tdecl was null");
         return 0;
     }
@@ -949,24 +948,23 @@ unsigned int ic_decl_type_mark_bool(struct ic_decl_type *tdecl){
     return 1;
 }
 
-
 /* add a new field to types list of fields
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_add_field(struct ic_decl_type *tdecl, struct ic_field *field){
-    if( ! tdecl ){
+unsigned int ic_decl_type_add_field(struct ic_decl_type *tdecl, struct ic_field *field) {
+    if (!tdecl) {
         puts("ic_decl_type_add_field: tdecl was null");
         return 0;
     }
 
-    if( ! field ){
+    if (!field) {
         puts("ic_decl_type_add_field: field was null");
         return 0;
     }
 
-    if( -1 == ic_pvector_append( &(tdecl->fields), field ) ){
+    if (-1 == ic_pvector_append(&(tdecl->fields), field)) {
         puts("ic_decl_type_add_field: call to ic_pvector_append failed");
         return 0;
     }
@@ -979,8 +977,8 @@ unsigned int ic_decl_type_add_field(struct ic_decl_type *tdecl, struct ic_field 
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_mark_builtin(struct ic_decl_type *tdecl){
-    if( ! tdecl ){
+unsigned int ic_decl_type_mark_builtin(struct ic_decl_type *tdecl) {
+    if (!tdecl) {
         puts("ic_decl_type_mark_builtin: tdecl was null");
         return 0;
     }
@@ -996,8 +994,8 @@ unsigned int ic_decl_type_mark_builtin(struct ic_decl_type *tdecl){
  * returns 1 if builtin
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_isbuiltin(struct ic_decl_type *tdecl){
-    if( ! tdecl ){
+unsigned int ic_decl_type_isbuiltin(struct ic_decl_type *tdecl) {
+    if (!tdecl) {
         puts("ic_decl_type_isbuiltin: tdecl was null");
         return 0;
     }
@@ -1006,12 +1004,12 @@ unsigned int ic_decl_type_isbuiltin(struct ic_decl_type *tdecl){
 }
 
 /* print the decl_type to stdout */
-void ic_decl_type_print(struct ic_decl_type *tdecl, unsigned int *indent_level){
-    if( ! tdecl ){
+void ic_decl_type_print(struct ic_decl_type *tdecl, unsigned int *indent_level) {
+    if (!tdecl) {
         puts("ic_decl_type_print: tdecl was null");
         return;
     }
-    if( ! indent_level ){
+    if (!indent_level) {
         puts("ic_decl_type_print: indent_level was null");
         return;
     }
@@ -1020,52 +1018,51 @@ void ic_decl_type_print(struct ic_decl_type *tdecl, unsigned int *indent_level){
     ic_decl_type_print_body(tdecl, indent_level);
 }
 
-void ic_decl_type_print_header(struct ic_decl_type *tdecl, unsigned int *indent_level){
-    if( ! tdecl ){
+void ic_decl_type_print_header(struct ic_decl_type *tdecl, unsigned int *indent_level) {
+    if (!tdecl) {
         puts("ic_decl_type_print_header: tdecl was null");
         return;
     }
-    if( ! indent_level ){
+    if (!indent_level) {
         puts("ic_decl_type_print_header: indent_level was null");
         return;
     }
 
     /* print type and name */
-    printf ("type %s\n", ic_symbol_contents(&(tdecl->name)) );
+    printf("type %s\n", ic_symbol_contents(&(tdecl->name)));
 }
 
-void ic_decl_type_print_body(struct ic_decl_type *tdecl, unsigned int *indent_level){
+void ic_decl_type_print_body(struct ic_decl_type *tdecl, unsigned int *indent_level) {
     unsigned int i = 0;
 
-    if( ! tdecl ){
+    if (!tdecl) {
         puts("ic_decl_type_print_body: tdecl was null");
         return;
     }
-    if( ! indent_level ){
+    if (!indent_level) {
         puts("ic_decl_type_print_body: indent_level was null");
         return;
     }
 
-
     /* increment indent level before body */
-    ++ *indent_level;
+    ++*indent_level;
 
     /* iterate through pvector fields
      * prefix each field with a 2 spaces  and postfix each with a \n
      */
-    for( i=0; i< ic_pvector_length(&(tdecl->fields)); ++i ){
+    for (i = 0; i < ic_pvector_length(&(tdecl->fields)); ++i) {
         /* print indent */
         ic_parse_print_indent(*indent_level);
 
         /* print field contents */
-        ic_field_print( ic_pvector_get( &(tdecl->fields), i ) );
+        ic_field_print(ic_pvector_get(&(tdecl->fields), i));
 
         /* postfix newline */
         puts("");
     }
 
     /* decrement indent level after body */
-    -- *indent_level;
+    --*indent_level;
 
     puts("end");
 }
@@ -1075,8 +1072,8 @@ void ic_decl_type_print_body(struct ic_decl_type *tdecl, unsigned int *indent_le
  * returns char * on success
  * returns 0 on failure
  */
-char * ic_decl_type_str(struct ic_decl_type *tdecl){
-    if( ! tdecl ){
+char *ic_decl_type_str(struct ic_decl_type *tdecl) {
+    if (!tdecl) {
         puts("ic_decl_type_str: tdecl was null");
         return 0;
     }
@@ -1089,21 +1086,21 @@ char * ic_decl_type_str(struct ic_decl_type *tdecl){
  * returns * on success
  * returns 0 on failure
  */
-struct ic_type * ic_decl_type_get_field_type(struct ic_decl_type *tdecl, char * field_name){
+struct ic_type *ic_decl_type_get_field_type(struct ic_decl_type *tdecl, char *field_name) {
     struct ic_type *type = 0;
 
-    if( ! tdecl ){
+    if (!tdecl) {
         puts("ic_decl_type_get_field_type: tdecl was null");
         return 0;
     }
 
-    if( ! field_name ){
+    if (!field_name) {
         puts("ic_decl_type_get_field_type: field_name was null");
         return 0;
     }
 
-    type = ic_dict_get( &(tdecl->field_dict), field_name );
-    if( ! type ){
+    type = ic_dict_get(&(tdecl->field_dict), field_name);
+    if (!type) {
         printf("ic_decl_type_get_field_type: failed to get type for field name '%s' from dict\n", field_name);
         return 0;
     }
@@ -1116,23 +1113,23 @@ struct ic_type * ic_decl_type_get_field_type(struct ic_decl_type *tdecl, char * 
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char * field_name, struct ic_type *type){
-    if( ! tdecl ){
+unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char *field_name, struct ic_type *type) {
+    if (!tdecl) {
         puts("ic_decl_type_add_field_type: tdecl was null");
         return 0;
     }
 
-    if( ! field_name ){
+    if (!field_name) {
         puts("ic_decl_type_add_field_type: field_name was null");
         return 0;
     }
 
-    if( ! type ){
+    if (!type) {
         puts("ic_decl_type_add_field_type: type was null");
         return 0;
     }
 
-    if( ! ic_dict_insert( &(tdecl->field_dict), field_name, type ) ){
+    if (!ic_dict_insert(&(tdecl->field_dict), field_name, type)) {
         printf("ic_decl_type_add_field_type: failed to insert type for field name '%s' into dict\n", field_name);
         return 0;
     }
@@ -1145,36 +1142,36 @@ unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char * fiel
  * returns new ic_field * on success
  * returns 0 on failure
  */
-struct ic_decl_op * ic_decl_op_new(char *from_src, unsigned int from_len, char *to_src, unsigned int to_len){
+struct ic_decl_op *ic_decl_op_new(char *from_src, unsigned int from_len, char *to_src, unsigned int to_len) {
     struct ic_decl_op *op = 0;
 
-    if( ! from_src ){
+    if (!from_src) {
         puts("ic_decl_op_new: from_src was null");
         return 0;
     }
 
-    if( ! from_len ){
+    if (!from_len) {
         puts("ic_decl_op_new: from_len was 0");
         return 0;
     }
 
-    if( ! to_src ){
+    if (!to_src) {
         puts("ic_decl_op_new: to_src was null");
         return 0;
     }
 
-    if( ! to_len ){
+    if (!to_len) {
         puts("ic_decl_op_new: to_len was 0");
         return 0;
     }
 
     op = calloc(1, sizeof(struct ic_decl_op));
-    if( ! op ){
+    if (!op) {
         puts("ic_decl_op_new: call to calloc failed");
         return 0;
     }
 
-    if( ! ic_decl_op_init(op, from_src, from_len, to_src, to_len) ){
+    if (!ic_decl_op_init(op, from_src, from_len, to_src, to_len)) {
         puts("ic_decl_op_new: call to ic_decl_op_init failed");
         return 0;
     }
@@ -1187,38 +1184,38 @@ struct ic_decl_op * ic_decl_op_new(char *from_src, unsigned int from_len, char *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_op_init(struct ic_decl_op *op, char *from_src, unsigned int from_len, char *to_src, unsigned int to_len){
-    if( ! op ){
+unsigned int ic_decl_op_init(struct ic_decl_op *op, char *from_src, unsigned int from_len, char *to_src, unsigned int to_len) {
+    if (!op) {
         puts("ic_decl_op_init: top was null");
         return 0;
     }
 
-    if( ! from_src ){
+    if (!from_src) {
         puts("ic_decl_op_init: from_src was null");
         return 0;
     }
 
-    if( ! from_len ){
+    if (!from_len) {
         puts("ic_decl_op_init: from_len was 0");
         return 0;
     }
 
-    if( ! to_src ){
+    if (!to_src) {
         puts("ic_decl_op_init: to_src was null");
         return 0;
     }
 
-    if( ! to_len ){
+    if (!to_len) {
         puts("ic_decl_op_init: to_len was 0");
         return 0;
     }
 
-    if( ! ic_symbol_init( &(op->from), from_src, from_len ) ){
+    if (!ic_symbol_init(&(op->from), from_src, from_len)) {
         puts("ic_decl_op_init: call to ic_symbol_init for 'from' failed");
         return 0;
     }
 
-    if( ! ic_symbol_init( &(op->to), to_src, to_len ) ){
+    if (!ic_symbol_init(&(op->to), to_src, to_len)) {
         puts("ic_decl_op_init: call to ic_symbol_init for 'to' failed");
         return 0;
     }
@@ -1236,23 +1233,23 @@ unsigned int ic_decl_op_init(struct ic_decl_op *op, char *from_src, unsigned int
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_op_destroy(struct ic_decl_op *op, unsigned int free_op){
-    if( ! op ){
+unsigned int ic_decl_op_destroy(struct ic_decl_op *op, unsigned int free_op) {
+    if (!op) {
         puts("ic_decl_op_destroy: op was null");
         return 0;
     }
 
-    if( ! ic_symbol_destroy( &(op->from), 0) ){
+    if (!ic_symbol_destroy(&(op->from), 0)) {
         puts("ic_decl_op_destroy: call to ic_symbol_destroy failed for 'from'");
         return 0;
     }
 
-    if( ! ic_symbol_destroy( &(op->to), 0) ){
+    if (!ic_symbol_destroy(&(op->to), 0)) {
         puts("ic_decl_op_destroy: call to ic_symbol_destroy failed for 'to'");
         return 0;
     }
 
-    if( free_op ){
+    if (free_op) {
         free(op);
     }
 
@@ -1260,8 +1257,8 @@ unsigned int ic_decl_op_destroy(struct ic_decl_op *op, unsigned int free_op){
 }
 
 /* print the decl_op to stdout */
-void ic_decl_op_print(struct ic_decl_op *op, unsigned int *indent_level){
-    if( ! op ){
+void ic_decl_op_print(struct ic_decl_op *op, unsigned int *indent_level) {
+    if (!op) {
         puts("ic_decl_op_print: op was null");
         return;
     }
@@ -1286,18 +1283,18 @@ void ic_decl_op_print(struct ic_decl_op *op, unsigned int *indent_level){
  * returns new ic_decl on success
  * returns 0 on failure
  */
-struct ic_decl * ic_decl_new(enum ic_decl_tag tag){
+struct ic_decl *ic_decl_new(enum ic_decl_tag tag) {
     struct ic_decl *decl = 0;
 
     /* allocate space */
     decl = calloc(1, sizeof(struct ic_decl));
-    if( ! decl ){
+    if (!decl) {
         puts("ic_decl_new: call to calloc failed");
         return 0;
     }
 
     /* initialise */
-    if( ! ic_decl_init(decl, tag) ){
+    if (!ic_decl_init(decl, tag)) {
         puts("ic_decl_new: call to ic_decl_init failed");
         return 0;
     }
@@ -1313,8 +1310,8 @@ struct ic_decl * ic_decl_new(enum ic_decl_tag tag){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_init(struct ic_decl *decl, enum ic_decl_tag tag){
-    if( ! decl ){
+unsigned int ic_decl_init(struct ic_decl *decl, enum ic_decl_tag tag) {
+    if (!decl) {
         puts("ic_decl_init: decl was null");
         return 0;
     }
@@ -1341,8 +1338,8 @@ unsigned int ic_decl_init(struct ic_decl *decl, enum ic_decl_tag tag){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl){
-    if( ! decl ){
+unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl) {
+    if (!decl) {
         puts("ic_decl_destroy: decl was null");
         return 0;
     }
@@ -1353,11 +1350,11 @@ unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl){
      * as both the fdecl and tdecl are elements on this ic_decl
      * so we have to handle the free bewlo
      */
-    switch( decl->tag ){
+    switch (decl->tag) {
         case ic_decl_tag_func:
         case ic_decl_tag_builtin_func:
             /* destroy all elements but not not (0) free fdecl itself */
-            if( ! ic_decl_func_destroy(&(decl->u.fdecl), 0) ){
+            if (!ic_decl_func_destroy(&(decl->u.fdecl), 0)) {
                 puts("ic_decl_destroy: call to ic_decl_func_destroy failed");
                 return 0;
             }
@@ -1366,14 +1363,14 @@ unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl){
         case ic_decl_tag_type:
         case ic_decl_tag_builtin_type:
             /* destroy all elements but not not (0) free tdecl itself */
-            if( ! ic_decl_type_destroy(&(decl->u.tdecl), 0) ){
+            if (!ic_decl_type_destroy(&(decl->u.tdecl), 0)) {
                 puts("ic_decl_destroy: call to ic_decl_type_destroy failed");
                 return 0;
             }
             break;
 
         case ic_decl_tag_builtin_op:
-            if( ! ic_decl_op_destroy(&(decl->u.op), 0) ){
+            if (!ic_decl_op_destroy(&(decl->u.op), 0)) {
                 puts("ic_decl_destroy: call to ic_decl_op_destroy failed");
                 return 0;
             }
@@ -1386,7 +1383,7 @@ unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl){
     }
 
     /* caller must determine if we are to free decl itself */
-    if( free_decl ){
+    if (free_decl) {
         free(decl);
     }
 
@@ -1400,14 +1397,14 @@ unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl){
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_decl_func * ic_decl_get_fdecl(struct ic_decl *decl){
-    if( ! decl ){
+struct ic_decl_func *ic_decl_get_fdecl(struct ic_decl *decl) {
+    if (!decl) {
         puts("ic_decl_get_fdecl: decl was null");
         return 0;
     }
 
     /* check we are the right type */
-    if( decl->tag != ic_decl_tag_func && decl->tag != ic_decl_tag_builtin_func ){
+    if (decl->tag != ic_decl_tag_func && decl->tag != ic_decl_tag_builtin_func) {
         return 0;
     }
 
@@ -1421,14 +1418,14 @@ struct ic_decl_func * ic_decl_get_fdecl(struct ic_decl *decl){
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_decl_type * ic_decl_get_tdecl(struct ic_decl *decl){
-    if( ! decl ){
+struct ic_decl_type *ic_decl_get_tdecl(struct ic_decl *decl) {
+    if (!decl) {
         puts("ic_decl_get_tdecl: decl was null");
         return 0;
     }
 
     /* check we are the right type */
-    if( decl->tag != ic_decl_tag_type && decl->tag != ic_decl_tag_builtin_type ){
+    if (decl->tag != ic_decl_tag_type && decl->tag != ic_decl_tag_builtin_type) {
         return 0;
     }
 
@@ -1442,14 +1439,14 @@ struct ic_decl_type * ic_decl_get_tdecl(struct ic_decl *decl){
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_decl_op * ic_decl_get_op(struct ic_decl *decl){
-    if( ! decl ){
+struct ic_decl_op *ic_decl_get_op(struct ic_decl *decl) {
+    if (!decl) {
         puts("ic_decl_get_op: decl was null");
         return 0;
     }
 
     /* check we are the right type */
-    if( decl->tag != ic_decl_tag_builtin_op ){
+    if (decl->tag != ic_decl_tag_builtin_op) {
         return 0;
     }
 
@@ -1462,16 +1459,16 @@ struct ic_decl_op * ic_decl_get_op(struct ic_decl *decl){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_mark_builtin(struct ic_decl *decl){
-    if( ! decl ){
+unsigned int ic_decl_mark_builtin(struct ic_decl *decl) {
+    if (!decl) {
         puts("ic_decl_mark_builtin: decl was null");
         return 0;
     }
 
-    switch( decl->tag ){
+    switch (decl->tag) {
         case ic_decl_tag_func:
             decl->tag = ic_decl_tag_builtin_func;
-            if( ! ic_decl_func_mark_builtin(&(decl->u.fdecl)) ){
+            if (!ic_decl_func_mark_builtin(&(decl->u.fdecl))) {
                 puts("ic_decl_mark_builtin: call to ic_decl_func_mark_builtin failed");
                 return 0;
             }
@@ -1479,7 +1476,7 @@ unsigned int ic_decl_mark_builtin(struct ic_decl *decl){
 
         case ic_decl_tag_type:
             decl->tag = ic_decl_tag_builtin_type;
-            if( ! ic_decl_type_mark_builtin(&(decl->u.tdecl)) ){
+            if (!ic_decl_type_mark_builtin(&(decl->u.tdecl))) {
                 puts("ic_decl_mark_builtin: call to ic_decl_type_mark_builtin failed");
                 return 0;
             }
@@ -1494,35 +1491,35 @@ unsigned int ic_decl_mark_builtin(struct ic_decl *decl){
 }
 
 /* print contents of ic_decl */
-void ic_decl_print(struct ic_decl *decl, unsigned int *indent_level){
+void ic_decl_print(struct ic_decl *decl, unsigned int *indent_level) {
 
-    if( ! decl ){
+    if (!decl) {
         puts("ic_decl_print: decl was null");
         return;
     }
-    if( ! indent_level ){
+    if (!indent_level) {
         puts("ic_decl_print: indent_level was null");
         return;
     }
 
-    switch( decl->tag ){
+    switch (decl->tag) {
         case ic_decl_tag_func:
-            ic_decl_func_print( ic_decl_get_fdecl(decl), indent_level );
+            ic_decl_func_print(ic_decl_get_fdecl(decl), indent_level);
             break;
         case ic_decl_tag_type:
-            ic_decl_type_print( ic_decl_get_tdecl(decl), indent_level );
+            ic_decl_type_print(ic_decl_get_tdecl(decl), indent_level);
             break;
         case ic_decl_tag_builtin_func:
             fputs("builtin ", stdout);
-            ic_decl_func_print_header( ic_decl_get_fdecl(decl), indent_level );
+            ic_decl_func_print_header(ic_decl_get_fdecl(decl), indent_level);
             break;
         case ic_decl_tag_builtin_type:
             fputs("builtin ", stdout);
-            ic_decl_type_print_header( ic_decl_get_tdecl(decl), indent_level );
+            ic_decl_type_print_header(ic_decl_get_tdecl(decl), indent_level);
             break;
         case ic_decl_tag_builtin_op:
             fputs("builtin ", stdout);
-            ic_decl_op_print( ic_decl_get_op(decl), indent_level );
+            ic_decl_op_print(ic_decl_get_op(decl), indent_level);
             break;
 
         default:
@@ -1530,5 +1527,3 @@ void ic_decl_print(struct ic_decl *decl, unsigned int *indent_level){
             break;
     }
 }
-
-

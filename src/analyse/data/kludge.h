@@ -1,10 +1,10 @@
 #ifndef ICARUS_KLUDGE_H
 #define ICARUS_KLUDGE_H
 
-#include "../../parse/data/ast.h"
-#include "../../data/pvector.h"
 #include "../../data/dict.h"
+#include "../../data/pvector.h"
 #include "../../data/symbol.h"
+#include "../../parse/data/ast.h"
 #include "../../parse/data/type_ref.h"
 
 /* a Kludge is the output from the analyse stage of icarus
@@ -35,7 +35,6 @@ struct ic_kludge {
     /* list of Type decls */
     struct ic_pvector tdecls;
 
-
     /* list of Type builtins
      * this is populated as part of kludge_init
      * FIXME consider builtin population
@@ -59,7 +58,7 @@ struct ic_kludge {
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_kludge * ic_kludge_new(void);
+struct ic_kludge *ic_kludge_new(void);
 
 /* init an existing kludge
  *
@@ -118,35 +117,35 @@ unsigned int ic_kludge_add_op(struct ic_kludge *kludge, struct ic_decl_op *op);
  * returns * on success
  * returns 0 on failure
  */
-struct ic_type * ic_kludge_get_type(struct ic_kludge *kludge, char *tdecl_str);
+struct ic_type *ic_kludge_get_type(struct ic_kludge *kludge, char *tdecl_str);
 
 /* retrieve ic_type by symbol
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_type * ic_kludge_get_type_from_symbol(struct ic_kludge *kludge, struct ic_symbol *type);
+struct ic_type *ic_kludge_get_type_from_symbol(struct ic_kludge *kludge, struct ic_symbol *type);
 
 /* retrieve ic_type by type_ref
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_type * ic_kludge_get_type_from_typeref(struct ic_kludge *kludge, struct ic_type_ref *type_ref);
+struct ic_type *ic_kludge_get_type_from_typeref(struct ic_kludge *kludge, struct ic_type_ref *type_ref);
 
 /* retrieve func decl by string
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_decl_func * ic_kludge_get_fdecl(struct ic_kludge *kludge, char *fdecl_str);
+struct ic_decl_func *ic_kludge_get_fdecl(struct ic_kludge *kludge, char *fdecl_str);
 
 /* retrieve func decl by symbol
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_decl_func * ic_kludge_get_fdecl_from_symbol(struct ic_kludge *kludge, struct ic_symbol *fdecl);
+struct ic_decl_func *ic_kludge_get_fdecl_from_symbol(struct ic_kludge *kludge, struct ic_symbol *fdecl);
 
 /* retrieve the function name that this operator maps to
  *
@@ -155,7 +154,7 @@ struct ic_decl_func * ic_kludge_get_fdecl_from_symbol(struct ic_kludge *kludge, 
  * returns * on success
  * returns 0 on error
  */
-struct ic_symbol * ic_kludge_get_operator(struct ic_kludge *kludge, char *sym_str);
+struct ic_symbol *ic_kludge_get_operator(struct ic_kludge *kludge, char *sym_str);
 
 /* retrieve the function name that this operator maps to
  *
@@ -164,7 +163,7 @@ struct ic_symbol * ic_kludge_get_operator(struct ic_kludge *kludge, char *sym_st
  * returns * on success
  * returns 0 on error
  */
-struct ic_symbol * ic_kludge_get_operator_from_symbol(struct ic_kludge *kludge, struct ic_symbol *symbol);
+struct ic_symbol *ic_kludge_get_operator_from_symbol(struct ic_kludge *kludge, struct ic_symbol *symbol);
 
 /* check if an existing identifier is taken either within the kludge or the provided sope
  *
@@ -206,6 +205,5 @@ int ic_kludge_identifier_exists_symbol(struct ic_kludge *kludge, struct ic_scope
  * returns 0 on failure
  */
 unsigned int ic_kludge_add_error(struct ic_kludge *kludge, void *error);
-
 
 #endif
