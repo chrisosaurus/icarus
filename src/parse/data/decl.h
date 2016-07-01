@@ -7,6 +7,11 @@
 #include "../../data/pvector.h"
 #include "../../data/dict.h"
 
+/* predeclare to allow usage of *ic_transform_body
+ * within decl_func
+ */
+struct ic_transform_body;
+
 struct ic_decl_func {
     /* fn name(args...) -> ret_type
      *      body ...
@@ -28,7 +33,14 @@ struct ic_decl_func {
      */
     struct ic_symbol *ret_type;
 
+    /* body of parse time stmt */
     struct ic_body body;
+
+    /* TIR body
+     * body constructed at transform time for consumption
+     * by backend
+     */
+    struct ic_transform_body *tbody;
 
     /* call signature
      * foo(Int Int)

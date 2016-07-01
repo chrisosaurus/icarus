@@ -10,6 +10,7 @@
 #include "../../data/string.h"
 #include "../parse.h"
 #include "../permissions.h"
+#include "../../transform/data/tbody.h"
 
 /* FIXME crutch for unused param */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -93,6 +94,9 @@ unsigned int ic_decl_func_init(struct ic_decl_func *fdecl, char *name, unsigned 
     /* initialise return type to 0 (void) */
     fdecl->ret_type = 0;
     fdecl->builtin = 0;
+
+    /* make sure to init tbody */
+    fdecl->tbody = 0;
 
     /* initialise our empty body */
     if( ! ic_body_init( &(fdecl->body) ) ){
@@ -194,6 +198,16 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
     if( ! ic_body_destroy(&(fdecl->body), 0) ){
         puts("ic_decl_type_destroy: for body call to ic_body_destroy failed");
         return 0;
+    }
+
+    if( fdecl->tbody ){
+      /* call destroy on transform_body
+       * free as it is a pointer member
+       */
+      if( ! ic_transform_body_destroy( fdecl->tbody, 1 ) ){
+          puts("ic_decl_type_destroy: for tbody call to ic_transform_body_destroy failed");
+          return 0;
+      }
     }
 
     /* only free if caller asked */
