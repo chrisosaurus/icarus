@@ -4,7 +4,7 @@
 #include "../../data/pvector.h"
 #include "../../analyse/data/scope.h"
 
-/* predeclare ic_stmt to allow use of ic_stmt *
+/* predeclare ic_stmt to allow use of *ic_stmt
  * as type
  */
 struct ic_stmt;
