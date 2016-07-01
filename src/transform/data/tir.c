@@ -638,8 +638,19 @@ unsigned int ic_transform_ir_ret_print(struct ic_transform_ir_ret *ret, unsigned
         return 0;
     }
 
-    /* FIXME TODO implement */
-    puts("ic_transform_ir_ret_print: UNIMPLEMENTED");
+    ic_parse_print_indent(*indent);
+
+    fputs("return", stdout);
+
+    /* print symbol if it's set */
+    if (ret->var) {
+        fputs(" ", stdout);
+        ic_symbol_print(ret->var);
+    }
+
+    /* trailing \n */
+    puts("");
+
     return 0;
 }
 
