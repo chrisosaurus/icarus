@@ -187,6 +187,7 @@ unsigned int ic_transform_ir_let_expr_destroy(struct ic_transform_ir_let_expr *l
  * return 0 on failure
  */
 unsigned int ic_transform_ir_let_expr_print(struct ic_transform_ir_let_expr *let, unsigned int *indent) {
+    unsigned int fake_indent = 0;
     if (!let) {
         puts("ic_transform_ir_let_expr_print: let was null");
         return 0;
@@ -197,8 +198,31 @@ unsigned int ic_transform_ir_let_expr_print(struct ic_transform_ir_let_expr *let
         return 0;
     }
 
-    /* FIXME TODO implement */
-    puts("ic_transform_ir_let_expr_print: UNIMPLEMENTED");
+    if (!let->name || !let->type || !let->expr) {
+        puts("ic_transform_ir_let_expr_print: this let is not ready for printing - has null fields");
+        return 0;
+    }
+
+    ic_parse_print_indent(*indent);
+
+    fputs("let ", stdout);
+
+    /* identifier name */
+    ic_symbol_print(let->name);
+
+    fputs("::", stdout);
+
+    /* type */
+    ic_type_print(let->type);
+
+    fputs(" = ", stdout);
+
+    /* expr */
+    ic_transform_ir_expr_print(let->expr, &fake_indent);
+
+    /* trailing \n */
+    puts("");
+
     return 0;
 }
 
