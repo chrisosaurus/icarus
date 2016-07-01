@@ -1,0 +1,13 @@
+Language: Cpp
+
+BasedOnStyle: LLVM
+
+AllowShortIfStatementsOnASingleLine: false
+BreakBeforeBraces: Attach
+ColumnLimit: 0
+IndentCaseLabels: true
+IndentWidth: 4
+SpaceBeforeParens: ControlStatements
+SpacesInParentheses: false
+UseTab: Never
+

@@ -117,5 +117,8 @@ compile: clean icarus
 	rm -f out.c
 	./icarus example/simple.ic out.c
 
-.PHONY: all clean cleanobj icarus test test_custom example readme compile
+format:
+	find src/ t/ -iname '*.[ch]' | xargs clang-format -style=file -i
+
+.PHONY: all clean cleanobj icarus test test_custom example readme compile format
 
