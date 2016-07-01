@@ -218,7 +218,10 @@ unsigned int ic_transform_ir_let_expr_print(struct ic_transform_ir_let_expr *let
     fputs(" = ", stdout);
 
     /* expr */
-    ic_transform_ir_expr_print(let->expr, &fake_indent);
+    if (!ic_transform_ir_expr_print(let->expr, &fake_indent)) {
+        puts("ic_transform_ir_let_expr_print: call to ic_transform_ir_expr_print failed");
+        return 0;
+    }
 
     /* trailing \n */
     puts("");
