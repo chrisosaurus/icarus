@@ -449,8 +449,24 @@ unsigned int ic_transform_ir_assign_print(struct ic_transform_ir_assign *assign,
         return 0;
     }
 
-    /* FIXME TODO implement */
-    puts("ic_transform_ir_assign_print: UNIMPLEMENTED");
+    if (!assign->left || !assign->right) {
+        puts("ic_transform_ir_assign_print: this assign is not ready for printing - has null fields");
+        return 0;
+    }
+
+    ic_parse_print_indent(*indent);
+
+    /* left symbol */
+    ic_symbol_print(assign->left);
+
+    fputs(" = ", stdout);
+
+    /* right symbol */
+    ic_symbol_print(assign->right);
+
+    /* trailing \n */
+    puts("");
+
     return 0;
 }
 
