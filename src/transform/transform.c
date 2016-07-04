@@ -148,6 +148,13 @@ static unsigned int ic_transform_fdecl(struct ic_kludge *kludge, struct ic_decl_
 }
 
 static unsigned int ic_transform_body(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body) {
+    /* length of body */
+    unsigned int len = 0;
+    /* offset into body */
+    unsigned int i = 0;
+    /* current stmt within body */
+    struct ic_stmt *stmt = 0;
+
     if (!kludge) {
         puts("ic_transform_body: kludge was null");
         return 0;
@@ -162,14 +169,28 @@ static unsigned int ic_transform_body(struct ic_kludge *kludge, struct ic_transf
         puts("ic_transform_body: body was null");
         return 0;
     }
+    len = ic_body_length(body);
+    if (!len) {
+        puts("ic_transform_body: got len `0` from ic_body_length");
+        return 0;
+    }
 
-    /* FIXME TODO */
     /* step through body stmts */
-    /* for each stmt */
-    /* transform - dispatch to function */
+    for (i = 0; i < len; ++i) {
+        /* for each stmt */
+        stmt = ic_body_get(body, i);
+        if (!stmt) {
+            puts("ic_transform_body: call to ic_body_get failed");
+            return 0;
+        }
 
-    /* FIXME TODO */
-    puts("ic_transform_body: transform implementation pending");
+        /* transform - dispatch to function */
+        if (!ic_transform_stmt(kludge, tbody, body, stmt)) {
+            puts("ic_transform_body: call to ic_transform_stmt failed");
+            return 0;
+        }
+    }
+
     return 1;
 }
 
