@@ -106,6 +106,14 @@ static unsigned int ic_transform_stmt_while(struct ic_kludge *kludge, struct ic_
  */
 static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_expr *expr);
 
+/* register and append a new temporary expr as a let
+ * generates a new symbol name and returns it
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+static struct ic_symbol *ic_transform_new_temp(struct ic_transform_body *tbody, struct ic_expr *expr);
+
 /* perform translation to TIR from kludge
  *
  * modifies kludge in place
@@ -348,6 +356,10 @@ static unsigned int ic_transform_stmt(struct ic_kludge *kludge, struct ic_transf
  * returns 0 on failure
  */
 static unsigned int ic_transform_stmt_ret(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_ret *ret) {
+    struct ic_expr *expr = 0;
+    struct ic_transform_ir_stmt *stmt = 0;
+    struct ic_symbol *new_tmp = 0;
+
     if (!kludge) {
         puts("ic_transform_stmt_ret: kludge was null");
         return 0;
@@ -368,7 +380,24 @@ static unsigned int ic_transform_stmt_ret(struct ic_kludge *kludge, struct ic_tr
         return 0;
     }
 
-    puts("ic_transform_stmt_ret: implementation pending");
+    expr = ret->ret;
+    new_tmp = ic_transform_new_temp(tbody, expr);
+    if (!new_tmp) {
+        puts("ic_transform_stmt_ret: call to ic_transform_new_temp failed");
+        return 0;
+    }
+
+    stmt = ic_transform_ir_stmt_ret_new(new_tmp);
+    if (!stmt) {
+        puts("ic_transform_stmt_ret: call to ic_transform_ir_stmt_ret_new failed");
+        return 0;
+    }
+
+    if (!ic_transform_body_append(tbody, stmt)) {
+        puts("ic_transform_stmt_ret: call to ic_transform_body_append failed");
+        return 0;
+    }
+
     return 1;
 }
 
@@ -598,4 +627,37 @@ static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_t
 
     puts("ic_transform_stmt_expr: implementation pending");
     return 1;
+}
+
+/* register and append a new temporary expr as a let
+ * generates a new symbol name and returns it
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+static struct ic_symbol *ic_transform_new_temp(struct ic_transform_body *tbody, struct ic_expr *expr) {
+
+    if (!tbody) {
+        puts("ic_transform_new_temp: tbody was null");
+        return 0;
+    }
+
+    if (!expr) {
+        puts("ic_transform_new_temp: expr was null");
+        return 0;
+    }
+
+    /* FIXME TODO */
+    /* register on tbody->tcounter */
+    /* generate new unique temporary symbol */
+    /* create a new let for this expr */
+    /* append new let to tbody */
+    /* return sym name*/
+
+    /* FIXME what is expr is already a symbol?
+   * just return it!
+   */
+
+    puts("ic_transform_new_temp: unimplemented");
+    return 0;
 }
