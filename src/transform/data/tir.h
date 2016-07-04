@@ -327,9 +327,9 @@ unsigned int ic_transform_ir_fcall_destroy(struct ic_transform_ir_fcall *fcall, 
 unsigned int ic_transform_ir_fcall_print(struct ic_transform_ir_fcall *fcall, unsigned int *indent);
 
 enum ic_transform_ir_stmt_tag {
-    ic_transform_ir_type_expr,
-    ic_transform_ir_type_let,
-    ic_transform_ir_type_ret
+    ic_transform_ir_stmt_type_expr,
+    ic_transform_ir_stmt_type_let,
+    ic_transform_ir_stmt_type_ret
 };
 
 struct ic_transform_ir_stmt {
@@ -397,5 +397,26 @@ struct ic_transform_ir_let *ic_transform_ir_stmt_get_let(struct ic_transform_ir_
  * returns 0 on failure
  */
 struct ic_transform_ir_ret *ic_transform_ir_stmt_get_ret(struct ic_transform_ir_stmt *stmt);
+
+/* allocate and initialise a new stmt->let->literal
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_literal_new(struct ic_symbol *name, struct ic_type *type, struct ic_expr_constant *literal);
+
+/* allocate and initialise a new stmt->let->expr
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_expr_new(struct ic_symbol *name, struct ic_type *type, struct ic_transform_ir_expr *expr);
+
+/* allocate and initialise a new stmt->ret
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_ret_new(struct ic_symbol *var);
 
 #endif /* ifndef ICARUS_TRANSFORM_IR_H */

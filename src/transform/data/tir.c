@@ -821,21 +821,21 @@ unsigned int ic_transform_ir_stmt_print(struct ic_transform_ir_stmt *stmt, unsig
     }
 
     switch (stmt->tag) {
-        case ic_transform_ir_type_expr:
+        case ic_transform_ir_stmt_type_expr:
             if (!ic_transform_ir_expr_print(&(stmt->u.expr), indent)) {
                 puts("ic_transform_ir_stmt_print: call to ic_transform_ir_expr_print failed");
                 return 0;
             }
             break;
 
-        case ic_transform_ir_type_let:
+        case ic_transform_ir_stmt_type_let:
             if (!ic_transform_ir_let_print(&(stmt->u.let), indent)) {
                 puts("ic_transform_ir_stmt_print: call to ic_transform_ir_let_print failed");
                 return 0;
             }
             break;
 
-        case ic_transform_ir_type_ret:
+        case ic_transform_ir_stmt_type_ret:
             if (!ic_transform_ir_ret_print(&(stmt->u.ret), indent)) {
                 puts("ic_transform_ir_stmt_print: call to ic_transform_ir_ret_print failed");
                 return 0;
@@ -862,7 +862,7 @@ struct ic_transform_ir_expr *ic_transform_ir_stmt_get_expr(struct ic_transform_i
         return 0;
     }
 
-    if (stmt->tag != ic_transform_ir_type_expr) {
+    if (stmt->tag != ic_transform_ir_stmt_type_expr) {
         puts("ic_transform_ir_stmt_get_expr: stmt was not of type expr");
         return 0;
     }
@@ -881,7 +881,7 @@ struct ic_transform_ir_let *ic_transform_ir_stmt_get_let(struct ic_transform_ir_
         return 0;
     }
 
-    if (stmt->tag != ic_transform_ir_type_let) {
+    if (stmt->tag != ic_transform_ir_stmt_type_let) {
         puts("ic_transform_ir_stmt_get_let: stmt was not of type let");
         return 0;
     }
@@ -900,10 +900,131 @@ struct ic_transform_ir_ret *ic_transform_ir_stmt_get_ret(struct ic_transform_ir_
         return 0;
     }
 
-    if (stmt->tag != ic_transform_ir_type_ret) {
+    if (stmt->tag != ic_transform_ir_stmt_type_ret) {
         puts("ic_transform_ir_stmt_get_ret: stmt was not of type ret");
         return 0;
     }
 
     return &(stmt->u.ret);
+}
+
+/* allocate and initialise a new stmt->let->literal
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_literal_new(struct ic_symbol *name, struct ic_type *type, struct ic_expr_constant *literal) {
+    struct ic_transform_ir_stmt *stmt = 0;
+
+    if (!name) {
+        puts("ic_transform_ir_stmt_let_literal_new: name was null");
+        return 0;
+    }
+
+    if (!type) {
+        puts("ic_transform_ir_stmt_let_literal_new: type was null");
+        return 0;
+    }
+
+    if (!literal) {
+        puts("ic_transform_ir_stmt_let_literal_new: literal was null");
+        return 0;
+    }
+
+    stmt = ic_transform_ir_stmt_new(ic_transform_ir_stmt_type_let);
+    if (!stmt) {
+        puts("ic_transform_ir_stmt_let_literal_new: call to ic_transform_ir_stmt_new failed");
+        return 0;
+    }
+
+    if (!ic_transform_ir_let_init(&(stmt->u.let), ic_transform_ir_let_type_literal)) {
+        puts("ic_transform_ir_stmt_let_literal_new: call to ic_transform_ir_let_init failed");
+        return 0;
+    }
+
+    if (!ic_transform_ir_let_literal_init(&(stmt->u.let.u.lit))) {
+        puts("ic_transform_ir_stmt_let_literal_new: call to ic_transform_ir_let_literal_init failed");
+        return 0;
+    }
+
+    stmt->u.let.u.lit.name = name;
+    stmt->u.let.u.lit.type = type;
+    stmt->u.let.u.lit.literal = literal;
+
+    return stmt;
+}
+
+/* allocate and initialise a new stmt->let->expr
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_expr_new(struct ic_symbol *name, struct ic_type *type, struct ic_transform_ir_expr *expr) {
+    struct ic_transform_ir_stmt *stmt = 0;
+
+    if (!name) {
+        puts("ic_transform_ir_stmt_let_expr_new: name was null");
+        return 0;
+    }
+
+    if (!type) {
+        puts("ic_transform_ir_stmt_let_expr_new: type was null");
+        return 0;
+    }
+
+    if (!expr) {
+        puts("ic_transform_ir_stmt_let_expr_new: expr was null");
+        return 0;
+    }
+
+    stmt = ic_transform_ir_stmt_new(ic_transform_ir_stmt_type_let);
+    if (!stmt) {
+        puts("ic_transform_ir_stmt_let_expr_new: call to ic_transform_ir_stmt_new failed");
+        return 0;
+    }
+
+    if (!ic_transform_ir_let_init(&(stmt->u.let), ic_transform_ir_let_type_expr)) {
+        puts("ic_transform_ir_stmt_let_expr_new: call to ic_transform_ir_let_init failed");
+        return 0;
+    }
+
+    if (!ic_transform_ir_let_expr_init(&(stmt->u.let.u.expr))) {
+        puts("ic_transform_ir_stmt_let_expr_new: call to ic_transform_ir_let_expr_init failed");
+        return 0;
+    }
+
+    stmt->u.let.u.expr.name = name;
+    stmt->u.let.u.expr.type = type;
+    stmt->u.let.u.expr.expr = expr;
+
+    return stmt;
+}
+
+/* allocate and initialise a new stmt->ret
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_ret_new(struct ic_symbol *var) {
+    struct ic_transform_ir_stmt *stmt = 0;
+
+    if (!var) {
+        puts("ic_transform_ir_stmt_ret_new: var was null");
+        return 0;
+    }
+
+    stmt = ic_transform_ir_stmt_new(ic_transform_ir_stmt_type_expr);
+    if (!stmt) {
+        puts("ic_transform_ir_stmt_ret_new: call to ic_transform_ir_stmt_new failed");
+        return 0;
+    }
+
+    if (!ic_transform_ir_ret_init(&(stmt->u.ret))) {
+        puts("ic_transform_ir_stmt_let_expr_new: call to ic_transform_ir_ret_init failed");
+        return 0;
+    }
+
+    stmt->u.ret.var = var;
+
+    return stmt;
 }

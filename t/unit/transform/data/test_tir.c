@@ -145,16 +145,16 @@ void basic_stmt(void) {
 
     puts("basic tir stmt testing");
 
-    assert(ic_transform_ir_stmt_init(&stmt_expr, ic_transform_ir_type_expr));
+    assert(ic_transform_ir_stmt_init(&stmt_expr, ic_transform_ir_stmt_type_expr));
     expr = ic_transform_ir_stmt_get_expr(&stmt_expr);
     assert(expr);
 
-    stmt_let = ic_transform_ir_stmt_new(ic_transform_ir_type_let);
+    stmt_let = ic_transform_ir_stmt_new(ic_transform_ir_stmt_type_let);
     assert(stmt_let);
     let = ic_transform_ir_stmt_get_let(stmt_let);
     assert(let);
 
-    stmt_ret = ic_transform_ir_stmt_new(ic_transform_ir_type_ret);
+    stmt_ret = ic_transform_ir_stmt_new(ic_transform_ir_stmt_type_ret);
     assert(stmt_ret);
     ret = ic_transform_ir_stmt_get_ret(stmt_ret);
     assert(ret);
