@@ -4,6 +4,7 @@
 #include "../data/pvector.h"
 #include "../parse/data/body.h"
 #include "../parse/data/decl.h"
+#include "../parse/data/stmt.h"
 #include "data/tbody.h"
 #include "data/tcounter.h"
 #include "transform.h"
@@ -41,6 +42,69 @@ static unsigned int ic_transform_body(struct ic_kludge *kludge, struct ic_transf
  * returns 0 on failure
  */
 static unsigned int ic_transform_stmt(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt *stmt);
+
+/* perform translation of a single `ret` stmt within a body
+ *
+ * appends tir stmt to tbody
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_transform_stmt_ret(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_ret *ret);
+
+/* perform translation of a single `let` stmt within a body
+ *
+ * appends tir stmt to tbody
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_let *let);
+
+/* perform translation of a single `assign` stmt within a body
+ *
+ * appends tir stmt to tbody
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_assign *assign);
+
+/* perform translation of a single `if` stmt within a body
+ *
+ * appends tir stmt to tbody
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_if *sif);
+
+/* perform translation of a single `for` stmt within a body
+ *
+ * appends tir stmt to tbody
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_transform_stmt_for(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_for *sfor);
+
+/* perform translation of a single `while` stmt within a body
+ *
+ * appends tir stmt to tbody
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_transform_stmt_while(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_while *swhile);
+
+/* perform translation of a single `expr` stmt within a body
+ *
+ * appends tir stmt to tbody
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_expr *expr);
 
 /* perform translation to TIR from kludge
  *
@@ -215,10 +279,287 @@ static unsigned int ic_transform_stmt(struct ic_kludge *kludge, struct ic_transf
         return 0;
     }
 
-    /* FIXME TODO */
     /* dispatch to functions for each stmt type */
+    switch (stmt->tag) {
+        case ic_stmt_type_ret:
+            if (!ic_transform_stmt_ret(kludge, tbody, body, &(stmt->u.ret))) {
+                puts("ic_transform_stmt: call to ic_transform_stmt_ret failed");
+                return 0;
+            }
+            break;
 
-    /* FIXME TODO */
+        case ic_stmt_type_let:
+            if (!ic_transform_stmt_let(kludge, tbody, body, &(stmt->u.let))) {
+                puts("ic_transform_stmt: call to ic_transform_stmt_let failed");
+                return 0;
+            }
+            break;
+
+        case ic_stmt_type_assign:
+            if (!ic_transform_stmt_assign(kludge, tbody, body, &(stmt->u.assign))) {
+                puts("ic_transform_stmt: call to ic_transform_stmt_assign failed");
+                return 0;
+            }
+            break;
+
+        case ic_stmt_type_if:
+            if (!ic_transform_stmt_if(kludge, tbody, body, &(stmt->u.sif))) {
+                puts("ic_transform_stmt: call to ic_transform_stmt_if failed");
+                return 0;
+            }
+            break;
+
+        case ic_stmt_type_for:
+            if (!ic_transform_stmt_for(kludge, tbody, body, &(stmt->u.sfor))) {
+                puts("ic_transform_stmt: call to ic_transform_stmt_for failed");
+                return 0;
+            }
+            break;
+
+        case ic_stmt_type_while:
+            if (!ic_transform_stmt_while(kludge, tbody, body, &(stmt->u.swhile))) {
+                puts("ic_transform_stmt: call to ic_transform_stmt_while failed");
+                return 0;
+            }
+            break;
+
+        case ic_stmt_type_expr:
+            if (!ic_transform_stmt_expr(kludge, tbody, body, stmt->u.expr)) {
+                puts("ic_transform_stmt: call to ic_transform_stmt_expr failed");
+                return 0;
+            }
+            break;
+
+        default:
+            puts("ic_transform_stmt: impossible stmt->tag");
+            return 0;
+            break;
+    }
+
     puts("ic_transform_stmt: transform implementation pending");
+    return 1;
+}
+
+/* perform translation of a single `ret` stmt within a body
+ *
+ * appends tir stmt to tbody
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_transform_stmt_ret(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_ret *ret) {
+    if (!kludge) {
+        puts("ic_transform_stmt_ret: kludge was null");
+        return 0;
+    }
+
+    if (!tbody) {
+        puts("ic_transform_stmt_ret: tbody was null");
+        return 0;
+    }
+
+    if (!body) {
+        puts("ic_transform_stmt_ret: body was null");
+        return 0;
+    }
+
+    if (!ret) {
+        puts("ic_transform_stmt_ret: ret was null");
+        return 0;
+    }
+
+    puts("ic_transform_stmt_ret: implementation pending");
+    return 1;
+}
+
+/* perform translation of a single `let` stmt within a body
+ *
+ * appends tir stmt to tbody
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_let *let) {
+    if (!kludge) {
+        puts("ic_transform_stmt_let: kludge was null");
+        return 0;
+    }
+
+    if (!tbody) {
+        puts("ic_transform_stmt_let: tbody was null");
+        return 0;
+    }
+
+    if (!body) {
+        puts("ic_transform_stmt_let: body was null");
+        return 0;
+    }
+
+    if (!let) {
+        puts("ic_transform_stmt_let: let was null");
+        return 0;
+    }
+
+    puts("ic_transform_stmt_let: implementation pending");
+    return 1;
+}
+
+/* perform translation of a single `assign` stmt within a body
+ *
+ * appends tir stmt to tbody
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_assign *assign) {
+    if (!kludge) {
+        puts("ic_transform_stmt_assign: kludge was null");
+        return 0;
+    }
+
+    if (!tbody) {
+        puts("ic_transform_stmt_assign: tbody was null");
+        return 0;
+    }
+
+    if (!body) {
+        puts("ic_transform_stmt_assign: body was null");
+        return 0;
+    }
+
+    if (!assign) {
+        puts("ic_transform_stmt_assign: assign was null");
+        return 0;
+    }
+
+    puts("ic_transform_stmt_assign: implementation pending");
+    return 1;
+}
+
+/* perform translation of a single `if` stmt within a body
+ *
+ * appends tir stmt to tbody
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_if *sif) {
+    if (!kludge) {
+        puts("ic_transform_stmt_if: kludge was null");
+        return 0;
+    }
+
+    if (!tbody) {
+        puts("ic_transform_stmt_if: tbody was null");
+        return 0;
+    }
+
+    if (!body) {
+        puts("ic_transform_stmt_if: body was null");
+        return 0;
+    }
+
+    if (!sif) {
+        puts("ic_transform_stmt_if: sif was null");
+        return 0;
+    }
+
+    puts("ic_transform_stmt_if: implementation pending");
+    return 1;
+}
+
+/* perform translation of a single `for` stmt within a body
+ *
+ * appends tir stmt to tbody
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_transform_stmt_for(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_for *sfor) {
+    if (!kludge) {
+        puts("ic_transform_stmt_for: kludge was null");
+        return 0;
+    }
+
+    if (!tbody) {
+        puts("ic_transform_stmt_for: tbody was null");
+        return 0;
+    }
+
+    if (!body) {
+        puts("ic_transform_stmt_for: body was null");
+        return 0;
+    }
+
+    if (!sfor) {
+        puts("ic_transform_stmt_for: sfor was null");
+        return 0;
+    }
+
+    puts("ic_transform_stmt_for: implementation pending");
+    return 1;
+}
+
+/* perform translation of a single `while` stmt within a body
+ *
+ * appends tir stmt to tbody
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_transform_stmt_while(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_while *swhile) {
+    if (!kludge) {
+        puts("ic_transform_stmt_while: kludge was null");
+        return 0;
+    }
+
+    if (!tbody) {
+        puts("ic_transform_stmt_while: tbody was null");
+        return 0;
+    }
+
+    if (!body) {
+        puts("ic_transform_stmt_while: body was null");
+        return 0;
+    }
+
+    if (!swhile) {
+        puts("ic_transform_stmt_while: swhile was null");
+        return 0;
+    }
+
+    puts("ic_transform_stmt_while: implementation pending");
+    return 1;
+}
+
+/* perform translation of a single `expr` stmt within a body
+ *
+ * appends tir stmt to tbody
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_expr *expr) {
+    if (!kludge) {
+        puts("ic_transform_stmt_expr: kludge was null");
+        return 0;
+    }
+
+    if (!tbody) {
+        puts("ic_transform_stmt_expr: tbody was null");
+        return 0;
+    }
+
+    if (!body) {
+        puts("ic_transform_stmt_expr: body was null");
+        return 0;
+    }
+
+    if (!expr) {
+        puts("ic_transform_stmt_expr: expr was null");
+        return 0;
+    }
+
+    puts("ic_transform_stmt_expr: implementation pending");
     return 1;
 }
