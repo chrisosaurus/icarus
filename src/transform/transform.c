@@ -380,6 +380,9 @@ static unsigned int ic_transform_stmt_ret(struct ic_kludge *kludge, struct ic_tr
  * returns 0 on failure
  */
 static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_let *let) {
+    struct ic_expr_constant *cons = 0;
+    struct ic_transform_ir_stmt *stmt = 0;
+
     if (!kludge) {
         puts("ic_transform_stmt_let: kludge was null");
         return 0;
@@ -398,6 +401,39 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_tr
     if (!let) {
         puts("ic_transform_stmt_let: let was null");
         return 0;
+    }
+
+    switch (let->init->tag) {
+        case ic_expr_type_func_call:
+            puts("ic_transform_stmt_let: unsupported let->init->tag: func_call");
+            return 0;
+            break;
+
+        case ic_expr_type_identifier:
+            puts("ic_transform_stmt_let: unsupported let->init->tag: identifier");
+            return 0;
+            break;
+
+        case ic_expr_type_constant:
+            cons = &(let->init->u.cons);
+            stmt = ic_transform_ir_stmt_let_literal_new(&(let->identifier), let->inferred_type, cons);
+            if (!stmt) {
+                puts("ic_transform_stmt_let: call to ic_transform_ir_stmt_let_literal_new failed");
+                return 0;
+            }
+            if (!ic_transform_body_append(tbody, stmt)) {
+                puts("ic_transform_stmt_let: call to ic_transform_body_append failed");
+                return 0;
+            }
+
+            /* success */
+            return 1;
+            break;
+
+        default:
+            puts("ic_transform_stmt_let: unsupported let->init->tag");
+            return 0;
+            break;
     }
 
     puts("ic_transform_stmt_let: implementation pending");
