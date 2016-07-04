@@ -4,6 +4,10 @@
 #include "../data/pvector.h"
 #include "../parse/data/decl.h"
 #include "transform.h"
+#include "../parse/data/body.h"
+#include "data/tbody.h"
+
+#pragma GCC diagnostic ignored "-Wunused-function"
 
 /* perform translation of all fdecls on kludge
  *
@@ -18,6 +22,25 @@ static unsigned int ic_transform_fdecls(struct ic_kludge *kludge);
  * returns 0 on failure
  */
 static unsigned int ic_transform_fdecl(struct ic_kludge *kludge, struct ic_decl_func *func);
+
+/* perform translation of a single body
+ *
+ * appends tir stmts to tbody
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_transform_body(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body);
+
+/* perform translation of a single stmt within a body
+ *
+ * appends tir stmt to tbody
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_transform_stmt(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt *stmt);
+
 
 /* perform translation to TIR from kludge
  *
@@ -93,6 +116,70 @@ static unsigned int ic_transform_fdecl(struct ic_kludge *kludge, struct ic_decl_
         return 0;
     }
 
+    /* FIXME TODO */
+    /* steps? */
+    /* check transform_body is not populated */
+    /* populate tbody */
+    /* initialise tbody and inner tcounter */
+    /* dispatch to transform_body for work */
+
+    /* FIXME TODO */
     puts("ic_transform_fecl: transform implementation pending");
     return 1;
 }
+
+static unsigned int ic_transform_body(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body) {
+    if (!kludge) {
+        puts("ic_transform_body: kludge was null");
+        return 0;
+    }
+
+    if (!tbody) {
+        puts("ic_transform_body: tbody was null");
+        return 0;
+    }
+
+    if (!body) {
+        puts("ic_transform_body: body was null");
+        return 0;
+    }
+
+    /* FIXME TODO */
+    /* step through body stmts */
+      /* for each stmt */
+      /* transform - dispatch to function */
+
+    /* FIXME TODO */
+    puts("ic_transform_body: transform implementation pending");
+    return 1;
+}
+
+static unsigned int ic_transform_stmt(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt *stmt) {
+    if (!kludge) {
+        puts("ic_transform_stmt: kludge was null");
+        return 0;
+    }
+
+    if (!tbody) {
+        puts("ic_transform_stmt: tbody was null");
+        return 0;
+    }
+
+    if (!body) {
+        puts("ic_transform_stmt: body was null");
+        return 0;
+    }
+
+    if (!stmt) {
+        puts("ic_transform_stmt: stmt was null");
+        return 0;
+    }
+
+    /* FIXME TODO */
+    /* dispatch to functions for each stmt type */
+
+    /* FIXME TODO */
+    puts("ic_transform_stmt: transform implementation pending");
+    return 1;
+}
+
