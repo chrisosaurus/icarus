@@ -2,10 +2,11 @@
 
 #include "../analyse/data/kludge.h"
 #include "../data/pvector.h"
-#include "../parse/data/decl.h"
-#include "transform.h"
 #include "../parse/data/body.h"
+#include "../parse/data/decl.h"
 #include "data/tbody.h"
+#include "data/tcounter.h"
+#include "transform.h"
 
 #pragma GCC diagnostic ignored "-Wunused-function"
 
@@ -40,7 +41,6 @@ static unsigned int ic_transform_body(struct ic_kludge *kludge, struct ic_transf
  * returns 0 on failure
  */
 static unsigned int ic_transform_stmt(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt *stmt);
-
 
 /* perform translation to TIR from kludge
  *
@@ -106,6 +106,8 @@ static unsigned int ic_transform_fdecls(struct ic_kludge *kludge) {
  * returns 0 on failure
  */
 static unsigned int ic_transform_fdecl(struct ic_kludge *kludge, struct ic_decl_func *func) {
+    struct ic_transform_counter *tcounter = 0;
+
     if (!kludge) {
         puts("ic_transform_fdecl: kludge was null");
         return 0;
@@ -116,15 +118,32 @@ static unsigned int ic_transform_fdecl(struct ic_kludge *kludge, struct ic_decl_
         return 0;
     }
 
-    /* FIXME TODO */
-    /* steps? */
     /* check transform_body is not populated */
-    /* populate tbody */
-    /* initialise tbody and inner tcounter */
-    /* dispatch to transform_body for work */
+    if (func->tbody) {
+        puts("ic_transform_fdecl: func->tbody was already set");
+        return 0;
+    }
 
-    /* FIXME TODO */
-    puts("ic_transform_fecl: transform implementation pending");
+    /* create tcounter */
+    tcounter = ic_transform_counter_new();
+    if (!tcounter) {
+        puts("ic_transform_fdecl: call to ic_transform_counter_new failed");
+        return 0;
+    }
+
+    /* populate tbody */
+    func->tbody = ic_transform_body_new(tcounter);
+    if (!func->tbody) {
+        puts("ic_transform_fdecl: call to ic_transform_body_new failed");
+        return 0;
+    }
+
+    /* dispatch to transform_body for work */
+    if (!ic_transform_body(kludge, func->tbody, &(func->body))) {
+        puts("ic_transform_fdecl: call to ic_transform_body failed");
+        return 0;
+    }
+
     return 1;
 }
 
@@ -146,8 +165,8 @@ static unsigned int ic_transform_body(struct ic_kludge *kludge, struct ic_transf
 
     /* FIXME TODO */
     /* step through body stmts */
-      /* for each stmt */
-      /* transform - dispatch to function */
+    /* for each stmt */
+    /* transform - dispatch to function */
 
     /* FIXME TODO */
     puts("ic_transform_body: transform implementation pending");
@@ -182,4 +201,3 @@ static unsigned int ic_transform_stmt(struct ic_kludge *kludge, struct ic_transf
     puts("ic_transform_stmt: transform implementation pending");
     return 1;
 }
-
