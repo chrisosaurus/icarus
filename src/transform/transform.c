@@ -781,6 +781,7 @@ static struct ic_transform_ir_expr *ic_transform_fcall(struct ic_transform_body 
             puts("ic_transform_fcall: call to ic_expr_func_call_get_arg failed");
             return 0;
         }
+
         /* build up new_args */
         sym = ic_transform_fcall_arg(tbody, arg);
         if (!sym) {
@@ -821,6 +822,9 @@ static struct ic_transform_ir_expr *ic_transform_fcall(struct ic_transform_body 
  * returns 0 on failure
  */
 static struct ic_symbol *ic_transform_fcall_arg(struct ic_transform_body *tbody, struct ic_expr *arg) {
+    /* FIXME ownership */
+    struct ic_symbol *sym = 0;
+
     if (!tbody) {
         puts("ic_transform_fcall_arg: tbody was null");
         return 0;
@@ -829,6 +833,20 @@ static struct ic_symbol *ic_transform_fcall_arg(struct ic_transform_body *tbody,
     if (!arg) {
         puts("ic_transform_fcall_arg: arg was null");
         return 0;
+    }
+
+    switch (arg->tag) {
+        case ic_expr_type_identifier:
+            /* FIXME ownership */
+            sym = &(arg->u.id.identifier);
+            /* FIXME ownership */
+            return sym;
+            break;
+
+        default:
+            puts("ic_transform_fcall_arg: unsupported/unimplemented arg->tag");
+            return 0;
+            break;
     }
 
     puts("ic_transform_fcall_arg: implementation pending");
