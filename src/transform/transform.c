@@ -114,6 +114,13 @@ static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_t
  */
 static struct ic_symbol *ic_transform_new_temp(struct ic_transform_body *tbody, struct ic_expr *expr);
 
+/* transform a function call
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned  int ic_transform_fcall(struct ic_transform_body *tbody, struct ic_expr_func_call *fcall);
+
 /* perform translation to TIR from kludge
  *
  * modifies kludge in place
@@ -625,6 +632,38 @@ static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_t
         return 0;
     }
 
+    switch( expr->tag){
+      case ic_expr_type_func_call:
+        puts("ic_transform_stmt_expr: unimplemented expr->tag");
+        return 0;
+        break;
+
+      case ic_expr_type_identifier:
+        puts("ic_transform_stmt_expr: unimplemented expr->tag");
+        return 0;
+        break;
+
+      case ic_expr_type_constant:
+        puts("ic_transform_stmt_expr: unimplemented expr->tag");
+        return 0;
+        break;
+
+      case ic_expr_type_operator:
+        puts("ic_transform_stmt_expr: unimplemented expr->tag");
+        return 0;
+        break;
+
+      case ic_expr_type_field_access:
+        puts("ic_transform_stmt_expr: unimplemented expr->tag");
+        return 0;
+        break;
+
+      default:
+        puts("ic_transform_stmt_expr: impossible expr->tag");
+        return 0;
+        break;
+    }
+
     puts("ic_transform_stmt_expr: implementation pending");
     return 1;
 }
@@ -661,3 +700,24 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_transform_body *tbody, 
     puts("ic_transform_new_temp: unimplemented");
     return 0;
 }
+
+/* transform a function call
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned  int ic_transform_fcall(struct ic_transform_body *tbody, struct ic_expr_func_call *fcall){
+    if (!tbody) {
+        puts("ic_transform_fcall: tbody was null");
+        return 0;
+    }
+
+    if (!fcall) {
+        puts("ic_transform_fcall: fcall was null");
+        return 0;
+    }
+
+    puts("ic_transform_fcall: unimplemented");
+    return 0;
+}
+
