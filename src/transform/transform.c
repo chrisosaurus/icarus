@@ -257,11 +257,8 @@ static unsigned int ic_transform_body(struct ic_kludge *kludge, struct ic_transf
         puts("ic_transform_body: body was null");
         return 0;
     }
+
     len = ic_body_length(body);
-    if (!len) {
-        puts("ic_transform_body: got len `0` from ic_body_length");
-        return 0;
-    }
 
     /* step through body stmts */
     for (i = 0; i < len; ++i) {
@@ -816,7 +813,7 @@ static struct ic_transform_ir_fcall *ic_transform_fcall(struct ic_transform_body
             return 0;
         }
 
-        if (!ic_pvector_append(new_args, sym)) {
+        if (-1 == ic_pvector_append(new_args, sym)) {
             puts("ic_transform_fcall: call to ic_pvector_append failed");
             return 0;
         }

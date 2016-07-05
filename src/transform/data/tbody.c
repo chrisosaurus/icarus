@@ -134,7 +134,7 @@ unsigned int ic_transform_body_append(struct ic_transform_body *tbody, struct ic
         return 0;
     }
 
-    if (!ic_pvector_append(&(tbody->tstmts), tstmt)) {
+    if (-1 == ic_pvector_append(&(tbody->tstmts), tstmt)) {
         puts("ic_transform_body_append: call to ic_pvector_append failed");
         return 0;
     }
