@@ -114,12 +114,12 @@ static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_t
  */
 static struct ic_symbol *ic_transform_new_temp(struct ic_transform_body *tbody, struct ic_expr *expr);
 
-/* transform a function call
+/* transform an fcall to tir_expr
  *
- * returns 1 on success
+ * returns * on success
  * returns 0 on failure
  */
-static unsigned  int ic_transform_fcall(struct ic_transform_body *tbody, struct ic_expr_func_call *fcall);
+static struct ic_transform_ir_expr * ic_transform_fcall(struct ic_transform_body *tbody, struct ic_expr_func_call *fcall);
 
 /* perform translation to TIR from kludge
  *
@@ -417,6 +417,8 @@ static unsigned int ic_transform_stmt_ret(struct ic_kludge *kludge, struct ic_tr
  */
 static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_let *let) {
     struct ic_expr_constant *cons = 0;
+    struct ic_expr_func_call *fcall = 0;
+    struct ic_transform_ir_expr *expr = 0;
     struct ic_transform_ir_stmt *stmt = 0;
 
     if (!kludge) {
@@ -441,8 +443,24 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_tr
 
     switch (let->init->tag) {
         case ic_expr_type_func_call:
-            puts("ic_transform_stmt_let: unsupported let->init->tag: func_call");
-            return 0;
+            fcall = &(let->init->u.fcall);
+            expr = ic_transform_fcall(tbody, fcall);
+            if( ! expr){
+                puts("ic_transform_stmt_let: call to ic_transform_ir_fcall failed");
+                return 0;
+            }
+            stmt = ic_transform_ir_stmt_let_expr_new(&(let->identifier), let->inferred_type, expr);
+            if( ! stmt){
+                puts("ic_transform_stmt_let: call to ic_transform_ir_stmt_let_expr_new failed");
+                return 0;
+            }
+            if (!ic_transform_body_append(tbody, stmt)) {
+                puts("ic_transform_stmt_let: call to ic_transform_body_append failed");
+                return 0;
+            }
+
+            /* success */
+            return 1;
             break;
 
         case ic_expr_type_identifier:
@@ -701,12 +719,12 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_transform_body *tbody, 
     return 0;
 }
 
-/* transform a function call
+/* transform an fcall to tir_expr
  *
  * returns 1 on success
  * returns 0 on failure
  */
-static unsigned  int ic_transform_fcall(struct ic_transform_body *tbody, struct ic_expr_func_call *fcall){
+static struct ic_transform_ir_expr * ic_transform_fcall(struct ic_transform_body *tbody, struct ic_expr_func_call *fcall){
     if (!tbody) {
         puts("ic_transform_fcall: tbody was null");
         return 0;
