@@ -661,21 +661,31 @@ unsigned int ic_transform_ir_ret_print(struct ic_transform_ir_ret *ret, unsigned
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_transform_ir_fcall *ic_transform_ir_fcall_new(void) {
-    struct ic_transform_ir_fcall *fcall = 0;
+struct ic_transform_ir_fcall *ic_transform_ir_fcall_new(struct ic_expr_func_call *fcall, struct ic_pvector *args) {
+    struct ic_transform_ir_fcall *tir_fcall = 0;
 
-    fcall = calloc(sizeof(struct ic_transform_ir_fcall), 0);
     if (!fcall) {
+        puts("ir_transform_ir_fcall_new: fcall was null");
+        return 0;
+    }
+
+    if (!args) {
+        puts("ir_transform_ir_fcall_new: args was null");
+        return 0;
+    }
+
+    tir_fcall = calloc(sizeof(struct ic_transform_ir_fcall), 0);
+    if (!tir_fcall) {
         puts("ir_transform_ir_fcall_new: call to calloc failed");
         return 0;
     }
 
-    if (!ic_transform_ir_fcall_init(fcall)) {
+    if (!ic_transform_ir_fcall_init(tir_fcall, fcall, args)) {
         puts("ir_transform_ir_fcall_new: call to ic_transform_fcall_init failed");
         return 0;
     }
 
-    return fcall;
+    return tir_fcall;
 }
 
 /* initialise an existing fcall
@@ -685,14 +695,24 @@ struct ic_transform_ir_fcall *ic_transform_ir_fcall_new(void) {
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_fcall_init(struct ic_transform_ir_fcall *fcall) {
+unsigned int ic_transform_ir_fcall_init(struct ic_transform_ir_fcall *tir_fcall, struct ic_expr_func_call *fcall, struct ic_pvector *args) {
+    if (!tir_fcall) {
+        puts("ic_transform_ir_fcall_init: tir_fcall was null");
+        return 0;
+    }
+
     if (!fcall) {
         puts("ic_transform_ir_fcall_init: fcall was null");
         return 0;
     }
 
-    fcall->fcall = 0;
-    fcall->args = 0;
+    if (!args) {
+        puts("ic_transform_ir_fcall_init: args was null");
+        return 0;
+    }
+
+    tir_fcall->fcall = fcall;
+    tir_fcall->args = args;
 
     return 1;
 }

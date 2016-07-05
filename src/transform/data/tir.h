@@ -285,7 +285,7 @@ unsigned int ic_transform_ir_ret_destroy(struct ic_transform_ir_ret *ret, unsign
 unsigned int ic_transform_ir_ret_print(struct ic_transform_ir_ret *ret, unsigned int *indent);
 
 struct ic_transform_ir_fcall {
-    struct ic_expr_fcall *fcall;
+    struct ic_expr_func_call *fcall;
     /* pvector of symbols */
     struct ic_pvector *args;
 };
@@ -297,7 +297,7 @@ struct ic_transform_ir_fcall {
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_transform_ir_fcall *ic_transform_ir_fcall_new(void);
+struct ic_transform_ir_fcall *ic_transform_ir_fcall_new(struct ic_expr_func_call *fcall, struct ic_pvector *args);
 
 /* initialise an existing fcall
  *
@@ -306,7 +306,7 @@ struct ic_transform_ir_fcall *ic_transform_ir_fcall_new(void);
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_fcall_init(struct ic_transform_ir_fcall *fcall);
+unsigned int ic_transform_ir_fcall_init(struct ic_transform_ir_fcall *tir_fcall, struct ic_expr_func_call *fcall, struct ic_pvector *args);
 
 /* destroy fcall
  *

@@ -119,7 +119,16 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_transform_body *tbody, 
  * returns * on success
  * returns 0 on failure
  */
-static struct ic_transform_ir_expr * ic_transform_fcall(struct ic_transform_body *tbody, struct ic_expr_func_call *fcall);
+static struct ic_transform_ir_expr *ic_transform_fcall(struct ic_transform_body *tbody, struct ic_expr_func_call *fcall);
+
+/* transform an fcall argument to an symbol
+ * if the arg is already a symbol, just return it
+ * otherwise create a new let binding the result of expr
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+static struct ic_symbol *ic_transform_fcall_arg(struct ic_transform_body *tbody, struct ic_expr *arg);
 
 /* perform translation to TIR from kludge
  *
@@ -445,12 +454,12 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_tr
         case ic_expr_type_func_call:
             fcall = &(let->init->u.fcall);
             expr = ic_transform_fcall(tbody, fcall);
-            if( ! expr){
+            if (!expr) {
                 puts("ic_transform_stmt_let: call to ic_transform_ir_fcall failed");
                 return 0;
             }
             stmt = ic_transform_ir_stmt_let_expr_new(&(let->identifier), let->inferred_type, expr);
-            if( ! stmt){
+            if (!stmt) {
                 puts("ic_transform_stmt_let: call to ic_transform_ir_stmt_let_expr_new failed");
                 return 0;
             }
@@ -650,36 +659,36 @@ static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_t
         return 0;
     }
 
-    switch( expr->tag){
-      case ic_expr_type_func_call:
-        puts("ic_transform_stmt_expr: unimplemented expr->tag");
-        return 0;
-        break;
+    switch (expr->tag) {
+        case ic_expr_type_func_call:
+            puts("ic_transform_stmt_expr: unimplemented expr->tag");
+            return 0;
+            break;
 
-      case ic_expr_type_identifier:
-        puts("ic_transform_stmt_expr: unimplemented expr->tag");
-        return 0;
-        break;
+        case ic_expr_type_identifier:
+            puts("ic_transform_stmt_expr: unimplemented expr->tag");
+            return 0;
+            break;
 
-      case ic_expr_type_constant:
-        puts("ic_transform_stmt_expr: unimplemented expr->tag");
-        return 0;
-        break;
+        case ic_expr_type_constant:
+            puts("ic_transform_stmt_expr: unimplemented expr->tag");
+            return 0;
+            break;
 
-      case ic_expr_type_operator:
-        puts("ic_transform_stmt_expr: unimplemented expr->tag");
-        return 0;
-        break;
+        case ic_expr_type_operator:
+            puts("ic_transform_stmt_expr: unimplemented expr->tag");
+            return 0;
+            break;
 
-      case ic_expr_type_field_access:
-        puts("ic_transform_stmt_expr: unimplemented expr->tag");
-        return 0;
-        break;
+        case ic_expr_type_field_access:
+            puts("ic_transform_stmt_expr: unimplemented expr->tag");
+            return 0;
+            break;
 
-      default:
-        puts("ic_transform_stmt_expr: impossible expr->tag");
-        return 0;
-        break;
+        default:
+            puts("ic_transform_stmt_expr: impossible expr->tag");
+            return 0;
+            break;
     }
 
     puts("ic_transform_stmt_expr: implementation pending");
@@ -724,7 +733,30 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_transform_body *tbody, 
  * returns 1 on success
  * returns 0 on failure
  */
-static struct ic_transform_ir_expr * ic_transform_fcall(struct ic_transform_body *tbody, struct ic_expr_func_call *fcall){
+static struct ic_transform_ir_expr *ic_transform_fcall(struct ic_transform_body *tbody, struct ic_expr_func_call *fcall) {
+
+    /* offset into fcall->args */
+    unsigned int i = 0;
+    /* length of fcall->args */
+    unsigned int len = 0;
+    /* current fcall->arg */
+    struct ic_expr *arg = 0;
+    /* the symbol representing this argument */
+    struct ic_symbol *sym = 0;
+
+    /* our new pvector of symbols
+     * each representing the name for a let expr
+     * holding an argument for this fcall
+     * this is owned by the tir_fcall
+     */
+    struct ic_pvector *new_args = 0;
+
+    /* our eventual output tir_fcall */
+    struct ic_transform_ir_fcall *tir_fcall = 0;
+
+    /* our final output */
+    struct ic_transform_ir_expr *tir_expr = 0;
+
     if (!tbody) {
         puts("ic_transform_fcall: tbody was null");
         return 0;
@@ -735,7 +767,70 @@ static struct ic_transform_ir_expr * ic_transform_fcall(struct ic_transform_body
         return 0;
     }
 
-    puts("ic_transform_fcall: unimplemented");
-    return 0;
+    new_args = ic_pvector_new(0);
+    if (!new_args) {
+        puts("ic_transform_fcall: call to ic_pvector_new failed");
+        return 0;
+    }
+
+    /* for each args */
+    len = ic_expr_func_call_length(fcall);
+    for (i = 0; i < len; ++i) {
+        arg = ic_expr_func_call_get_arg(fcall, i);
+        if (!arg) {
+            puts("ic_transform_fcall: call to ic_expr_func_call_get_arg failed");
+            return 0;
+        }
+        /* build up new_args */
+        sym = ic_transform_fcall_arg(tbody, arg);
+        if (!sym) {
+            puts("ic_transform_fcall: call to ic_transform_fcall_arg failed");
+            return 0;
+        }
+
+        if (!ic_pvector_append(new_args, sym)) {
+            puts("ic_transform_fcall: call to ic_pvector_append failed");
+            return 0;
+        }
+    }
+
+    /* FIXME TODO ownership ... */
+    tir_fcall = ic_transform_ir_fcall_new(fcall, new_args);
+    if (!tir_expr) {
+        puts("ic_transform_fcall: call to ic_transform_ir_fcall_new failed");
+        return 0;
+    }
+
+    tir_expr = ic_transform_ir_expr_new();
+    if (!tir_expr) {
+        puts("ic_transform_fcall: call to ic_transform_ir_expr_new failed");
+        return 0;
+    }
+
+    /* FIXME TODO ownership ... */
+    tir_expr->fcall = tir_fcall;
+
+    return tir_expr;
 }
 
+/* transform an fcall argument to an symbol
+ * if the arg is already a symbol, just return it
+ * otherwise create a new let binding the result of expr
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+static struct ic_symbol *ic_transform_fcall_arg(struct ic_transform_body *tbody, struct ic_expr *arg) {
+    if (!tbody) {
+        puts("ic_transform_fcall_arg: tbody was null");
+        return 0;
+    }
+
+    if (!arg) {
+        puts("ic_transform_fcall_arg: arg was null");
+        return 0;
+    }
+
+    puts("ic_transform_fcall_arg: implementation pending");
+    return 0;
+}
