@@ -1,6 +1,7 @@
 TODO:
 -----
 
+* 'everything' within tir (except pointers to fdecl/kludge) should be owned - copy any shared symbols
 * ic_transform_fcall_arg: constant case
 * sort out transform ownership - it is a mess
 * complete tir print implementations
