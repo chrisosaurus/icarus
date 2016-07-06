@@ -553,9 +553,17 @@ unsigned int ic_transform_ir_expr_print(struct ic_transform_ir_expr *expr, unsig
         return 0;
     }
 
-    /* FIXME TODO implement */
-    puts("ic_transform_ir_expr_print: UNIMPLEMENTED");
-    return 0;
+    if( ! expr->fcall ){
+        puts("ic_transform_ir_expr_print: expr->fcall was null");
+        return 0;
+    }
+
+    if( ! ic_transform_ir_fcall_print(expr->fcall, indent) ){
+      puts("ic_transform_ir_expr_print: call to ic_transform_ir_fcall_print failed");
+      return 0;
+    }
+
+    return 1;
 }
 
 /* allocate and initialise a new ret
