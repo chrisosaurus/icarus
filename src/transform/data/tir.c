@@ -889,6 +889,8 @@ unsigned int ic_transform_ir_stmt_print(struct ic_transform_ir_stmt *stmt, unsig
                 puts("ic_transform_ir_stmt_print: call to ic_transform_ir_expr_print failed");
                 return 0;
             }
+            /* trailing \n after expr */
+            puts("");
             break;
 
         case ic_transform_ir_stmt_type_let:
