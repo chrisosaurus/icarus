@@ -770,10 +770,7 @@ unsigned int ic_transform_ir_fcall_print(struct ic_transform_ir_fcall *fcall, un
         return 0;
     }
 
-    /* indent */
-    ic_parse_print_indent(*indent);
-
-    /* function name */
+    /* function name and indent */
     ic_expr_print(fcall->fcall->fname, indent);
 
     /* opening ( */
