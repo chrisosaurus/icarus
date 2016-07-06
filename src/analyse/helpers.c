@@ -716,17 +716,12 @@ static struct ic_type *ic_analyse_infer_identifier(struct ic_kludge *kludge, str
     return type;
 }
 
-static struct ic_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_constant *cons) {
+struct ic_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_expr_constant *cons) {
     /* our resulting type */
     struct ic_type *type = 0;
 
     if (!kludge) {
         puts("ic_analyse_infer_constant: kludge was null");
-        return 0;
-    }
-
-    if (!scope) {
-        puts("ic_analyse_infer_constant: scope was null");
         return 0;
     }
 
@@ -1021,7 +1016,7 @@ struct ic_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scop
                 return 0;
             }
 
-            type = ic_analyse_infer_constant(kludge, scope, cons);
+            type = ic_analyse_infer_constant(kludge, cons);
             if (!type) {
                 puts("ic_analyse_infer: call to ic_analyse_infer_constant failed");
                 return 0;

@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "../analyse/data/kludge.h"
+#include "../analyse/helpers.h"
 #include "../data/pvector.h"
 #include "../parse/data/body.h"
 #include "../parse/data/decl.h"
@@ -10,6 +11,8 @@
 #include "transform.h"
 
 #pragma GCC diagnostic ignored "-Wunused-function"
+
+#define TCOUNT_MAX_SIZE 10
 
 /* perform translation of all fdecls on kludge
  *
@@ -112,7 +115,7 @@ static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_t
  * returns * on success
  * returns 0 on failure
  */
-static struct ic_symbol *ic_transform_new_temp(struct ic_transform_body *tbody, struct ic_expr *expr);
+static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_expr *expr);
 
 /* transform an fcall to tir_fcall
  *
@@ -440,7 +443,7 @@ static unsigned int ic_transform_stmt_ret(struct ic_kludge *kludge, struct ic_tr
     }
 
     expr = ret->ret;
-    new_tmp = ic_transform_new_temp(tbody, expr);
+    new_tmp = ic_transform_new_temp(kludge, tbody, expr);
     if (!new_tmp) {
         puts("ic_transform_stmt_ret: call to ic_transform_new_temp failed");
         return 0;
@@ -771,7 +774,31 @@ static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_t
  * returns * on success
  * returns 0 on failure
  */
-static struct ic_symbol *ic_transform_new_temp(struct ic_transform_body *tbody, struct ic_expr *expr) {
+static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_expr *expr) {
+    /* the tir stmt we generate */
+    struct ic_transform_ir_stmt *tir_stmt = 0;
+    /* string used for generating symbol */
+    struct ic_string *str = 0;
+    char *str_ch = 0;
+    int str_len = 0;
+    /* our temporary count */
+    unsigned int tcount = 0;
+    /* maximum of TCOUNT_MAX_SIZE digits */
+    char tcount_ch[TCOUNT_MAX_SIZE];
+    int tcount_ch_printed = 0;
+
+    /* symbol */
+    struct ic_symbol *sym = 0;
+    /* type */
+    struct ic_type *type = 0;
+
+    /* constant used in literal case */
+    struct ic_expr_constant *constant = 0;
+
+    if (!kludge) {
+        puts("ic_transform_new_temp: kludge was null");
+        return 0;
+    }
 
     if (!tbody) {
         puts("ic_transform_new_temp: tbody was null");
@@ -803,8 +830,86 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_transform_body *tbody, 
             break;
 
         case ic_expr_type_constant:
-            puts("ic_transform_new_temp: expr->tag field_access not yet supported");
-            return 0;
+            /* generate name */
+            /* base of _t for temp */
+            str = ic_string_new("_t", 2);
+            if (!str) {
+                puts("ic_transform_new_temp: call to ic_string_new failed");
+                return 0;
+            }
+
+            /* register on tcounter to get our number */
+            tcount = ic_transform_counter_register_temporary(tbody->tcounter);
+            if (!tcount) {
+                puts("ic_transform_new_temp: call to ic_transform_counter_registery_temporary failed");
+                return 0;
+            }
+
+            /* convert tcount to string */
+            tcount_ch_printed = snprintf(tcount_ch, TCOUNT_MAX_SIZE, "%d", tcount);
+            if (tcount_ch_printed == TCOUNT_MAX_SIZE) {
+                puts("WARNING: ic_transform_new_temp: snprintf printed same TCOUNT_MAX_SIZE chars");
+            }
+
+            /* concat */
+            if (!ic_string_append_char(str, tcount_ch, tcount_ch_printed)) {
+                puts("ic_transform_new_temp: call to ic_string_append_char failed");
+                return 0;
+            }
+
+            /* convert to symbol */
+            str_ch = ic_string_contents(str);
+            if (!str_ch) {
+                puts("ic_transform_new_temp: call to ic_string_contents failed");
+                return 0;
+            }
+
+            str_len = ic_string_length(str);
+            if (-1 == str_len) {
+                puts("ic_transform_new_temp: call to ic_string_length failed");
+                return 0;
+            }
+
+            sym = ic_symbol_new(str_ch, str_len);
+            if (!sym) {
+                puts("ic_transform_new_temp: call to ic_symbol_new failed");
+                return 0;
+            }
+
+            /* destroy string
+             * safe as symbol_new performs a strncpy
+             */
+            str_ch = 0;
+            if (!ic_string_destroy(str, 1)) {
+                puts("ic_transform_new_temp: call to ic_string_destroy failed");
+                return 0;
+            }
+
+            /* unpack literal */
+            constant = ic_expr_get_constant(expr);
+            if (!constant) {
+                puts("ic_transform_new_temp: call to ic_expr_get_constant failed");
+                return 0;
+            }
+
+            /* FIXME TODO infer type */
+            type = 0; /* FIXME TODO */
+            type = ic_analyse_infer_constant(kludge, constant);
+
+            /* generate new statement */
+            tir_stmt = ic_transform_ir_stmt_let_literal_new(sym, type, constant);
+            if (!tir_stmt) {
+                puts("ic_transform_new_temp: call to ic_transform_ir_stmt_let_literal_new failed");
+                return 0;
+            }
+
+            if (!ic_transform_body_append(tbody, tir_stmt)) {
+                puts("ic_transform_new_temp: call to ic_transform_body_append failed");
+                return 0;
+            }
+
+            /* success */
+            return sym;
             break;
 
         case ic_expr_type_operator:

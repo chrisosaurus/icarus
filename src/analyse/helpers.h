@@ -51,6 +51,8 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
  */
 struct ic_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr);
 
+struct ic_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_expr_constant *cons);
+
 /* check a statement for validity
  *
  * FIXME need a way of signalling and passing errors
