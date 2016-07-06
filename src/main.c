@@ -113,6 +113,11 @@ int main(int argc, char **argv) {
         puts("transform failed");
         exit(1);
     }
+    puts("----------------");
+    if(!ic_transform_print(kludge)){
+        puts("call to ic_transform_print failed");
+        exit(1);
+    }
 
     /* backend time
      * only compile if user specifies out_filename

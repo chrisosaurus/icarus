@@ -152,6 +152,52 @@ unsigned int ic_transform(struct ic_kludge *kludge) {
     return 1;
 }
 
+/* print out all transformed items within kludge
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_print(struct ic_kludge *kludge){
+    /* i for kludge fdecls */
+    unsigned int i = 0;
+    /* len for kludge fdecls */
+    unsigned int len = 0;
+    /* current tdecl we are considering */
+    struct ic_decl_func *fdecl = 0;
+    /* pointer to tbody within */
+    struct ic_transform_body *tbody = 0;
+    /* indent level */
+    unsigned int indent = 1;
+
+  if( ! kludge){
+    puts("ic_transform_print: kludge was null");
+    return 0;
+  }
+
+    len = ic_pvector_length(&(kludge->fdecls));
+
+    for (i = 0; i < len; ++i) {
+        fdecl = ic_pvector_get(&(kludge->fdecls), i);
+        if (!fdecl) {
+            puts("ic_transform_print: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        tbody = fdecl->tbody;
+        if( ! tbody){
+            puts("ic_transform_print: fdecl lacked tbody");
+            return 0;
+        }
+
+        if( ! ic_transform_body_print(tbody, &indent) ){
+            puts("ic_transform_print: call to ic_transform_body_print failed");
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
 /* perform translation of all fdecls on kludge
  *
  * returns 1 on success
@@ -163,7 +209,7 @@ static unsigned int ic_transform_fdecls(struct ic_kludge *kludge) {
     /* len for kludge fdecls */
     unsigned int kf_len = 0;
     /* current tdecl we are considering */
-    struct ic_decl_func *fdecl;
+    struct ic_decl_func *fdecl = 0;
 
     if (!kludge) {
         puts("ic_transform_fdecls: kludge was null");
