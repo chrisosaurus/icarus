@@ -753,6 +753,13 @@ unsigned int ic_transform_ir_fcall_destroy(struct ic_transform_ir_fcall *fcall, 
  * fcallurn 0 on failure
  */
 unsigned int ic_transform_ir_fcall_print(struct ic_transform_ir_fcall *fcall, unsigned int *indent) {
+    /* offset into fcall args */
+    unsigned int i = 0;
+    /* length of fcall args */
+    unsigned int len = 0;
+    /* current arg */
+    struct ic_symbol *arg = 0;
+
     if (!fcall) {
         puts("ic_transform_ir_fcall_print: fcall was null");
         return 0;
@@ -763,9 +770,37 @@ unsigned int ic_transform_ir_fcall_print(struct ic_transform_ir_fcall *fcall, un
         return 0;
     }
 
-    /* FIXME TODO implement */
-    puts("ic_transform_ir_fcall_print: UNIMPLEMENTED");
-    return 0;
+    /* indent */
+    ic_parse_print_indent(*indent);
+
+    /* function name */
+    ic_expr_print(fcall->fcall->fname, indent);
+
+    /* opening ( */
+    fputs("(", stdout);
+
+    /* args */
+    len = ic_pvector_length(fcall->args);
+
+    for(i=0; i<len; ++i ){
+      arg = ic_pvector_get(fcall->args, i);
+      if(!arg){
+        puts("ic_transform_ir_fcall_print: call to ic_pvector_get failed");
+        return 0;
+      }
+
+      if( i> 0){
+        /* comma and space to sep. args */
+        fputs(", ", stdout);
+        /* print arg */
+        ic_symbol_print(arg);
+      }
+    }
+
+    /* closing ) */
+    fputs(")", stdout);
+
+    return 1;
 }
 
 /* allocate and initialise a new stmt
