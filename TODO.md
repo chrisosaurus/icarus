@@ -1,6 +1,7 @@
 TODO:
 -----
 
+* ic_transform_fcall_arg: constant case
 * sort out transform ownership - it is a mess
 * complete tir print implementations
 * automate running of `make format` - either as part of compile and/or test

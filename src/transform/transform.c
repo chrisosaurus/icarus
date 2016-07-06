@@ -855,6 +855,11 @@ static struct ic_symbol *ic_transform_fcall_arg(struct ic_transform_body *tbody,
             return sym;
             break;
 
+        case ic_expr_type_constant:
+            puts("ic_transform_fcall_arg: unsupported/unimplemented arg->tag: constant");
+            return 0;
+            break;
+
         default:
             puts("ic_transform_fcall_arg: unsupported/unimplemented arg->tag");
             return 0;
