@@ -789,9 +789,10 @@ unsigned int ic_transform_ir_fcall_print(struct ic_transform_ir_fcall *fcall, un
       if( i> 0){
         /* comma and space to sep. args */
         fputs(", ", stdout);
-        /* print arg */
-        ic_symbol_print(arg);
       }
+
+      /* print arg */
+      ic_symbol_print(arg);
     }
 
     /* closing ) */
