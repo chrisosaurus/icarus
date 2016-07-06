@@ -790,11 +790,41 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_transform_body *tbody, 
     /* append new let to tbody */
     /* return sym name*/
 
-    /* FIXME what is expr is already a symbol?
-   * just return it!
-   */
+    switch (expr->tag) {
+        case ic_expr_type_func_call:
+            puts("ic_transform_new_temp: expr->tag func_call not yet supported");
+            return 0;
+            break;
 
-    puts("ic_transform_new_temp: unimplemented");
+        case ic_expr_type_identifier:
+            /* should never try to do this */
+            puts("ic_transform_new_temp: caller passed in expr->tag identifier - doesn't make sense");
+            return 0;
+            break;
+
+        case ic_expr_type_constant:
+            puts("ic_transform_new_temp: expr->tag field_access not yet supported");
+            return 0;
+            break;
+
+        case ic_expr_type_operator:
+            /* all operators should now be functions ??? */
+            puts("ic_transform_new_temp: caller passed in expr->tag operator - should already be transformed at this point");
+            return 0;
+            break;
+
+        case ic_expr_type_field_access:
+            puts("ic_transform_new_temp: expr->tag field_access not yet supported");
+            return 0;
+            break;
+
+        default:
+            puts("ic_transform_new_temp: caller passed in imposible/unknown expr->tag");
+            return 0;
+            break;
+    }
+
+    puts("ic_transform_new_temp: impossible! fell off end of switch");
     return 0;
 }
 
