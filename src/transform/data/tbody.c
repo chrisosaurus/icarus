@@ -12,7 +12,7 @@
 struct ic_transform_body *ic_transform_body_new(struct ic_transform_counter *tcounter) {
     struct ic_transform_body *tbody = 0;
 
-    tbody = calloc(sizeof(struct ic_transform_body), 1);
+    tbody = calloc(1, sizeof(struct ic_transform_body));
     if (!tbody) {
         puts("ic_transform_body_new: call to calloc failed");
         return 0;

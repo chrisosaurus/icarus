@@ -14,7 +14,7 @@
 struct ic_transform_ir_let_literal *ic_transform_ir_let_literal_new(void) {
     struct ic_transform_ir_let_literal *let = 0;
 
-    let = calloc(sizeof(struct ic_transform_ir_let_literal), 0);
+    let = calloc(1, sizeof(struct ic_transform_ir_let_literal));
     if (!let) {
         puts("ir_transform_ir_let_literal_new: call to calloc failed");
         return 0;
@@ -125,7 +125,7 @@ unsigned int ic_transform_ir_let_literal_print(struct ic_transform_ir_let_litera
 struct ic_transform_ir_let_expr *ic_transform_ir_let_expr_new(void) {
     struct ic_transform_ir_let_expr *expr = 0;
 
-    expr = calloc(sizeof(struct ic_transform_ir_let_expr), 0);
+    expr = calloc(1, sizeof(struct ic_transform_ir_let_expr));
     if (!expr) {
         puts("ir_transform_ir_let_expr_new: call to calloc failed");
         return 0;
@@ -239,7 +239,7 @@ unsigned int ic_transform_ir_let_expr_print(struct ic_transform_ir_let_expr *let
 struct ic_transform_ir_let *ic_transform_ir_let_new(enum ic_transform_ir_let_tag tag) {
     struct ic_transform_ir_let *let = 0;
 
-    let = calloc(sizeof(struct ic_transform_ir_let), 0);
+    let = calloc(1, sizeof(struct ic_transform_ir_let));
     if (!let) {
         puts("ir_transform_ir_let_new: call to calloc failed");
         return 0;
@@ -381,7 +381,7 @@ struct ic_transform_ir_let_expr *ic_transform_ir_let_get_expr(struct ic_transfor
 struct ic_transform_ir_assign *ic_transform_ir_assign_new(void) {
     struct ic_transform_ir_assign *assign = 0;
 
-    assign = calloc(sizeof(struct ic_transform_ir_assign), 0);
+    assign = calloc(1, sizeof(struct ic_transform_ir_assign));
     if (!assign) {
         puts("ir_transform_ir_assign_new: call to calloc failed");
         return 0;
@@ -483,7 +483,7 @@ unsigned int ic_transform_ir_assign_print(struct ic_transform_ir_assign *assign,
 struct ic_transform_ir_expr *ic_transform_ir_expr_new(void) {
     struct ic_transform_ir_expr *expr = 0;
 
-    expr = calloc(sizeof(struct ic_transform_ir_expr), 0);
+    expr = calloc(1, sizeof(struct ic_transform_ir_expr));
     if (!expr) {
         puts("ir_transform_ir_expr_new: call to calloc failed");
         return 0;
@@ -568,7 +568,7 @@ unsigned int ic_transform_ir_expr_print(struct ic_transform_ir_expr *expr, unsig
 struct ic_transform_ir_ret *ic_transform_ir_ret_new(void) {
     struct ic_transform_ir_ret *ret = 0;
 
-    ret = calloc(sizeof(struct ic_transform_ir_ret), 0);
+    ret = calloc(1, sizeof(struct ic_transform_ir_ret));
     if (!ret) {
         puts("ir_transform_ir_ret_new: call to calloc failed");
         return 0;
@@ -674,7 +674,7 @@ struct ic_transform_ir_fcall *ic_transform_ir_fcall_new(struct ic_expr_func_call
         return 0;
     }
 
-    tir_fcall = calloc(sizeof(struct ic_transform_ir_fcall), 0);
+    tir_fcall = calloc(1, sizeof(struct ic_transform_ir_fcall));
     if (!tir_fcall) {
         puts("ir_transform_ir_fcall_new: call to calloc failed");
         return 0;
@@ -770,7 +770,7 @@ unsigned int ic_transform_ir_fcall_print(struct ic_transform_ir_fcall *fcall, un
 struct ic_transform_ir_stmt *ic_transform_ir_stmt_new(enum ic_transform_ir_stmt_tag tag) {
     struct ic_transform_ir_stmt *stmt = 0;
 
-    stmt = calloc(sizeof(struct ic_transform_ir_stmt), 0);
+    stmt = calloc(1, sizeof(struct ic_transform_ir_stmt));
     if (!stmt) {
         puts("ir_transform_ir_stmt_new: call to calloc failed");
         return 0;

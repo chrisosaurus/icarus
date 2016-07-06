@@ -11,7 +11,7 @@
 struct ic_transform_counter *ic_transform_counter_new(void) {
     struct ic_transform_counter *tcounter = 0;
 
-    tcounter = calloc(sizeof(struct ic_transform_counter), 1);
+    tcounter = calloc(1, sizeof(struct ic_transform_counter));
     if (!tcounter) {
         puts("ic_transform_counter_new: call to calloc failed");
         return 0;
