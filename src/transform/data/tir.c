@@ -442,6 +442,8 @@ unsigned int ic_transform_ir_assign_destroy(struct ic_transform_ir_assign *assig
  * return 0 on failure
  */
 unsigned int ic_transform_ir_assign_print(struct ic_transform_ir_assign *assign, unsigned int *indent) {
+    unsigned int fake_indent = 0;
+
     if (!assign) {
         puts("ic_transform_ir_assign_print: assign was null");
         return 0;
@@ -465,7 +467,10 @@ unsigned int ic_transform_ir_assign_print(struct ic_transform_ir_assign *assign,
     fputs(" = ", stdout);
 
     /* right symbol */
-    ic_symbol_print(assign->right);
+    if (!ic_transform_ir_expr_print(assign->right, &fake_indent)) {
+        puts("ic_transform_ir_assign_print: call to ic_transform_ir_expr_print failed");
+        return 0;
+    }
 
     /* trailing \n */
     puts("");
@@ -969,6 +974,25 @@ struct ic_transform_ir_ret *ic_transform_ir_stmt_get_ret(struct ic_transform_ir_
     }
 
     return &(stmt->u.ret);
+}
+
+/* get pointer to internal assign
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_assign *ic_transform_ir_stmt_get_assign(struct ic_transform_ir_stmt *stmt) {
+    if (!stmt) {
+        puts("ic_transform_ir_stmt_get_assign: stmt was null");
+        return 0;
+    }
+
+    if (stmt->tag != ic_transform_ir_stmt_type_assign) {
+        puts("ic_transform_ir_stmt_get_assign: stmt was not of type assign");
+        return 0;
+    }
+
+    return &(stmt->u.assign);
 }
 
 /* allocate and initialise a new stmt->let->literal

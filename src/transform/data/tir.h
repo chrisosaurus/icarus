@@ -165,7 +165,7 @@ struct ic_transform_ir_let_expr *ic_transform_ir_let_get_expr(struct ic_transfor
 
 struct ic_transform_ir_assign {
     struct ic_symbol *left;
-    struct ic_symbol *right;
+    struct ic_transform_ir_expr *right;
 };
 
 /* allocate and initialise a new assign
@@ -329,7 +329,8 @@ unsigned int ic_transform_ir_fcall_print(struct ic_transform_ir_fcall *fcall, un
 enum ic_transform_ir_stmt_tag {
     ic_transform_ir_stmt_type_expr,
     ic_transform_ir_stmt_type_let,
-    ic_transform_ir_stmt_type_ret
+    ic_transform_ir_stmt_type_ret,
+    ic_transform_ir_stmt_type_assign
 };
 
 struct ic_transform_ir_stmt {
@@ -338,6 +339,7 @@ struct ic_transform_ir_stmt {
         struct ic_transform_ir_expr expr;
         struct ic_transform_ir_let let;
         struct ic_transform_ir_ret ret;
+        struct ic_transform_ir_assign assign;
     } u;
 };
 
@@ -397,6 +399,13 @@ struct ic_transform_ir_let *ic_transform_ir_stmt_get_let(struct ic_transform_ir_
  * returns 0 on failure
  */
 struct ic_transform_ir_ret *ic_transform_ir_stmt_get_ret(struct ic_transform_ir_stmt *stmt);
+
+/* get pointer to internal assign
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_assign *ic_transform_ir_stmt_get_assign(struct ic_transform_ir_stmt *stmt);
 
 /* allocate and initialise a new stmt->let->literal
  *
