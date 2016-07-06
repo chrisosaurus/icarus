@@ -112,7 +112,7 @@ unsigned int ic_transform_ir_let_literal_print(struct ic_transform_ir_let_litera
     /* trailing \n */
     puts("");
 
-    return 0;
+    return 1;
 }
 
 /* allocate and initialise a new let_expr
