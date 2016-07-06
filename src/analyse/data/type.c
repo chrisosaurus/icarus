@@ -220,8 +220,18 @@ unsigned int ic_type_equal(struct ic_type *a, struct ic_type *b) {
     return a == b;
 }
 
-/* print debug information about a type */
+/* print type name */
 void ic_type_print(struct ic_type *type) {
+    if (!type) {
+        puts("ic_type_print: type was null");
+        return;
+    }
+
+    ic_symbol_print(&(type->u.decl->name));
+}
+
+/* print debug information about a type */
+void ic_type_print_debug(struct ic_type *type) {
     unsigned int fake_indent = 0;
 
     if (!type) {
@@ -232,3 +242,4 @@ void ic_type_print(struct ic_type *type) {
     fputs("found: ", stdout);
     ic_decl_type_print_header(type->u.decl, &fake_indent);
 }
+
