@@ -553,14 +553,14 @@ unsigned int ic_transform_ir_expr_print(struct ic_transform_ir_expr *expr, unsig
         return 0;
     }
 
-    if( ! expr->fcall ){
+    if (!expr->fcall) {
         puts("ic_transform_ir_expr_print: expr->fcall was null");
         return 0;
     }
 
-    if( ! ic_transform_ir_fcall_print(expr->fcall, indent) ){
-      puts("ic_transform_ir_expr_print: call to ic_transform_ir_fcall_print failed");
-      return 0;
+    if (!ic_transform_ir_fcall_print(expr->fcall, indent)) {
+        puts("ic_transform_ir_expr_print: call to ic_transform_ir_fcall_print failed");
+        return 0;
     }
 
     return 1;
@@ -779,20 +779,20 @@ unsigned int ic_transform_ir_fcall_print(struct ic_transform_ir_fcall *fcall, un
     /* args */
     len = ic_pvector_length(fcall->args);
 
-    for(i=0; i<len; ++i ){
-      arg = ic_pvector_get(fcall->args, i);
-      if(!arg){
-        puts("ic_transform_ir_fcall_print: call to ic_pvector_get failed");
-        return 0;
-      }
+    for (i = 0; i < len; ++i) {
+        arg = ic_pvector_get(fcall->args, i);
+        if (!arg) {
+            puts("ic_transform_ir_fcall_print: call to ic_pvector_get failed");
+            return 0;
+        }
 
-      if( i> 0){
-        /* comma and space to sep. args */
-        fputs(", ", stdout);
-      }
+        if (i > 0) {
+            /* comma and space to sep. args */
+            fputs(", ", stdout);
+        }
 
-      /* print arg */
-      ic_symbol_print(arg);
+        /* print arg */
+        ic_symbol_print(arg);
     }
 
     /* closing ) */

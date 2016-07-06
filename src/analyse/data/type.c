@@ -242,4 +242,3 @@ void ic_type_print_debug(struct ic_type *type) {
     fputs("found: ", stdout);
     ic_decl_type_print_header(type->u.decl, &fake_indent);
 }
-

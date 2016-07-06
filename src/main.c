@@ -114,7 +114,7 @@ int main(int argc, char **argv) {
         exit(1);
     }
     puts("----------------");
-    if(!ic_transform_print(kludge)){
+    if (!ic_transform_print(kludge)) {
         puts("call to ic_transform_print failed");
         exit(1);
     }

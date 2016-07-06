@@ -157,7 +157,7 @@ unsigned int ic_transform(struct ic_kludge *kludge) {
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_print(struct ic_kludge *kludge){
+unsigned int ic_transform_print(struct ic_kludge *kludge) {
     /* i for kludge fdecls */
     unsigned int i = 0;
     /* len for kludge fdecls */
@@ -169,10 +169,10 @@ unsigned int ic_transform_print(struct ic_kludge *kludge){
     /* indent level */
     unsigned int indent = 1;
 
-  if( ! kludge){
-    puts("ic_transform_print: kludge was null");
-    return 0;
-  }
+    if (!kludge) {
+        puts("ic_transform_print: kludge was null");
+        return 0;
+    }
 
     len = ic_pvector_length(&(kludge->fdecls));
 
@@ -184,12 +184,12 @@ unsigned int ic_transform_print(struct ic_kludge *kludge){
         }
 
         tbody = fdecl->tbody;
-        if( ! tbody){
+        if (!tbody) {
             puts("ic_transform_print: fdecl lacked tbody");
             return 0;
         }
 
-        if( ! ic_transform_body_print(tbody, &indent) ){
+        if (!ic_transform_body_print(tbody, &indent)) {
             puts("ic_transform_print: call to ic_transform_body_print failed");
             return 0;
         }
