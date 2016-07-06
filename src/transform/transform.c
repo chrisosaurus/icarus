@@ -778,9 +778,6 @@ static struct ic_transform_ir_fcall *ic_transform_fcall(struct ic_transform_body
     /* our eventual output tir_fcall */
     struct ic_transform_ir_fcall *tir_fcall = 0;
 
-    /* our final output */
-    struct ic_transform_ir_expr *tir_expr = 0;
-
     if (!tbody) {
         puts("ic_transform_fcall: tbody was null");
         return 0;
@@ -821,7 +818,7 @@ static struct ic_transform_ir_fcall *ic_transform_fcall(struct ic_transform_body
 
     /* FIXME TODO ownership ... */
     tir_fcall = ic_transform_ir_fcall_new(fcall, new_args);
-    if (!tir_expr) {
+    if (!tir_fcall) {
         puts("ic_transform_fcall: call to ic_transform_ir_fcall_new failed");
         return 0;
     }
