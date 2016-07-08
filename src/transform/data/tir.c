@@ -664,7 +664,7 @@ unsigned int ic_transform_ir_ret_print(struct ic_transform_ir_ret *ret, unsigned
     /* trailing \n */
     puts("");
 
-    return 0;
+    return 1;
 }
 
 /* allocate and initialise a new fcall
