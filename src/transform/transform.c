@@ -1054,6 +1054,11 @@ static struct ic_symbol *ic_transform_fcall_arg(struct ic_kludge *kludge, struct
             return sym;
             break;
 
+        case ic_expr_type_func_call:
+            puts("ic_transform_fcall_arg: unsupported/unimplemented arg->tag: func_call");
+            return 0;
+            break;
+
         default:
             puts("ic_transform_fcall_arg: unsupported/unimplemented arg->tag");
             return 0;
