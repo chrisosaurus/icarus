@@ -1061,6 +1061,15 @@ static struct ic_symbol *ic_transform_fcall_arg(struct ic_kludge *kludge, struct
     }
 
     switch (arg->tag) {
+        case ic_expr_type_func_call:
+            sym = ic_transform_new_temp(kludge, tbody, arg);
+            if (!sym) {
+                puts("ic_transform_fcall_arg: call to ic_transform_new_temp (for func_call) failed");
+                return 0;
+            }
+            return sym;
+            break;
+
         case ic_expr_type_identifier:
             /* FIXME ownership */
             sym = &(arg->u.id.identifier);
@@ -1077,17 +1086,18 @@ static struct ic_symbol *ic_transform_fcall_arg(struct ic_kludge *kludge, struct
             return sym;
             break;
 
-        case ic_expr_type_func_call:
-            sym = ic_transform_new_temp(kludge, tbody, arg);
-            if (!sym) {
-                puts("ic_transform_fcall_arg: call to ic_transform_new_temp (for func_call) failed");
-                return 0;
-            }
-            return sym;
+        case ic_expr_type_operator:
+            puts("ic_transform_fcall_arg: unsupported/unimplemented arg->tag: operator");
+            return 0;
+            break;
+
+        case ic_expr_type_field_access:
+            puts("ic_transform_fcall_arg: unsupported/unimplemented arg->tag: field_access");
+            return 0;
             break;
 
         default:
-            puts("ic_transform_fcall_arg: unsupported/unimplemented arg->tag");
+            puts("ic_transform_fcall_arg: impossible/unknown arg->tag");
             return 0;
             break;
     }
