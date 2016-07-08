@@ -730,6 +730,10 @@ static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_t
             fcall = &(expr->u.fcall);
             tir_expr = &(tir_stmt->u.expr);
             tir_expr->fcall = ic_transform_fcall(kludge, tbody, fcall);
+            if (!tir_expr->fcall) {
+                puts("ic_transform_stmt_expr: call to ic_transform_fcall failed");
+                return 0;
+            }
             if (!ic_transform_body_append(tbody, tir_stmt)) {
                 puts("ic_transform_stmt_expr: call to ic_transform_body_append failed");
                 return 0;
