@@ -1100,7 +1100,7 @@ struct ic_transform_ir_stmt *ic_transform_ir_stmt_ret_new(struct ic_symbol *var)
         return 0;
     }
 
-    stmt = ic_transform_ir_stmt_new(ic_transform_ir_stmt_type_expr);
+    stmt = ic_transform_ir_stmt_new(ic_transform_ir_stmt_type_ret);
     if (!stmt) {
         puts("ic_transform_ir_stmt_ret_new: call to ic_transform_ir_stmt_new failed");
         return 0;
