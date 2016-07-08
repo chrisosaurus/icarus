@@ -14,6 +14,13 @@
 
 #define TCOUNT_MAX_SIZE 10
 
+/* generate a str from a string and unsigned int
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_transform_gen_name(char *prefix, unsigned int tcount);
+
 /* perform translation of all fdecls on kludge
  *
  * returns 1 on success
@@ -153,6 +160,83 @@ unsigned int ic_transform(struct ic_kludge *kludge) {
 
     puts("ic_transform: transform implementation pending");
     return 1;
+}
+
+/* generate a str from a string and unsigned int
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_transform_gen_name(char *prefix, unsigned int tcount) {
+    /* our resulting sym */
+    struct ic_symbol *sym = 0;
+
+    /* string used for generating symbol */
+    struct ic_string *str = 0;
+    char *str_ch = 0;
+    int str_len = 0;
+    /* maximum of TCOUNT_MAX_SIZE digits */
+    char tcount_ch[TCOUNT_MAX_SIZE];
+    int tcount_ch_printed = 0;
+
+    if (!prefix) {
+        puts("ic_transform_gen_name: prefix was null");
+        return 0;
+    }
+
+    if (!tcount) {
+        puts("ic_transform_gen_name: tcount was zero");
+        return 0;
+    }
+
+    /* base of _t for temp */
+    str = ic_string_new("_t", 2);
+    if (!str) {
+        puts("ic_transform_gen_name: call to ic_string_new failed");
+        return 0;
+    }
+
+    /* convert tcount to string */
+    tcount_ch_printed = snprintf(tcount_ch, TCOUNT_MAX_SIZE, "%d", tcount);
+    if (tcount_ch_printed == TCOUNT_MAX_SIZE) {
+        puts("WARNING: ic_transform_gen_name: snprintf printed same TCOUNT_MAX_SIZE chars");
+    }
+
+    /* concat */
+    if (!ic_string_append_char(str, tcount_ch, tcount_ch_printed)) {
+        puts("ic_transform_gen_name: call to ic_string_append_char failed");
+        return 0;
+    }
+
+    /* convert to symbol */
+    str_ch = ic_string_contents(str);
+    if (!str_ch) {
+        puts("ic_transform_gen_name: call to ic_string_contents failed");
+        return 0;
+    }
+
+    str_len = ic_string_length(str);
+    if (-1 == str_len) {
+        puts("ic_transform_gen_name: call to ic_string_length failed");
+        return 0;
+    }
+
+    sym = ic_symbol_new(str_ch, str_len);
+    if (!sym) {
+        puts("ic_transform_gen_name: call to ic_symbol_new failed");
+        return 0;
+    }
+
+    /* destroy string
+     * safe as symbol_new performs a strncpy
+     */
+    str_ch = 0;
+    if (!ic_string_destroy(str, 1)) {
+        puts("ic_transform_gen_name: call to ic_string_destroy failed");
+        return 0;
+    }
+
+    return sym;
 }
 
 /* print out all transformed items within kludge
@@ -781,15 +865,6 @@ static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_t
 static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_expr *expr) {
     /* the tir stmt we generate */
     struct ic_transform_ir_stmt *tir_stmt = 0;
-    /* string used for generating symbol */
-    struct ic_string *str = 0;
-    char *str_ch = 0;
-    int str_len = 0;
-    /* our temporary count */
-    unsigned int tcount = 0;
-    /* maximum of TCOUNT_MAX_SIZE digits */
-    char tcount_ch[TCOUNT_MAX_SIZE];
-    int tcount_ch_printed = 0;
 
     /* symbol */
     struct ic_symbol *sym = 0;
@@ -835,59 +910,7 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
 
         case ic_expr_type_constant:
             /* generate name */
-            /* base of _t for temp */
-            str = ic_string_new("_t", 2);
-            if (!str) {
-                puts("ic_transform_new_temp: call to ic_string_new failed");
-                return 0;
-            }
-
-            /* register on tcounter to get our number */
-            tcount = ic_transform_counter_register_temporary(tbody->tcounter);
-            if (!tcount) {
-                puts("ic_transform_new_temp: call to ic_transform_counter_registery_temporary failed");
-                return 0;
-            }
-
-            /* convert tcount to string */
-            tcount_ch_printed = snprintf(tcount_ch, TCOUNT_MAX_SIZE, "%d", tcount);
-            if (tcount_ch_printed == TCOUNT_MAX_SIZE) {
-                puts("WARNING: ic_transform_new_temp: snprintf printed same TCOUNT_MAX_SIZE chars");
-            }
-
-            /* concat */
-            if (!ic_string_append_char(str, tcount_ch, tcount_ch_printed)) {
-                puts("ic_transform_new_temp: call to ic_string_append_char failed");
-                return 0;
-            }
-
-            /* convert to symbol */
-            str_ch = ic_string_contents(str);
-            if (!str_ch) {
-                puts("ic_transform_new_temp: call to ic_string_contents failed");
-                return 0;
-            }
-
-            str_len = ic_string_length(str);
-            if (-1 == str_len) {
-                puts("ic_transform_new_temp: call to ic_string_length failed");
-                return 0;
-            }
-
-            sym = ic_symbol_new(str_ch, str_len);
-            if (!sym) {
-                puts("ic_transform_new_temp: call to ic_symbol_new failed");
-                return 0;
-            }
-
-            /* destroy string
-             * safe as symbol_new performs a strncpy
-             */
-            str_ch = 0;
-            if (!ic_string_destroy(str, 1)) {
-                puts("ic_transform_new_temp: call to ic_string_destroy failed");
-                return 0;
-            }
+            sym = ic_transform_gen_name("_t", ic_transform_counter_register_temporary(tbody->tcounter));
 
             /* unpack literal */
             constant = ic_expr_get_constant(expr);
