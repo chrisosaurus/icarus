@@ -1048,15 +1048,19 @@ static struct ic_symbol *ic_transform_fcall_arg(struct ic_kludge *kludge, struct
         case ic_expr_type_constant:
             sym = ic_transform_new_temp(kludge, tbody, arg);
             if (!sym) {
-                puts("ic_transform_fcall_arg: call to ic_transform_new_temp");
+                puts("ic_transform_fcall_arg: call to ic_transform_new_temp (for constant) failed");
                 return 0;
             }
             return sym;
             break;
 
         case ic_expr_type_func_call:
-            puts("ic_transform_fcall_arg: unsupported/unimplemented arg->tag: func_call");
-            return 0;
+            sym = ic_transform_new_temp(kludge, tbody, arg);
+            if (!sym) {
+                puts("ic_transform_fcall_arg: call to ic_transform_new_temp (for func_call) failed");
+                return 0;
+            }
+            return sym;
             break;
 
         default:
