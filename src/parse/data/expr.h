@@ -71,6 +71,13 @@ unsigned int ic_expr_func_call_set_fdecl(struct ic_expr_func_call *fcall, struct
  */
 struct ic_decl_func *ic_expr_func_call_get_fdecl(struct ic_expr_func_call *fcall);
 
+/* check if fdecl is already set
+ *
+ * returns 1 if fdecl is set
+ * returns 0 otherwise
+ */
+unsigned int ic_expr_func_call_has_fdecl(struct ic_expr_func_call *fcall);
+
 /* add a new argument to this function call
  *
  * returns 1 on success

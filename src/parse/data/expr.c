@@ -175,6 +175,24 @@ struct ic_decl_func *ic_expr_func_call_get_fdecl(struct ic_expr_func_call *fcall
     return fcall->fdecl;
 }
 
+/* check if fdecl is already set
+ *
+ * returns 1 if fdecl is set
+ * returns 0 otherwise
+ */
+unsigned int ic_expr_func_call_has_fdecl(struct ic_expr_func_call *fcall) {
+    if (!fcall) {
+        puts("ic_expr_func_call_get_fdecl: fcall was null");
+        return 0;
+    }
+
+    if (!fcall->fdecl) {
+        return 0;
+    }
+
+    return 1;
+}
+
 /* add a new argument to this function call
  *
  * returns 1 on success
