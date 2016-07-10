@@ -919,8 +919,6 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
                 return 0;
             }
 
-            /* FIXME TODO infer type */
-            type = 0; /* FIXME TODO */
             type = ic_analyse_infer_constant(kludge, constant);
 
             /* generate new statement */
