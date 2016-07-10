@@ -283,6 +283,11 @@ unsigned int ic_transform_print(struct ic_kludge *kludge) {
             return 0;
         }
 
+        /* skip printing of builtins */
+        if (ic_decl_func_isbuiltin(fdecl)) {
+          continue;
+        }
+
         /* header for fdecl */
         ic_decl_func_print_header(fdecl, &fake_indent);
 
