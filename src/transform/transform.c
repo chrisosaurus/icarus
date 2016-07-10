@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "../analyse/data/kludge.h"
 #include "../analyse/helpers.h"
@@ -190,7 +191,7 @@ struct ic_symbol *ic_transform_gen_name(char *prefix, unsigned int tcount) {
     }
 
     /* base of _t for temp */
-    str = ic_string_new("_t", 2);
+    str = ic_string_new(prefix, strlen(prefix));
     if (!str) {
         puts("ic_transform_gen_name: call to ic_string_new failed");
         return 0;
@@ -996,7 +997,7 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
 
         case ic_expr_type_constant:
             /* generate name */
-            sym = ic_transform_gen_name("_t", ic_transform_counter_register_temporary(tbody->tcounter));
+            sym = ic_transform_gen_name("_l", ic_transform_counter_register_literal(tbody->tcounter));
             if (!sym) {
                 puts("ic_transform_new_temp: call to ic_transform_gen_name failed");
                 return 0;
