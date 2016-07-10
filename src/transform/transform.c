@@ -180,6 +180,9 @@ struct ic_symbol *ic_transform_gen_name(char *prefix, unsigned int tcount) {
     char tcount_ch[TCOUNT_MAX_SIZE];
     int tcount_ch_printed = 0;
 
+    /* prefix len */
+    size_t prefix_len = 0;
+
     if (!prefix) {
         puts("ic_transform_gen_name: prefix was null");
         return 0;
@@ -190,8 +193,15 @@ struct ic_symbol *ic_transform_gen_name(char *prefix, unsigned int tcount) {
         return 0;
     }
 
-    /* base of _t for temp */
-    str = ic_string_new(prefix, strlen(prefix));
+    /* get len */
+    prefix_len = strlen(prefix);
+    if (!prefix_len) {
+        puts("ic_transform_gen_name: call to strlen failed");
+        return 0;
+    }
+
+    /* use user provided prefix */
+    str = ic_string_new(prefix, prefix_len);
     if (!str) {
         puts("ic_transform_gen_name: call to ic_string_new failed");
         return 0;
