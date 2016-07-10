@@ -899,6 +899,13 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
     /* constant used in literal case */
     struct ic_expr_constant *constant = 0;
 
+    /* fcall used in func call case */
+    struct ic_expr_func_call *fcall = 0;
+    /* tir fcall used in func_call case */
+    struct ic_transform_ir_fcall *tir_fcall = 0;
+    /* tir expr wrapping fcall used in func_call case */
+    struct ic_transform_ir_expr *tir_expr = 0;
+
     if (!kludge) {
         puts("ic_transform_new_temp: kludge was null");
         return 0;
@@ -928,8 +935,57 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
 
     switch (expr->tag) {
         case ic_expr_type_func_call:
-            puts("ic_transform_new_temp: expr->tag func_call not yet supported");
-            return 0;
+            /* generate name */
+            sym = ic_transform_gen_name("_t", ic_transform_counter_register_temporary(tbody->tcounter));
+            if (!sym) {
+                puts("ic_transform_new_temp: call to ic_transform_gen_name failed");
+                return 0;
+            }
+
+            /* get return type of function call */
+            type = ic_analyse_infer(kludge, scope, expr);
+            if (!type) {
+                puts("ic_transform_new_temp: call to ic_analyse_infer failed");
+                return 0;
+            }
+
+            /* unwrap fcall */
+            fcall = ic_expr_get_fcall(expr);
+            if (!fcall) {
+                puts("ic_transform_new_temp: call to ic_expr_get_fcall failed");
+                return 0;
+            }
+
+            /* transform fcall */
+            tir_fcall = ic_transform_fcall(kludge, scope, tbody, fcall);
+            if (!tir_fcall) {
+                puts("ic_transform_new_temp: call to ic_transform_fcall failed");
+                return 0;
+            }
+
+            /* wrap in tir_expr */
+            tir_expr = ic_transform_ir_expr_new();
+            if (!tir_expr) {
+                puts("ic_transform_new_temp: call to ic_transform_ir_expr_new failed");
+                return 0;
+            }
+            /* wrap tir_fcall in tir_expr */
+            tir_expr->fcall = tir_fcall;
+
+            /* generate new statement */
+            tir_stmt = ic_transform_ir_stmt_let_expr_new(sym, type, tir_expr);
+            if (!tir_stmt) {
+                puts("ic_transform_new_temp: call to ic_transform_ir_stmt_let_expr_new failed");
+                return 0;
+            }
+
+            if (!ic_transform_body_append(tbody, tir_stmt)) {
+                puts("ic_transform_new_temp: call to ic_transform_body_append failed");
+                return 0;
+            }
+
+            /* success */
+            return sym;
             break;
 
         case ic_expr_type_identifier:
@@ -941,6 +997,10 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
         case ic_expr_type_constant:
             /* generate name */
             sym = ic_transform_gen_name("_t", ic_transform_counter_register_temporary(tbody->tcounter));
+            if (!sym) {
+                puts("ic_transform_new_temp: call to ic_transform_gen_name failed");
+                return 0;
+            }
 
             /* unpack literal */
             constant = ic_expr_get_constant(expr);
@@ -950,6 +1010,10 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
             }
 
             type = ic_analyse_infer_constant(kludge, constant);
+            if (!type) {
+                puts("ic_transform_new_temp: call to ic_anlyse_infer_constant failed");
+                return 0;
+            }
 
             /* generate new statement */
             tir_stmt = ic_transform_ir_stmt_let_literal_new(sym, type, constant);
