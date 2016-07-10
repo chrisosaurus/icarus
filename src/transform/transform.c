@@ -42,7 +42,7 @@ static unsigned int ic_transform_fdecl(struct ic_kludge *kludge, struct ic_decl_
  * returns 1 on success
  * returns 0 on failure
  */
-static unsigned int ic_transform_body(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body);
+static unsigned int ic_transform_body(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body);
 
 /* perform translation of a single stmt within a body
  *
@@ -51,7 +51,7 @@ static unsigned int ic_transform_body(struct ic_kludge *kludge, struct ic_transf
  * returns 1 on success
  * returns 0 on failure
  */
-static unsigned int ic_transform_stmt(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt *stmt);
+static unsigned int ic_transform_stmt(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt *stmt);
 
 /* perform translation of a single `ret` stmt within a body
  *
@@ -60,7 +60,7 @@ static unsigned int ic_transform_stmt(struct ic_kludge *kludge, struct ic_transf
  * returns 1 on success
  * returns 0 on failure
  */
-static unsigned int ic_transform_stmt_ret(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_ret *ret);
+static unsigned int ic_transform_stmt_ret(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_ret *ret);
 
 /* perform translation of a single `let` stmt within a body
  *
@@ -69,7 +69,7 @@ static unsigned int ic_transform_stmt_ret(struct ic_kludge *kludge, struct ic_tr
  * returns 1 on success
  * returns 0 on failure
  */
-static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_let *let);
+static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_let *let);
 
 /* perform translation of a single `assign` stmt within a body
  *
@@ -114,7 +114,7 @@ static unsigned int ic_transform_stmt_while(struct ic_kludge *kludge, struct ic_
  * returns 1 on success
  * returns 0 on failure
  */
-static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_expr *expr);
+static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_expr *expr);
 
 /* register and append a new temporary expr as a let
  * generates a new symbol name and returns it
@@ -122,14 +122,14 @@ static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_t
  * returns * on success
  * returns 0 on failure
  */
-static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_expr *expr);
+static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_expr *expr);
 
 /* transform an fcall to tir_fcall
  *
  * returns * on success
  * returns 0 on failure
  */
-static struct ic_transform_ir_fcall *ic_transform_fcall(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_expr_func_call *fcall);
+static struct ic_transform_ir_fcall *ic_transform_fcall(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_expr_func_call *fcall);
 
 /* transform an fcall argument to an symbol
  * if the arg is already a symbol, just return it
@@ -138,7 +138,7 @@ static struct ic_transform_ir_fcall *ic_transform_fcall(struct ic_kludge *kludge
  * returns * on success
  * returns 0 on failure
  */
-static struct ic_symbol *ic_transform_fcall_arg(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_expr *arg);
+static struct ic_symbol *ic_transform_fcall_arg(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_expr *arg);
 
 /* perform translation to TIR from kludge
  *
@@ -360,7 +360,7 @@ static unsigned int ic_transform_fdecl(struct ic_kludge *kludge, struct ic_decl_
     }
 
     /* dispatch to transform_body for work */
-    if (!ic_transform_body(kludge, func->tbody, &(func->body))) {
+    if (!ic_transform_body(kludge, func->body.scope, func->tbody, &(func->body))) {
         puts("ic_transform_fdecl: call to ic_transform_body failed");
         return 0;
     }
@@ -368,7 +368,7 @@ static unsigned int ic_transform_fdecl(struct ic_kludge *kludge, struct ic_decl_
     return 1;
 }
 
-static unsigned int ic_transform_body(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body) {
+static unsigned int ic_transform_body(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body) {
     /* length of body */
     unsigned int len = 0;
     /* offset into body */
@@ -378,6 +378,11 @@ static unsigned int ic_transform_body(struct ic_kludge *kludge, struct ic_transf
 
     if (!kludge) {
         puts("ic_transform_body: kludge was null");
+        return 0;
+    }
+
+    if (!scope) {
+        puts("ic_transform_body: scope was null");
         return 0;
     }
 
@@ -403,7 +408,7 @@ static unsigned int ic_transform_body(struct ic_kludge *kludge, struct ic_transf
         }
 
         /* transform - dispatch to function */
-        if (!ic_transform_stmt(kludge, tbody, body, stmt)) {
+        if (!ic_transform_stmt(kludge, scope, tbody, body, stmt)) {
             puts("ic_transform_body: call to ic_transform_stmt failed");
             return 0;
         }
@@ -412,9 +417,14 @@ static unsigned int ic_transform_body(struct ic_kludge *kludge, struct ic_transf
     return 1;
 }
 
-static unsigned int ic_transform_stmt(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt *stmt) {
+static unsigned int ic_transform_stmt(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt *stmt) {
     if (!kludge) {
         puts("ic_transform_stmt: kludge was null");
+        return 0;
+    }
+
+    if (!scope) {
+        puts("ic_transform_stmt: scope was null");
         return 0;
     }
 
@@ -436,14 +446,14 @@ static unsigned int ic_transform_stmt(struct ic_kludge *kludge, struct ic_transf
     /* dispatch to functions for each stmt type */
     switch (stmt->tag) {
         case ic_stmt_type_ret:
-            if (!ic_transform_stmt_ret(kludge, tbody, body, &(stmt->u.ret))) {
+            if (!ic_transform_stmt_ret(kludge, scope, tbody, body, &(stmt->u.ret))) {
                 puts("ic_transform_stmt: call to ic_transform_stmt_ret failed");
                 return 0;
             }
             break;
 
         case ic_stmt_type_let:
-            if (!ic_transform_stmt_let(kludge, tbody, body, &(stmt->u.let))) {
+            if (!ic_transform_stmt_let(kludge, scope, tbody, body, &(stmt->u.let))) {
                 puts("ic_transform_stmt: call to ic_transform_stmt_let failed");
                 return 0;
             }
@@ -478,7 +488,7 @@ static unsigned int ic_transform_stmt(struct ic_kludge *kludge, struct ic_transf
             break;
 
         case ic_stmt_type_expr:
-            if (!ic_transform_stmt_expr(kludge, tbody, body, stmt->u.expr)) {
+            if (!ic_transform_stmt_expr(kludge, scope, tbody, body, stmt->u.expr)) {
                 puts("ic_transform_stmt: call to ic_transform_stmt_expr failed");
                 return 0;
             }
@@ -501,13 +511,18 @@ static unsigned int ic_transform_stmt(struct ic_kludge *kludge, struct ic_transf
  * returns 1 on success
  * returns 0 on failure
  */
-static unsigned int ic_transform_stmt_ret(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_ret *ret) {
+static unsigned int ic_transform_stmt_ret(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_ret *ret) {
     struct ic_expr *expr = 0;
     struct ic_transform_ir_stmt *stmt = 0;
     struct ic_symbol *new_tmp = 0;
 
     if (!kludge) {
         puts("ic_transform_stmt_ret: kludge was null");
+        return 0;
+    }
+
+    if (!scope) {
+        puts("ic_transform_stmt_ret: scope was null");
         return 0;
     }
 
@@ -527,7 +542,7 @@ static unsigned int ic_transform_stmt_ret(struct ic_kludge *kludge, struct ic_tr
     }
 
     expr = ret->ret;
-    new_tmp = ic_transform_new_temp(kludge, tbody, expr);
+    new_tmp = ic_transform_new_temp(kludge, scope, tbody, expr);
     if (!new_tmp) {
         puts("ic_transform_stmt_ret: call to ic_transform_new_temp failed");
         return 0;
@@ -554,7 +569,7 @@ static unsigned int ic_transform_stmt_ret(struct ic_kludge *kludge, struct ic_tr
  * returns 1 on success
  * returns 0 on failure
  */
-static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_let *let) {
+static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_let *let) {
     struct ic_expr_constant *cons = 0;
     struct ic_expr_func_call *fcall = 0;
     struct ic_transform_ir_expr *expr = 0;
@@ -563,6 +578,11 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_tr
 
     if (!kludge) {
         puts("ic_transform_stmt_let: kludge was null");
+        return 0;
+    }
+
+    if (!scope) {
+        puts("ic_transform_stmt_let: scope was null");
         return 0;
     }
 
@@ -584,7 +604,7 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_tr
     switch (let->init->tag) {
         case ic_expr_type_func_call:
             fcall = &(let->init->u.fcall);
-            tir_fcall = ic_transform_fcall(kludge, tbody, fcall);
+            tir_fcall = ic_transform_fcall(kludge, scope, tbody, fcall);
             if (!tir_fcall) {
                 puts("ic_transform_stmt_let: call to ic_transform_ir_fcall failed");
                 return 0;
@@ -779,13 +799,18 @@ static unsigned int ic_transform_stmt_while(struct ic_kludge *kludge, struct ic_
  * returns 1 on success
  * returns 0 on failure
  */
-static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_expr *expr) {
+static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_expr *expr) {
     struct ic_transform_ir_stmt *tir_stmt = 0;
     struct ic_transform_ir_expr *tir_expr = 0;
     struct ic_expr_func_call *fcall = 0;
 
     if (!kludge) {
         puts("ic_transform_stmt_expr: kludge was null");
+        return 0;
+    }
+
+    if (!scope) {
+        puts("ic_transform_stmt_expr: scope was null");
         return 0;
     }
 
@@ -813,7 +838,7 @@ static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_t
             }
             fcall = &(expr->u.fcall);
             tir_expr = &(tir_stmt->u.expr);
-            tir_expr->fcall = ic_transform_fcall(kludge, tbody, fcall);
+            tir_expr->fcall = ic_transform_fcall(kludge, scope, tbody, fcall);
             if (!tir_expr->fcall) {
                 puts("ic_transform_stmt_expr: call to ic_transform_fcall failed");
                 return 0;
@@ -862,7 +887,7 @@ static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_t
  * returns * on success
  * returns 0 on failure
  */
-static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_expr *expr) {
+static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_expr *expr) {
     /* the tir stmt we generate */
     struct ic_transform_ir_stmt *tir_stmt = 0;
 
@@ -876,6 +901,11 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
 
     if (!kludge) {
         puts("ic_transform_new_temp: kludge was null");
+        return 0;
+    }
+
+    if (!scope) {
+        puts("ic_transform_new_temp: scope was null");
         return 0;
     }
 
@@ -963,7 +993,7 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
  * returns 1 on success
  * returns 0 on failure
  */
-static struct ic_transform_ir_fcall *ic_transform_fcall(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_expr_func_call *fcall) {
+static struct ic_transform_ir_fcall *ic_transform_fcall(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_expr_func_call *fcall) {
 
     /* offset into fcall->args */
     unsigned int i = 0;
@@ -986,6 +1016,11 @@ static struct ic_transform_ir_fcall *ic_transform_fcall(struct ic_kludge *kludge
 
     if (!kludge) {
         puts("ic_transform_fcall: kludge was null");
+        return 0;
+    }
+
+    if (!scope) {
+        puts("ic_transform_fcall: scope was null");
         return 0;
     }
 
@@ -1015,7 +1050,7 @@ static struct ic_transform_ir_fcall *ic_transform_fcall(struct ic_kludge *kludge
         }
 
         /* build up new_args */
-        sym = ic_transform_fcall_arg(kludge, tbody, arg);
+        sym = ic_transform_fcall_arg(kludge, scope, tbody, arg);
         if (!sym) {
             puts("ic_transform_fcall: call to ic_transform_fcall_arg failed");
             return 0;
@@ -1044,9 +1079,19 @@ static struct ic_transform_ir_fcall *ic_transform_fcall(struct ic_kludge *kludge
  * returns * on success
  * returns 0 on failure
  */
-static struct ic_symbol *ic_transform_fcall_arg(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_expr *arg) {
+static struct ic_symbol *ic_transform_fcall_arg(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_expr *arg) {
     /* FIXME ownership */
     struct ic_symbol *sym = 0;
+
+    if (!kludge) {
+        puts("ic_transform_fcall_arg: kludge was null");
+        return 0;
+    }
+
+    if (!scope) {
+        puts("ic_transform_fcall_arg: scope was null");
+        return 0;
+    }
 
     if (!tbody) {
         puts("ic_transform_fcall_arg: tbody was null");
@@ -1060,7 +1105,7 @@ static struct ic_symbol *ic_transform_fcall_arg(struct ic_kludge *kludge, struct
 
     switch (arg->tag) {
         case ic_expr_type_func_call:
-            sym = ic_transform_new_temp(kludge, tbody, arg);
+            sym = ic_transform_new_temp(kludge, scope, tbody, arg);
             if (!sym) {
                 puts("ic_transform_fcall_arg: call to ic_transform_new_temp (for func_call) failed");
                 return 0;
@@ -1076,7 +1121,7 @@ static struct ic_symbol *ic_transform_fcall_arg(struct ic_kludge *kludge, struct
             break;
 
         case ic_expr_type_constant:
-            sym = ic_transform_new_temp(kludge, tbody, arg);
+            sym = ic_transform_new_temp(kludge, scope, tbody, arg);
             if (!sym) {
                 puts("ic_transform_fcall_arg: call to ic_transform_new_temp (for constant) failed");
                 return 0;
