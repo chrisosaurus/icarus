@@ -1,5 +1,9 @@
+fn get_str()->String
+  return "hello world"
+end
+
 fn say_hi()
-  println("hello world")
+  println(get_str())
 end
 
 fn main()
