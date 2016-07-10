@@ -266,6 +266,8 @@ unsigned int ic_transform_print(struct ic_kludge *kludge) {
     struct ic_transform_body *tbody = 0;
     /* indent level */
     unsigned int indent = 1;
+    /* fake indent */
+    unsigned int fake_indent = 0;
 
     if (!kludge) {
         puts("ic_transform_print: kludge was null");
@@ -281,16 +283,24 @@ unsigned int ic_transform_print(struct ic_kludge *kludge) {
             return 0;
         }
 
+        /* header for fdecl */
+        ic_decl_func_print_header(fdecl, &fake_indent);
+
+        /* get transformed body */
         tbody = fdecl->tbody;
         if (!tbody) {
             puts("ic_transform_print: fdecl lacked tbody");
             return 0;
         }
 
+        /* print transformed body */
         if (!ic_transform_body_print(tbody, &indent)) {
             puts("ic_transform_print: call to ic_transform_body_print failed");
             return 0;
         }
+
+        /* of fdecl body */
+        puts("end");
     }
 
     return 1;
