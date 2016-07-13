@@ -558,33 +558,33 @@ static struct ic_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct i
 
     /* if fcall already has an fdecl set */
     if (ic_expr_func_call_has_fdecl(fcall)) {
-      fdecl = ic_expr_func_call_get_fdecl(fcall);
-      if (!fdecl) {
-        puts("ic_analyse_infer_fcall: call to ic_expr_func_call_get_fdecl failed");
-        return 0;
-      }
+        fdecl = ic_expr_func_call_get_fdecl(fcall);
+        if (!fdecl) {
+            puts("ic_analyse_infer_fcall: call to ic_expr_func_call_get_fdecl failed");
+            return 0;
+        }
     } else {
-      /* otherwise work out the fdecl */
-      ch = ic_analyse_fcall_str(kludge, scope, fcall);
-      if (!ch) {
-          puts("ic_analyse_infer_fcall: call to ic_analyse_fcall_str failed");
-          return 0;
-      }
+        /* otherwise work out the fdecl */
+        ch = ic_analyse_fcall_str(kludge, scope, fcall);
+        if (!ch) {
+            puts("ic_analyse_infer_fcall: call to ic_analyse_fcall_str failed");
+            return 0;
+        }
 
-      fdecl = ic_kludge_get_fdecl(kludge, ch);
-      if (!fdecl) {
-          /* FIXME return type not found
+        fdecl = ic_kludge_get_fdecl(kludge, ch);
+        if (!fdecl) {
+            /* FIXME return type not found
            * need helpful error message
            */
-          printf("ic_analyse_infer_fcall: error finding fdecl for fcall '%s'\n", ch);
-          return 0;
-      }
+            printf("ic_analyse_infer_fcall: error finding fdecl for fcall '%s'\n", ch);
+            return 0;
+        }
 
-      /* record this found fdecl on the fcall */
-      if (!ic_expr_func_call_set_fdecl(fcall, fdecl)) {
-          puts("ic_analyse_infer_fcall: call to ic_expr_func_call_set_fdecl failed");
-          return 0;
-      }
+        /* record this found fdecl on the fcall */
+        if (!ic_expr_func_call_set_fdecl(fcall, fdecl)) {
+            puts("ic_analyse_infer_fcall: call to ic_expr_func_call_set_fdecl failed");
+            return 0;
+        }
     }
 
     /* now convert the fdecl to a return type */

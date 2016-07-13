@@ -285,7 +285,7 @@ unsigned int ic_transform_print(struct ic_kludge *kludge) {
 
         /* skip printing of builtins */
         if (ic_decl_func_isbuiltin(fdecl)) {
-          continue;
+            continue;
         }
 
         /* header for fdecl */
