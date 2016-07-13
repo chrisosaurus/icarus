@@ -11,24 +11,21 @@
 
 /* backends */
 #include "backends/2c/2c.h"
+#include "backends/pancake/pancake.h"
 
 int main(int argc, char **argv) {
     char *filename = 0, *source = 0, *core_source = 0;
-    char *out_filename = 0;
     struct ic_token_list *token_list = 0, *core_token_list = 0;
     struct ic_ast *ast = 0, *core_ast = 0;
     struct ic_kludge *kludge = 0;
 
+    /* backend variables */
+    char *backend = 0;
+    char *out_filename = 0;
+
     if (argc < 2) {
         puts("No source file specified");
         exit(1);
-    } else if (argc > 3) {
-        puts("Too many arguments supplied, only source file and possible output target are expected");
-        exit(1);
-    }
-
-    if (argc == 3) {
-        out_filename = argv[2];
     }
 
     kludge = ic_kludge_new();
@@ -119,14 +116,45 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    /* backend time
-     * only compile if user specifies out_filename
-     */
-    if (out_filename) {
-        puts("\ncompile output (PENDING):");
-        if (!ic_b2c_compile(kludge, out_filename)) {
-            puts("compilation failed");
+    /* backend time */
+    if (argc > 2 ){
+        backend = argv[2];
+
+        if (!strncmp("pancake", backend, 7)) {
+          if (argc > 3) {
+            puts("too many arguments to backend pancake, none allowed");
             exit(1);
+          }
+
+          puts("\nbackend pancake selected (PENDING):");
+          if (!ic_backend_pancake(kludge)) {
+            puts("Pancake backend failed");
+            exit(1);
+          }
+
+        } else if (!strncmp("2c", backend, 2)) {
+          if (argc < 4){
+            puts("too few arguments to backend 2c, need output filename");
+            exit(1);
+          }
+          if (argc > 4){
+            puts("too many arguments to backend 2c, only need output filename");
+            exit(1);
+          }
+          out_filename = argv[3];
+          puts("\nbackend 2c selected (PENDING):");
+          if (!ic_b2c_compile(kludge, out_filename)) {
+              puts("compilation failed");
+              exit(1);
+          }
+
+        } else {
+          printf("Unknown backend '%s'\n", backend);
+          puts("Currently supported backends:");
+          puts("  2c      - compile to c");
+          puts("  pancake - stack based interpreter");
+          puts("");
+          exit(1);
         }
     }
 
