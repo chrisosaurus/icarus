@@ -3,8 +3,9 @@
 
 #include <stdio.h> /* FILE */
 
-#include "../../analyse/data/kludge.h"
-#include "../../parse/data/expr.h"
+/* predeclarations */
+struct ic_kludge;
+struct ic_transform_ir_expr;
 
 /* compile a given expr to specified file
  *
@@ -13,6 +14,6 @@
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_b2c_compile_expr(struct ic_kludge *input_kludge, struct ic_expr *expr, FILE *out);
+unsigned int ic_b2c_compile_expr(struct ic_kludge *input_kludge, struct ic_transform_ir_expr *texp, FILE *out);
 
 #endif

@@ -1,8 +1,13 @@
 #include "expr.h"
 
+#include "../../analyse/data/kludge.h"
+#include "../../parse/data/expr.h"
+#include "../../transform/data/tir.h"
+
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
-unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic_expr_func_call *fcall, FILE *out);
+unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic_transform_ir_fcall *fcall, FILE *out);
+
 unsigned int ic_b2c_compile_expr_identifier(struct ic_kludge *input_kludge, struct ic_expr_identifier *identifier, FILE *out);
 unsigned int ic_b2c_compile_expr_constant(struct ic_kludge *input_kludge, struct ic_expr_constant *constant, FILE *out);
 unsigned int ic_b2c_compile_expr_operator(struct ic_kludge *input_kludge, struct ic_expr_operator *operator, FILE *out);
@@ -15,16 +20,14 @@ unsigned int ic_b2c_compile_expr_faccess(struct ic_kludge *input_kludge, struct 
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_b2c_compile_expr(struct ic_kludge *input_kludge, struct ic_expr *expr, FILE *out) {
-    unsigned int indent_level = 1;
-
+unsigned int ic_b2c_compile_expr(struct ic_kludge *input_kludge, struct ic_transform_ir_expr *texpr, FILE *out) {
     if (!input_kludge) {
         puts("ic_b2c_compile_expr: input_kludge was null");
         return 0;
     }
 
-    if (!expr) {
-        puts("ic_b2c_compile_expr: expr was null");
+    if (!texpr) {
+        puts("ic_b2c_compile_expr: texpr was null");
         return 0;
     }
 
@@ -33,44 +36,21 @@ unsigned int ic_b2c_compile_expr(struct ic_kludge *input_kludge, struct ic_expr 
         return 0;
     }
 
-    switch (expr->tag) {
-        case ic_expr_type_func_call:
-            return ic_b2c_compile_expr_fcall(input_kludge, &(expr->u.fcall), out);
-            break;
+    if (!ic_b2c_compile_expr_fcall(input_kludge, texpr->fcall, out)){
+        puts("ic_b2c_compile_expr: call to ic_b2d_compile_expr_fcall failed");
+        return 0;
+    }
 
-        case ic_expr_type_identifier:
-            return ic_b2c_compile_expr_identifier(input_kludge, &(expr->u.id), out);
-            break;
-
-        case ic_expr_type_constant:
-            return ic_b2c_compile_expr_constant(input_kludge, &(expr->u.cons), out);
-            break;
-
-        case ic_expr_type_operator:
-            return ic_b2c_compile_expr_operator(input_kludge, &(expr->u.op), out);
-            break;
-
-        case ic_expr_type_field_access:
-            return ic_b2c_compile_expr_faccess(input_kludge, &(expr->u.faccess), out);
-            break;
-
-        default:
-            puts("ic_b2c_compile_expr: impossible tag");
-
-            puts("ic_b2c_compile_expr: called for");
-            ic_expr_print(expr, &indent_level);
-            /* caller of ic_expr_print must add \n */
-            puts("");
-            return 0;
-
-            break;
+    if (!ic_b2c_compile_expr_fcall(input_kludge, texpr->fcall, out)) {
+        puts("ic_b2c_compile_expr: call to ic_b2c_compile_expr_fcall failed");
+        return 0;
     }
 
     puts("ic_b2c_compile_expr: impossible");
     return 0;
 }
 
-unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic_expr_func_call *fcall, FILE *out) {
+unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic_transform_ir_fcall *fcall, FILE *out) {
     /* indent level used for _print calls for debug
    * FIXME gross
    */
@@ -84,7 +64,7 @@ unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic
     /* length of fcall args pvector */
     unsigned int length = 0;
     /* current arg */
-    struct ic_expr *expr = 0;
+    struct ic_symbol *sym = 0;
 
     if (!input_kludge) {
         puts("ic_b2c_compile_expr_fcall: input_kludge was null");
@@ -102,10 +82,10 @@ unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic
     }
 
     puts("ic_b2c_compile_expr_fcall: call for");
-    ic_expr_func_call_print(fcall, &indent_level);
+    ic_expr_func_call_print(fcall->fcall, &indent_level);
     puts("");
 
-    fdecl = ic_expr_func_call_get_fdecl(fcall);
+    fdecl = ic_expr_func_call_get_fdecl(fcall->fcall);
     if (!fdecl) {
         puts("ic_b2c_compile_expr_fcall: call to ic_expr_func_call_get_fdecl failed");
         return 0;
@@ -125,19 +105,22 @@ unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic
     fputs("(", out);
 
     /* omit arguments */
-    length = ic_expr_func_call_length(fcall);
+    length = ic_transform_ir_fcall_length(fcall);
 
     for (i = 0; i < length; ++i) {
-        expr = ic_expr_func_call_get_arg(fcall, i);
-        if (!expr) {
-            puts("ic_b2c_compile_expr_fcall: call to ic_expr_func_call_get_arg");
+        /* add commas between args */
+        if (i>0) {
+          fputs(",", stdout);
+        }
+
+        sym = ic_transform_ir_fcall_get_arg(fcall, i);
+        if (!sym) {
+            puts("ic_b2c_compile_expr_fcall: call to ic_transform_ir_fcall_get_arg");
             return 0;
         }
 
-        if (!ic_b2c_compile_expr(input_kludge, expr, out)) {
-            puts("ic_b2c_compile_expr_fcall: call to ic_b2c_compile_expr failed");
-            return 0;
-        }
+        /* output symbol */
+        ic_symbol_print(sym);
     }
 
     /* omit closing ) */

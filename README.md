@@ -123,7 +123,6 @@ Current holes
 =============
 
 * The IR is incomplete
-* The compilation step is currently from the ast, not from the IR
 * The compiler is incomplete
 
 

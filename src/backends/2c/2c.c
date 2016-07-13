@@ -1,10 +1,10 @@
 #include <stdio.h>
 
 #include "../../analyse/data/type.h"
-#include "../../parse/data/body.h"
+#include "../../transform/data/tbody.h"
 #include "2c.h"
 #include "expr.h"
-#include "stmt.h"
+#include "tir.h"
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
@@ -356,11 +356,11 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f) {
 }
 
 unsigned int ic_b2c_generate_functions_body(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f) {
-    /* current stmt in body */
-    struct ic_stmt *stmt = 0;
-    /* index of current stmt in body */
+    /* current tir_stmt in tir_body */
+    struct ic_transform_ir_stmt *tstmt = 0;
+    /* index of current tir_stmt in tir_body */
     unsigned int i = 0;
-    /* length of body */
+    /* length of tir_body */
     unsigned int len = 0;
 
     if (!kludge) {
@@ -378,16 +378,16 @@ unsigned int ic_b2c_generate_functions_body(struct ic_kludge *kludge, struct ic_
         return 0;
     }
 
-    len = ic_body_length(&(fdecl->body));
+    len = ic_transform_body_length(fdecl->tbody);
 
     for (i = 0; i < len; ++i) {
-        stmt = ic_body_get(&(fdecl->body), i);
-        if (!stmt) {
-            puts("ic_b2c_generate_functions_body: call to ic_body_get failed");
+        tstmt = ic_transform_body_get(fdecl->tbody, i);
+        if (!tstmt) {
+            puts("ic_b2c_generate_functions_body: call to ic_transform_body_get failed");
             return 0;
         }
 
-        if (!ic_b2c_compile_stmt(kludge, stmt, f)) {
+        if (!ic_b2c_compile_stmt(kludge, tstmt, f)) {
             puts("ic_b2c_generate_functions_body: call to ic_b2c_compile_stmt failed");
             return 0;
         }
