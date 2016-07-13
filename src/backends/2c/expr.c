@@ -46,8 +46,7 @@ unsigned int ic_b2c_compile_expr(struct ic_kludge *input_kludge, struct ic_trans
         return 0;
     }
 
-    puts("ic_b2c_compile_expr: impossible");
-    return 0;
+    return 1;
 }
 
 unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic_transform_ir_fcall *fcall, FILE *out) {
