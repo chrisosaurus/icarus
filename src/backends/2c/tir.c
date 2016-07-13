@@ -161,7 +161,8 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_t
             return 0;
         }
 
-        fprintf(stdout, "%s %s =", let_type_str, let_name);
+        /* print "type name = " */
+        fprintf(out, "%s %s = ", let_type_str, let_name);
 
         /* literal */
         literal = let->u.lit.literal;
@@ -170,6 +171,9 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_t
             puts("ic_b2c_compile_stmt_let: call to ic_b2c_compile_expr_constant failed");
             return 0;
         }
+
+        /* closing semicolon and trailing \n */
+        fputs(";\n", out);
 
         return 1;
         break;
