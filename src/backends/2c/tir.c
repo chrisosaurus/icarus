@@ -129,10 +129,29 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_t
         return 0;
     }
 
-    puts("ic_b2c_compile_stmt_let: called on");
-    ic_transform_ir_let_print(let, &indent_level);
+    switch (let->tag) {
+      case ic_transform_ir_let_type_literal:
+        /* let name::type = literal */
+        puts("ic_b2c_compile_stmt_let: called on");
+        ic_transform_ir_let_print(let, &indent_level);
 
-    puts("ic_b2c_compile_stmt_let: unimplemented");
+        puts("ic_b2c_compile_stmt_let: let_type_literal unimplemented");
+        break;
+
+      case ic_transform_ir_let_type_expr:
+        /* let name::type = fcall(args...) */
+        puts("ic_b2c_compile_stmt_let: called on");
+        ic_transform_ir_let_print(let, &indent_level);
+
+        puts("ic_b2c_compile_stmt_let: let_type_expr unimplemented");
+        break;
+
+      default:
+        puts("ic_b2c_compile_stmt_let: impossible let_type");
+        break;
+        break;
+    }
+
     return 0;
 }
 
