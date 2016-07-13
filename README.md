@@ -82,7 +82,7 @@ if we input the following file (1.ic):
 
 we can then compile this via:
 
-    ./icarus 1.ic out.c
+    ./icarus 1.ic 2c out.c
 
 this will show us the parser outputting it's understanding of our code
 
@@ -105,7 +105,8 @@ which will output (to out.c):
     Void i_main_a();
     /* main() -> Void */
     Void i_main_a(){
-    i_println_a_String(ic_string_new("Hello world", 11));
+    String *_l1 = ic_string_new("Hello world", 11);
+    i_println_a_String(_l1);
     }
     #include "backends/2c/entry.c"
 
