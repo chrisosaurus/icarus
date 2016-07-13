@@ -41,11 +41,6 @@ unsigned int ic_b2c_compile_expr(struct ic_kludge *input_kludge, struct ic_trans
         return 0;
     }
 
-    if (!ic_b2c_compile_expr_fcall(input_kludge, texpr->fcall, out)) {
-        puts("ic_b2c_compile_expr: call to ic_b2c_compile_expr_fcall failed");
-        return 0;
-    }
-
     return 1;
 }
 
