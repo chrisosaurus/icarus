@@ -4,7 +4,7 @@
 /* predeclare */
 struct ic_kludge;
 
-/* pancake - stack based vm backend
+/* pancake - stack based interpreter backend
  *
  * returns 1 on success
  * returns 0 on failure
