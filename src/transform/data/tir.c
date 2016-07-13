@@ -782,12 +782,12 @@ unsigned int ic_transform_ir_fcall_print(struct ic_transform_ir_fcall *fcall, un
     fputs("(", stdout);
 
     /* args */
-    len = ic_pvector_length(fcall->args);
+    len = ic_transform_ir_fcall_length(fcall);
 
     for (i = 0; i < len; ++i) {
-        arg = ic_pvector_get(fcall->args, i);
+        arg = ic_transform_ir_fcall_get_arg(fcall, i);
         if (!arg) {
-            puts("ic_transform_ir_fcall_print: call to ic_pvector_get failed");
+            puts("ic_transform_ir_fcall_print: call to ic_transform_ir_fcall_get_arg failed");
             return 0;
         }
 
