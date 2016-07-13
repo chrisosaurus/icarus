@@ -59,6 +59,8 @@ unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic
     unsigned int length = 0;
     /* current arg */
     struct ic_symbol *sym = 0;
+    /* str of current arg */
+    char *sym_str = 0;
 
     if (!input_kludge) {
         puts("ic_b2c_compile_expr_fcall: input_kludge was null");
@@ -101,6 +103,7 @@ unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic
     /* omit arguments */
     length = ic_transform_ir_fcall_length(fcall);
 
+
     for (i = 0; i < length; ++i) {
         /* add commas between args */
         if (i>0) {
@@ -115,6 +118,12 @@ unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic
 
         /* output symbol */
         ic_symbol_print(sym);
+        sym_str = ic_symbol_contents(sym);
+        if (!sym_str) {
+            puts("ic_b2c_compile_expr_fcall: call to ic_symbol_contents");
+            return 0;
+        }
+        fputs(sym_str, out);
     }
 
     /* omit closing ) */
