@@ -1,5 +1,5 @@
-#include "expr.h"
 #include "tir.h"
+#include "expr.h"
 
 #include "../../analyse/data/kludge.h"
 #include "../../parse/data/stmt.h"
@@ -40,36 +40,36 @@ unsigned int ic_b2c_compile_stmt(struct ic_kludge *input_kludge, struct ic_trans
     /* dispatch to appropriate sub handler based on tstmt type */
     switch (tstmt->tag) {
         case ic_transform_ir_stmt_type_expr:
-            if (! ic_b2c_compile_stmt_expr(input_kludge, &(tstmt->u.expr), out)){
-              puts("ic_b2c_compile_stmt: call to ic_b2c_compile_stmt_expr failed");
-              return 0;
+            if (!ic_b2c_compile_stmt_expr(input_kludge, &(tstmt->u.expr), out)) {
+                puts("ic_b2c_compile_stmt: call to ic_b2c_compile_stmt_expr failed");
+                return 0;
             }
             return 1;
             break;
 
         case ic_transform_ir_stmt_type_let:
             return ic_b2c_compile_stmt_let(input_kludge, &(tstmt->u.let), out);
-            if (! ic_b2c_compile_stmt_expr(input_kludge, &(tstmt->u.expr), out)){
-              puts("ic_b2c_compile_stmt: call to ic_b2c_compile_stmt_let failed");
-              return 0;
+            if (!ic_b2c_compile_stmt_expr(input_kludge, &(tstmt->u.expr), out)) {
+                puts("ic_b2c_compile_stmt: call to ic_b2c_compile_stmt_let failed");
+                return 0;
             }
             return 1;
             break;
 
         case ic_transform_ir_stmt_type_ret:
             return ic_b2c_compile_stmt_ret(input_kludge, &(tstmt->u.ret), out);
-            if (! ic_b2c_compile_stmt_expr(input_kludge, &(tstmt->u.expr), out)){
-              puts("ic_b2c_compile_stmt: call to ic_b2c_compile_stmt_ret failed");
-              return 0;
+            if (!ic_b2c_compile_stmt_expr(input_kludge, &(tstmt->u.expr), out)) {
+                puts("ic_b2c_compile_stmt: call to ic_b2c_compile_stmt_ret failed");
+                return 0;
             }
             return 1;
             break;
 
         case ic_transform_ir_stmt_type_assign:
             return ic_b2c_compile_stmt_assign(input_kludge, &(tstmt->u.assign), out);
-            if (! ic_b2c_compile_stmt_expr(input_kludge, &(tstmt->u.expr), out)){
-              puts("ic_b2c_compile_stmt: call to ic_b2c_compile_stmt_assign failed");
-              return 0;
+            if (!ic_b2c_compile_stmt_expr(input_kludge, &(tstmt->u.expr), out)) {
+                puts("ic_b2c_compile_stmt: call to ic_b2c_compile_stmt_assign failed");
+                return 0;
             }
             return 1;
             break;
@@ -136,63 +136,63 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_t
     }
 
     switch (let->tag) {
-      case ic_transform_ir_let_type_literal:
-        /* let name::type = literal */
-        /* goes to */
-        /* c_type_str name = cons(literal) */
+        case ic_transform_ir_let_type_literal:
+            /* let name::type = literal */
+            /* goes to */
+            /* c_type_str name = cons(literal) */
 
-        let_type = let->u.lit.type;
+            let_type = let->u.lit.type;
 
-        let_type_sym = ic_type_name(let_type);
-        if (!let_type_sym) {
-            puts("ic_b2c_compile_stmt_let: call to ic_type_name failed");
+            let_type_sym = ic_type_name(let_type);
+            if (!let_type_sym) {
+                puts("ic_b2c_compile_stmt_let: call to ic_type_name failed");
+                return 0;
+            }
+
+            let_type_str = ic_symbol_contents(let_type_sym);
+            if (!let_type_str) {
+                puts("ic_b2c_compile_stmt_let: call to ic_symbol_contents failed for let type");
+                return 0;
+            }
+
+            let_name = ic_symbol_contents(let->u.lit.name);
+            if (!let_name) {
+                puts("ic_b2c_compile_stmt_let: call to ic_symbol_contents failed for let name");
+                return 0;
+            }
+
+            /* print "type *name = " */
+            fprintf(out, "%s *%s = ", let_type_str, let_name);
+
+            /* literal */
+            literal = let->u.lit.literal;
+
+            if (!ic_b2c_compile_expr_constant(input_kludge, literal, out)) {
+                puts("ic_b2c_compile_stmt_let: call to ic_b2c_compile_expr_constant failed");
+                return 0;
+            }
+
+            /* closing semicolon and trailing \n */
+            fputs(";\n", out);
+
+            return 1;
+            break;
+
+        case ic_transform_ir_let_type_expr:
+            /* let name::type = fcall(args...) */
+            /* goes to */
+            /* c_type_str name = fcall(args...) */
+            puts("ic_b2c_compile_stmt_let: called on");
+            ic_transform_ir_let_print(let, &indent_level);
+
+            puts("ic_b2c_compile_stmt_let: let_type_expr unimplemented");
             return 0;
-        }
+            break;
 
-        let_type_str = ic_symbol_contents(let_type_sym);
-        if (!let_type_str) {
-            puts("ic_b2c_compile_stmt_let: call to ic_symbol_contents failed for let type");
+        default:
+            puts("ic_b2c_compile_stmt_let: impossible let_type");
             return 0;
-        }
-
-        let_name = ic_symbol_contents(let->u.lit.name);
-        if (!let_name) {
-            puts("ic_b2c_compile_stmt_let: call to ic_symbol_contents failed for let name");
-            return 0;
-        }
-
-        /* print "type *name = " */
-        fprintf(out, "%s *%s = ", let_type_str, let_name);
-
-        /* literal */
-        literal = let->u.lit.literal;
-
-        if (!ic_b2c_compile_expr_constant(input_kludge, literal, out)) {
-            puts("ic_b2c_compile_stmt_let: call to ic_b2c_compile_expr_constant failed");
-            return 0;
-        }
-
-        /* closing semicolon and trailing \n */
-        fputs(";\n", out);
-
-        return 1;
-        break;
-
-      case ic_transform_ir_let_type_expr:
-        /* let name::type = fcall(args...) */
-        /* goes to */
-        /* c_type_str name = fcall(args...) */
-        puts("ic_b2c_compile_stmt_let: called on");
-        ic_transform_ir_let_print(let, &indent_level);
-
-        puts("ic_b2c_compile_stmt_let: let_type_expr unimplemented");
-        return 0;
-        break;
-
-      default:
-        puts("ic_b2c_compile_stmt_let: impossible let_type");
-        return 0;
-        break;
+            break;
     }
 
     return 0;

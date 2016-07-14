@@ -338,7 +338,7 @@ unsigned int ic_transform_ir_fcall_length(struct ic_transform_ir_fcall *fcall);
  * returns * on success
  * returns 0 on failure
  */
-struct ic_symbol * ic_transform_ir_fcall_get_arg(struct ic_transform_ir_fcall *fcall, unsigned int i);
+struct ic_symbol *ic_transform_ir_fcall_get_arg(struct ic_transform_ir_fcall *fcall, unsigned int i);
 
 enum ic_transform_ir_stmt_tag {
     ic_transform_ir_stmt_type_expr,

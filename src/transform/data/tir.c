@@ -811,12 +811,12 @@ unsigned int ic_transform_ir_fcall_print(struct ic_transform_ir_fcall *fcall, un
  * returns number on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_fcall_length(struct ic_transform_ir_fcall *fcall){
+unsigned int ic_transform_ir_fcall_length(struct ic_transform_ir_fcall *fcall) {
     unsigned len = 0;
 
     if (!fcall) {
-      puts("ic_transform_ir_fcall_length: fcall was null");
-      return 0;
+        puts("ic_transform_ir_fcall_length: fcall was null");
+        return 0;
     }
 
     len = ic_pvector_length(fcall->args);
@@ -829,18 +829,18 @@ unsigned int ic_transform_ir_fcall_length(struct ic_transform_ir_fcall *fcall){
  * returns * on success
  * returns 0 on failure
  */
-struct ic_symbol * ic_transform_ir_fcall_get_arg(struct ic_transform_ir_fcall *fcall, unsigned int i){
+struct ic_symbol *ic_transform_ir_fcall_get_arg(struct ic_transform_ir_fcall *fcall, unsigned int i) {
     struct ic_symbol *sym = 0;
 
     if (!fcall) {
-      puts("ic_transform_ir_fcall_get_arg: fcall was null");
-      return 0;
+        puts("ic_transform_ir_fcall_get_arg: fcall was null");
+        return 0;
     }
 
     sym = ic_pvector_get(fcall->args, i);
     if (!sym) {
-      puts("ic_transform_ir_fcall_get_arg: call to ic_pvector_get failed");
-      return 0;
+        puts("ic_transform_ir_fcall_get_arg: call to ic_pvector_get failed");
+        return 0;
     }
 
     return sym;

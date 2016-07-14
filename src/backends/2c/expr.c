@@ -36,7 +36,7 @@ unsigned int ic_b2c_compile_expr(struct ic_kludge *input_kludge, struct ic_trans
         return 0;
     }
 
-    if (!ic_b2c_compile_expr_fcall(input_kludge, texpr->fcall, out)){
+    if (!ic_b2c_compile_expr_fcall(input_kludge, texpr->fcall, out)) {
         puts("ic_b2c_compile_expr: call to ic_b2d_compile_expr_fcall failed");
         return 0;
     }
@@ -103,11 +103,10 @@ unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic
     /* omit arguments */
     length = ic_transform_ir_fcall_length(fcall);
 
-
     for (i = 0; i < length; ++i) {
         /* add commas between args */
-        if (i>0) {
-          fputs(",", stdout);
+        if (i > 0) {
+            fputs(",", stdout);
         }
 
         sym = ic_transform_ir_fcall_get_arg(fcall, i);
