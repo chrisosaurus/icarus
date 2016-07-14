@@ -22,6 +22,8 @@ enum ic_backend_pancake_bytecode_type {
   ibpb_jnif,
   /* panic str */
   ibpb_panic,
+  /* exit_success */
+  ipbp_exit,
 };
 
 struct ic_backend_pancake_bytecode {
