@@ -1,10 +1,12 @@
 #ifndef IC_BACKEND_PANCAKE_VALUE_STACK_H
 #define IC_BACKEND_PANCAKE_VALUE_STACK_H
 
+#include "value.h"
+
 #define IC_BACKEND_PANCAKE_VALUE_STACK_SIZE 2048
 
 struct ic_backend_pancake_value_stack {
-    void *stack[IC_BACKEND_PANCAKE_VALUE_STACK_SIZE];
+    struct ic_backend_pancake_value stack[IC_BACKEND_PANCAKE_VALUE_STACK_SIZE];
 
     /* current heah
    * -1 = empty
@@ -39,16 +41,20 @@ unsigned int ic_backend_pancake_value_stack_destroy(struct ic_backend_pancake_va
 
 /* get current top of stack (and remove it)
  *
+ * returned value must be read before another push is called
+ *
  * returns * on success
- * returns 0 on failure
+ * returns 0 on error
  */
-void *ic_backend_pancake_value_stack_pop(struct ic_backend_pancake_value_stack *stack);
+struct ic_backend_pancake_value *ic_backend_pancake_value_stack_pop(struct ic_backend_pancake_value_stack *stack);
 
-/* push a new item onto the stack
+/* push a new value onto the stack
+ *
+ * will copy from passed in value
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_value_stack_push(struct ic_backend_pancake_value_stack *stack, void *item);
+unsigned int ic_backend_pancake_value_stack_push(struct ic_backend_pancake_value_stack *stack, struct ic_backend_pancake_value *value);
 
 #endif /* IC_BACKEND_PANCAKE_VALUE_STACK_H */

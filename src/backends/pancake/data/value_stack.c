@@ -63,11 +63,13 @@ unsigned int ic_backend_pancake_value_stack_destroy(struct ic_backend_pancake_va
 
 /* get current top of stack (and remove it)
  *
- * returns address on success
+ * returned value must be read before another push is called
+ *
+ * returns * on success
  * returns 0 on failure
  */
-void *ic_backend_pancake_value_stack_pop(struct ic_backend_pancake_value_stack *stack) {
-    void *ret = 0;
+struct ic_backend_pancake_value *ic_backend_pancake_value_stack_pop(struct ic_backend_pancake_value_stack *stack) {
+    struct ic_backend_pancake_value *ret;
 
     if (!stack) {
         puts("ic_backend_pancake_value_stack_pop: stack was null");
@@ -79,7 +81,7 @@ void *ic_backend_pancake_value_stack_pop(struct ic_backend_pancake_value_stack *
         return 0;
     }
 
-    ret = stack->stack[stack->head];
+    ret = &(stack->stack[stack->head]);
     stack->head -= 1;
 
     return ret;
@@ -87,17 +89,19 @@ void *ic_backend_pancake_value_stack_pop(struct ic_backend_pancake_value_stack *
 
 /* push a new item onto the stack
  *
+ * will copy from passed in value
+ *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_value_stack_push(struct ic_backend_pancake_value_stack *stack, void *item) {
+unsigned int ic_backend_pancake_value_stack_push(struct ic_backend_pancake_value_stack *stack, struct ic_backend_pancake_value *value) {
     if (!stack) {
         puts("ic_backend_pancake_value_stack_push: stack was null");
         return 0;
     }
 
-    if (item) {
-        puts("ic_backend_pancake_value_stack_push: item was null");
+    if (!value) {
+        puts("ic_backend_pancake_value_stack_push: vaue was null");
         return 0;
     }
 
@@ -107,7 +111,7 @@ unsigned int ic_backend_pancake_value_stack_push(struct ic_backend_pancake_value
     }
 
     stack->head += 1;
-    stack->stack[stack->head] = item;
+    stack->stack[stack->head] = *value;
 
     return 1;
 }
