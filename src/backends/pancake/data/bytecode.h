@@ -4,6 +4,8 @@
 enum ic_backend_pancake_bytecode_type {
     /* push_bool bool */
     ipbp_pushbool,
+    /* push_uint uint */
+    ibpb_pushuint,
     /* push_int int */
     ibpb_pushint,
     /* push_str string */
