@@ -36,40 +36,41 @@ the same program in TIR:
 the bytecode:
 
     mapping:
-      get_str -> 5
-      say_hi -> 2
-      main -> 0
+      get_str -> 6
+      say_hi -> 3
+      main -> 1
 
     literals:
       lit_1 -> "Hello world"
 
     instructions:
-      0 call say_hi     # main
-      1 exit success
-      2 call get_str    # say_hi
-      3 call println
-      4 return
-      5 pushstr lit_1   # get_str
-      6 return
+      0 exit failure    # always exit, error case
+      1 call say_hi     # main
+      2 exit success
+      3 call get_str    # say_hi
+      4 call println
+      5 return
+      6 pushstr lit_1   # get_str
+      7 return
 
 
 the return address during runtime:
 
     return address  after 0:
 
-      0
+      1
 
     return address after 2
 
-      0
-      2
+      1
+      3
 
     return address after 6
 
-      0
+      1
 
     return address after 1
 
       <empty>
 
-
+note that the address 0 is special, it is always exit
