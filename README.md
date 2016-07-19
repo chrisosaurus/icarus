@@ -2,7 +2,7 @@
 
 <img src="https://github.com/mkfifo/icarus/blob/master/resources/logo.jpg" alt="Logo" align="right" />
 
-Icarus is a toy language exploring static verifiability
+Icarus is a programming language designed as an experiment to explore static verification of mutation contracts
 
 I am currently exploring a few potential options for how Icarus' "permissions" (ownership, aliasing,mutation) system will work.
 
