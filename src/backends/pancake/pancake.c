@@ -17,7 +17,7 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *runtime, struct ic_backend_pancake_instructions *instructions);
+unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *runtime);
 
 /* pancake - stack based interpreter backend
  *
@@ -45,7 +45,7 @@ unsigned int ic_backend_pancake(struct ic_kludge *kludge) {
         return 0;
     }
 
-    if (!ic_backend_pancake_interpret(runtime, instructions)) {
+    if (!ic_backend_pancake_interpret(runtime)) {
         puts("ic_backend_pancake: call to ic_backend_pancake_interpret failed");
         return 0;
     }
@@ -74,14 +74,9 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *runtime, struct ic_backend_pancake_instructions *instructions) {
+unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *runtime) {
     if (!runtime) {
         puts("ic_backend_pancake_interpret: runtime was null");
-        return 0;
-    }
-
-    if (!instructions) {
-        puts("ic_backend_pancake_interpret: instructions was null");
         return 0;
     }
 
