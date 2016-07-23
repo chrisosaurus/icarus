@@ -1,0 +1,75 @@
+.TH icarus 1 icarus
+
+.SH NAME
+Icarus - Programming language (and implementation) designed as an experiment to explore static verification of mutation contracts.
+
+.SH SYNOPSIS
+.B icarus
+\fI\,SOURCE\/\fR
+[\fI\,BACKEND\/\fR]
+[\fI\,BACKEND-ARGS\/\fR]
+
+.SH COPYRIGHT AND LICENSE
+.B Icarus
+is Copyright (C) 2015-2016 Chris Hall
+.B Icarus
+is released under the terms of the MIT license
+
+.SH OPTIONS
+
+.IR SOURCE:
+.br
+.RS
+relative path to input icarus source file
+.RE
+.P
+
+.IR BACKEND
+can be one of:
+.RS
+
+.IP 2c
+.br
+backend to compile to c
+.br
+requires an output filename in BACKEND-ARGS.
+.P
+
+.IP pancake
+.br
+stack-vm interpreter backend
+.br
+requires no BACKEND-ARGS.
+.P
+
+.RE
+
+.IR BACKEND-ARGS:
+.RS
+.IP output-filename
+output filename (relative path) required for some backends
+.P
+.RE
+
+.SH EXAMPLES
+.TP
+icarus input.ic
+verify input.ic
+.TP
+icarus input.ic pancake
+run pancake interpreter over input.ic
+.TP
+icarus input.ic 2c out.c
+compile input.ic using the 2c compiler and place the output in out.c
+
+.SH AUTHORS
+Chris Hall
+<followingthepath at gmail d0t com>
+
+.SH BUGS
+All bug reports for .B Icarus should either be filed in github at https://github.com/mkfifo/icarus or emailed to the author(s)
+
+.SH SOURCE
+The source code for .B Icarus can be found on github at https://github.com/mkfifo/icarus
+
+
