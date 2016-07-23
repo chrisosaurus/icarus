@@ -120,5 +120,8 @@ compile: clean icarus
 format:
 	find src/ t/ -iname '*.[ch]' | xargs clang-format -style=file -i
 
-.PHONY: all clean cleanobj icarus test test_custom example readme compile format
+man:
+	man -l icarus.1
+
+.PHONY: all clean cleanobj icarus test test_custom example readme compile format man
 
