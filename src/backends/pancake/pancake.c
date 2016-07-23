@@ -60,13 +60,23 @@ unsigned int ic_backend_pancake(struct ic_kludge *kludge) {
  * returns 0 on failure
  */
 struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_kludge *kludge) {
+    struct ic_backend_pancake_instructions *instructions = 0;
+
     if (!kludge) {
         puts("ic_backend_pancake_compile: kludge was null");
         return 0;
     }
 
-    puts("ic_backend_pancake_compile: unimplemented");
-    return 0;
+    instructions = ic_backend_pancake_instructions_new();
+    if (!instructions) {
+        puts("ic_backend_pancake_compile: call to ic_backend_pancake_instructions_new failed");
+        return 0;
+    }
+
+    /* FIXME TODO compile kludge into bytecode instructions */
+
+    puts("ic_backend_pancake_compile: implementation pending");
+    return instructions;
 }
 
 /* interpret bytecode in runtime
