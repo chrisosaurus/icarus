@@ -124,11 +124,14 @@ Current holes
 =============
 
 * The IR is incomplete
-* The compiler is incomplete
+* The compiler (2c) is incomplete
+* The interpreter (pancake) has only just started
 
 
 Current focus
 =============
 
 The `transform` phase - which outputs the new Icarus Transform IR
+
+The `pancake` interpreter - work is beginning
 
