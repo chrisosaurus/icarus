@@ -4,6 +4,11 @@
 
 Icarus is a programming language designed as an experiment to explore static verification of mutation contracts
 
+A hybrid imperative/functional language designed to explore the boundary between these 2 paradigms - trying to port some of the lessons and advantages from functional programming back to a more traditional imperative style.
+
+Allows controlled mutation and aliasing, but only when both caller and callee agree to it. 
+No global mutable state.
+
 I am currently exploring a few potential options for how Icarus' "permissions" (ownership, aliasing,mutation) system will work.
 
 The current proposal can be seen in [docs/language/mutability/proposal_five/permissions.md](https://github.com/mkfifo/icarus/blob/master/docs/language/mutability/proposal_five/permissions.md)
