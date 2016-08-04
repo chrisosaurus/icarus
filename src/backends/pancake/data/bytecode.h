@@ -2,6 +2,8 @@
 #define IC_BACKEND_PANCAKE_BYTECODE_H
 
 enum ic_backend_pancake_bytecode_type {
+    /* fdecl_label fdecl_sig_call */
+    ipbp_fdecl_label,
     /* push_bool bool */
     ipbp_pushbool,
     /* push_uint uint */

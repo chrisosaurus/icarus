@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "../../analyse/data/kludge.h"
+#include "data/bytecode.h"
 #include "data/instructions.h"
 #include "data/runtime.h"
 #include "pancake.h"
@@ -61,13 +62,24 @@ unsigned int ic_backend_pancake(struct ic_kludge *kludge) {
  */
 struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_kludge *kludge) {
     struct ic_backend_pancake_instructions *instructions = 0;
+    /* offset into kludge fdecls */
     unsigned int offset = 0;
+    /* length of kludge fdecls */
     unsigned int len = 0;
+    /* current kludge fdecl */
     struct ic_decl_func *fdecl = 0;
+    /* sig_call for current fdecl */
     struct ic_string *fdecl_sig_call = 0;
+    /* char * to sig_call for current fdec/
+     * FIXME only needed when unimplemented
+     */
     char *fdecl_sig_call_ch = 0;
+    /* tbody of current fdecl */
     struct ic_transform_body *fdecl_tbody = 0;
-    unsigned int fdecl_offset = 0;
+    /* offset we created fdecl at */
+    unsigned int fdecl_instructions_offset = 0;
+    /* dummy bytecode for fdecl */
+    struct ic_backend_pancake_bytecode *bc_dummy_fdecl = 0;
 
     if (!kludge) {
         puts("ic_backend_pancake_compile: kludge was null");
@@ -117,15 +129,24 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
             return instructions;
         }
 
-        /* get length - which is offset of next instruction
-         * FIXME TODO may want to insert a dummy no-op instructions with a label
-         *  for each function
-         */
-        fdecl_offset = ic_backend_pancake_instructions_length(instructions);
+        /* get length - which is offset of next instruction */
+        fdecl_instructions_offset = ic_backend_pancake_instructions_length(instructions);
 
         /* register function at offset */
-        if (!ic_backend_pancake_instructions_register_fdecl(instructions, fdecl_sig_call, fdecl_offset)) {
+        if (!ic_backend_pancake_instructions_register_fdecl(instructions, fdecl_sig_call, fdecl_instructions_offset)) {
             puts("ic_backend_pancake_compile: call to ic_backend_pancake_instructions_register_fdecl failed");
+            return instructions;
+        }
+
+        /* insert dummy no-op function label instruction */
+        bc_dummy_fdecl = ic_backend_pancake_bytecode_new(ipbp_fdecl_label, fdecl_sig_call, 0);
+        if (!bc_dummy_fdecl) {
+            puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_new failed");
+            return instructions;
+        }
+
+        if (!ic_backend_pancake_instructions_append(instructions, bc_dummy_fdecl)) {
+            puts("ic_backend_pancake_compile: call to ic_backend_pancake_instructions_append failed");
             return instructions;
         }
 
