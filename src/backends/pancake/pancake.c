@@ -67,6 +67,7 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
     struct ic_string *fdecl_sig_call = 0;
     char *fdecl_sig_call_ch = 0;
     struct ic_transform_body *fdecl_tbody = 0;
+    unsigned int fdecl_offset = 0;
 
     if (!kludge) {
         puts("ic_backend_pancake_compile: kludge was null");
@@ -116,8 +117,17 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
             return instructions;
         }
 
-        /* FIXME TODO register function */
-        printf("ic_backend_pancake_compile: UNIMPLEMENTED: skipping function registration for '%s'\n", fdecl_sig_call_ch);
+        /* get length - which is offset of next instruction
+         * FIXME TODO may want to insert a dummy no-op instructions with a label
+         *  for each function
+         */
+        fdecl_offset = ic_backend_pancake_instructions_length(instructions);
+
+        /* register function at offset */
+        if (!ic_backend_pancake_instructions_register_fdecl(instructions, fdecl_sig_call, fdecl_offset)) {
+            puts("ic_backend_pancake_compile: call to ic_backend_pancake_instructions_register_fdecl failed");
+            return instructions;
+        }
 
         /* FIXME TODO compile fdecl_tbody */
         printf("ic_backend_pancake_compile: UNIMPLEMENTED: skipping compilation for '%s'\n", fdecl_sig_call_ch);
