@@ -75,6 +75,17 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
 
     /* FIXME TODO compile kludge into bytecode instructions */
 
+    /* for each fdecl
+     *  get current pos, insert into map of fdecl-sig to pos
+     *    FIXME TODO need fdecl-sig mapping
+     *  deal with args ???
+     *  for each instruction in fdecl
+     *    compile
+     *  end
+     *  pop args
+     * end
+     */
+
     puts("ic_backend_pancake_compile: implementation pending");
     return instructions;
 }

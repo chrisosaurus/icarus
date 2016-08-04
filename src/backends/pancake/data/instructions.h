@@ -1,6 +1,7 @@
 #ifndef IC_BACKEND_PANCAKE_INSTRUCTIONS_H
 #define IC_BACKEND_PANCAKE_INSTRUCTIONS_H
 
+#include "../../../data/string.h"
 #include "bytecode.h"
 
 struct ic_backend_pancake_instructions {
@@ -12,6 +13,8 @@ struct ic_backend_pancake_instructions {
     unsigned int offset;
     /* array of all instructions */
     struct ic_backend_pancake_bytecode *bytecode_array;
+    /* map from fdecl sig to offset */
+    struct ic_dict *fdecl_offset_map;
 };
 
 /* alloc and init a new instructions
@@ -35,7 +38,7 @@ unsigned int ic_backend_pancake_instructions_init(struct ic_backend_pancake_inst
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_instructions_destroy(struct ic_backend_pancake_instructions *, unsigned int free_instructions);
+unsigned int ic_backend_pancake_instructions_destroy(struct ic_backend_pancake_instructions *instructions, unsigned int free_instructions);
 
 /* append given bytecode instructions
  *
@@ -44,7 +47,7 @@ unsigned int ic_backend_pancake_instructions_destroy(struct ic_backend_pancake_i
  * returns 1 on success
  * returns 0 on falure
  */
-unsigned int ic_backend_pancake_instructions_append(struct ic_backend_pancake_instructions *, struct ic_backend_pancake_bytecode *bytecode);
+unsigned int ic_backend_pancake_instructions_append(struct ic_backend_pancake_instructions *instructions, struct ic_backend_pancake_bytecode *bytecode);
 
 /* get current length of instructions
  *
@@ -58,7 +61,7 @@ unsigned int ic_backend_pancake_instructions_length(struct ic_backend_pancake_in
  * returns * on success
  * returns 0 on failure
  */
-struct ic_backend_pancake_bytecode *ic_backend_pancake_instructions_get(struct ic_backend_pancake_instructions *, unsigned int offset);
+struct ic_backend_pancake_bytecode *ic_backend_pancake_instructions_get(struct ic_backend_pancake_instructions *instructions, unsigned int offset);
 
 /* get current offset into instructions
  *
@@ -86,6 +89,23 @@ struct ic_backend_pancake_bytecode *ic_backend_pancake_instructions_advance(stru
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_instructions_set_offset(struct ic_backend_pancake_instructions *, unsigned int offset);
+unsigned int ic_backend_pancake_instructions_set_offset(struct ic_backend_pancake_instructions *instructions, unsigned int offset);
+
+/* add new fdecl-sig to offset mapping
+ * this registers a function at an offset
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_instructions_register_fdecl(struct ic_backend_pancake_instructions *instructions, struct ic_string *fdecl_sig_call, unsigned int offset);
+
+/* get an offset for a fdecl-sig
+ *
+ * FIXME no way to indicate failure
+ *
+ * returns int on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_instructions_get_fdecl(struct ic_backend_pancake_instructions *instructions, struct ic_string *fdecl_sig_call);
 
 #endif /* IC_BACKEND_PANCAKE_INSTRUCTIONS_H */

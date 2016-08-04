@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../../../data/dict.h"
+#include "../../../data/string.h"
 #include "instructions.h"
 
 #define IC_BACKEND_PANCAKE_INSTRUCTIONS_START_SIZE 1024
@@ -44,9 +46,24 @@ unsigned int ic_backend_pancake_instructions_init(struct ic_backend_pancake_inst
 
     instructions->cap = IC_BACKEND_PANCAKE_INSTRUCTIONS_START_SIZE;
 
+    /* using a c-array and realloc below
+     * does not use pvector
+     * no init call needed
+     */
     instructions->bytecode_array = calloc(instructions->cap, sizeof(struct ic_backend_pancake_bytecode));
     if (!instructions->bytecode_array) {
-        puts("ic_backend_pancake_instructions_init: call to calloc failed");
+        puts("ic_backend_pancake_instructions_init: call to calloc failed bytecode_array");
+        return 0;
+    }
+
+    instructions->fdecl_offset_map = calloc(1, sizeof(struct ic_dict));
+    if (!instructions->fdecl_offset_map) {
+        puts("ic_backend_pancake_instructions_init: call to calloc failed for fdecl_offset_map");
+        return 0;
+    }
+
+    if (!ic_dict_init(instructions->fdecl_offset_map)) {
+        puts("ic_backend_pancake_instructions_init: call to ic_dict_init");
         return 0;
     }
 
@@ -68,6 +85,14 @@ unsigned int ic_backend_pancake_instructions_destroy(struct ic_backend_pancake_i
 
     free(instructions->bytecode_array);
     instructions->bytecode_array = 0;
+
+    /* dict_destroy(dict, free_dict, free_data)
+     * free-ing data as it is alloced in register
+     */
+    if (!ic_dict_destroy(instructions->fdecl_offset_map, 1, 1)) {
+        puts("ic_backend_pancake_instructions_destroy: call to ic_dict_destroy failed");
+        return 0;
+    }
 
     if (free_instructions) {
         free(instructions);
@@ -222,4 +247,88 @@ unsigned int ic_backend_pancake_instructions_set_offset(struct ic_backend_pancak
     instructions->offset = offset;
 
     return 1;
+}
+
+/* add new fdecl-sig to offset mapping
+ * this registers a function at an offset
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_instructions_register_fdecl(struct ic_backend_pancake_instructions *instructions, struct ic_string *fdecl_sig_call, unsigned int offset) {
+    unsigned int *offset_alloc = 0;
+    char *key = 0;
+
+    if (!instructions) {
+        puts("ic_backend_pancake_instructions_register_fdecl: instructions was null");
+        return 0;
+    }
+
+    if (!fdecl_sig_call) {
+        puts("ic_backend_pancake_instructions_register_fdecl: fdecl_sig_call was null");
+        return 0;
+    }
+
+    /* have to allocate int to get pointer to it
+   * bit gross
+   * TODO FIXME think about this alloc */
+    offset_alloc = calloc(1, sizeof(unsigned int));
+    if (!offset_alloc) {
+        puts("ic_backend_pancake_instructions_register_fdecl: call to calloc failed");
+        return 0;
+    }
+
+    *offset_alloc = offset;
+
+    key = ic_string_contents(fdecl_sig_call);
+    if (!key) {
+        puts("ic_backend_pancake_instructions_register_fdecl: call to ic_string_contents failed");
+        return 0;
+    }
+
+    if (!ic_dict_insert(instructions->fdecl_offset_map, key, offset_alloc)) {
+        puts("ic_backend_pancake_instructions_register_fdecl: call to ic_dict_insert failed");
+        return 0;
+    }
+
+    return 1;
+}
+
+/* get an offset for a fdecl-sig
+ *
+ * FIXME no way to indicate failure
+ *
+ * returns int on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_instructions_get_fdecl(struct ic_backend_pancake_instructions *instructions, struct ic_string *fdecl_sig_call) {
+    char *key = 0;
+    unsigned int offset = 0;
+    unsigned int *offset_alloc = 0;
+
+    if (!instructions) {
+        puts("ic_backend_pancake_instructions_get_fdecl: instructions was null");
+        return 0;
+    }
+
+    if (!fdecl_sig_call) {
+        puts("ic_backend_pancake_instructions_get_fdecl: fdecl_sig_call was null");
+        return 0;
+    }
+
+    key = ic_string_contents(fdecl_sig_call);
+    if (!key) {
+        puts("ic_backend_pancake_instructions_get_fdecl: call to ic_string_contents failed");
+        return 0;
+    }
+
+    offset_alloc = ic_dict_get(instructions->fdecl_offset_map, key);
+    if (!offset_alloc) {
+        puts("ic_backend_pancake_instructions_get_fdecl: call to ic_dict_get failed");
+        return 0;
+    }
+
+    offset = *offset_alloc;
+
+    return offset;
 }
