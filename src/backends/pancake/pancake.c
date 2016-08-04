@@ -61,6 +61,12 @@ unsigned int ic_backend_pancake(struct ic_kludge *kludge) {
  */
 struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_kludge *kludge) {
     struct ic_backend_pancake_instructions *instructions = 0;
+    unsigned int offset = 0;
+    unsigned int len = 0;
+    struct ic_decl_func *fdecl = 0;
+    struct ic_string *fdecl_sig_call = 0;
+    char *fdecl_sig_call_ch = 0;
+    struct ic_transform_body *fdecl_tbody = 0;
 
     if (!kludge) {
         puts("ic_backend_pancake_compile: kludge was null");
@@ -77,7 +83,6 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
 
     /* for each fdecl
      *  get current pos, insert into map of fdecl-sig to pos
-     *    FIXME TODO need fdecl-sig mapping
      *  deal with args ???
      *  for each instruction in fdecl
      *    compile
@@ -85,6 +90,38 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
      *  pop args
      * end
      */
+    len = ic_pvector_length(&(kludge->fdecls));
+    if (!len) {
+        puts("ic_backend_pancake_compile: call to ic_pvector_length failed");
+        return instructions;
+    }
+
+    for (offset = 0; offset < len; ++offset) {
+        fdecl = ic_pvector_get(&(kludge->fdecls), offset);
+        if (!fdecl) {
+            puts("ic_backend_pancake_compile: call to ic_pvector_get failed");
+            return instructions;
+        }
+
+        fdecl_sig_call = &(fdecl->sig_call);
+        fdecl_sig_call_ch = ic_string_contents(fdecl_sig_call);
+        if (!fdecl_sig_call_ch) {
+            puts("ic_backend_pancake_compile: call to ic_string_contents failed");
+            return instructions;
+        }
+
+        fdecl_tbody = fdecl->tbody;
+        if (!fdecl_tbody) {
+            puts("ic_backend_pancake_compile: no tbody found on fdecl");
+            return instructions;
+        }
+
+        /* FIXME TODO register function */
+        printf("ic_backend_pancake_compile: UNIMPLEMENTED: skipping function registration for '%s'\n", fdecl_sig_call_ch);
+
+        /* FIXME TODO compile fdecl_tbody */
+        printf("ic_backend_pancake_compile: UNIMPLEMENTED: skipping compilation for '%s'\n", fdecl_sig_call_ch);
+    }
 
     puts("ic_backend_pancake_compile: implementation pending");
     return instructions;
