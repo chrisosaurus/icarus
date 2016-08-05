@@ -1,6 +1,7 @@
 TODO:
 -----
 
+* output generation doesn't handle arguments: /* plus(String String) -> String */ String plus();
 * change pancake/bytecode arg storage to union
 * all print methods should take `FILE *` argument rather than assuming stdout
 * 'everything' within tir (except pointers to fdecl/kludge) should be owned - copy any shared symbols
@@ -10,7 +11,6 @@ TODO:
 * automate running of milestone/*.ic and compare output to milestone/*.exp - these can serve as tests - need 'template' so we know which we expected to pass and fail
 * uncommented `plus` alias for `concat` in stdlib/core.ic
 * remove FIXME and commented out error handling in 2c once functions_body is implemented : /* FIXME TODO silencing error for now */
-* output generation doesn't handle arguments: /* plus(String String) -> String */ String plus();
 * output generation includes a semi-builtin from src/core.ic: fn plus(a::String, b::String) -> String return concat(a, b) end appearing as String plus();
 * rejig _print infra to always have a _str method (or similar) and have _print simply call this
   to string logic should not be inside _print
