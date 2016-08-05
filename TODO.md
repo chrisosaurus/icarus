@@ -1,6 +1,7 @@
 TODO:
 -----
 
+* all print methods should take `FILE *` argument rather than assuming stdout
 * 'everything' within tir (except pointers to fdecl/kludge) should be owned - copy any shared symbols
 * sort out transform ownership - it is a mess
 * complete tir print implementations
