@@ -254,6 +254,12 @@ unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct i
     char *func_sig_full = 0;
     char *func_return_type_str = 0;
 
+    unsigned int i = 0;
+    unsigned int len = 0;
+    struct ic_field *arg = 0;
+    char *arg_name = 0;
+    char *arg_type = 0;
+
     if (!kludge) {
         puts("ic_b2c_generate_functions_header: kludge was null");
         return 0;
@@ -309,8 +315,25 @@ unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct i
         fprintf(f, "%s %s(", func_return_type_str, func_sig_mangled);
     }
 
-    /* FIXME args */
-    printf("pre: func '%s' only partially implemented (args missing)\n", func_sig_full);
+    /* output arguments */
+    len = ic_pvector_length(&(fdecl->args));
+    for (i = 0; i < len; ++i) {
+        if (i > 0) {
+            fputs(", ", f);
+        }
+
+        arg = ic_pvector_get(&(fdecl->args), i);
+        if (!arg) {
+            puts("ic_b2c_generate_functions: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        arg_name = ic_symbol_contents(&(arg->name));
+        arg_type = ic_symbol_contents(ic_type_ref_get_symbol(&(arg->type)));
+
+        /* generate */
+        fprintf(f, "%s *%s", arg_type, arg_name);
+    }
 
     /* closing brace*/
     fputs(")", f);
