@@ -8,13 +8,12 @@ my $path = "./icarus";
 die "Could not find '$path'\n" unless -e $path;
 
 my $input = <<EOF;
-fn get_str() -> String
-    let name = "Jennifer"
+fn get_str(name::String) -> String
     return concat(concat("Hello there ", name), ", very nice to meet you")
 end
 
 fn main()
-  println(get_str())
+  println(get_str("Jennifer"))
 end
 EOF
 
