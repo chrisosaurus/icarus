@@ -1,6 +1,7 @@
 TODO:
 -----
 
+* consider changes in branch moving-signed-int-to-sint-type
 * change pancake/bytecode arg storage to union
 * all print methods should take `FILE *` argument rather than assuming stdout
 * 'everything' within tir (except pointers to fdecl/kludge) should be owned - copy any shared symbols
