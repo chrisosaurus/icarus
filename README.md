@@ -81,8 +81,12 @@ The life of a simple icarus program
 
 if we input the following file (1.ic):
 
+    fn get_str(name::String) -> String
+        return concat(concat("Hello there ", name), ", very nice to meet you")
+    end
+
     fn main()
-        println("Hello world")
+      println(get_str("Jennifer"))
     end
 
 we can then compile this via:
@@ -91,27 +95,51 @@ we can then compile this via:
 
 this will show us the parser outputting it's understanding of our code
 
+    # get_str(String)
+    fn get_str(name::String) -> String
+        return concat(concat("Hello there ", name), ", very nice to meet you")
+    end
+
     # main()
     fn main() -> Void
-        println("Hello world")
+        println(get_str("Jennifer"))
     end
 
 and show us that transformed IR version of this
 
-    fn main()::Void
-        let _t1::String = "Hello world"
+    fn get_str(name::String) -> String
+        let _l1::String = "Hello there "
+        let _t2::String = concat(_l1, name)
+        let _l2::String = ", very nice to meet you"
+        let _t1::String = concat(_t2, _l2)
+        return _t1
+    end
+    fn main() -> Void
+        let _l1::String = "Jennifer"
+        let _t1::String = get_str(_l1)
         println(_t1)
     end
 
 which will output (to out.c):
 
     #include "backends/2c/builtins.c"
+    /* get_str(String) -> String */
+    String * i_get_str_a_String(String *name);
     /* main() -> Void */
-    Void i_main_a();
+    Void * i_main_a();
+    /* get_str(String) -> String */
+    String * i_get_str_a_String(String *name){
+    String *_l1 = ic_string_new("Hello there ", 12);
+    String *_t2 = i_concat_a_String_String(_l1, name);
+    String *_l2 = ic_string_new(", very nice to meet you", 23);
+    String *_t1 = i_concat_a_String_String(_t2, _l2);
+    return _t1;
+    }
     /* main() -> Void */
-    Void i_main_a(){
-    String *_l1 = ic_string_new("Hello world", 11);
-    i_println_a_String(_l1);
+    Void * i_main_a(){
+    String *_l1 = ic_string_new("Jennifer", 8);
+    String *_t1 = i_get_str_a_String(_l1);
+    i_println_a_String(_t1);
     }
     #include "backends/2c/entry.c"
 
@@ -122,7 +150,7 @@ if we compile and run this, we can see:
 
 the output:
 
-    Hello world
+    Hello there Jennifer, very nice to meet you
 
 
 Current holes
