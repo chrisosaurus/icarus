@@ -8,9 +8,13 @@ my $path = "./icarus";
 die "Could not find '$path'\n" unless -e $path;
 
 my $input = <<EOF;
-fn main()
+fn get_str() -> String
     let name = "Jennifer"
-    println(concat(concat("Hello there ", name), ", very nice to meet you"))
+    return concat(concat("Hello there ", name), ", very nice to meet you")
+end
+
+fn main()
+  println(get_str())
 end
 EOF
 
