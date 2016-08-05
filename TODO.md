@@ -1,7 +1,6 @@
 TODO:
 -----
 
-* consider changes in branch moving-signed-int-to-sint-type
 * change pancake/bytecode arg storage to union
 * all print methods should take `FILE *` argument rather than assuming stdout
 * 'everything' within tir (except pointers to fdecl/kludge) should be owned - copy any shared symbols
@@ -79,6 +78,7 @@ considerations:
 * `ic_analyse_decl_type` currently allows co-recursive types `type Foo a::Bar end` `type bar a::Foo end`, is this allowed?
 * consider allowing free_data param to ic_pvector_destroy that is passed to (*destroy_item) rather than defaulting to true
 * decide on comma handling, currently skipped in parsing, and inserted in printing
+* should we expose fixed width types only to icarus userspace ?
 
 
 
