@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
+#include <inttypes.h>
 
 void * ic_alloc(size_t size){
     void *v = 0;
@@ -22,8 +24,8 @@ typedef struct Uint Uint;
 typedef struct String String;
 
 Bool * ic_bool_new(unsigned int boolean);
-Sint * ic_sint_new(long long int integer);
-Uint * ic_uint_new(long long unsigned int integer);
+Sint * ic_sint_new(int32_t integer);
+Uint * ic_uint_new(uint32_t integer);
 String * ic_string_new(char *str, unsigned int len);
 
 /* builtin fn println() */
@@ -113,10 +115,10 @@ Bool * i_or_a_Bool_Bool(Bool *a, Bool *b){
 
 /* builtin type Signed int */
 typedef struct Sint{
-    long long int integer;
+    int32_t integer;
 } Sint;
 
-Sint * ic_sint_new(long long int integer){
+Sint * ic_sint_new(int32_t integer){
     Sint *i = 0;
     i = ic_alloc(sizeof(Sint));
     i->integer = integer;
@@ -124,7 +126,7 @@ Sint * ic_sint_new(long long int integer){
 }
 /* builtin fn print(a::Sint) */
 void i_print_a_Sint(Sint *i){
-    printf("%lli", i->integer);
+    printf("%"PRId32, i->integer);
 }
 /* builtin fn println(a::Sint) */
 void i_println_a_Sint(Sint *i){
@@ -173,10 +175,10 @@ Sint * i_modulo_a_Sint_Sint(Sint *a, Sint *b){
 
 /* builtin type Unsigned int */
 typedef struct Uint{
-    long long unsigned int integer;
+    uint32_t integer;
 } Uint;
 
-Uint * ic_uint_new(long long unsigned int integer){
+Uint * ic_uint_new(uint32_t integer){
     Uint *i = 0;
     i = ic_alloc(sizeof(Uint));
     i->integer = integer;
@@ -184,7 +186,7 @@ Uint * ic_uint_new(long long unsigned int integer){
 }
 /* builtin fn print(a::Sint) */
 void i_print_a_Uint(Uint *i){
-    printf("%lli", i->integer);
+    printf("%"PRId32, i->integer);
 }
 /* builtin fn println(a::Sint) */
 void i_println_a_Uint(Uint *i){
