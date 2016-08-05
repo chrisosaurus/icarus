@@ -108,4 +108,11 @@ unsigned int ic_backend_pancake_instructions_register_fdecl(struct ic_backend_pa
  */
 unsigned int ic_backend_pancake_instructions_get_fdecl(struct ic_backend_pancake_instructions *instructions, struct ic_string *fdecl_sig_call);
 
+/* print instructions to provided file
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_instructions_print(struct ic_backend_pancake_instructions *instructions, FILE *file);
+
 #endif /* IC_BACKEND_PANCAKE_INSTRUCTIONS_H */

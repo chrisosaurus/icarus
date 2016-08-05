@@ -332,3 +332,40 @@ unsigned int ic_backend_pancake_instructions_get_fdecl(struct ic_backend_pancake
 
     return offset;
 }
+
+/* print instructions to provided file
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_instructions_print(struct ic_backend_pancake_instructions *instructions, FILE *file) {
+    unsigned int i = 0;
+    unsigned int len = 0;
+    struct ic_backend_pancake_bytecode *current_bytecode = 0;
+
+    if (!instructions) {
+        puts("ic_backend_pancake_instructions_print: instructions was null");
+        return 0;
+    }
+
+    if (!file) {
+        puts("ic_backend_pancake_instructions_print: file was null");
+        return 0;
+    }
+
+    len = instructions->len;
+    for (i = 0; i < len; ++i) {
+        if (i > 0) {
+            /* \n sep. between lines */
+            fputs("\n", file);
+        }
+
+        current_bytecode = &(instructions->bytecode_array[i]);
+        if (!ic_backend_pancake_bytecode_print(current_bytecode, file)) {
+            puts("ic_backend_pancake_instructions_print: call to ic_backend_pancake_bytecode_print failed");
+            return 0;
+        }
+    }
+
+    return 1;
+}
