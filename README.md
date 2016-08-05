@@ -105,7 +105,7 @@ this will show us the parser outputting it's understanding of our code
         println(get_str("Jennifer"))
     end
 
-and show us that transformed IR version of this
+and show us the transformed IR version of this
 
     fn get_str(name::String) -> String
         let _l1::String = "Hello there "
