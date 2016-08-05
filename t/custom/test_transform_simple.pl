@@ -58,5 +58,5 @@ if( $exit_status != 0 || $output ne $expected ){
     }
 }
 
-say "test_analyse_current successs";
+say "test_transform_simple successs";
 
