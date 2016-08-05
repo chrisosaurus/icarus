@@ -17,7 +17,7 @@ static struct test_lex_tests tests[] = {
     {"-", 1, {IC_MINUS}},
     {"hello", 1, {IC_IDENTIFIER}},
     {"\"world\"", 1, {IC_LITERAL_STRING}},
-    {"fn name(i::Int) end", 9, {IC_FUNC, IC_WHITESPACE, IC_IDENTIFIER, IC_LRBRACKET, IC_IDENTIFIER, IC_DOUBLECOLON, IC_IDENTIFIER, IC_RRBRACKET, IC_WHITESPACE, IC_END}}};
+    {"fn name(i::Sint) end", 9, {IC_FUNC, IC_WHITESPACE, IC_IDENTIFIER, IC_LRBRACKET, IC_IDENTIFIER, IC_DOUBLECOLON, IC_IDENTIFIER, IC_RRBRACKET, IC_WHITESPACE, IC_END}}};
 
 int main(void) {
     /* offset into table */

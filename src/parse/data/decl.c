@@ -444,10 +444,10 @@ void ic_decl_func_print_body(struct ic_decl_func *fdecl, unsigned int *indent_le
 /* return a string representation of this function signature
  *
  * for a function signature
- *      fn foo(a::Int, b::Int) -> Int
+ *      fn foo(a::Sint, b::Sint) -> Sint
  *
  * this function will return
- *      foo(Int Int)
+ *      foo(Sint Sint)
  *
  * the char* returned is a string stored within fdecl,
  * this means the caller must not free or mutate this string
@@ -558,10 +558,10 @@ char *ic_decl_func_sig_call(struct ic_decl_func *fdecl) {
 /* return a full string representation of this function signature
  *
  * for a function signature
- *      fn foo(a::Int, b::Int) -> Int
+ *      fn foo(a::Sint, b::Sint) -> Sint
  *
  * this function will return
- *      foo(Int Int) -> Int
+ *      foo(Sint Sint) -> Sint
  *
  * the char* returned is a string stored within fdecl,
  * this means the caller must not free or mutate this string
@@ -686,10 +686,10 @@ char *ic_decl_func_sig_full(struct ic_decl_func *fdecl) {
 /* return a mangled string representation of this function signature
  *
  * for a function signature
- *      fn foo(a::Int, b::Int) -> Int
+ *      fn foo(a::Sint, b::Sint) -> Sint
  *
  * this function will return
- *      i_foo_a_Int_Int
+ *      i_foo_a_Sint_Sint
  *
  * the char* returned is a string stored within fdecl,
  * this means the caller must not free or mutate this string

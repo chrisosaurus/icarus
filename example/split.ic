@@ -1,9 +1,9 @@
-builtin fn index_of(str::String, c::Char) -> Maybe<Int>
+builtin fn index_of(str::String, c::Char) -> Maybe<Sint>
 
 fn split(str::String, c::Char) -> [String]
     let idx = index_of(s, c)
     match idx
-        Int
+        Sint
             let before = s[0,   idx]
             let after  = s[idx, len(s)]
             return [before, after]

@@ -18,7 +18,7 @@ A `Maybe` is just a built-in Union type
 example syntax (work in progress):
 
     # defaults to Empty
-    let m::Maybe<Int>
+    let m::Maybe<Sint>
 
     if ...
         m = 32
@@ -27,7 +27,7 @@ example syntax (work in progress):
         m = 16
 
     switch m
-        case Int
+        case Sint
             print("Got number " m.contents)
         end
         case Empty
@@ -39,9 +39,9 @@ example syntax (work in progress):
 
     # returns position of needle within haystack on success
     # reutrns Empty on failure
-    function search(haystack::String needle::Char) :: Maybe<Int>
+    function search(haystack::String needle::Char) :: Maybe<Sint>
         let char::Char
-        let pos::Int
+        let pos::Sint
 
         for (char pos) in iterate(haystack)
             if char == needle
@@ -53,9 +53,9 @@ example syntax (work in progress):
         return Empty
     end
 
-    let res::Maybe<Int> = search("hello" 'e')
+    let res::Maybe<Sint> = search("hello" 'e')
     switch res
-        case Int
+        case Sint
             print("character found")
         end
         case Empty

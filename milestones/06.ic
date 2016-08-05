@@ -1,8 +1,8 @@
 type Foo
-  i::Int
+  i::Sint
 end
 
-fn unpack(f::Foo) -> Int
+fn unpack(f::Foo) -> Sint
  return f.i
 end
 

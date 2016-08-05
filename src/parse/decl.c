@@ -425,7 +425,7 @@ struct ic_decl *ic_parse_decl_func_header(struct ic_token_list *token_list) {
 
     /* note token being null *is* allowed
      * as this could mean we have the following as the last decl. in our file
-     *  builtin foo(a::Int)
+     *  builtin foo(a::Sint)
      */
     if ((!token) || (token->id != IC_ARROW)) {
         /* add Void type to our fdecl */

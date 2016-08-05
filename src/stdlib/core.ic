@@ -10,15 +10,25 @@ builtin fn not(a::Bool) -> Bool
 builtin fn and(a::Bool, b::Bool) -> Bool
 builtin fn or(a::Bool, b::Bool) -> Bool
 
-builtin type Int
-builtin fn print(a::Int)
-builtin fn println(a::Int)
-builtin fn equal(a::Int, b::Int) -> Bool
-builtin fn plus(a::Int, b::Int) -> Int
-builtin fn minus(a::Int, b::Int) -> Int
-builtin fn multiply(a::Int, b::Int) -> Int
-builtin fn divide(a::Int, b::Int) -> Int
-builtin fn modulo(a::Int, b::Int) -> Int
+builtin type Sint
+builtin fn print(a::Sint)
+builtin fn println(a::Sint)
+builtin fn equal(a::Sint, b::Sint) -> Bool
+builtin fn plus(a::Sint, b::Sint) -> Sint
+builtin fn minus(a::Sint, b::Sint) -> Sint
+builtin fn multiply(a::Sint, b::Sint) -> Sint
+builtin fn divide(a::Sint, b::Sint) -> Sint
+builtin fn modulo(a::Sint, b::Sint) -> Sint
+
+builtin type Uint
+builtin fn print(a::Uint)
+builtin fn println(a::Uint)
+builtin fn equal(a::Uint, b::Uint) -> Bool
+builtin fn plus(a::Uint, b::Uint) -> Uint
+builtin fn minus(a::Uint, b::Uint) -> Uint
+builtin fn multiply(a::Uint, b::Uint) -> Uint
+builtin fn divide(a::Uint, b::Uint) -> Uint
+builtin fn modulo(a::Uint, b::Uint) -> Uint
 
 builtin type String
 builtin fn print(a::String)

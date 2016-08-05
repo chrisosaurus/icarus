@@ -43,8 +43,8 @@ we should first convert to the form
       let _t2::???    = y(_t1)
       let _t3::???    = x(_t2)
       let res::???    = do_someting(_t3)
-      let _l2::Int    = 1
-      let _l3::Int    = 3
+      let _l2::Sint   = 1
+      let _l3::Sint   = 3
       let _t4::???    = _l2 + res
       let _t5::???    = _t4 + _l3
       println(_t5)

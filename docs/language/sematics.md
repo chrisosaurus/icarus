@@ -29,15 +29,15 @@ of function name and types do not match an already declared one
 
 This is valid:
 
-    function foo(i::Int) end
-    function foo(i::Int j::Int) end
+    function foo(i::Sint) end
+    function foo(i::Sint j::Sint) end
     function foo(s::String) end
 
 However this is invalid:
 
-    function foo(a::Int) end
+    function foo(a::Sint) end
     # compile time error, existing function already declared
-    function foo(b::Int) end
+    function foo(b::Sint) end
 
 
 **Function scope**
@@ -61,22 +61,22 @@ In icarus functions are dispatched both on name and on argument types
 
 If we define 3 functions `foo`:
 
-    function foo(a::Int) end
-    function foo(a::Int b::Int) end
+    function foo(a::Sint) end
+    function foo(a::Sint b::Sint) end
     function foo(a::String) end
 
 And then call them:
 
     function main()
-        foo(1)       # calls foo(a::Int)
-        foo(1 2)     # calls foo(a::Int b::Int)
+        foo(1)       # calls foo(a::Sint)
+        foo(1 2)     # calls foo(a::Sint b::Sint)
         foo("hello") # calls foo(a::String)
     end
 
 Function dispatch is done at compile time, and if a call cannot be
 matched to a declaration then this is a compile time error:
 
-    function bar(a::Int) end
+    function bar(a::Sint) end
 
     function main()
         bar("hello") # compile time error, no bar(String) found

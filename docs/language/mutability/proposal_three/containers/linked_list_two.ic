@@ -35,7 +35,7 @@ fn pop<T>(&l::LinkeList<T>) -> &Maybe<T>
     return &n
 end
 
-fn get<T>(&l::LinkeList<T>, i::Int) -> &Maybe<Int>
+fn get<T>(&l::LinkeList<T>, i::Sint) -> &Maybe<Sint>
     let &n = &l.node
 
     if i<= 1
@@ -54,14 +54,14 @@ fn get<T>(&l::LinkeList<T>, i::Int) -> &Maybe<Int>
     return &n
 end
 
-fn mystery(&list::LinkedList<Int>)
+fn mystery(&list::LinkedList<Sint>)
     for &i in &list
         &i += 1
     end
 end
 
 fn main()
-    let &ll = LinkedList<Int>(Nothing)
+    let &ll = LinkedList<Sint>(Nothing)
     let @x = 14
     let @y = 21
 

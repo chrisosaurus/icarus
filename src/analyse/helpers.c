@@ -525,7 +525,7 @@ static struct ic_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct i
     }
 
     /*
-     *  infer addone(1) -> addone(Int)->Int -> Int
+     *  infer addone(1) -> addone(Sint)->Sint -> Sint
      *  expr->tag == func_call
      *  fc = expr->u.fcall
      *  fstr = str(fc)
@@ -538,7 +538,7 @@ static struct ic_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct i
      */
 
     /*
-     *  infer Foo(1 "hello") -> Foo(Int String) -> Foo
+     *  infer Foo(1 "hello") -> Foo(Sint String) -> Foo
      *  expr->tag == func_call
      *  fc = expr->u.fcall
      *  fstr = str(fc)
@@ -743,7 +743,7 @@ struct ic_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_ex
     switch (cons->tag) {
 
         /*
-         *  infer 1 -> Int
+         *  infer 1 -> Sint
          *  expr->tag == constant
          *  cons = expr->u.cons
          *  cons->type == integer
@@ -751,9 +751,9 @@ struct ic_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_ex
          */
         case ic_expr_constant_type_integer:
             /* FIXME decide on type case sensitivity */
-            type = ic_kludge_get_type(kludge, "Int");
+            type = ic_kludge_get_type(kludge, "Sint");
             if (!type) {
-                puts("ic_analyse_infer_constant: Int: call to ic_kludge_get_type failed");
+                puts("ic_analyse_infer_constant: Sint: call to ic_kludge_get_type failed");
                 return 0;
             }
             return type;
@@ -914,10 +914,10 @@ static struct ic_type *ic_analyse_infer_operator(struct ic_kludge *kludge, struc
  *  ic_type_ref * -> actual type inferred
  *
  * examples:
- *  infer 1 to Int
+ *  infer 1 to Sint
  *  infer "hello" to String
- *  infer addone(1) which is a call to addone(Int) -> Int therefore Int
- *  infer Foo(1 "hello") which is call to Foo(Int String) -> Foo therefore Foo
+ *  infer addone(1) which is a call to addone(Sint) -> Sint therefore Sint
+ *  infer Foo(1 "hello") which is call to Foo(Sint String) -> Foo therefore Foo
  *
  * returns ic_type * on success
  * returns 0 on failure
@@ -952,7 +952,7 @@ struct ic_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scop
 
         case ic_expr_type_func_call:
             /*
-             *  infer addone(1) -> addone(Int)->Int -> Int
+             *  infer addone(1) -> addone(Sint)->Sint -> Sint
              *  expr->tag == func_call
              *  fc = expr->u.fcall
              *  fstr = str(fc)
@@ -965,7 +965,7 @@ struct ic_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scop
              */
 
             /*
-             *  infer Foo(1 "hello") -> Foo(Int String) -> Foo
+             *  infer Foo(1 "hello") -> Foo(Sint String) -> Foo
              *  expr->tag == func_call
              *  fc = expr->u.fcall
              *  fstr = str(fc)
@@ -1255,10 +1255,10 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
  *
  * this function must be compatible with the one produced
  * by `ic_decl_func_sig_call`
- *      foo(Int Int)
+ *      foo(Sint Sint)
  *
  * and
- *      bar(&Int String)
+ *      bar(&Sint String)
  *
  * returns char * on success
  * returns 0 on failure

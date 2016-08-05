@@ -10,11 +10,11 @@ It is sometimes useful to be able to hide information for the purposes of enforc
 
 
     type Date
-        _day   :: Int
-        _month :: Int
-        _year  :: Int
+        _day   :: Sint
+        _month :: Sint
+        _year  :: Sint
 
-        Date(d::Int, m::Int, y::Int)
+        Date(d::Sint, m::Sint, y::Sint)
             # naive first solution
             assert(ordered(0,    d, 32))
             assert(ordered(0,    m, 13))
@@ -31,9 +31,9 @@ removing boiler plate
 However we could also handle this instead with public fields with constraints on their value
 
     type Date
-        day   :: Int :: ordered(0,    day,   32)
-        month :: Int :: ordered(0,    month, 13)
-        year  :: Int :: ordered(1900, year,   2100)
+        day   :: Sint :: ordered(0,    day,   32)
+        month :: Sint :: ordered(0,    month, 13)
+        year  :: Sint :: ordered(1900, year,   2100)
     end
 
 
@@ -50,17 +50,17 @@ getting smarter
 here is the version with a constructor, getter and setters
 
     type Date
-        _day   :: Int
-        _month :: Int
-        _year  :: Int
+        _day   :: Sint
+        _month :: Sint
+        _year  :: Sint
 
-        Date(d::Int, m::Int, y::Int)
+        Date(d::Sint, m::Sint, y::Sint)
             assert(validate_date(d,m,y))
             return new(d,my,y)
         end
     end
 
-    fn validate_date(d::Int, m::Int, y::Int) -> Bool
+    fn validate_date(d::Sint, m::Sint, y::Sint) -> Bool
         if m == 2
             # february
             if is_leap_year(y)
@@ -77,29 +77,29 @@ here is the version with a constructor, getter and setters
         end
     end
 
-    fn day(date::Date) -> Int
+    fn day(date::Date) -> Sint
         date._day
     end
 
-    fn day(&date::Date, d::Int)
+    fn day(&date::Date, d::Sint)
         assert(validate_date(d, date._month, date._year))
         &date._day = d
     end
 
-    fn month(date::Date) -> Int
+    fn month(date::Date) -> Sint
         date._month
     end
 
-    fn year(&date::Date, m::Int)
+    fn year(&date::Date, m::Sint)
         assert(validate_date(date._day, m, date._year))
         &date._month = m
     end
 
-    fn year(date::Date) -> Int
+    fn year(date::Date) -> Sint
         date._year
     end
 
-    fn year(&date::Date, y::Int)
+    fn year(&date::Date, y::Sint)
         assert(validate_date(date._day, date._month, y))
         &date._year = y
     end
@@ -118,12 +118,12 @@ even smarter
 we could try model this with something like
 
     type Date
-        day   :: Int :: validate_date(day, month, year)
-        month :: Int :: validate_date(day, month, year)
-        year  :: Int :: validate_date(day, month, year)
+        day   :: Sint :: validate_date(day, month, year)
+        month :: Sint :: validate_date(day, month, year)
+        year  :: Sint :: validate_date(day, month, year)
     end
 
-    fn validate_date(d::Int, m::Int, y::Int) -> Bool
+    fn validate_date(d::Sint, m::Sint, y::Sint) -> Bool
         if m == 2
             # february
             if is_leap_year(y)

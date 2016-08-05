@@ -17,11 +17,13 @@ void * ic_alloc(size_t size){
 /* pre-declarations */
 typedef struct Void Void;
 typedef struct Bool Bool;
-typedef struct Int Int;
+typedef struct Sint Sint;
+typedef struct Uint Uint;
 typedef struct String String;
 
 Bool * ic_bool_new(unsigned int boolean);
-Int * ic_int_new(long long int integer);
+Sint * ic_sint_new(long long int integer);
+Uint * ic_uint_new(long long unsigned int integer);
 String * ic_string_new(char *str, unsigned int len);
 
 /* builtin fn println() */
@@ -109,28 +111,28 @@ Bool * i_or_a_Bool_Bool(Bool *a, Bool *b){
 }
 
 
-/* builtin type Int */
-typedef struct Int{
+/* builtin type Signed int */
+typedef struct Sint{
     long long int integer;
-} Int;
+} Sint;
 
-Int * ic_int_new(long long int integer){
-    Int *i = 0;
-    i = ic_alloc(sizeof(Int));
+Sint * ic_sint_new(long long int integer){
+    Sint *i = 0;
+    i = ic_alloc(sizeof(Sint));
     i->integer = integer;
     return i;
 }
-/* builtin fn print(a::Int) */
-void i_print_a_Int(Int *i){
+/* builtin fn print(a::Sint) */
+void i_print_a_Sint(Sint *i){
     printf("%lli", i->integer);
 }
-/* builtin fn println(a::Int) */
-void i_println_a_Int(Int *i){
-    i_print_a_Int(i);
+/* builtin fn println(a::Sint) */
+void i_println_a_Sint(Sint *i){
+    i_print_a_Sint(i);
     i_println_a();
 }
-/* builtin fn equal(a::Int, b::Int) -> Bool */
-Bool * i_equal_a_Int_Int(Int *a, Int *b){
+/* builtin fn equal(a::Sint, b::Sint) -> Bool */
+Bool * i_equal_a_Sint_Sint(Sint *a, Sint *b){
     if( a->integer == b->integer ){
         /* return truthy boolean */
         return ic_bool_new(1);
@@ -138,37 +140,96 @@ Bool * i_equal_a_Int_Int(Int *a, Int *b){
     /* return falsey boolean */
     return ic_bool_new(0);
 }
-/* builtin fn plus(a::Int, b::Int) -> Int */
-Int * i_plus_a_Int_Int(Int *a, Int *b){
-    Int *i = 0;
-    i = ic_int_new(a->integer + b->integer);
+/* builtin fn plus(a::Sint, b::Sint) -> Sint */
+Sint * i_plus_a_Sint_Sint(Sint *a, Sint *b){
+    Sint *i = 0;
+    i = ic_sint_new(a->integer + b->integer);
     return i;
 }
-/* builtin fn minus(a::Int, b::Int) -> Int */
-Int * i_minus_a_Int_Int(Int *a, Int *b){
-    Int *i = 0;
-    i = ic_int_new(a->integer - b->integer);
+/* builtin fn minus(a::Sint, b::Sint) -> Sint */
+Sint * i_minus_a_Sint_Sint(Sint *a, Sint *b){
+    Sint *i = 0;
+    i = ic_sint_new(a->integer - b->integer);
     return i;
 }
-/* builtin fn multiply(a::Int, b::Int) -> Int */
-Int * i_multiply_a_Int_Int(Int *a, Int *b){
-    Int *i = 0;
-    i = ic_int_new(a->integer * b->integer);
+/* builtin fn multiply(a::Sint, b::Sint) -> Sint */
+Sint * i_multiply_a_Sint_Sint(Sint *a, Sint *b){
+    Sint *i = 0;
+    i = ic_sint_new(a->integer * b->integer);
     return i;
 }
-/* builtin fn divide(a::Int, b::Int) -> Int */
-Int * i_divide_a_Int_Int(Int *a, Int *b){
-    Int *i = 0;
-    i = ic_int_new(a->integer / b->integer);
+/* builtin fn divide(a::Sint, b::Sint) -> Sint */
+Sint * i_divide_a_Sint_Sint(Sint *a, Sint *b){
+    Sint *i = 0;
+    i = ic_sint_new(a->integer / b->integer);
     return i;
 }
-/* builtin fn modulo(a::Int, b::Int) -> Int */
-Int * i_modulo_a_Int_Int(Int *a, Int *b){
-    Int *i = 0;
-    i = ic_int_new(a->integer % b->integer);
+/* builtin fn modulo(a::Sint, b::Sint) -> Sint */
+Sint * i_modulo_a_Sint_Sint(Sint *a, Sint *b){
+    Sint *i = 0;
+    i = ic_sint_new(a->integer % b->integer);
     return i;
 }
 
+/* builtin type Unsigned int */
+typedef struct Uint{
+    long long unsigned int integer;
+} Uint;
+
+Uint * ic_uint_new(long long unsigned int integer){
+    Uint *i = 0;
+    i = ic_alloc(sizeof(Uint));
+    i->integer = integer;
+    return i;
+}
+/* builtin fn print(a::Sint) */
+void i_print_a_Uint(Uint *i){
+    printf("%lli", i->integer);
+}
+/* builtin fn println(a::Sint) */
+void i_println_a_Uint(Uint *i){
+    i_print_a_Uint(i);
+    i_println_a();
+}
+/* builtin fn equal(a::Sint, b::Sint) -> Bool */
+Bool * i_equal_a_Uint_Uint(Uint *a, Uint *b){
+    if( a->integer == b->integer ){
+        /* return truthy boolean */
+        return ic_bool_new(1);
+    }
+    /* return falsey boolean */
+    return ic_bool_new(0);
+}
+/* builtin fn plus(a::Sint, b::Sint) -> Sint */
+Uint * i_plus_a_Uint_Uint(Uint *a, Uint *b){
+    Uint *i = 0;
+    i = ic_uint_new(a->integer + b->integer);
+    return i;
+}
+/* builtin fn minus(a::Sint, b::Sint) -> Sint */
+Uint * i_minus_a_Uint_Uint(Uint *a, Uint *b){
+    Uint *i = 0;
+    i = ic_uint_new(a->integer - b->integer);
+    return i;
+}
+/* builtin fn multiply(a::Sint, b::Sint) -> Sint */
+Uint * i_multiply_a_Uint_Uint(Uint *a, Uint *b){
+    Uint *i = 0;
+    i = ic_uint_new(a->integer * b->integer);
+    return i;
+}
+/* builtin fn divide(a::Sint, b::Sint) -> Sint */
+Uint * i_divide_a_Uint_Uint(Uint *a, Uint *b){
+    Uint *i = 0;
+    i = ic_uint_new(a->integer / b->integer);
+    return i;
+}
+/* builtin fn modulo(a::Sint, b::Sint) -> Sint */
+Uint * i_modulo_a_Uint_Uint(Uint *a, Uint *b){
+    Uint *i = 0;
+    i = ic_uint_new(a->integer % b->integer);
+    return i;
+}
 
 /* builtin type String */
 typedef struct String{

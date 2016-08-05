@@ -27,7 +27,7 @@ this mapping is managed in `src/stdlib/core.ic`
 Any type can implement the operators for any type,
 if you wanted you could define
 
-    fn add(b::Bool, i::Int) -> SomeType ... end
+    fn add(b::Bool, i::Sint) -> SomeType ... end
 
 and then you may use
 

@@ -1,7 +1,7 @@
 
 fn main()
-    let x::Int = 5
-    let y::Int = 5
+    let x::Sint = 5
+    let y::Sint = 5
 
     # the following currently fails to parse
     if x == 5 && y == 4

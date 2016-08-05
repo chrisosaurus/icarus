@@ -1,7 +1,7 @@
 
 # ["hi", "there"]  -->  {"hi": 0, "there": 1}
 # version 1
-fn makeReverseMap<T>(list::[T]) -> {T: Int}
+fn makeReverseMap<T>(list::[T]) -> {T: Sint}
     let index = 0
     let &out::{T: index}
     for item in list
@@ -13,7 +13,7 @@ end
 
 # version 2
 # has a declaration of the out variable in the function interface.
-fn makeReverseMap<T>(list::[T]) -> out::{T: Int}
+fn makeReverseMap<T>(list::[T]) -> out::{T: Sint}
     let index = 0
     let &progress::out
     for item in list

@@ -127,7 +127,7 @@ conversions must be explicit
 
 for example this is wrong
 
-    fn foo($y::Int) ... end
+    fn foo($y::Sint) ... end
 
     let x = 5
     foo(x)
@@ -136,7 +136,7 @@ this is illegal, despite a conversion from frozen x to immutable x being allowed
 
 we can instead do this as long as we make it explicit
 
-    fn foo($y::Int) ... end
+    fn foo($y::Sint) ... end
 
     let x = 5
     foo($x)
@@ -168,7 +168,7 @@ Local
 
 Since our goal is only about capturing a contract between interfaces, what a body does to local only variables is not of great concern
 
-    fn foo(&x::Int)
+    fn foo(&x::Sint)
         let y = 15
         y += 1
         y += 8
@@ -185,15 +185,15 @@ Decay
 
 By default variables decay to frozen
 
-    fn bar(x::Int)
+    fn bar(x::Sint)
         print(x)
     end
 
-    fn baz(&x::Int)
+    fn baz(&x::Sint)
         print(x)
     end
 
-    fn foo(&x::Int)
+    fn foo(&x::Sint)
         bar(x)
         baz(&x)
     end
@@ -222,7 +222,7 @@ here the `let @x` is needless, as the `x` is frozen and therefore I already have
 this should be an error or at the very least a warning.
 
 
-    fn foo(@x::Int)
+    fn foo(@x::Sint)
         print(x)
     end
 
@@ -235,7 +235,7 @@ Aliasing
 
 We do allow aliasing, as long as the alias never violates the permissions
 
-    fn foo(@x::Int)
+    fn foo(@x::Sint)
         let &y = x
         &y = 14
     end
@@ -301,8 +301,8 @@ safe decay
 ----------
 for example the builtin function print only needs to be able to read, it will never write or store
 
-    # builtin print function for an Int
-    builtin fn print($x::Int)
+    # builtin print function for an Sint
+    builtin fn print($x::Sint)
 
 and thus a call to this function has to give the immut right
 
@@ -322,7 +322,7 @@ we can fix this either by explicitely converting to immut
 
 or we can make a wrapper function which does this for us
 
-    fn print(y::Int) print($y) end
+    fn print(y::Sint) print($y) end
 
 This is safe as a conversion from frozen to immmut is safe
 
@@ -391,7 +391,7 @@ of type and permission
 example using ListMut
 
     fn main()
-        let list = ListMut<Int>
+        let list = ListMut<Sint>
 
         # populate list
         for i in [1..100]
@@ -406,13 +406,13 @@ example using ListMut
 
     end
 
-    fn print_list($list::ListMut<Int>)
+    fn print_list($list::ListMut<Sint>)
         for $i in $list
             print($i)
         end
     end
 
-    fn add_one_to_each(&list::ListMut<Int>)
+    fn add_one_to_each(&list::ListMut<Sint>)
         for &i in &list
             &i += 1
         end
@@ -454,7 +454,7 @@ however an immutable reference is only temporary, for the duration of the callee
 Consider a snippet similar to above
 
     fn main()
-        let list = ListMut<Int>
+        let list = ListMut<Sint>
 
         # populate list
         for i in [1..100]
@@ -466,7 +466,7 @@ Consider a snippet similar to above
 
     end
 
-    fn print_list($list::ListMut<Int>)
+    fn print_list($list::ListMut<Sint>)
         for $i in $list
             print($i)
         end
@@ -474,12 +474,12 @@ Consider a snippet similar to above
 
 there are a lot of immutable sigils (`$`), however as a caller of print_list you could argue that you don't actually care
 
-forcing the user to also expose a conversion function `fn print_list(list::ListMut<Int>) print_list($list) end` is gross
+forcing the user to also expose a conversion function `fn print_list(list::ListMut<Sint>) print_list($list) end` is gross
 
 the above snippet is not really more explicit than
 
     fn main()
-        let list = ListMut<Int>
+        let list = ListMut<Sint>
 
         # populate list
         for i in [1..100]
@@ -491,7 +491,7 @@ the above snippet is not really more explicit than
 
     end
 
-    fn print_list(list::ListMut<Int>)
+    fn print_list(list::ListMut<Sint>)
         for i in list
             print(i)
         end
@@ -504,7 +504,7 @@ a case where the difference between frozen and immut is more obvious is here,
 note that i resort back to the usual notation of `x` being `frozen x` and `$y` being `immut y`
 
     fn main()
-        let list = ListMut<Int>
+        let list = ListMut<Sint>
         let x = 14
         &list.append(@x)
 
@@ -513,7 +513,7 @@ note that i resort back to the usual notation of `x` being `frozen x` and `$y` b
         print($x)
     end
 
-    fn add_one_to_each(&list::ListMut<Int>)
+    fn add_one_to_each(&list::ListMut<Sint>)
         for &i in &list
             &i += 1
         end
@@ -548,7 +548,7 @@ as the mutation to `x` happens before the call to print where we freeze it
 to get around this we would have to freeze `x` *before* the call to add_one_to_all
 
     fn main()
-        let list = ListMut<Int>
+        let list = ListMut<Sint>
         let x = 14
         &list.append(@x)
 
@@ -558,7 +558,7 @@ to get around this we would have to freeze `x` *before* the call to add_one_to_a
         print(y)
     end
 
-    fn add_one_to_each(&list::ListMut<Int>)
+    fn add_one_to_each(&list::ListMut<Sint>)
         for &i in &list
             &i += 1
         end
@@ -572,20 +572,20 @@ this would output
 notice that we could also do this via an intermediary
 
     fn main()
-        let list = ListMut<Int>
+        let list = ListMut<Sint>
         let x = 14
         &list.append(@x)
 
         do_stuff(x, &list)
     end
 
-    fn add_one_to_each(&list::ListMut<Int>)
+    fn add_one_to_each(&list::ListMut<Sint>)
         for &i in &list
             &i += 1
         end
     end
 
-    fn do_stuff(y::Int, &List::ListMut<Int>)
+    fn do_stuff(y::Sint, &List::ListMut<Sint>)
         print(y)
         add_one_to_each(&list)
         print(y)

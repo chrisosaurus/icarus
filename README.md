@@ -28,11 +28,11 @@ Example
 An example showing fizzbuzz and some elements of Icarus' permissions system,
 the below example will not yet run in Icarus
 
-    fn is_div(a::Int, b::Int) -> Bool
+    fn is_div(a::Sint, b::Sint) -> Bool
         return (a % b) == 0
     end
 
-    fn fizzbuzz(from::Int, to::Int)
+    fn fizzbuzz(from::Sint, to::Sint)
         for num in range(from, to)
             let &arr::Vector<String>
 

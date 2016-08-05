@@ -24,7 +24,7 @@ int main(void) {
     assert(tdecl->fields.used == 0);
 
     /* add some fields */
-    field = ic_field_new("a", 1, "Int", 3, ic_parse_perm_default());
+    field = ic_field_new("a", 1, "Sint", 3, ic_parse_perm_default());
     assert(field);
     assert(1 == ic_decl_type_add_field(tdecl, field));
 
@@ -32,7 +32,7 @@ int main(void) {
     assert(field);
     assert(1 == ic_decl_type_add_field(tdecl, field));
 
-    printf("Should see:\ntype Foo\n    a::Int\n    b::String\nend\n");
+    printf("Should see:\ntype Foo\n    a::Sint\n    b::String\nend\n");
 
     /* output type */
     puts("Output:");

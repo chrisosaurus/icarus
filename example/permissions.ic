@@ -1,24 +1,24 @@
 
-fn foo(a::Int)
+fn foo(a::Sint)
 end
 
-fn foo($a::Int)
+fn foo($a::Sint)
 end
 
-fn foo(%a::Int)
+fn foo(%a::Sint)
 end
 
-fn foo(&a::Int)
+fn foo(&a::Sint)
 end
 
-fn foo(@a::Int)
+fn foo(@a::Sint)
 end
 
-fn foo(*a::Int)
+fn foo(*a::Sint)
 end
 
 fn main()
-    let @a::Int = 5
+    let @a::Sint = 5
     foo(@a)
     foo(&a)
     foo(%a)

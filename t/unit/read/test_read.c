@@ -4,13 +4,13 @@
 
 #include "../../../src/read/read.h"
 
-static char *expected = "# user defined type with 2 fields, an Int and a String\n\
+static char *expected = "# user defined type with 2 fields, an Sint and a String\n\
 type Foo\n\
-    a::Int\n\
+    a::Sint\n\
     b::String\n\
 end\n\
 \n\
-fn d(i::Int)\n\
+fn d(i::Sint)\n\
     print(i)\n\
 end\n\
 \n\
@@ -25,13 +25,13 @@ fn d(f::Foo)\n\
 end\n\
 \n\
 # simple function to test return values\n\
-fn add_one(i::Int) -> Int\n\
+fn add_one(i::Sint) -> Sint\n\
     let tmp = i\n\
     tmp = i + 1\n\
     return tmp\n\
 end\n\
 \n\
-fn maybe_add_one(i::Int, b::Bool) -> Int\n\
+fn maybe_add_one(i::Sint, b::Bool) -> Sint\n\
     # FIXME this doesn't work `if i == 2 and b`\n\
     # due to lack of operator precedence\n\
     if b and i == 2\n\
@@ -51,7 +51,7 @@ fn main()\n\
 end\n\
 \n\
 # hack to work around lack of constructors\n\
-builtin fn Foo(a::Int, b::String) -> Foo\n\
+builtin fn Foo(a::Sint, b::String) -> Foo\n\
 \n\
 ";
 

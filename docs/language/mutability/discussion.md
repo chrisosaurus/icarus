@@ -17,7 +17,7 @@ consideration:
 e.g.
 
     type Node
-        &i::Int
+        &i::Sint
     end
 
     let &mine = 5

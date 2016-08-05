@@ -22,7 +22,7 @@ Bad aliasing
 
 here is an example where I dislike the default semantics
 
-    fn naughty(&x::Int, y::Int)
+    fn naughty(&x::Sint, y::Sint)
         print(y)
         &x += 1
         print(y)
@@ -47,10 +47,10 @@ Bad aliasing within containers
 ==============================
 
     type Node
-        x::Int
+        x::Sint
     end
 
-    fn store(y::Int)
+    fn store(y::Sint)
         return Node(y)
     end
 

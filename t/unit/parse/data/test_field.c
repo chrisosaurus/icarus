@@ -24,13 +24,13 @@ int main(void) {
     assert(field->permissions == ic_parse_perm_default());
 
     /* test init */
-    assert(ic_field_init(&init_me, "hello", 5, "Int", 3, 2));
+    assert(ic_field_init(&init_me, "hello", 5, "Sint", 3, 2));
 
     assert(!strncmp("hello",
                     ic_symbol_contents(&(init_me.name)),
                     5));
 
-    assert(!strncmp("Int",
+    assert(!strncmp("Sint",
                     ic_symbol_contents(ic_type_ref_get_symbol(&(init_me.type))),
                     3));
 

@@ -4,13 +4,13 @@
 # we want to be able specify functions for converting between types
 
 type Foo
-    a::Int
+    a::Sint
 end
 
 # this requires being able to pass a Type as a value
 # and be able to match on it for dispatch
 
-fn convert(f::Foo Int) :: Int
+fn convert(f::Foo Sint) :: Sint
     return f.a
 end
 

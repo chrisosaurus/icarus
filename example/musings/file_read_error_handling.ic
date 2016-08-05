@@ -2,7 +2,7 @@
 # a simple example representing reading a file into a vector
 
 type Line
-  number::Int
+  number::Sint
   content::String
 end
 

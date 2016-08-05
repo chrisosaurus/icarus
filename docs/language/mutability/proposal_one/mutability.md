@@ -8,7 +8,7 @@ Immutable value references
 
 In Icarus mutability and variables have some interesting properties
 
-    let a::Int = 5
+    let a::Sint = 5
 
 here we create a mutable variable a that holds a reference to the immutable value 5
 
@@ -22,7 +22,7 @@ however we can reassign the variable, assignment (`=`) never mutates values but 
 Say if instead we create a user defined type and make a variable of it
 
     type Foo
-        a::Int
+        a::Sint
     end
 
     let f::Foo = Foo(1)
@@ -41,7 +41,7 @@ Mutable value references
 if instead we create a mutable reference we can get the desired behavior
 
     type Foo
-        a::Int
+        a::Sint
     end
 
     let &f::Foo = Foo(1)
@@ -61,21 +61,21 @@ Function arguments
 
 these rules apply to function arguments as well, with one minor exceptions
 
-    let a::Int = 5
+    let a::Sint = 5
 
 here `a` is a **mutable** local variable a holding a reference to an **immutable** value 5
 
 however if we have
 
-    fn foo(b::Int)
+    fn foo(b::Sint)
 
-here `b` is an **immutable** local variable holding a reference to an **immutable** Integer value
+here `b` is an **immutable** local variable holding a reference to an **immutable** Sinteger value
 
 and
 
-    fn foo(&c::Int)
+    fn foo(&c::Sint)
 
-here c is an **immutable** local variable holding a reference to a **mutable** Integer value
+here c is an **immutable** local variable holding a reference to a **mutable** Sinteger value
 
 we can refer to this as both a mutable value `&c` and an immutable value `c`, we can mutate the value `&c = 4`,
 but any attempt to modify the variable `c = 4` directly is an error

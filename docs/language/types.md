@@ -10,11 +10,11 @@ A record type introduces a default constructor which takes every field as an arg
 A user can additionally define new constructors (to be described later)
 
     type Foo
-        a::Int
+        a::Sint
         s::String
     end
 
-    # use of default constructor Foo(a::Int s::String)
+    # use of default constructor Foo(a::Sint s::String)
     let f::Foo = Foo(14 "hello")
 
     print(f.a) # 14
@@ -55,7 +55,7 @@ However like an Enum it can only ever hold *one* value at a time
 
     Union Foo
         s::String
-        i::Int
+        i::Sint
     end
 
     let f::Foo = function_returning_a_foo()
@@ -66,7 +66,7 @@ However like an Enum it can only ever hold *one* value at a time
             # do something with f.s
             # it is an error in here to reference f.i
         end
-        case Int
+        case Sint
             # do something with f.i
             # it is an error in here to reference f.s
         end
@@ -78,7 +78,7 @@ The above is roughly equivalent to the following C:
     struct Foo {
         enum {
             Foo_String,
-            Foo_Int
+            Foo_Sint
         } type;
 
         union {
@@ -93,7 +93,7 @@ The above is roughly equivalent to the following C:
         case Foo_String:
             // do something with f.data.s
             break;
-        case Foo_Int:
+        case Foo_Sint:
             // do something with f.data.i
             break;
     }

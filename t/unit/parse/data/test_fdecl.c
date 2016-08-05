@@ -24,7 +24,7 @@ int main(void) {
     assert(fdecl->args.used == 0);
 
     /* add some fields */
-    field = ic_field_new("a", 1, "Int", 3, ic_parse_perm_default());
+    field = ic_field_new("a", 1, "Sint", 3, ic_parse_perm_default());
     assert(field);
     assert(1 == ic_decl_func_add_arg(fdecl, field));
 
@@ -32,7 +32,7 @@ int main(void) {
     assert(field);
     assert(1 == ic_decl_func_add_arg(fdecl, field));
 
-    printf("Should see:\n# Foo(int String)\nfn Foo(a::Int b::String) -> Void\nend\n");
+    printf("Should see:\n# Foo(int String)\nfn Foo(a::Sint b::String) -> Void\nend\n");
 
     /* output type */
     puts("Output:");

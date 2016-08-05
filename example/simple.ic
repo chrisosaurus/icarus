@@ -1,10 +1,10 @@
-# user defined type with 2 fields, an Int and a String
+# user defined type with 2 fields, an Sint and a String
 type Foo
-    a::Int
+    a::Sint
     b::String
 end
 
-fn d(i::Int)
+fn d(i::Sint)
     print(i)
 end
 
@@ -19,13 +19,13 @@ fn d(f::Foo)
 end
 
 # simple function to test return values
-fn add_one(i::Int) -> Int
+fn add_one(i::Sint) -> Sint
     let tmp = i
     tmp = i + 1
     return tmp
 end
 
-fn maybe_add_one(i::Int, b::Bool) -> Int
+fn maybe_add_one(i::Sint, b::Bool) -> Sint
     # FIXME this doesn't work `if i == 2 and b`
     # due to lack of operator precedence
     if b and i == 2
@@ -45,5 +45,5 @@ fn main()
 end
 
 # hack to work around lack of constructors
-builtin fn Foo(a::Int, b::String) -> Foo
+builtin fn Foo(a::Sint, b::String) -> Foo
 

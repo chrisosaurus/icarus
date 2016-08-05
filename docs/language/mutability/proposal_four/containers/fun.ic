@@ -8,7 +8,7 @@ type Bar<T>
 end
 
 type Baz
-    &i::Int
+    &i::Sint
     &s::String
 end
 

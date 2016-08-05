@@ -14,12 +14,12 @@ my $expected = <<EOF;
 parser output:
 ----------------
 type Foo
-    a::Int
+    a::Sint
     b::String
 end
 
-# d(Int)
-fn d(i::Int) -> Void
+# d(Sint)
+fn d(i::Sint) -> Void
     print(i)
 end
 
@@ -34,15 +34,15 @@ fn d(f::Foo) -> Void
     d(f.b)
 end
 
-# add_one(Int)
-fn add_one(i::Int) -> Int
+# add_one(Sint)
+fn add_one(i::Sint) -> Sint
     let tmp = i
     tmp = i + 1
     return tmp
 end
 
-# maybe_add_one(Int Bool)
-fn maybe_add_one(i::Int, b::Bool) -> Int
+# maybe_add_one(Sint Bool)
+fn maybe_add_one(i::Sint, b::Bool) -> Sint
     if b and i == 2
         i = i + 1
     end
@@ -56,7 +56,7 @@ fn main() -> Void
     d(f)
 end
 
-builtin fn Foo(a::Int, b::String) -> Foo
+builtin fn Foo(a::Sint, b::String) -> Foo
 ----------------
 
 EOF

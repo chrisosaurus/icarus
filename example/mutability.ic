@@ -10,7 +10,7 @@
 #    to have mutability visible at the interface level (function declaration)
 
 type Foo
-  a::Int
+  a::Sint
 end
 
 # function bar takes a mutable reference to a Foo
@@ -18,8 +18,8 @@ fn bar(&f::Foo)
   &f.a = 14
 end
 
-# function bar takes a mutable reference to an Int
-fn bar(&a::Int)
+# function bar takes a mutable reference to an Sint
+fn bar(&a::Sint)
   &a = 14
 end
 
@@ -46,7 +46,7 @@ fn main()
   bar(x.a)
 
 
-  let &i::Int = 0
+  let &i::Sint = 0
 
   # four - function can mutate i
   bar(&i)
