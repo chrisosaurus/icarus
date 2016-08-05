@@ -1,6 +1,8 @@
 #ifndef IC_TRANSFORM_H
 #define IC_TRANSFORM_H
 
+#include "../analyse/data/kludge.h"
+
 /* perform translation to TIR from kludge
  *
  * modifies kludge in place

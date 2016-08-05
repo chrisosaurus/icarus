@@ -2,7 +2,7 @@
 #include <stdlib.h> /* exit, free */
 #include <string.h>
 
-#include "test_custom_helpers.h"
+#include "helpers.h"
 
 int main(int argc, char **argv) {
     char *filename = 0;
