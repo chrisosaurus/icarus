@@ -83,6 +83,11 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
         return 0;
     }
 
+    if (!file) {
+        puts("ic_backend_pancake_bytecode_print: file was null");
+        return 0;
+    }
+
     switch (bytecode->tag) {
         /* fdecl_label fdecl_sig_call */
         case ipbp_fdecl_label:
