@@ -31,7 +31,6 @@ all: icarus
 icarus: ${OBJ}
 	@echo more compiling CC -o $@ with extra flags \"${EXTRAFLAGS}\"
 	@${CC} src/main.c -o $@ ${LDFLAGS} ${EXTRAFLAGS} ${OBJ}
-	@make -s cleanobj
 
 # build icarus with debug output
 debug:
@@ -66,7 +65,7 @@ example: icarus
 test: clean $(OBJ) $(TESTO) test_custom test_success cleanobj
 
 
-test_custom: $(OBJ)
+test_custom: $(OBJ) icarus
 	@echo -e "\n\ncompiling t/custom/test_token_print.c to bin/t/custom/test_token_print"
 	@mkdir -p `dirname bin/t/custom/test_token_print`
 	@${CC} t/custom/test_token_print.c -o bin/t/custom/test_token_print ${CFLAGS} ${LDFLAGS} ${OBJ}
@@ -102,6 +101,9 @@ test_custom: $(OBJ)
 	@${CC} t/custom/test_transform_simple.c -o bin/t/custom/test_transform_simple ${CFLAGS} ${LDFLAGS} ${OBJ}
 	@echo running test_transform_simple.pl
 	t/custom/test_transform_simple.pl
+
+	@echo running test_backend_2c_simple.pl
+	t/custom/test_backend_2c_simple.pl
 
 # compile and run each test
 $(TESTO) : $(TESTOUT)/% : %.c
