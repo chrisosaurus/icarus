@@ -1,6 +1,13 @@
 #ifndef IC_BACKEND_PANCAKE_BYTECODE_H
 #define IC_BACKEND_PANCAKE_BYTECODE_H
 
+/* NB: the types here are NOT IC_ types
+ * 'str' is char *
+ * 'uint' in unsigned int *
+ * 'bool' is bool *
+ *
+ * FIXME TODO consider changing to union for args to support int rather than int*
+ */
 enum ic_backend_pancake_bytecode_type {
     /* fdecl_label fdecl_sig_call */
     ipbp_fdecl_label,
@@ -60,5 +67,14 @@ unsigned int ic_backend_pancake_bytecode_init(struct ic_backend_pancake_bytecode
  * returns 0 on failure
  */
 unsigned int ic_backend_pancake_bytecode_destroy(struct ic_backend_pancake_bytecode *bytecode, unsigned int free_bytecode);
+
+/* print bytecode representation to provided FILE
+ *
+ * will not append a trailing \n
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecode *bytecode, FILE *file);
 
 #endif /* IC_BACKEND_PANCAKE_BYTECODE_H */

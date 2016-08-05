@@ -70,8 +70,8 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
     struct ic_decl_func *fdecl = 0;
     /* sig_call for current fdecl */
     struct ic_string *fdecl_sig_call = 0;
-    /* char * to sig_call for current fdec/
-     * FIXME only needed when unimplemented
+    /* char * to sig_call for current fdec
+     * used for bytecode
      */
     char *fdecl_sig_call_ch = 0;
     /* tbody of current fdecl */
@@ -139,7 +139,7 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
         }
 
         /* insert dummy no-op function label instruction */
-        bc_dummy_fdecl = ic_backend_pancake_bytecode_new(ipbp_fdecl_label, fdecl_sig_call, 0);
+        bc_dummy_fdecl = ic_backend_pancake_bytecode_new(ipbp_fdecl_label, fdecl_sig_call_ch, 0);
         if (!bc_dummy_fdecl) {
             puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_new failed");
             return instructions;
