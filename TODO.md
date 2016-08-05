@@ -1,7 +1,6 @@
 TODO:
 -----
 
-* output generation doesn't handle arguments: /* plus(String String) -> String */ String plus();
 * change pancake/bytecode arg storage to union
 * all print methods should take `FILE *` argument rather than assuming stdout
 * 'everything' within tir (except pointers to fdecl/kludge) should be owned - copy any shared symbols
