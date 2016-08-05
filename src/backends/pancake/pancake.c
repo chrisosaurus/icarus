@@ -20,6 +20,13 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
  */
 unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *runtime);
 
+/* compile an fdecl into bytecode
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_decl_func *fdecl);
+
 /* pancake - stack based interpreter backend
  *
  * returns 1 on success
@@ -68,6 +75,48 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
     unsigned int len = 0;
     /* current kludge fdecl */
     struct ic_decl_func *fdecl = 0;
+
+    if (!kludge) {
+        puts("ic_backend_pancake_compile: kludge was null");
+        return 0;
+    }
+
+    instructions = ic_backend_pancake_instructions_new();
+    if (!instructions) {
+        puts("ic_backend_pancake_compile: call to ic_backend_pancake_instructions_new failed");
+        return 0;
+    }
+
+    len = ic_pvector_length(&(kludge->fdecls));
+    if (!len) {
+        puts("ic_backend_pancake_compile: call to ic_pvector_length failed");
+        return 0;
+    }
+
+    /* go through each fdecl, pull it out, call compile_fdecl to do work */
+    for (offset = 0; offset < len; ++offset) {
+        fdecl = ic_pvector_get(&(kludge->fdecls), offset);
+        if (!fdecl) {
+            puts("ic_backend_pancake_compile: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        if (!ic_backend_pancake_compile_fdecl(instructions, kludge, fdecl)) {
+            puts("ic_backend_pancake_compile: call to ic_backend_pancake_compile_fdecl failed");
+            return 0;
+        }
+    }
+
+    puts("ic_backend_pancake_compile: implementation pending");
+    return instructions;
+}
+
+/* compile an fdecl into bytecode
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_decl_func *fdecl) {
     /* sig_call for current fdecl */
     struct ic_string *fdecl_sig_call = 0;
     /* char * to sig_call for current fdec
@@ -81,14 +130,18 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
     /* dummy bytecode for fdecl */
     struct ic_backend_pancake_bytecode *bc_dummy_fdecl = 0;
 
-    if (!kludge) {
-        puts("ic_backend_pancake_compile: kludge was null");
+    if (!instructions) {
+        puts("ic_backend_pancake_compile_fdecl: instructions was null");
         return 0;
     }
 
-    instructions = ic_backend_pancake_instructions_new();
-    if (!instructions) {
-        puts("ic_backend_pancake_compile: call to ic_backend_pancake_instructions_new failed");
+    if (!kludge) {
+        puts("ic_backend_pancake_compile_fdecl: kludge was null");
+        return 0;
+    }
+
+    if (!fdecl) {
+        puts("ic_backend_pancake_compile_fdecl: fdecl_tbody was null");
         return 0;
     }
 
@@ -103,59 +156,45 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
      *  pop args
      * end
      */
-    len = ic_pvector_length(&(kludge->fdecls));
-    if (!len) {
-        puts("ic_backend_pancake_compile: call to ic_pvector_length failed");
-        return instructions;
+
+    fdecl_sig_call = &(fdecl->sig_call);
+    fdecl_sig_call_ch = ic_string_contents(fdecl_sig_call);
+    if (!fdecl_sig_call_ch) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_string_contents failed");
+        return 0;
     }
 
-    for (offset = 0; offset < len; ++offset) {
-        fdecl = ic_pvector_get(&(kludge->fdecls), offset);
-        if (!fdecl) {
-            puts("ic_backend_pancake_compile: call to ic_pvector_get failed");
-            return instructions;
-        }
-
-        fdecl_sig_call = &(fdecl->sig_call);
-        fdecl_sig_call_ch = ic_string_contents(fdecl_sig_call);
-        if (!fdecl_sig_call_ch) {
-            puts("ic_backend_pancake_compile: call to ic_string_contents failed");
-            return instructions;
-        }
-
-        fdecl_tbody = fdecl->tbody;
-        if (!fdecl_tbody) {
-            puts("ic_backend_pancake_compile: no tbody found on fdecl");
-            return instructions;
-        }
-
-        /* get length - which is offset of next instruction */
-        fdecl_instructions_offset = ic_backend_pancake_instructions_length(instructions);
-
-        /* register function at offset */
-        if (!ic_backend_pancake_instructions_register_fdecl(instructions, fdecl_sig_call, fdecl_instructions_offset)) {
-            puts("ic_backend_pancake_compile: call to ic_backend_pancake_instructions_register_fdecl failed");
-            return instructions;
-        }
-
-        /* insert dummy no-op function label instruction */
-        bc_dummy_fdecl = ic_backend_pancake_bytecode_new(ipbp_fdecl_label, fdecl_sig_call_ch, 0);
-        if (!bc_dummy_fdecl) {
-            puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_new failed");
-            return instructions;
-        }
-
-        if (!ic_backend_pancake_instructions_append(instructions, bc_dummy_fdecl)) {
-            puts("ic_backend_pancake_compile: call to ic_backend_pancake_instructions_append failed");
-            return instructions;
-        }
-
-        /* FIXME TODO compile fdecl_tbody */
-        printf("ic_backend_pancake_compile: UNIMPLEMENTED: skipping compilation for '%s'\n", fdecl_sig_call_ch);
+    fdecl_tbody = fdecl->tbody;
+    if (!fdecl_tbody) {
+        puts("ic_backend_pancake_compile_fdecl: no tbody found on fdecl");
+        return 0;
     }
 
-    puts("ic_backend_pancake_compile: implementation pending");
-    return instructions;
+    /* get length - which is offset of next instruction */
+    fdecl_instructions_offset = ic_backend_pancake_instructions_length(instructions);
+
+    /* register function at offset */
+    if (!ic_backend_pancake_instructions_register_fdecl(instructions, fdecl_sig_call, fdecl_instructions_offset)) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_register_fdecl failed");
+        return 0;
+    }
+
+    /* insert dummy no-op function label instruction */
+    bc_dummy_fdecl = ic_backend_pancake_bytecode_new(ipbp_fdecl_label, fdecl_sig_call_ch, 0);
+    if (!bc_dummy_fdecl) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_bytecode_new failed");
+        return 0;
+    }
+
+    if (!ic_backend_pancake_instructions_append(instructions, bc_dummy_fdecl)) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_append failed");
+        return 0;
+    }
+
+    /* FIXME TODO compile fdecl_tbody */
+    printf("ic_backend_pancake_compile_fdecl: UNIMPLEMENTED: skipping compilation for '%s'\n", fdecl_sig_call_ch);
+
+    return 1;
 }
 
 /* interpret bytecode in runtime
