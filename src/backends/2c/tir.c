@@ -87,7 +87,8 @@ unsigned int ic_b2c_compile_stmt(struct ic_kludge *input_kludge, struct ic_trans
 }
 
 unsigned int ic_b2c_compile_stmt_ret(struct ic_kludge *input_kludge, struct ic_transform_ir_ret *ret, FILE *out) {
-    unsigned int indent_level = 1;
+    struct ic_symbol *ret_sym = 0;
+    char *ret_str = 0;
 
     if (!input_kludge) {
         puts("ic_b2c_compile_stmt_ret: input_kludge was null");
@@ -104,11 +105,21 @@ unsigned int ic_b2c_compile_stmt_ret(struct ic_kludge *input_kludge, struct ic_t
         return 0;
     }
 
-    puts("ic_b2c_compile_stmt_ret: called on");
-    ic_transform_ir_ret_print(ret, &indent_level);
+    ret_sym = ret->var;
+    if (!ret_sym) {
+        puts("ic_b2c_compile_stmt_ret: ret_sym was null");
+        return 0;
+    }
 
-    puts("ic_b2c_compile_stmt_ret: unimplemented");
-    return 0;
+    ret_str = ic_symbol_contents(ret_sym);
+    if (!ret_sym) {
+        puts("ic_b2c_compile_stmt_ret: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    fprintf(out, "return %s;\n", ret_str);
+
+    return 1;
 }
 
 unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_transform_ir_let *let, FILE *out) {

@@ -281,6 +281,7 @@ unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct i
         return 0;
     }
 
+    /* return-type func-name( args ... ); */
     if (fdecl->ret_type) {
         /* FIXME need to convert to c type */
         func_return_type_str = ic_symbol_contents(fdecl->ret_type);
@@ -288,18 +289,25 @@ unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct i
             puts("ic_b2c_generate_functions: call to ic_symbol_contents failed for return type");
             return 0;
         }
+
+        /* print comment */
+        fprintf(f, "/* %s */\n", func_sig_full);
+
+        /* print return-type, name, and opening bracket
+         * NB: notice '*' to make into c pointer
+         * this is why we cannot squash the Void and non-void cases
+         */
+        fprintf(f, "%s * %s(", func_return_type_str, func_sig_mangled);
     } else {
         /* c void */
         func_return_type_str = "void";
+
+        /* print comment */
+        fprintf(f, "/* %s */\n", func_sig_full);
+
+        /* print return-type, name, and opening bracket */
+        fprintf(f, "%s %s(", func_return_type_str, func_sig_mangled);
     }
-
-    /* print comment */
-    fprintf(f, "/* %s */\n", func_sig_full);
-
-    /* return-type func-name( args ... ); */
-
-    /* print return-type, name, and opening bracket */
-    fprintf(f, "%s %s(", func_return_type_str, func_sig_mangled);
 
     /* FIXME args */
     printf("pre: func '%s' only partially implemented (args missing)\n", func_sig_full);
