@@ -217,12 +217,9 @@ unsigned int ic_b2c_compile_expr_constant(struct ic_kludge *input_kludge, struct
             break;
 
         case ic_expr_constant_type_boolean:
-            puts("ic_b2c_compile_expr_constant: call for");
-            ic_expr_constant_print(constant, &indent_level);
-            puts("");
+            fprintf(out, "ic_bool_new(%u)\n", constant->u.boolean);
 
-            puts("ic_b2c_compile_expr_constant: boolean not implemented");
-            return 0;
+            return 1;
 
             break;
 

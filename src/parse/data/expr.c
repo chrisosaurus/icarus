@@ -496,6 +496,10 @@ unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, unsigne
             }
             break;
 
+        case ic_expr_constant_type_boolean:
+            /* nothing to do */
+            break;
+
         default:
             puts("ic_expr_constant_destroy: impossible type");
             return 0;
