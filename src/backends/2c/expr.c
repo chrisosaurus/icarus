@@ -106,7 +106,7 @@ unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic
     for (i = 0; i < length; ++i) {
         /* add commas between args */
         if (i > 0) {
-            fputs(",", stdout);
+            fputs(", ", out);
         }
 
         sym = ic_transform_ir_fcall_get_arg(fcall, i);

@@ -269,9 +269,10 @@ Bool * i_equal_a_String_String(String *a, String *b){
 String * i_concat_a_String_String(String *a, String *b){
     String *s = 0;
     s = ic_alloc(sizeof(String));
-    s->str = ic_alloc(a->len + b->len - 1);
-    strcpy(s->str, a->str);
-    strcpy(&(s->str[a->len]), b->str);
+    s->len = a->len + b->len;
+    s->str = ic_alloc(s->len);
+    strncpy(s->str, a->str, a->len);
+    strncpy(&(s->str[a->len]), b->str, b->len);
     return s;
 }
 
