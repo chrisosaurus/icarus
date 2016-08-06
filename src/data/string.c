@@ -68,8 +68,10 @@ unsigned int ic_string_init(struct ic_string *str, char *source, unsigned int le
     /* strncpy source into string */
     strncpy(str->backing.contents, source, len);
 
-    /* insert null terminator */
-    str->backing.contents[len + 1] = '\0';
+    /* insert null terminator at end of string
+     * NB: we allocated (len+1) so [len] is last valid offset
+     */
+    str->backing.contents[len] = '\0';
 
     /* set the number of used chars
      * NB: this does not include the null terminator

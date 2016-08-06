@@ -40,7 +40,7 @@ unsigned int ic_carray_init(struct ic_carray *arr, unsigned int len) {
 
     arr->len = len;
 
-    arr->contents = calloc(len, sizeof(void *));
+    arr->contents = calloc(len, sizeof(char));
     if (!arr->contents) {
         puts("ic_carray_init: calloc of contents failed");
         return 0;
@@ -141,7 +141,7 @@ unsigned int ic_carray_ensure(struct ic_carray *arr, unsigned int new_len) {
      * note that we only allocated enough room to store a void*
      * so we have to be careful about what we actually store here
      */
-    arr->contents = realloc(arr->contents, sizeof(void *) * new_len);
+    arr->contents = realloc(arr->contents, sizeof(char) * new_len);
     if (!arr->contents) {
         puts("ic_carray_ensure: realloc failed");
         return 0;
