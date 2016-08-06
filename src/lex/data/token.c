@@ -21,6 +21,7 @@ struct ic_token *ic_token_new(enum ic_token_id id, char *line, unsigned int offs
 
     if (!ic_token_init(token, id, line, offset, file, line_num)) {
         puts("ic_token_new: call to ic_token_init failed");
+        free(token);
         return 0;
     }
 
