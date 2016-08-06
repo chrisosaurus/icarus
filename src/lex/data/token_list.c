@@ -237,6 +237,10 @@ struct ic_token *ic_token_list_peek_important(struct ic_token_list *list) {
             case IC_WHITESPACE:
                 /* consume and keep going */
                 token = ic_token_list_next(list);
+                if (!token) {
+                    puts("ic_token_list_peek_important: call to ic_token_list_next failed");
+                    return 0;
+                }
                 break;
 
             default:
