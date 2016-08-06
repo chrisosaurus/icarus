@@ -24,6 +24,7 @@ struct ic_backend_pancake_runtime *ic_backend_pancake_runtime_new(struct ic_back
 
     if (!ic_backend_pancake_runtime_init(runtime, instructions)) {
         puts("ic_backend_panecake_runtime_new: call to ic_backend_pancake_runtme failed");
+        free(runtime);
         return 0;
     }
 
