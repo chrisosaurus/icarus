@@ -5,6 +5,7 @@
 #include "data/instructions.h"
 #include "data/runtime.h"
 #include "pancake.h"
+#include "tir.h"
 
 /* compile a kludge into bytecode
  *
