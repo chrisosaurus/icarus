@@ -131,5 +131,5 @@ format:
 man:
 	man -l icarus.1
 
-.PHONY: all clean cleanobj icarus test test_custom example readme compile format man
+.PHONY: all clean cleanobj test test_custom example readme compile format man
 
