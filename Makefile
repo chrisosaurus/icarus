@@ -131,5 +131,8 @@ format:
 man:
 	man -l icarus.1
 
-.PHONY: all clean cleanobj test test_custom example readme compile format man
+analyze: clean
+	scan-build make
+
+.PHONY: all clean cleanobj test test_custom example readme compile format man analyze
 
