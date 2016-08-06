@@ -1087,7 +1087,7 @@ struct ic_expr *ic_expr_clone(struct ic_expr *expr) {
     /* zero out expr */
     memset(expr, 0, sizeof(struct ic_expr));
 
-    return expr;
+    return new;
 }
 
 /* takes an existing expr and converts it to a binary operator
