@@ -62,7 +62,7 @@ struct ic_field *ic_parse_field(struct ic_token_list *token_list) {
 
     type = ic_token_get_string(token);
     type_len = ic_token_get_string_length(token);
-    if (!name || !name_len) {
+    if (!type || !type_len) {
         puts("ic_parse_field: failed to extract type from token");
         return 0;
     }
