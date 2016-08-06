@@ -158,6 +158,12 @@ static struct ic_stmt *ic_parse_stmt_let(struct ic_token_list *token_list) {
 
     /* check for optional `::` */
     token = ic_token_list_peek_important(token_list);
+    if (!token) {
+        puts("ic_parse_stmt_let: call to ic_token_list_peek failed");
+        free(stmt);
+        return 0;
+    }
+
     if (token->id == IC_DOUBLECOLON) {
         /* consume `::` */
         token = ic_token_list_expect_important(token_list, IC_DOUBLECOLON);
