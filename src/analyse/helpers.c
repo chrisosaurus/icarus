@@ -1396,7 +1396,9 @@ ERROR:
     puts("ic_analyse_fcall_str: error occurred, destroying string");
 
     if (str) {
-        ic_string_destroy(str, 1);
+        if (!ic_string_destroy(str, 1)) {
+            puts("ic_analyse_fcall_str: in ERROR cleanup: call to ic_string_destroy failed");
+        }
     }
 
     return 0;
