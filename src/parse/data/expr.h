@@ -363,18 +363,6 @@ struct ic_expr *ic_expr_new(enum ic_expr_tag tag);
  */
 int ic_expr_init(struct ic_expr *expr, enum ic_expr_tag tag);
 
-/* clone an ic_expr and then zero the old
- *
- * this will allocate and initialise a new ic_expr
- * based on the value in the provided expr
- *
- * this will 'zero out' the provided expression after cloning
- *
- * returns pointer on success
- * returns 0 on failure
- */
-struct ic_expr *ic_expr_clone(struct ic_expr *expr);
-
 /* takes an existing expr and converts it to a binary operator
  *
  * this will overwrite any data already here

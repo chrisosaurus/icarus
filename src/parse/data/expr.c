@@ -1057,39 +1057,6 @@ int ic_expr_init(struct ic_expr *expr, enum ic_expr_tag tag) {
     return 1;
 }
 
-/* clone an ic_expr and then zero the old
- *
- * this will allocate and initialise a new ic_expr
- * based on the value in the provided expr
- *
- * this will 'zero out' the provided expression after cloning
- *
- * returns pointer on success
- * returns 0 on failure
- */
-struct ic_expr *ic_expr_clone(struct ic_expr *expr) {
-    struct ic_expr *new = 0;
-
-    if (!expr) {
-        puts("ic_expr_clone: expr was null");
-        return 0;
-    }
-
-    new = ic_expr_new(expr->tag);
-    if (!new) {
-        puts("ic_expr_clone: call to ic_expr_new failed");
-        return 0;
-    }
-
-    /* memcpy over data */
-    memcpy(new, expr, sizeof(struct ic_expr));
-
-    /* zero out expr */
-    memset(expr, 0, sizeof(struct ic_expr));
-
-    return new;
-}
-
 /* takes an existing expr and converts it to a binary operator
  *
  * this will overwrite any data already here
