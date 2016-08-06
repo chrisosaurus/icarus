@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "../../analyse/data/type.h"
 #include "../../transform/data/tbody.h"
@@ -260,6 +261,8 @@ unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct i
     char *arg_name = 0;
     char *arg_type = 0;
 
+    unsigned int is_void = 0;
+
     if (!kludge) {
         puts("ic_b2c_generate_functions_header: kludge was null");
         return 0;
@@ -296,23 +299,29 @@ unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct i
             return 0;
         }
 
-        /* print comment */
-        fprintf(f, "/* %s */\n", func_sig_full);
+        /* we can also be void at this point */
+        if (!strncmp("Void", func_return_type_str, 4)) {
+            is_void = 1;
+        }
+    } else {
+        /* icarus void */
+        func_return_type_str = "Void";
 
+        is_void = 1;
+    }
+
+    /* print comment */
+    fprintf(f, "/* %s */\n", func_sig_full);
+
+    if (is_void) {
+        /* print return-type, name, and opening bracket */
+        fprintf(f, "%s %s(", func_return_type_str, func_sig_mangled);
+    } else {
         /* print return-type, name, and opening bracket
          * NB: notice '*' to make into c pointer
          * this is why we cannot squash the Void and non-void cases
          */
         fprintf(f, "%s * %s(", func_return_type_str, func_sig_mangled);
-    } else {
-        /* c void */
-        func_return_type_str = "void";
-
-        /* print comment */
-        fprintf(f, "/* %s */\n", func_sig_full);
-
-        /* print return-type, name, and opening bracket */
-        fprintf(f, "%s %s(", func_return_type_str, func_sig_mangled);
     }
 
     /* output arguments */
