@@ -597,7 +597,7 @@ static struct ic_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct i
     }
 
     ch = ic_symbol_contents(sym);
-    if (!sym) {
+    if (!ch) {
         puts("ic_analyse_infer_fcall: call to ic_symbol_contents failed for ret_type");
         return 0;
     }
