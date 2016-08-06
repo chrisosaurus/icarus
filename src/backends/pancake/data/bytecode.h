@@ -7,6 +7,8 @@
  * 'bool' is bool *
  *
  * FIXME TODO consider changing to union for args to support int rather than int*
+ *
+ * FIXME TODO consider changing address from uint to label
  */
 enum ic_backend_pancake_bytecode_type {
     /* fdecl_label fdecl_sig_call */
@@ -19,21 +21,21 @@ enum ic_backend_pancake_bytecode_type {
     ibpb_pushint,
     /* push_str string */
     ibpb_pushstr,
-    /* push key */
+    /* push key::string */
     ibpb_push,
-    /* call fname argn */
+    /* call fname argn::uint */
     ibpb_call,
-    /* pop n */
+    /* pop n::uint */
     ibpb_pop,
     /* return */
     ibpb_return,
-    /* jmp addr */
+    /* jmp addr::uint */
     ibpb_jmp,
-    /* jif addr */
+    /* jif addr::uint */
     ibpb_jif,
-    /* jnif addr */
+    /* jnif addr::uint */
     ibpb_jnif,
-    /* panic str */
+    /* panic desc::str */
     ibpb_panic,
     /* exit_success */
     ipbp_exit,
