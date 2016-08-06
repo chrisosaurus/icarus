@@ -22,6 +22,7 @@ struct ic_slot *ic_slot_new(struct ic_symbol *name, struct ic_type *type, unsign
 
     if (!ic_slot_init(slot, name, type, permissions, reference)) {
         puts("ic_slot_new: call to ic_slot_init failed");
+        free(slot);
         return 0;
     }
 
