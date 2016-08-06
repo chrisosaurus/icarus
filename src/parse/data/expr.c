@@ -918,6 +918,7 @@ struct ic_expr_faccess *ic_expr_faccess_new(struct ic_expr *left, struct ic_expr
 
     if (!ic_expr_faccess_init(faccess, left, right)) {
         puts("ic_expr_faccess_new: call to ic_expr_faccess_init failed");
+        free(faccess);
         return 0;
     }
 
