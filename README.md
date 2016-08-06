@@ -126,7 +126,7 @@ which will output (to out.c):
     /* get_str(String) -> String */
     String * i_get_str_a_String(String *name);
     /* main() -> Void */
-    Void * i_main_a();
+    Void i_main_a();
     /* get_str(String) -> String */
     String * i_get_str_a_String(String *name){
     String *_l1 = ic_string_new("Hello there ", 12);
@@ -136,7 +136,7 @@ which will output (to out.c):
     return _t1;
     }
     /* main() -> Void */
-    Void * i_main_a(){
+    Void i_main_a(){
     String *_l1 = ic_string_new("Jennifer", 8);
     String *_t1 = i_get_str_a_String(_l1);
     i_println_a_String(_t1);
