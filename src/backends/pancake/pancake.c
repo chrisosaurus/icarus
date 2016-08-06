@@ -117,12 +117,10 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
  * returns 0 on failure
  */
 unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_decl_func *fdecl) {
-    /* sig_call for current fdecl */
-    struct ic_string *fdecl_sig_call = 0;
     /* char * to sig_call for current fdec
      * used for bytecode
      */
-    char *fdecl_sig_call_ch = 0;
+    char *fdecl_sig_call = 0;
     /* tbody of current fdecl */
     struct ic_transform_body *fdecl_tbody = 0;
     /* offset we created fdecl at */
@@ -157,10 +155,9 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
      * end
      */
 
-    fdecl_sig_call = &(fdecl->sig_call);
-    fdecl_sig_call_ch = ic_string_contents(fdecl_sig_call);
-    if (!fdecl_sig_call_ch) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_string_contents failed");
+    fdecl_sig_call = ic_decl_func_sig_call(fdecl);
+    if (!fdecl_sig_call) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_decl_func_sig_call failed");
         return 0;
     }
 
@@ -186,7 +183,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
         return 0;
     }
 
-    if (!ic_backend_pancake_bytecode_arg1_set_char(bc_dummy_fdecl, fdecl_sig_call_ch)) {
+    if (!ic_backend_pancake_bytecode_arg1_set_char(bc_dummy_fdecl, fdecl_sig_call)) {
         puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_bytecode_arg1_set_char failed");
         return 0;
     }
@@ -197,7 +194,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     }
 
     /* FIXME TODO compile fdecl_tbody */
-    printf("ic_backend_pancake_compile_fdecl: UNIMPLEMENTED: skipping compilation for '%s'\n", fdecl_sig_call_ch);
+    printf("ic_backend_pancake_compile_fdecl: UNIMPLEMENTED: skipping compilation for '%s'\n", fdecl_sig_call);
 
     return 1;
 }

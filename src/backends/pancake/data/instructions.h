@@ -97,7 +97,7 @@ unsigned int ic_backend_pancake_instructions_set_offset(struct ic_backend_pancak
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_instructions_register_fdecl(struct ic_backend_pancake_instructions *instructions, struct ic_string *fdecl_sig_call, unsigned int offset);
+unsigned int ic_backend_pancake_instructions_register_fdecl(struct ic_backend_pancake_instructions *instructions, char *fdecl_sig_call, unsigned int offset);
 
 /* get an offset for a fdecl-sig
  *
@@ -106,7 +106,7 @@ unsigned int ic_backend_pancake_instructions_register_fdecl(struct ic_backend_pa
  * returns int on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_instructions_get_fdecl(struct ic_backend_pancake_instructions *instructions, struct ic_string *fdecl_sig_call);
+unsigned int ic_backend_pancake_instructions_get_fdecl(struct ic_backend_pancake_instructions *instructions, char *fdecl_sig_call);
 
 /* print instructions to provided file
  *
