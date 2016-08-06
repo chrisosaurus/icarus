@@ -112,7 +112,7 @@ unsigned int ic_b2c_compile_stmt_ret(struct ic_kludge *input_kludge, struct ic_t
     }
 
     ret_str = ic_symbol_contents(ret_sym);
-    if (!ret_sym) {
+    if (!ret_str) {
         puts("ic_b2c_compile_stmt_ret: call to ic_symbol_contents failed");
         return 0;
     }
