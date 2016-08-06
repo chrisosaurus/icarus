@@ -48,7 +48,7 @@ unsigned int ic_backend_pancake(struct ic_kludge *kludge) {
     }
 
     runtime = ic_backend_pancake_runtime_new(instructions);
-    if (!instructions) {
+    if (!runtime) {
         puts("ic_backend_pancake: call to ic_backend_pancake_runtime_new failed");
         return 0;
     }
