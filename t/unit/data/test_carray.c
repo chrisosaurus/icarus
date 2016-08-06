@@ -38,6 +38,10 @@ void normal(void) {
     assert(ic_carray_get(arr, 10) == 0);
     assert(ic_carray_set(arr, 10, 'a') == 0);
 
+    /* resize to hold 100 items, confirm the resize was a success*/
+    assert(ic_carray_ensure(arr, 100) == 1);
+    assert(arr->len == 100);
+
     assert(1 == ic_carray_destroy(arr, 1));
 }
 
