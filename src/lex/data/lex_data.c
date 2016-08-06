@@ -31,6 +31,7 @@ struct ic_lex_data *ic_lex_data_new(char *filename, char *source) {
 
     if (!ic_lex_data_init(lex_data, filename, source)) {
         puts("ic_lex_data_new: call to ic_lex_data_init failed");
+        free(lex_data);
         return 0;
     }
 
