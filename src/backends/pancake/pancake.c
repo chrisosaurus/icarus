@@ -180,9 +180,14 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     }
 
     /* insert dummy no-op function label instruction */
-    bc_dummy_fdecl = ic_backend_pancake_bytecode_new(ipbp_fdecl_label, fdecl_sig_call_ch, 0);
+    bc_dummy_fdecl = ic_backend_pancake_bytecode_new(ipbp_fdecl_label);
     if (!bc_dummy_fdecl) {
         puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_bytecode_new failed");
+        return 0;
+    }
+
+    if (!ic_backend_pancake_bytecode_arg1_set_char(bc_dummy_fdecl, fdecl_sig_call_ch)) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_bytecode_arg1_set_char failed");
         return 0;
     }
 
