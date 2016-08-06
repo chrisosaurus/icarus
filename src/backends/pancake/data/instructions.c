@@ -23,6 +23,7 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_new(void
 
     if (!ic_backend_pancake_instructions_init(instructions)) {
         puts("ic_backend_pancake_instructions_new: call to ic_backend_pancake_instructions_init failed");
+        free(instructions);
         return 0;
     }
 
