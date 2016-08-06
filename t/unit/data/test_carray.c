@@ -1,4 +1,5 @@
 #include <assert.h> /* assert */
+#include <stdio.h>
 
 #include "../../../src/data/carray.h"
 
@@ -52,6 +53,8 @@ void abnormal(void) {
 int main(void) {
     normal();
     abnormal();
+
+    puts("test_carray success");
 
     return 0;
 }
