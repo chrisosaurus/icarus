@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "../../analyse/data/kludge.h"
+#include "../../transform/data/tbody.h"
 #include "data/bytecode.h"
 #include "data/instructions.h"
 #include "data/runtime.h"
@@ -200,6 +201,16 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     /* dummy bytecode for fdecl */
     struct ic_backend_pancake_bytecode *bc_dummy_fdecl = 0;
 
+    /* len of tbody */
+    unsigned int len = 0;
+    /* offset into tbody */
+    unsigned int i = 0;
+    /* current tstmt */
+    struct ic_transform_ir_stmt *tstmt = 0;
+
+    /* let, used only if tstmt is let */
+    struct ic_transform_ir_let *tlet = 0;
+
     if (!instructions) {
         puts("ic_backend_pancake_compile_fdecl: instructions was null");
         return 0;
@@ -238,12 +249,6 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     if (fdecl->builtin) {
         printf("warning: ic_backend_pancake_compile_fdecl: skipping builtin fdecl '%s'\n", fdecl_sig_call);
         return 1;
-    }
-
-    fdecl_tbody = fdecl->tbody;
-    if (!fdecl_tbody) {
-        puts("ic_backend_pancake_compile_fdecl: no tbody found on fdecl");
-        return 0;
     }
 
     /* get length - which is offset of next instruction */
@@ -311,8 +316,71 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
      */
     /* FIXME TODO */
 
-    /* FIXME TODO compile fdecl_tbody */
-    printf("ic_backend_pancake_compile_fdecl: UNIMPLEMENTED: skipping compilation for '%s'\n", fdecl_sig_call);
+    fdecl_tbody = fdecl->tbody;
+    if (!fdecl_tbody) {
+        puts("ic_backend_pancake_compile_fdecl: no tbody found on fdecl");
+        return 0;
+    }
+
+    len = ic_transform_body_length(fdecl_tbody);
+
+    for (i = 0; i < len; ++i) {
+        tstmt = ic_transform_body_get(fdecl_tbody, i);
+        if (!tstmt) {
+            puts("ic_backend_pancake_compile_fdecl: call to ic_transform_body_get failed");
+            return 0;
+        }
+
+        switch (tstmt->tag) {
+            case ic_transform_ir_stmt_type_expr:
+                puts("ic_backend_pancake_compile_fdecl: expr unimplemented");
+                return 0;
+                break;
+
+            case ic_transform_ir_stmt_type_let:
+                tlet = ic_transform_ir_stmt_get_let(tstmt);
+                if (!tlet) {
+                    puts("ic_backend_pancake_compile_fdecl: call to ic_transform_ir_stmt_get_let failed");
+                    return 0;
+                }
+
+                switch (tlet->tag) {
+                    case ic_transform_ir_let_type_literal:
+                        puts("ic_backend_pancake_compile_fdecl: let literal unimplemented");
+                        return 0;
+                        break;
+
+                    case ic_transform_ir_let_type_expr:
+                        puts("ic_backend_pancake_compile_fdecl: let expr unimplemented");
+                        return 0;
+                        break;
+
+                    default:
+                        puts("ic_backend_pancake_compile_fdecl: let impossible case");
+                        return 0;
+                        break;
+                }
+
+                puts("ic_backend_pancake_compile_fdecl: let impossible case");
+                return 0;
+                break;
+
+            case ic_transform_ir_stmt_type_ret:
+                puts("ic_backend_pancake_compile_fdecl: return unimplemented");
+                return 0;
+                break;
+
+            case ic_transform_ir_stmt_type_assign:
+                puts("ic_backend_pancake_compile_fdecl: assign unimplemented");
+                return 0;
+                break;
+
+            default:
+                puts("ic_backend_pancake_compile_fdecl: impossible case");
+                return 0;
+                break;
+        }
+    }
 
     return 1;
 }
