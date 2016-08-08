@@ -76,6 +76,15 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
     unsigned int len = 0;
     /* current kludge fdecl */
     struct ic_decl_func *fdecl = 0;
+    /* bytecode instruction used for entry label jump */
+    struct ic_backend_pancake_bytecode *bc_entry_label = 0;
+    /* bytecode instruction used for entry jump */
+    struct ic_backend_pancake_bytecode *bc_entry_jump = 0;
+    /* bytecode instruction used for entry exit */
+    struct ic_backend_pancake_bytecode *bc_entry_exit = 0;
+    /* offset for main function
+     * FIXME TODO set */
+    unsigned int main_offset = 0;
 
     if (!kludge) {
         puts("ic_backend_pancake_compile: kludge was null");
@@ -99,8 +108,42 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
      * but first we have to make main - which we do below just as with every
      * other function
      */
-    /* FIXME insert jump 0 */
-    /* FIXME insert exit */
+    /* insert label */
+    bc_entry_label = ic_backend_pancake_bytecode_new(icp_label);
+    if (!bc_entry_label) {
+        puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_new failed for entry_label");
+        return 0;
+    }
+    if (!ic_backend_pancake_bytecode_arg1_set_char(bc_entry_label, "entry")) {
+        puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_arg1_set_char failed for entry_label");
+        return 0;
+    }
+    if (!ic_backend_pancake_instructions_append(instructions, bc_entry_label)) {
+        puts("ic_backend_pancake_compile: call to ic_backend_pancake_instructions_append failed for entry_label");
+        return 0;
+    }
+
+    /* insert jump 0 */
+    bc_entry_jump = ic_backend_pancake_bytecode_new(icp_jmp);
+    if (!bc_entry_jump) {
+        puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_new failed for entry_jump");
+        return 0;
+    }
+    if (!ic_backend_pancake_instructions_append(instructions, bc_entry_jump)) {
+        puts("ic_backend_pancake_compile: call to ic_backend_pancake_instructions_append failed for entry_jump");
+        return 0;
+    }
+
+    /* insert exit */
+    bc_entry_exit = ic_backend_pancake_bytecode_new(icp_exit);
+    if (!bc_entry_exit) {
+        puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_new failed for entry_exit");
+        return 0;
+    }
+    if (!ic_backend_pancake_instructions_append(instructions, bc_entry_exit)) {
+        puts("ic_backend_pancake_compile: call to ic_backend_pancake_instructions_append failed for entry_exit");
+        return 0;
+    }
 
     /* go through each fdecl, pull it out, call compile_fdecl to do work */
     for (offset = 0; offset < len; ++offset) {
@@ -116,8 +159,13 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
         }
     }
 
-    /* FIXME pull out address of offset */
-    /* FIXME modify instruction 0 to jump to main offset */
+    /* FIXME TODO pull out address of offset */
+    main_offset = 0; /* FIXME TODO set */
+    /* modify instruction 0 to jump to main offset */
+    if (!ic_backend_pancake_bytecode_arg1_set_uint(bc_entry_jump, main_offset)) {
+        puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+        return 0;
+    }
 
     puts("ic_backend_pancake_compile: implementation pending");
     return instructions;
