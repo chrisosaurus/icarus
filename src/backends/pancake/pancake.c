@@ -82,8 +82,7 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
     struct ic_backend_pancake_bytecode *bc_entry_jump = 0;
     /* bytecode instruction used for entry exit */
     struct ic_backend_pancake_bytecode *bc_entry_exit = 0;
-    /* offset for main function
-     * FIXME TODO set */
+    /* offset for main function */
     unsigned int main_offset = 0;
 
     if (!kludge) {
@@ -159,8 +158,15 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
         }
     }
 
-    /* FIXME TODO pull out address of offset */
-    main_offset = 0; /* FIXME TODO set */
+    /* pull out address of offset */
+    main_offset = ic_backend_pancake_instructions_get_fdecl(instructions, "main()");
+    /* NB: we cannot test for failure of this function, but we do know that address
+     * '0' is our entry point - so main cannot be it
+     */
+    if (!main_offset) {
+        puts("ic_backend_pancake_compile: couldn't find main function");
+        return 0;
+    }
     /* modify instruction 0 to jump to main offset */
     if (!ic_backend_pancake_bytecode_arg1_set_uint(bc_entry_jump, main_offset)) {
         puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
