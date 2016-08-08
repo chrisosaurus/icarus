@@ -13,33 +13,33 @@
  */
 enum ic_backend_pancake_bytecode_type {
     /* fdecl_label fdecl_sig_call */
-    ipbp_fdecl_label,
+    icp_label,
     /* push_bool bool */
-    ipbp_pushbool,
+    icp_pushbool,
     /* push_uint uint */
-    ibpb_pushuint,
+    icp_pushuint,
     /* push_int int */
-    ibpb_pushint,
+    icp_pushint,
     /* push_str string */
-    ibpb_pushstr,
+    icp_pushstr,
     /* push key::string */
-    ibpb_push,
+    icp_push,
     /* call fname argn::uint */
-    ibpb_call,
+    icp_call,
     /* pop n::uint */
-    ibpb_pop,
+    icp_pop,
     /* return */
-    ibpb_return,
+    icp_return,
     /* jmp addr::uint */
-    ibpb_jmp,
+    icp_jmp,
     /* jif addr::uint */
-    ibpb_jif,
+    icp_jif,
     /* jnif addr::uint */
-    ibpb_jnif,
+    icp_jnif,
     /* panic desc::str */
-    ibpb_panic,
+    icp_panic,
     /* exit_success */
-    ipbp_exit,
+    icp_exit,
 };
 
 enum ic_backend_pancake_bytecode_arg_type {

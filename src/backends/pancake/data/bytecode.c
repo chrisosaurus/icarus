@@ -96,8 +96,8 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
     }
 
     switch (bytecode->tag) {
-        /* fdecl_label fdecl_sig_call */
-        case ipbp_fdecl_label:
+        /* label string */
+        case icp_label:
             ch = ic_backend_pancake_bytecode_arg1_get_char(bytecode);
             if (!ch) {
                 puts("ic_backend_pancake_bytecode_print: call to ic_backend_pancake_bytecode_arg1_get_char failed");
@@ -110,7 +110,7 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             break;
 
         /* push_bool bool */
-        case ipbp_pushbool:
+        case icp_pushbool:
             boolean = ic_backend_pancake_bytecode_arg1_get_bool(bytecode);
 
             fprintf(file, "pushbool %" PRId8, boolean);
@@ -119,7 +119,7 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             break;
 
         /* push_uint uint */
-        case ibpb_pushuint:
+        case icp_pushuint:
             uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
 
             fprintf(file, "pushuint %" PRId32, uint);
@@ -128,7 +128,7 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             break;
 
         /* push_int int */
-        case ibpb_pushint:
+        case icp_pushint:
             sint = ic_backend_pancake_bytecode_arg1_get_sint(bytecode);
 
             fprintf(file, "pushint %" PRId32, sint);
@@ -137,7 +137,7 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             break;
 
         /* push_str string */
-        case ibpb_pushstr:
+        case icp_pushstr:
             ch = ic_backend_pancake_bytecode_arg1_get_char(bytecode);
             if (!ch) {
                 puts("ic_backend_pancake_bytecode_print: call to ic_backend_pancake_bytecode_arg1_get_char failed");
@@ -149,7 +149,7 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             break;
 
         /* push key */
-        case ibpb_push:
+        case icp_push:
             ch = ic_backend_pancake_bytecode_arg1_get_char(bytecode);
             if (!ch) {
                 puts("ic_backend_pancake_bytecode_print: call to ic_backend_pancake_bytecode_arg1_get_char failed");
@@ -162,7 +162,7 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             break;
 
         /* call fname argn */
-        case ibpb_call:
+        case icp_call:
 
             ch = ic_backend_pancake_bytecode_arg1_get_char(bytecode);
             if (!ch) {
@@ -178,7 +178,7 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             break;
 
         /* pop n */
-        case ibpb_pop:
+        case icp_pop:
             uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
 
             fprintf(file, "pop %" PRId32, uint);
@@ -187,13 +187,13 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             break;
 
         /* return */
-        case ibpb_return:
+        case icp_return:
             fputs("return", file);
             return 1;
             break;
 
         /* jmp addr */
-        case ibpb_jmp:
+        case icp_jmp:
             uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
 
             fprintf(file, "jmp %" PRId32, uint);
@@ -202,7 +202,7 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             break;
 
         /* jif addr */
-        case ibpb_jif:
+        case icp_jif:
             uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
 
             fprintf(file, "jif %" PRId32, uint);
@@ -211,7 +211,7 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             break;
 
         /* jnif addr */
-        case ibpb_jnif:
+        case icp_jnif:
             uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
 
             fprintf(file, "jnif %" PRId32, uint);
@@ -220,7 +220,7 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             break;
 
         /* panic str */
-        case ibpb_panic:
+        case icp_panic:
             ch = ic_backend_pancake_bytecode_arg1_get_char(bytecode);
             if (!ch) {
                 puts("ic_backend_pancake_bytecode_print: call to ic_backend_pancake_bytecode_arg1_get_char failed");
@@ -233,7 +233,7 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             break;
 
         /* exit_success */
-        case ipbp_exit:
+        case icp_exit:
             fputs("exit", file);
 
             return 1;

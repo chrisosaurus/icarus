@@ -94,6 +94,14 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
         return 0;
     }
 
+    /* create dummy top-level program entry point
+     * later on we will make this jump instead to 'main'
+     * but first we have to make main - which we do below just as with every
+     * other function
+     */
+    /* FIXME insert jump 0 */
+    /* FIXME insert exit */
+
     /* go through each fdecl, pull it out, call compile_fdecl to do work */
     for (offset = 0; offset < len; ++offset) {
         fdecl = ic_pvector_get(&(kludge->fdecls), offset);
@@ -107,6 +115,9 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
             return 0;
         }
     }
+
+    /* FIXME pull out address of offset */
+    /* FIXME modify instruction 0 to jump to main offset */
 
     puts("ic_backend_pancake_compile: implementation pending");
     return instructions;
@@ -185,7 +196,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     }
 
     /* insert dummy no-op function label instruction */
-    bc_dummy_fdecl = ic_backend_pancake_bytecode_new(ipbp_fdecl_label);
+    bc_dummy_fdecl = ic_backend_pancake_bytecode_new(icp_label);
     if (!bc_dummy_fdecl) {
         puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_bytecode_new failed");
         return 0;
