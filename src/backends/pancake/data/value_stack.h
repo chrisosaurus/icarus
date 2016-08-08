@@ -8,7 +8,7 @@
 struct ic_backend_pancake_value_stack {
     struct ic_backend_pancake_value stack[IC_BACKEND_PANCAKE_VALUE_STACK_SIZE];
 
-    /* current heah
+    /* current head
    * -1 = empty
    *  0 = first
    *  IC_BACKEND_PANCAKE_VALUE_STACK_SIZE -1 = max
