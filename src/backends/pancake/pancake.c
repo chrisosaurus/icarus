@@ -272,6 +272,45 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
         return 0;
     }
 
+    /* instantiate dict mapping
+     *  name -> {accessed::bool, location::int, value::literal_constant}
+     */
+    /* FIXME TODO */
+
+    /* register all args */
+    /* FIXME TODO */
+
+    /* for each statement we currently have 4 possibilities:
+     *
+     *  let name::type = literal
+     *    register name to {value:literal, accessed:0}
+     *  let name::type = fcall(args...)
+     *    push all args onto stack (using dict)
+     *    call fcall
+     *    register return position to name (along with count)
+     *  fcall(args...)
+     *    push all args onto stack (using dict)
+     *    call fcall
+     *    if non-void:
+     *      pop 1 - throw away return value, give warning
+     *  return name
+     *    set return_register to name
+     *    invoke exit process
+     *
+     *
+     *  exit process
+     *    walk dict
+     *      warn for every item with an access count of 0
+     *      free every literal
+     *      for non-literals, add pop instruction
+     *      if return_register is set, add push instruction
+     *      if void and pushed, error
+     *      is non-void and didn't push, error
+     *      add pop-return address instruction
+     *      jump to return address
+     */
+    /* FIXME TODO */
+
     /* FIXME TODO compile fdecl_tbody */
     printf("ic_backend_pancake_compile_fdecl: UNIMPLEMENTED: skipping compilation for '%s'\n", fdecl_sig_call);
 
