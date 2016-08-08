@@ -115,7 +115,7 @@ unsigned int ic_backend_pancake_return_stack_push(struct ic_backend_pancake_retu
         return 0;
     }
 
-    if (stack->head > IC_BACKEND_PANCAKE_RETURN_STACK_SIZE) {
+    if (stack->head >= IC_BACKEND_PANCAKE_RETURN_STACK_SIZE) {
         puts("ic_backend_pancake_return_stack_push: stack is full");
         return 0;
     }
