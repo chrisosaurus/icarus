@@ -4,6 +4,7 @@
 #include "../../transform/data/tbody.h"
 #include "data/bytecode.h"
 #include "data/instructions.h"
+#include "data/local.h"
 #include "data/runtime.h"
 #include "pancake.h"
 #include "tir.h"
