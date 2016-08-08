@@ -144,6 +144,12 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
         return 0;
     }
 
+    /* sanity check our length */
+    if (3 != ic_backend_pancake_instructions_length(instructions)) {
+        puts("ic_backend_pancake_compile: instructions length was not 3, something went wrong");
+        return 0;
+    }
+
     /* go through each fdecl, pull it out, call compile_fdecl to do work */
     for (offset = 0; offset < len; ++offset) {
         fdecl = ic_pvector_get(&(kludge->fdecls), offset);
