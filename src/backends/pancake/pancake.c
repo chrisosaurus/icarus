@@ -416,6 +416,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
 
                 switch (tlet->tag) {
                     case ic_transform_ir_let_type_literal:
+                        /* FIXME TODO diving deep into tlet is gross */
                         local = ic_backend_pancake_local_new(tlet->u.lit.name, icpl_literal);
                         if (!local) {
                             puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_local failed");
