@@ -223,6 +223,8 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
 
     /* dict from char* to pancake/data/local */
     struct ic_dict *locals = 0;
+    /* pvector of keys to dict, as we cannot recover these from dict */
+    struct ic_pvector *locals_keys = 0;
 
     /* current local */
     struct ic_backend_pancake_local *local = 0;
@@ -310,6 +312,12 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
         return 0;
     }
 
+    locals_keys = ic_pvector_new(0);
+    if (!locals_keys) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_pvector_new failed");
+        return 0;
+    }
+
     /* register all args
      * we register each argument as the offset from the start of this function
      * calling-convention:
@@ -345,6 +353,11 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
             puts("ic_backend_pancake_compile_fdecl: call to ic_dict_insert failed");
             return 0;
         }
+
+        if (-1 == ic_pvector_append(locals_keys, arg_name_ch)) {
+            puts("ic_backend_pancake_compile_fdecl: call to ic_pvector_append failed");
+            return 0;
+        }
     }
 
     /* for each statement we currently have 4 possibilities:
@@ -365,16 +378,6 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
      *    invoke exit process
      *
      *
-     *  exit process
-     *    walk dict
-     *      warn for every item with an access count of 0
-     *      free every literal
-     *      for non-literals, add pop instruction
-     *      if return_register is set, add push instruction
-     *      if void and pushed, error
-     *      is non-void and didn't push, error
-     *      add pop-return address instruction
-     *      jump to return address
      */
     /* FIXME TODO */
 
@@ -442,6 +445,30 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
                 return 0;
                 break;
         }
+    }
+
+    /*
+     *  exit process
+     *    insert instruction to save return value to return_register
+     *    walk dict
+     *      warn for every item with an access count of 0
+     *      free every literal
+     *      for non-literals, add pop instruction
+     *    if return_register is set, add push instruction
+     *    if void and pushed, error
+     *    is non-void and didn't push, error
+     *    add pop-return address instruction
+     *    jump to return address
+     */
+    /* FIXME TODO */
+
+    /* destroy locals_keys pvector
+     * free it
+     * keys are all managed by arg->name symbo
+     */
+    if (!ic_pvector_destroy(locals_keys, 1, 0)) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_pvector_destroy failed");
+        return 0;
     }
 
     /* destroy dict
