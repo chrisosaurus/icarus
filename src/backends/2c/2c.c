@@ -300,7 +300,7 @@ unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct i
         }
 
         /* we can also be void at this point */
-        if (!strncmp("Void", func_return_type_str, 4)) {
+        if (!strncmp("Void", func_return_type_str, 5)) {
             is_void = 1;
         }
     } else {
