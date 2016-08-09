@@ -238,6 +238,9 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     /* count of args to pop for cleanup */
     unsigned int cleanup_count = 0;
 
+    /* if this fdecl is void */
+    unsigned int is_void = 0;
+
     if (!instructions) {
         puts("ic_backend_pancake_compile_fdecl: instructions was null");
         return 0;
@@ -368,6 +371,8 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
             return 0;
         }
     }
+
+    is_void = ic_decl_func_is_void(fdecl);
 
     /* for each statement we currently have 4 possibilities:
      *
@@ -515,7 +520,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     }
 
     /* if function is not void save return value */
-    if (!ic_decl_func_is_void(fdecl)) {
+    if (!is_void) {
         inst = ic_backend_pancake_bytecode_new(icp_save);
         if (!inst) {
             puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_bytecode_new failed");
@@ -543,7 +548,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     }
 
     /* if function is not void restore return value */
-    if (!ic_decl_func_is_void(fdecl)) {
+    if (!is_void) {
         inst = ic_backend_pancake_bytecode_new(icp_restore);
         if (!inst) {
             puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_bytecode_new failed");
