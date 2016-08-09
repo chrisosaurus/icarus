@@ -781,6 +781,41 @@ char *ic_decl_func_sig_mangled(struct ic_decl_func *fdecl) {
     return ic_string_contents(fstr);
 }
 
+/* check if this function returns void
+ *
+ * returns boolean on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_func_is_void(struct ic_decl_func *fdecl) {
+    struct ic_symbol *ret = 0;
+    char *ret_ch = 0;
+
+    if (!fdecl) {
+        puts("ic_decl_func_is_void: fdecl was null");
+        return 0;
+    }
+
+    /* ret_type is 0 for void */
+    if (fdecl->ret_type == 0) {
+        return 1;
+    }
+
+    /* also capturing an explicit "void" type */
+    ret = fdecl->ret_type;
+
+    ret_ch = ic_symbol_contents(ret);
+    if (!ret_ch) {
+        puts("ic_decl_func_is_void: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    if (!strncmp("Void", ret_ch, 5)) {
+        return 1;
+    }
+
+    return 0;
+}
+
 /* allocate and return a new decl_type
  * only needs name and len
  * will also allocate an empty pvector for fields

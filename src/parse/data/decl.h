@@ -185,6 +185,13 @@ char *ic_decl_func_sig_full(struct ic_decl_func *fdecl);
  */
 char *ic_decl_func_sig_mangled(struct ic_decl_func *fdecl);
 
+/* check if this function returns void
+ *
+ * returns boolean on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_func_is_void(struct ic_decl_func *fdecl);
+
 /* a func declaration is a symbol and then a collection of fields
  *  type Foo
  *   a::Int
