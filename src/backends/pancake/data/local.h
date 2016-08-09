@@ -5,7 +5,7 @@
 
 enum ic_backend_pancake_local_type {
     icpl_literal,
-    icpl_runtime,
+    icpl_offset,
 };
 
 /* a local 'variable' used during bytecode compilation */
@@ -26,7 +26,7 @@ struct ic_backend_pancake_local {
      */
     union {
         struct ic_expr_constant *literal;
-        unsigned int function_offset;
+        unsigned int offset;
     } u;
 };
 
@@ -72,5 +72,23 @@ unsigned int ic_backend_pancake_local_set_literal(struct ic_backend_pancake_loca
  * returns 0 on failure
  */
 unsigned int ic_backend_pancake_local_set_offset(struct ic_backend_pancake_local *local, unsigned int offset);
+
+/* get literal from this local
+ *
+ * must be a literal
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+struct ic_expr_constant *ic_backend_pancake_local_get_literal(struct ic_backend_pancake_local *local);
+
+/* get offset from this local
+ *
+ * must be an offset
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_local_get_offset(struct ic_backend_pancake_local *local);
 
 #endif /* IC_BACKEND_PANCAKE_LOCAL_H */
