@@ -555,6 +555,17 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
         }
     }
 
+    /* insert our actual return instruction */
+    inst = ic_backend_pancake_bytecode_new(icp_return);
+    if (!inst) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_bytecode_new failed");
+        return 0;
+    }
+    if (!ic_backend_pancake_instructions_append(instructions, inst)) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_append failed");
+        return 0;
+    }
+
     /* destroy locals_keys pvector
      * free it
      * keys are all managed by arg->name symbo
