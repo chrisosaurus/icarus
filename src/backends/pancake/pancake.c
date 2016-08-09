@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "../../analyse/data/kludge.h"
+#include "../../data/dict.h"
 #include "../../transform/data/tbody.h"
 #include "data/bytecode.h"
 #include "data/instructions.h"
@@ -212,6 +213,9 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     /* let, used only if tstmt is let */
     struct ic_transform_ir_let *tlet = 0;
 
+    /* dict from char* to pancake/data/local */
+    struct ic_dict *locals = 0;
+
     if (!instructions) {
         puts("ic_backend_pancake_compile_fdecl: instructions was null");
         return 0;
@@ -281,7 +285,11 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     /* instantiate dict mapping
      *  name -> {accessed::bool, location::int, value::literal_constant}
      */
-    /* FIXME TODO */
+    locals = ic_dict_new();
+    if (!locals) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_dict_new failed");
+        return 0;
+    }
 
     /* register all args */
     /* FIXME TODO */
@@ -381,6 +389,15 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
                 return 0;
                 break;
         }
+    }
+
+    /* destroy dict
+     * free dict
+     * free values (all locals created in this scope)
+     */
+    if (!ic_dict_destroy(locals, 1, 1)) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_dict_destroy failed");
+        return 0;
     }
 
     return 1;
