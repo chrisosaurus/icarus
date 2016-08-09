@@ -203,10 +203,13 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     /* dummy bytecode for fdecl */
     struct ic_backend_pancake_bytecode *bc_dummy_fdecl = 0;
 
-    /* len of tbody */
+    /* len of args OR tbody */
     unsigned int len = 0;
-    /* offset into tbody */
+    /* offset into args OR tbody */
     unsigned int i = 0;
+    /* current arg */
+    struct ic_field *arg = 0;
+    char *arg_name_ch = 0;
     /* current tstmt */
     struct ic_transform_ir_stmt *tstmt = 0;
 
@@ -215,6 +218,9 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
 
     /* dict from char* to pancake/data/local */
     struct ic_dict *locals = 0;
+
+    /* current local */
+    struct ic_backend_pancake_local *local = 0;
 
     if (!instructions) {
         puts("ic_backend_pancake_compile_fdecl: instructions was null");
@@ -291,8 +297,42 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
         return 0;
     }
 
-    /* register all args */
-    /* FIXME TODO */
+    /* register all args
+     * we register each argument as the offset from the start of this function
+     * calling-convention:
+     *  args are passed in-order
+     *  caller cleans
+     */
+    len = ic_pvector_length(&(fdecl->args));
+    for (i = 0; i < len; ++i) {
+        arg = ic_pvector_get(&(fdecl->args), i);
+        if (!arg) {
+            puts("ic_backend_pancake_compile_fdecl: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        local = ic_backend_pancake_local_new(&(arg->name), icpl_offset);
+        if (!local) {
+            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_local_new failed");
+            return 0;
+        }
+
+        if (!ic_backend_pancake_local_set_offset(local, i)) {
+            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_local_set_offset failed");
+            return 0;
+        }
+
+        arg_name_ch = ic_symbol_contents(&(arg->name));
+        if (!arg_name_ch) {
+            puts("ic_backend_pancake_compile_fdecl: call to ic_symbol_contents failed");
+            return 0;
+        }
+
+        if (!ic_dict_insert(locals, arg_name_ch, local)) {
+            puts("ic_backend_pancake_compile_fdecl: call to ic_dict_insert failed");
+            return 0;
+        }
+    }
 
     /* for each statement we currently have 4 possibilities:
      *
