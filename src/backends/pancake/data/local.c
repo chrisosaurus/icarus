@@ -181,3 +181,19 @@ unsigned int ic_backend_pancake_local_get_offset(struct ic_backend_pancake_local
 
     return local->u.offset;
 }
+
+/* get the accessed field on this local
+ *
+ * has no way of signalling error
+ *
+ * returns boolean on success
+ * returns 0 on failure
+ */
+bool ic_backend_pancake_local_accessed(struct ic_backend_pancake_local *local) {
+    if (!local) {
+        puts("ic_backend_pancake_local_accessed: local was null");
+        return 0;
+    }
+
+    return local->accessed;
+}

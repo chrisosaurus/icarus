@@ -91,4 +91,13 @@ struct ic_expr_constant *ic_backend_pancake_local_get_literal(struct ic_backend_
  */
 unsigned int ic_backend_pancake_local_get_offset(struct ic_backend_pancake_local *local);
 
+/* get the accessed field on this local
+ *
+ * has no way of signalling error
+ *
+ * returns boolean on success
+ * returns 0 on failure
+ */
+bool ic_backend_pancake_local_accessed(struct ic_backend_pancake_local *local);
+
 #endif /* IC_BACKEND_PANCAKE_LOCAL_H */
