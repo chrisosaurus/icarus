@@ -70,6 +70,8 @@ struct ic_table_entry table[] = {
     {"(", 1, IC_LRBRACKET},
     {")", 1, IC_RRBRACKET},
 
-    {"", 1, IC_TOKEN_LEN}};
+    {"", 1, IC_TOKEN_LEN},
+
+};
 
 #endif
