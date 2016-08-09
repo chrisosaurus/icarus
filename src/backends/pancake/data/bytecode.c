@@ -192,11 +192,27 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             return 1;
             break;
 
-        /* jmp addr */
+        /* jmp addr::uint
+         * OR
+         * jmp sig::string
+         *
+         * jmp sig::string are inserted first, and then replaced at the end of
+         * pancake compile by
+         * jmi addr::uint
+         */
         case icp_jmp:
-            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            if (bytecode->arg1.tag == ic_backend_pancake_bytecode_arg_type_uint) {
+                uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
 
-            fprintf(file, "jmp %" PRId32, uint);
+                fprintf(file, "jmp %" PRId32, uint);
+            } else if (bytecode->arg1.tag == ic_backend_pancake_bytecode_arg_type_char) {
+                ch = ic_backend_pancake_bytecode_arg1_get_char(bytecode);
+
+                fprintf(file, "jmp %s", ch);
+            } else {
+                puts("ic_backend_pancake_bytecode_print: unsupported icp_jmp arg1");
+                return 0;
+            }
 
             return 1;
             break;

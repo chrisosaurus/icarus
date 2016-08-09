@@ -166,6 +166,10 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
         }
     }
 
+    /* FIXME TODO generalise this logic
+     * as we really want to step through all jmps and replace labels with offsets
+     */
+
     /* pull out address of offset */
     main_offset = ic_backend_pancake_instructions_get_fdecl(instructions, "main()");
     /* NB: we cannot test for failure of this function, but we do know that address

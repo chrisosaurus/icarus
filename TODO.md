@@ -1,6 +1,7 @@
 TODO:
 -----
 
+* generalise pancake.c compile_fdecl main_offset logic
 * should be easy to test if a given fdecl returns void or not
 * we shouldn't be comparing "void" strings in backend 2c
 * all print methods should take `FILE *` argument rather than assuming stdout
