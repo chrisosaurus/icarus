@@ -368,6 +368,8 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
      *    push all args onto stack (using dict)
      *    call fcall
      *    register return position to name (along with count)
+     *    if void:
+     *      compile-time error
      *  fcall(args...)
      *    push all args onto stack (using dict)
      *    call fcall
