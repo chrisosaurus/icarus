@@ -192,6 +192,11 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
  * returns 0 on failure
  */
 unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_decl_func *fdecl) {
+    /* the stack offset this function starts at
+     * NB: this is one *after* the label
+     * this is the position of the first argument
+     */
+    unsigned int fdecl_stack_offset = 0;
     /* char * to sig_call for current fdec
      * used for bytecode
      */
@@ -285,6 +290,14 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
 
     if (!ic_backend_pancake_instructions_append(instructions, bc_dummy_fdecl)) {
         puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_append failed");
+        return 0;
+    }
+
+    /* get stack offset of first arg to this function */
+    fdecl_stack_offset = ic_backend_pancake_instructions_length(instructions);
+    if (!fdecl_stack_offset) {
+        /* usually we cannot check failure, but we know we have just inserted a label */
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_length failed");
         return 0;
     }
 
