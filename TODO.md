@@ -1,7 +1,6 @@
 TODO:
 -----
 
-* instructions_append is by value, so lots of news leaking in pancake, and compile_fdecl is treating it as though it were refs which fail
 * should be easy to test if a given fdecl returns void or not
 * we shouldn't be comparing "void" strings in backend 2c
 * all print methods should take `FILE *` argument rather than assuming stdout

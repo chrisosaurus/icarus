@@ -116,45 +116,33 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
      * other function
      */
     /* insert label */
-    bc_entry_label = ic_backend_pancake_bytecode_new(icp_label);
+    bc_entry_label = ic_backend_pancake_instructions_add(instructions, icp_label);
     if (!bc_entry_label) {
-        puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_new failed for entry_label");
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
         return 0;
     }
     if (!ic_backend_pancake_bytecode_arg1_set_char(bc_entry_label, "entry")) {
         puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_arg1_set_char failed for entry_label");
         return 0;
     }
-    if (!ic_backend_pancake_instructions_append(instructions, bc_entry_label)) {
-        puts("ic_backend_pancake_compile: call to ic_backend_pancake_instructions_append failed for entry_label");
-        return 0;
-    }
 
     /* insert jump 0
      * later on the '0' will be replaced with the address of main
      */
-    bc_entry_jump = ic_backend_pancake_bytecode_new(icp_jmp);
+    bc_entry_jump = ic_backend_pancake_instructions_add(instructions, icp_jmp);
     if (!bc_entry_jump) {
-        puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_new failed for entry_jump");
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
         return 0;
     }
     if (!ic_backend_pancake_bytecode_arg1_set_uint(bc_entry_jump, 0)) {
         puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
         return 0;
     }
-    if (!ic_backend_pancake_instructions_append(instructions, bc_entry_jump)) {
-        puts("ic_backend_pancake_compile: call to ic_backend_pancake_instructions_append failed for entry_jump");
-        return 0;
-    }
 
     /* insert exit */
-    bc_entry_exit = ic_backend_pancake_bytecode_new(icp_exit);
+    bc_entry_exit = ic_backend_pancake_instructions_add(instructions, icp_exit);
     if (!bc_entry_exit) {
-        puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_new failed for entry_exit");
-        return 0;
-    }
-    if (!ic_backend_pancake_instructions_append(instructions, bc_entry_exit)) {
-        puts("ic_backend_pancake_compile: call to ic_backend_pancake_instructions_append failed for entry_exit");
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
         return 0;
     }
 
@@ -188,12 +176,6 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
         return 0;
     }
 
-    /* FIXME TODO instructions_append is by value
-     * so all our news are leaking
-     * and this doesn't work....
-     * broken
-     */
-    /* modify instruction 0 to jump to main offset */
     if (!ic_backend_pancake_bytecode_arg1_set_uint(bc_entry_jump, main_offset)) {
         puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
         return 0;
@@ -308,19 +290,13 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     }
 
     /* insert dummy no-op function label instruction */
-    bc_dummy_fdecl = ic_backend_pancake_bytecode_new(icp_label);
+    bc_dummy_fdecl = ic_backend_pancake_instructions_add(instructions, icp_label);
     if (!bc_dummy_fdecl) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_bytecode_new failed");
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
         return 0;
     }
-
     if (!ic_backend_pancake_bytecode_arg1_set_char(bc_dummy_fdecl, fdecl_sig_call)) {
         puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_bytecode_arg1_set_char failed");
-        return 0;
-    }
-
-    if (!ic_backend_pancake_instructions_append(instructions, bc_dummy_fdecl)) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_append failed");
         return 0;
     }
 
@@ -538,53 +514,34 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
 
     /* if function is not void save return value */
     if (!is_void) {
-        inst = ic_backend_pancake_bytecode_new(icp_save);
-        if (!inst) {
-            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_bytecode_new failed");
-            return 0;
-        }
-        if (!ic_backend_pancake_instructions_append(instructions, inst)) {
-            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_append failed");
+        if (!ic_backend_pancake_instructions_add(instructions, icp_save)) {
+            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
             return 0;
         }
     }
 
     /* insert pop cleanup_count */
-    inst = ic_backend_pancake_bytecode_new(icp_pop);
-    if (!inst) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_bytecode_new failed");
+    inst = ic_backend_pancake_instructions_add(instructions, icp_pop);
+    if (!bc_dummy_fdecl) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
         return 0;
     }
     if (!ic_backend_pancake_bytecode_arg1_set_uint(inst, cleanup_count)) {
         puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
         return 0;
     }
-    if (!ic_backend_pancake_instructions_append(instructions, inst)) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_append failed");
-        return 0;
-    }
 
     /* if function is not void restore return value */
     if (!is_void) {
-        inst = ic_backend_pancake_bytecode_new(icp_restore);
-        if (!inst) {
-            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_bytecode_new failed");
-            return 0;
-        }
-        if (!ic_backend_pancake_instructions_append(instructions, inst)) {
-            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_append failed");
+        if (!ic_backend_pancake_instructions_add(instructions, icp_restore)) {
+            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
             return 0;
         }
     }
 
     /* insert our actual return instruction */
-    inst = ic_backend_pancake_bytecode_new(icp_return);
-    if (!inst) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_bytecode_new failed");
-        return 0;
-    }
-    if (!ic_backend_pancake_instructions_append(instructions, inst)) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_append failed");
+    if (!ic_backend_pancake_instructions_add(instructions, icp_return)) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
         return 0;
     }
 

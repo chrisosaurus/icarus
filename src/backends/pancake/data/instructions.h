@@ -40,14 +40,17 @@ unsigned int ic_backend_pancake_instructions_init(struct ic_backend_pancake_inst
  */
 unsigned int ic_backend_pancake_instructions_destroy(struct ic_backend_pancake_instructions *instructions, unsigned int free_instructions);
 
-/* append given bytecode instructions
+/* extend the instructions array by one and return a pointer to this
+ * new bytecode
+ *
+ * also initialises bytecode to specified type
  *
  * will resize as needed
  *
- * returns 1 on success
+ * returns * on success
  * returns 0 on falure
  */
-unsigned int ic_backend_pancake_instructions_append(struct ic_backend_pancake_instructions *instructions, struct ic_backend_pancake_bytecode *bytecode);
+struct ic_backend_pancake_bytecode *ic_backend_pancake_instructions_add(struct ic_backend_pancake_instructions *instructions, enum ic_backend_pancake_bytecode_type type);
 
 /* get current length of instructions
  *

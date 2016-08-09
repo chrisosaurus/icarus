@@ -102,17 +102,21 @@ unsigned int ic_backend_pancake_instructions_destroy(struct ic_backend_pancake_i
     return 1;
 }
 
-/* append given bytecode instructions
+/* extend the instructions array by one and return a pointer to this
+ * new bytecode
+ *
+ * also initialises bytecode to specified type
  *
  * will resize as needed
  *
- * returns 1 on success
+ * returns * on success
  * returns 0 on falure
  */
-unsigned int ic_backend_pancake_instructions_append(struct ic_backend_pancake_instructions *instructions, struct ic_backend_pancake_bytecode *bytecode) {
+struct ic_backend_pancake_bytecode *ic_backend_pancake_instructions_add(struct ic_backend_pancake_instructions *instructions, enum ic_backend_pancake_bytecode_type type) {
+    struct ic_backend_pancake_bytecode *bytecode = 0;
 
     if (!instructions) {
-        puts("ic_backend_pancake_instructions_append: instructions was null");
+        puts("ic_backend_pancake_instructions_add: instructions was null");
         return 0;
     }
 
@@ -122,18 +126,23 @@ unsigned int ic_backend_pancake_instructions_append(struct ic_backend_pancake_in
         instructions->cap *= 2;
         instructions->bytecode_array = realloc(instructions->bytecode_array, instructions->cap * sizeof(struct ic_backend_pancake_bytecode));
         if (!instructions->bytecode_array) {
-            puts("ic_backend_pancake_instructions_append: call to realloc failed");
+            puts("ic_backend_pancake_instructions_add: call to realloc failed");
             return 0;
         }
     }
 
-    /* insert via copy */
-    instructions->bytecode_array[instructions->len] = *bytecode;
+    /* get address of current head*/
+    bytecode = &(instructions->bytecode_array[instructions->len]);
+
+    if (!ic_backend_pancake_bytecode_init(bytecode, type)) {
+        puts("ic_backend_pancake_instructions_add: call to ic_backend_pancake_bytecode_init failed");
+        return 0;
+    }
 
     /* increment len counter */
     instructions->len += 1;
 
-    return 1;
+    return bytecode;
 }
 
 /* get current length of instructions
