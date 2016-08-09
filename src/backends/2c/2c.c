@@ -290,8 +290,20 @@ unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct i
         return 0;
     }
 
-    /* return-type func-name( args ... ); */
-    if (fdecl->ret_type) {
+    /* print comment */
+    fprintf(f, "/* %s */\n", func_sig_full);
+
+    is_void = ic_decl_func_is_void(fdecl);
+
+    if (is_void) {
+        /* print comment */
+        fprintf(f, "Void %s(", func_sig_mangled);
+    } else {
+        if (!fdecl->ret_type) {
+            puts("ic_b2c_generate_functions: fdecl lacked return type");
+            return 0;
+        }
+
         /* FIXME need to convert to c type */
         func_return_type_str = ic_symbol_contents(fdecl->ret_type);
         if (!func_return_type_str) {
@@ -299,28 +311,7 @@ unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct i
             return 0;
         }
 
-        /* we can also be void at this point */
-        if (!strncmp("Void", func_return_type_str, 5)) {
-            is_void = 1;
-        }
-    } else {
-        /* icarus void */
-        func_return_type_str = "Void";
-
-        is_void = 1;
-    }
-
-    /* print comment */
-    fprintf(f, "/* %s */\n", func_sig_full);
-
-    if (is_void) {
-        /* print return-type, name, and opening bracket */
-        fprintf(f, "%s %s(", func_return_type_str, func_sig_mangled);
-    } else {
-        /* print return-type, name, and opening bracket
-         * NB: notice '*' to make into c pointer
-         * this is why we cannot squash the Void and non-void cases
-         */
+        /* print type and then * for c-pointer */
         fprintf(f, "%s * %s(", func_return_type_str, func_sig_mangled);
     }
 
