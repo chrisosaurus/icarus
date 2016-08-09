@@ -40,6 +40,14 @@ enum ic_backend_pancake_bytecode_type {
     icp_panic,
     /* exit_success */
     icp_exit,
+    /* save current top of stack to restore later
+     * NB: save will overwrite any previously saved value
+     */
+    icp_save,
+    /* restore previously saved item to top of stack
+     * NB: error if no previous item was saved
+     */
+    icp_restore,
 };
 
 enum ic_backend_pancake_bytecode_arg_type {

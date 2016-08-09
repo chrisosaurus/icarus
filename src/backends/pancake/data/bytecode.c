@@ -239,6 +239,20 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             return 1;
             break;
 
+        /* save current top of stack to restore later */
+        case icp_save:
+            fputs("save", file);
+
+            return 1;
+            break;
+
+        /* restore previously saved item to top of stack */
+        case icp_restore:
+            fputs("restore", file);
+
+            return 1;
+            break;
+
         default:
             puts("ic_backend_pancake_bytecode_print: impossible case");
             return 0;
