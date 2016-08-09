@@ -280,13 +280,13 @@ unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct i
 
     func_sig_mangled = ic_decl_func_sig_mangled(fdecl);
     if (!func_sig_mangled) {
-        puts("ic_b2c_generate_functions: call to ic_string_contents failed for sig_mangled");
+        puts("ic_b2c_generate_function_headers: call to ic_string_contents failed for sig_mangled");
         return 0;
     }
 
     func_sig_full = ic_decl_func_sig_full(fdecl);
     if (!func_sig_full) {
-        puts("ic_b2c_generate_functions: call to ic_decl_func_sig_full failed");
+        puts("ic_b2c_generate_function_headers: call to ic_decl_func_sig_full failed");
         return 0;
     }
 
@@ -300,14 +300,14 @@ unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct i
         fprintf(f, "Void %s(", func_sig_mangled);
     } else {
         if (!fdecl->ret_type) {
-            puts("ic_b2c_generate_functions: fdecl lacked return type");
+            puts("ic_b2c_generate_function_headers: fdecl lacked return type");
             return 0;
         }
 
         /* FIXME need to convert to c type */
         func_return_type_str = ic_symbol_contents(fdecl->ret_type);
         if (!func_return_type_str) {
-            puts("ic_b2c_generate_functions: call to ic_symbol_contents failed for return type");
+            puts("ic_b2c_generate_function_headers: call to ic_symbol_contents failed for return type");
             return 0;
         }
 
@@ -324,7 +324,7 @@ unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct i
 
         arg = ic_pvector_get(&(fdecl->args), i);
         if (!arg) {
-            puts("ic_b2c_generate_functions: call to ic_pvector_get failed");
+            puts("ic_b2c_generate_function_headers: call to ic_pvector_get failed");
             return 0;
         }
 
