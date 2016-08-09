@@ -51,6 +51,11 @@ unsigned int ic_backend_pancake(struct ic_kludge *kludge) {
         return 0;
     }
 
+    if (!ic_backend_pancake_instructions_print(instructions, stdout)) {
+        puts("ic_backend_pancake: call to ic_backend_pancake_instructions_print failed");
+        return 0;
+    }
+
     runtime = ic_backend_pancake_runtime_new(instructions);
     if (!runtime) {
         puts("ic_backend_pancake: call to ic_backend_pancake_runtime_new failed");
@@ -125,10 +130,16 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
         return 0;
     }
 
-    /* insert jump 0 */
+    /* insert jump 0
+     * later on the '0' will be replaced with the address of main
+     */
     bc_entry_jump = ic_backend_pancake_bytecode_new(icp_jmp);
     if (!bc_entry_jump) {
         puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_new failed for entry_jump");
+        return 0;
+    }
+    if (!ic_backend_pancake_bytecode_arg1_set_uint(bc_entry_jump, 0)) {
+        puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
         return 0;
     }
     if (!ic_backend_pancake_instructions_append(instructions, bc_entry_jump)) {
@@ -176,6 +187,12 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
         puts("ic_backend_pancake_compile: couldn't find main function");
         return 0;
     }
+
+    /* FIXME TODO instructions_append is by value
+     * so all our news are leaking
+     * and this doesn't work....
+     * broken
+     */
     /* modify instruction 0 to jump to main offset */
     if (!ic_backend_pancake_bytecode_arg1_set_uint(bc_entry_jump, main_offset)) {
         puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
