@@ -1,6 +1,8 @@
 TODO:
 -----
 
+* should be easy to test if a given fdecl returns void or not
+* we shouldn't be comparing "void" strings in backend 2c
 * all print methods should take `FILE *` argument rather than assuming stdout
 * 'everything' within tir (except pointers to fdecl/kludge) should be owned - copy any shared symbols
 * sort out transform ownership - it is a mess
