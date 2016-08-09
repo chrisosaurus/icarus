@@ -229,6 +229,9 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     /* current local */
     struct ic_backend_pancake_local *local = 0;
 
+    /* name of literal */
+    char *let_literal_name_ch = 0;
+
     if (!instructions) {
         puts("ic_backend_pancake_compile_fdecl: instructions was null");
         return 0;
@@ -413,8 +416,24 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
 
                 switch (tlet->tag) {
                     case ic_transform_ir_let_type_literal:
-                        puts("ic_backend_pancake_compile_fdecl: let literal unimplemented");
-                        return 0;
+                        local = ic_backend_pancake_local_new(tlet->u.lit.name, icpl_literal);
+                        if (!local) {
+                            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_local failed");
+                            return 0;
+                        }
+                        if (!ic_backend_pancake_local_set_literal(local, tlet->u.lit.literal)) {
+                            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_set_literal failed");
+                            return 0;
+                        }
+                        let_literal_name_ch = ic_symbol_contents(tlet->u.lit.name);
+                        if (!let_literal_name_ch) {
+                            puts("ic_backend_pancake_compile_fdecl: call to ic_symbol_contents failed");
+                            return 0;
+                        }
+                        if (!ic_dict_insert(locals, let_literal_name_ch, local)) {
+                            puts("ic_backend_pancake_compile_fdecl: call to ic_dict_insert failed");
+                            return 0;
+                        }
                         break;
 
                     case ic_transform_ir_let_type_expr:
@@ -428,8 +447,6 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
                         break;
                 }
 
-                puts("ic_backend_pancake_compile_fdecl: let impossible case");
-                return 0;
                 break;
 
             case ic_transform_ir_stmt_type_ret:
