@@ -30,14 +30,7 @@ enum ic_backend_pancake_bytecode_type {
     icp_pop,
     /* return */
     icp_return,
-    /* jmp addr::uint
-     * OR
-     * jmp sig::string
-     *
-     * jmp sig::string are inserted first, and then replaced at the end of
-     * pancake compile by
-     * jmi addr::uint
-     */
+    /* jmp addr::uint */
     icp_jmp,
     /* jif addr::uint */
     icp_jif,

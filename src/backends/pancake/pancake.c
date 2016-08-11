@@ -86,12 +86,10 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
     struct ic_decl_func *fdecl = 0;
     /* bytecode instruction used for entry label jump */
     struct ic_backend_pancake_bytecode *bc_entry_label = 0;
-    /* bytecode instruction used for entry jump */
-    struct ic_backend_pancake_bytecode *bc_entry_jump = 0;
+    /* bytecode instruction used for entry call to main */
+    struct ic_backend_pancake_bytecode *bc_entry_call = 0;
     /* bytecode instruction used for entry exit */
     struct ic_backend_pancake_bytecode *bc_entry_exit = 0;
-    /* offset for main function */
-    unsigned int main_offset = 0;
 
     if (!kludge) {
         puts("ic_backend_pancake_compile: kludge was null");
@@ -129,12 +127,16 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
     /* insert jump 0
      * later on the '0' will be replaced with the address of main
      */
-    bc_entry_jump = ic_backend_pancake_instructions_add(instructions, icp_jmp);
-    if (!bc_entry_jump) {
+    bc_entry_call = ic_backend_pancake_instructions_add(instructions, icp_call);
+    if (!bc_entry_call) {
         puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
         return 0;
     }
-    if (!ic_backend_pancake_bytecode_arg1_set_uint(bc_entry_jump, 0)) {
+    if (!ic_backend_pancake_bytecode_arg1_set_char(bc_entry_call, "main")) {
+        puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+        return 0;
+    }
+    if (!ic_backend_pancake_bytecode_arg2_set_uint(bc_entry_call, 0)) {
         puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
         return 0;
     }
@@ -164,25 +166,6 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
             puts("ic_backend_pancake_compile: call to ic_backend_pancake_compile_fdecl failed");
             return 0;
         }
-    }
-
-    /* FIXME TODO generalise this logic
-     * as we really want to step through all jmps and replace labels with offsets
-     */
-
-    /* pull out address of offset */
-    main_offset = ic_backend_pancake_instructions_get_fdecl(instructions, "main()");
-    /* NB: we cannot test for failure of this function, but we do know that address
-     * '0' is our entry point - so main cannot be it
-     */
-    if (!main_offset) {
-        puts("ic_backend_pancake_compile: couldn't find main function");
-        return 0;
-    }
-
-    if (!ic_backend_pancake_bytecode_arg1_set_uint(bc_entry_jump, main_offset)) {
-        puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
-        return 0;
     }
 
     puts("ic_backend_pancake_compile: implementation pending");
