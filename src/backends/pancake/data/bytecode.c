@@ -161,7 +161,7 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             return 1;
             break;
 
-        /* call fname argn */
+        /* call fname::stringargn */
         case icp_call:
 
             ch = ic_backend_pancake_bytecode_arg1_get_char(bytecode);
@@ -273,6 +273,14 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_void(struct ic_backend_pancake
         return 0;
     }
 
+    /* only allow arg to be set where it is correct */
+    switch (bytecode->tag) {
+        default:
+            puts("ic_backend_pancake_bytecode_arg1_set_void: invalid void arg set on bytecode that doesn't support");
+            return 0;
+            break;
+    }
+
     bytecode->arg1.tag = ic_backend_pancake_bytecode_arg_type_void;
     bytecode->arg1.u.v = arg1;
 
@@ -288,6 +296,14 @@ unsigned int ic_backend_pancake_bytecode_arg2_set_void(struct ic_backend_pancake
     if (!bytecode) {
         puts("ic_backend_pancake_bytecode_arg2_set_uint: bytecode was null");
         return 0;
+    }
+
+    /* only allow arg to be set where it is correct */
+    switch (bytecode->tag) {
+        default:
+            puts("ic_backend_pancake_bytecode_arg2_set_void: invalid void arg set on bytecode that doesn't support");
+            return 0;
+            break;
     }
 
     bytecode->arg2.tag = ic_backend_pancake_bytecode_arg_type_void;
@@ -344,6 +360,25 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_char(struct ic_backend_pancake
         puts("ic_backend_pancake_bytecode_arg1_set_char: bytecode was null");
         return 0;
     }
+    /* only allow arg to be set where it is correct */
+    switch (bytecode->tag) {
+        /* fdecl_label fdecl_sig_call */
+        case icp_label:
+        /* push_str string */
+        case icp_pushstr:
+        /* push key::string */
+        case icp_push:
+        /* call fname::string argn::uint */
+        case icp_call:
+        /* panic desc::str */
+        case icp_panic:
+            break;
+
+        default:
+            puts("ic_backend_pancake_bytecode_arg1_set_char: invalid void arg set on bytecode that doesn't support");
+            return 0;
+            break;
+    }
 
     bytecode->arg1.tag = ic_backend_pancake_bytecode_arg_type_char;
     bytecode->arg1.u.ch = arg1;
@@ -364,6 +399,14 @@ unsigned int ic_backend_pancake_bytecode_arg2_set_char(struct ic_backend_pancake
 
     bytecode->arg2.tag = ic_backend_pancake_bytecode_arg_type_char;
     bytecode->arg2.u.ch = arg2;
+
+    /* only allow arg to be set where it is correct */
+    switch (bytecode->tag) {
+        default:
+            puts("ic_backend_pancake_bytecode_arg2_set_char: invalid void arg set on bytecode that doesn't support");
+            return 0;
+            break;
+    }
 
     return 1;
 }
@@ -416,6 +459,17 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_bool(struct ic_backend_pancake
         puts("ic_backend_pancake_bytecode_arg1_set_bool: bytecode was null");
         return 0;
     }
+    /* only allow arg to be set where it is correct */
+    switch (bytecode->tag) {
+        /* push_bool bool */
+        case icp_pushbool:
+            break;
+
+        default:
+            puts("ic_backend_pancake_bytecode_arg1_set_bool: invalid void arg set on bytecode that doesn't support");
+            return 0;
+            break;
+    }
 
     bytecode->arg1.tag = ic_backend_pancake_bytecode_arg_type_bool;
     bytecode->arg1.u.boolean = arg1;
@@ -432,6 +486,14 @@ unsigned int ic_backend_pancake_bytecode_arg2_set_bool(struct ic_backend_pancake
     if (!bytecode) {
         puts("ic_backend_pancake_bytecode_arg2_set_bool: bytecode was null");
         return 0;
+    }
+
+    /* only allow arg to be set where it is correct */
+    switch (bytecode->tag) {
+        default:
+            puts("ic_backend_pancake_bytecode_arg2_set_bool: invalid void arg set on bytecode that doesn't support");
+            return 0;
+            break;
     }
 
     bytecode->arg2.tag = ic_backend_pancake_bytecode_arg_type_bool;
@@ -488,6 +550,17 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_sint(struct ic_backend_pancake
         puts("ic_backend_pancake_bytecode_arg1_set_sint: bytecode was null");
         return 0;
     }
+    /* only allow arg to be set where it is correct */
+    switch (bytecode->tag) {
+        /* push_int int */
+        case icp_pushint:
+            break;
+
+        default:
+            puts("ic_backend_pancake_bytecode_arg1_set_sint: invalid void arg set on bytecode that doesn't support");
+            return 0;
+            break;
+    }
 
     bytecode->arg1.tag = ic_backend_pancake_bytecode_arg_type_sint;
     bytecode->arg1.u.sint = arg1;
@@ -504,6 +577,13 @@ unsigned int ic_backend_pancake_bytecode_arg2_set_sint(struct ic_backend_pancake
     if (!bytecode) {
         puts("ic_backend_pancake_bytecode_arg2_set_sint: bytecode was null");
         return 0;
+    }
+    /* only allow arg to be set where it is correct */
+    switch (bytecode->tag) {
+        default:
+            puts("ic_backend_pancake_bytecode_arg2_set_sint: invalid void arg set on bytecode that doesn't support");
+            return 0;
+            break;
     }
 
     bytecode->arg2.tag = ic_backend_pancake_bytecode_arg_type_sint;
@@ -564,6 +644,25 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_uint(struct ic_backend_pancake
         puts("ic_backend_pancake_bytecode_arg1_set_uint: bytecode was null");
         return 0;
     }
+    /* only allow arg to be set where it is correct */
+    switch (bytecode->tag) {
+        /* push_uint uint */
+        case icp_pushuint:
+        /* pop n::uint */
+        case icp_pop:
+        /* jmp addr::uint */
+        case icp_jmp:
+        /* jif addr::uint */
+        case icp_jif:
+        /* jnif addr::uint */
+        case icp_jnif:
+            break;
+
+        default:
+            puts("ic_backend_pancake_bytecode_arg1_set_uint: invalid void arg set on bytecode that doesn't support");
+            return 0;
+            break;
+    }
 
     bytecode->arg1.tag = ic_backend_pancake_bytecode_arg_type_uint;
     bytecode->arg1.u.uint = arg1;
@@ -580,6 +679,18 @@ unsigned int ic_backend_pancake_bytecode_arg2_set_uint(struct ic_backend_pancake
     if (!bytecode) {
         puts("ic_backend_pancake_bytecode_arg2_set_uint: bytecode was null");
         return 0;
+    }
+
+    /* only allow arg to be set where it is correct */
+    switch (bytecode->tag) {
+        /* call fname::stringargn::uint */
+        case icp_call:
+            break;
+
+        default:
+            puts("ic_backend_pancake_bytecode_arg2_set_uint: invalid void arg set on bytecode that doesn't support");
+            return 0;
+            break;
     }
 
     bytecode->arg2.tag = ic_backend_pancake_bytecode_arg_type_uint;

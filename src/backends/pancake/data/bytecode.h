@@ -24,7 +24,7 @@ enum ic_backend_pancake_bytecode_type {
     icp_pushstr,
     /* push key::string */
     icp_push,
-    /* call fname argn::uint */
+    /* call fname::string argn::uint */
     icp_call,
     /* pop n::uint */
     icp_pop,
