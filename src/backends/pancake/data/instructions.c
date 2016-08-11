@@ -363,5 +363,8 @@ unsigned int ic_backend_pancake_instructions_print(struct ic_backend_pancake_ins
         }
     }
 
+    /* trailing \n */
+    fputs("\n", file);
+
     return 1;
 }
