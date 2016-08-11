@@ -31,6 +31,13 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
  */
 unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_decl_func *fdecl);
 
+/* compile an expr (function call) into pancake bytecode
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_transform_ir_expr *texpr);
+
 /* pancake - stack based interpreter backend
  *
  * returns 1 on success
@@ -209,6 +216,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
 
     /* let, used only if tstmt is let */
     struct ic_transform_ir_let *tlet = 0;
+    struct ic_transform_ir_expr *texpr = 0;
 
     /* dict from char* to pancake/data/local */
     struct ic_dict *locals = 0;
@@ -429,6 +437,13 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
                         break;
 
                     case ic_transform_ir_let_type_expr:
+                        /* FIXME TODO diving deep into tlet is gross */
+                        texpr = tlet->u.expr.expr;
+                        if (!ic_backend_pancake_compile_expr(instructions, kludge, texpr)) {
+                            puts("ic_backend_pancake_compile_fdecl: let expr call to ic_backend_pancake_compile_expr failed");
+                            return 0;
+                        }
+
                         puts("ic_backend_pancake_compile_fdecl: let expr unimplemented");
                         return 0;
                         break;
@@ -551,6 +566,31 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     }
 
     return 1;
+}
+
+/* compile an expr (function call) into pancake bytecode
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_transform_ir_expr *texpr) {
+    if (!instructions) {
+        puts("ic_backend_pancake_compile_expr: instructions was null");
+        return 0;
+    }
+
+    if (!kludge) {
+        puts("ic_backend_pancake_compile_expr: kludge was null");
+        return 0;
+    }
+
+    if (!texpr) {
+        puts("ic_backend_pancake_compile_expr: texpr was null");
+        return 0;
+    }
+
+    puts("ic_backend_pancake_compile_expr: implementation pending");
+    return 0;
 }
 
 /* interpret bytecode in runtime
