@@ -31,6 +31,13 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
  */
 unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_decl_func *fdecl);
 
+/* compile an fdecl_body into bytecode
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_decl_func *fdecl, struct ic_transform_body *fdecl_tbody, struct ic_dict *locals);
+
 /* compile an expr (function call) into pancake bytecode
  *
  * returns 1 on success
@@ -211,12 +218,6 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     /* current arg */
     struct ic_field *arg = 0;
     char *local_name_ch = 0;
-    /* current tstmt */
-    struct ic_transform_ir_stmt *tstmt = 0;
-
-    /* let, used only if tstmt is let */
-    struct ic_transform_ir_let *tlet = 0;
-    struct ic_transform_ir_expr *texpr = 0;
 
     /* dict from char* to pancake/data/local */
     struct ic_dict *locals = 0;
@@ -225,9 +226,6 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
 
     /* current local */
     struct ic_backend_pancake_local *local = 0;
-
-    /* name of literal */
-    char *let_literal_name_ch = 0;
 
     /* count of args to pop for cleanup */
     unsigned int cleanup_count = 0;
@@ -391,86 +389,9 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
         return 0;
     }
 
-    len = ic_transform_body_length(fdecl_tbody);
-
-    for (i = 0; i < len; ++i) {
-        tstmt = ic_transform_body_get(fdecl_tbody, i);
-        if (!tstmt) {
-            puts("ic_backend_pancake_compile_fdecl: call to ic_transform_body_get failed");
-            return 0;
-        }
-
-        switch (tstmt->tag) {
-            case ic_transform_ir_stmt_type_expr:
-                puts("ic_backend_pancake_compile_fdecl: expr unimplemented");
-                return 0;
-                break;
-
-            case ic_transform_ir_stmt_type_let:
-                tlet = ic_transform_ir_stmt_get_let(tstmt);
-                if (!tlet) {
-                    puts("ic_backend_pancake_compile_fdecl: call to ic_transform_ir_stmt_get_let failed");
-                    return 0;
-                }
-
-                switch (tlet->tag) {
-                    case ic_transform_ir_let_type_literal:
-                        /* FIXME TODO diving deep into tlet is gross */
-                        local = ic_backend_pancake_local_new(tlet->u.lit.name, icpl_literal);
-                        if (!local) {
-                            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_local failed");
-                            return 0;
-                        }
-                        if (!ic_backend_pancake_local_set_literal(local, tlet->u.lit.literal)) {
-                            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_set_literal failed");
-                            return 0;
-                        }
-                        let_literal_name_ch = ic_symbol_contents(tlet->u.lit.name);
-                        if (!let_literal_name_ch) {
-                            puts("ic_backend_pancake_compile_fdecl: call to ic_symbol_contents failed");
-                            return 0;
-                        }
-                        if (!ic_dict_insert(locals, let_literal_name_ch, local)) {
-                            puts("ic_backend_pancake_compile_fdecl: call to ic_dict_insert failed");
-                            return 0;
-                        }
-                        break;
-
-                    case ic_transform_ir_let_type_expr:
-                        /* FIXME TODO diving deep into tlet is gross */
-                        texpr = tlet->u.expr.expr;
-                        if (!ic_backend_pancake_compile_expr(instructions, kludge, texpr)) {
-                            puts("ic_backend_pancake_compile_fdecl: let expr call to ic_backend_pancake_compile_expr failed");
-                            return 0;
-                        }
-
-                        puts("ic_backend_pancake_compile_fdecl: let expr unimplemented");
-                        return 0;
-                        break;
-
-                    default:
-                        puts("ic_backend_pancake_compile_fdecl: let impossible case");
-                        return 0;
-                        break;
-                }
-
-                break;
-
-            case ic_transform_ir_stmt_type_ret:
-                puts("ic_backend_pancake_compile_fdecl: return unimplemented");
-                return 0;
-                break;
-
-            case ic_transform_ir_stmt_type_assign:
-                puts("ic_backend_pancake_compile_fdecl: assign unimplemented");
-                return 0;
-                break;
-
-            default:
-                puts("ic_backend_pancake_compile_fdecl: impossible case");
-                return 0;
-                break;
-        }
+    if (!ic_backend_pancake_compile_fdecl_body(instructions, kludge, fdecl, fdecl_tbody, locals)) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_compile_fdecl_body failed");
+        return 0;
     }
 
     /*
@@ -563,6 +484,139 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     if (!ic_dict_destroy(locals, 1, 1)) {
         puts("ic_backend_pancake_compile_fdecl: call to ic_dict_destroy failed");
         return 0;
+    }
+
+    return 1;
+}
+
+/* compile an fdecl_body into bytecode
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_decl_func *fdecl, struct ic_transform_body *fdecl_tbody, struct ic_dict *locals) {
+    /* current offset into body */
+    unsigned int i = 0;
+    /* len of body */
+    unsigned int len = 0;
+    /* current stmt in body */
+    struct ic_transform_ir_stmt *tstmt = 0;
+
+    /* let, used only if tstmt is let */
+    struct ic_transform_ir_let *tlet = 0;
+    struct ic_transform_ir_expr *texpr = 0;
+
+    /* name of literal */
+    char *let_literal_name_ch = 0;
+
+    /* current local */
+    struct ic_backend_pancake_local *local = 0;
+
+    if (!instructions) {
+        puts("ic_backend_pancake_compile_fdecl_body: instructions was null");
+        return 0;
+    }
+
+    if (!kludge) {
+        puts("ic_backend_pancake_compile_fdecl_body: kludge was null");
+        return 0;
+    }
+
+    if (!fdecl) {
+        puts("ic_backend_pancake_compile_fdecl_body: fdecl was null");
+        return 0;
+    }
+
+    if (!fdecl_tbody) {
+        puts("ic_backend_pancake_compile_fdecl_body: fdecl_tbody was null");
+        return 0;
+    }
+
+    if (!locals) {
+        puts("ic_backend_pancake_compile_fdecl_body: locals was null");
+        return 0;
+    }
+
+    len = ic_transform_body_length(fdecl_tbody);
+
+    for (i = 0; i < len; ++i) {
+        tstmt = ic_transform_body_get(fdecl_tbody, i);
+        if (!tstmt) {
+            puts("ic_backend_pancake_compile_fdecl_body: call to ic_transform_body_get failed");
+            return 0;
+        }
+
+        switch (tstmt->tag) {
+            case ic_transform_ir_stmt_type_expr:
+                puts("ic_backend_pancake_compile_fdecl_body: expr unimplemented");
+                return 0;
+                break;
+
+            case ic_transform_ir_stmt_type_let:
+                tlet = ic_transform_ir_stmt_get_let(tstmt);
+                if (!tlet) {
+                    puts("ic_backend_pancake_compile_fdecl_body: call to ic_transform_ir_stmt_get_let failed");
+                    return 0;
+                }
+
+                switch (tlet->tag) {
+                    case ic_transform_ir_let_type_literal:
+                        /* FIXME TODO diving deep into tlet is gross */
+                        local = ic_backend_pancake_local_new(tlet->u.lit.name, icpl_literal);
+                        if (!local) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_local failed");
+                            return 0;
+                        }
+                        if (!ic_backend_pancake_local_set_literal(local, tlet->u.lit.literal)) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_set_literal failed");
+                            return 0;
+                        }
+                        let_literal_name_ch = ic_symbol_contents(tlet->u.lit.name);
+                        if (!let_literal_name_ch) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_symbol_contents failed");
+                            return 0;
+                        }
+                        if (!ic_dict_insert(locals, let_literal_name_ch, local)) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_dict_insert failed");
+                            return 0;
+                        }
+                        break;
+
+                    case ic_transform_ir_let_type_expr:
+                        /* FIXME TODO diving deep into tlet is gross */
+                        texpr = tlet->u.expr.expr;
+                        if (!ic_backend_pancake_compile_expr(instructions, kludge, texpr)) {
+                            puts("ic_backend_pancake_compile_fdecl_body: let expr call to ic_backend_pancake_compile_expr failed");
+                            return 0;
+                        }
+
+                        puts("ic_backend_pancake_compile_fdecl_body: let expr unimplemented");
+                        return 0;
+                        break;
+
+                    default:
+                        puts("ic_backend_pancake_compile_fdecl_body: let impossible case");
+                        return 0;
+                        break;
+                }
+
+                break;
+
+            case ic_transform_ir_stmt_type_ret:
+                puts("ic_backend_pancake_compile_fdecl_body: return unimplemented");
+                return 0;
+                break;
+
+            case ic_transform_ir_stmt_type_assign:
+                puts("ic_backend_pancake_compile_fdecl_body: assign unimplemented");
+                return 0;
+                break;
+
+            default:
+                puts("ic_backend_pancake_compile_fdecl_body: impossible case");
+                return 0;
+                break;
+        }
     }
 
     return 1;
