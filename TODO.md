@@ -54,6 +54,7 @@ testing debt:
 technical debt:
 -----
 
+* current naming scheme is getting too long
 * pancake compile_fdecl is way too large for a single function
 * not satisfied with complex expr parsing `if y == 4 && x == 5 ... end`
 * having ops from core.ic AND in isoperator is a bit gross
