@@ -42,7 +42,7 @@ bugs:
 
 
 testing debt:
------
+-------------
 
 * test_ast needs to be beefed up
 * create test_parse
@@ -52,7 +52,7 @@ testing debt:
 
 
 technical debt:
------
+---------------
 
 * current naming scheme is getting too long
 * pancake compile_fdecl is way too large for a single function
@@ -74,7 +74,7 @@ technical debt:
 
 
 considerations:
------
+---------------
 
 * consider const-correctness on read only args
 * `ic_analyse_decl_type` currently allows co-recursive types `type Foo a::Bar end` `type bar a::Foo end`, is this allowed?
