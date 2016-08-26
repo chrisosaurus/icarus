@@ -1,6 +1,7 @@
 TODO:
 -----
 
+* move from '<' and '>' for templates to '[' and ']' to disambiguate from bitwise '<<' and '>>' at lexer level, makes more regular
 * should be easy to test if a given fdecl returns void or not
 * we shouldn't be comparing "void" strings in backend 2c
 * all print methods should take `FILE *` argument rather than assuming stdout
