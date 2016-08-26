@@ -22,8 +22,8 @@ end
 #   this has to be syntax/macro as it may return from the current scope
 
 
-fn read_file(file_name::String) -> Result<Vector<Line>>
-    let &v = Vector<Line>()
+fn read_file(file_name::String) -> Result[Vector[Line]]
+    let &v = Vector[Line]()
 
     let &f::File = match File(file_name)
         case OK(x)

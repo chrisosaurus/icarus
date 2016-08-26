@@ -6,8 +6,8 @@ type Line
   content::String
 end
 
-fn read_file(file_name::String) -> Vector<Line>
-    let &v = Vector<Line>()
+fn read_file(file_name::String) -> Vector[Line]
+    let &v = Vector[Line]()
     let &f = File(file_name)
 
     for (line, count) in read_lines(&f)

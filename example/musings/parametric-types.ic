@@ -1,17 +1,17 @@
 
 # unsure about the syntax or semantics here
 
-type Foo<T>
+type Foo[T]
     a::T
     b::Sint
 
-    fn Foo<T>(t::T) -> Foo<T>
+    fn Foo[T](t::T) -> Foo[T]
         return Foo(t 10)
     end
 end
 
 fn main()
-    let f::Foo<String> = Foo("hello")
+    let f::Foo[String] = Foo("hello")
 
 end
 

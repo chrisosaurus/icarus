@@ -3,7 +3,7 @@
 # before allowing unboxing of Union types
 
 # defaults to Empty
-let m::Maybe<Sint>
+let m::Maybe[Sint]
 
 if ...
     m = 32

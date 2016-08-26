@@ -279,24 +279,24 @@ we can do this by providing various get methods and dispatching on a combination
 of type and permission
 
     # a List type for storing immutables
-    builtin type ListImmut<T>
-    builtin fn append<T>(&l::ListImmut<T>, %t::T)
-    builtin fn get<T>(l::ListImmut<T>) -> t::T
-    builtin fn getStorable<T>(l::ListImmut<T>) -> %t::T
+    builtin type ListImmut[T]
+    builtin fn append[T](&l::ListImmut[T], %t::T)
+    builtin fn get[T](l::ListImmut[T]) -> t::T
+    builtin fn getStorable[T](l::ListImmut[T]) -> %t::T
 
     # a List type for storing mutables
-    builtin type ListMut<T>
-    builtin fn append<T>(&l::ListMut<T>, @t::T)
-    builtin fn get<T>(&l::ListMut<T>) -> &t::T
-    builtin fn get<T>(l::ListMut<T>) -> t::T
-    builtin fn getStorable<T>(&l::ListMut<T>) -> @t::T
-    builtin fn getStorable<T>(l::ListMut<T>) -> %t::T
+    builtin type ListMut[T]
+    builtin fn append[T](&l::ListMut[T], @t::T)
+    builtin fn get[T](&l::ListMut[T]) -> &t::T
+    builtin fn get[T](l::ListMut[T]) -> t::T
+    builtin fn getStorable[T](&l::ListMut[T]) -> @t::T
+    builtin fn getStorable[T](l::ListMut[T]) -> %t::T
 
 
 example using ListMut
 
     fn main()
-        let &list = ListMut<Sint>
+        let &list = ListMut[Sint]
 
         # populate list
         for i in [1..100]
@@ -311,13 +311,13 @@ example using ListMut
 
     end
 
-    fn print_list(list::ListMut<Sint>)
+    fn print_list(list::ListMut[Sint])
         for i in list
             print(i)
         end
     end
 
-    fn add_one_to_each(&list::ListMut<Sint>)
+    fn add_one_to_each(&list::ListMut[Sint])
         for &i in &list
             &i += 1
         end
@@ -353,7 +353,7 @@ If you are only reading from variables then I think your code should be 'sigil l
 below `print_list` only reads and prints.
 
     fn main()
-        let list = ListMut<Sint>
+        let list = ListMut[Sint]
 
         # populate list
         for i in [1..100]
@@ -365,7 +365,7 @@ below `print_list` only reads and prints.
 
     end
 
-    fn print_list(list::ListMut<Sint>)
+    fn print_list(list::ListMut[Sint])
         for i in list
             print(i)
         end

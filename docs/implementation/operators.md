@@ -11,9 +11,9 @@ some examples of operators and their matching functions
 
     1 + 2 => plus(Sint, Sint) -> Sint => plus(1, 2) => 3
 
-    a == b => equal<X, Y>(X, Y) -> Bool => equal(a, b)
+    a == b => equal[X, Y](X, Y) -> Bool => equal(a, b)
 
-    a != b => not(equal<X, Y>(X, Y)) -> Bool = not(equal(a, b))
+    a != b => not(equal[X, Y](X, Y)) -> Bool = not(equal(a, b))
 
 the functions implemented operators are looked up through the same means as
 all variable lookups (`scope`), and thus the user may define their own operators

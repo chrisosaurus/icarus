@@ -268,23 +268,23 @@ of type and permission (the Icarus analyse phase already handles this and correc
 pairs functions calls up with their declarations/definitions).
 
     # a List type for storing immutables
-    builtin type ListImmut<T>
-    builtin fn append<T>(&l::ListImmut<T>, %t::T)
-    builtin fn get<T>(l::ListImmut<T>) -> t::T
-    builtin fn getStorable<T>(l::ListImmut<T>) -> %t::T
+    builtin type ListImmut[T]
+    builtin fn append[T](&l::ListImmut[T], %t::T)
+    builtin fn get[T](l::ListImmut[T]) -> t::T
+    builtin fn getStorable[T](l::ListImmut[T]) -> %t::T
 
     # a List type for storing mutables
-    builtin type ListMut<T>
-    builtin fn append<T>(&l::ListMut<T>, @t::T)
-    builtin fn get<T>(&l::ListMut<T>) -> &t::T
-    builtin fn get<T>(l::ListMut<T>) -> t::T
-    builtin fn getStorable<T>(&l::ListMut<T>) -> @t::T
-    builtin fn getStorable<T>(l::ListMut<T>) -> %t::T
+    builtin type ListMut[T]
+    builtin fn append[T](&l::ListMut[T], @t::T)
+    builtin fn get[T](&l::ListMut[T]) -> &t::T
+    builtin fn get[T](l::ListMut[T]) -> t::T
+    builtin fn getStorable[T](&l::ListMut[T]) -> @t::T
+    builtin fn getStorable[T](l::ListMut[T]) -> %t::T
 
 example using ListMut
 
     fn main()
-        let &list = ListMut<Sint>
+        let &list = ListMut[Sint]
 
         # populate list
         for @i in [1..100]
@@ -299,13 +299,13 @@ example using ListMut
 
     end
 
-    fn print_list(list::ListMut<Sint>)
+    fn print_list(list::ListMut[Sint])
         for i in list
             print(i)
         end
     end
 
-    fn add_one_to_each(&list::ListMut<Sint>)
+    fn add_one_to_each(&list::ListMut[Sint])
         for &i in &list
             &i += 1
         end

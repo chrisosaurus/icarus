@@ -9,7 +9,7 @@ end
 # FIXME currently find_last_hello has no way of signaling an error
 # and does not initialise last, this isn't currently defined so we
 # need to think about this
-fn find_last_hello(arr::Array<1,String>) -> String
+fn find_last_hello(arr::Array[1,String]) -> String
   # this means last is a mutable variable reference to an immutable string value
   let last::String
 

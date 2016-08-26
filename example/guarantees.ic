@@ -1,5 +1,5 @@
 
-fn add_one(&list::List<Sint>)
+fn add_one(&list::List[Sint])
     for &item in &list
         &item += 1
     end
@@ -8,7 +8,7 @@ end
 # here print_list takes a `list`
 # print_list is guaranteed `value semantics` on this `list`
 # that is, `list` cannot mutate under print_list for the duration of the call
-fn print_list(list::List<Sint>)
+fn print_list(list::List[Sint])
     # likewise here `item` has value semantics
     # it cannot mutate under print_list for the duration of the for loop
     for item in list
@@ -17,7 +17,7 @@ fn print_list(list::List<Sint>)
 end
 
 fn main()
-    let &list::List<Sint> = make_interesting_list()
+    let &list::List[Sint] = make_interesting_list()
 
     add_one(&list)
 

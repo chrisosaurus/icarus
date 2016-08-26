@@ -374,24 +374,24 @@ we can do this by providing various get methods and dispatching on a combination
 of type and permission
 
     # a List type for storing immutables
-    builtin type ListImmut<T>
-    builtin fn append<T>(&l::ListImmut<T>, %t::T)
-    builtin fn get<T>($l::ListImmut<T>) -> $t::T
-    builtin fn getStorable<T>($l::ListImmut<T>) -> %t::T
+    builtin type ListImmut[T]
+    builtin fn append[T](&l::ListImmut[T], %t::T)
+    builtin fn get[T]($l::ListImmut[T]) -> $t::T
+    builtin fn getStorable[T]($l::ListImmut[T]) -> %t::T
 
     # a List type for storing mutables
-    builtin type ListMut<T>
-    builtin fn append<T>(&l::ListMut<T>, @t::T)
-    builtin fn get<T>(&l::ListMut<T>) -> &t::T
-    builtin fn get<T>($l::ListMut<T>) -> $t::T
-    builtin fn getStorable<T>(&l::ListMut<T>) -> @t::T
-    builtin fn getStorable<T>($l::ListMut<T>) -> %t::T
+    builtin type ListMut[T]
+    builtin fn append[T](&l::ListMut[T], @t::T)
+    builtin fn get[T](&l::ListMut[T]) -> &t::T
+    builtin fn get[T]($l::ListMut[T]) -> $t::T
+    builtin fn getStorable[T](&l::ListMut[T]) -> @t::T
+    builtin fn getStorable[T]($l::ListMut[T]) -> %t::T
 
 
 example using ListMut
 
     fn main()
-        let list = ListMut<Sint>
+        let list = ListMut[Sint]
 
         # populate list
         for i in [1..100]
@@ -406,13 +406,13 @@ example using ListMut
 
     end
 
-    fn print_list($list::ListMut<Sint>)
+    fn print_list($list::ListMut[Sint])
         for $i in $list
             print($i)
         end
     end
 
-    fn add_one_to_each(&list::ListMut<Sint>)
+    fn add_one_to_each(&list::ListMut[Sint])
         for &i in &list
             &i += 1
         end
@@ -454,7 +454,7 @@ however an immutable reference is only temporary, for the duration of the callee
 Consider a snippet similar to above
 
     fn main()
-        let list = ListMut<Sint>
+        let list = ListMut[Sint]
 
         # populate list
         for i in [1..100]
@@ -466,7 +466,7 @@ Consider a snippet similar to above
 
     end
 
-    fn print_list($list::ListMut<Sint>)
+    fn print_list($list::ListMut[Sint])
         for $i in $list
             print($i)
         end
@@ -474,12 +474,12 @@ Consider a snippet similar to above
 
 there are a lot of immutable sigils (`$`), however as a caller of print_list you could argue that you don't actually care
 
-forcing the user to also expose a conversion function `fn print_list(list::ListMut<Sint>) print_list($list) end` is gross
+forcing the user to also expose a conversion function `fn print_list(list::ListMut[Sint]) print_list($list) end` is gross
 
 the above snippet is not really more explicit than
 
     fn main()
-        let list = ListMut<Sint>
+        let list = ListMut[Sint]
 
         # populate list
         for i in [1..100]
@@ -491,7 +491,7 @@ the above snippet is not really more explicit than
 
     end
 
-    fn print_list(list::ListMut<Sint>)
+    fn print_list(list::ListMut[Sint])
         for i in list
             print(i)
         end
@@ -504,7 +504,7 @@ a case where the difference between frozen and immut is more obvious is here,
 note that i resort back to the usual notation of `x` being `frozen x` and `$y` being `immut y`
 
     fn main()
-        let list = ListMut<Sint>
+        let list = ListMut[Sint]
         let x = 14
         &list.append(@x)
 
@@ -513,7 +513,7 @@ note that i resort back to the usual notation of `x` being `frozen x` and `$y` b
         print($x)
     end
 
-    fn add_one_to_each(&list::ListMut<Sint>)
+    fn add_one_to_each(&list::ListMut[Sint])
         for &i in &list
             &i += 1
         end
@@ -548,7 +548,7 @@ as the mutation to `x` happens before the call to print where we freeze it
 to get around this we would have to freeze `x` *before* the call to add_one_to_all
 
     fn main()
-        let list = ListMut<Sint>
+        let list = ListMut[Sint]
         let x = 14
         &list.append(@x)
 
@@ -558,7 +558,7 @@ to get around this we would have to freeze `x` *before* the call to add_one_to_a
         print(y)
     end
 
-    fn add_one_to_each(&list::ListMut<Sint>)
+    fn add_one_to_each(&list::ListMut[Sint])
         for &i in &list
             &i += 1
         end
@@ -572,20 +572,20 @@ this would output
 notice that we could also do this via an intermediary
 
     fn main()
-        let list = ListMut<Sint>
+        let list = ListMut[Sint]
         let x = 14
         &list.append(@x)
 
         do_stuff(x, &list)
     end
 
-    fn add_one_to_each(&list::ListMut<Sint>)
+    fn add_one_to_each(&list::ListMut[Sint])
         for &i in &list
             &i += 1
         end
     end
 
-    fn do_stuff(y::Sint, &List::ListMut<Sint>)
+    fn do_stuff(y::Sint, &List::ListMut[Sint])
         print(y)
         add_one_to_each(&list)
         print(y)

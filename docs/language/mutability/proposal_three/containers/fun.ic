@@ -1,9 +1,9 @@
 
-type Foo<T>
-    &b::Bar<T>
+type Foo[T]
+    &b::Bar[T]
 end
 
-type Bar<T>
+type Bar[T]
     &i::T
 end
 

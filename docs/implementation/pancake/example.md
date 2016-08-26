@@ -71,6 +71,6 @@ the return address during runtime:
 
     return address after 1
 
-      <empty>
+      [empty]
 
 note that the address 0 is special, it is always exit

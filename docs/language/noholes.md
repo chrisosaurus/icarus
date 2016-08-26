@@ -18,7 +18,7 @@ A `Maybe` is just a built-in Union type
 example syntax (work in progress):
 
     # defaults to Empty
-    let m::Maybe<Sint>
+    let m::Maybe[Sint]
 
     if ...
         m = 32
@@ -39,7 +39,7 @@ example syntax (work in progress):
 
     # returns position of needle within haystack on success
     # reutrns Empty on failure
-    function search(haystack::String needle::Char) :: Maybe<Sint>
+    function search(haystack::String needle::Char) :: Maybe[Sint]
         let char::Char
         let pos::Sint
 
@@ -53,7 +53,7 @@ example syntax (work in progress):
         return Empty
     end
 
-    let res::Maybe<Sint> = search("hello" 'e')
+    let res::Maybe[Sint] = search("hello" 'e')
     switch res
         case Sint
             print("character found")
@@ -72,11 +72,11 @@ Icarus plans to avoid this using parametric types (C++ templates)
 
 example syntax (work in progress):
 
-    type Foo<T>
-        contents::Array<T>
+    type Foo[T]
+        contents::Array[T]
     end
 
-    function bar<T>(a::T)
+    function bar[T](a::T)
         ...
     end
 

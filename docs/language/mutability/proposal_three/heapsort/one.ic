@@ -24,7 +24,7 @@ fn parent(i::Sint) -> Sint
 end
 
 # inplace heapify of array
-fn heapify<T>(&arr::Array<T)
+fn heapify[T](&arr::Array[T])
     let len = arr.length()
     for i in 1..(len-1)
         pushup(&arr, i)
@@ -32,7 +32,7 @@ fn heapify<T>(&arr::Array<T)
 fn
 
 # take a place in the array, and keep pushing it up until it cannot go up anymore
-fn pushup<T>(&arr::Array<T>, index::Sint)
+fn pushup[T](&arr::Array[T], index::Sint)
     if index <= 0
         return
     end
@@ -46,7 +46,7 @@ fn pushup<T>(&arr::Array<T>, index::Sint)
     end
 end
 
-fn max<T>(a::T, b::T, c::T) -> T
+fn max[T](a::T, b::T, c::T) -> T
     if a >= b
         if a >= c
             return a
@@ -63,7 +63,7 @@ end
 # given an item in index
 # return the index it should be swapped with
 # or return current index if no swap is needed
-fn heapmax(arr::Array<T>, index::Sint, until::Sint) -> Sint
+fn heapmax(arr::Array[T], index::Sint, until::Sint) -> Sint
     let lcindex = lchild(index)
     let rcindex = rchild(index)
 
@@ -94,7 +94,7 @@ fn heapmax(arr::Array<T>, index::Sint, until::Sint) -> Sint
 end
 
 # take a place in the array, and keep pushing it down until it cannot go down anymore
-fn pushdown<T>(&arr::Array<T>, index::Sint, until::Sint)
+fn pushdown[T](&arr::Array[T], index::Sint, until::Sint)
     if index >= until
         return
     end
@@ -109,7 +109,7 @@ fn pushdown<T>(&arr::Array<T>, index::Sint, until::Sint)
 end
 
 # in place heap sort given a heap
-fn sortheap<T>(&arr::Array<T>)
+fn sortheap[T](&arr::Array[T])
     let len = arr.length()
     for i in (len-1) .. 0
         # swap head and tail
@@ -121,12 +121,12 @@ fn sortheap<T>(&arr::Array<T>)
 fn
 
 # inplace heapsort
-fn heapsort<T>(&arr::Array<T>)
+fn heapsort[T](&arr::Array[T])
     heapify(&arr)
     sortheap(&arr)
 end
 
-fn print_array<T>(arr::Array<T>)
+fn print_array[T](arr::Array[T])
     for $i in arr
         print($i)
     end

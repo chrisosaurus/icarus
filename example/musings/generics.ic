@@ -1,22 +1,22 @@
-type Node<T>
-    next  :: Maybe<Node<T>>
+type Node[T]
+    next  :: Maybe[Node[T]]
     value :: T
 end
 
-fn value<T>(n::Node<T>) -> T
+fn value[T](n::Node[T]) -> T
     return n.value
 end
 
-fn next<T>(n::Node<T>) -> Maybe<Node<T>>
+fn next[T](n::Node[T]) -> Maybe[Node[T]]
     return n.node
 end
 
-type LinkedList<T>
-    head :: Node<T>
+type LinkedList[T]
+    head :: Node[T]
 end
 
-fn getNth<T>(l::LinkedList<T>, nth::Sint) -> Maybe<T>
-    let n::Node<T> = l.head
+fn getNth[T](l::LinkedList[T], nth::Sint) -> Maybe[T]
+    let n::Node[T] = l.head
 
     # [1..nth) means from 1 (inclusive) to nth (exclusive)
     # this is equiv. to the pythonic range(1, nth - 1)

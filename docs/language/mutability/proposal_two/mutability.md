@@ -213,14 +213,14 @@ a Box type allows you to share mutable reference, the normal rules apply:
 the above rewritten with a box type is now:
 
     type Node
-        i::Box<&Sint>
+        i::Box[&Sint]
     end
 
-    fn insert(&n::Node, a::Box<&Sint>)
+    fn insert(&n::Node, a::Box[&Sint])
         &n->i = a
     end
 
-    let &mine::Box<&Sint> = 5
+    let &mine::Box[&Sint] = 5
     let &n = Node()
     insert(&n, &mine)
 
@@ -229,7 +229,7 @@ we now end up with
 
     +-var---------+                         +-var---------+
     | mine        |                         | n           |
-    | ::Box<&Sint>|                         | ::Node      |
+    | ::Box[&Sint]|                         | ::Node      |
     | immutable   |                         | mutable     |
     +-------------+                         +-------------+
              \                                |
@@ -264,7 +264,7 @@ which then gives us
 
     +-var---------+                         +-var---------+
     | mine        |                         | n           |
-    | ::Box<&Sint>|                         | ::Node      |
+    | ::Box[&Sint]|                         | ::Node      |
     | immutable   |                         | mutable     |
     +-------------+                         +-------------+
              \                                |

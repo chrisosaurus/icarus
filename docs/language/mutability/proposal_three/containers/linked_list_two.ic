@@ -5,25 +5,25 @@
 # &a mut ref
 # @a storable mut ref
 
-type LinkedList<T>
-    @node::maybe<LNode<T>>
+type LinkedList[T]
+    @node::maybe[LNode[T]]
 end
 
-type LNode<T>
+type LNode[T]
     &val::T
-    &next::Maybe<LNode<T>>
+    &next::Maybe[LNode[T]]
 end
 
-fn prepend<T>(&l::LinkeList<T>, @v::T)
-    let @n = LNode<T>(@v, &l.node)
+fn prepend[T](&l::LinkeList[T], @v::T)
+    let @n = LNode[T](@v, &l.node)
     &l.node = @n
 end
 
-fn head<T>(&l::LinkeList<T>) -> &Maybe<T>
+fn head[T](&l::LinkeList[T]) -> &Maybe[T]
     return &l.node;
 end
 
-fn pop<T>(&l::LinkeList<T>) -> &Maybe<T>
+fn pop[T](&l::LinkeList[T]) -> &Maybe[T]
     let &n = &l.node;
 
     match &n
@@ -35,7 +35,7 @@ fn pop<T>(&l::LinkeList<T>) -> &Maybe<T>
     return &n
 end
 
-fn get<T>(&l::LinkeList<T>, i::Sint) -> &Maybe<Sint>
+fn get[T](&l::LinkeList[T], i::Sint) -> &Maybe[Sint]
     let &n = &l.node
 
     if i<= 1
@@ -54,14 +54,14 @@ fn get<T>(&l::LinkeList<T>, i::Sint) -> &Maybe<Sint>
     return &n
 end
 
-fn mystery(&list::LinkedList<Sint>)
+fn mystery(&list::LinkedList[Sint])
     for &i in &list
         &i += 1
     end
 end
 
 fn main()
-    let &ll = LinkedList<Sint>(Nothing)
+    let &ll = LinkedList[Sint](Nothing)
     let @x = 14
     let @y = 21
 
@@ -77,7 +77,7 @@ fn main()
     println(y)
 end
 
-fn println<T>(x::T)
+fn println[T](x::T)
     print(x)
     print("\n")
 end

@@ -46,7 +46,7 @@ Proposed solution
 
 full proposal:
 
-  i_<fname>_a[_<ArgType>*]
+  i_[fname]_a[_[ArgType]*]
 
 
 some examples

@@ -5,7 +5,7 @@
 # here we have a foo which takes a 2 dimensional Array of Sint
 # we capture the size of the first dimension (x) into `xd`
 # we capture the size of the second dimension (y) into `yd`
-fn init( &arr :: Array<Sint, xd, yd> )
+fn init( &arr :: Array[Sint, xd, yd] )
     for x in 0..xd
         for y in 0..yd {
             &arr[x][y] = x + y
@@ -14,7 +14,7 @@ fn init( &arr :: Array<Sint, xd, yd> )
 end
 
 fn main()
-    let &a = Array<Sint, 4, 4>()
+    let &a = Array[Sint, 4, 4]()
 
     init(&a)
 
