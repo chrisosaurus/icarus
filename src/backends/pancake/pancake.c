@@ -161,7 +161,7 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
         puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
         return 0;
     }
-    if (!ic_backend_pancake_bytecode_arg1_set_char(bc_entry_call, "main")) {
+    if (!ic_backend_pancake_bytecode_arg1_set_char(bc_entry_call, "main()")) {
         puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
         return 0;
     }
