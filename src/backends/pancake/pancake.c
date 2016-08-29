@@ -2,6 +2,7 @@
 
 #include "../../analyse/data/kludge.h"
 #include "../../data/dict.h"
+#include "../../parse/data/expr.h"
 #include "../../transform/data/tbody.h"
 #include "data/bytecode.h"
 #include "data/instructions.h"
@@ -479,15 +480,36 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
     /* current stmt in body */
     struct ic_transform_ir_stmt *tstmt = 0;
 
-    /* let, used only if tstmt is let */
+    /* let, used only if tstmt is let
+     * used to decompose let
+     */
     struct ic_transform_ir_let *tlet = 0;
     struct ic_transform_ir_expr *texpr = 0;
+    struct ic_transform_ir_let_literal *tlet_lit = 0;
+    struct ic_transform_ir_let_expr *tlet_expr = 0;
+    struct ic_transform_ir_fcall *tfcall = 0;
+    struct ic_expr_func_call *fcall = 0;
+    struct ic_decl_func *decl_func = 0;
+
+    /* length of fcall args */
+    unsigned int fcall_len = 0;
+    /* current offset into fcall args */
+    unsigned int fcall_i = 0;
+    /* current fcall arg */
+    struct ic_symbol *fcall_arg = 0;
+    /* function to call */
+    char *fdecl_sig_mangled = 0;
+    /* call instruction */
+    struct ic_backend_pancake_bytecode *bc_fcall_call = 0;
 
     /* name of literal */
     char *let_literal_name_ch = 0;
 
     /* current local */
     struct ic_backend_pancake_local *local = 0;
+
+    /* current offset, used by fcall */
+    unsigned int cur_offset = 0;
 
     if (!instructions) {
         puts("ic_backend_pancake_compile_fdecl_body: instructions was null");
@@ -560,17 +582,18 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
 
                 switch (tlet->tag) {
                     case ic_transform_ir_let_type_literal:
-                        /* FIXME TODO diving deep into tlet is gross */
-                        local = ic_backend_pancake_local_new(tlet->u.lit.name, icpl_literal);
+                        /* FIXME TODO consider adding some error handling */
+                        tlet_lit = &(tlet->u.lit);
+                        local = ic_backend_pancake_local_new(tlet_lit->name, icpl_literal);
                         if (!local) {
                             puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_local failed");
                             return 0;
                         }
-                        if (!ic_backend_pancake_local_set_literal(local, tlet->u.lit.literal)) {
+                        if (!ic_backend_pancake_local_set_literal(local, tlet_lit->literal)) {
                             puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_set_literal failed");
                             return 0;
                         }
-                        let_literal_name_ch = ic_symbol_contents(tlet->u.lit.name);
+                        let_literal_name_ch = ic_symbol_contents(tlet_lit->name);
                         if (!let_literal_name_ch) {
                             puts("ic_backend_pancake_compile_fdecl_body: call to ic_symbol_contents failed");
                             return 0;
@@ -582,10 +605,91 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
                         break;
 
                     case ic_transform_ir_let_type_expr:
-                        /* FIXME TODO diving deep into tlet is gross */
-                        texpr = tlet->u.expr.expr;
+                        /*
+                         *  let name::type = fcall(args...)
+                         *    push all args onto stack (using dict)
+                         *    call fcall
+                         *    register return position to name (along with access count)
+                         *    if void:
+                         *      compile-time error
+                         */
+
+                        /* FIXME TODO consider adding some error handling */
+                        tlet_expr = &(tlet->u.expr);
+                        texpr = tlet_expr->expr;
+                        tfcall = texpr->fcall;
                         if (!ic_backend_pancake_compile_expr(instructions, kludge, texpr)) {
                             puts("ic_backend_pancake_compile_fdecl_body: let expr call to ic_backend_pancake_compile_expr failed");
+                            return 0;
+                        }
+
+                        /* FIXME TODO for each arg, push onto stack */
+                        fcall_len = ic_transform_ir_fcall_length(tfcall);
+                        for (fcall_i = 0; i < fcall_len; ++fcall_i) {
+                            fcall_arg = ic_transform_ir_fcall_get_arg(tfcall, fcall_i);
+                            if (!fcall_arg) {
+                                puts("ic_backend_pancake_compile_fdecl_body: call to ic_transform_ir_fcall_get_arg failed");
+                                return 0;
+                            }
+                            /* FIXME TODO push arg onto stack */
+                        }
+
+                        /* insert call instruction to fcall */
+                        fcall = tfcall->fcall;
+                        decl_func = fcall->fdecl;
+                        fdecl_sig_mangled = ic_decl_func_sig_mangled(decl_func);
+                        if (!fdecl_sig_mangled) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_decl_func_sig_mangled failed");
+                            return 0;
+                        }
+                        bc_fcall_call = ic_backend_pancake_instructions_add(instructions, icp_call);
+                        if (!bc_fcall_call) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_add failed");
+                            return 0;
+                        }
+                        if (!ic_backend_pancake_bytecode_arg1_set_char(bc_fcall_call, fdecl_sig_mangled)) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                            return 0;
+                        }
+                        /* set number of args we call with */
+                        if (!ic_backend_pancake_bytecode_arg2_set_uint(bc_fcall_call, fcall_len)) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                            return 0;
+                        }
+
+                        /* FIXME TODO register return position to name (along with access count) */
+                        cur_offset = ic_backend_pancake_instructions_length(instructions);
+                        if (!cur_offset) {
+                            /* usually we cannot check failure, but we know we have just inserted a label */
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_length failed");
+                            return 0;
+                        }
+
+                        local = ic_backend_pancake_local_new(tlet_expr->name, icpl_offset);
+                        if (!local) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_local failed");
+                            return 0;
+                        }
+
+                        if (!ic_backend_pancake_local_set_offset(local, cur_offset)) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_set_literal failed");
+                            return 0;
+                        }
+                        let_literal_name_ch = ic_symbol_contents(tlet_expr->name);
+                        if (!let_literal_name_ch) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_symbol_contents failed");
+                            return 0;
+                        }
+                        if (!ic_dict_insert(locals, let_literal_name_ch, local)) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_dict_insert failed");
+                            return 0;
+                        }
+                        /* FIXME TODO is the above offset correct? */
+
+                        /* if void: compile-time error */
+                        if (ic_decl_func_is_void(decl_func)) {
+                            puts("ic_backend_pancake_compile_fdecl_body: function used in let was void");
+                            printf("function called and assigned to let '%s', but function is void\n", let_literal_name_ch);
                             return 0;
                         }
 
