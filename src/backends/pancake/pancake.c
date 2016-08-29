@@ -886,7 +886,7 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
             return 0;
         }
         /* mark as accessed */
-        local->accessed = true;
+        arg_local->accessed = true;
         /* deal with different local cases */
         switch (arg_local->tag) {
             case icpl_literal:
