@@ -1,6 +1,8 @@
 TODO:
 -----
 
+* refactor out arg handling from let_expr
+* refactor our fcall logic from let_expr
 * should be easy to test if a given fdecl returns void or not
 * we shouldn't be comparing "void" strings in backend 2c
 * all print methods should take `FILE *` argument rather than assuming stdout
