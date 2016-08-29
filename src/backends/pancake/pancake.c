@@ -575,9 +575,9 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
                     return 0;
                 }
 
-                if (fcall_is_void) {
+                if (!fcall_is_void) {
                     puts("ic_backend_pancake_compile_fdecl_body: function used in void context but was not void");
-                    printf("non-void function called in void context '%s'\n", let_literal_name_ch);
+                    printf("non-void function called in void context\n");
                     return 0;
                 }
 
