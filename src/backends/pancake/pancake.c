@@ -838,9 +838,6 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
     /* local for each arg */
     struct ic_backend_pancake_local *arg_local = 0;
 
-    /* current local */
-    struct ic_backend_pancake_local *local = 0;
-
     if (!instructions) {
         puts("ic_backend_pancake_compile_fcall: instructions was null");
         return 0;
@@ -902,7 +899,7 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
                     puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_add failed");
                     return 0;
                 }
-                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, local->u.offset)) {
+                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, arg_local->u.offset)) {
                     puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
                     return 0;
                 }
