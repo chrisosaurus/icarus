@@ -161,6 +161,15 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             return 1;
             break;
 
+        /* copyarg argn::uint */
+        case icp_copyarg:
+            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+
+            fprintf(file, "copyarg %" PRId32, uint);
+
+            return 1;
+            break;
+
         /* call fname::stringargn */
         case icp_call:
 
@@ -648,6 +657,8 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_uint(struct ic_backend_pancake
     switch (bytecode->tag) {
         /* push_uint uint */
         case icp_pushuint:
+        /* copyarg argn::uint */
+        case icp_copyarg:
         /* pop n::uint */
         case icp_pop:
         /* jmp addr::uint */
