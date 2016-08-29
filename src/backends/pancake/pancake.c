@@ -708,8 +708,7 @@ unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructi
         return 0;
     }
 
-    puts("ic_backend_pancake_compile_expr: implementation pending");
-    return 0;
+    return 1;
 }
 
 /* interpret bytecode in runtime
