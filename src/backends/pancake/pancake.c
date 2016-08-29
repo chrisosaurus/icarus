@@ -660,9 +660,17 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
                                     break;
 
                                 case icpl_offset:
-                                    /* FIXME TODO insert `copyarg argn` instruction */
-                                    puts("ic_backend_pancake_compile_fdecl_body: acpl_offset support unimplemented");
-                                    return 0;
+                                    /* insert `copyarg argn` instruction */
+                                    instruction = ic_backend_pancake_instructions_add(instructions, icp_copyarg);
+                                    if (!instruction) {
+                                        puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_add failed");
+                                        return 0;
+                                    }
+                                    if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, local->u.offset)) {
+                                        puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                                        return 0;
+                                    }
+
                                     break;
 
                                 default:
