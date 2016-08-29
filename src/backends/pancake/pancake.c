@@ -499,8 +499,8 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
     struct ic_symbol *fcall_arg = 0;
     /* function to call */
     char *fdecl_sig_mangled = 0;
-    /* call instruction */
-    struct ic_backend_pancake_bytecode *bc_fcall_call = 0;
+    /* instruction */
+    struct ic_backend_pancake_bytecode *instruction = 0;
 
     /* name of literal */
     char *let_literal_name_ch = 0;
@@ -680,17 +680,17 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
                             puts("ic_backend_pancake_compile_fdecl_body: call to ic_decl_func_sig_mangled failed");
                             return 0;
                         }
-                        bc_fcall_call = ic_backend_pancake_instructions_add(instructions, icp_call);
-                        if (!bc_fcall_call) {
+                        instruction = ic_backend_pancake_instructions_add(instructions, icp_call);
+                        if (!instruction) {
                             puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_add failed");
                             return 0;
                         }
-                        if (!ic_backend_pancake_bytecode_arg1_set_char(bc_fcall_call, fdecl_sig_mangled)) {
+                        if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_sig_mangled)) {
                             puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
                             return 0;
                         }
                         /* set number of args we call with */
-                        if (!ic_backend_pancake_bytecode_arg2_set_uint(bc_fcall_call, fcall_len)) {
+                        if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, fcall_len)) {
                             puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
                             return 0;
                         }
