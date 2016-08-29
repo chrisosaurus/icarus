@@ -826,7 +826,7 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
     /* current fcall arg */
     struct ic_symbol *fcall_arg = 0;
     /* function to call */
-    char *fdecl_sig_mangled = 0;
+    char *fdecl_sig_call = 0;
     /* instruction */
     struct ic_backend_pancake_bytecode *instruction = 0;
 
@@ -916,9 +916,9 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
     /* insert call instruction to fcall */
     fcall = tfcall->fcall;
     decl_func = fcall->fdecl;
-    fdecl_sig_mangled = ic_decl_func_sig_mangled(decl_func);
-    if (!fdecl_sig_mangled) {
-        puts("ic_backend_pancake_compile_fdecl_body: call to ic_decl_func_sig_mangled failed");
+    fdecl_sig_call = ic_decl_func_sig_call(decl_func);
+    if (!fdecl_sig_call) {
+        puts("ic_backend_pancake_compile_fdecl_body: call to ic_decl_func_sig_call failed");
         return 0;
     }
     instruction = ic_backend_pancake_instructions_add(instructions, icp_call);
@@ -926,7 +926,7 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
         puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_add failed");
         return 0;
     }
-    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_sig_mangled)) {
+    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_sig_call)) {
         puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
         return 0;
     }
