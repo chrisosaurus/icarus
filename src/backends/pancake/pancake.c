@@ -508,9 +508,6 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
     /* current local */
     struct ic_backend_pancake_local *local = 0;
 
-    /* current offset, used by fcall */
-    unsigned int cur_offset = 0;
-
     if (!instructions) {
         puts("ic_backend_pancake_compile_fdecl_body: instructions was null");
         return 0;
@@ -657,34 +654,10 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
                             return 0;
                         }
 
-                        /* FIXME TODO register return position to name (along with access count) */
-                        cur_offset = ic_backend_pancake_instructions_length(instructions);
-                        if (!cur_offset) {
-                            /* usually we cannot check failure, but we know we have just inserted a label */
-                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_length failed");
-                            return 0;
-                        }
-
-                        local = ic_backend_pancake_local_new(tlet_expr->name, icpl_offset);
-                        if (!local) {
-                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_local failed");
-                            return 0;
-                        }
-
-                        if (!ic_backend_pancake_local_set_offset(local, cur_offset)) {
-                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_set_literal failed");
-                            return 0;
-                        }
-                        let_literal_name_ch = ic_symbol_contents(tlet_expr->name);
-                        if (!let_literal_name_ch) {
-                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_symbol_contents failed");
-                            return 0;
-                        }
-                        if (!ic_dict_insert(locals, let_literal_name_ch, local)) {
-                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_dict_insert failed");
-                            return 0;
-                        }
-                        /* FIXME TODO is the above offset correct? */
+                        /* FIXME TODO register return position to name (along with access count)
+                         * NB: this is not a trivial problem, as this is the runtime offset, which may be tricky
+                         */
+                        puts("ic_backend_pancake_compile_fdecl_body: return value not yet handled");
 
                         /* if void: compile-time error */
                         if (ic_decl_func_is_void(decl_func)) {
