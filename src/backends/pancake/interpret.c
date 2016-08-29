@@ -72,6 +72,14 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
              * NB: error if no previous item was saved
              */
             case icp_restore:
+            /* store key::string
+             * stores current top of stack under key */
+            case icp_store:
+            /* load key::string
+             * loads from key onto under
+             * FIXME TODO figure out load vs push */
+            case icp_load:
+
                 puts("ic_backend_pancake_interpret: unimplemeneted bytecode instruction");
                 return 0;
                 break;

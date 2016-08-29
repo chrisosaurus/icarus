@@ -262,6 +262,30 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             return 1;
             break;
 
+        case icp_store:
+            ch = ic_backend_pancake_bytecode_arg1_get_char(bytecode);
+            if (!ch) {
+                puts("ic_backend_pancake_bytecode_print: call to ic_backend_pancake_bytecode_arg1_get_char failed");
+                return 0;
+            }
+
+            fprintf(file, "store %s", ch);
+
+            return 1;
+            break;
+
+        case icp_load:
+            ch = ic_backend_pancake_bytecode_arg1_get_char(bytecode);
+            if (!ch) {
+                puts("ic_backend_pancake_bytecode_print: call to ic_backend_pancake_bytecode_arg1_get_char failed");
+                return 0;
+            }
+
+            fprintf(file, "load %s", ch);
+
+            return 1;
+            break;
+
         default:
             puts("ic_backend_pancake_bytecode_print: impossible case");
             return 0;
@@ -381,6 +405,13 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_char(struct ic_backend_pancake
         case icp_call:
         /* panic desc::str */
         case icp_panic:
+        /* store key::string
+         * stores current top of stack under key */
+        case icp_store:
+        /* load key::string
+         * loads from key onto under
+         * FIXME TODO figure out load vs push */
+        case icp_load:
             break;
 
         default:

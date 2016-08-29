@@ -50,6 +50,13 @@ enum ic_backend_pancake_bytecode_type {
      * NB: error if no previous item was saved
      */
     icp_restore,
+    /* store key::string
+     * stores current top of stack under key */
+    icp_store,
+    /* load key::string
+     * loads from key onto under
+     * FIXME TODO figure out load vs push */
+    icp_load,
 };
 
 enum ic_backend_pancake_bytecode_arg_type {
