@@ -44,7 +44,7 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_transform_ir_expr *texpr);
+unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_dict *locals, struct ic_transform_ir_expr *texpr, unsigned int *is_void);
 
 /* compile an function call into pancake bytecode
  *
@@ -501,7 +501,6 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
     struct ic_transform_ir_expr *texpr = 0;
     struct ic_transform_ir_let_literal *tlet_lit = 0;
     struct ic_transform_ir_let_expr *tlet_expr = 0;
-    struct ic_transform_ir_fcall *tfcall = 0;
 
     /* name of literal */
     char *let_literal_name_ch = 0;
@@ -570,8 +569,18 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
 
         switch (tstmt->tag) {
             case ic_transform_ir_stmt_type_expr:
-                puts("ic_backend_pancake_compile_fdecl_body: expr unimplemented");
-                return 0;
+                texpr = &(tstmt->u.expr);
+                if (!ic_backend_pancake_compile_expr(instructions, kludge, locals, texpr, &fcall_is_void)) {
+                    puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_compile_expr failed");
+                    return 0;
+                }
+
+                if (fcall_is_void) {
+                    puts("ic_backend_pancake_compile_fdecl_body: function used in void context but was not void");
+                    printf("non-void function called in void context '%s'\n", let_literal_name_ch);
+                    return 0;
+                }
+
                 break;
 
             case ic_transform_ir_stmt_type_let:
@@ -618,14 +627,8 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
                         /* FIXME TODO consider adding some error handling */
                         tlet_expr = &(tlet->u.expr);
                         texpr = tlet_expr->expr;
-                        tfcall = texpr->fcall;
-                        if (!ic_backend_pancake_compile_expr(instructions, kludge, texpr)) {
+                        if (!ic_backend_pancake_compile_expr(instructions, kludge, locals, texpr, &fcall_is_void)) {
                             puts("ic_backend_pancake_compile_fdecl_body: let expr call to ic_backend_pancake_compile_expr failed");
-                            return 0;
-                        }
-
-                        if (!ic_backend_pancake_compile_fcall(instructions, kludge, locals, tfcall, &fcall_is_void)) {
-                            puts("ic_backend_pancake_compile_fdecl_body: let expr call to ic_backend_pancake_compile_fcall failed");
                             return 0;
                         }
 
@@ -672,7 +675,8 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_transform_ir_expr *texpr) {
+unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_dict *locals, struct ic_transform_ir_expr *texpr, unsigned int *is_void) {
+    struct ic_transform_ir_fcall *tfcall = 0;
     if (!instructions) {
         puts("ic_backend_pancake_compile_expr: instructions was null");
         return 0;
@@ -683,8 +687,24 @@ unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructi
         return 0;
     }
 
+    if (!locals) {
+        puts("ic_backend_pancake_compile_expr: locals was null");
+        return 0;
+    }
+
     if (!texpr) {
         puts("ic_backend_pancake_compile_expr: texpr was null");
+        return 0;
+    }
+
+    if (!is_void) {
+        puts("ic_backend_pancake_compile_expr: is_void was null");
+        return 0;
+    }
+
+    tfcall = texpr->fcall;
+    if (!ic_backend_pancake_compile_fcall(instructions, kludge, locals, tfcall, is_void)) {
+        puts("ic_backend_pancake_compile_fdecl_body: let expr call to ic_backend_pancake_compile_fcall failed");
         return 0;
     }
 
