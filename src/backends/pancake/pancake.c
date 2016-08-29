@@ -46,6 +46,13 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
  */
 unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_transform_ir_expr *texpr);
 
+/* add a push instruction for a constant
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_compile_push_constant(struct ic_backend_pancake_instructions *instructions, struct ic_backend_pancake_local *local);
+
 /* pancake - stack based interpreter backend
  *
  * returns 1 on success
@@ -648,15 +655,11 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
                             /* deal with different local cases */
                             switch (arg_local->tag) {
                                 case icpl_literal:
-                                    /* FIXME TODO push appropriate literal
-                                   * pushbool bool
-                                   * pushuint uint
-                                   * pushint  int
-                                   * pushstr  str
-                                   * push     key::string
-                                   */
-                                    puts("ic_backend_pancake_compile_fdecl_body: acpl_literal support unimplemented");
-                                    return 0;
+
+                                    if (!ic_backend_pancake_compile_push_constant(instructions, local)) {
+                                        puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_compile_push_constant failed");
+                                        return 0;
+                                    }
                                     break;
 
                                 case icpl_offset:
@@ -785,4 +788,91 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
 
     puts("ic_backend_pancake_interpret: unimplemented");
     return 0;
+}
+
+/* add a push instruction for a constant
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_compile_push_constant(struct ic_backend_pancake_instructions *instructions, struct ic_backend_pancake_local *local) {
+    struct ic_expr_constant *literal = 0;
+    struct ic_backend_pancake_bytecode *instruction = 0;
+    char *str_value = 0;
+
+    /* push appropriate literal
+     * pushbool bool
+     * pushuint uint FIXME TODO
+     * pushint  int
+     * pushstr  str
+     * push     key::string FIXME TODO
+     */
+    if (!instructions) {
+        puts("ic_backend_pancake_compile_push_constant: instructions was null");
+        return 0;
+    }
+
+    if (!local) {
+        puts("ic_backend_pancake_compile_push_constant: local was null");
+        return 0;
+    }
+
+    literal = ic_backend_pancake_local_get_literal(local);
+    if (!literal) {
+        puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_local_get_literal failed");
+        return 0;
+    }
+
+    switch (literal->tag) {
+        case ic_expr_constant_type_integer:
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_pushint);
+            if (!instruction) {
+                puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_instructions_add failed");
+                return 0;
+            }
+            if (!ic_backend_pancake_bytecode_arg1_set_sint(instruction, literal->u.integer)) {
+                puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+                return 0;
+            }
+
+            break;
+
+        case ic_expr_constant_type_string:
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
+            if (!instruction) {
+                puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_instructions_add failed");
+                return 0;
+            }
+            str_value = ic_string_contents(&(literal->u.string));
+            if (!str_value) {
+                puts("ic_backend_pancake_compile_push_constant: call to ic_string_contents failed");
+                return 0;
+            }
+            if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, str_value)) {
+                puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+                return 0;
+            }
+
+            break;
+
+        case ic_expr_constant_type_boolean:
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_pushbool);
+            if (!instruction) {
+                puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_instructions_add failed");
+                return 0;
+            }
+            if (!ic_backend_pancake_bytecode_arg1_set_bool(instruction, literal->u.boolean)) {
+                puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+                return 0;
+            }
+
+            break;
+
+        default:
+            puts("ic_backend_pancake_compile_push_constant: unsupported literal->tag");
+            return 0;
+            break;
+    }
+
+    return 1;
 }
