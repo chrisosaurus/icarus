@@ -360,29 +360,6 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
 
     is_void = ic_decl_func_is_void(fdecl);
 
-    /* for each statement we currently have 4 possibilities:
-     *
-     *  let name::type = literal
-     *    register name to {value:literal, accessed:0}
-     *  let name::type = fcall(args...)
-     *    push all args onto stack (using dict)
-     *    call fcall
-     *    register return position to name (along with count)
-     *    if void:
-     *      compile-time error
-     *  fcall(args...)
-     *    push all args onto stack (using dict)
-     *    call fcall
-     *    if non-void:
-     *      pop 1 - throw away return value, give warning
-     *  return name
-     *    set return_register to name
-     *    invoke exit process
-     *
-     *
-     */
-    /* FIXME TODO */
-
     fdecl_tbody = fdecl->tbody;
     if (!fdecl_tbody) {
         puts("ic_backend_pancake_compile_fdecl: no tbody found on fdecl");
@@ -538,6 +515,28 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
     }
 
     len = ic_transform_body_length(fdecl_tbody);
+
+    /* for each statement we currently have 4 possibilities:
+     *
+     *  let name::type = literal
+     *    register name to {value:literal, accessed:0}
+     *  let name::type = fcall(args...)
+     *    push all args onto stack (using dict)
+     *    call fcall
+     *    register return position to name (along with count)
+     *    if void:
+     *      compile-time error
+     *  fcall(args...)
+     *    push all args onto stack (using dict)
+     *    call fcall
+     *    if non-void:
+     *      pop 1 - throw away return value, give warning
+     *  return name
+     *    set return_register to name
+     *    invoke exit process
+     *
+     *
+     */
 
     for (i = 0; i < len; ++i) {
         tstmt = ic_transform_body_get(fdecl_tbody, i);
