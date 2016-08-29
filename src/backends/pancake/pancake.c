@@ -890,7 +890,7 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
         /* deal with different local cases */
         switch (arg_local->tag) {
             case icpl_literal:
-                if (!ic_backend_pancake_compile_push_constant(instructions, local)) {
+                if (!ic_backend_pancake_compile_push_constant(instructions, arg_local)) {
                     puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_compile_push_constant failed");
                     return 0;
                 }
