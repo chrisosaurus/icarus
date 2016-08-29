@@ -505,6 +505,11 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
     /* name of literal */
     char *let_literal_name_ch = 0;
 
+    /* name of each arg */
+    char *arg_name = 0;
+    /* local for each arg */
+    struct ic_backend_pancake_local *arg_local = 0;
+
     /* current local */
     struct ic_backend_pancake_local *local = 0;
 
@@ -620,7 +625,7 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
                             return 0;
                         }
 
-                        /* FIXME TODO for each arg, push onto stack */
+                        /* for each arg, push onto stack */
                         fcall_len = ic_transform_ir_fcall_length(tfcall);
                         for (fcall_i = 0; i < fcall_len; ++fcall_i) {
                             fcall_arg = ic_transform_ir_fcall_get_arg(tfcall, fcall_i);
@@ -628,7 +633,43 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
                                 puts("ic_backend_pancake_compile_fdecl_body: call to ic_transform_ir_fcall_get_arg failed");
                                 return 0;
                             }
-                            /* FIXME TODO push arg onto stack */
+                            arg_name = ic_symbol_contents(fcall_arg);
+                            if (!arg_name) {
+                                puts("ic_backend_pancake_compile_fdecl_body: call to ic_symbol_contents failed");
+                                return 0;
+                            }
+                            arg_local = ic_dict_get(locals, arg_name);
+                            if (!arg_local) {
+                                puts("ic_backend_pancake_compile_fdecl_body: call to ic_dict_get failed");
+                                return 0;
+                            }
+                            /* mark as accessed */
+                            local->accessed = true;
+                            /* deal with different local cases */
+                            switch (arg_local->tag) {
+                                case icpl_literal:
+                                    /* FIXME TODO push appropriate literal
+                                   * pushbool bool
+                                   * pushuint uint
+                                   * pushint  int
+                                   * pushstr  str
+                                   * push     key::string
+                                   */
+                                    puts("ic_backend_pancake_compile_fdecl_body: acpl_literal support unimplemented");
+                                    return 0;
+                                    break;
+
+                                case icpl_offset:
+                                    /* FIXME TODO insert `copyarg argn` instruction */
+                                    puts("ic_backend_pancake_compile_fdecl_body: acpl_offset support unimplemented");
+                                    return 0;
+                                    break;
+
+                                default:
+                                    puts("ic_backend_pancake_compile_fdecl_body: impossible arg_local->arg");
+                                    return 0;
+                                    break;
+                            }
                         }
 
                         /* insert call instruction to fcall */
