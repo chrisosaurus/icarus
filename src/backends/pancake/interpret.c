@@ -55,7 +55,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
                     puts("ic_backend_pancake_interpret: ic_backend_pancake_bytecode_arg1_get_char failed");
                     return 0;
                 }
-                puts(str);
+                printf("Runtime panic: %s\n", str);
                 exit(1);
                 break;
 
