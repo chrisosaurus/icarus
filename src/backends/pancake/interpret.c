@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "data/runtime.h"
 #include "pancake.h"
@@ -16,6 +17,8 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
     struct ic_backend_pancake_instructions *instructions = 0;
     struct ic_backend_pancake_return_stack *return_stack = 0;
     struct ic_backend_pancake_value_stack *value_stack = 0;
+
+    char *str = 0;
 
     if (!runtime) {
         puts("ic_backend_pancake_interpret: runtime was null");
@@ -44,6 +47,23 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
                     return 0;
                 }
                 break;
+
+            /* panic desc::str */
+            case icp_panic:
+                str = ic_backend_pancake_bytecode_arg1_get_char(instruction);
+                if (!str) {
+                    puts("ic_backend_pancake_interpret: ic_backend_pancake_bytecode_arg1_get_char failed");
+                    return 0;
+                }
+                puts(str);
+                exit(1);
+                break;
+
+            /* exit_success */
+            case icp_exit:
+                exit(0);
+                break;
+
             /* push_bool bool */
             case icp_pushbool:
             /* push_uint uint */
@@ -68,10 +88,6 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
             case icp_jif:
             /* jnif addr::uint */
             case icp_jnif:
-            /* panic desc::str */
-            case icp_panic:
-            /* exit_success */
-            case icp_exit:
             /* save current top of stack to restore later
              * NB: save will overwrite any previously saved value
              */
