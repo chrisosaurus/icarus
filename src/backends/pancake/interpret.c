@@ -36,6 +36,14 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
         switch (instruction->tag) {
             /* fdecl_label fdecl_sig_call */
             case icp_label:
+                /* noop advance */
+                /* assigning to instruction just to check, not used */
+                instruction = ic_backend_pancake_instructions_advance(instructions);
+                if (!instruction) {
+                    puts("ic_backend_pancake_interpret: ic_backend_pancake_instructions_advance failed");
+                    return 0;
+                }
+                break;
             /* push_bool bool */
             case icp_pushbool:
             /* push_uint uint */
