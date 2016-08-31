@@ -4,7 +4,7 @@
 enum ic_backend_pancake_value_type {
     ic_backend_pancake_value_type_bool,
     ic_backend_pancake_value_type_uint,
-    ic_backend_pancake_value_type_int,
+    ic_backend_pancake_value_type_sint,
     ic_backend_pancake_value_type_string,
     ic_backend_pancake_value_type_ref,
 };
@@ -14,12 +14,11 @@ struct ic_backend_pancake_value {
     union {
         unsigned int boolean;
 
-        unsigned int uinteger;
+        unsigned int uint;
 
-        int integer;
+        int sint;
 
-        /* FIXME */
-        void *string;
+        char *string;
 
         /* FIXME */
         void *ref;
