@@ -18,7 +18,14 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
     struct ic_backend_pancake_return_stack *return_stack = 0;
     struct ic_backend_pancake_value_stack *value_stack = 0;
 
+    /* values inside our instructions we may want to unpack */
     char *str = 0;
+    int sint = 0;
+    unsigned int uint = 0;
+    bool boolean = false;
+
+    /* current value we are working with */
+    struct ic_backend_pancake_value *value = 0;
 
     if (!runtime) {
         puts("ic_backend_pancake_interpret: runtime was null");
@@ -66,12 +73,66 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
 
             /* push_bool bool */
             case icp_pushbool:
+                boolean = ic_backend_pancake_bytecode_arg1_get_bool(instruction);
+
+                value = ic_backend_pancake_value_stack_push(value_stack);
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_push failed");
+                    return 0;
+                }
+
+                value->tag = ic_backend_pancake_value_type_bool;
+                value->u.boolean = boolean;
+
+                break;
+
             /* push_uint uint */
             case icp_pushuint:
+                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+                value = ic_backend_pancake_value_stack_push(value_stack);
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_push failed");
+                    return 0;
+                }
+
+                value->tag = ic_backend_pancake_value_type_uint;
+                value->u.uint = uint;
+
+                break;
+
             /* push_int int */
             case icp_pushint:
+                sint = ic_backend_pancake_bytecode_arg1_get_sint(instruction);
+                value = ic_backend_pancake_value_stack_push(value_stack);
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_push failed");
+                    return 0;
+                }
+
+                value->tag = ic_backend_pancake_value_type_sint;
+                value->u.sint = sint;
+
+                break;
+
             /* push_str string */
             case icp_pushstr:
+                str = ic_backend_pancake_bytecode_arg1_get_char(instruction);
+                if (!str) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_bytecode_arg1_get_char failed");
+                    return 0;
+                }
+
+                value = ic_backend_pancake_value_stack_push(value_stack);
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_push failed");
+                    return 0;
+                }
+
+                value->tag = ic_backend_pancake_value_type_string;
+                value->u.string = str;
+
+                break;
+
             /* push key::string */
             case icp_push:
             /* copyarg argn::uint */
