@@ -238,7 +238,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
                 }
 
                 /* n args */
-                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+                uint = ic_backend_pancake_bytecode_arg2_get_uint(instruction);
 
                 /* get current offset */
                 cur_offset = ic_backend_pancake_instructions_get_offset(instructions);
