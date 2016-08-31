@@ -32,4 +32,11 @@ struct ic_backend_pancake_value {
  */
 unsigned int ic_backend_pancake_value_copy(struct ic_backend_pancake_value *value_from, struct ic_backend_pancake_value *value_to);
 
+/* print value to provided file
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_value_print(struct ic_backend_pancake_value *value, FILE *file);
+
 #endif /* IC_BACKEND_PANCAKE_VALUE_H */

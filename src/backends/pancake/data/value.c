@@ -48,3 +48,48 @@ unsigned int ic_backend_pancake_value_copy(struct ic_backend_pancake_value *valu
 
     return 1;
 }
+
+/* print value to provided file
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_value_print(struct ic_backend_pancake_value *value, FILE *file) {
+    if (!value) {
+        puts("ic_backend_pancake_value_print: value was null");
+        return 0;
+    }
+
+    if (!file) {
+        puts("ic_backend_pancake_value_print: file was null");
+        return 0;
+    }
+
+    switch (value->tag) {
+        case ic_backend_pancake_value_type_bool:
+            fprintf(file, "bool: %u\n", value->u.boolean);
+            break;
+
+        case ic_backend_pancake_value_type_uint:
+            fprintf(file, "uint: %u\n", value->u.uint);
+            break;
+
+        case ic_backend_pancake_value_type_sint:
+            fprintf(file, "sint: %d\n", value->u.sint);
+            break;
+
+        case ic_backend_pancake_value_type_string:
+            fprintf(file, "string: %s\n", value->u.string);
+            break;
+
+        case ic_backend_pancake_value_type_ref:
+            puts("ic_backend_pancake_value_print: unable to print ref");
+            return 0;
+
+        default:
+            puts("ic_backend_pancake_value_print: impossible value->tag");
+            return 0;
+    }
+
+    return 0;
+}

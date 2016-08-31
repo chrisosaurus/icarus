@@ -68,6 +68,8 @@ unsigned int ic_backend_pancake_builtin_println_string(struct ic_backend_pancake
 
     if (value->tag != ic_backend_pancake_value_type_string) {
         puts("ic_backend_pancake_builtin_println_string: value was not of expected type string");
+        fputs("found: ", stdout);
+        ic_backend_pancake_value_print(value, stdout);
         return 0;
     }
 
