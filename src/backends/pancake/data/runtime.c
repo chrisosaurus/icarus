@@ -50,9 +50,9 @@ unsigned int ic_backend_pancake_runtime_init(struct ic_backend_pancake_runtime *
     /* FIXME TODO decide on instructions ownership */
     runtime->instructions = instructions;
 
-    runtime->return_stack = ic_backend_pancake_return_stack_new();
-    if (!(runtime->return_stack)) {
-        puts("ic_backend_pancake_runtime_init: call to ic_backend_pancake_return_stack_new failed");
+    runtime->call_info_stack = ic_backend_pancake_call_info_stack_new();
+    if (!(runtime->call_info_stack)) {
+        puts("ic_backend_pancake_runtime_init: call to ic_backend_pancake_call_info_stack_new failed");
         return 0;
     }
 
@@ -78,8 +78,8 @@ unsigned int ic_backend_pancake_runtime_destroy(struct ic_backend_pancake_runtim
         return 0;
     }
 
-    if (!ic_backend_pancake_return_stack_destroy(runtime->return_stack, 1)) {
-        puts("ic_backend_pancake_runtime_init: call to ic_backend_pancake_return_stack_destroy failed");
+    if (!ic_backend_pancake_call_info_stack_destroy(runtime->call_info_stack, 1)) {
+        puts("ic_backend_pancake_runtime_init: call to ic_backend_pancake_call_info_stack_destroy failed");
         return 0;
     }
 
@@ -90,7 +90,7 @@ unsigned int ic_backend_pancake_runtime_destroy(struct ic_backend_pancake_runtim
 
     /* FIXME TODO decide on instructions ownership */
 
-    runtime->return_stack = 0;
+    runtime->call_info_stack = 0;
     runtime->value_stack = 0;
     runtime->instructions = 0;
 
