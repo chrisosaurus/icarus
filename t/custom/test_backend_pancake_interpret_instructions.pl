@@ -10,14 +10,18 @@ die "Could not find '$path'\n" unless -e $path;
 
 my $input = <<EOF;
 label dummy
+pushuint 4
+pushuint 3
 pushuint 6
 pushuint 7
+call_builtin plus(Uint,Uint) 2
 call_builtin plus(Uint,Uint) 2
 exit
 EOF
 
 my $expected = <<EOF;
-uint: 13
+uint: 16
+uint: 4
 EOF
 
 my $pid = open3(my $write, my $read, my $error, "$path") or die "Failed to open $path";
