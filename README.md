@@ -74,8 +74,8 @@ In progress (currently lacking for minimal proof of concept):
 * backends (compiler, interpreter)
 
 
-Work so far
-===========
+Work so far - 2c backend
+========================
 
 The life of a simple icarus program
 
@@ -152,13 +152,71 @@ the output:
 
     Hello there Jennifer, very nice to meet you
 
+Work so far - pancake backend
+========================
+
+if we have the following data in `here.ic`
+
+    fn foo(s::String)
+      println(s)
+    end
+
+    fn main()
+      foo("Hello world")
+    end
+
+we can run this through the `pancake` backend which will
+first compile it to bytecode and then interpret it
+
+    ./icarus here.ic pancake
+
+which shows us
+
+    ...
+
+    transform output (PENDING):
+    ----------------
+    ic_transform_stmt: transform implementation pending
+    ic_transform_stmt: transform implementation pending
+    ic_transform: transform implementation pending
+    ----------------
+    fn foo(s::String) -> Void
+        println(s)
+    end
+    fn main() -> Void
+        let _l1::String = "Hello world"
+        foo(_l1)
+    end
+
+    backend pancake selected (PENDING):
+    ic_backend_pancake_compile_fdecl_body: return value not yet handled
+    ic_backend_pancake_compile_fdecl_body: return value not yet handled
+    ic_backend_pancake_compile: implementation pending
+    Pancake bytecode:
+    =================
+    label entry
+    call main() 0
+    exit
+    label foo(String)
+    copyarg 0
+    call_builtin println(String) 1
+    pop 1
+    return_void
+    label main()
+    pushstr Hello world
+    call foo(String) 1
+    return_void
+    =================
+    Hello world
+
+
 
 Current holes
 =============
 
 * The IR is incomplete
 * The compiler (2c) is incomplete
-* The interpreter (pancake) has only just started
+* The interpreter (pancake) is incomplete
 
 
 Current focus
@@ -166,5 +224,5 @@ Current focus
 
 The `transform` phase - which outputs the new Icarus Transform IR
 
-The `pancake` interpreter - work is beginning
+The `pancake` interpreter - catching up quickly to `2c` backend
 
