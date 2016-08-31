@@ -50,6 +50,5 @@ unsigned int ic_backend_pancake(struct ic_kludge *kludge) {
         return 0;
     }
 
-    puts("ic_backend_pancake: unimplemented");
     return 1;
 }

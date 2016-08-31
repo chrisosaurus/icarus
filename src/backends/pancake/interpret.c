@@ -88,7 +88,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
             /* exit_success */
             case icp_exit:
-                exit(0);
+                return 1;
                 break;
 
             /* push_bool bool */
