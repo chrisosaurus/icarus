@@ -3,7 +3,7 @@
 
 /* predeclare */
 struct ic_kludge;
-struct ic_backend_pancake_runtime;
+struct ic_backend_pancake_runtime_data;
 
 /* pancake - stack based interpreter backend
  *
@@ -19,11 +19,11 @@ unsigned int ic_backend_pancake(struct ic_kludge *kludge);
  */
 struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_kludge *kludge);
 
-/* interpret bytecode in runtime
+/* interpret bytecode in runtime_data
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *runtime);
+unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data *runtime_data);
 
 #endif /* IC_BACKEND_PANCAKE_H */

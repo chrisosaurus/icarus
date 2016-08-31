@@ -1,18 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "data/runtime.h"
+#include "data/runtime_data.h"
 #include "pancake.h"
 
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 
-/* interpret bytecode in runtime
+/* interpret bytecode in runtime_data
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *runtime) {
+unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data *runtime_data) {
     struct ic_backend_pancake_bytecode *instruction = 0;
     struct ic_backend_pancake_instructions *instructions = 0;
     struct ic_backend_pancake_call_info_stack *call_info_stack = 0;
@@ -40,14 +40,14 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
     /* current call_info we are working with */
     struct ic_backend_pancake_call_info *call_info = 0;
 
-    if (!runtime) {
-        puts("ic_backend_pancake_interpret: runtime was null");
+    if (!runtime_data) {
+        puts("ic_backend_pancake_interpret: runtime_data was null");
         return 0;
     }
 
-    instructions = runtime->instructions;
-    call_info_stack = runtime->call_info_stack;
-    value_stack = runtime->value_stack;
+    instructions = runtime_data->instructions;
+    call_info_stack = runtime_data->call_info_stack;
+    value_stack = runtime_data->value_stack;
 
     for (;;) {
         instruction = ic_backend_pancake_instructions_get_current(instructions);
@@ -73,7 +73,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
                     puts("ic_backend_pancake_interpret: ic_backend_pancake_bytecode_arg1_get_char failed");
                     return 0;
                 }
-                printf("Runtime panic: %s\n", str);
+                printf("runtime panic: %s\n", str);
                 exit(1);
                 break;
 

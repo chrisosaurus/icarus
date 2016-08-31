@@ -3,7 +3,7 @@
 #include "../../analyse/data/kludge.h"
 #include "../../data/dict.h"
 #include "data/instructions.h"
-#include "data/runtime.h"
+#include "data/runtime_data.h"
 #include "pancake.h"
 
 /* pancake - stack based interpreter backend
@@ -13,7 +13,7 @@
  */
 unsigned int ic_backend_pancake(struct ic_kludge *kludge) {
     struct ic_backend_pancake_instructions *instructions = 0;
-    struct ic_backend_pancake_runtime *runtime = 0;
+    struct ic_backend_pancake_runtime_data *runtime_data = 0;
 
     if (!kludge) {
         puts("ic_backend_pancake: kludge was null");
@@ -31,13 +31,13 @@ unsigned int ic_backend_pancake(struct ic_kludge *kludge) {
         return 0;
     }
 
-    runtime = ic_backend_pancake_runtime_new(instructions);
-    if (!runtime) {
-        puts("ic_backend_pancake: call to ic_backend_pancake_runtime_new failed");
+    runtime_data = ic_backend_pancake_runtime_data_new(instructions);
+    if (!runtime_data) {
+        puts("ic_backend_pancake: call to ic_backend_pancake_runtime_data_new failed");
         return 0;
     }
 
-    if (!ic_backend_pancake_interpret(runtime)) {
+    if (!ic_backend_pancake_interpret(runtime_data)) {
         puts("ic_backend_pancake: call to ic_backend_pancake_interpret failed");
         return 0;
     }
