@@ -280,8 +280,17 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
 
                 /* FIXME TODO ignoring arg cleanup details */
 
-                /* offset to jump to */
+                /* offset to jump to
+                 * NB: this cannot be 0 as 0 is always our entry point and not a valid function
+                 * address
+                 */
                 new_offset = ic_backend_pancake_instructions_get_fdecl(instructions, str);
+
+                if (!new_offset) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_instructions_get_fdecl failed");
+                    printf("Couldn't find address of function '%s' called at offset '%u'\n", str, cur_offset);
+                    return 0;
+                }
 
                 /* jump to offset */
                 if (!ic_backend_pancake_instructions_set_offset(instructions, new_offset)) {
