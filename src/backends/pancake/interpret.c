@@ -143,6 +143,74 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
 
                 break;
 
+            /* jif addr::uint */
+            case icp_jif:
+                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+
+                /* get value */
+                value = ic_backend_pancake_value_stack_peek(value_stack);
+
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_peek failed");
+                    return 0;
+                }
+
+                if (value->tag != ic_backend_pancake_value_type_bool) {
+                    puts("ic_backend_pancake_interpret: value->tag was not of type boolean");
+                    return 0;
+                }
+
+                boolean = value->u.boolean;
+
+                /* consume value */
+                if (!ic_backend_pancake_value_stack_pop(value_stack)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_pop failed");
+                    return 0;
+                }
+
+                if (boolean) {
+                    if (!ic_backend_pancake_instructions_set_offset(instructions, uint)) {
+                        puts("ic_backend_pancake_interpret: call to ic_backend_pancake_instructions_set_offset failed");
+                        return 0;
+                    }
+                }
+
+                break;
+
+            /* jnif addr::uint */
+            case icp_jnif:
+                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+
+                /* get value */
+                value = ic_backend_pancake_value_stack_peek(value_stack);
+
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_peek failed");
+                    return 0;
+                }
+
+                if (value->tag != ic_backend_pancake_value_type_bool) {
+                    puts("ic_backend_pancake_interpret: value->tag was not of type boolean");
+                    return 0;
+                }
+
+                boolean = value->u.boolean;
+
+                /* consume value */
+                if (!ic_backend_pancake_value_stack_pop(value_stack)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_pop failed");
+                    return 0;
+                }
+
+                if (!boolean) {
+                    if (!ic_backend_pancake_instructions_set_offset(instructions, uint)) {
+                        puts("ic_backend_pancake_interpret: call to ic_backend_pancake_instructions_set_offset failed");
+                        return 0;
+                    }
+                }
+
+                break;
+
             /* pop n::uint */
             case icp_pop:
                 uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
@@ -163,10 +231,6 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
             case icp_call:
             /* return */
             case icp_return:
-            /* jif addr::uint */
-            case icp_jif:
-            /* jnif addr::uint */
-            case icp_jnif:
             /* save current top of stack to restore later
              * NB: save will overwrite any previously saved value
              */
