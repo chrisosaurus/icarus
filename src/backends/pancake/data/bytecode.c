@@ -391,11 +391,12 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_char(struct ic_backend_pancake
         /* panic desc::str */
         case icp_panic:
         /* store key::string
-         * stores current top of stack under key */
+         * stores current top of stack under key
+         */
         case icp_store:
         /* load key::string
          * loads from key onto under
-         * FIXME TODO figure out load vs push */
+         */
         case icp_load:
             break;
 
