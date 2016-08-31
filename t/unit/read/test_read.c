@@ -69,7 +69,7 @@ int main(void) {
     }
     fclose(f);
 
-    slurped_results = ic_read_slurp(filename);
+    slurped_results = ic_read_slurp_filename(filename);
     if (!slurped_results) {
         puts("read_slurp failed");
         exit(1);

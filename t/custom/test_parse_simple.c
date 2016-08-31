@@ -14,7 +14,7 @@ int main(void) {
 
     filename = "example/simple.ic";
 
-    source = ic_read_slurp(filename);
+    source = ic_read_slurp_filename(filename);
     if (!source) {
         puts("test_parse_example: slurping failed");
         exit(1);

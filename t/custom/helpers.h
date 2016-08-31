@@ -86,7 +86,7 @@ unsigned int test_custom_helper_load_filename(struct ic_kludge *kludge, char *fi
         exit(1);
     }
 
-    source = ic_read_slurp(filename);
+    source = ic_read_slurp_filename(filename);
 
     if (!source) {
         printf("test_custom_helpers: slurping failed for filename '%s'\n", filename);

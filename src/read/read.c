@@ -4,12 +4,48 @@
 #include "read.h"
 
 /* slurp entire file into single alloc-ed buffer
+ *
  * returns this buffer on success
  * returns 0 on failure
  */
-char *ic_read_slurp(char *filename) {
+char *ic_read_slurp_filename(char *filename) {
     /* file object */
-    FILE *f;
+    FILE *file;
+    /* malloc-ed buffer we store file contents in and return */
+    char *buffer;
+
+    /* open file */
+    file = fopen(filename, "r");
+    if (!file) {
+        puts("ERROR: fopen failed in read_slurp_filename");
+        perror("read_slurp_filename::fopen");
+        return 0;
+    }
+
+    buffer = ic_read_slurp_file(file);
+
+    if (!buffer) {
+        puts("Error: read_slurp_filename::read_slurp_file failed");
+        fclose(file);
+        return 0;
+    }
+
+    /* close file */
+    if (fclose(file)) {
+        puts("Error: read_slurp_filename::fclose failed");
+        free(buffer);
+        return 0;
+    }
+
+    return buffer;
+}
+
+/* slurp entire file into single alloc-ed buffer
+ *
+ * returns this buffer on success
+ * returns 0 on failure
+ */
+char *ic_read_slurp_file(FILE *file) {
     /* size of file (from ftell) */
     long fsize;
     /* unsigned version of comparison with size_t read */
@@ -19,44 +55,32 @@ char *ic_read_slurp(char *filename) {
     /* malloc-ed buffer we store file contents in and return */
     char *buffer;
 
-    /* open file */
-    f = fopen(filename, "r");
-    if (!f) {
-        puts("ERROR: fopen failed in read_slurp");
-        perror("read_slurp::fopen");
-        return 0;
-    }
-
-    /* seek to end of filej */
-    if (fseek(f, 0, SEEK_END)) {
-        puts("ERROR: fseek SEEK_END failed in read_slurp");
-        perror("read_slurp::fseek SEEK_END");
-        fclose(f);
+    /* seek to end of file */
+    if (fseek(file, 0, SEEK_END)) {
+        puts("ERROR: fseek SEEK_END failed in read_slurp_file");
+        perror("read_slurp_file::fseek SEEK_END");
         return 0;
     }
 
     /* get current offset */
-    fsize = ftell(f);
+    fsize = ftell(file);
     ufsize = fsize;
     if (fsize < 0) {
-        puts("ERROR: fstell failed in read_slurp");
-        perror("read_slurp::ftell");
-        fclose(f);
+        puts("ERROR: fstell failed in read_slurp_file");
+        perror("read_slurp_file::ftell");
         return 0;
     }
 
     /* back to the start */
-    if (fseek(f, 0, SEEK_SET)) {
-        puts("ERROR: fseek SEEK_SET failed in read_slurp");
-        perror("read_slurp::fseek SEEK_SET");
-        fclose(f);
+    if (fseek(file, 0, SEEK_SET)) {
+        puts("ERROR: fseek SEEK_SET failed in read_slurp_file");
+        perror("read_slurp_file::fseek SEEK_SET");
         return 0;
     }
 
     buffer = malloc(ufsize + 1);
     if (!buffer) {
-        puts("ERROR: malloc failed in read_slurp");
-        fclose(f);
+        puts("ERROR: malloc failed in read_slurp_file");
         return 0;
     }
 
@@ -64,19 +88,11 @@ char *ic_read_slurp(char *filename) {
     buffer[fsize] = '\0';
 
     /* slurp in the contents */
-    read = fread(buffer, 1, fsize, f);
+    read = fread(buffer, 1, fsize, file);
 
     /* check read and file size both line up */
     if (read != ufsize) {
-        printf("ERROR: read_slurp::fread read '%zd' when we expected '%lu'\n", read, ufsize);
-        fclose(f);
-        free(buffer);
-        return 0;
-    }
-
-    /* close file */
-    if (fclose(f)) {
-        puts("Error: read_flup::fcose failed");
+        printf("ERROR: read_slurp_file::fread read '%zd' when we expected '%lu'\n", read, ufsize);
         free(buffer);
         return 0;
     }

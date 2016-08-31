@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
     }
 
     /* populate from core.ic */
-    core_source = ic_read_slurp("src/stdlib/core.ic");
+    core_source = ic_read_slurp_filename("src/stdlib/core.ic");
     if (!core_source) {
         puts("slurping failed for src/stdlib/core.ic");
         exit(1);
@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
 
     filename = argv[1];
 
-    source = ic_read_slurp(filename);
+    source = ic_read_slurp_filename(filename);
     if (!source) {
         puts("slurping failed");
         exit(1);
