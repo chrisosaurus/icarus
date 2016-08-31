@@ -26,6 +26,10 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
 
     /* new offset */
     unsigned int new_offset = 0;
+    /* current offset */
+    unsigned int cur_offset = 0;
+    /* offset at top of return stack */
+    unsigned int return_stack_offset = 0;
 
     /* current value we are working with */
     struct ic_backend_pancake_value *value = 0;
@@ -238,14 +242,23 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
                 /* n args */
                 uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
 
-                /* offset to jump to */
-                new_offset = ic_backend_pancake_instructions_get_fdecl(instructions, str);
+                /* get current offset */
+                cur_offset = ic_backend_pancake_instructions_get_offset(instructions);
+                /* add one to go to NEXT instruction */
+                cur_offset += 1;
+
+                /* add cur_offset to top of return stack */
+                if (!ic_backend_pancake_return_stack_push(return_stack, cur_offset)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_return_stack_push failed");
+                    return 0;
+                }
 
                 /* FIXME TODO ignoring uint */
 
                 /* FIXME TODO ignoring arg cleanup details */
 
-                /* FIXME TODO need to push current offset onto return stack */
+                /* offset to jump to */
+                new_offset = ic_backend_pancake_instructions_get_fdecl(instructions, str);
 
                 /* jump to offset */
                 if (!ic_backend_pancake_instructions_set_offset(instructions, new_offset)) {
