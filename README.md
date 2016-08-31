@@ -193,7 +193,7 @@ which shows us
     ic_backend_pancake_compile_fdecl_body: return value not yet handled
     ic_backend_pancake_compile: implementation pending
     Pancake bytecode:
-    =================
+    ==========================
     label entry
     call main() 0
     exit
@@ -206,9 +206,11 @@ which shows us
     pushstr Hello world
     call foo(String) 1
     return_void
-    =================
-    Hello world
+    ==========================
 
+    Pancake interpreter output
+    ==========================
+    Hello world
 
 
 Current holes

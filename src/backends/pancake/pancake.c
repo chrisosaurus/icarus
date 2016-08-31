@@ -28,12 +28,16 @@ unsigned int ic_backend_pancake(struct ic_kludge *kludge) {
 
     /* print instructions */
     puts("Pancake bytecode:");
-    puts("=================");
+    puts("==========================");
     if (!ic_backend_pancake_instructions_print(instructions, stdout)) {
         puts("ic_backend_pancake: call to ic_backend_pancake_instructions_print failed");
         return 0;
     }
-    puts("=================");
+    puts("==========================");
+    puts("");
+
+    puts("Pancake interpreter output");
+    puts("==========================");
 
     runtime_data = ic_backend_pancake_runtime_data_new(instructions);
     if (!runtime_data) {
