@@ -39,22 +39,25 @@ unsigned int ic_backend_pancake_value_stack_init(struct ic_backend_pancake_value
  */
 unsigned int ic_backend_pancake_value_stack_destroy(struct ic_backend_pancake_value_stack *stack, unsigned int free_stack);
 
-/* get current top of stack (and remove it)
- *
- * returned value must be read before another push is called
+/* get current top of stack
  *
  * returns * on success
  * returns 0 on error
  */
-struct ic_backend_pancake_value *ic_backend_pancake_value_stack_pop(struct ic_backend_pancake_value_stack *stack);
+struct ic_backend_pancake_value *ic_backend_pancake_value_stack_peek(struct ic_backend_pancake_value_stack *stack);
 
-/* push a new value onto the stack
- *
- * will copy from passed in value
+/* remove top of stack
  *
  * returns 1 on success
+ * returns 0 on error
+ */
+unsigned int ic_backend_pancake_value_stack_pop(struct ic_backend_pancake_value_stack *stack);
+
+/* push a new value onto the stack and return * to it
+ *
+ * returns * on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_value_stack_push(struct ic_backend_pancake_value_stack *stack, struct ic_backend_pancake_value *value);
+struct ic_backend_pancake_value *ic_backend_pancake_value_stack_push(struct ic_backend_pancake_value_stack *stack);
 
 #endif /* IC_BACKEND_PANCAKE_VALUE_STACK_H */

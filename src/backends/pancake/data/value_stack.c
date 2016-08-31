@@ -61,16 +61,35 @@ unsigned int ic_backend_pancake_value_stack_destroy(struct ic_backend_pancake_va
     return 1;
 }
 
-/* get current top of stack (and remove it)
- *
- * returned value must be read before another push is called
+/* get current top of stack
  *
  * returns * on success
- * returns 0 on failure
+ * returns 0 on error
  */
-struct ic_backend_pancake_value *ic_backend_pancake_value_stack_pop(struct ic_backend_pancake_value_stack *stack) {
+struct ic_backend_pancake_value *ic_backend_pancake_value_stack_peek(struct ic_backend_pancake_value_stack *stack) {
     struct ic_backend_pancake_value *ret;
 
+    if (!stack) {
+        puts("ic_backend_pancake_value_stack_peek: stack was null");
+        return 0;
+    }
+
+    if (stack->head == -1) {
+        puts("ic_backend_pancake_value_stack_peek: stack was empty");
+        return 0;
+    }
+
+    ret = &(stack->stack[stack->head]);
+
+    return ret;
+}
+
+/* remove top of stack
+ *
+ * returns 1 on success
+ * returns 0 on error
+ */
+unsigned int ic_backend_pancake_value_stack_pop(struct ic_backend_pancake_value_stack *stack) {
     if (!stack) {
         puts("ic_backend_pancake_value_stack_pop: stack was null");
         return 0;
@@ -81,27 +100,19 @@ struct ic_backend_pancake_value *ic_backend_pancake_value_stack_pop(struct ic_ba
         return 0;
     }
 
-    ret = &(stack->stack[stack->head]);
     stack->head -= 1;
-
-    return ret;
+    return 1;
 }
 
-/* push a new item onto the stack
+/* push a new value onto the stack and return * to it
  *
- * will copy from passed in value
- *
- * returns 1 on success
+ * returns * on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_value_stack_push(struct ic_backend_pancake_value_stack *stack, struct ic_backend_pancake_value *value) {
+struct ic_backend_pancake_value *ic_backend_pancake_value_stack_push(struct ic_backend_pancake_value_stack *stack) {
+    struct ic_backend_pancake_value *ret;
     if (!stack) {
         puts("ic_backend_pancake_value_stack_push: stack was null");
-        return 0;
-    }
-
-    if (!value) {
-        puts("ic_backend_pancake_value_stack_push: vaue was null");
         return 0;
     }
 
@@ -111,7 +122,8 @@ unsigned int ic_backend_pancake_value_stack_push(struct ic_backend_pancake_value
     }
 
     stack->head += 1;
-    stack->stack[stack->head] = *value;
 
-    return 1;
+    ret = &(stack->stack[stack->head]);
+
+    return ret;
 }
