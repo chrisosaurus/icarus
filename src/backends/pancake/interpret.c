@@ -4,6 +4,8 @@
 #include "data/runtime_data.h"
 #include "pancake.h"
 
+#include "runtime/builtins.h"
+
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 
@@ -39,6 +41,9 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
     /* current call_info we are working with */
     struct ic_backend_pancake_call_info *call_info = 0;
+
+    /* builtin function we are calling */
+    ic_backend_function_sig builtin_func = 0;
 
     if (!runtime_data) {
         puts("ic_backend_pancake_interpret: runtime_data was null");
@@ -367,6 +372,37 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 break;
 
+            /* call_builtin fname::string argn::uint */
+            case icp_call_builtin:
+                /* fdecl sig call */
+                str = ic_backend_pancake_bytecode_arg1_get_char(instruction);
+                if (!str) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_bytecode_arg1_get_char failed");
+                    return 0;
+                }
+
+                cur_offset = ic_backend_pancake_instructions_get_offset(instructions);
+
+                /* FIXME TODO ignoring uint */
+
+                /* FIXME TODO should we create a call_info frame ? */
+
+                /* try fetch our builtin function */
+                builtin_func = ic_backend_pancake_builtins_table_get(str);
+                if (!builtin_func) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_builtins_table_get failed");
+                    printf("tried to fetch builtin func '%s' at offset '%u'\n", str, cur_offset);
+                    return 0;
+                }
+
+                /* call func */
+                if (!builtin_func(value_stack)) {
+                    puts("runtime panic: call to builtin func failed");
+                    printf("builtin func '%s' called at offset '%u'\n", str, cur_offset);
+                    return 0;
+                }
+                break;
+
             /* return_value */
             case icp_return_value:
             /* save current top of stack to restore later
@@ -387,8 +423,6 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
             case icp_load:
             /* tailcall fname::string argn::uint */
             case icp_tailcall:
-            /* call_builtin fname::string argn::uint */
-            case icp_call_builtin:
 
                 puts("ic_backend_pancake_interpret: unimplemeneted bytecode instruction");
                 return 0;
