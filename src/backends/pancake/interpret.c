@@ -48,6 +48,10 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
             return 0;
         }
 
+        fputs("ic_backend_pancake_interpret: DEBUG looking at :", stdout);
+        ic_backend_pancake_bytecode_print(instruction, stdout);
+        puts("");
+
         switch (instruction->tag) {
             /* fdecl_label fdecl_sig_call */
             case icp_label:
@@ -267,6 +271,9 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
                     puts("ic_backend_pancake_interpret: call to ic_backend_pancake_instructions_set_offset failed");
                     return 0;
                 }
+
+                /* DEBUG */
+                printf("ic_backend_pancake_interpert: DEBUG icp_call: going to %s at offset %u\n", str, new_offset);
 
                 /* do not advance this round */
                 continue;
