@@ -74,4 +74,11 @@ unsigned int ic_backend_pancake_value_stack_height(struct ic_backend_pancake_val
  */
 struct ic_backend_pancake_value *ic_backend_pancake_value_stack_get_offset(struct ic_backend_pancake_value_stack *stack, unsigned int);
 
+/* print value stack to provided file
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_value_stack_print(struct ic_backend_pancake_value_stack *value_stack, FILE *file);
+
 #endif /* IC_BACKEND_PANCAKE_VALUE_STACK_H */

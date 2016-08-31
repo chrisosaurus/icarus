@@ -157,3 +157,44 @@ struct ic_backend_pancake_value *ic_backend_pancake_value_stack_get_offset(struc
 
     return ret;
 }
+
+/* print value stack to provided file
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_value_stack_print(struct ic_backend_pancake_value_stack *value_stack, FILE *file){
+    int i = 0;
+    int len = 0;
+    struct ic_backend_pancake_value *value = 0;
+
+    if (!value_stack) {
+        puts("ic_backend_pancake_value_stack_print: value_stack was null");
+        return 0;
+    }
+
+    if (!file) {
+        puts("ic_backend_pancake_value_stack_print: file was null");
+        return 0;
+    }
+
+    printf("DEBUG: stack head was '%d'\n", len);
+    len = value_stack->head;
+
+    /* NB: has to be <= */
+    for (i=0; i<=len; ++i){
+        value = ic_backend_pancake_value_stack_get_offset(value_stack, i);
+        if (!value) {
+            puts("ic_backend_pancake_value_stack_print: call to ic_backend_pancake_value_stack_get_offset failed");
+            return 0;
+        }
+
+        if (!ic_backend_pancake_value_print(value, file)) {
+            puts("ic_backend_pancake_value_stack_print: call to ic_backend_pancake_value_print failed");
+            return 0;
+        }
+    }
+    return 0;
+}
+
+
