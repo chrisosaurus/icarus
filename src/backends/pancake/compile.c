@@ -225,10 +225,9 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
         return 0;
     }
 
-    /* FIXME TODO how does pancake handle builtin functions? */
-    /* FIXME TODO for now skip builtin functions */
+    /* skip builtin function */
     if (fdecl->builtin) {
-        printf("warning: ic_backend_pancake_compile_fdecl: skipping builtin fdecl '%s'\n", fdecl_sig_call);
+        // printf("warning: ic_backend_pancake_compile_fdecl: skipping builtin fdecl '%s'\n", fdecl_sig_call);
         return 1;
     }
 
