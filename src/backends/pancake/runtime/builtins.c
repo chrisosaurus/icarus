@@ -5,14 +5,13 @@
 #include "builtins.h"
 
 unsigned int i_println_string(struct ic_backend_pancake_value_stack *value_stack);
-
 unsigned int i_println_sint(struct ic_backend_pancake_value_stack *value_stack);
-
 unsigned int i_println_uint(struct ic_backend_pancake_value_stack *value_stack);
-
 unsigned int i_println_bool(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int i_plus_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int i_plus_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
 
-#define ic_backend_pancake_builtins_table_len 4
+#define ic_backend_pancake_builtins_table_len 6
 
 /* table mapping user-land names to internal names */
 struct ic_backend_pancake_builtins_table_type {
@@ -23,6 +22,8 @@ struct ic_backend_pancake_builtins_table_type {
     {"println(Uint)", i_println_uint},
     {"println(Sint)", i_println_sint},
     {"println(Bool)", i_println_bool},
+    {"plus(Uint Uint)", i_plus_uint_uint},
+    {"plus(Sint Sint)", i_plus_sint_sint},
 };
 
 /* get builtin function for user-land name
@@ -216,5 +217,153 @@ unsigned int i_println_bool(struct ic_backend_pancake_value_stack *value_stack) 
     boolean = value->u.boolean;
 
     printf("%d\n", boolean);
+    return 1;
+}
+
+/* add two uints
+ *
+ * pops 2 uints from stack
+ * pushes return back on
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int i_plus_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
+    struct ic_backend_pancake_value *value = 0;
+    unsigned int uint_one = 0;
+    unsigned int uint_two = 0;
+    unsigned int answer = 0;
+
+    if (!value_stack) {
+        puts("i_plus_uint_uint: value_stack was null");
+        return 0;
+    }
+
+    value = ic_backend_pancake_value_stack_peek(value_stack);
+
+    if (!value) {
+        puts("i_plus_uint_uint: call to ic_backend_pancake_value_stack_peek failed");
+        return 0;
+    }
+
+    if (value->tag != ic_backend_pancake_value_type_uint) {
+        puts("i_plus_uint_uint: value was not of expected type uint");
+        fputs("found: ", stdout);
+        ic_backend_pancake_value_print(value, stdout);
+        return 0;
+    }
+
+    if (!ic_backend_pancake_value_stack_pop(value_stack)) {
+        puts("i_plus_uint_uint: call to ic_backend_pancake_value_stack_pop failed");
+        return 0;
+    }
+
+    uint_one = value->u.uint;
+
+    value = ic_backend_pancake_value_stack_peek(value_stack);
+
+    if (!value) {
+        puts("i_plus_uint_uint: call to ic_backend_pancake_value_stack_peek failed");
+        return 0;
+    }
+
+    if (value->tag != ic_backend_pancake_value_type_uint) {
+        puts("i_plus_uint_uint: value was not of expected type uint");
+        fputs("found: ", stdout);
+        ic_backend_pancake_value_print(value, stdout);
+        return 0;
+    }
+
+    if (!ic_backend_pancake_value_stack_pop(value_stack)) {
+        puts("i_plus_uint_uint: call to ic_backend_pancake_value_stack_pop failed");
+        return 0;
+    }
+
+    uint_two = value->u.uint;
+
+    answer = uint_one + uint_two;
+
+    value = ic_backend_pancake_value_stack_push(value_stack);
+    if (!value) {
+        puts("i_plus_uint_uint: call to ic_backend_pancake_value_stack_push failed");
+        return 0;
+    }
+
+    value->u.uint = answer;
+
+    return 1;
+}
+
+/* add two sints
+ *
+ * pops 2 sints from stack
+ * pushes return back on
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int i_plus_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
+    struct ic_backend_pancake_value *value = 0;
+    int sint_one = 0;
+    int sint_two = 0;
+    int answer = 0;
+
+    if (!value_stack) {
+        puts("i_plus_sint_sint: value_stack was null");
+        return 0;
+    }
+
+    value = ic_backend_pancake_value_stack_peek(value_stack);
+
+    if (!value) {
+        puts("i_plus_sint_sint: call to ic_backend_pancake_value_stack_peek failed");
+        return 0;
+    }
+
+    if (value->tag != ic_backend_pancake_value_type_sint) {
+        puts("i_plus_sint_sint: value was not of expected type sint");
+        fputs("found: ", stdout);
+        ic_backend_pancake_value_print(value, stdout);
+        return 0;
+    }
+
+    if (!ic_backend_pancake_value_stack_pop(value_stack)) {
+        puts("i_plus_sint_sint: call to ic_backend_pancake_value_stack_pop failed");
+        return 0;
+    }
+
+    sint_one = value->u.sint;
+
+    value = ic_backend_pancake_value_stack_peek(value_stack);
+
+    if (!value) {
+        puts("i_plus_sint_sint: call to ic_backend_pancake_value_stack_peek failed");
+        return 0;
+    }
+
+    if (value->tag != ic_backend_pancake_value_type_sint) {
+        puts("i_plus_sint_sint: value was not of expected type sint");
+        fputs("found: ", stdout);
+        ic_backend_pancake_value_print(value, stdout);
+        return 0;
+    }
+
+    if (!ic_backend_pancake_value_stack_pop(value_stack)) {
+        puts("i_plus_sint_sint: call to ic_backend_pancake_value_stack_pop failed");
+        return 0;
+    }
+
+    sint_two = value->u.sint;
+
+    answer = sint_one + sint_two;
+
+    value = ic_backend_pancake_value_stack_push(value_stack);
+    if (!value) {
+        puts("i_plus_sint_sint: call to ic_backend_pancake_value_stack_push failed");
+        return 0;
+    }
+
+    value->u.sint = answer;
+
     return 1;
 }
