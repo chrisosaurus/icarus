@@ -9,6 +9,8 @@
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 
+#define PANCAKE_INTERPRET_DEBUG 0
+
 /* interpret bytecode in runtime_data
  *
  * returns 1 on success
@@ -61,9 +63,11 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
             return 0;
         }
 
+#if PANCAKE_INTERPRET_DEBUG
         fputs("ic_backend_pancake_interpret: DEBUG looking at: ", stdout);
         ic_backend_pancake_bytecode_print(instruction, stdout);
         puts("");
+#endif
 
         switch (instruction->tag) {
             /* fdecl_label fdecl_sig_call */
@@ -304,8 +308,10 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                     return 0;
                 }
 
+#if PANCAKE_INTERPRET_DEBUG
                 /* DEBUG */
                 printf("ic_backend_pancake_interpret: DEBUG icp_call: going to %s at offset %u\n", str, new_offset);
+#endif
 
                 /* do not advance this round */
                 continue;
