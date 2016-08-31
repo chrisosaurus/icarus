@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
     struct ic_backend_pancake_instructions *instructions = 0;
 
     if (argc < 3) {
-        puts("No source file specified");
+        puts("not enough args, need both input source and output file");
         exit(1);
     } else if (argc > 3) {
         puts("Too many arguments supplied, only source and out files were expected");
