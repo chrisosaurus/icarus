@@ -26,6 +26,9 @@ enum ic_backend_pancake_bytecode_type {
     icp_copyarg,
     /* call fname::string argn::uint */
     icp_call,
+    /* tailcall fname::string argn::uint */
+    icp_tailcall,
+    /* pop n::uint */
     /* pop n::uint */
     icp_pop,
     /* return */

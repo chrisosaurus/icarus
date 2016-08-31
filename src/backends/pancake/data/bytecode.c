@@ -173,6 +173,22 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             return 1;
             break;
 
+        /* tailcall fname::stringargn */
+        case icp_tailcall:
+
+            ch = ic_backend_pancake_bytecode_arg1_get_char(bytecode);
+            if (!ch) {
+                puts("ic_backend_pancake_bytecode_print: call to ic_backend_pancake_bytecode_arg1_get_char failed");
+                return 0;
+            }
+
+            uint = ic_backend_pancake_bytecode_arg2_get_uint(bytecode);
+
+            fprintf(file, "tailcall %s %" PRId32, ch, uint);
+
+            return 1;
+            break;
+
         /* pop n */
         case icp_pop:
             uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
@@ -388,6 +404,8 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_char(struct ic_backend_pancake
         case icp_pushstr:
         /* call fname::string argn::uint */
         case icp_call:
+        /* tailcall fname::string argn::uint */
+        case icp_tailcall:
         /* panic desc::str */
         case icp_panic:
         /* store key::string
@@ -713,6 +731,8 @@ unsigned int ic_backend_pancake_bytecode_arg2_set_uint(struct ic_backend_pancake
     switch (bytecode->tag) {
         /* call fname::stringargn::uint */
         case icp_call:
+        /* tailcall fname::stringargn::uint */
+        case icp_tailcall:
             break;
 
         default:

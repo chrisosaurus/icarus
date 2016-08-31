@@ -275,6 +275,8 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
              * loads from key onto under
              */
             case icp_load:
+            /* tailcall fname::string argn::uint */
+            case icp_tailcall:
 
                 puts("ic_backend_pancake_interpret: unimplemeneted bytecode instruction");
                 return 0;
