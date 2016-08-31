@@ -148,19 +148,6 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             return 1;
             break;
 
-        /* push key */
-        case icp_push:
-            ch = ic_backend_pancake_bytecode_arg1_get_char(bytecode);
-            if (!ch) {
-                puts("ic_backend_pancake_bytecode_print: call to ic_backend_pancake_bytecode_arg1_get_char failed");
-                return 0;
-            }
-
-            fprintf(file, "push %s", ch);
-
-            return 1;
-            break;
-
         /* copyarg argn::uint */
         case icp_copyarg:
             uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
@@ -399,8 +386,6 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_char(struct ic_backend_pancake
         case icp_label:
         /* push_str string */
         case icp_pushstr:
-        /* push key::string */
-        case icp_push:
         /* call fname::string argn::uint */
         case icp_call:
         /* panic desc::str */

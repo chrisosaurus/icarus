@@ -22,8 +22,6 @@ enum ic_backend_pancake_bytecode_type {
     icp_pushint,
     /* push_str string */
     icp_pushstr,
-    /* push key::string */
-    icp_push,
     /* copyarg argn::uint */
     icp_copyarg,
     /* call fname::string argn::uint */
@@ -51,11 +49,12 @@ enum ic_backend_pancake_bytecode_type {
      */
     icp_restore,
     /* store key::string
-     * stores current top of stack under key */
+     * stores current top of stack under key
+     */
     icp_store,
     /* load key::string
      * loads from key onto under
-     * FIXME TODO figure out load vs push */
+     */
     icp_load,
 };
 

@@ -223,8 +223,6 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
                 }
                 break;
 
-            /* push key::string */
-            case icp_push:
             /* copyarg argn::uint */
             case icp_copyarg:
             /* call fname::string argn::uint */
