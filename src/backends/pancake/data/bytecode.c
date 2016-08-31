@@ -159,7 +159,6 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
 
         /* call fname::stringargn */
         case icp_call:
-
             ch = ic_backend_pancake_bytecode_arg1_get_char(bytecode);
             if (!ch) {
                 puts("ic_backend_pancake_bytecode_print: call to ic_backend_pancake_bytecode_arg1_get_char failed");
@@ -175,7 +174,6 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
 
         /* tailcall fname::stringargn */
         case icp_tailcall:
-
             ch = ic_backend_pancake_bytecode_arg1_get_char(bytecode);
             if (!ch) {
                 puts("ic_backend_pancake_bytecode_print: call to ic_backend_pancake_bytecode_arg1_get_char failed");
@@ -185,6 +183,21 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             uint = ic_backend_pancake_bytecode_arg2_get_uint(bytecode);
 
             fprintf(file, "tailcall %s %" PRId32, ch, uint);
+
+            return 1;
+            break;
+
+        /* call_builtin fname::stringargn */
+        case icp_call_builtin:
+            ch = ic_backend_pancake_bytecode_arg1_get_char(bytecode);
+            if (!ch) {
+                puts("ic_backend_pancake_bytecode_print: call to ic_backend_pancake_bytecode_arg1_get_char failed");
+                return 0;
+            }
+
+            uint = ic_backend_pancake_bytecode_arg2_get_uint(bytecode);
+
+            fprintf(file, "call_builtin %s %" PRId32, ch, uint);
 
             return 1;
             break;
@@ -412,6 +425,8 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_char(struct ic_backend_pancake
         case icp_call:
         /* tailcall fname::string argn::uint */
         case icp_tailcall:
+        /* call_builtin fname::string argn::uint */
+        case icp_call_builtin:
         /* panic desc::str */
         case icp_panic:
         /* store key::string
@@ -739,6 +754,8 @@ unsigned int ic_backend_pancake_bytecode_arg2_set_uint(struct ic_backend_pancake
         case icp_call:
         /* tailcall fname::stringargn::uint */
         case icp_tailcall:
+        /* call_builtin fname::stringargn::uint */
+        case icp_call_builtin:
             break;
 
         default:
