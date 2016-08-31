@@ -146,6 +146,9 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
                     return 0;
                 }
 
+                /* do not advance this round */
+                continue;
+
                 break;
 
             /* jif addr::uint */
@@ -179,6 +182,9 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
                         return 0;
                     }
                 }
+
+                /* do not advance this round */
+                continue;
 
                 break;
 
@@ -214,6 +220,9 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
                     }
                 }
 
+                /* do not advance this round */
+                continue;
+
                 break;
 
             /* pop n::uint */
@@ -240,10 +249,11 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
                 /* n args */
                 uint = ic_backend_pancake_bytecode_arg2_get_uint(instruction);
 
-                /* get current offset */
+                /* get current offset
+                 * NB: fine to return to this value
+                 * as the for loop will then advance past it
+                 */
                 cur_offset = ic_backend_pancake_instructions_get_offset(instructions);
-                /* add one to go to NEXT instruction */
-                cur_offset += 1;
 
                 /* add cur_offset to top of return stack */
                 if (!ic_backend_pancake_return_stack_push(return_stack, cur_offset)) {
@@ -263,6 +273,9 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
                     puts("ic_backend_pancake_interpret: call to ic_backend_pancake_instructions_set_offset failed");
                     return 0;
                 }
+
+                /* do not advance this round */
+                continue;
 
                 break;
 
@@ -312,6 +325,13 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
                 puts("ic_backend_pancake_interpret: unknown bytecode instructions");
                 return 0;
                 break;
+        }
+
+        /* advance instructions */
+        instruction = ic_backend_pancake_instructions_advance(instructions);
+        if (!instruction) {
+            puts("ic_backend_pancake_interpret: call to ic_backend_pancake_instructions_advance failed");
+            return 0;
         }
     }
 
