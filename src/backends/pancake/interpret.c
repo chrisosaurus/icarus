@@ -28,8 +28,6 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
     unsigned int new_offset = 0;
     /* current offset */
     unsigned int cur_offset = 0;
-    /* offset at top of return stack */
-    unsigned int return_stack_offset = 0;
 
     /* current value we are working with */
     struct ic_backend_pancake_value *value = 0;
@@ -268,12 +266,25 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
 
                 break;
 
+            /* return_void */
+            case icp_return_void:
+                /* remove value at top of return stack */
+                new_offset = ic_backend_pancake_return_stack_pop(return_stack);
+
+                /* FIXME TODO ignoring arg cleanup details */
+
+                /* jump to offset */
+                if (!ic_backend_pancake_instructions_set_offset(instructions, new_offset)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_instructions_set_offset failed");
+                    return 0;
+                }
+
+                break;
+
             /* copyarg argn::uint */
             case icp_copyarg:
             /* return_value */
             case icp_return_value:
-            /* return_void */
-            case icp_return_void:
             /* save current top of stack to restore later
              * NB: save will overwrite any previously saved value
              */
