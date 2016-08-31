@@ -48,7 +48,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
             return 0;
         }
 
-        fputs("ic_backend_pancake_interpret: DEBUG looking at :", stdout);
+        fputs("ic_backend_pancake_interpret: DEBUG looking at: ", stdout);
         ic_backend_pancake_bytecode_print(instruction, stdout);
         puts("");
 
@@ -273,7 +273,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
                 }
 
                 /* DEBUG */
-                printf("ic_backend_pancake_interpert: DEBUG icp_call: going to %s at offset %u\n", str, new_offset);
+                printf("ic_backend_pancake_interpret: DEBUG icp_call: going to %s at offset %u\n", str, new_offset);
 
                 /* do not advance this round */
                 continue;
