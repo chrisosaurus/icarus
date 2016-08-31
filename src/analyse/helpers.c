@@ -538,7 +538,7 @@ static struct ic_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct i
      */
 
     /*
-     *  infer Foo(1 "hello") -> Foo(Sint String) -> Foo
+     *  infer Foo(1,"hello") -> Foo(Sint,String) -> Foo
      *  expr->tag == func_call
      *  fc = expr->u.fcall
      *  fstr = str(fc)
@@ -917,7 +917,7 @@ static struct ic_type *ic_analyse_infer_operator(struct ic_kludge *kludge, struc
  *  infer 1 to Sint
  *  infer "hello" to String
  *  infer addone(1) which is a call to addone(Sint) -> Sint therefore Sint
- *  infer Foo(1 "hello") which is call to Foo(Sint String) -> Foo therefore Foo
+ *  infer Foo(1,"hello") which is call to Foo(Sint,String) -> Foo therefore Foo
  *
  * returns ic_type * on success
  * returns 0 on failure
@@ -965,7 +965,7 @@ struct ic_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scop
              */
 
             /*
-             *  infer Foo(1 "hello") -> Foo(Sint String) -> Foo
+             *  infer Foo(1,"hello") -> Foo(Sint,String) -> Foo
              *  expr->tag == func_call
              *  fc = expr->u.fcall
              *  fstr = str(fc)
@@ -1084,7 +1084,7 @@ struct ic_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scop
  * FIXME need a way of signalling and passing errors
  *
  * examples:
- *  check let f::Foo = Foo(addone(1) "hello")
+ *  check let f::Foo = Foo(addone(1),"hello")
  *  check d(f)
  *  check print(s)
  *
@@ -1255,10 +1255,10 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
  *
  * this function must be compatible with the one produced
  * by `ic_decl_func_sig_call`
- *      foo(Sint Sint)
+ *      foo(Sint,Sint)
  *
  * and
- *      bar(&Sint String)
+ *      bar(&Sint,String)
  *
  * returns char * on success
  * returns 0 on failure
@@ -1323,9 +1323,9 @@ char *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, str
     /* insert list of argument types */
     len = ic_pvector_length(&(fcall->args));
     for (i = 0; i < len; ++i) {
-        /* insert a space if this isn't the first arg */
+        /* insert a comma if this isn't the first arg */
         if (i != 0) {
-            if (!ic_string_append_char(str, " ", 1)) {
+            if (!ic_string_append_char(str, ",", 1)) {
                 puts("ic_analyse_fcall_str: call to ic_string_append_char for ' ' failed");
                 goto ERROR;
             }

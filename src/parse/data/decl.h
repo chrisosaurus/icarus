@@ -43,17 +43,17 @@ struct ic_decl_func {
     struct ic_transform_body *tbody;
 
     /* call signature
-     * foo(Int Int)
+     * foo(Int,Int)
      */
     struct ic_string sig_call;
 
     /* full signature
-     * foo(Int Int) -> Int
+     * foo(Int,Int) -> Int
      */
     struct ic_string sig_full;
 
     /* mangled signature
-     * foo(Int Int) -> Int => i_foo_a_Int_Int
+     * foo(Int,Int) -> Int => i_foo_a_Int_Int
      */
     struct ic_string sig_mangled;
 
@@ -140,10 +140,10 @@ void ic_decl_func_print_body(struct ic_decl_func *fdecl, unsigned int *indent_le
 /* return a string representation of this function's call signature
  *
  * for a function signature
- *      fn foo(a::Int b::Int) -> Int
+ *      fn foo(a::Int,b::Int) -> Int
  *
  * this function will return
- *      foo(Int Int)
+ *      foo(Int,Int)
  *
  * the char* returned is a string stored within fdecl,
  * this means the caller must not free or mutate this string
@@ -156,10 +156,10 @@ char *ic_decl_func_sig_call(struct ic_decl_func *fdecl);
 /* return a string representation of this function full signature
  *
  * for a function signature
- *      fn foo(a::Int b::Int) -> Int
+ *      fn foo(a::Int,b::Int) -> Int
  *
  * this function will return
- *      foo(Int Int) -> Int
+ *      foo(Int,Int) -> Int
  *
  * the char* returned is a string stored within fdecl,
  * this means the caller must not free or mutate this string
@@ -172,7 +172,7 @@ char *ic_decl_func_sig_full(struct ic_decl_func *fdecl);
 /* return a mangled representation of this function full signature
  *
  * for a function signature
- *      fn foo(a::Int b::Int) -> Int
+ *      fn foo(a::Int,b::Int) -> Int
  *
  * this function will return
  *      i_foo_a_Int_Int

@@ -447,7 +447,7 @@ void ic_decl_func_print_body(struct ic_decl_func *fdecl, unsigned int *indent_le
  *      fn foo(a::Sint, b::Sint) -> Sint
  *
  * this function will return
- *      foo(Sint Sint)
+ *      foo(Sint,Sint)
  *
  * the char* returned is a string stored within fdecl,
  * this means the caller must not free or mutate this string
@@ -500,9 +500,9 @@ char *ic_decl_func_sig_call(struct ic_decl_func *fdecl) {
     /* iterate through args appending the type name to our string representation
      */
     for (i = 0; i < len; ++i) {
-        /* insert a space if we are not the first argument */
+        /* insert a comma if we are not the first argument */
         if (i > 0) {
-            if (!ic_string_append_char(fstr, " ", 1)) {
+            if (!ic_string_append_char(fstr, ",", 1)) {
                 puts("ic_decl_func_sig_call: arg: call to ic_string_append_char failed");
                 return 0;
             }
@@ -561,7 +561,7 @@ char *ic_decl_func_sig_call(struct ic_decl_func *fdecl) {
  *      fn foo(a::Sint, b::Sint) -> Sint
  *
  * this function will return
- *      foo(Sint Sint) -> Sint
+ *      foo(Sint,Sint) -> Sint
  *
  * the char* returned is a string stored within fdecl,
  * this means the caller must not free or mutate this string
@@ -614,9 +614,9 @@ char *ic_decl_func_sig_full(struct ic_decl_func *fdecl) {
     /* iterate through args appending the type name to our string representation
      */
     for (i = 0; i < len; ++i) {
-        /* insert a space if we are not the first argument */
+        /* insert a comma if we are not the first argument */
         if (i > 0) {
-            if (!ic_string_append_char(fstr, " ", 1)) {
+            if (!ic_string_append_char(fstr, ",", 1)) {
                 puts("ic_decl_func_sig_full: arg: call to ic_string_append_char failed");
                 return 0;
             }

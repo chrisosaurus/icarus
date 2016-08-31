@@ -44,7 +44,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
  *  infer 1 -> Int
  *  infer "helo" -> String
  *  infer addone(1) -> addone(Int)->Int -> Int
- *  infer Foo(1 "hello") -> Foo(Int String) -> Foo
+ *  infer Foo(1,"hello") -> Foo(Int,String) -> Foo
  *
  * returns ic_type * on success
  * returns 0 on failure
@@ -58,7 +58,7 @@ struct ic_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_ex
  * FIXME need a way of signalling and passing errors
  *
  * examples:
- *  check let f::Foo = Foo(addone(1) "hello")
+ *  check let f::Foo = Foo(addone(1),"hello")
  *  check d(f)
  *  check print(s)
  *
