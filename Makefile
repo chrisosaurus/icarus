@@ -117,6 +117,12 @@ test_custom: $(OBJ) icarus
 	@echo running test_backend_pancake_interpret_simple.pl
 	t/custom/test_backend_pancake_interpret_simple.pl
 
+	@echo -e "\n\ncompiling t/custom/test_backend_pancake_interpret_instructions.c to bin/t/custom/test_backend_pancake_interpret_instructions"
+	@mkdir -p `dirname bin/t/custom/test_backend_pancake_interpret_instructions`
+	@${CC} t/custom/test_backend_pancake_interpret_instructions.c -o bin/t/custom/test_backend_pancake_interpret_instructions ${CFLAGS} ${LDFLAGS} ${OBJ}
+	@echo running test_backend_pancake_interpret_instructions.pl
+	t/custom/test_backend_pancake_interpret_instructions.pl
+
 # compile and run each test
 $(TESTO) : $(TESTOUT)/% : %.c
 	@echo -e "\n\ncompiling $< to $@"

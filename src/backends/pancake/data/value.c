@@ -91,5 +91,5 @@ unsigned int ic_backend_pancake_value_print(struct ic_backend_pancake_value *val
             return 0;
     }
 
-    return 0;
+    return 1;
 }

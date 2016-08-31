@@ -1,9 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../../../data/dict.h"
+#include "../../../data/strdup.h"
 #include "../../../data/string.h"
+#include "../../../read/read.h"
 #include "instructions.h"
+
+#pragma GCC diagnostic ignored "-Wunused-variable"
 
 #define IC_BACKEND_PANCAKE_INSTRUCTIONS_START_SIZE 1024
 
@@ -367,4 +372,142 @@ unsigned int ic_backend_pancake_instructions_print(struct ic_backend_pancake_ins
     fputs("\n", file);
 
     return 1;
+}
+
+/* load bytecode instructions from file
+ *
+ * allocates new instructions to hold
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FILE *file) {
+    struct ic_backend_pancake_instructions *instructions = 0;
+    struct ic_backend_pancake_bytecode *instruction = 0;
+
+    char op[256];
+    char str_arg1[256];
+    char *nstr = 0;
+    unsigned int uint_arg1;
+    unsigned int uint_arg2;
+
+    int ret = 0;
+
+    if (!file) {
+        puts("ic_backend_pancake_instructions_load: file was null");
+        return 0;
+    }
+
+    instructions = ic_backend_pancake_instructions_new();
+    if (!instructions) {
+        puts("ic_backend_pancake_instructions_load: call to ic_backend_pancake_instruction_new failed");
+        return 0;
+    }
+
+    /* FIXME TODO
+     * parse through file
+     * create bytecode
+     * insert into instructions
+     */
+
+    while (1) {
+        ret = fscanf(file, "%s", op);
+
+        if (ret == EOF) {
+            /* success */
+            break;
+        }
+
+        if (ret != 1) {
+            /* failure */
+            puts("ic_backend_pancake_instructions_load: failed to read");
+            return 0;
+        }
+
+        if (!strcmp("pushuint", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_pushuint);
+        } else if (!strcmp("call_builtin", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_call_builtin);
+        } else if (!strcmp("exit", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_exit);
+        } else if (!strcmp("label", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_label);
+        } else {
+            printf("ic_backend_pancake_instructions_load: unsupported instruction '%s'\n", op);
+            return 0;
+        }
+
+        if (!instruction) {
+            puts("ic_backend_pancake_instructions_load: call to ic_backend_pancake_instructions_add failed");
+            return 0;
+        }
+
+        switch (instruction->tag) {
+            case icp_pushuint:
+                /* consume uint */
+                ret = fscanf(file, "%u", &uint_arg1);
+                if (ret == EOF || ret == 0) {
+                    puts("ic_backend_pancake_instructions_load: read failed 1");
+                    return 0;
+                }
+                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, uint_arg1)) {
+                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_uint failed");
+                    return 0;
+                }
+                break;
+
+            case icp_call_builtin:
+                /* consume str and arg count */
+                ret = fscanf(file, "%s", str_arg1);
+                if (ret == EOF || ret != 1) {
+                    puts("ic_backend_pancake_instructions_load: read failed 2");
+                    return 0;
+                }
+
+                ret = fscanf(file, "%u", &uint_arg2);
+                if (ret == EOF || ret != 1) {
+                    puts("ic_backend_pancake_instructions_load: read failed 2.1");
+                    return 0;
+                }
+
+                nstr = ic_strdup(str_arg1);
+                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, nstr)) {
+                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_char failed");
+                    return 0;
+                }
+
+                if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, uint_arg2)) {
+                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg2_set_uint failed");
+                    return 0;
+                }
+
+                break;
+
+            case icp_exit:
+                /* nothing more to do */
+                break;
+
+            case icp_label:
+                /* consume string */
+                ret = fscanf(file, "%s", str_arg1);
+                if (ret == EOF || ret != 1) {
+                    puts("ic_backend_pancake_instructions_load: read failed 3");
+                    return 0;
+                }
+                nstr = ic_strdup(str_arg1);
+                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, nstr)) {
+                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_char failed");
+                    return 0;
+                }
+
+                break;
+
+            default:
+                puts("ic_backend_pancake_instructions_load: unsupported instruction->tag");
+                return 0;
+                break;
+        }
+    }
+
+    return instructions;
 }

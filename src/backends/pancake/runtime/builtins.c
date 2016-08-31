@@ -22,8 +22,8 @@ struct ic_backend_pancake_builtins_table_type {
     {"println(Uint)", i_println_uint},
     {"println(Sint)", i_println_sint},
     {"println(Bool)", i_println_bool},
-    {"plus(Uint Uint)", i_plus_uint_uint},
-    {"plus(Sint Sint)", i_plus_sint_sint},
+    {"plus(Uint,Uint)", i_plus_uint_uint},
+    {"plus(Sint,Sint)", i_plus_sint_sint},
 };
 
 /* get builtin function for user-land name

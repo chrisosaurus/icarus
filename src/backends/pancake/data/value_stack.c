@@ -178,11 +178,10 @@ unsigned int ic_backend_pancake_value_stack_print(struct ic_backend_pancake_valu
         return 0;
     }
 
-    printf("DEBUG: stack head was '%d'\n", len);
     len = value_stack->head;
 
-    /* NB: has to be <= */
-    for (i = 0; i <= len; ++i) {
+    /* NB: has to be >= */
+    for (i = len; i >= 0; --i) {
         value = ic_backend_pancake_value_stack_get_offset(value_stack, i);
         if (!value) {
             puts("ic_backend_pancake_value_stack_print: call to ic_backend_pancake_value_stack_get_offset failed");
@@ -194,5 +193,6 @@ unsigned int ic_backend_pancake_value_stack_print(struct ic_backend_pancake_valu
             return 0;
         }
     }
-    return 0;
+
+    return 1;
 }

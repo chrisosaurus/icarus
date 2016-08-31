@@ -118,4 +118,13 @@ unsigned int ic_backend_pancake_instructions_get_fdecl(struct ic_backend_pancake
  */
 unsigned int ic_backend_pancake_instructions_print(struct ic_backend_pancake_instructions *instructions, FILE *file);
 
+/* load bytecode instructions from file
+ *
+ * allocates new instructions to hold
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FILE *file);
+
 #endif /* IC_BACKEND_PANCAKE_INSTRUCTIONS_H */
