@@ -24,6 +24,9 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
     unsigned int uint = 0;
     bool boolean = false;
 
+    /* new offset */
+    unsigned int new_offset = 0;
+
     /* current value we are working with */
     struct ic_backend_pancake_value *value = 0;
 
@@ -223,10 +226,37 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
                 }
                 break;
 
-            /* copyarg argn::uint */
-            case icp_copyarg:
             /* call fname::string argn::uint */
             case icp_call:
+                /* fdecl sig call */
+                str = ic_backend_pancake_bytecode_arg1_get_char(instruction);
+                if (!str) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_bytecode_arg1_get_char failed");
+                    return 0;
+                }
+
+                /* n args */
+                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+
+                /* offset to jump to */
+                new_offset = ic_backend_pancake_instructions_get_fdecl(instructions, str);
+
+                /* FIXME TODO ignoring uint */
+
+                /* FIXME TODO ignoring arg cleanup details */
+
+                /* FIXME TODO need to push current offset onto return stack */
+
+                /* jump to offset */
+                if (!ic_backend_pancake_instructions_set_offset(instructions, new_offset)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_instructions_set_offset failed");
+                    return 0;
+                }
+
+                break;
+
+            /* copyarg argn::uint */
+            case icp_copyarg:
             /* return */
             case icp_return:
             /* save current top of stack to restore later
