@@ -383,7 +383,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
      */
     if (cleanup_count > 0) {
         inst = ic_backend_pancake_instructions_add(instructions, icp_pop);
-        if (!bc_dummy_fdecl) {
+        if (!inst) {
             puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
             return 0;
         }
