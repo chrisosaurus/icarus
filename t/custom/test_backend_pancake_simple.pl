@@ -29,7 +29,6 @@ return_void
 label main()
 pushstr Hello world
 call foo(String) 1
-pop 0
 return_void
 EOF
 

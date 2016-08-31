@@ -379,15 +379,19 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
         }
     }
 
-    /* insert pop cleanup_count */
-    inst = ic_backend_pancake_instructions_add(instructions, icp_pop);
-    if (!bc_dummy_fdecl) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
-        return 0;
-    }
-    if (!ic_backend_pancake_bytecode_arg1_set_uint(inst, cleanup_count)) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
-        return 0;
+    /* insert pop cleanup_count
+     * only if cleanup_count > 0
+     */
+    if (cleanup_count > 0) {
+        inst = ic_backend_pancake_instructions_add(instructions, icp_pop);
+        if (!bc_dummy_fdecl) {
+            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
+            return 0;
+        }
+        if (!ic_backend_pancake_bytecode_arg1_set_uint(inst, cleanup_count)) {
+            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+            return 0;
+        }
     }
 
     /* insert our actual return instruction */
