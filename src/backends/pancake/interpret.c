@@ -133,6 +133,16 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
 
                 break;
 
+            /* jmp addr::uint */
+            case icp_jmp:
+                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+                if (!ic_backend_pancake_instructions_set_offset(instructions, uint)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_instructions_set_offset failed");
+                    return 0;
+                }
+
+                break;
+
             /* push key::string */
             case icp_push:
             /* copyarg argn::uint */
@@ -143,8 +153,6 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
             case icp_pop:
             /* return */
             case icp_return:
-            /* jmp addr::uint */
-            case icp_jmp:
             /* jif addr::uint */
             case icp_jif:
             /* jnif addr::uint */
