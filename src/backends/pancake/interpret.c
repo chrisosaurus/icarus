@@ -143,14 +143,24 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
 
                 break;
 
+            /* pop n::uint */
+            case icp_pop:
+                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+                /* pop uint items from the value_stack */
+                for (; uint > 0; --uint) {
+                    if (!ic_backend_pancake_value_stack_pop(value_stack)) {
+                        puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_pop failed");
+                        return 0;
+                    }
+                }
+                break;
+
             /* push key::string */
             case icp_push:
             /* copyarg argn::uint */
             case icp_copyarg:
             /* call fname::string argn::uint */
             case icp_call:
-            /* pop n::uint */
-            case icp_pop:
             /* return */
             case icp_return:
             /* jif addr::uint */
