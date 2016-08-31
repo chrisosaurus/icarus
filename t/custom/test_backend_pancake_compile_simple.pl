@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use v5.10;
 
-my $path = "bin/t/custom/test_backend_pancake_simple";
+my $path = "bin/t/custom/test_backend_pancake_compile_simple";
 
 die "Could not find '$path'\n" unless -e $path;
 
@@ -32,14 +32,14 @@ call foo(String) 1
 return_void
 EOF
 
-my $in_tmp_file = `mktemp TESTING_BACKEND_PANCAKE_SIMPLE_XXX.ic`;
+my $in_tmp_file = `mktemp TESTING_BACKEND_PANCAKE_COMPILE_SIMPLE_XXX.ic`;
 chomp($in_tmp_file);
 open( my $fh, ">", "$in_tmp_file" ) or die "failed to open tmp file '$in_tmp_file'";
 print $fh $input;
 close $fh;
 
 # using mktemp here just to get name
-my $out_tmp_file = `mktemp TESTING_BACKEND_PANCAKE_SIMPLE_XXX.out`;
+my $out_tmp_file = `mktemp TESTING_BACKEND_PANCAKE_COMPILE_SIMPLE_XXX.out`;
 
 my $output = `$path $in_tmp_file $out_tmp_file`;
 my $exit_status = $?;
@@ -69,6 +69,6 @@ if( $exit_status != 0 || $output ne $expected ){
     }
 }
 
-say "test_backend_pancake_simple successs";
+say "test_backend_pancake_compile_simple successs";
 say "=======\nGot correct output:\n$output";
 
