@@ -349,8 +349,6 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 /* offset for the start of this function */
                 value_stack_offset = call_info->arg_start;
 
-                printf("DEBUG: start of this value was '%u'\n", value_stack_offset);
-
                 /* our arg numbers */
                 uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
 
@@ -359,10 +357,6 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 /* value to copy onto head of stack */
                 value = ic_backend_pancake_value_stack_get_offset(value_stack, value_stack_offset);
-;
-                printf("DEBUG: got value from offset '%u'\n", value_stack_offset);
-
-                ic_backend_pancake_value_stack_print(value_stack, stdout);
 
                 /* create new value on value_stack to copy into */
                 to_value = ic_backend_pancake_value_stack_push(value_stack);

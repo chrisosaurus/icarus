@@ -163,7 +163,7 @@ struct ic_backend_pancake_value *ic_backend_pancake_value_stack_get_offset(struc
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_value_stack_print(struct ic_backend_pancake_value_stack *value_stack, FILE *file){
+unsigned int ic_backend_pancake_value_stack_print(struct ic_backend_pancake_value_stack *value_stack, FILE *file) {
     int i = 0;
     int len = 0;
     struct ic_backend_pancake_value *value = 0;
@@ -182,7 +182,7 @@ unsigned int ic_backend_pancake_value_stack_print(struct ic_backend_pancake_valu
     len = value_stack->head;
 
     /* NB: has to be <= */
-    for (i=0; i<=len; ++i){
+    for (i = 0; i <= len; ++i) {
         value = ic_backend_pancake_value_stack_get_offset(value_stack, i);
         if (!value) {
             puts("ic_backend_pancake_value_stack_print: call to ic_backend_pancake_value_stack_get_offset failed");
@@ -196,5 +196,3 @@ unsigned int ic_backend_pancake_value_stack_print(struct ic_backend_pancake_valu
     }
     return 0;
 }
-
-
