@@ -25,4 +25,11 @@ struct ic_backend_pancake_value {
     } u;
 };
 
+/* copy all data from `value_from` into `value_to`
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_value_copy(struct ic_backend_pancake_value *value_from, struct ic_backend_pancake_value *value_to);
+
 #endif /* IC_BACKEND_PANCAKE_VALUE_H */

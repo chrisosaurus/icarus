@@ -60,4 +60,18 @@ unsigned int ic_backend_pancake_value_stack_pop(struct ic_backend_pancake_value_
  */
 struct ic_backend_pancake_value *ic_backend_pancake_value_stack_push(struct ic_backend_pancake_value_stack *stack);
 
+/* current 'height' of value_stack
+ *
+ * returns n on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_value_stack_height(struct ic_backend_pancake_value_stack *stack);
+
+/* fetch arbitrary offset within value_stack
+ *
+ * returns n on success
+ * returns 0 on failure
+ */
+struct ic_backend_pancake_value *ic_backend_pancake_value_stack_get_offset(struct ic_backend_pancake_value_stack *stack, unsigned int);
+
 #endif /* IC_BACKEND_PANCAKE_VALUE_STACK_H */

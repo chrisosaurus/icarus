@@ -29,8 +29,13 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
     /* current offset */
     unsigned int cur_offset = 0;
 
+    /* offset into value_stack */
+    unsigned int value_stack_offset = 0;
+
     /* current value we are working with */
     struct ic_backend_pancake_value *value = 0;
+    /* value for copyarg to copy into */
+    struct ic_backend_pancake_value *to_value = 0;
 
     /* current call_info we are working with */
     struct ic_backend_pancake_call_info *call_info = 0;
@@ -263,6 +268,9 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
                     return 0;
                 }
 
+                /* height of value stack */
+                value_stack_offset = ic_backend_pancake_value_stack_height(value_stack);
+
                 /* set appropriate call_info values */
                 call_info->return_offset = cur_offset;
                 call_info->arg_count = uint;
@@ -317,6 +325,39 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
 
             /* copyarg argn::uint */
             case icp_copyarg:
+                call_info = ic_backend_pancake_call_info_stack_peek(call_info_stack);
+                if (!call_info) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_call_info_stack_peek failed");
+                    return 0;
+                }
+
+                /* offset for the start of this function */
+                value_stack_offset = call_info->call_start_offset;
+
+                /* our arg numbers */
+                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+
+                /* the offset of our arg into the value_stack */
+                value_stack_offset += uint;
+
+                /* value to copy onto head of stack */
+                value = ic_backend_pancake_value_stack_get_offset(value_stack, new_offset);
+
+                /* create new value on value_stack to copy into */
+                to_value = ic_backend_pancake_value_stack_push(value_stack);
+                if (!to_value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_push failed");
+                    return 0;
+                }
+
+                /* perform copy */
+                if (!ic_backend_pancake_value_copy(value, to_value)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_copy failed");
+                    return 0;
+                }
+
+                break;
+
             /* return_value */
             case icp_return_value:
             /* save current top of stack to restore later

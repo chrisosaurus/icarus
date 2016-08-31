@@ -15,6 +15,10 @@ struct ic_backend_pancake_call_info {
      * this is the start of the 'current' function
      */
     unsigned int call_start_offset;
+    /* height of value stack when this call started
+     * this is so we can address arguments
+     */
+    unsigned int arg_start;
 };
 
 #endif /* IC_BACKEND_PANCAKE_CALL_INFO_H */

@@ -127,3 +127,33 @@ struct ic_backend_pancake_value *ic_backend_pancake_value_stack_push(struct ic_b
 
     return ret;
 }
+
+/* current 'height' of value_stack
+ *
+ * returns n on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_value_stack_height(struct ic_backend_pancake_value_stack *stack) {
+    if (stack->head < 0) {
+        return 0;
+    }
+
+    return stack->head;
+}
+
+/* fetch arbitrary offset within value_stack
+ *
+ * returns n on success
+ * returns 0 on failure
+ */
+struct ic_backend_pancake_value *ic_backend_pancake_value_stack_get_offset(struct ic_backend_pancake_value_stack *stack, unsigned int offset) {
+    struct ic_backend_pancake_value *ret;
+    if (!stack) {
+        puts("ic_backend_pancake_value_stack_get_offset: stack was null");
+        return 0;
+    }
+
+    ret = &(stack->stack[offset]);
+
+    return ret;
+}
