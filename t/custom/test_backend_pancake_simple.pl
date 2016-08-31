@@ -23,7 +23,7 @@ call main() 0
 exit
 label foo(String)
 copyarg 0
-call println(String) 1
+call_builtin println(String) 1
 pop 1
 return_void
 label main()

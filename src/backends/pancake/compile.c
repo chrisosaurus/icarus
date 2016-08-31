@@ -858,7 +858,13 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
         puts("ic_backend_pancake_compile_fdecl_body: call to ic_decl_func_sig_call failed");
         return 0;
     }
-    instruction = ic_backend_pancake_instructions_add(instructions, icp_call);
+
+    if (ic_decl_func_isbuiltin(fcall->fdecl)) {
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_call_builtin);
+    } else {
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_call);
+    }
+
     if (!instruction) {
         puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_add failed");
         return 0;
