@@ -390,18 +390,22 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
         return 0;
     }
 
-    /* if function is not void restore return value */
-    if (!is_void) {
+    /* insert our actual return instruction */
+    if (is_void) {
+        if (!ic_backend_pancake_instructions_add(instructions, icp_return_void)) {
+            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
+            return 0;
+        }
+    } else {
+        /* if function is not void restore return value */
         if (!ic_backend_pancake_instructions_add(instructions, icp_restore)) {
             puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
             return 0;
         }
-    }
-
-    /* insert our actual return instruction */
-    if (!ic_backend_pancake_instructions_add(instructions, icp_return)) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
-        return 0;
+        if (!ic_backend_pancake_instructions_add(instructions, icp_return_value)) {
+            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
+            return 0;
+        }
     }
 
     /* destroy locals_keys pvector

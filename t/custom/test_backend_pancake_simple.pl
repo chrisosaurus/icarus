@@ -25,12 +25,12 @@ label foo(String)
 copyarg 0
 call println(String) 1
 pop 1
-return
+return_void
 label main()
 pushstr Hello world
 call foo(String) 1
 pop 0
-return
+return_void
 EOF
 
 my $in_tmp_file = `mktemp TESTING_BACKEND_PANCAKE_SIMPLE_XXX.ic`;

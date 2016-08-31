@@ -31,8 +31,10 @@ enum ic_backend_pancake_bytecode_type {
     /* pop n::uint */
     /* pop n::uint */
     icp_pop,
-    /* return */
-    icp_return,
+    /* return_value */
+    icp_return_value,
+    /* return_void */
+    icp_return_void,
     /* jmp addr::uint */
     icp_jmp,
     /* jif addr::uint */

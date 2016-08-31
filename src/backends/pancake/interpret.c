@@ -270,8 +270,10 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime *run
 
             /* copyarg argn::uint */
             case icp_copyarg:
-            /* return */
-            case icp_return:
+            /* return_value */
+            case icp_return_value:
+            /* return_void */
+            case icp_return_void:
             /* save current top of stack to restore later
              * NB: save will overwrite any previously saved value
              */

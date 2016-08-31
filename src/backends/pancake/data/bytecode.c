@@ -198,9 +198,15 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             return 1;
             break;
 
-        /* return */
-        case icp_return:
-            fputs("return", file);
+        /* return_value */
+        case icp_return_value:
+            fputs("return_value", file);
+            return 1;
+            break;
+
+        /* return_void */
+        case icp_return_void:
+            fputs("return_void", file);
             return 1;
             break;
 
