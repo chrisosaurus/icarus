@@ -8,8 +8,10 @@ my $path = "bin/t/custom/test_backend_pancake_interpret_instructions";
 
 die "Could not find '$path'\n" unless -e $path;
 
-my $input = <<EOF;
-label dummy
+my $cases = [
+  {
+    input =>
+"label dummy
 pushuint 4
 pushuint 3
 pushuint 6
@@ -17,31 +19,45 @@ pushuint 7
 call_builtin plus(Uint,Uint) 2
 call_builtin plus(Uint,Uint) 2
 exit
-EOF
-
-my $expected = <<EOF;
-uint: 16
+",
+    expected =>
+"uint: 16
 uint: 4
-EOF
+"
+  },
 
-my $pid = open3(my $write, my $read, my $error, "$path") or die "Failed to open $path";
-print $write $input;
-close $write;
-waitpid($pid, 0);
-my $output = "";
-{
-    local $/ = undef;
-    $output = <$read>;
+];
+
+sub run {
+  my $input = shift // die;
+  my $expected = shift // die;
+
+  my $pid = open3(my $write, my $read, my $error, "$path") or die "Failed to open $path";
+  print $write $input;
+  close $write;
+  waitpid($pid, 0);
+  my $output = "";
+  {
+      local $/ = undef;
+      $output = <$read>;
+  }
+
+  if( $output ne $expected ){
+      say "Output was not as expected";
+      say "=======\nExpected:\n$expected";
+      say "=======\nGot:\n$output";
+      say "=======\n";
+      die "Output not as expected";
+  }
+
+  say "=======\nGot correct output:\n$output";
 }
 
-if( $output ne $expected ){
-    say "Output was not as expected";
-    say "=======\nExpected:\n$expected";
-    say "=======\nGot:\n$output";
-    say "=======\n";
-    die "Output not as expected";
+for my $case (@$cases) {
+  my $input = $case->{input};
+  my $expected = $case->{expected};
+  run $input, $expected;
 }
 
 say "test_backend_pancake_interpret_simple successs";
-say "=======\nGot correct output:\n$output";
 
