@@ -50,11 +50,24 @@ my $cases = [
   },
   {
     input => "
-      pushint 4
+      pushint 3
+      pushint 5
+      call_builtin minus(Sint,Sint) 2
       exit
       ",
     expected => "
-      sint: 4
+      sint: -2
+      "
+  },
+  {
+    input => "
+      pushuint 3
+      pushuint 5
+      call_builtin minus(Uint,Uint) 2
+      exit
+      ",
+    expected => "
+      uint: 0
       "
   },
 ];
