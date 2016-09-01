@@ -11,6 +11,19 @@ die "Could not find '$path'\n" unless -e $path;
 my $cases = [
   {
     input => "
+      pushuint 176
+      pushuint 7
+      pushuint 27
+      exit
+      ",
+    expected => "
+      uint: 27
+      uint: 7
+      uint: 176
+      "
+  },
+  {
+    input => "
       label dummy
       pushuint 4
       pushuint 3
@@ -25,7 +38,6 @@ my $cases = [
       uint: 4
       "
   },
-
 ];
 
 # whitespace sensitivity sucks
