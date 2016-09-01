@@ -38,6 +38,16 @@ my $cases = [
       uint: 4
       "
   },
+  {
+    input => "
+      pushuint 17
+      call_builtin println(Uint) 1
+      exit
+      ",
+    expected => "
+      17
+      "
+  },
 ];
 
 # whitespace sensitivity sucks
