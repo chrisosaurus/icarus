@@ -48,6 +48,15 @@ my $cases = [
       17
       "
   },
+  {
+    input => "
+      pushint 4
+      exit
+      ",
+    expected => "
+      sint: 4
+      "
+  },
 ];
 
 # whitespace sensitivity sucks

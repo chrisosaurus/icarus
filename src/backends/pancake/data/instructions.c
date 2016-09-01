@@ -390,6 +390,8 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
     char *nstr = 0;
     unsigned int uint_arg1;
     unsigned int uint_arg2;
+    int sint_arg1;
+    int sint_arg2;
 
     int ret = 0;
 
@@ -426,6 +428,8 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
 
         if (!strcmp("pushuint", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_pushuint);
+        } else if (!strcmp("pushint", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_pushint);
         } else if (!strcmp("call_builtin", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_call_builtin);
         } else if (!strcmp("exit", op)) {
@@ -452,6 +456,19 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                 }
                 if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, uint_arg1)) {
                     puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_uint failed");
+                    return 0;
+                }
+                break;
+
+            case icp_pushint:
+                /* consume uint */
+                ret = fscanf(file, "%d", &sint_arg1);
+                if (ret == EOF || ret == 0) {
+                    puts("ic_backend_pancake_instructions_load: read failed 1");
+                    return 0;
+                }
+                if (!ic_backend_pancake_bytecode_arg1_set_sint(instruction, sint_arg1)) {
+                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_sint failed");
                     return 0;
                 }
                 break;
