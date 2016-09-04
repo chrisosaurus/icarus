@@ -30,6 +30,7 @@ enum ic_token_id {
     IC_WHITESPACE,
 
     IC_END,
+    IC_THEN,
 
     IC_IF,
     IC_ELSIF,

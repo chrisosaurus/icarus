@@ -123,6 +123,10 @@ char *ic_token_id_get_representation(enum ic_token_id id) {
             return "end";
             break;
 
+        case IC_THEN:
+            return "then";
+            break;
+
         case IC_IF:
             return "if";
             break;
@@ -558,6 +562,10 @@ void ic_token_id_print_debug(enum ic_token_id id) {
 
         case IC_END:
             fputs("IC_END", stdout);
+            break;
+
+        case IC_THEN:
+            fputs("IC_THEN", stdout);
             break;
 
         case IC_IF:
