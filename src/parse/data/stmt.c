@@ -658,13 +658,13 @@ void ic_stmt_if_print(struct ic_stmt_if *sif, unsigned int *indent_level) {
     ic_parse_print_indent(*indent_level);
 
     /* we want to print
-     *  if expr
+     *  if expr then
      *      body
      *  end
      */
     fputs("if ", stdout);
     ic_expr_print(sif->expr, &fake_indent);
-    puts("");
+    puts(" then");
 
     /* print body
      * body will handle incr and decr of the indent level

@@ -43,7 +43,7 @@ end
 
 # maybe_add_one(Sint,Bool)
 fn maybe_add_one(i::Sint, b::Bool) -> Sint
-    if b and i == 2
+    if b and i == 2 then
         i = i + 1
     end
     return i

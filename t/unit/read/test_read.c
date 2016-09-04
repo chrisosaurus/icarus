@@ -34,7 +34,7 @@ end\n\
 fn maybe_add_one(i::Sint, b::Bool) -> Sint\n\
     # FIXME this doesn't work `if i == 2 and b`\n\
     # due to lack of operator precedence\n\
-    if b and i == 2\n\
+    if b and i == 2 then\n\
         i = i + 1\n\
     end\n\
 \n\

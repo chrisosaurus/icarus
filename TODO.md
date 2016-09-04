@@ -1,6 +1,9 @@
 TODO:
 -----
 
+* parse handling of 'and' is gross
+* all word tokens needs to have a non-word token to end them afterwards
+* t/custom/test_lex_simple "andi" is gross
 * all print methods should take `FILE *` argument rather than assuming stdout
 * 'everything' within tir (except pointers to fdecl/kludge) should be owned - copy any shared symbols
 * sort out transform ownership - it is a mess

@@ -275,6 +275,14 @@ static struct ic_stmt *ic_parse_stmt_if(struct ic_token_list *token_list) {
     /* save our expr on the body stmt */
     stmt->u.sif.expr = expr;
 
+    /* consume then */
+    token = ic_token_list_expect_important(token_list, IC_THEN);
+    if (!token) {
+        puts("ic_parse_stmt_if: Failed to find `then` token");
+        free(stmt);
+        return 0;
+    }
+
     /* FIXME check that our 'expr' has the type Bool */
 
     /* parse our body */
