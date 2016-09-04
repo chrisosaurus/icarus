@@ -231,6 +231,19 @@ char *ic_token_id_get_representation(enum ic_token_id id) {
             return ")";
             break;
 
+        case IC_LESSTHAN_EQUAL:
+            return "<=";
+            break;
+        case IC_GREATERTHAN_EQUAL:
+            return ">=";
+            break;
+        case IC_LESSTHAN:
+            return "<";
+            break;
+        case IC_GREATERTHAN:
+            return ">";
+            break;
+
         default:
             printf("ic_token_id_get_representation: ERROR, unknown token id '%d'\n", id);
             return 0;
@@ -653,6 +666,19 @@ void ic_token_id_print_debug(enum ic_token_id id) {
             break;
         case IC_RRBRACKET:
             fputs("IC_RRBRACKET", stdout);
+            break;
+
+        case IC_LESSTHAN_EQUAL:
+            fputs("IC_LESSTHAN_EQUAL", stdout);
+            break;
+        case IC_GREATERTHAN_EQUAL:
+            fputs("IC_GREATERTHAN_EQUAL", stdout);
+            break;
+        case IC_LESSTHAN:
+            fputs("IC_LESSTHAN", stdout);
+            break;
+        case IC_GREATERTHAN:
+            fputs("IC_GREATERTHAN", stdout);
             break;
 
         default:

@@ -62,6 +62,11 @@ enum ic_token_id {
     IC_LRBRACKET, /* ( left round bracket */
     IC_RRBRACKET, /* ) right round backet */
 
+    IC_LESSTHAN_EQUAL,    /* <= */
+    IC_GREATERTHAN_EQUAL, /* >= */
+    IC_LESSTHAN,          /* < */
+    IC_GREATERTHAN,       /* > */
+
     IC_TOKEN_LEN /* final token */
 };
 
