@@ -49,4 +49,8 @@ builtin op % modulo
 builtin op == equal
 builtin op and and
 builtin op or or
+builtin op <= lessthan_equal
+builtin op >= greaterthan_equal
+builtin op < lessthan
+builtin op > greaterthan
 

@@ -426,6 +426,12 @@ unsigned int ic_token_isoperator(struct ic_token *token) {
         case IC_OR:
             return 1;
 
+        case IC_LESSTHAN_EQUAL:
+        case IC_GREATERTHAN_EQUAL:
+        case IC_LESSTHAN:
+        case IC_GREATERTHAN:
+            return 1;
+
         case IC_PERIOD:
             /* a period is not an operator
              * it is a field access */
