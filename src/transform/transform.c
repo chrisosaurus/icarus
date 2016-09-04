@@ -12,6 +12,7 @@
 #include "transform.h"
 
 #pragma GCC diagnostic ignored "-Wunused-function"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 
 #define TCOUNT_MAX_SIZE 10
 
@@ -79,7 +80,7 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_sc
  * returns 1 on success
  * returns 0 on failure
  */
-static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_assign *assign);
+static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_assign *assign);
 
 /* perform translation of a single `if` stmt within a body
  *
@@ -88,7 +89,7 @@ static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic
  * returns 1 on success
  * returns 0 on failure
  */
-static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_if *sif);
+static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_if *sif);
 
 /* perform translation of a single `for` stmt within a body
  *
@@ -97,7 +98,7 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_tra
  * returns 1 on success
  * returns 0 on failure
  */
-static unsigned int ic_transform_stmt_for(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_for *sfor);
+static unsigned int ic_transform_stmt_for(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_for *sfor);
 
 /* perform translation of a single `while` stmt within a body
  *
@@ -106,7 +107,7 @@ static unsigned int ic_transform_stmt_for(struct ic_kludge *kludge, struct ic_tr
  * returns 1 on success
  * returns 0 on failure
  */
-static unsigned int ic_transform_stmt_while(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_while *swhile);
+static unsigned int ic_transform_stmt_while(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_while *swhile);
 
 /* perform translation of a single `expr` stmt within a body
  *
@@ -486,28 +487,28 @@ static unsigned int ic_transform_stmt(struct ic_kludge *kludge, struct ic_scope 
             break;
 
         case ic_stmt_type_assign:
-            if (!ic_transform_stmt_assign(kludge, tbody, body, &(stmt->u.assign))) {
+            if (!ic_transform_stmt_assign(kludge, scope, tbody, body, &(stmt->u.assign))) {
                 puts("ic_transform_stmt: call to ic_transform_stmt_assign failed");
                 return 0;
             }
             break;
 
         case ic_stmt_type_if:
-            if (!ic_transform_stmt_if(kludge, tbody, body, &(stmt->u.sif))) {
+            if (!ic_transform_stmt_if(kludge, scope, tbody, body, &(stmt->u.sif))) {
                 puts("ic_transform_stmt: call to ic_transform_stmt_if failed");
                 return 0;
             }
             break;
 
         case ic_stmt_type_for:
-            if (!ic_transform_stmt_for(kludge, tbody, body, &(stmt->u.sfor))) {
+            if (!ic_transform_stmt_for(kludge, scope, tbody, body, &(stmt->u.sfor))) {
                 puts("ic_transform_stmt: call to ic_transform_stmt_for failed");
                 return 0;
             }
             break;
 
         case ic_stmt_type_while:
-            if (!ic_transform_stmt_while(kludge, tbody, body, &(stmt->u.swhile))) {
+            if (!ic_transform_stmt_while(kludge, scope, tbody, body, &(stmt->u.swhile))) {
                 puts("ic_transform_stmt: call to ic_transform_stmt_while failed");
                 return 0;
             }
@@ -697,9 +698,14 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_sc
  * returns 1 on success
  * returns 0 on failure
  */
-static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_assign *assign) {
+static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_assign *assign) {
     if (!kludge) {
         puts("ic_transform_stmt_assign: kludge was null");
+        return 0;
+    }
+
+    if (!scope) {
+        puts("ic_transform_stmt_assign: scope was null");
         return 0;
     }
 
@@ -729,9 +735,14 @@ static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic
  * returns 1 on success
  * returns 0 on failure
  */
-static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_if *sif) {
+static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_if *sif) {
     if (!kludge) {
         puts("ic_transform_stmt_if: kludge was null");
+        return 0;
+    }
+
+    if (!scope) {
+        puts("ic_transform_stmt_if: scope was null");
         return 0;
     }
 
@@ -761,7 +772,7 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_tra
  * returns 1 on success
  * returns 0 on failure
  */
-static unsigned int ic_transform_stmt_for(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_for *sfor) {
+static unsigned int ic_transform_stmt_for(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_for *sfor) {
     if (!kludge) {
         puts("ic_transform_stmt_for: kludge was null");
         return 0;
@@ -793,9 +804,14 @@ static unsigned int ic_transform_stmt_for(struct ic_kludge *kludge, struct ic_tr
  * returns 1 on success
  * returns 0 on failure
  */
-static unsigned int ic_transform_stmt_while(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_while *swhile) {
+static unsigned int ic_transform_stmt_while(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_while *swhile) {
     if (!kludge) {
         puts("ic_transform_stmt_while: kludge was null");
+        return 0;
+    }
+
+    if (!scope) {
+        puts("ic_transform_stmt_while: scope was null");
         return 0;
     }
 
