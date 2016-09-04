@@ -19,6 +19,10 @@ builtin fn minus(a::Sint, b::Sint) -> Sint
 builtin fn multiply(a::Sint, b::Sint) -> Sint
 builtin fn divide(a::Sint, b::Sint) -> Sint
 builtin fn modulo(a::Sint, b::Sint) -> Sint
+builtin fn lessthan_equal(a::Sint, b::Sint) -> Bool
+builtin fn greaterthan_equal(a::Sint, b::Sint) -> Bool
+builtin fn greaterthan(a::Sint, b::Sint) -> Bool
+builtin fn lessthan(a::Sint, b::Sint) -> Bool
 
 builtin type Uint
 builtin fn print(a::Uint)
@@ -29,6 +33,10 @@ builtin fn minus(a::Uint, b::Uint) -> Uint
 builtin fn multiply(a::Uint, b::Uint) -> Uint
 builtin fn divide(a::Uint, b::Uint) -> Uint
 builtin fn modulo(a::Uint, b::Uint) -> Uint
+builtin fn lessthan_equal(a::Uint, b::Uint) -> Bool
+builtin fn greaterthan_equal(a::Uint, b::Uint) -> Bool
+builtin fn greaterthan(a::Uint, b::Uint) -> Bool
+builtin fn lessthan(a::Uint, b::Uint) -> Bool
 
 builtin type String
 builtin fn print(a::String)
