@@ -74,6 +74,11 @@ unsigned int ic_b2c_compile_stmt(struct ic_kludge *input_kludge, struct ic_trans
             return 1;
             break;
 
+        case ic_transform_ir_stmt_type_if:
+            puts("ic_b2c_compile_stmt: if statements not yet supported");
+            return 0;
+            break;
+
         default:
             puts("ic_b2c_compile_stmt: stmt had impossible tag:");
             ic_transform_ir_stmt_print(tstmt, &indent_level);
