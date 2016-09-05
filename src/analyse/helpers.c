@@ -499,7 +499,7 @@ ERROR:
     return 0;
 }
 
-static struct ic_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall) {
+struct ic_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall) {
     /* our resulting type */
     struct ic_type *type = 0;
 
@@ -875,6 +875,7 @@ static struct ic_type *ic_analyse_infer_operator(struct ic_kludge *kludge, struc
         return 0;
     }
 
+    /* relying on identifier_init to set sane default permissions */
     if (!ic_expr_identifier_init(id, mapped_op_str, mapped_op_len, 0)) {
         puts("ic_analyse_infer_operator: call to ic_expr_identifier_init failed");
         return 0;

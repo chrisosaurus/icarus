@@ -53,6 +53,8 @@ struct ic_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scop
 
 struct ic_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_expr_constant *cons);
 
+struct ic_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall);
+
 /* check a statement for validity
  *
  * FIXME need a way of signalling and passing errors

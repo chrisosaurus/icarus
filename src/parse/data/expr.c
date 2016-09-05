@@ -382,6 +382,11 @@ unsigned int ic_expr_identifier_init(struct ic_expr_identifier *identifier, char
         return 0;
     }
 
+    /* if permissions are not set, then go to default */
+    if (!permissions) {
+        permissions = ic_parse_perm_default();
+    }
+
     identifier->permissions = permissions;
 
     return 1;
@@ -826,12 +831,18 @@ unsigned int ic_expr_operator_destroy(struct ic_expr_operator *op, unsigned int 
         }
     }
 
+    /* FIXME TODO avoiding calling this
+     * as operators are a little different to normal fcalls
+     * and the below code isn't operator-safe yet
+     */
+    /*
     if (op->fcall) {
         if (!ic_expr_func_call_destroy(op->fcall, 1)) {
-            puts("ic_expr_operator_destroy: second : call to ic_expr_func_calldestroy failed");
+            puts("ic_expr_operator_destroy: call to ic_expr_func_call_destroy failed");
             return 0;
         }
     }
+    */
 
     if (free_op) {
         free(op);

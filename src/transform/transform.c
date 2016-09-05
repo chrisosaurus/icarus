@@ -736,6 +736,9 @@ static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic
  * returns 0 on failure
  */
 static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_if *sif) {
+    struct ic_transform_ir_stmt *tstmt = 0;
+    struct ic_transform_ir_if *tif = 0;
+    struct ic_symbol *cond_sym = 0;
     if (!kludge) {
         puts("ic_transform_stmt_if: kludge was null");
         return 0;
@@ -758,6 +761,49 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
 
     if (!sif) {
         puts("ic_transform_stmt_if: sif was null");
+        return 0;
+    }
+
+    /* process if-expr */
+    cond_sym = ic_transform_new_temp(kludge, scope, tbody, sif->expr);
+    if (!cond_sym) {
+        puts("ic_transform_stmt_if: call to ic_transform_new_temp failed");
+        return 0;
+    }
+
+    /* make our new tif */
+    tstmt = ic_transform_ir_stmt_if_new(cond_sym);
+    if (!tstmt) {
+        puts("ic_transform_stmt_if: call to ic_transform_ir_stmt_if_new failed");
+        return 0;
+    }
+
+    /* get our tif out */
+    tif = ic_transform_ir_stmt_get_if(tstmt);
+    if (!tif) {
+        puts("ic_transform_stmt_if: call to ic_transform_ir_stmt_get_if failed");
+        return 0;
+    }
+
+    /* create new nested body sharing tcounter */
+    tif->then_tbody = ic_transform_body_new(tbody->tcounter);
+    if (!tif->then_tbody) {
+        puts("ic_transform_fdecl: call to ic_transform_body_new failed");
+        return 0;
+    }
+
+    /* dispatch to transform_body for work */
+    if (!ic_transform_body(kludge, scope, tif->then_tbody, sif->body)) {
+        puts("ic_transform_fdecl: call to ic_transform_body failed");
+        return 0;
+    }
+
+    /* FIXME TODO
+     * deal with optional else clause
+     */
+
+    if (!ic_transform_body_append(tbody, tstmt)) {
+        puts("ic_transform_stmt_ret: call to ic_transform_body_append failed");
         return 0;
     }
 
@@ -1074,9 +1120,61 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
             break;
 
         case ic_expr_type_operator:
-            /* all operators should now be functions ??? */
-            puts("ic_transform_new_temp: caller passed in expr->tag operator - should already be transformed at this point");
-            return 0;
+            if (!expr->u.op.fcall) {
+                /* all operators should have had their fcall set
+                 * during analysis
+                 */
+                puts("ic_transform_new_temp: caller passed in expr->tag operator without fcall set");
+                return 0;
+            }
+
+            /* generate name */
+            sym = ic_transform_gen_name("_t", ic_transform_counter_register_temporary(tbody->tcounter));
+            if (!sym) {
+                puts("ic_transform_new_temp: call to ic_transform_gen_name failed");
+                return 0;
+            }
+
+            /* unwrap fcall */
+            fcall = expr->u.op.fcall;
+
+            /* get return type of function call */
+            type = ic_analyse_infer_fcall(kludge, scope, fcall);
+            if (!type) {
+                puts("ic_transform_new_temp: call to ic_analyse_infer_fcall failed");
+                return 0;
+            }
+
+            /* transform fcall */
+            tir_fcall = ic_transform_fcall(kludge, scope, tbody, fcall);
+            if (!tir_fcall) {
+                puts("ic_transform_new_temp: call to ic_transform_fcall failed");
+                return 0;
+            }
+
+            /* wrap in tir_expr */
+            tir_expr = ic_transform_ir_expr_new();
+            if (!tir_expr) {
+                puts("ic_transform_new_temp: call to ic_transform_ir_expr_new failed");
+                return 0;
+            }
+            /* wrap tir_fcall in tir_expr */
+            tir_expr->fcall = tir_fcall;
+
+            /* generate new statement */
+            tir_stmt = ic_transform_ir_stmt_let_expr_new(sym, type, tir_expr);
+            if (!tir_stmt) {
+                puts("ic_transform_new_temp: call to ic_transform_ir_stmt_let_expr_new failed");
+                return 0;
+            }
+
+            if (!ic_transform_body_append(tbody, tir_stmt)) {
+                puts("ic_transform_new_temp: call to ic_transform_body_append failed");
+                return 0;
+            }
+
+            /* success */
+            return sym;
             break;
 
         case ic_expr_type_field_access:

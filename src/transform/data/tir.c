@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "../../parse/parse.h"
-#include "tir.h"
+#include "tbody.h"
 
 /* allocate and initialise a new let_literal
  *
@@ -478,6 +478,132 @@ unsigned int ic_transform_ir_assign_print(struct ic_transform_ir_assign *assign,
     return 0;
 }
 
+/* allocate and initialise a new if
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_if *ic_transform_ir_if_new(struct ic_symbol *cond_sym) {
+    struct ic_transform_ir_if *tif = 0;
+
+    if (!cond_sym) {
+        puts("ir_transform_ir_if_new: cond_sym was null");
+        return 0;
+    }
+
+    tif = calloc(1, sizeof(struct ic_transform_ir_if));
+    if (!tif) {
+        puts("ir_transform_ir_if_new: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_transform_ir_if_init(tif, cond_sym)) {
+        puts("ir_transform_ir_if_new: call to ic_transform_if_init failed");
+        return 0;
+    }
+
+    return tif;
+}
+
+/* initialise an existing if
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_if_init(struct ic_transform_ir_if *tif, struct ic_symbol *cond_sym) {
+    if (!tif) {
+        puts("ic_transform_ir_let_if_init: if was null");
+        return 0;
+    }
+
+    if (!cond_sym) {
+        puts("ic_transform_ir_let_if_init: cond_sym was null");
+        return 0;
+    }
+
+    tif->cond = cond_sym;
+    tif->then_tbody = 0;
+    tif->else_tbody = 0;
+
+    return 1;
+}
+
+/* destroy if
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * will only free if if `free_if` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_if_destroy(struct ic_transform_ir_if *tif, unsigned int free_if) {
+    if (!tif) {
+        puts("ic_transform_ir_let_if_destroy: if was null");
+        return 0;
+    }
+
+    if (free_if) {
+        free(tif);
+    }
+
+    return 1;
+}
+
+/* print if
+ *
+ * returns 1 on success
+ * return 0 on failure
+ */
+unsigned int ic_transform_ir_if_print(struct ic_transform_ir_if *tif, unsigned int *indent) {
+    unsigned int fake_indent = *indent + 1;
+
+    if (!tif) {
+        puts("ic_transform_ir_if_print: if was null");
+        return 0;
+    }
+
+    if (!indent) {
+        puts("ic_transform_ir_if_print: indent was null");
+        return 0;
+    }
+
+    ic_parse_print_indent(*indent);
+
+    /* if statement */
+    fputs("if ", stdout);
+
+    /* cond */
+    ic_symbol_print(tif->cond);
+    puts("");
+
+    /* body */
+    if (!ic_transform_body_print(tif->then_tbody, &fake_indent)) {
+        puts("ic_transform_ir_if_print: call to ic_transform_body_print failed");
+        return 0;
+    }
+
+    /* if we have an else clause */
+    if (tif->else_tbody) {
+        ic_parse_print_indent(*indent);
+        puts("else");
+        if (!ic_transform_body_print(tif->else_tbody, &fake_indent)) {
+            puts("ic_transform_ir_if_print: call to ic_transform_body_print failed");
+            return 0;
+        }
+    }
+
+    /* trailing end and \n */
+    ic_parse_print_indent(*indent);
+    puts("end");
+
+    return 1;
+}
+
 /* allocate and initialise a new expr
  *
  * TODO doesn't touch any of the contained elements
@@ -950,6 +1076,13 @@ unsigned int ic_transform_ir_stmt_print(struct ic_transform_ir_stmt *stmt, unsig
             }
             break;
 
+        case ic_transform_ir_stmt_type_if:
+            if (!ic_transform_ir_if_print(&(stmt->u.sif), indent)) {
+                puts("ic_transform_ir_stmt_print: call to ic_transform_ir_if_print failed");
+                return 0;
+            }
+            break;
+
         default:
             puts("ic_transform_ir_stmt_print: impossible stmt->tag");
             return 0;
@@ -1014,6 +1147,25 @@ struct ic_transform_ir_ret *ic_transform_ir_stmt_get_ret(struct ic_transform_ir_
     }
 
     return &(stmt->u.ret);
+}
+
+/* get pointer to internal if
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_if *ic_transform_ir_stmt_get_if(struct ic_transform_ir_stmt *stmt) {
+    if (!stmt) {
+        puts("ic_transform_ir_stmt_get_if: stmt was null");
+        return 0;
+    }
+
+    if (stmt->tag != ic_transform_ir_stmt_type_if) {
+        puts("ic_transform_ir_stmt_get_if: stmt was not of type if");
+        return 0;
+    }
+
+    return &(stmt->u.sif);
 }
 
 /* get pointer to internal assign
@@ -1152,6 +1304,33 @@ struct ic_transform_ir_stmt *ic_transform_ir_stmt_ret_new(struct ic_symbol *var)
     }
 
     stmt->u.ret.var = var;
+
+    return stmt;
+}
+
+/* allocate and initialise a new stmt->ret
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_if_new(struct ic_symbol *cond_sym) {
+    struct ic_transform_ir_stmt *stmt = 0;
+
+    if (!cond_sym) {
+        puts("ic_transform_ir_stmt_if_new: var was null");
+        return 0;
+    }
+
+    stmt = ic_transform_ir_stmt_new(ic_transform_ir_stmt_type_if);
+    if (!stmt) {
+        puts("ic_transform_ir_stmt_if_new: call to ic_transform_ir_stmt_new failed");
+        return 0;
+    }
+
+    if (!ic_transform_ir_if_init(&(stmt->u.sif), cond_sym)) {
+        puts("ic_transform_ir_stmt_let_expr_new: call to ic_transform_ir_if_init failed");
+        return 0;
+    }
 
     return stmt;
 }

@@ -204,6 +204,51 @@ unsigned int ic_transform_ir_assign_destroy(struct ic_transform_ir_assign *assig
  */
 unsigned int ic_transform_ir_assign_print(struct ic_transform_ir_assign *assign, unsigned int *indent);
 
+struct ic_transform_ir_if {
+    /* symbol pointing to let variables holding if-condition value */
+    struct ic_symbol *cond;
+    /* mandatory then tbody */
+    struct ic_transform_body *then_tbody;
+    /* optional else tbody */
+    struct ic_transform_body *else_tbody;
+};
+
+/* allocate and initialise a new if
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_if *ic_transform_ir_if_new(struct ic_symbol *cond_sym);
+
+/* initialise an existing if
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_if_init(struct ic_transform_ir_if *tif, struct ic_symbol *cond_sym);
+
+/* destroy if
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * will only free assign if `free_if` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_if_destroy(struct ic_transform_ir_if *tif, unsigned int free_if);
+
+/* print if
+ *
+ * returns 1 on success
+ * return 0 on failure
+ */
+unsigned int ic_transform_ir_if_print(struct ic_transform_ir_if *tif, unsigned int *indent);
+
 struct ic_transform_ir_expr {
     struct ic_transform_ir_fcall *fcall;
 };
@@ -344,7 +389,8 @@ enum ic_transform_ir_stmt_tag {
     ic_transform_ir_stmt_type_expr,
     ic_transform_ir_stmt_type_let,
     ic_transform_ir_stmt_type_ret,
-    ic_transform_ir_stmt_type_assign
+    ic_transform_ir_stmt_type_assign,
+    ic_transform_ir_stmt_type_if
 };
 
 struct ic_transform_ir_stmt {
@@ -354,6 +400,7 @@ struct ic_transform_ir_stmt {
         struct ic_transform_ir_let let;
         struct ic_transform_ir_ret ret;
         struct ic_transform_ir_assign assign;
+        struct ic_transform_ir_if sif;
     } u;
 };
 
@@ -414,6 +461,13 @@ struct ic_transform_ir_let *ic_transform_ir_stmt_get_let(struct ic_transform_ir_
  */
 struct ic_transform_ir_ret *ic_transform_ir_stmt_get_ret(struct ic_transform_ir_stmt *stmt);
 
+/* get pointer to internal if
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_if *ic_transform_ir_stmt_get_if(struct ic_transform_ir_stmt *stmt);
+
 /* get pointer to internal assign
  *
  * returns * on success
@@ -441,5 +495,11 @@ struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_expr_new(struct ic_symbol 
  * returns 0 on failure
  */
 struct ic_transform_ir_stmt *ic_transform_ir_stmt_ret_new(struct ic_symbol *var);
+/* allocate and initialise a new stmt->if
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_if_new(struct ic_symbol *cond_sym);
 
 #endif /* ifndef ICARUS_TRANSFORM_IR_H */

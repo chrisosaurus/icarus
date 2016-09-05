@@ -52,6 +52,7 @@ testing debt:
 technical debt:
 ---------------
 
+* operator_destroy doesn't cleanup fcall
 * should only return a pointer, all other values should be return via pointer in args, so that return values can always be tested for failure
 * current naming scheme is getting too long
 * pancake compile_fdecl is way too large for a single function
