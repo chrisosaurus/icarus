@@ -793,7 +793,7 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
     }
 
     /* dispatch to transform_body for work */
-    if (!ic_transform_body(kludge, scope, tif->then_tbody, sif->body)) {
+    if (!ic_transform_body(kludge, scope, tif->then_tbody, sif->then_body)) {
         puts("ic_transform_fdecl: call to ic_transform_body failed");
         return 0;
     }
@@ -801,6 +801,20 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
     /* FIXME TODO
      * deal with optional else clause
      */
+    if (sif->else_body) {
+        /* create new nested body sharing tcounter */
+        tif->else_tbody = ic_transform_body_new(tbody->tcounter);
+        if (!tif->else_tbody) {
+            puts("ic_transform_fdecl: call to ic_transform_body_new failed");
+            return 0;
+        }
+
+        /* dispatch to transform_body for work */
+        if (!ic_transform_body(kludge, scope, tif->else_tbody, sif->else_body)) {
+            puts("ic_transform_fdecl: call to ic_transform_body failed");
+            return 0;
+        }
+    }
 
     if (!ic_transform_body_append(tbody, tstmt)) {
         puts("ic_transform_stmt_ret: call to ic_transform_body_append failed");

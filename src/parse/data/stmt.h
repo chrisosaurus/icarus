@@ -202,7 +202,8 @@ void ic_stmt_assign_print(struct ic_stmt_assign *assign, unsigned int *indent_le
  */
 struct ic_stmt_if {
     struct ic_expr *expr;
-    struct ic_body *body;
+    struct ic_body *then_body;
+    struct ic_body *else_body;
 };
 
 /* allocate and initialise a new ic_stmt_if
@@ -236,20 +237,6 @@ unsigned int ic_stmt_if_destroy(struct ic_stmt_if *sif, unsigned int free_if);
  * returns 0 on failure
  */
 struct ic_expr *ic_stmt_if_get_expr(struct ic_stmt_if *sif);
-
-/* get statement of offset i within the body
- *
- * returns pointer to element on success
- * returns 0 on failure
- */
-struct ic_stmt *ic_stmt_if_get_stmt(struct ic_stmt_if *sif, unsigned int i);
-
-/* get length of body
- *
- * returns length on success
- * returns 0 on failure
- */
-unsigned int ic_stmt_if_length(struct ic_stmt_if *sif);
 
 /* print this if */
 void ic_stmt_if_print(struct ic_stmt_if *sif, unsigned int *indent_level);

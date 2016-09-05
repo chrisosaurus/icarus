@@ -557,7 +557,8 @@ unsigned int ic_stmt_if_init(struct ic_stmt_if *sif) {
 
     /* just zero out expr and body*/
     sif->expr = 0;
-    sif->body = 0;
+    sif->then_body = 0;
+    sif->else_body = 0;
 
     /* return success */
     return 1;
@@ -585,9 +586,17 @@ unsigned int ic_stmt_if_destroy(struct ic_stmt_if *sif, unsigned int free_if) {
     }
 
     /* free_body = 0 as member */
-    if (!ic_body_destroy(sif->body, 0)) {
+    if (!ic_body_destroy(sif->then_body, 0)) {
         puts("ic_stmt_if_destroy: call to ic_body_destroy failed");
         return 0;
+    }
+
+    if (sif->else_body) {
+        /* free_body = 0 as member */
+        if (!ic_body_destroy(sif->else_body, 0)) {
+            puts("ic_stmt_if_destroy: call to ic_body_destroy failed");
+            return 0;
+        }
     }
 
     if (free_if) {
@@ -608,36 +617,6 @@ struct ic_expr *ic_stmt_if_get_expr(struct ic_stmt_if *sif) {
 
     /* return our expr innards */
     return sif->expr;
-}
-
-/* get statement of offset i within the body
- *
- * returns pointer to element on success
- * returns 0 on failure
- */
-struct ic_stmt *ic_stmt_if_get_stmt(struct ic_stmt_if *sif, unsigned int i) {
-    if (!sif) {
-        puts("ic_stmt_if_get_stmt: sif was null");
-        return 0;
-    }
-
-    /* let body do the lifting */
-    return ic_body_get(sif->body, i);
-}
-
-/* get length of body
- *
- * returns length on success
- * returns 0 on failure
- */
-unsigned int ic_stmt_if_length(struct ic_stmt_if *sif) {
-    if (!sif) {
-        puts("ic_stmt_if_length: sif was null");
-        return 0;
-    }
-
-    /* let body do the lifting */
-    return ic_body_length(sif->body);
 }
 
 /* print this if */
@@ -669,7 +648,13 @@ void ic_stmt_if_print(struct ic_stmt_if *sif, unsigned int *indent_level) {
     /* print body
      * body will handle incr and decr of the indent level
      */
-    ic_body_print(sif->body, indent_level);
+    ic_body_print(sif->then_body, indent_level);
+
+    if (sif->else_body) {
+        ic_parse_print_indent(*indent_level);
+        puts("else");
+        ic_body_print(sif->else_body, indent_level);
+    }
 
     /* statements are displayed on their own line */
     /* print indent */

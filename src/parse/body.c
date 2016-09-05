@@ -12,7 +12,7 @@
  * returns * on success
  * returns 0 on failure
  */
-struct ic_body *ic_parse_body(struct ic_token_list *token_list) {
+struct ic_body *ic_parse_body(struct ic_token_list *token_list, unsigned int consume_end) {
     /* the body we eventually return */
     struct ic_body *body = 0;
     /* each intermediate statement that we add to the body */
@@ -34,9 +34,13 @@ struct ic_body *ic_parse_body(struct ic_token_list *token_list) {
         return 0;
     }
 
-    /* keep going until we see an unexpected end */
+    /* keep going until we see an unexpected end or else */
     while ((token = ic_token_list_peek_important(token_list))) {
         if (token->id == IC_END) {
+            success = 1;
+            break;
+        }
+        if (token->id == IC_ELSE) {
             success = 1;
             break;
         }
@@ -54,11 +58,13 @@ struct ic_body *ic_parse_body(struct ic_token_list *token_list) {
             return 0;
         }
     }
-    /* consume end */
-    token = ic_token_list_expect_important(token_list, IC_END);
-    if (!token) {
-        puts("ic_parse_body: unable to find end token");
-        return 0;
+    if (consume_end) {
+        /* consume end */
+        token = ic_token_list_expect_important(token_list, IC_END);
+        if (!token) {
+            puts("ic_parse_body: unable to find end token");
+            return 0;
+        }
     }
 
     /* if success is 1 then we hit an end token */

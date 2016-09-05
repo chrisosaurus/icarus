@@ -42,7 +42,7 @@ struct ic_stmt *ic_parse_stmt(struct ic_token_list *token_list);
  * returns * on success
  * returns 0 on failure
  */
-struct ic_body *ic_parse_body(struct ic_token_list *token_list);
+struct ic_body *ic_parse_body(struct ic_token_list *token_list, unsigned int consume_end);
 
 /**** parse/decl.c ****/
 

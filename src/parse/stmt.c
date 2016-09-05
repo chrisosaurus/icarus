@@ -226,8 +226,10 @@ static struct ic_stmt *ic_parse_stmt_if(struct ic_token_list *token_list) {
     struct ic_stmt *stmt = 0;
     /* our condition expression */
     struct ic_expr *expr = 0;
-    /* our body */
-    struct ic_body *body = 0;
+    /* our then body */
+    struct ic_body *then_body = 0;
+    /* our else body */
+    struct ic_body *else_body = 0;
 
     /* current token */
     struct ic_token *token = 0;
@@ -277,17 +279,57 @@ static struct ic_stmt *ic_parse_stmt_if(struct ic_token_list *token_list) {
 
     /* FIXME check that our 'expr' has the type Bool */
 
-    /* parse our body */
-    body = ic_parse_body(token_list);
-    if (!body) {
+    /* parse our body
+     * do not consume end, it could be else or end
+     */
+    then_body = ic_parse_body(token_list, 0);
+    if (!then_body) {
         puts("ic_parse_stmt_if: call to ic_parse_body failed");
         return 0;
     }
 
     /* save our body on the stmt */
-    stmt->u.sif.body = body;
+    stmt->u.sif.then_body = then_body;
 
-    /* ic_parse_body consumes our `end` for us */
+    token = ic_token_list_peek_important(token_list);
+    if (!token) {
+        puts("ic_parse_stmt_if: call to ic_token_list_peek_important failed");
+        return 0;
+    }
+
+    if (token->id == IC_END) {
+        /* consume end */
+        token = ic_token_list_expect_important(token_list, IC_END);
+        if (!token) {
+            puts("ic_parse_stmt_if: unable to find end token");
+            return 0;
+        }
+    } else if (token->id == IC_ELSE) {
+        /* consume else */
+        token = ic_token_list_expect_important(token_list, IC_ELSE);
+        if (!token) {
+            puts("ic_parse_stmt_if: unable to find else token");
+            return 0;
+        }
+        /* parse else body, consume end */
+        else_body = ic_parse_body(token_list, 0);
+        if (!else_body) {
+            puts("ic_parse_stmt_if: call to ic_parse_body failed");
+            return 0;
+        }
+
+        stmt->u.sif.else_body = else_body;
+
+        /* consume our end */
+        token = ic_token_list_expect_important(token_list, IC_END);
+        if (!token) {
+            puts("ic_parse_stmt_if: unable to find end token");
+            return 0;
+        }
+    } else {
+        puts("ic_parse_stmt_if: failed to deal with end/else");
+        return 0;
+    }
 
     return stmt;
 }
@@ -360,8 +402,8 @@ static struct ic_stmt *ic_parse_stmt_for(struct ic_token_list *token_list) {
 
     /* FIXME check types for expr and iterator */
 
-    /* parse our body */
-    body = ic_parse_body(token_list);
+    /* parse our body, consume end for us */
+    body = ic_parse_body(token_list, 1);
     if (!body) {
         puts("ic_parse_stmt_for: call to ic_parse_body failed");
         return 0;
@@ -423,8 +465,8 @@ static struct ic_stmt *ic_parse_stmt_while(struct ic_token_list *token_list) {
 
     /* FIXME check that our 'expr' has the type Bool */
 
-    /* parse our body */
-    body = ic_parse_body(token_list);
+    /* parse our body, consume end for us */
+    body = ic_parse_body(token_list, 1);
     if (!body) {
         puts("ic_parse_stmt_while: call to ic_parse_body failed");
         return 0;
