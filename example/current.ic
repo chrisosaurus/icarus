@@ -30,6 +30,13 @@ fn main()
     let f::Foo = Foo(add_one(1))
 
     d(f)
+
+    let x = 6
+    if x > 14
+      println("x > 14")
+    else
+      println("x <= 14")
+    end
 end
 
 # temporary hack to allow type and function analysis to pass
