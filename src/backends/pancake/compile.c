@@ -611,6 +611,11 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
                 return 0;
                 break;
 
+            case ic_transform_ir_stmt_type_if:
+                puts("ic_backend_pancake_compile_fdecl_body: if unimplemented");
+                return 0;
+                break;
+
             default:
                 puts("ic_backend_pancake_compile_fdecl_body: impossible case");
                 return 0;
