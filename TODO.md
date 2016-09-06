@@ -1,6 +1,7 @@
 TODO:
 -----
 
+* default integer type for literal, Sint or Uint? 'fn foo() -> Uint return 14 end' currently is an error
 * all print methods should take `FILE *` argument rather than assuming stdout
 * 'everything' within tir (except pointers to fdecl/kludge) should be owned - copy any shared symbols
 * sort out transform ownership - it is a mess
