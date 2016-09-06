@@ -48,6 +48,10 @@ enum ic_backend_pancake_bytecode_type {
     icp_exit,
     /* save current top of stack to restore later
      * NB: save will overwrite any previously saved value
+     * NB: saved value not guaranteed to survive past any function calls
+     *     as they may themselves call save
+     *     only intended to be used immediately before a popn call
+     *     and then to call restore
      */
     icp_save,
     /* restore previously saved item to top of stack

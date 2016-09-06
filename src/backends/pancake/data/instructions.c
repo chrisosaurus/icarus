@@ -436,6 +436,10 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
             instruction = ic_backend_pancake_instructions_add(instructions, icp_exit);
         } else if (!strcmp("label", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_label);
+        } else if (!strcmp("save", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_save);
+        } else if (!strcmp("restore", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_restore);
         } else {
             printf("ic_backend_pancake_instructions_load: unsupported instruction '%s'\n", op);
             return 0;
@@ -500,6 +504,8 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
 
                 break;
 
+            case icp_save:
+            case icp_restore:
             case icp_exit:
                 /* nothing more to do */
                 break;

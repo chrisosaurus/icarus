@@ -47,6 +47,9 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
     /* builtin function we are calling */
     ic_backend_function_sig builtin_func = 0;
 
+    /* saved value for returning */
+    struct ic_backend_pancake_value saved_return_value;
+
     if (!runtime_data) {
         puts("ic_backend_pancake_interpret: runtime_data was null");
         return 0;
@@ -410,16 +413,51 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 }
                 break;
 
-            /* return_value */
-            case icp_return_value:
             /* save current top of stack to restore later
              * NB: save will overwrite any previously saved value
              */
             case icp_save:
+                /* get value */
+                value = ic_backend_pancake_value_stack_peek(value_stack);
+
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_peek failed");
+                    return 0;
+                }
+
+                if (!ic_backend_pancake_value_copy(value, &saved_return_value)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_copy failed");
+                    return 0;
+                }
+
+                /* consume value */
+                if (!ic_backend_pancake_value_stack_pop(value_stack)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_pop failed");
+                    return 0;
+                }
+
+                break;
+
             /* restore previously saved item to top of stack
              * NB: error if no previous item was saved
              */
             case icp_restore:
+                value = ic_backend_pancake_value_stack_push(value_stack);
+
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_push failed");
+                    return 0;
+                }
+
+                if (!ic_backend_pancake_value_copy(&saved_return_value, value)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_copy failed");
+                    return 0;
+                }
+
+                break;
+
+            /* return_value */
+            case icp_return_value:
             /* store key::string
              * stores current top of stack under key
              */

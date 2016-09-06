@@ -70,6 +70,29 @@ my $cases = [
       uint: 0
       "
   },
+  {
+    input => "
+      pushuint 3
+      save
+      exit
+      ",
+    expected =>"
+      ",
+  },
+  {
+    input => "
+      pushuint 3
+      save
+      pushuint 5
+      restore
+      exit
+      ",
+    expected =>"
+      uint: 3
+      uint: 5
+      ",
+  },
+
 ];
 
 # whitespace sensitivity sucks
