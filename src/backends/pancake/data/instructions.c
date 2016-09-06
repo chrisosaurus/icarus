@@ -395,6 +395,9 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
 
     int ret = 0;
 
+    /* offset of instruction we just added */
+    unsigned int cur_offset = 0;
+
     if (!file) {
         puts("ic_backend_pancake_instructions_load: file was null");
         return 0;
@@ -413,6 +416,8 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
      */
 
     while (1) {
+        cur_offset = ic_backend_pancake_instructions_length(instructions);
+
         ret = fscanf(file, "%s", op);
 
         if (ret == EOF) {
@@ -440,6 +445,16 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
             instruction = ic_backend_pancake_instructions_add(instructions, icp_save);
         } else if (!strcmp("restore", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_restore);
+        } else if (!strcmp("clean_frame", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_clean_frame);
+        } else if (!strcmp("call", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_call);
+        } else if (!strcmp("return_value", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_return_value);
+        } else if (!strcmp("return_void", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_return_void);
+        } else if (!strcmp("copyarg", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_copyarg);
         } else {
             printf("ic_backend_pancake_instructions_load: unsupported instruction '%s'\n", op);
             return 0;
@@ -451,11 +466,24 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
         }
 
         switch (instruction->tag) {
+            case icp_copyarg:
+                /* consume uint */
+                ret = fscanf(file, "%u", &uint_arg1);
+                if (ret == EOF || ret == 0) {
+                    puts("ic_backend_pancake_instructions_load: read failed for copyarg");
+                    return 0;
+                }
+                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, uint_arg1)) {
+                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_uint failed");
+                    return 0;
+                }
+                break;
+
             case icp_pushuint:
                 /* consume uint */
                 ret = fscanf(file, "%u", &uint_arg1);
                 if (ret == EOF || ret == 0) {
-                    puts("ic_backend_pancake_instructions_load: read failed 1");
+                    puts("ic_backend_pancake_instructions_load: read failed for pushuint");
                     return 0;
                 }
                 if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, uint_arg1)) {
@@ -468,7 +496,7 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                 /* consume uint */
                 ret = fscanf(file, "%d", &sint_arg1);
                 if (ret == EOF || ret == 0) {
-                    puts("ic_backend_pancake_instructions_load: read failed 1");
+                    puts("ic_backend_pancake_instructions_load: read failed for pushint");
                     return 0;
                 }
                 if (!ic_backend_pancake_bytecode_arg1_set_sint(instruction, sint_arg1)) {
@@ -477,17 +505,18 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                 }
                 break;
 
+            case icp_call:
             case icp_call_builtin:
                 /* consume str and arg count */
                 ret = fscanf(file, "%s", str_arg1);
                 if (ret == EOF || ret != 1) {
-                    puts("ic_backend_pancake_instructions_load: read failed 2");
+                    puts("ic_backend_pancake_instructions_load: read 1 failed for call or call_builtin");
                     return 0;
                 }
 
                 ret = fscanf(file, "%u", &uint_arg2);
                 if (ret == EOF || ret != 1) {
-                    puts("ic_backend_pancake_instructions_load: read failed 2.1");
+                    puts("ic_backend_pancake_instructions_load: read 2 failed for call or call_builtin");
                     return 0;
                 }
 
@@ -506,6 +535,9 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
 
             case icp_save:
             case icp_restore:
+            case icp_clean_frame:
+            case icp_return_void:
+            case icp_return_value:
             case icp_exit:
                 /* nothing more to do */
                 break;
@@ -514,12 +546,18 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                 /* consume string */
                 ret = fscanf(file, "%s", str_arg1);
                 if (ret == EOF || ret != 1) {
-                    puts("ic_backend_pancake_instructions_load: read failed 3");
+                    puts("ic_backend_pancake_instructions_load: read failed for icp_label");
                     return 0;
                 }
                 nstr = ic_strdup(str_arg1);
                 if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, nstr)) {
                     puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_char failed");
+                    return 0;
+                }
+
+                /* register label as function */
+                if (!ic_backend_pancake_instructions_register_fdecl(instructions, nstr, cur_offset)) {
+                    puts("ic_backend_pancake_instructions_load: call to ic_backend_pancake_instructions_register_fdecl failed");
                     return 0;
                 }
 

@@ -321,8 +321,11 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 break;
 
+            /* return_value */
+            case icp_return_value:
             /* return_void */
             case icp_return_void:
+                /* no difference in behavior between return_value and return-void */
                 call_info = ic_backend_pancake_call_info_stack_peek(call_info_stack);
                 if (!call_info) {
                     puts("ic_backend_pancake_interpret: call to ic_backend_pancake_call_info_stack_peek failed");
@@ -336,8 +339,6 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                     puts("ic_backend_pancake_interpret: call to ic_backend_pancake_call_info_stack_pop failed");
                     return 0;
                 }
-
-                /* FIXME TODO ignoring arg cleanup details */
 
                 /* jump to offset */
                 if (!ic_backend_pancake_instructions_set_offset(instructions, new_offset)) {
@@ -456,8 +457,36 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 break;
 
-            /* return_value */
-            case icp_return_value:
+            /* clean_frame
+             * resets stack-frame back to how it was before caller inserted args
+             */
+            case icp_clean_frame:
+                /* call_info contains
+                 *  arg_start
+                 *
+                 * which we know is the height of the value_stack from before
+                 * our args were inserted
+                 *
+                 * so we can reset the value stack back to this height to
+                 * cleanup
+                 */
+
+                call_info = ic_backend_pancake_call_info_stack_peek(call_info_stack);
+                if (!call_info) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_call_info_stack_peek failed");
+                    return 0;
+                }
+
+                value_stack_offset = call_info->arg_start;
+
+                /* reset value_stack back to this point */
+                if (!ic_backend_pancake_value_stack_reset(value_stack, value_stack_offset)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_offset failed");
+                    return 0;
+                }
+
+                break;
+
             /* store key::string
              * stores current top of stack under key
              */
@@ -468,7 +497,6 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
             case icp_load:
             /* tailcall fname::string argn::uint */
             case icp_tailcall:
-
                 puts("ic_backend_pancake_interpret: unimplemeneted bytecode instruction");
                 return 0;
                 break;

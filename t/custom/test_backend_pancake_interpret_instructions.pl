@@ -92,7 +92,29 @@ my $cases = [
       uint: 5
       ",
   },
-
+  {
+    input => "
+      label entry
+      call main() 0
+      exit
+      label foo()
+      pushuint 5
+      copyarg 0
+      save
+      clean_frame
+      restore
+      return_value
+      label main()
+      call foo() 0
+      call_builtin println(Uint) 1
+      clean_frame
+      return_void
+      ",
+    expected => "
+      5
+      uint: 5
+      ",
+  },
 ];
 
 # whitespace sensitivity sucks

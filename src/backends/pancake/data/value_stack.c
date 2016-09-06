@@ -134,6 +134,11 @@ struct ic_backend_pancake_value *ic_backend_pancake_value_stack_push(struct ic_b
  * returns 0 on failure
  */
 unsigned int ic_backend_pancake_value_stack_height(struct ic_backend_pancake_value_stack *stack) {
+    if (!stack) {
+        puts("ic_backend_pancake_value_stack_height: stack was null");
+        return 0;
+    }
+
     if (stack->head < 0) {
         return 0;
     }
@@ -156,6 +161,36 @@ struct ic_backend_pancake_value *ic_backend_pancake_value_stack_get_offset(struc
     ret = &(stack->stack[offset]);
 
     return ret;
+}
+
+/* reset value stack back to this offset
+ *
+ * this will drop all values about it
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_value_stack_reset(struct ic_backend_pancake_value_stack *stack, unsigned int offset) {
+    unsigned int stack_head = 0;
+    if (!stack) {
+        puts("ic_backend_pancake_value_stack_reset: stack was null");
+        return 0;
+    }
+
+    if (stack->head < 0) {
+        puts("ic_backend_pancake_value_stack_reset: stack was empty");
+        return 0;
+    }
+
+    stack_head = stack->head;
+
+    if (stack_head < offset) {
+        puts("ic_backend_pancake_value_stack_reset: stack was already above offset");
+        return 0;
+    }
+
+    stack->head = offset;
+    return 1;
 }
 
 /* print value stack to provided file

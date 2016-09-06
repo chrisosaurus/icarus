@@ -72,7 +72,16 @@ unsigned int ic_backend_pancake_value_stack_height(struct ic_backend_pancake_val
  * returns n on success
  * returns 0 on failure
  */
-struct ic_backend_pancake_value *ic_backend_pancake_value_stack_get_offset(struct ic_backend_pancake_value_stack *stack, unsigned int);
+struct ic_backend_pancake_value *ic_backend_pancake_value_stack_get_offset(struct ic_backend_pancake_value_stack *stack, unsigned int offset);
+
+/* reset value stack back to this offset
+ *
+ * this will drop all values about it
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_value_stack_reset(struct ic_backend_pancake_value_stack *stack, unsigned int offset);
 
 /* print value stack to provided file
  *

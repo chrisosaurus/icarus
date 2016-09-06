@@ -167,9 +167,6 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     /* dummy bytecode for fdecl */
     struct ic_backend_pancake_bytecode *bc_dummy_fdecl = 0;
 
-    /* current bytecode instruction */
-    struct ic_backend_pancake_bytecode *inst = 0;
-
     /* len of args OR tbody */
     unsigned int len = 0;
     /* offset into args OR tbody */
@@ -185,12 +182,6 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
 
     /* current local */
     struct ic_backend_pancake_local *local = 0;
-
-    /* count of args to pop for cleanup */
-    unsigned int cleanup_count = 0;
-
-    /* if this fdecl is void */
-    unsigned int is_void = 0;
 
     if (!instructions) {
         puts("ic_backend_pancake_compile_fdecl: instructions was null");
@@ -316,8 +307,6 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
         }
     }
 
-    is_void = ic_decl_func_is_void(fdecl);
-
     fdecl_tbody = fdecl->tbody;
     if (!fdecl_tbody) {
         puts("ic_backend_pancake_compile_fdecl: no tbody found on fdecl");
@@ -342,7 +331,6 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
      *    add pop-return address instruction
      *    jump to return address
      */
-    cleanup_count = 0;
     len = ic_pvector_length(locals_keys);
     for (i = 0; i < len; ++i) {
         local_name_ch = ic_pvector_get(locals_keys, i);
@@ -361,54 +349,21 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
         if (!local->accessed) {
             printf("Pancake: Warning: unused local variable '%s'\n", local_name_ch);
         }
-
-        /* if this is an offset (value on stack) then count this so we can
-         * clean it up before returning
-         */
-        if (local->tag == icpl_offset) {
-            ++cleanup_count;
-        }
     }
 
-    /* if function is not void save return value */
-    if (!is_void) {
-        if (!ic_backend_pancake_instructions_add(instructions, icp_save)) {
-            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
-            return 0;
-        }
-    }
-
-    /* insert pop cleanup_count
-     * only if cleanup_count > 0
+    /* insert a cleanup and return_void instruction
+     * if a function used a return statement then it is likely we will never
+     * actually hit these instructions
+     *
+     * FIXME TODO only insert if not preceeded by return statement
      */
-    if (cleanup_count > 0) {
-        inst = ic_backend_pancake_instructions_add(instructions, icp_pop);
-        if (!inst) {
-            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
-            return 0;
-        }
-        if (!ic_backend_pancake_bytecode_arg1_set_uint(inst, cleanup_count)) {
-            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
-            return 0;
-        }
+    if (!ic_backend_pancake_instructions_add(instructions, icp_clean_frame)) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
+        return 0;
     }
-
-    /* insert our actual return instruction */
-    if (is_void) {
-        if (!ic_backend_pancake_instructions_add(instructions, icp_return_void)) {
-            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
-            return 0;
-        }
-    } else {
-        /* if function is not void restore return value */
-        if (!ic_backend_pancake_instructions_add(instructions, icp_restore)) {
-            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
-            return 0;
-        }
-        if (!ic_backend_pancake_instructions_add(instructions, icp_return_value)) {
-            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
-            return 0;
-        }
+    if (!ic_backend_pancake_instructions_add(instructions, icp_return_void)) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
+        return 0;
     }
 
     /* destroy locals_keys pvector
@@ -456,8 +411,14 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
     /* name of literal */
     char *let_literal_name_ch = 0;
 
+    /* name of variable in return stmt */
+    char *ret_name = 0;
+
     /* current local */
     struct ic_backend_pancake_local *local = 0;
+
+    /* instruction we generate */
+    struct ic_backend_pancake_bytecode *instruction = 0;
 
     /* out-of-band return value from ic_backend_pancake_compile_fcall */
     unsigned int fcall_is_void = 0;
@@ -602,8 +563,79 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
                 break;
 
             case ic_transform_ir_stmt_type_ret:
-                puts("ic_backend_pancake_compile_fdecl_body: return unimplemented");
-                return 0;
+                ret_name = ic_symbol_contents(tstmt->u.ret.var);
+                if (!ret_name) {
+                    puts("ic_backend_pancake_compile_fdecl_body: call to ic_symbol_contents failed");
+                    return 0;
+                }
+                local = ic_dict_get(locals, ret_name);
+                if (!local) {
+                    puts("ic_backend_pancake_compile_fdecl_body: call to ic_dict_get failed");
+                    return 0;
+                }
+                /* mark as accessed */
+                local->accessed = true;
+                /* deal with different local cases */
+                switch (local->tag) {
+                    case icpl_literal:
+                        if (!ic_backend_pancake_compile_push_constant(instructions, local)) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_compile_push_constant failed");
+                            return 0;
+                        }
+                        break;
+
+                    case icpl_offset:
+                        /* insert `copyarg argn` instruction */
+                        instruction = ic_backend_pancake_instructions_add(instructions, icp_copyarg);
+                        if (!instruction) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_add failed");
+                            return 0;
+                        }
+                        if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, local->u.offset)) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                            return 0;
+                        }
+
+                        break;
+
+                    default:
+                        puts("ic_backend_pancake_compile_fdecl_body: impossible local->arg");
+                        return 0;
+                        break;
+                }
+
+                /* FIXME TODO ideally we would only save/restore/clean if we
+                 * knew the stack clean had work to do
+                 */
+
+                /* insert save instruction */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_save);
+                if (!instruction) {
+                    puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+
+                /* insert clean_frame instruction */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_clean_frame);
+                if (!instruction) {
+                    puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+
+                /* insert restore instruction */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_restore);
+                if (!instruction) {
+                    puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+
+                /* insert return_value instruction */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_return_value);
+                if (!instruction) {
+                    puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+
                 break;
 
             case ic_transform_ir_stmt_type_assign:
@@ -882,11 +914,6 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
         puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
         return 0;
     }
-
-    /* FIXME TODO register return position to name (along with access count)
-     * NB: this is not a trivial problem, as this is the runtime offset, which may be tricky
-     */
-    puts("ic_backend_pancake_compile_fdecl_body: return value not yet handled");
 
     /* if void: compile-time error */
     if (ic_decl_func_is_void(decl_func)) {

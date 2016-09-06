@@ -308,6 +308,11 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             return 1;
             break;
 
+        case icp_clean_frame:
+            fputs("clean_frame", file);
+            return 1;
+            break;
+
         default:
             puts("ic_backend_pancake_bytecode_print: impossible case");
             return 0;

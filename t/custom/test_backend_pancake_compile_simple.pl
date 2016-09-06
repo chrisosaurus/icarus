@@ -24,11 +24,12 @@ exit
 label foo(String)
 copyarg 0
 call_builtin println(String) 1
-pop 1
+clean_frame
 return_void
 label main()
 pushstr Hello world
 call foo(String) 1
+clean_frame
 return_void
 EOF
 
