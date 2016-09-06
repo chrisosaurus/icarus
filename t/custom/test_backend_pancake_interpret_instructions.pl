@@ -121,12 +121,18 @@ sub run {
   print $write $input;
   close $write;
   waitpid($pid, 0);
+  my $status = $?;
   my $output = "";
   {
       local $/ = undef;
       $output = <$read>;
   }
   $output = cleanup $output;
+
+  if( $status != 0 ){
+      say "Command return non-zero exit code '${status}";
+      die "Command return non-zero exit code '${status}";
+  }
 
   if( $output ne $expected ){
       say "Output was not as expected";
@@ -136,7 +142,7 @@ sub run {
       die "Output not as expected";
   }
 
-  say "=======\nGot correct output:\n$output";
+  say "=======\nGot correct output:\n$output\n=======";
 }
 
 for my $case (@$cases) {
