@@ -178,8 +178,8 @@ unsigned int ic_backend_pancake_value_stack_reset(struct ic_backend_pancake_valu
     }
 
     if (stack->head < 0) {
-        puts("ic_backend_pancake_value_stack_reset: stack was empty");
-        return 0;
+        /* stack is empty, no need to reset */
+        return 1;
     }
 
     stack_head = stack->head;
