@@ -176,9 +176,6 @@ which shows us
 
     transform output (PENDING):
     ----------------
-    ic_transform_stmt: transform implementation pending
-    ic_transform_stmt: transform implementation pending
-    ic_transform: transform implementation pending
     ----------------
     fn foo(s::String) -> Void
         println(s)
@@ -189,9 +186,6 @@ which shows us
     end
 
     backend pancake selected (PENDING):
-    ic_backend_pancake_compile_fdecl_body: return value not yet handled
-    ic_backend_pancake_compile_fdecl_body: return value not yet handled
-    ic_backend_pancake_compile: implementation pending
     Pancake bytecode:
     ==========================
     label entry
