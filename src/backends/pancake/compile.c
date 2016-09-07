@@ -7,7 +7,6 @@
 #include "data/instructions.h"
 #include "data/local.h"
 #include "pancake.h"
-#include "tir.h"
 
 /* compile an fdecl into bytecode
  *
