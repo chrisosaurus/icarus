@@ -10,20 +10,20 @@ die "Could not find '$path'\n" unless -e $path;
 
 my $cases = [
   {
-    input => "
+    input => '
       pushuint 176
       pushuint 7
       pushuint 27
       exit
-      ",
-    expected => "
+      ',
+    expected => '
       uint: 27
       uint: 7
       uint: 176
-      "
+      '
   },
   {
-    input => "
+    input => '
       label dummy
       pushuint 4
       pushuint 3
@@ -32,68 +32,68 @@ my $cases = [
       call_builtin plus(Uint,Uint) 2
       call_builtin plus(Uint,Uint) 2
       exit
-      ",
-    expected => "
+      ',
+    expected => '
       uint: 16
       uint: 4
-      "
+      '
   },
   {
-    input => "
+    input => '
       pushuint 17
       call_builtin println(Uint) 1
       exit
-      ",
-    expected => "
+      ',
+    expected => '
       17
-      "
+      '
   },
   {
-    input => "
+    input => '
       pushint 3
       pushint 5
       call_builtin minus(Sint,Sint) 2
       exit
-      ",
-    expected => "
+      ',
+    expected => '
       sint: -2
-      "
+      '
   },
   {
-    input => "
+    input => '
       pushuint 3
       pushuint 5
       call_builtin minus(Uint,Uint) 2
       exit
-      ",
-    expected => "
+      ',
+    expected => '
       uint: 0
-      "
+      '
   },
   {
-    input => "
+    input => '
       pushuint 3
       save
       exit
-      ",
-    expected =>"
-      ",
+      ',
+    expected =>'
+      ',
   },
   {
-    input => "
+    input => '
       pushuint 3
       save
       pushuint 5
       restore
       exit
-      ",
-    expected =>"
+      ',
+    expected =>'
       uint: 3
       uint: 5
-      ",
+      ',
   },
   {
-    input => "
+    input => '
       label entry
       call main() 0
       exit
@@ -109,11 +109,11 @@ my $cases = [
       call_builtin println(Uint) 1
       clean_frame
       return_void
-      ",
-    expected => "
+      ',
+    expected => '
       5
       uint: 5
-      ",
+      ',
   },
 
   {
