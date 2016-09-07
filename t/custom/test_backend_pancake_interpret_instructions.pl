@@ -115,6 +115,17 @@ my $cases = [
       uint: 5
       ",
   },
+
+  {
+    input => '
+      pushstr "hello world"
+      call_builtin println(String) 1
+      exit
+      ',
+    expected => '
+      hello world
+      ',
+  },
 ];
 
 # whitespace sensitivity sucks

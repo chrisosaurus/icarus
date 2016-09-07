@@ -143,7 +143,7 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
                 puts("ic_backend_pancake_bytecode_print: call to ic_backend_pancake_bytecode_arg1_get_char failed");
                 return 0;
             }
-            fprintf(file, "pushstr %s", ch);
+            fprintf(file, "pushstr \"%s\"", ch);
 
             return 1;
             break;
