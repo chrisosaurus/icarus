@@ -160,7 +160,6 @@ unsigned int ic_transform(struct ic_kludge *kludge) {
         return 0;
     }
 
-    puts("ic_transform: transform implementation pending");
     return 1;
 }
 
@@ -527,7 +526,6 @@ static unsigned int ic_transform_stmt(struct ic_kludge *kludge, struct ic_scope 
             break;
     }
 
-    puts("ic_transform_stmt: transform implementation pending");
     return 1;
 }
 
@@ -687,7 +685,6 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_sc
             break;
     }
 
-    puts("ic_transform_stmt_let: implementation pending");
     return 1;
 }
 
@@ -724,8 +721,8 @@ static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic
         return 0;
     }
 
-    puts("ic_transform_stmt_assign: implementation pending");
-    return 1;
+    puts("ic_transform_stmt_assign: unimplemented");
+    return 0;
 }
 
 /* perform translation of a single `if` stmt within a body
@@ -821,7 +818,6 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
         return 0;
     }
 
-    puts("ic_transform_stmt_if: implementation pending");
     return 1;
 }
 
@@ -853,8 +849,8 @@ static unsigned int ic_transform_stmt_for(struct ic_kludge *kludge, struct ic_sc
         return 0;
     }
 
-    puts("ic_transform_stmt_for: implementation pending");
-    return 1;
+    puts("ic_transform_stmt_for: unimplemented");
+    return 0;
 }
 
 /* perform translation of a single `while` stmt within a body
@@ -890,8 +886,8 @@ static unsigned int ic_transform_stmt_while(struct ic_kludge *kludge, struct ic_
         return 0;
     }
 
-    puts("ic_transform_stmt_while: implementation pending");
-    return 1;
+    puts("ic_transform_stmt_while: unimplemented");
+    return 0;
 }
 
 /* perform translation of a single `expr` stmt within a body
@@ -979,7 +975,6 @@ static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_s
             break;
     }
 
-    puts("ic_transform_stmt_expr: implementation pending");
     return 1;
 }
 
@@ -1363,6 +1358,5 @@ static struct ic_symbol *ic_transform_fcall_arg(struct ic_kludge *kludge, struct
             break;
     }
 
-    puts("ic_transform_fcall_arg: implementation pending");
     return 0;
 }

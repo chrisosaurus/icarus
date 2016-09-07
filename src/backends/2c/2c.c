@@ -156,7 +156,6 @@ unsigned int ic_b2c_generate_types_pre(struct ic_kludge *kludge, FILE *f) {
         fprintf(f, "typedef struct %s %s;\n", type_name, type_name);
     }
 
-    puts("ic_b2c_generate_types_pre: implementation pending");
     return 1;
 }
 
@@ -338,7 +337,6 @@ unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct i
     /* closing brace*/
     fputs(")", f);
 
-    puts("ic_b2c_generate_functions_header: implementation pending");
     return 1;
 }
 
@@ -382,7 +380,6 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f) {
         fputs(";\n", f);
     }
 
-    puts("ic_b2c_generate_functions_pre: implementation pending");
     return 1;
 }
 
@@ -483,7 +480,6 @@ unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f) {
         fputs("}\n", f);
     }
 
-    puts("ic_b2c_generate_functions: implementation pending");
     return 1;
 }
 

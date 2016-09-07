@@ -140,7 +140,6 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
         }
     }
 
-    puts("ic_backend_pancake_compile: implementation pending");
     return instructions;
 }
 

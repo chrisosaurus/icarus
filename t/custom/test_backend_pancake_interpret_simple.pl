@@ -18,10 +18,6 @@ end
 EOF
 
 my $expected = <<EOF;
-ic_transform_stmt: transform implementation pending
-ic_transform_stmt: transform implementation pending
-ic_transform: transform implementation pending
-ic_backend_pancake_compile: implementation pending
 Hello world
 EOF
 

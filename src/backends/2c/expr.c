@@ -130,7 +130,6 @@ unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic
 
     /* FIXME communicate to caller the need to end (e.g. optionally append `;`) */
 
-    puts("ic_b2c_compile_expr_fcall: implementation pending");
     return 1;
 }
 

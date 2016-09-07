@@ -18,9 +18,6 @@ end
 EOF
 
 my $expected = <<EOF;
-ic_transform_stmt: transform implementation pending
-ic_transform_stmt: transform implementation pending
-ic_transform: transform implementation pending
 fn get_greeting(name::String) -> String
     let _l1::String = "Hello there "
     let _t2::String = concat(_l1, name)
