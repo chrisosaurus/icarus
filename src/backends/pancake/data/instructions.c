@@ -521,10 +521,27 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                     return 0;
                 }
 
+                break;
+
+            case icp_label:
+                /* consume string */
+                ret = fscanf(file, "%s", str_arg1);
+                if (ret == EOF || ret != 1) {
+                    puts("ic_backend_pancake_instructions_load: read failed for icp_label");
+                    return 0;
+                }
+                nstr = ic_strdup(str_arg1);
                 if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, nstr)) {
                     puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_char failed");
                     return 0;
                 }
+
+                /* register label as function */
+                if (!ic_backend_pancake_instructions_register_fdecl(instructions, nstr, cur_offset)) {
+                    puts("ic_backend_pancake_instructions_load: call to ic_backend_pancake_instructions_register_fdecl failed");
+                    return 0;
+                }
+
                 break;
 
             case icp_call:
@@ -562,27 +579,6 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
             case icp_return_value:
             case icp_exit:
                 /* nothing more to do */
-                break;
-
-            case icp_label:
-                /* consume string */
-                ret = fscanf(file, "%s", str_arg1);
-                if (ret == EOF || ret != 1) {
-                    puts("ic_backend_pancake_instructions_load: read failed for icp_label");
-                    return 0;
-                }
-                nstr = ic_strdup(str_arg1);
-                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, nstr)) {
-                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_char failed");
-                    return 0;
-                }
-
-                /* register label as function */
-                if (!ic_backend_pancake_instructions_register_fdecl(instructions, nstr, cur_offset)) {
-                    puts("ic_backend_pancake_instructions_load: call to ic_backend_pancake_instructions_register_fdecl failed");
-                    return 0;
-                }
-
                 break;
 
             default:
