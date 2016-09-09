@@ -2,7 +2,10 @@
 #define IC_BACKEND_PANCAKE_CALL_INFO_H
 
 /* an instance of this struct is put onto the call_info_stack
- * for each (non tail) icp_call
+ * for each icp_call
+ *
+ * for a tailcall this struct will still be inserted,
+ * but after the struct from the caller is removed.
  */
 struct ic_backend_pancake_call_info {
     /* offset of calling set
