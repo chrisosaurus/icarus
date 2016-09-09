@@ -123,6 +123,9 @@ test_custom: $(OBJ) icarus
 	@echo running test_backend_pancake_interpret_instructions.pl
 	t/custom/test_backend_pancake_interpret_instructions.pl
 
+	@echo running test_backend_pancake_end_to_end.pl
+	t/custom/test_backend_pancake_end_to_end.pl
+
 # compile and run each test
 $(TESTO) : $(TESTOUT)/% : %.c
 	@echo -e "\n\ncompiling $< to $@"
