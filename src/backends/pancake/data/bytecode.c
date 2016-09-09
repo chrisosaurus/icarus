@@ -172,8 +172,8 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             return 1;
             break;
 
-        /* tailcall fname::stringargn */
-        case icp_tailcall:
+        /* tailcall_void fname::stringargn */
+        case icp_tailcall_void:
             ch = ic_backend_pancake_bytecode_arg1_get_char(bytecode);
             if (!ch) {
                 puts("ic_backend_pancake_bytecode_print: call to ic_backend_pancake_bytecode_arg1_get_char failed");
@@ -182,7 +182,22 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
 
             uint = ic_backend_pancake_bytecode_arg2_get_uint(bytecode);
 
-            fprintf(file, "tailcall %s %" PRId32, ch, uint);
+            fprintf(file, "tailcall_void %s %" PRId32, ch, uint);
+
+            return 1;
+            break;
+
+        /* tailcall_value fname::stringargn */
+        case icp_tailcall_value:
+            ch = ic_backend_pancake_bytecode_arg1_get_char(bytecode);
+            if (!ch) {
+                puts("ic_backend_pancake_bytecode_print: call to ic_backend_pancake_bytecode_arg1_get_char failed");
+                return 0;
+            }
+
+            uint = ic_backend_pancake_bytecode_arg2_get_uint(bytecode);
+
+            fprintf(file, "tailcall_value %s %" PRId32, ch, uint);
 
             return 1;
             break;
@@ -428,8 +443,10 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_char(struct ic_backend_pancake
         case icp_pushstr:
         /* call fname::string argn::uint */
         case icp_call:
-        /* tailcall fname::string argn::uint */
-        case icp_tailcall:
+        /* tailcall_void fname::string argn::uint */
+        case icp_tailcall_void:
+        /* tailcall_value fname::string argn::uint */
+        case icp_tailcall_value:
         /* call_builtin fname::string argn::uint */
         case icp_call_builtin:
         /* panic desc::str */
@@ -757,8 +774,10 @@ unsigned int ic_backend_pancake_bytecode_arg2_set_uint(struct ic_backend_pancake
     switch (bytecode->tag) {
         /* call fname::stringargn::uint */
         case icp_call:
-        /* tailcall fname::stringargn::uint */
-        case icp_tailcall:
+        /* tailcall_void fname::stringargn::uint */
+        case icp_tailcall_void:
+        /* tailcall_value fname::stringargn::uint */
+        case icp_tailcall_value:
         /* call_builtin fname::stringargn::uint */
         case icp_call_builtin:
             break;
