@@ -457,6 +457,10 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
             instruction = ic_backend_pancake_instructions_add(instructions, icp_copyarg);
         } else if (!strcmp("pushstr", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
+        } else if (!strcmp("store", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_store);
+        } else if (!strcmp("load", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load);
         } else {
             printf("ic_backend_pancake_instructions_load: unsupported instruction '%s'\n", op);
             return 0;
@@ -507,11 +511,13 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                 }
                 break;
 
+            case icp_store:
+            case icp_load:
             case icp_pushstr:
                 /* consume uint */
                 ret = fscanf(file, " \"%[^\"]\"", str_arg1);
                 if (ret == EOF || ret == 0) {
-                    puts("ic_backend_pancake_instructions_load: read failed for pushstr");
+                    puts("ic_backend_pancake_instructions_load: read failed for pushstr/store/load");
                     return 0;
                 }
 
