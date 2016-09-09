@@ -522,6 +522,11 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                 }
 
                 nstr = ic_strdup(str_arg1);
+                if (!nstr) {
+                    puts("ic_backend_pancake_instructions_load: call to ic_strdup failed");
+                    return 0;
+                }
+
                 if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, nstr)) {
                     puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_char failed");
                     return 0;
@@ -536,7 +541,13 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                     puts("ic_backend_pancake_instructions_load: read failed for icp_label");
                     return 0;
                 }
+
                 nstr = ic_strdup(str_arg1);
+                if (!nstr) {
+                    puts("ic_backend_pancake_instructions_load: call to ic_strdup failed");
+                    return 0;
+                }
+
                 if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, nstr)) {
                     puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_char failed");
                     return 0;
@@ -566,6 +577,12 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                 }
 
                 nstr = ic_strdup(str_arg1);
+
+                if (!nstr) {
+                    puts("ic_backend_pancake_instructions_load: call to ic_strdup failed");
+                    return 0;
+                }
+
                 if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, nstr)) {
                     puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_char failed");
                     return 0;
