@@ -70,51 +70,70 @@ my $cases = [
 
   {
     input => '
-      fn bar() -> Sint
-        return 14
+      fn bar(a::Sint) -> Sint
+        return 7 + a
       end
 
-      fn foo() -> Sint
-        return bar()
+      fn foo(a::Sint) -> Sint
+        return bar(a + 4)
+      end
+
+      fn baz(a::Sint) -> Sint
+        let b = a + 3
+        return bar(b)
       end
 
       fn main()
-        println(foo())
+        println(foo(7))
+        println(baz(7))
       end
       ',
     expected => '
       lexer output:
       ----------------
 
-      fn bar() -> Sint
-        return 14
+      fn bar(a::Sint) -> Sint
+        return 7 + a
       end
 
-      fn foo() -> Sint
-        return bar()
+      fn foo(a::Sint) -> Sint
+        return bar(a + 4)
+      end
+
+      fn baz(a::Sint) -> Sint
+        let b = a + 3
+        return bar(b)
       end
 
       fn main()
-        println(foo())
+        println(foo(7))
+        println(baz(7))
       end
       ----------------
 
 
       parser output:
       ----------------
-      # bar()
-      fn bar() -> Sint
-          return 14
+      # bar(Sint)
+      fn bar(a::Sint) -> Sint
+          return 7 + a
       end
 
-      # foo()
-      fn foo() -> Sint
-          return bar()
+      # foo(Sint)
+      fn foo(a::Sint) -> Sint
+          return bar(a + 4)
+      end
+
+      # baz(Sint)
+      fn baz(a::Sint) -> Sint
+          let b = a + 3
+          return bar(b)
       end
 
       # main()
       fn main() -> Void
-          println(foo())
+          println(foo(7))
+          println(baz(7))
       end
       ----------------
 
@@ -129,17 +148,30 @@ my $cases = [
       transform output (PENDING):
       ----------------
       ----------------
-      fn bar() -> Sint
-          let _l1::Sint = 14
-          return _l1
+      fn bar(a::Sint) -> Sint
+          let _l1::Sint = 7
+          let _t1::Sint = plus(_l1, a)
+          return _t1
       end
-      fn foo() -> Sint
-          let _t1::Sint = bar()
+      fn foo(a::Sint) -> Sint
+          let _l1::Sint = 4
+          let _t2::Sint = plus(a, _l1)
+          let _t1::Sint = bar(_t2)
+          return _t1
+      end
+      fn baz(a::Sint) -> Sint
+          let _l1::Sint = 3
+          let b::Sint = plus(a, _l1)
+          let _t1::Sint = bar(b)
           return _t1
       end
       fn main() -> Void
-          let _t1::Sint = foo()
+          let _l1::Sint = 7
+          let _t1::Sint = foo(_l1)
           println(_t1)
+          let _l2::Sint = 7
+          let _t2::Sint = baz(_l2)
+          println(_t2)
       end
 
       backend pancake selected (PENDING):
@@ -148,16 +180,40 @@ my $cases = [
       label entry
       call main() 0
       exit
-      label bar()
-      pushint 14
+      label bar(Sint)
+      pushint 7
+      copyarg 0
+      call_builtin plus(Sint,Sint) 2
+      store _t1
+      load _t1
       save
       clean_stack
       restore
       return_value
       clean_stack
       return_void
-      label foo()
-      call bar() 0
+      label foo(Sint)
+      copyarg 0
+      pushint 4
+      call_builtin plus(Sint,Sint) 2
+      store _t2
+      load _t2
+      call bar(Sint) 1
+      store _t1
+      load _t1
+      save
+      clean_stack
+      restore
+      return_value
+      clean_stack
+      return_void
+      label baz(Sint)
+      copyarg 0
+      pushint 3
+      call_builtin plus(Sint,Sint) 2
+      store b
+      load b
+      call bar(Sint) 1
       store _t1
       load _t1
       save
@@ -167,9 +223,15 @@ my $cases = [
       clean_stack
       return_void
       label main()
-      call foo() 0
+      pushint 7
+      call foo(Sint) 1
       store _t1
       load _t1
+      call_builtin println(Sint) 1
+      pushint 7
+      call baz(Sint) 1
+      store _t2
+      load _t2
       call_builtin println(Sint) 1
       clean_stack
       return_void
@@ -177,7 +239,8 @@ my $cases = [
 
       Pancake interpreter output
       ==========================
-      14
+      18
+      17
       ',
   },
 ];
