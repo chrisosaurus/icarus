@@ -19,7 +19,7 @@
 unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data *runtime_data) {
     struct ic_backend_pancake_bytecode *instruction = 0;
     struct ic_backend_pancake_instructions *instructions = 0;
-    struct ic_backend_pancake_call_info_stack *call_info_stack = 0;
+    struct ic_backend_pancake_call_frame_stack *call_frame_stack = 0;
     struct ic_backend_pancake_value_stack *value_stack = 0;
 
     /* values inside our instructions we may want to unpack */
@@ -41,8 +41,8 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
     /* value for copyarg to copy into */
     struct ic_backend_pancake_value *to_value = 0;
 
-    /* current call_info we are working with */
-    struct ic_backend_pancake_call_info *call_info = 0;
+    /* current call_frame we are working with */
+    struct ic_backend_pancake_call_frame *call_frame = 0;
 
     /* builtin function we are calling */
     ic_backend_function_sig builtin_func = 0;
@@ -56,7 +56,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
     }
 
     instructions = runtime_data->instructions;
-    call_info_stack = runtime_data->call_info_stack;
+    call_frame_stack = runtime_data->call_frame_stack;
     value_stack = runtime_data->value_stack;
 
     for (;;) {
@@ -273,21 +273,21 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                  */
                 cur_offset = ic_backend_pancake_instructions_get_offset(instructions);
 
-                /* make new element on top of call_info_stack */
-                call_info = ic_backend_pancake_call_info_stack_push(call_info_stack);
-                if (!call_info) {
-                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_call_info_stack_push failed");
+                /* make new element on top of call_frame_stack */
+                call_frame = ic_backend_pancake_call_frame_stack_push(call_frame_stack);
+                if (!call_frame) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_call_frame_stack_push failed");
                     return 0;
                 }
 
                 /* height of value stack */
                 value_stack_offset = ic_backend_pancake_value_stack_height(value_stack);
 
-                /* set appropriate call_info values */
-                call_info->return_offset = cur_offset;
-                call_info->arg_count = uint;
-                call_info->call_start_offset = new_offset;
-                call_info->arg_start = value_stack_offset;
+                /* set appropriate call_frame values */
+                call_frame->return_offset = cur_offset;
+                call_frame->arg_count = uint;
+                call_frame->call_start_offset = new_offset;
+                call_frame->arg_start = value_stack_offset;
 
                 /* FIXME TODO ignoring uint */
 
@@ -326,17 +326,17 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
             /* return_void */
             case icp_return_void:
                 /* no difference in behavior between return_value and return-void */
-                call_info = ic_backend_pancake_call_info_stack_peek(call_info_stack);
-                if (!call_info) {
-                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_call_info_stack_peek failed");
+                call_frame = ic_backend_pancake_call_frame_stack_peek(call_frame_stack);
+                if (!call_frame) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_call_frame_stack_peek failed");
                     return 0;
                 }
 
-                new_offset = call_info->return_offset;
+                new_offset = call_frame->return_offset;
 
                 /* remove value at top of return stack */
-                if (!ic_backend_pancake_call_info_stack_pop(call_info_stack)) {
-                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_call_info_stack_pop failed");
+                if (!ic_backend_pancake_call_frame_stack_pop(call_frame_stack)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_call_frame_stack_pop failed");
                     return 0;
                 }
 
@@ -350,14 +350,14 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
             /* copyarg argn::uint */
             case icp_copyarg:
-                call_info = ic_backend_pancake_call_info_stack_peek(call_info_stack);
-                if (!call_info) {
-                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_call_info_stack_peek failed");
+                call_frame = ic_backend_pancake_call_frame_stack_peek(call_frame_stack);
+                if (!call_frame) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_call_frame_stack_peek failed");
                     return 0;
                 }
 
                 /* offset for the start of this function */
-                value_stack_offset = call_info->arg_start;
+                value_stack_offset = call_frame->arg_start;
 
                 /* our arg numbers */
                 uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
@@ -396,7 +396,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 /* FIXME TODO ignoring uint */
 
-                /* FIXME TODO should we create a call_info frame ? */
+                /* FIXME TODO should we create a call_frame frame ? */
 
                 /* try fetch our builtin function */
                 builtin_func = ic_backend_pancake_builtins_table_get(str);
@@ -461,7 +461,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
              * resets stack-frame back to how it was before caller inserted args
              */
             case icp_clean_stack:
-                /* call_info contains
+                /* call_frame contains
                  *  arg_start
                  *
                  * which we know is the height of the value_stack from before
@@ -471,13 +471,13 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                  * cleanup
                  */
 
-                call_info = ic_backend_pancake_call_info_stack_peek(call_info_stack);
-                if (!call_info) {
-                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_call_info_stack_peek failed");
+                call_frame = ic_backend_pancake_call_frame_stack_peek(call_frame_stack);
+                if (!call_frame) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_call_frame_stack_peek failed");
                     return 0;
                 }
 
-                value_stack_offset = call_info->arg_start;
+                value_stack_offset = call_frame->arg_start;
 
                 /* reset value_stack back to this point */
                 if (!ic_backend_pancake_value_stack_reset(value_stack, value_stack_offset)) {

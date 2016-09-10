@@ -1,13 +1,13 @@
 #ifndef IC_BACKEND_PANCAKE_RUNTIME_DATA_H
 #define IC_BACKEND_PANCAKE_RUNTIME_DATA_H
 
-#include "call_info_stack.h"
+#include "call_frame_stack.h"
 #include "instructions.h"
 #include "value_stack.h"
 
 struct ic_backend_pancake_runtime_data {
     struct ic_backend_pancake_instructions *instructions;
-    struct ic_backend_pancake_call_info_stack *call_info_stack;
+    struct ic_backend_pancake_call_frame_stack *call_frame_stack;
     struct ic_backend_pancake_value_stack *value_stack;
     /* FIXME TODO eventually this should also have a heap for allocation */
 };

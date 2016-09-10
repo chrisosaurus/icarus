@@ -1,13 +1,13 @@
-#ifndef IC_BACKEND_PANCAKE_CALL_INFO_H
-#define IC_BACKEND_PANCAKE_CALL_INFO_H
+#ifndef IC_BACKEND_PANCAKE_CALL_FRAME_H
+#define IC_BACKEND_PANCAKE_CALL_FRAME_H
 
-/* an instance of this struct is put onto the call_info_stack
+/* an instance of this struct is put onto the call_frame_stack
  * for each icp_call
  *
  * for a tailcall this struct will still be inserted,
  * but after the struct from the caller is removed.
  */
-struct ic_backend_pancake_call_info {
+struct ic_backend_pancake_call_frame {
     /* offset of calling set
      * offset we return to upon icp_return_*
      */
@@ -24,4 +24,4 @@ struct ic_backend_pancake_call_info {
     unsigned int arg_start;
 };
 
-#endif /* IC_BACKEND_PANCAKE_CALL_INFO_H */
+#endif /* IC_BACKEND_PANCAKE_CALL_FRAME_H */
