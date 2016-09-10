@@ -67,6 +67,92 @@ my $cases = [
       Hello world
       '
   },
+
+  {
+    input => '
+      fn foo() -> Sint
+        return 14
+      end
+
+      fn main()
+        println(foo())
+      end
+      ',
+    expected => '
+      lexer output:
+      ----------------
+
+      fn foo() -> Sint
+        return 14
+      end
+
+      fn main()
+        println(foo())
+      end
+      ----------------
+
+
+      parser output:
+      ----------------
+      # foo()
+      fn foo() -> Sint
+          return 14
+      end
+
+      # main()
+      fn main() -> Void
+          println(foo())
+      end
+      ----------------
+
+
+      analyse output:
+      ----------------
+      warning: main implementation pending, icarus is currently only partially functional
+      analysis complete
+      ----------------
+
+
+      transform output (PENDING):
+      ----------------
+      ----------------
+      fn foo() -> Sint
+          let _l1::Sint = 14
+          return _l1
+      end
+      fn main() -> Void
+          let _t1::Sint = foo()
+          println(_t1)
+      end
+
+      backend pancake selected (PENDING):
+      Pancake bytecode:
+      ==========================
+      label entry
+      call main() 0
+      exit
+      label foo()
+      pushint 14
+      save
+      clean_stack
+      restore
+      return_value
+      clean_stack
+      return_void
+      label main()
+      call foo() 0
+      store _t1
+      load _t1
+      call_builtin println(Sint) 1
+      clean_stack
+      return_void
+      ==========================
+
+      Pancake interpreter output
+      ==========================
+      14
+      ',
+  },
 ];
 
 # whitespace sensitivity sucks

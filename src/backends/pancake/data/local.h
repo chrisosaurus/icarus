@@ -4,8 +4,16 @@
 #include <stdbool.h>
 
 enum ic_backend_pancake_local_type {
+    /* literal means we have a literal value stored here */
     icpl_literal,
+    /* offset means we have the value stored on the stack
+     * at the given offset within our fcall's value_stack
+     */
     icpl_offset,
+    /* runtime means the value is dependent on a runtime expression
+     * and that the value is stored on our call_frame->local_vars
+     */
+    icpl_runtime,
 };
 
 /* a local 'variable' used during bytecode compilation */

@@ -1,6 +1,7 @@
 TODO:
 -----
 
+* refactor out locals handling in pancake/compile.c - should share logic when possible
 * all debug/warning messages should go to stderr to make testing easier
 * default integer type for literal, Sint or Uint? 'fn foo() -> Uint return 14 end' currently is an error
 * all print methods should take `FILE *` argument rather than assuming stdout

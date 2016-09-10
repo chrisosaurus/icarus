@@ -406,8 +406,8 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
     struct ic_transform_ir_let_literal *tlet_lit = 0;
     struct ic_transform_ir_let_expr *tlet_expr = 0;
 
-    /* name of literal */
-    char *let_literal_name_ch = 0;
+    /* name of let */
+    char *let_name_ch = 0;
 
     /* name of variable in return stmt */
     char *ret_name = 0;
@@ -513,12 +513,12 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
                             puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_set_literal failed");
                             return 0;
                         }
-                        let_literal_name_ch = ic_symbol_contents(tlet_lit->name);
-                        if (!let_literal_name_ch) {
+                        let_name_ch = ic_symbol_contents(tlet_lit->name);
+                        if (!let_name_ch) {
                             puts("ic_backend_pancake_compile_fdecl_body: call to ic_symbol_contents failed");
                             return 0;
                         }
-                        if (!ic_dict_insert(locals, let_literal_name_ch, local)) {
+                        if (!ic_dict_insert(locals, let_name_ch, local)) {
                             puts("ic_backend_pancake_compile_fdecl_body: call to ic_dict_insert failed");
                             return 0;
                         }
@@ -529,12 +529,13 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
                          *  let name::type = fcall(args...)
                          *    push all args onto stack (using dict)
                          *    call fcall
-                         *    register return position to name (along with access count)
+                         *    register return value to name (along with access count)
                          *    if void:
                          *      compile-time error
                          */
 
                         /* FIXME TODO consider adding some error handling */
+                        /* compile fcall */
                         tlet_expr = &(tlet->u.expr);
                         texpr = tlet_expr->expr;
                         if (!ic_backend_pancake_compile_expr(instructions, kludge, locals, texpr, &fcall_is_void)) {
@@ -544,12 +545,39 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
 
                         if (fcall_is_void) {
                             puts("ic_backend_pancake_compile_fdecl_body: function used in let was void");
-                            printf("function called and assigned to let '%s', but function is void\n", let_literal_name_ch);
+                            printf("function called and assigned to let '%s', but function is void\n", let_name_ch);
                             return 0;
                         }
 
-                        puts("ic_backend_pancake_compile_fdecl_body: let expr unimplemented");
-                        return 0;
+                        /* insert icp_store instruction under name of let */
+                        let_name_ch = ic_symbol_contents(tlet_expr->name);
+
+                        /* insert `store let_name_ch` instruction */
+                        instruction = ic_backend_pancake_instructions_add(instructions, icp_store);
+                        if (!instruction) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_add failed");
+                            return 0;
+                        }
+                        if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, let_name_ch)) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                            return 0;
+                        }
+
+                        /* create local */
+                        local = ic_backend_pancake_local_new(tlet_expr->name, icpl_runtime);
+                        if (!local) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_local failed");
+                            return 0;
+                        }
+                        if (!let_name_ch) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_symbol_contents failed");
+                            return 0;
+                        }
+                        if (!ic_dict_insert(locals, let_name_ch, local)) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_dict_insert failed");
+                            return 0;
+                        }
+
                         break;
 
                     default:
@@ -594,6 +622,11 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
                             return 0;
                         }
 
+                        break;
+
+                    case icpl_runtime:
+                        puts("ic_backend_pancake_compile_fdecl_body: icpl_runtime unimplemented");
+                        return 0;
                         break;
 
                     default:
@@ -839,17 +872,17 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
     for (i = 0; i < len; ++i) {
         fcall_arg = ic_transform_ir_fcall_get_arg(tfcall, i);
         if (!fcall_arg) {
-            puts("ic_backend_pancake_compile_fdecl_body: call to ic_transform_ir_fcall_get_arg failed");
+            puts("ic_backend_pancake_compile_fcall: call to ic_transform_ir_fcall_get_arg failed");
             return 0;
         }
         arg_name = ic_symbol_contents(fcall_arg);
         if (!arg_name) {
-            puts("ic_backend_pancake_compile_fdecl_body: call to ic_symbol_contents failed");
+            puts("ic_backend_pancake_compile_fcall: call to ic_symbol_contents failed");
             return 0;
         }
         arg_local = ic_dict_get(locals, arg_name);
         if (!arg_local) {
-            puts("ic_backend_pancake_compile_fdecl_body: call to ic_dict_get failed");
+            puts("ic_backend_pancake_compile_fcall: call to ic_dict_get failed");
             return 0;
         }
         /* mark as accessed */
@@ -858,7 +891,7 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
         switch (arg_local->tag) {
             case icpl_literal:
                 if (!ic_backend_pancake_compile_push_constant(instructions, arg_local)) {
-                    puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_compile_push_constant failed");
+                    puts("ic_backend_pancake_compile_fcall: call to ic_backend_pancake_compile_push_constant failed");
                     return 0;
                 }
                 break;
@@ -867,18 +900,32 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
                 /* insert `copyarg argn` instruction */
                 instruction = ic_backend_pancake_instructions_add(instructions, icp_copyarg);
                 if (!instruction) {
-                    puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_add failed");
+                    puts("ic_backend_pancake_compile_fcall: call to ic_backend_pancake_instructions_add failed");
                     return 0;
                 }
                 if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, arg_local->u.offset)) {
-                    puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                    puts("ic_backend_pancake_compile_fcall: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                    return 0;
+                }
+
+                break;
+
+            case icpl_runtime:
+                /* insert `load key` instruction */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_load);
+                if (!instruction) {
+                    puts("ic_backend_pancake_compile_fcall: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, arg_name)) {
+                    puts("ic_backend_pancake_compile_fcall: call to ic_backend_pancake_bytecode_arg1_set_char");
                     return 0;
                 }
 
                 break;
 
             default:
-                puts("ic_backend_pancake_compile_fdecl_body: impossible arg_local->arg");
+                puts("ic_backend_pancake_compile_fcall: impossible arg_local->arg");
                 return 0;
                 break;
         }
@@ -889,7 +936,7 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
     decl_func = fcall->fdecl;
     fdecl_sig_call = ic_decl_func_sig_call(decl_func);
     if (!fdecl_sig_call) {
-        puts("ic_backend_pancake_compile_fdecl_body: call to ic_decl_func_sig_call failed");
+        puts("ic_backend_pancake_compile_fcall: call to ic_decl_func_sig_call failed");
         return 0;
     }
 
@@ -900,16 +947,16 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
     }
 
     if (!instruction) {
-        puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_add failed");
+        puts("ic_backend_pancake_compile_fcall: call to ic_backend_pancake_instructions_add failed");
         return 0;
     }
     if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_sig_call)) {
-        puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+        puts("ic_backend_pancake_compile_fcall: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
         return 0;
     }
     /* set number of args we call with */
     if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, len)) {
-        puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+        puts("ic_backend_pancake_compile_fcall: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
         return 0;
     }
 

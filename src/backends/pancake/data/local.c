@@ -61,6 +61,10 @@ unsigned int ic_backend_pancake_local_init(struct ic_backend_pancake_local *loca
             local->u.offset = 0;
             break;
 
+        case icpl_runtime:
+            /* nothing to do */
+            break;
+
         default:
             puts("ic_backend_pancake_local_init: impossible tag");
             return 0;
