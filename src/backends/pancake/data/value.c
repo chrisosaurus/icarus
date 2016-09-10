@@ -1,6 +1,20 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "value.h"
+
+/* allocate a  blank value */
+struct ic_backend_pancake_value *ic_backend_pancake_value_new(void) {
+    struct ic_backend_pancake_value *value = 0;
+
+    value = calloc(1, sizeof(struct ic_backend_pancake_value));
+    if (!value) {
+        puts("ic_backend_pancake_value_new: call to calloc failed");
+        return 0;
+    }
+
+    return value;
+}
 
 /* copy all data from `value_from` into `value_to`
  *

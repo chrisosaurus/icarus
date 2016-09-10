@@ -25,6 +25,9 @@ struct ic_backend_pancake_value {
     } u;
 };
 
+/* allocate a  blank value */
+struct ic_backend_pancake_value *ic_backend_pancake_value_new(void);
+
 /* copy all data from `value_from` into `value_to`
  *
  * returns 1 on success

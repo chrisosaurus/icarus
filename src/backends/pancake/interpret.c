@@ -491,6 +491,54 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
              * stores current top of stack under key
              */
             case icp_store:
+                /* key we will store under */
+                str = ic_backend_pancake_bytecode_arg1_get_char(instruction);
+                if (!str) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_bytecode_arg1_get_char failed");
+                    return 0;
+                }
+
+                /* value from top of stack to store */
+                value = ic_backend_pancake_value_stack_peek(value_stack);
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_push failed");
+                    return 0;
+                }
+
+                /* make a new value to copy into */
+                to_value = ic_backend_pancake_value_new();
+                if (!to_value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_new failed");
+                    return 0;
+                }
+
+                /* perform copy of value */
+                if (!ic_backend_pancake_value_copy(value, to_value)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_copy failed");
+                    return 0;
+                }
+
+                /* get our current call_frame */
+                call_frame = ic_backend_pancake_call_frame_stack_peek(call_frame_stack);
+                if (!call_frame) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_call_frame_stack_peek failed");
+                    return 0;
+                }
+
+                /* store to_value under str on call_frame */
+                if (!ic_backend_pancake_call_frame_set(call_frame, str, to_value)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_call_frame_set failed");
+                    return 0;
+                }
+
+                /* consume value on top of value_stack */
+                if (!ic_backend_pancake_value_stack_pop(value_stack)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_pop failed");
+                    return 0;
+                }
+
+                break;
+
             /* load key::string
              * loads from key onto under
              */
