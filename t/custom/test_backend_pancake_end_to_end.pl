@@ -70,8 +70,12 @@ my $cases = [
 
   {
     input => '
-      fn foo() -> Sint
+      fn bar() -> Sint
         return 14
+      end
+
+      fn foo() -> Sint
+        return bar()
       end
 
       fn main()
@@ -82,8 +86,12 @@ my $cases = [
       lexer output:
       ----------------
 
-      fn foo() -> Sint
+      fn bar() -> Sint
         return 14
+      end
+
+      fn foo() -> Sint
+        return bar()
       end
 
       fn main()
@@ -94,9 +102,14 @@ my $cases = [
 
       parser output:
       ----------------
+      # bar()
+      fn bar() -> Sint
+          return 14
+      end
+
       # foo()
       fn foo() -> Sint
-          return 14
+          return bar()
       end
 
       # main()
@@ -116,9 +129,13 @@ my $cases = [
       transform output (PENDING):
       ----------------
       ----------------
-      fn foo() -> Sint
+      fn bar() -> Sint
           let _l1::Sint = 14
           return _l1
+      end
+      fn foo() -> Sint
+          let _t1::Sint = bar()
+          return _t1
       end
       fn main() -> Void
           let _t1::Sint = foo()
@@ -131,8 +148,18 @@ my $cases = [
       label entry
       call main() 0
       exit
-      label foo()
+      label bar()
       pushint 14
+      save
+      clean_stack
+      restore
+      return_value
+      clean_stack
+      return_void
+      label foo()
+      call bar() 0
+      store _t1
+      load _t1
       save
       clean_stack
       restore

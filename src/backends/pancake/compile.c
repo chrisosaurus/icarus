@@ -625,8 +625,17 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
                         break;
 
                     case icpl_runtime:
-                        puts("ic_backend_pancake_compile_fdecl_body: icpl_runtime unimplemented");
-                        return 0;
+                        /* insert `load key` instruction */
+                        instruction = ic_backend_pancake_instructions_add(instructions, icp_load);
+                        if (!instruction) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_add failed");
+                            return 0;
+                        }
+                        if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, ret_name)) {
+                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_bytecode_arg1_set_char");
+                            return 0;
+                        }
+
                         break;
 
                     default:
