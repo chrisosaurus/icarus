@@ -126,6 +126,28 @@ my $cases = [
       hello world
       ',
   },
+  {
+    input => '
+      label entry
+      call foo() 0
+      exit
+      label foo()
+      pushint 5
+      pushint 3
+      store foo
+      call_builtin println(Sint) 1
+      load foo
+      call_builtin println(Sint) 1
+      load foo
+      call_builtin println(Sint) 1
+      return_void
+      ',
+    expected => '
+      5
+      3
+      3
+      ',
+  },
 ];
 
 # whitespace sensitivity sucks
