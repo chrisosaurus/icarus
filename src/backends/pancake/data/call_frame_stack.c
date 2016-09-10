@@ -125,5 +125,10 @@ struct ic_backend_pancake_call_frame *ic_backend_pancake_call_frame_stack_push(s
 
     ret = &(stack->stack[stack->head]);
 
+    if (!ic_backend_pancake_call_frame_init(ret)) {
+        puts("ic_backend_pancake_call_frame_stack_push: call to ic_backend_pancake_call_frame_init failed");
+        return 0;
+    }
+
     return ret;
 }
