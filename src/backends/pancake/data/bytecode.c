@@ -323,8 +323,8 @@ unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecod
             return 1;
             break;
 
-        case icp_clean_frame:
-            fputs("clean_frame", file);
+        case icp_clean_stack:
+            fputs("clean_stack", file);
             return 1;
             break;
 

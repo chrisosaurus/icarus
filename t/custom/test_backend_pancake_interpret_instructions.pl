@@ -101,13 +101,13 @@ my $cases = [
       pushuint 5
       copyarg 0
       save
-      clean_frame
+      clean_stack
       restore
       return_value
       label main()
       call foo() 0
       call_builtin println(Uint) 1
-      clean_frame
+      clean_stack
       return_void
       ',
     expected => '

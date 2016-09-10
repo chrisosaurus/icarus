@@ -68,10 +68,10 @@ enum ic_backend_pancake_bytecode_type {
      * loads from key onto under
      */
     icp_load,
-    /* clean_frame
+    /* clean_stack
      * resets stack-frame back to how it was before caller inserted args
      */
-    icp_clean_frame,
+    icp_clean_stack,
 };
 
 enum ic_backend_pancake_bytecode_arg_type {

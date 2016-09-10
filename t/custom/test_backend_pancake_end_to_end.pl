@@ -58,7 +58,7 @@ my $cases = [
       label main()
       pushstr "Hello world"
       call_builtin println(String) 1
-      clean_frame
+      clean_stack
       return_void
       ==========================
 

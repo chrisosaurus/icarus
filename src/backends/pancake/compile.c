@@ -355,7 +355,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
      *
      * FIXME TODO only insert if not preceeded by return statement
      */
-    if (!ic_backend_pancake_instructions_add(instructions, icp_clean_frame)) {
+    if (!ic_backend_pancake_instructions_add(instructions, icp_clean_stack)) {
         puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
         return 0;
     }
@@ -613,8 +613,8 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
                     return 0;
                 }
 
-                /* insert clean_frame instruction */
-                instruction = ic_backend_pancake_instructions_add(instructions, icp_clean_frame);
+                /* insert clean_stack instruction */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_clean_stack);
                 if (!instruction) {
                     puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
                     return 0;

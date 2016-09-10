@@ -445,8 +445,8 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
             instruction = ic_backend_pancake_instructions_add(instructions, icp_save);
         } else if (!strcmp("restore", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_restore);
-        } else if (!strcmp("clean_frame", op)) {
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_clean_frame);
+        } else if (!strcmp("clean_stack", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_clean_stack);
         } else if (!strcmp("call", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_call);
         } else if (!strcmp("return_value", op)) {
@@ -597,7 +597,7 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
 
             case icp_save:
             case icp_restore:
-            case icp_clean_frame:
+            case icp_clean_stack:
             case icp_return_void:
             case icp_return_value:
             case icp_exit:

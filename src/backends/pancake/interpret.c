@@ -457,10 +457,10 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 break;
 
-            /* clean_frame
+            /* clean_stack
              * resets stack-frame back to how it was before caller inserted args
              */
-            case icp_clean_frame:
+            case icp_clean_stack:
                 /* call_info contains
                  *  arg_start
                  *
