@@ -62,13 +62,13 @@ unsigned int ic_backend_pancake_instructions_init(struct ic_backend_pancake_inst
         return 0;
     }
 
-    instructions->fdecl_offset_map = calloc(1, sizeof(struct ic_dict));
-    if (!instructions->fdecl_offset_map) {
-        puts("ic_backend_pancake_instructions_init: call to calloc failed for fdecl_offset_map");
+    instructions->label_offset_map = calloc(1, sizeof(struct ic_dict));
+    if (!instructions->label_offset_map) {
+        puts("ic_backend_pancake_instructions_init: call to calloc failed for label_offset_map");
         return 0;
     }
 
-    if (!ic_dict_init(instructions->fdecl_offset_map)) {
+    if (!ic_dict_init(instructions->label_offset_map)) {
         puts("ic_backend_pancake_instructions_init: call to ic_dict_init");
         return 0;
     }
@@ -95,7 +95,7 @@ unsigned int ic_backend_pancake_instructions_destroy(struct ic_backend_pancake_i
     /* dict_destroy(dict, free_dict, free_data)
      * free-ing data as it is alloced in register
      */
-    if (!ic_dict_destroy(instructions->fdecl_offset_map, 1, 1)) {
+    if (!ic_dict_destroy(instructions->label_offset_map, 1, 1)) {
         puts("ic_backend_pancake_instructions_destroy: call to ic_dict_destroy failed");
         return 0;
     }
@@ -270,16 +270,16 @@ unsigned int ic_backend_pancake_instructions_set_offset(struct ic_backend_pancak
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_instructions_register_fdecl(struct ic_backend_pancake_instructions *instructions, char *fdecl_sig_call, unsigned int offset) {
+unsigned int ic_backend_pancake_instructions_register_label(struct ic_backend_pancake_instructions *instructions, char *fdecl_sig_call, unsigned int offset) {
     unsigned int *offset_alloc = 0;
 
     if (!instructions) {
-        puts("ic_backend_pancake_instructions_register_fdecl: instructions was null");
+        puts("ic_backend_pancake_instructions_register_label: instructions was null");
         return 0;
     }
 
     if (!fdecl_sig_call) {
-        puts("ic_backend_pancake_instructions_register_fdecl: fdecl_sig_call was null");
+        puts("ic_backend_pancake_instructions_register_label: fdecl_sig_call was null");
         return 0;
     }
 
@@ -288,14 +288,14 @@ unsigned int ic_backend_pancake_instructions_register_fdecl(struct ic_backend_pa
    * TODO FIXME think about this alloc */
     offset_alloc = calloc(1, sizeof(unsigned int));
     if (!offset_alloc) {
-        puts("ic_backend_pancake_instructions_register_fdecl: call to calloc failed");
+        puts("ic_backend_pancake_instructions_register_label: call to calloc failed");
         return 0;
     }
 
     *offset_alloc = offset;
 
-    if (!ic_dict_insert(instructions->fdecl_offset_map, fdecl_sig_call, offset_alloc)) {
-        puts("ic_backend_pancake_instructions_register_fdecl: call to ic_dict_insert failed");
+    if (!ic_dict_insert(instructions->label_offset_map, fdecl_sig_call, offset_alloc)) {
+        puts("ic_backend_pancake_instructions_register_label: call to ic_dict_insert failed");
         return 0;
     }
 
@@ -309,23 +309,23 @@ unsigned int ic_backend_pancake_instructions_register_fdecl(struct ic_backend_pa
  * returns int on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_instructions_get_fdecl(struct ic_backend_pancake_instructions *instructions, char *fdecl_sig_call) {
+unsigned int ic_backend_pancake_instructions_get_label(struct ic_backend_pancake_instructions *instructions, char *fdecl_sig_call) {
     unsigned int offset = 0;
     unsigned int *offset_alloc = 0;
 
     if (!instructions) {
-        puts("ic_backend_pancake_instructions_get_fdecl: instructions was null");
+        puts("ic_backend_pancake_instructions_get_label: instructions was null");
         return 0;
     }
 
     if (!fdecl_sig_call) {
-        puts("ic_backend_pancake_instructions_get_fdecl: fdecl_sig_call was null");
+        puts("ic_backend_pancake_instructions_get_label: fdecl_sig_call was null");
         return 0;
     }
 
-    offset_alloc = ic_dict_get(instructions->fdecl_offset_map, fdecl_sig_call);
+    offset_alloc = ic_dict_get(instructions->label_offset_map, fdecl_sig_call);
     if (!offset_alloc) {
-        puts("ic_backend_pancake_instructions_get_fdecl: call to ic_dict_get failed");
+        puts("ic_backend_pancake_instructions_get_label: call to ic_dict_get failed");
         return 0;
     }
 
@@ -574,8 +574,8 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                 }
 
                 /* register label as function */
-                if (!ic_backend_pancake_instructions_register_fdecl(instructions, nstr, cur_offset)) {
-                    puts("ic_backend_pancake_instructions_load: call to ic_backend_pancake_instructions_register_fdecl failed");
+                if (!ic_backend_pancake_instructions_register_label(instructions, nstr, cur_offset)) {
+                    puts("ic_backend_pancake_instructions_load: call to ic_backend_pancake_instructions_register_label failed");
                     return 0;
                 }
 

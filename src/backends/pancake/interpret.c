@@ -297,10 +297,10 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                  * NB: this cannot be 0 as 0 is always our entry point and not a valid function
                  * address
                  */
-                new_offset = ic_backend_pancake_instructions_get_fdecl(instructions, str);
+                new_offset = ic_backend_pancake_instructions_get_label(instructions, str);
 
                 if (!new_offset) {
-                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_instructions_get_fdecl failed");
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_instructions_get_label failed");
                     printf("Couldn't find address of function '%s' called at offset '%u'\n", str, cur_offset);
                     return 0;
                 }

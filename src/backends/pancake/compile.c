@@ -224,8 +224,8 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     fdecl_instructions_offset = ic_backend_pancake_instructions_length(instructions);
 
     /* register function at offset */
-    if (!ic_backend_pancake_instructions_register_fdecl(instructions, fdecl_sig_call, fdecl_instructions_offset)) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_register_fdecl failed");
+    if (!ic_backend_pancake_instructions_register_label(instructions, fdecl_sig_call, fdecl_instructions_offset)) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_register_label failed");
         return 0;
     }
 

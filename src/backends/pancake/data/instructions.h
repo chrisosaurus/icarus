@@ -13,8 +13,8 @@ struct ic_backend_pancake_instructions {
     unsigned int offset;
     /* array of all instructions */
     struct ic_backend_pancake_bytecode *bytecode_array;
-    /* map from fdecl sig to offset */
-    struct ic_dict *fdecl_offset_map;
+    /* map from label sig to offset */
+    struct ic_dict *label_offset_map;
 };
 
 /* alloc and init a new instructions
@@ -100,7 +100,7 @@ unsigned int ic_backend_pancake_instructions_set_offset(struct ic_backend_pancak
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_instructions_register_fdecl(struct ic_backend_pancake_instructions *instructions, char *fdecl_sig_call, unsigned int offset);
+unsigned int ic_backend_pancake_instructions_register_label(struct ic_backend_pancake_instructions *instructions, char *fdecl_sig_call, unsigned int offset);
 
 /* get an offset for a fdecl-sig
  *
@@ -109,7 +109,7 @@ unsigned int ic_backend_pancake_instructions_register_fdecl(struct ic_backend_pa
  * returns int on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_instructions_get_fdecl(struct ic_backend_pancake_instructions *instructions, char *fdecl_sig_call);
+unsigned int ic_backend_pancake_instructions_get_label(struct ic_backend_pancake_instructions *instructions, char *fdecl_sig_call);
 
 /* print instructions to provided file
  *
