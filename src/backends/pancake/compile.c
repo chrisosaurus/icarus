@@ -684,6 +684,75 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
                 break;
 
             case ic_transform_ir_stmt_type_if:
+                /* if cond
+                 *  body1
+                 * else
+                 *  body 2
+                 * end
+                 * ...
+                 *
+                 * compiles to
+                 *
+                 * cond
+                 * jnif ELSE_BRANCH_LABEL
+                 * body1
+                 * jmp END_LABEL
+                 * ELSE_BRANCH_LABEL
+                 * body2
+                 * END_LABEL
+                 * ...
+                 */
+
+                /* NB: we must ensure labels are globally unique
+                 * we can use the func call signature, e.g. foo(Sint,Sint)
+                 * and then append _N where N is a number unique within this
+                 * fdecl
+                 *
+                 * so we need something similar to the tcounter system
+                 *
+                 */
+
+                /* fn foo(a Sint) -> Sint
+                 *  if a < 5
+                 *    body1...
+                 *  else
+                 *    body2...
+                 *  end
+                 * end
+                 */
+
+                /* fn foo(a Sint) -> Sint
+                 *  let cond::Bool = a < 5
+                 *  if cond
+                 *    body1...
+                 *  else
+                 *    body2...
+                 *  end
+                 * end
+                 */
+
+                /* label foo(Sint)
+                 * copyarg a
+                 * pushint 5
+                 * call_builtin lessthan(Sint, Sint) 2
+                 * jnif foo(Sint)_1
+                 * body1...
+                 * jmp foo(Sint)_2
+                 * label foo(Sint)_1
+                 * body2...
+                 * label foo(Sint)_2
+                 */
+
+                /* FIXME TODO */
+                /* generate label for else branch */
+                /* generate label for end of if/else */
+                /* insert condition */
+                /* insert jnif to else branch */
+                /* compile if branch body */
+                /* insert jmp to end */
+                /* insert label for else branch */
+                /* compile else branch body */
+                /* insert label for end of if/else */
                 puts("ic_backend_pancake_compile_fdecl_body: if unimplemented");
                 return 0;
                 break;
