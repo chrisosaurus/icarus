@@ -15,6 +15,13 @@
  */
 unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_decl_func *fdecl);
 
+/* compile an stmt into bytecode
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_dict *locals, struct ic_transform_ir_stmt *tstmt);
+
 /* compile an fdecl_body into bytecode
  *
  * returns 1 on success
@@ -385,19 +392,12 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     return 1;
 }
 
-/* compile an fdecl_body into bytecode
+/* compile an stmt into bytecode
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_decl_func *fdecl, struct ic_transform_body *fdecl_tbody, struct ic_dict *locals) {
-    /* current offset into body */
-    unsigned int i = 0;
-    /* len of body */
-    unsigned int len = 0;
-    /* current stmt in body */
-    struct ic_transform_ir_stmt *tstmt = 0;
-
+unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_dict *locals, struct ic_transform_ir_stmt *tstmt) {
     /* let, used only if tstmt is let
      * used to decompose let
      */
@@ -420,6 +420,330 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
 
     /* out-of-band return value from ic_backend_pancake_compile_fcall */
     unsigned int fcall_is_void = 0;
+
+    /* for each statement we currently have 4 possibilities:
+     *
+     *  let name::type = literal
+     *    register name to {value:literal, accessed:0}
+     *  let name::type = fcall(args...)
+     *    push all args onto stack (using dict)
+     *    call fcall
+     *    register return position to name (along with count)
+     *    if void:
+     *      compile-time error
+     *  fcall(args...)
+     *    push all args onto stack (using dict)
+     *    call fcall
+     *    if non-void:
+     *      pop 1 - throw away return value, give warning
+     *  return name
+     *    set return_register to name
+     *    invoke exit process
+     *
+     *
+     */
+
+    switch (tstmt->tag) {
+        case ic_transform_ir_stmt_type_expr:
+            texpr = &(tstmt->u.expr);
+            if (!ic_backend_pancake_compile_expr(instructions, kludge, locals, texpr, &fcall_is_void)) {
+                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_compile_expr failed");
+                return 0;
+            }
+
+            if (!fcall_is_void) {
+                puts("ic_backend_pancake_compile_stmt: function used in void context but was not void");
+                printf("non-void function called in void context\n");
+                return 0;
+            }
+
+            break;
+
+        case ic_transform_ir_stmt_type_let:
+            tlet = ic_transform_ir_stmt_get_let(tstmt);
+            if (!tlet) {
+                puts("ic_backend_pancake_compile_stmt: call to ic_transform_ir_stmt_get_let failed");
+                return 0;
+            }
+
+            switch (tlet->tag) {
+                case ic_transform_ir_let_type_literal:
+                    /* FIXME TODO consider adding some error handling */
+                    tlet_lit = &(tlet->u.lit);
+                    local = ic_backend_pancake_local_new(tlet_lit->name, icpl_literal);
+                    if (!local) {
+                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_local failed");
+                        return 0;
+                    }
+                    if (!ic_backend_pancake_local_set_literal(local, tlet_lit->literal)) {
+                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_set_literal failed");
+                        return 0;
+                    }
+                    let_name_ch = ic_symbol_contents(tlet_lit->name);
+                    if (!let_name_ch) {
+                        puts("ic_backend_pancake_compile_stmt: call to ic_symbol_contents failed");
+                        return 0;
+                    }
+                    if (!ic_dict_insert(locals, let_name_ch, local)) {
+                        puts("ic_backend_pancake_compile_stmt: call to ic_dict_insert failed");
+                        return 0;
+                    }
+                    break;
+
+                case ic_transform_ir_let_type_expr:
+                    /*
+                     *  let name::type = fcall(args...)
+                     *    push all args onto stack (using dict)
+                     *    call fcall
+                     *    register return value to name (along with access count)
+                     *    if void:
+                     *      compile-time error
+                     */
+
+                    /* FIXME TODO consider adding some error handling */
+                    /* compile fcall */
+                    tlet_expr = &(tlet->u.expr);
+                    texpr = tlet_expr->expr;
+                    if (!ic_backend_pancake_compile_expr(instructions, kludge, locals, texpr, &fcall_is_void)) {
+                        puts("ic_backend_pancake_compile_stmt: let expr call to ic_backend_pancake_compile_expr failed");
+                        return 0;
+                    }
+
+                    if (fcall_is_void) {
+                        puts("ic_backend_pancake_compile_stmt: function used in let was void");
+                        printf("function called and assigned to let '%s', but function is void\n", let_name_ch);
+                        return 0;
+                    }
+
+                    /* insert icp_store instruction under name of let */
+                    let_name_ch = ic_symbol_contents(tlet_expr->name);
+
+                    /* insert `store let_name_ch` instruction */
+                    instruction = ic_backend_pancake_instructions_add(instructions, icp_store);
+                    if (!instruction) {
+                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_instructions_add failed");
+                        return 0;
+                    }
+                    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, let_name_ch)) {
+                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                        return 0;
+                    }
+
+                    /* create local */
+                    local = ic_backend_pancake_local_new(tlet_expr->name, icpl_runtime);
+                    if (!local) {
+                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_local failed");
+                        return 0;
+                    }
+                    if (!let_name_ch) {
+                        puts("ic_backend_pancake_compile_stmt: call to ic_symbol_contents failed");
+                        return 0;
+                    }
+                    if (!ic_dict_insert(locals, let_name_ch, local)) {
+                        puts("ic_backend_pancake_compile_stmt: call to ic_dict_insert failed");
+                        return 0;
+                    }
+
+                    break;
+
+                default:
+                    puts("ic_backend_pancake_compile_stmt: let impossible case");
+                    return 0;
+                    break;
+            }
+
+            break;
+
+        case ic_transform_ir_stmt_type_ret:
+            ret_name = ic_symbol_contents(tstmt->u.ret.var);
+            if (!ret_name) {
+                puts("ic_backend_pancake_compile_stmt: call to ic_symbol_contents failed");
+                return 0;
+            }
+            local = ic_dict_get(locals, ret_name);
+            if (!local) {
+                puts("ic_backend_pancake_compile_stmt: call to ic_dict_get failed");
+                return 0;
+            }
+            /* mark as accessed */
+            local->accessed = true;
+            /* deal with different local cases */
+            switch (local->tag) {
+                case icpl_literal:
+                    if (!ic_backend_pancake_compile_push_constant(instructions, local)) {
+                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_compile_push_constant failed");
+                        return 0;
+                    }
+                    break;
+
+                case icpl_offset:
+                    /* insert `copyarg argn` instruction */
+                    instruction = ic_backend_pancake_instructions_add(instructions, icp_copyarg);
+                    if (!instruction) {
+                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_instructions_add failed");
+                        return 0;
+                    }
+                    if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, local->u.offset)) {
+                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                        return 0;
+                    }
+
+                    break;
+
+                case icpl_runtime:
+                    /* insert `load key` instruction */
+                    instruction = ic_backend_pancake_instructions_add(instructions, icp_load);
+                    if (!instruction) {
+                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_instructions_add failed");
+                        return 0;
+                    }
+                    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, ret_name)) {
+                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_bytecode_arg1_set_char");
+                        return 0;
+                    }
+
+                    break;
+
+                default:
+                    puts("ic_backend_pancake_compile_stmt: impossible local->arg");
+                    return 0;
+                    break;
+            }
+
+            /* FIXME TODO ideally we would only save/restore/clean if we
+             * knew the stack clean had work to do
+             */
+
+            /* insert save instruction */
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_save);
+            if (!instruction) {
+                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_instructions_add failed");
+                return 0;
+            }
+
+            /* insert clean_stack instruction */
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_clean_stack);
+            if (!instruction) {
+                puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
+                return 0;
+            }
+
+            /* insert restore instruction */
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_restore);
+            if (!instruction) {
+                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_instructions_add failed");
+                return 0;
+            }
+
+            /* insert return_value instruction */
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_return_value);
+            if (!instruction) {
+                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_instructions_add failed");
+                return 0;
+            }
+
+            break;
+
+        case ic_transform_ir_stmt_type_assign:
+            puts("ic_backend_pancake_compile_stmt: assign unimplemented");
+            return 0;
+            break;
+
+        case ic_transform_ir_stmt_type_if:
+            /* if cond
+             *  body1
+             * else
+             *  body 2
+             * end
+             * ...
+             *
+             * compiles to
+             *
+             * cond
+             * jnif ELSE_BRANCH_LABEL
+             * body1
+             * jmp END_LABEL
+             * ELSE_BRANCH_LABEL
+             * body2
+             * END_LABEL
+             * ...
+             */
+
+            /* NB: we must ensure labels are globally unique
+             * we can use the func call signature, e.g. foo(Sint,Sint)
+             * and then append _N where N is a number unique within this
+             * fdecl
+             *
+             * so we need something similar to the tcounter system
+             *
+             */
+
+            /* fn foo(a Sint) -> Sint
+             *  if a < 5
+             *    body1...
+             *  else
+             *    body2...
+             *  end
+             * end
+             */
+
+            /* fn foo(a Sint) -> Sint
+             *  let cond::Bool = a < 5
+             *  if cond
+             *    body1...
+             *  else
+             *    body2...
+             *  end
+             * end
+             */
+
+            /* label foo(Sint)
+             * copyarg a
+             * pushint 5
+             * call_builtin lessthan(Sint, Sint) 2
+             * jnif foo(Sint)_1
+             * body1...
+             * jmp foo(Sint)_2
+             * label foo(Sint)_1
+             * body2...
+             * label foo(Sint)_2
+             */
+
+            /* FIXME TODO */
+            /* generate label for else branch */
+            /* generate label for end of if/else */
+            /* insert condition */
+            /* insert jnif to else branch */
+            /* compile if branch body */
+            /* insert jmp to end */
+            /* insert label for else branch */
+            /* compile else branch body */
+            /* insert label for end of if/else */
+            puts("ic_backend_pancake_compile_stmt: if unimplemented");
+            return 0;
+            break;
+
+        default:
+            puts("ic_backend_pancake_compile_stmt: impossible case");
+            return 0;
+            break;
+    }
+
+    return 1;
+}
+
+/* compile an fdecl_body into bytecode
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_decl_func *fdecl, struct ic_transform_body *fdecl_tbody, struct ic_dict *locals) {
+    /* current offset into body */
+    unsigned int i = 0;
+    /* len of body */
+    unsigned int len = 0;
+    /* current stmt in body */
+    struct ic_transform_ir_stmt *tstmt = 0;
 
     if (!instructions) {
         puts("ic_backend_pancake_compile_fdecl_body: instructions was null");
@@ -448,28 +772,6 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
 
     len = ic_transform_body_length(fdecl_tbody);
 
-    /* for each statement we currently have 4 possibilities:
-     *
-     *  let name::type = literal
-     *    register name to {value:literal, accessed:0}
-     *  let name::type = fcall(args...)
-     *    push all args onto stack (using dict)
-     *    call fcall
-     *    register return position to name (along with count)
-     *    if void:
-     *      compile-time error
-     *  fcall(args...)
-     *    push all args onto stack (using dict)
-     *    call fcall
-     *    if non-void:
-     *      pop 1 - throw away return value, give warning
-     *  return name
-     *    set return_register to name
-     *    invoke exit process
-     *
-     *
-     */
-
     for (i = 0; i < len; ++i) {
         tstmt = ic_transform_body_get(fdecl_tbody, i);
         if (!tstmt) {
@@ -477,290 +779,9 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
             return 0;
         }
 
-        switch (tstmt->tag) {
-            case ic_transform_ir_stmt_type_expr:
-                texpr = &(tstmt->u.expr);
-                if (!ic_backend_pancake_compile_expr(instructions, kludge, locals, texpr, &fcall_is_void)) {
-                    puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_compile_expr failed");
-                    return 0;
-                }
-
-                if (!fcall_is_void) {
-                    puts("ic_backend_pancake_compile_fdecl_body: function used in void context but was not void");
-                    printf("non-void function called in void context\n");
-                    return 0;
-                }
-
-                break;
-
-            case ic_transform_ir_stmt_type_let:
-                tlet = ic_transform_ir_stmt_get_let(tstmt);
-                if (!tlet) {
-                    puts("ic_backend_pancake_compile_fdecl_body: call to ic_transform_ir_stmt_get_let failed");
-                    return 0;
-                }
-
-                switch (tlet->tag) {
-                    case ic_transform_ir_let_type_literal:
-                        /* FIXME TODO consider adding some error handling */
-                        tlet_lit = &(tlet->u.lit);
-                        local = ic_backend_pancake_local_new(tlet_lit->name, icpl_literal);
-                        if (!local) {
-                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_local failed");
-                            return 0;
-                        }
-                        if (!ic_backend_pancake_local_set_literal(local, tlet_lit->literal)) {
-                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_set_literal failed");
-                            return 0;
-                        }
-                        let_name_ch = ic_symbol_contents(tlet_lit->name);
-                        if (!let_name_ch) {
-                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_symbol_contents failed");
-                            return 0;
-                        }
-                        if (!ic_dict_insert(locals, let_name_ch, local)) {
-                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_dict_insert failed");
-                            return 0;
-                        }
-                        break;
-
-                    case ic_transform_ir_let_type_expr:
-                        /*
-                         *  let name::type = fcall(args...)
-                         *    push all args onto stack (using dict)
-                         *    call fcall
-                         *    register return value to name (along with access count)
-                         *    if void:
-                         *      compile-time error
-                         */
-
-                        /* FIXME TODO consider adding some error handling */
-                        /* compile fcall */
-                        tlet_expr = &(tlet->u.expr);
-                        texpr = tlet_expr->expr;
-                        if (!ic_backend_pancake_compile_expr(instructions, kludge, locals, texpr, &fcall_is_void)) {
-                            puts("ic_backend_pancake_compile_fdecl_body: let expr call to ic_backend_pancake_compile_expr failed");
-                            return 0;
-                        }
-
-                        if (fcall_is_void) {
-                            puts("ic_backend_pancake_compile_fdecl_body: function used in let was void");
-                            printf("function called and assigned to let '%s', but function is void\n", let_name_ch);
-                            return 0;
-                        }
-
-                        /* insert icp_store instruction under name of let */
-                        let_name_ch = ic_symbol_contents(tlet_expr->name);
-
-                        /* insert `store let_name_ch` instruction */
-                        instruction = ic_backend_pancake_instructions_add(instructions, icp_store);
-                        if (!instruction) {
-                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_add failed");
-                            return 0;
-                        }
-                        if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, let_name_ch)) {
-                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
-                            return 0;
-                        }
-
-                        /* create local */
-                        local = ic_backend_pancake_local_new(tlet_expr->name, icpl_runtime);
-                        if (!local) {
-                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_local failed");
-                            return 0;
-                        }
-                        if (!let_name_ch) {
-                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_symbol_contents failed");
-                            return 0;
-                        }
-                        if (!ic_dict_insert(locals, let_name_ch, local)) {
-                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_dict_insert failed");
-                            return 0;
-                        }
-
-                        break;
-
-                    default:
-                        puts("ic_backend_pancake_compile_fdecl_body: let impossible case");
-                        return 0;
-                        break;
-                }
-
-                break;
-
-            case ic_transform_ir_stmt_type_ret:
-                ret_name = ic_symbol_contents(tstmt->u.ret.var);
-                if (!ret_name) {
-                    puts("ic_backend_pancake_compile_fdecl_body: call to ic_symbol_contents failed");
-                    return 0;
-                }
-                local = ic_dict_get(locals, ret_name);
-                if (!local) {
-                    puts("ic_backend_pancake_compile_fdecl_body: call to ic_dict_get failed");
-                    return 0;
-                }
-                /* mark as accessed */
-                local->accessed = true;
-                /* deal with different local cases */
-                switch (local->tag) {
-                    case icpl_literal:
-                        if (!ic_backend_pancake_compile_push_constant(instructions, local)) {
-                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_compile_push_constant failed");
-                            return 0;
-                        }
-                        break;
-
-                    case icpl_offset:
-                        /* insert `copyarg argn` instruction */
-                        instruction = ic_backend_pancake_instructions_add(instructions, icp_copyarg);
-                        if (!instruction) {
-                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_add failed");
-                            return 0;
-                        }
-                        if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, local->u.offset)) {
-                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
-                            return 0;
-                        }
-
-                        break;
-
-                    case icpl_runtime:
-                        /* insert `load key` instruction */
-                        instruction = ic_backend_pancake_instructions_add(instructions, icp_load);
-                        if (!instruction) {
-                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_add failed");
-                            return 0;
-                        }
-                        if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, ret_name)) {
-                            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_bytecode_arg1_set_char");
-                            return 0;
-                        }
-
-                        break;
-
-                    default:
-                        puts("ic_backend_pancake_compile_fdecl_body: impossible local->arg");
-                        return 0;
-                        break;
-                }
-
-                /* FIXME TODO ideally we would only save/restore/clean if we
-                 * knew the stack clean had work to do
-                 */
-
-                /* insert save instruction */
-                instruction = ic_backend_pancake_instructions_add(instructions, icp_save);
-                if (!instruction) {
-                    puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_add failed");
-                    return 0;
-                }
-
-                /* insert clean_stack instruction */
-                instruction = ic_backend_pancake_instructions_add(instructions, icp_clean_stack);
-                if (!instruction) {
-                    puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
-                    return 0;
-                }
-
-                /* insert restore instruction */
-                instruction = ic_backend_pancake_instructions_add(instructions, icp_restore);
-                if (!instruction) {
-                    puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_add failed");
-                    return 0;
-                }
-
-                /* insert return_value instruction */
-                instruction = ic_backend_pancake_instructions_add(instructions, icp_return_value);
-                if (!instruction) {
-                    puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_pancake_instructions_add failed");
-                    return 0;
-                }
-
-                break;
-
-            case ic_transform_ir_stmt_type_assign:
-                puts("ic_backend_pancake_compile_fdecl_body: assign unimplemented");
-                return 0;
-                break;
-
-            case ic_transform_ir_stmt_type_if:
-                /* if cond
-                 *  body1
-                 * else
-                 *  body 2
-                 * end
-                 * ...
-                 *
-                 * compiles to
-                 *
-                 * cond
-                 * jnif ELSE_BRANCH_LABEL
-                 * body1
-                 * jmp END_LABEL
-                 * ELSE_BRANCH_LABEL
-                 * body2
-                 * END_LABEL
-                 * ...
-                 */
-
-                /* NB: we must ensure labels are globally unique
-                 * we can use the func call signature, e.g. foo(Sint,Sint)
-                 * and then append _N where N is a number unique within this
-                 * fdecl
-                 *
-                 * so we need something similar to the tcounter system
-                 *
-                 */
-
-                /* fn foo(a Sint) -> Sint
-                 *  if a < 5
-                 *    body1...
-                 *  else
-                 *    body2...
-                 *  end
-                 * end
-                 */
-
-                /* fn foo(a Sint) -> Sint
-                 *  let cond::Bool = a < 5
-                 *  if cond
-                 *    body1...
-                 *  else
-                 *    body2...
-                 *  end
-                 * end
-                 */
-
-                /* label foo(Sint)
-                 * copyarg a
-                 * pushint 5
-                 * call_builtin lessthan(Sint, Sint) 2
-                 * jnif foo(Sint)_1
-                 * body1...
-                 * jmp foo(Sint)_2
-                 * label foo(Sint)_1
-                 * body2...
-                 * label foo(Sint)_2
-                 */
-
-                /* FIXME TODO */
-                /* generate label for else branch */
-                /* generate label for end of if/else */
-                /* insert condition */
-                /* insert jnif to else branch */
-                /* compile if branch body */
-                /* insert jmp to end */
-                /* insert label for else branch */
-                /* compile else branch body */
-                /* insert label for end of if/else */
-                puts("ic_backend_pancake_compile_fdecl_body: if unimplemented");
-                return 0;
-                break;
-
-            default:
-                puts("ic_backend_pancake_compile_fdecl_body: impossible case");
-                return 0;
-                break;
+        if (!ic_backend_pancake_compile_stmt(instructions, kludge, locals, tstmt)) {
+            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_compile_stmt failed");
+            return 0;
         }
     }
 
