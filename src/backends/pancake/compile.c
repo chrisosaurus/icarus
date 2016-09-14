@@ -15,7 +15,7 @@
  */
 unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_decl_func *fdecl);
 
-/* compile an stmt into bytecode
+/* compile a stmt into bytecode
  *
  * returns 1 on success
  * returns 0 on failure
@@ -420,6 +420,26 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
 
     /* out-of-band return value from ic_backend_pancake_compile_fcall */
     unsigned int fcall_is_void = 0;
+
+    if (!instructions) {
+        puts("ic_backend_pancake_compile_stmt: instructions was null");
+        return 0;
+    }
+
+    if (!kludge) {
+        puts("ic_backend_pancake_compile_stmt: kludge was null");
+        return 0;
+    }
+
+    if (!locals) {
+        puts("ic_backend_pancake_compile_stmt: locals was null");
+        return 0;
+    }
+
+    if (!tstmt) {
+        puts("ic_backend_pancake_compile_stmt: tstmt was null");
+        return 0;
+    }
 
     /* for each statement we currently have 4 possibilities:
      *
