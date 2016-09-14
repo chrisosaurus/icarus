@@ -22,12 +22,12 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
  */
 unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_dict *locals, struct ic_transform_ir_stmt *tstmt);
 
-/* compile an fdecl_body into bytecode
+/* compile an tbody into bytecode
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_decl_func *fdecl, struct ic_transform_body *fdecl_tbody, struct ic_dict *locals);
+unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_transform_body *fdecl_tbody, struct ic_dict *locals);
 
 /* compile an expr (function call) into pancake bytecode
  *
@@ -318,8 +318,8 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
         return 0;
     }
 
-    if (!ic_backend_pancake_compile_fdecl_body(instructions, kludge, fdecl, fdecl_tbody, locals)) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_compile_fdecl_body failed");
+    if (!ic_backend_pancake_compile_body(instructions, kludge, fdecl_tbody, locals)) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_compile_body failed");
         return 0;
     }
 
@@ -752,12 +752,12 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
     return 1;
 }
 
-/* compile an fdecl_body into bytecode
+/* compile an tbody into bytecode
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_decl_func *fdecl, struct ic_transform_body *fdecl_tbody, struct ic_dict *locals) {
+unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_transform_body *fdecl_tbody, struct ic_dict *locals) {
     /* current offset into body */
     unsigned int i = 0;
     /* len of body */
@@ -766,27 +766,22 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
     struct ic_transform_ir_stmt *tstmt = 0;
 
     if (!instructions) {
-        puts("ic_backend_pancake_compile_fdecl_body: instructions was null");
+        puts("ic_backend_pancake_compile_body: instructions was null");
         return 0;
     }
 
     if (!kludge) {
-        puts("ic_backend_pancake_compile_fdecl_body: kludge was null");
-        return 0;
-    }
-
-    if (!fdecl) {
-        puts("ic_backend_pancake_compile_fdecl_body: fdecl was null");
+        puts("ic_backend_pancake_compile_body: kludge was null");
         return 0;
     }
 
     if (!fdecl_tbody) {
-        puts("ic_backend_pancake_compile_fdecl_body: fdecl_tbody was null");
+        puts("ic_backend_pancake_compile_body: fdecl_tbody was null");
         return 0;
     }
 
     if (!locals) {
-        puts("ic_backend_pancake_compile_fdecl_body: locals was null");
+        puts("ic_backend_pancake_compile_body: locals was null");
         return 0;
     }
 
@@ -795,12 +790,12 @@ unsigned int ic_backend_pancake_compile_fdecl_body(struct ic_backend_pancake_ins
     for (i = 0; i < len; ++i) {
         tstmt = ic_transform_body_get(fdecl_tbody, i);
         if (!tstmt) {
-            puts("ic_backend_pancake_compile_fdecl_body: call to ic_transform_body_get failed");
+            puts("ic_backend_pancake_compile_body: call to ic_transform_body_get failed");
             return 0;
         }
 
         if (!ic_backend_pancake_compile_stmt(instructions, kludge, locals, tstmt)) {
-            puts("ic_backend_pancake_compile_fdecl_body: call to ic_backend_compile_stmt failed");
+            puts("ic_backend_pancake_compile_body: call to ic_backend_compile_stmt failed");
             return 0;
         }
     }
@@ -842,7 +837,7 @@ unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructi
 
     tfcall = texpr->fcall;
     if (!ic_backend_pancake_compile_fcall(instructions, kludge, locals, tfcall, is_void)) {
-        puts("ic_backend_pancake_compile_fdecl_body: let expr call to ic_backend_pancake_compile_fcall failed");
+        puts("ic_backend_pancake_compile_body: let expr call to ic_backend_pancake_compile_fcall failed");
         return 0;
     }
 
