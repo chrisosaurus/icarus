@@ -836,6 +836,12 @@ unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructi
     }
 
     tfcall = texpr->fcall;
+
+    if (!tfcall) {
+        puts("ic_backend_pancake_compile_expr: tfcall was null");
+        return 0;
+    }
+
     if (!ic_backend_pancake_compile_fcall(instructions, kludge, locals, tfcall, is_void)) {
         puts("ic_backend_pancake_compile_body: let expr call to ic_backend_pancake_compile_fcall failed");
         return 0;
