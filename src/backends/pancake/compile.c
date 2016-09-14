@@ -865,7 +865,6 @@ unsigned int ic_backend_pancake_compile_push_constant(struct ic_backend_pancake_
      * pushuint uint FIXME TODO
      * pushint  int
      * pushstr  str
-     * push     key::string FIXME TODO
      */
     if (!instructions) {
         puts("ic_backend_pancake_compile_push_constant: instructions was null");
