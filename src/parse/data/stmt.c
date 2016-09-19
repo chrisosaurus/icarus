@@ -98,7 +98,7 @@ struct ic_expr *ic_stmt_ret_get_expr(struct ic_stmt_ret *ret) {
 }
 
 /* print this return */
-void ic_stmt_ret_print(struct ic_stmt_ret *ret, unsigned int *indent_level) {
+void ic_stmt_ret_print(FILE *fd, struct ic_stmt_ret *ret, unsigned int *indent_level) {
     /* our fake indent for our expr */
     unsigned int fake_indent = 0;
 
@@ -110,16 +110,16 @@ void ic_stmt_ret_print(struct ic_stmt_ret *ret, unsigned int *indent_level) {
     }
 
     /* indent */
-    ic_parse_print_indent(*indent_level);
+    ic_parse_print_indent(fd, *indent_level);
 
     /* print out 'return ' */
-    fputs("return ", stdout);
+    fputs("return ", fd);
 
     /* dispatch to expr print */
-    ic_expr_print(ret->ret, &fake_indent);
+    ic_expr_print(fd, ret->ret, &fake_indent);
 
     /* print out trailing '\n' */
-    puts("");
+    fputs("\n", fd);
 }
 
 /* allocate and initialise a new let
@@ -327,7 +327,7 @@ struct ic_expr *ic_stmt_let_get_expr(struct ic_stmt_let *let) {
 }
 
 /* print this let */
-void ic_stmt_let_print(struct ic_stmt_let *let, unsigned int *indent_level) {
+void ic_stmt_let_print(FILE *fd, struct ic_stmt_let *let, unsigned int *indent_level) {
     /* our fake indent for our subexpr */
     unsigned int fake_indent = 0;
 
@@ -341,28 +341,28 @@ void ic_stmt_let_print(struct ic_stmt_let *let, unsigned int *indent_level) {
     }
 
     /* output indent */
-    ic_parse_print_indent(*indent_level);
+    ic_parse_print_indent(fd, *indent_level);
 
     /* want to output
      * let identifier::type = init
      */
 
-    fputs("let ", stdout);
+    fputs("let ", fd);
 
-    ic_symbol_print(&(let->identifier));
+    ic_symbol_print(fd, &(let->identifier));
 
     /* declared type on let is optional */
     if (let->declared_type) {
-        fputs("::", stdout);
-        ic_symbol_print(let->declared_type);
+        fputs("::", fd);
+        ic_symbol_print(fd, let->declared_type);
     }
 
-    fputs(" = ", stdout);
+    fputs(" = ", fd);
 
-    ic_expr_print(let->init, &fake_indent);
+    ic_expr_print(fd, let->init, &fake_indent);
 
     /* statements are displayed on their own line */
-    puts("");
+    fputs("\n", fd);
 }
 
 /* allocate and initialise a new assign
@@ -482,7 +482,7 @@ struct ic_expr *ic_stmt_assign_get_right(struct ic_stmt_assign *assign) {
 }
 
 /* print this assign */
-void ic_stmt_assign_print(struct ic_stmt_assign *assign, unsigned int *indent_level) {
+void ic_stmt_assign_print(FILE *fd, struct ic_stmt_assign *assign, unsigned int *indent_level) {
     /* our fake indent for our subexpr */
     unsigned int fake_indent = 0;
 
@@ -497,22 +497,22 @@ void ic_stmt_assign_print(struct ic_stmt_assign *assign, unsigned int *indent_le
     }
 
     /* output indent */
-    ic_parse_print_indent(*indent_level);
+    ic_parse_print_indent(fd, *indent_level);
 
     /* want to output
      * left = right
      */
 
     fake_indent = 0;
-    ic_expr_print(assign->left, &fake_indent);
+    ic_expr_print(fd, assign->left, &fake_indent);
 
-    fputs(" = ", stdout);
+    fputs(" = ", fd);
 
     fake_indent = 0;
-    ic_expr_print(assign->right, &fake_indent);
+    ic_expr_print(fd, assign->right, &fake_indent);
 
     /* statements are displayed on their own line */
-    puts("");
+    fputs("\n", fd);
 }
 
 /* allocate and initialise a new ic_stmtm_if
@@ -620,7 +620,7 @@ struct ic_expr *ic_stmt_if_get_expr(struct ic_stmt_if *sif) {
 }
 
 /* print this if */
-void ic_stmt_if_print(struct ic_stmt_if *sif, unsigned int *indent_level) {
+void ic_stmt_if_print(FILE *fd, struct ic_stmt_if *sif, unsigned int *indent_level) {
     /* our fake indent for our subexpr */
     unsigned int fake_indent = 0;
 
@@ -634,32 +634,32 @@ void ic_stmt_if_print(struct ic_stmt_if *sif, unsigned int *indent_level) {
     }
 
     /* print indent */
-    ic_parse_print_indent(*indent_level);
+    ic_parse_print_indent(fd, *indent_level);
 
     /* we want to print
      *  if expr
      *      body
      *  end
      */
-    fputs("if ", stdout);
-    ic_expr_print(sif->expr, &fake_indent);
-    puts("");
+    fputs("if ", fd);
+    ic_expr_print(fd, sif->expr, &fake_indent);
+    fputs("\n", fd);
 
     /* print body
      * body will handle incr and decr of the indent level
      */
-    ic_body_print(sif->then_body, indent_level);
+    ic_body_print(fd, sif->then_body, indent_level);
 
     if (sif->else_body) {
-        ic_parse_print_indent(*indent_level);
-        puts("else");
-        ic_body_print(sif->else_body, indent_level);
+        ic_parse_print_indent(fd, *indent_level);
+        fputs("else\n", fd);
+        ic_body_print(fd, sif->else_body, indent_level);
     }
 
     /* statements are displayed on their own line */
     /* print indent */
-    ic_parse_print_indent(*indent_level);
-    puts("end");
+    ic_parse_print_indent(fd, *indent_level);
+    fputs("end\n", fd);
 }
 
 /* allocate and initialise a new ic_stmt_for
@@ -810,7 +810,7 @@ unsigned int ic_stmt_for_length(struct ic_stmt_for *sfor) {
 }
 
 /* print this for */
-void ic_stmt_for_print(struct ic_stmt_for *sfor, unsigned int *indent_level) {
+void ic_stmt_for_print(FILE *fd, struct ic_stmt_for *sfor, unsigned int *indent_level) {
     /* our fake indent for our subexpr */
     unsigned int fake_indent = 0;
 
@@ -824,28 +824,28 @@ void ic_stmt_for_print(struct ic_stmt_for *sfor, unsigned int *indent_level) {
     }
 
     /* print indent */
-    ic_parse_print_indent(*indent_level);
+    ic_parse_print_indent(fd, *indent_level);
 
     /* we want to print
      *  for expr in iterator
      *      body
      *  end
      */
-    fputs("for ", stdout);
-    ic_expr_print(sfor->expr, &fake_indent);
-    fputs(" in ", stdout);
-    ic_expr_print(sfor->iterator, &fake_indent);
-    puts("");
+    fputs("for ", fd);
+    ic_expr_print(fd, sfor->expr, &fake_indent);
+    fputs(" in ", fd);
+    ic_expr_print(fd, sfor->iterator, &fake_indent);
+    fputs("\n", fd);
 
     /* print body
      * body will handle incr and decr of the indent level
      */
-    ic_body_print(sfor->body, indent_level);
+    ic_body_print(fd, sfor->body, indent_level);
 
     /* statements are displayed on their own line */
     /* print indent */
-    ic_parse_print_indent(*indent_level);
-    puts("end");
+    ic_parse_print_indent(fd, *indent_level);
+    fputs("end\n", fd);
 }
 
 /* allocate and initialise a new ic_stmt_while
@@ -974,7 +974,7 @@ unsigned int ic_stmt_while_length(struct ic_stmt_while *swhile) {
 }
 
 /* print this if */
-void ic_stmt_while_print(struct ic_stmt_while *swhile, unsigned int *indent_level) {
+void ic_stmt_while_print(FILE *fd, struct ic_stmt_while *swhile, unsigned int *indent_level) {
     /* our fake indent for our subexpr */
     unsigned int fake_indent = 0;
 
@@ -988,26 +988,26 @@ void ic_stmt_while_print(struct ic_stmt_while *swhile, unsigned int *indent_leve
     }
 
     /* print indent */
-    ic_parse_print_indent(*indent_level);
+    ic_parse_print_indent(fd, *indent_level);
 
     /* we want to print
      *  while expr
      *      body
      *  end
      */
-    fputs("while ", stdout);
-    ic_expr_print(swhile->expr, &fake_indent);
-    puts("");
+    fputs("while ", fd);
+    ic_expr_print(fd, swhile->expr, &fake_indent);
+    fputs("\n", fd);
 
     /* print body
      * body will handle incr and decr of the indent level
      */
-    ic_body_print(swhile->body, indent_level);
+    ic_body_print(fd, swhile->body, indent_level);
 
     /* statements are displayed on their own line */
     /* print indent */
-    ic_parse_print_indent(*indent_level);
-    puts("end");
+    ic_parse_print_indent(fd, *indent_level);
+    fputs("end\n", fd);
 }
 
 /* allocate and initialise a new ic_stmt
@@ -1298,7 +1298,7 @@ struct ic_expr *ic_stmt_get_expr(struct ic_stmt *stmt) {
 }
 
 /* print this stmt */
-void ic_stmt_print(struct ic_stmt *stmt, unsigned int *indent_level) {
+void ic_stmt_print(FILE *fd, struct ic_stmt *stmt, unsigned int *indent_level) {
     if (!stmt) {
         puts("ic_stmt_print: stmt was null");
         return;
@@ -1310,31 +1310,31 @@ void ic_stmt_print(struct ic_stmt *stmt, unsigned int *indent_level) {
 
     switch (stmt->tag) {
         case ic_stmt_type_ret:
-            ic_stmt_ret_print(&(stmt->u.ret), indent_level);
+            ic_stmt_ret_print(fd, &(stmt->u.ret), indent_level);
             break;
 
         case ic_stmt_type_let:
-            ic_stmt_let_print(&(stmt->u.let), indent_level);
+            ic_stmt_let_print(fd, &(stmt->u.let), indent_level);
             break;
 
         case ic_stmt_type_assign:
-            ic_stmt_assign_print(&(stmt->u.assign), indent_level);
+            ic_stmt_assign_print(fd, &(stmt->u.assign), indent_level);
             break;
 
         case ic_stmt_type_if:
-            ic_stmt_if_print(&(stmt->u.sif), indent_level);
+            ic_stmt_if_print(fd, &(stmt->u.sif), indent_level);
             break;
 
         case ic_stmt_type_for:
-            ic_stmt_for_print(&(stmt->u.sfor), indent_level);
+            ic_stmt_for_print(fd, &(stmt->u.sfor), indent_level);
             break;
 
         case ic_stmt_type_while:
-            ic_stmt_while_print(&(stmt->u.swhile), indent_level);
+            ic_stmt_while_print(fd, &(stmt->u.swhile), indent_level);
             break;
 
         case ic_stmt_type_expr:
-            ic_expr_print(stmt->u.expr, indent_level);
+            ic_expr_print(fd, stmt->u.expr, indent_level);
             /* statements are displayed on their own line */
             puts("");
             break;

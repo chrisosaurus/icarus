@@ -198,7 +198,7 @@ unsigned int ic_backend_pancake_value_stack_reset(struct ic_backend_pancake_valu
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_value_stack_print(struct ic_backend_pancake_value_stack *value_stack, FILE *file) {
+unsigned int ic_backend_pancake_value_stack_print(FILE *fd, struct ic_backend_pancake_value_stack *value_stack) {
     int i = 0;
     int len = 0;
     struct ic_backend_pancake_value *value = 0;
@@ -208,8 +208,8 @@ unsigned int ic_backend_pancake_value_stack_print(struct ic_backend_pancake_valu
         return 0;
     }
 
-    if (!file) {
-        puts("ic_backend_pancake_value_stack_print: file was null");
+    if (!fd) {
+        puts("ic_backend_pancake_value_stack_print: fd was null");
         return 0;
     }
 
@@ -223,7 +223,7 @@ unsigned int ic_backend_pancake_value_stack_print(struct ic_backend_pancake_valu
             return 0;
         }
 
-        if (!ic_backend_pancake_value_print(value, file)) {
+        if (!ic_backend_pancake_value_print(fd, value)) {
             puts("ic_backend_pancake_value_stack_print: call to ic_backend_pancake_value_print failed");
             return 0;
         }

@@ -25,7 +25,7 @@ int main(void) {
 
     puts("\nlexer output:");
     puts("----------------");
-    ic_token_list_print(token_list);
+    ic_token_list_print(stdout, token_list);
     puts("----------------\n");
 
     /* FIXME may be leaking tokens */

@@ -79,7 +79,7 @@ unsigned int ic_token_set_string(struct ic_token *token, char *string, unsigned 
 
         default:
             fputs("ic_token_set_string: called on token not allowing a payload, token->id:", stdout);
-            ic_token_id_print_debug(token->id);
+            ic_token_id_print_debug(stdout, token->id);
             puts("");
             return 1;
             break;
@@ -285,7 +285,7 @@ char *ic_token_get_string(struct ic_token *token) {
 
         default:
             fputs("ic_token_get_string: called on token not allowing a payload, token->id:", stdout);
-            ic_token_id_print_debug(token->id);
+            ic_token_id_print_debug(stdout, token->id);
             puts("");
             return 0;
             break;
@@ -315,7 +315,7 @@ unsigned int ic_token_get_string_length(struct ic_token *token) {
 
         default:
             fputs("ic_token_get_string_length: called on token not allowing a payload, token->id:", stdout);
-            ic_token_id_print_debug(token->id);
+            ic_token_id_print_debug(stdout, token->id);
             puts("");
             return 0;
             break;
@@ -343,7 +343,7 @@ int ic_token_set_integer(struct ic_token *token, int integer) {
 
         default:
             fputs("ic_token_set_integer: called on token not allowing a payload, token->id:", stdout);
-            ic_token_id_print_debug(token->id);
+            ic_token_id_print_debug(stdout, token->id);
             puts("");
             return 0;
             break;
@@ -373,7 +373,7 @@ int ic_token_get_integer(struct ic_token *token) {
 
         default:
             fputs("ic_token_get_integer: called on token not allowing a payload, token->id:", stdout);
-            ic_token_id_print_debug(token->id);
+            ic_token_id_print_debug(stdout, token->id);
             puts("");
             return 0;
             break;
@@ -496,7 +496,7 @@ unsigned int ic_token_ispermission(struct ic_token *token) {
     return 0;
 }
 
-void ic_token_print(struct ic_token *token) {
+void ic_token_print(FILE *fd, struct ic_token *token) {
     char *str = 0;
     if (!token) {
         puts("ic_token_print: token was null");
@@ -505,16 +505,16 @@ void ic_token_print(struct ic_token *token) {
 
     switch (token->id) {
         case IC_IDENTIFIER:
-            printf("%.*s", token->u.str.len, token->u.str.string);
+            fprintf(fd, "%.*s", token->u.str.len, token->u.str.string);
             break;
         case IC_LITERAL_INTEGER:
-            printf("%ld", token->u.integer);
+            fprintf(fd, "%ld", token->u.integer);
             break;
         case IC_LITERAL_STRING:
-            printf("\"%.*s\"", token->u.str.len, token->u.str.string);
+            fprintf(fd, "\"%.*s\"", token->u.str.len, token->u.str.string);
             break;
         case IC_COMMENT:
-            printf("#%.*s", token->u.str.len, token->u.str.string);
+            fprintf(fd, "#%.*s", token->u.str.len, token->u.str.string);
             break;
 
         default:
@@ -524,185 +524,185 @@ void ic_token_print(struct ic_token *token) {
                 return;
             }
 
-            fputs(str, stdout);
+            fputs(str, fd);
             break;
     }
 }
 
-void ic_token_id_print_debug(enum ic_token_id id) {
+void ic_token_id_print_debug(FILE *fd, enum ic_token_id id) {
     switch (id) {
         case IC_IDENTIFIER:
             /* FIXME add payload */
-            fputs("IC_IDENTIFIER", stdout);
+            fputs("IC_IDENTIFIER", fd);
             break;
         case IC_LITERAL_INTEGER:
             /* FIXME add payload */
-            fputs("IC_LITERAL_INTEGER", stdout);
+            fputs("IC_LITERAL_INTEGER", fd);
             break;
         case IC_LITERAL_STRING:
             /* FIXME add payload */
-            fputs("IC_LITERAL_STRING", stdout);
+            fputs("IC_LITERAL_STRING", fd);
             break;
         case IC_COMMENT:
             /* FIXME add payload */
-            fputs("IC_COMMENT", stdout);
+            fputs("IC_COMMENT", fd);
             break;
 
         case IC_TRUE:
-            fputs("IC_TRUE", stdout);
+            fputs("IC_TRUE", fd);
             break;
         case IC_FALSE:
-            fputs("IC_TRUE", stdout);
+            fputs("IC_TRUE", fd);
             break;
 
         case IC_NEWLINE:
-            fputs("IC_NEWLINE", stdout);
+            fputs("IC_NEWLINE", fd);
             break;
         case IC_WHITESPACE:
-            fputs("IC_WHITSPACE", stdout);
+            fputs("IC_WHITSPACE", fd);
             break;
 
         case IC_END:
-            fputs("IC_END", stdout);
+            fputs("IC_END", fd);
             break;
 
         case IC_IF:
-            fputs("IC_IF", stdout);
+            fputs("IC_IF", fd);
             break;
         case IC_ELSIF:
-            fputs("IC_ELSIF", stdout);
+            fputs("IC_ELSIF", fd);
             break;
         case IC_ELSE:
-            fputs("IC_ELSE", stdout);
+            fputs("IC_ELSE", fd);
             break;
         case IC_RETURN:
-            fputs("IC_RETURN", stdout);
+            fputs("IC_RETURN", fd);
             break;
         case IC_LET:
-            fputs("IC_LET", stdout);
+            fputs("IC_LET", fd);
             break;
         case IC_FOR:
-            fputs("IC_FOR", stdout);
+            fputs("IC_FOR", fd);
             break;
         case IC_IN:
-            fputs("IC_IN", stdout);
+            fputs("IC_IN", fd);
             break;
         case IC_WHILE:
-            fputs("IC_WHILE", stdout);
+            fputs("IC_WHILE", fd);
             break;
 
         case IC_IMPORT:
-            fputs("IC_IMPORT", stdout);
+            fputs("IC_IMPORT", fd);
             break;
         case IC_BUILTIN:
-            fputs("IC_BUILTIN", stdout);
+            fputs("IC_BUILTIN", fd);
             break;
         case IC_OP:
-            fputs("IC_OP", stdout);
+            fputs("IC_OP", fd);
             break;
         case IC_FUNC:
-            fputs("IC_FUNC", stdout);
+            fputs("IC_FUNC", fd);
             break;
         case IC_TYPE:
-            fputs("IC_TYPE", stdout);
+            fputs("IC_TYPE", fd);
             break;
         case IC_ENUM:
-            fputs("IC_ENUM", stdout);
+            fputs("IC_ENUM", fd);
             break;
         case IC_UNION:
-            fputs("IC_UNION", stdout);
+            fputs("IC_UNION", fd);
             break;
 
         case IC_ARROW:
-            fputs("IC_ARROW", stdout);
+            fputs("IC_ARROW", fd);
             break;
         case IC_EQUAL:
-            fputs("IC_EQUAL", stdout);
+            fputs("IC_EQUAL", fd);
             break;
         case IC_ASSIGN:
-            fputs("IC_ASSIGN", stdout);
+            fputs("IC_ASSIGN", fd);
             break;
         case IC_DOUBLECOLON:
-            fputs("IC_DOUBLECOLON", stdout);
+            fputs("IC_DOUBLECOLON", fd);
             break;
         case IC_PERIOD:
-            fputs("IC_PERIOD", stdout);
+            fputs("IC_PERIOD", fd);
             break;
         case IC_COMMA:
-            fputs("IC_COMMA", stdout);
+            fputs("IC_COMMA", fd);
             break;
         case IC_AND:
-            fputs("IC_AND", stdout);
+            fputs("IC_AND", fd);
             break;
         case IC_OR:
-            fputs("IC_OR", stdout);
+            fputs("IC_OR", fd);
             break;
 
         case IC_DIVIDE:
-            fputs("IC_DIVIDE", stdout);
+            fputs("IC_DIVIDE", fd);
             break;
 
         case IC_DOLLAR:
-            fputs("IC_DOLLAR", stdout);
+            fputs("IC_DOLLAR", fd);
             break;
         case IC_PERCENT:
-            fputs("IC_PERCENT", stdout);
+            fputs("IC_PERCENT", fd);
             break;
         case IC_AMPERSAND:
-            fputs("IC_AMPERSAND", stdout);
+            fputs("IC_AMPERSAND", fd);
             break;
         case IC_AT:
-            fputs("IC_AT", stdout);
+            fputs("IC_AT", fd);
             break;
         case IC_ASTERISK:
-            fputs("IC_ASTERISK", stdout);
+            fputs("IC_ASTERISK", fd);
             break;
         case IC_CARET:
-            fputs("IC_CARET", stdout);
+            fputs("IC_CARET", fd);
             break;
         case IC_PLUS:
-            fputs("IC_PLUS", stdout);
+            fputs("IC_PLUS", fd);
             break;
         case IC_MINUS:
-            fputs("IC_MINUS", stdout);
+            fputs("IC_MINUS", fd);
             break;
 
         case IC_LRBRACKET:
-            fputs("IC_LRBRACKET", stdout);
+            fputs("IC_LRBRACKET", fd);
             break;
         case IC_RRBRACKET:
-            fputs("IC_RRBRACKET", stdout);
+            fputs("IC_RRBRACKET", fd);
             break;
 
         case IC_LESSTHAN_EQUAL:
-            fputs("IC_LESSTHAN_EQUAL", stdout);
+            fputs("IC_LESSTHAN_EQUAL", fd);
             break;
         case IC_GREATERTHAN_EQUAL:
-            fputs("IC_GREATERTHAN_EQUAL", stdout);
+            fputs("IC_GREATERTHAN_EQUAL", fd);
             break;
         case IC_LESSTHAN:
-            fputs("IC_LESSTHAN", stdout);
+            fputs("IC_LESSTHAN", fd);
             break;
         case IC_GREATERTHAN:
-            fputs("IC_GREATERTHAN", stdout);
+            fputs("IC_GREATERTHAN", fd);
             break;
 
         default:
-            printf("ic_token_id_print_debug: ERROR, unknown token id '%d'\n", id);
+            fprintf(fd, "ic_token_id_print_debug: ERROR, unknown token id '%d'\n", id);
             break;
     }
 }
 
-void ic_token_print_debug(struct ic_token *token) {
+void ic_token_print_debug(FILE *fd, struct ic_token *token) {
     if (!token) {
         puts("ic_token_print_debug: token was null");
         return;
     }
 
-    ic_token_id_print_debug(token->id);
+    ic_token_id_print_debug(fd, token->id);
 }
 
-void ic_token_print_line(struct ic_token *token) {
+void ic_token_print_line(FILE *fd, struct ic_token *token) {
     /* number of chars until line ends */
     unsigned int len = 0;
 
@@ -726,17 +726,17 @@ void ic_token_print_line(struct ic_token *token) {
 
 END:
 
-    printf("%.*s\n", len, token->line);
+    fprintf(fd, "%.*s\n", len, token->line);
 }
 
-void ic_token_debug(struct ic_token *token) {
+void ic_token_debug(FILE *fd, struct ic_token *token) {
     if (!token) {
         puts("ic_token_debug: token was null");
         return;
     }
 
-    fputs("ic_token_debug:", stdout);
-    ic_token_print_debug(token);
-    printf(" found in context: '%.*s'\nline:\n", 10, &(token->line[token->offset]));
-    ic_token_print_line(token);
+    fputs("ic_token_debug:", fd);
+    ic_token_print_debug(fd, token);
+    fprintf(fd, " found in context: '%.*s'\nline:\n", 10, &(token->line[token->offset]));
+    ic_token_print_line(fd, token);
 }

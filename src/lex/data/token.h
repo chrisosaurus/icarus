@@ -187,14 +187,14 @@ unsigned int ic_token_isboolean(struct ic_token *token);
  */
 unsigned int ic_token_ispermission(struct ic_token *token);
 
-void ic_token_print(struct ic_token *token);
+void ic_token_print(FILE *fd, struct ic_token *token);
 
-void ic_token_id_print_debug(enum ic_token_id id);
+void ic_token_id_print_debug(FILE *fd, enum ic_token_id id);
 
-void ic_token_print_debug(struct ic_token *token);
+void ic_token_print_debug(FILE *fd, struct ic_token *token);
 
-void ic_token_print_line(struct ic_token *token);
+void ic_token_print_line(FILE *fd, struct ic_token *token);
 
-void ic_token_debug(struct ic_token *token);
+void ic_token_debug(FILE *fd, struct ic_token *token);
 
 #endif

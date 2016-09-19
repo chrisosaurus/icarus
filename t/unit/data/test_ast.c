@@ -36,7 +36,7 @@ void basic(void) {
     printf("Should see:\ntype Foo\n    a::Sint\n    b::String\nend\n");
 
     /* output type */
-    ic_decl_type_print(tdecl, &fake_indent);
+    ic_decl_type_print(stdout, tdecl, &fake_indent);
 
     /* test ast itself */
     ast = ic_ast_new();

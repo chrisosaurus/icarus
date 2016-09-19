@@ -37,7 +37,7 @@ int main(void) {
     printf("Expected:\ntype Foo\n    bar::Baz\nend\n");
     /* print it out */
     puts("Output:");
-    ic_decl_print(decl, &fake_indent);
+    ic_decl_print(stdout, decl, &fake_indent);
 
     puts("");
 
@@ -65,7 +65,7 @@ int main(void) {
     printf("Expected:\n# Foo(Baz)\nfn Foo(bar::Baz) -> Void\nend\n");
     /* print it out */
     puts("Output:");
-    ic_decl_print(decl, &fake_indent);
+    ic_decl_print(stdout, decl, &fake_indent);
 
     return 0;
 }

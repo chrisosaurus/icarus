@@ -348,14 +348,14 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                  */
                 if (ic_type_isvoid(type)) {
                     puts("ic_analyse_body: if: void expression used as if condition");
-                    ic_type_print_debug(type);
+                    ic_type_print_debug(stdout, type);
                     goto ERROR;
                 }
 
                 /* this expression must be of type bool */
                 if (!ic_type_isbool(type)) {
                     puts("ic_analyse_body: if: expression was not of type bool");
-                    ic_type_print_debug(type);
+                    ic_type_print_debug(stdout, type);
                     goto ERROR;
                 }
 

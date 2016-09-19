@@ -88,6 +88,6 @@ unsigned int ic_backend_pancake_value_stack_reset(struct ic_backend_pancake_valu
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_value_stack_print(struct ic_backend_pancake_value_stack *value_stack, FILE *file);
+unsigned int ic_backend_pancake_value_stack_print(FILE *fd, struct ic_backend_pancake_value_stack *value_stack);
 
 #endif /* IC_BACKEND_PANCAKE_VALUE_STACK_H */

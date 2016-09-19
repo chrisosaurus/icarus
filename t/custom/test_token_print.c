@@ -47,7 +47,7 @@ int main(void) {
                 break;
         }
 
-        ic_token_print(token);
+        ic_token_print(stdout, token);
         puts("");
     }
     puts("---------");
@@ -60,7 +60,7 @@ int main(void) {
     for (i = 0; i < IC_TOKEN_LEN; ++i) {
         printf("%d : ", i);
         token->id = i;
-        ic_token_print_debug(token);
+        ic_token_print_debug(stdout, token);
         puts("");
     }
     puts("---------");

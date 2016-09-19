@@ -36,7 +36,7 @@ int main(void) {
 
     /* output type */
     puts("Output:");
-    ic_decl_func_print(fdecl, &fake_indent);
+    ic_decl_func_print(stdout, fdecl, &fake_indent);
 
     return 0;
 }

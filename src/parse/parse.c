@@ -78,7 +78,7 @@ struct ic_ast *ic_parse(struct ic_token_list *token_list) {
                 func = ic_parse_table[pt_offset].func;
                 if (!func) {
                     fputs("ic_parse: Error matched with:", stdout);
-                    ic_token_id_print_debug(token->id);
+                    ic_token_id_print_debug(stdout, token->id);
                     puts("  but parse table function was null, bailing");
 
                     /* free ast and all contents */
@@ -129,7 +129,7 @@ struct ic_ast *ic_parse(struct ic_token_list *token_list) {
 
         /* no match found */
         fputs("ic_parse: unsupported token_id:", stdout);
-        ic_token_id_print_debug(token->id);
+        ic_token_id_print_debug(stdout, token->id);
         puts(" found, bailing");
 
         /* free ast and all contents */
@@ -149,11 +149,11 @@ struct ic_ast *ic_parse(struct ic_token_list *token_list) {
 /* print levels worth of indent levels
  * an indent level is defined in parse.c
  */
-void ic_parse_print_indent(unsigned int levels) {
+void ic_parse_print_indent(FILE *fd, unsigned int levels) {
     /* print an empty string with width
      * levels * INDENT_PER_LEVELS
      */
-    printf("%*s", levels * INDENT_PER_LEVEL, "");
+    fprintf(fd, "%*s", levels * INDENT_PER_LEVEL, "");
 }
 
 unsigned int ic_parse_permissions(struct ic_token_list *token_list) {

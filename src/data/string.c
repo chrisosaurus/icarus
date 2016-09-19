@@ -411,7 +411,7 @@ unsigned int ic_string_append_cstr(struct ic_string *to, char *from) {
 }
 
 /* print this string */
-void ic_string_print(struct ic_string *string) {
+void ic_string_print(FILE *fd, struct ic_string *string) {
     char *con;
 
     if (!string) {
@@ -425,5 +425,5 @@ void ic_string_print(struct ic_string *string) {
         return;
     }
 
-    printf("%s", con);
+    fprintf(fd, "%s", con);
 }

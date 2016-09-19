@@ -78,7 +78,7 @@ unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic
     }
 
     puts("ic_b2c_compile_expr_fcall: call for");
-    ic_expr_func_call_print(fcall->fcall, &indent_level);
+    ic_expr_func_call_print(stdout, fcall->fcall, &indent_level);
     puts("");
 
     fdecl = ic_expr_func_call_get_fdecl(fcall->fcall);
@@ -116,7 +116,7 @@ unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic
         }
 
         /* output symbol */
-        ic_symbol_print(sym);
+        ic_symbol_print(stdout, sym);
         sym_str = ic_symbol_contents(sym);
         if (!sym_str) {
             puts("ic_b2c_compile_expr_fcall: call to ic_symbol_contents");
@@ -152,7 +152,7 @@ unsigned int ic_b2c_compile_expr_identifier(struct ic_kludge *input_kludge, stru
     }
 
     puts("ic_b2c_compile_expr_identifier: call for");
-    ic_expr_identifier_print(identifier, &indent_level);
+    ic_expr_identifier_print(stdout, identifier, &indent_level);
     puts("");
 
     puts("ic_b2c_compile_expr_identifier: unimplemented");
@@ -224,7 +224,7 @@ unsigned int ic_b2c_compile_expr_constant(struct ic_kludge *input_kludge, struct
 
         default:
             puts("ic_b2c_compile_expr_constant: call for");
-            ic_expr_constant_print(constant, &indent_level);
+            ic_expr_constant_print(stdout, constant, &indent_level);
             puts("");
 
             puts("ic_b2c_compile_expr_constant: unknown tag");
@@ -256,7 +256,7 @@ unsigned int ic_b2c_compile_expr_operator(struct ic_kludge *input_kludge, struct
     }
 
     puts("ic_b2c_compile_expr_operator: call for");
-    ic_expr_operator_print(operator, &indent_level);
+    ic_expr_operator_print(stdout, operator, &indent_level);
     puts("");
 
     puts("ic_b2c_compile_expr_operator: unimplemented");
@@ -282,7 +282,7 @@ unsigned int ic_b2c_compile_expr_faccess(struct ic_kludge *input_kludge, struct 
     }
 
     puts("ic_b2c_compile_expr_faccess: call for");
-    ic_expr_faccess_print(faccess, &indent_level);
+    ic_expr_faccess_print(stdout, faccess, &indent_level);
     puts("");
 
     puts("ic_b2c_compile_expr_faccess: unimplemented");

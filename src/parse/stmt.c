@@ -588,7 +588,7 @@ struct ic_stmt *ic_parse_stmt(struct ic_token_list *token_list) {
             func = ic_parse_table[pt_offset].func;
             if (!func) {
                 printf("ic_parse: Error matched with: ");
-                ic_token_id_print_debug(token->id);
+                ic_token_id_print_debug(stdout, token->id);
                 puts("but parse table function was null, bailing");
                 return 0;
             }

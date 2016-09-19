@@ -75,7 +75,7 @@ unsigned int ic_transform_ir_let_literal_destroy(struct ic_transform_ir_let_lite
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_let_literal_print(struct ic_transform_ir_let_literal *let, unsigned int *indent) {
+unsigned int ic_transform_ir_let_literal_print(FILE *fd, struct ic_transform_ir_let_literal *let, unsigned int *indent) {
     unsigned int fake_indent = 0;
     if (!let) {
         puts("ic_transform_ir_let_literal_print: let was null");
@@ -92,25 +92,25 @@ unsigned int ic_transform_ir_let_literal_print(struct ic_transform_ir_let_litera
         return 0;
     }
 
-    ic_parse_print_indent(*indent);
+    ic_parse_print_indent(fd, *indent);
 
-    fputs("let ", stdout);
+    fputs("let ", fd);
 
     /* identifier name */
-    ic_symbol_print(let->name);
+    ic_symbol_print(fd, let->name);
 
-    fputs("::", stdout);
+    fputs("::", fd);
 
     /* type */
-    ic_type_print(let->type);
+    ic_type_print(fd, let->type);
 
-    fputs(" = ", stdout);
+    fputs(" = ", fd);
 
     /* literal */
-    ic_expr_constant_print(let->literal, &fake_indent);
+    ic_expr_constant_print(fd, let->literal, &fake_indent);
 
     /* trailing \n */
-    puts("");
+    fputs("\n", fd);
 
     return 1;
 }
@@ -186,7 +186,7 @@ unsigned int ic_transform_ir_let_expr_destroy(struct ic_transform_ir_let_expr *l
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_let_expr_print(struct ic_transform_ir_let_expr *let, unsigned int *indent) {
+unsigned int ic_transform_ir_let_expr_print(FILE *fd, struct ic_transform_ir_let_expr *let, unsigned int *indent) {
     unsigned int fake_indent = 0;
     if (!let) {
         puts("ic_transform_ir_let_expr_print: let was null");
@@ -203,28 +203,28 @@ unsigned int ic_transform_ir_let_expr_print(struct ic_transform_ir_let_expr *let
         return 0;
     }
 
-    ic_parse_print_indent(*indent);
+    ic_parse_print_indent(fd, *indent);
 
-    fputs("let ", stdout);
+    fputs("let ", fd);
 
     /* identifier name */
-    ic_symbol_print(let->name);
+    ic_symbol_print(fd, let->name);
 
-    fputs("::", stdout);
+    fputs("::", fd);
 
     /* type */
-    ic_type_print(let->type);
+    ic_type_print(fd, let->type);
 
-    fputs(" = ", stdout);
+    fputs(" = ", fd);
 
     /* expr */
-    if (!ic_transform_ir_expr_print(let->expr, &fake_indent)) {
+    if (!ic_transform_ir_expr_print(fd, let->expr, &fake_indent)) {
         puts("ic_transform_ir_let_expr_print: call to ic_transform_ir_expr_print failed");
         return 0;
     }
 
     /* trailing \n */
-    puts("");
+    fputs("\n", fd);
 
     return 1;
 }
@@ -298,7 +298,7 @@ unsigned int ic_transform_ir_let_destroy(struct ic_transform_ir_let *let, unsign
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_let_print(struct ic_transform_ir_let *let, unsigned int *indent) {
+unsigned int ic_transform_ir_let_print(FILE *fd, struct ic_transform_ir_let *let, unsigned int *indent) {
     if (!let) {
         puts("ic_transform_ir_let_print: let was null");
         return 0;
@@ -311,14 +311,14 @@ unsigned int ic_transform_ir_let_print(struct ic_transform_ir_let *let, unsigned
 
     switch (let->tag) {
         case ic_transform_ir_let_type_literal:
-            if (!ic_transform_ir_let_literal_print(&(let->u.lit), indent)) {
+            if (!ic_transform_ir_let_literal_print(fd, &(let->u.lit), indent)) {
                 puts("ic_transform_ir_let_print: call to ic_transform_let_literal_print failed");
                 return 0;
             }
             break;
 
         case ic_transform_ir_let_type_expr:
-            if (!ic_transform_ir_let_expr_print(&(let->u.expr), indent)) {
+            if (!ic_transform_ir_let_expr_print(fd, &(let->u.expr), indent)) {
                 puts("ic_transform_ir_let_print: call to ic_transform_let_expr_print failed");
                 return 0;
             }
@@ -441,7 +441,7 @@ unsigned int ic_transform_ir_assign_destroy(struct ic_transform_ir_assign *assig
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_assign_print(struct ic_transform_ir_assign *assign, unsigned int *indent) {
+unsigned int ic_transform_ir_assign_print(FILE *fd, struct ic_transform_ir_assign *assign, unsigned int *indent) {
     unsigned int fake_indent = 0;
 
     if (!assign) {
@@ -459,21 +459,21 @@ unsigned int ic_transform_ir_assign_print(struct ic_transform_ir_assign *assign,
         return 0;
     }
 
-    ic_parse_print_indent(*indent);
+    ic_parse_print_indent(fd, *indent);
 
     /* left symbol */
-    ic_symbol_print(assign->left);
+    ic_symbol_print(fd, assign->left);
 
-    fputs(" = ", stdout);
+    fputs(" = ", fd);
 
     /* right symbol */
-    if (!ic_transform_ir_expr_print(assign->right, &fake_indent)) {
+    if (!ic_transform_ir_expr_print(fd, assign->right, &fake_indent)) {
         puts("ic_transform_ir_assign_print: call to ic_transform_ir_expr_print failed");
         return 0;
     }
 
     /* trailing \n */
-    puts("");
+    fputs("\n", fd);
 
     return 0;
 }
@@ -559,7 +559,7 @@ unsigned int ic_transform_ir_if_destroy(struct ic_transform_ir_if *tif, unsigned
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_if_print(struct ic_transform_ir_if *tif, unsigned int *indent) {
+unsigned int ic_transform_ir_if_print(FILE *fd, struct ic_transform_ir_if *tif, unsigned int *indent) {
     unsigned int fake_indent = *indent + 1;
 
     if (!tif) {
@@ -572,34 +572,34 @@ unsigned int ic_transform_ir_if_print(struct ic_transform_ir_if *tif, unsigned i
         return 0;
     }
 
-    ic_parse_print_indent(*indent);
+    ic_parse_print_indent(fd, *indent);
 
     /* if statement */
-    fputs("if ", stdout);
+    fputs("if ", fd);
 
     /* cond */
-    ic_symbol_print(tif->cond);
-    puts("");
+    ic_symbol_print(fd, tif->cond);
+    fputs("\n", fd);
 
     /* body */
-    if (!ic_transform_body_print(tif->then_tbody, &fake_indent)) {
+    if (!ic_transform_body_print(fd, tif->then_tbody, &fake_indent)) {
         puts("ic_transform_ir_if_print: call to ic_transform_body_print failed");
         return 0;
     }
 
     /* if we have an else clause */
     if (tif->else_tbody) {
-        ic_parse_print_indent(*indent);
+        ic_parse_print_indent(fd, *indent);
         puts("else");
-        if (!ic_transform_body_print(tif->else_tbody, &fake_indent)) {
+        if (!ic_transform_body_print(fd, tif->else_tbody, &fake_indent)) {
             puts("ic_transform_ir_if_print: call to ic_transform_body_print failed");
             return 0;
         }
     }
 
     /* trailing end and \n */
-    ic_parse_print_indent(*indent);
-    puts("end");
+    ic_parse_print_indent(fd, *indent);
+    fputs("end\n", fd);
 
     return 1;
 }
@@ -673,7 +673,7 @@ unsigned int ic_transform_ir_expr_destroy(struct ic_transform_ir_expr *expr, uns
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_expr_print(struct ic_transform_ir_expr *expr, unsigned int *indent) {
+unsigned int ic_transform_ir_expr_print(FILE *fd, struct ic_transform_ir_expr *expr, unsigned int *indent) {
     if (!expr) {
         puts("ic_transform_ir_expr_print: expr was null");
         return 0;
@@ -689,7 +689,7 @@ unsigned int ic_transform_ir_expr_print(struct ic_transform_ir_expr *expr, unsig
         return 0;
     }
 
-    if (!ic_transform_ir_fcall_print(expr->fcall, indent)) {
+    if (!ic_transform_ir_fcall_print(fd, expr->fcall, indent)) {
         puts("ic_transform_ir_expr_print: call to ic_transform_ir_fcall_print failed");
         return 0;
     }
@@ -766,7 +766,7 @@ unsigned int ic_transform_ir_ret_destroy(struct ic_transform_ir_ret *ret, unsign
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_ret_print(struct ic_transform_ir_ret *ret, unsigned int *indent) {
+unsigned int ic_transform_ir_ret_print(FILE *fd, struct ic_transform_ir_ret *ret, unsigned int *indent) {
     if (!ret) {
         puts("ic_transform_ir_ret_print: ret was null");
         return 0;
@@ -777,18 +777,18 @@ unsigned int ic_transform_ir_ret_print(struct ic_transform_ir_ret *ret, unsigned
         return 0;
     }
 
-    ic_parse_print_indent(*indent);
+    ic_parse_print_indent(fd, *indent);
 
-    fputs("return", stdout);
+    fputs("return", fd);
 
     /* print symbol if it's set */
     if (ret->var) {
-        fputs(" ", stdout);
-        ic_symbol_print(ret->var);
+        fputs(" ", fd);
+        ic_symbol_print(fd, ret->var);
     }
 
     /* trailing \n */
-    puts("");
+    fputs("\n", fd);
 
     return 1;
 }
@@ -883,7 +883,7 @@ unsigned int ic_transform_ir_fcall_destroy(struct ic_transform_ir_fcall *fcall, 
  * fcallurns 1 on success
  * fcallurn 0 on failure
  */
-unsigned int ic_transform_ir_fcall_print(struct ic_transform_ir_fcall *fcall, unsigned int *indent) {
+unsigned int ic_transform_ir_fcall_print(FILE *fd, struct ic_transform_ir_fcall *fcall, unsigned int *indent) {
     /* offset into fcall args */
     unsigned int i = 0;
     /* length of fcall args */
@@ -902,10 +902,10 @@ unsigned int ic_transform_ir_fcall_print(struct ic_transform_ir_fcall *fcall, un
     }
 
     /* function name and indent */
-    ic_expr_print(fcall->fcall->fname, indent);
+    ic_expr_print(fd, fcall->fcall->fname, indent);
 
     /* opening ( */
-    fputs("(", stdout);
+    fputs("(", fd);
 
     /* args */
     len = ic_transform_ir_fcall_length(fcall);
@@ -919,15 +919,15 @@ unsigned int ic_transform_ir_fcall_print(struct ic_transform_ir_fcall *fcall, un
 
         if (i > 0) {
             /* comma and space to sep. args */
-            fputs(", ", stdout);
+            fputs(", ", fd);
         }
 
         /* print arg */
-        ic_symbol_print(arg);
+        ic_symbol_print(fd, arg);
     }
 
     /* closing ) */
-    fputs(")", stdout);
+    fputs(")", fd);
 
     return 1;
 }
@@ -1041,7 +1041,7 @@ unsigned int ic_transform_ir_stmt_destroy(struct ic_transform_ir_stmt *stmt, uns
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_stmt_print(struct ic_transform_ir_stmt *stmt, unsigned int *indent) {
+unsigned int ic_transform_ir_stmt_print(FILE *fd, struct ic_transform_ir_stmt *stmt, unsigned int *indent) {
     if (!stmt) {
         puts("ic_transform_ir_stmt_print: stmt was null");
         return 0;
@@ -1054,7 +1054,7 @@ unsigned int ic_transform_ir_stmt_print(struct ic_transform_ir_stmt *stmt, unsig
 
     switch (stmt->tag) {
         case ic_transform_ir_stmt_type_expr:
-            if (!ic_transform_ir_expr_print(&(stmt->u.expr), indent)) {
+            if (!ic_transform_ir_expr_print(fd, &(stmt->u.expr), indent)) {
                 puts("ic_transform_ir_stmt_print: call to ic_transform_ir_expr_print failed");
                 return 0;
             }
@@ -1063,21 +1063,21 @@ unsigned int ic_transform_ir_stmt_print(struct ic_transform_ir_stmt *stmt, unsig
             break;
 
         case ic_transform_ir_stmt_type_let:
-            if (!ic_transform_ir_let_print(&(stmt->u.let), indent)) {
+            if (!ic_transform_ir_let_print(fd, &(stmt->u.let), indent)) {
                 puts("ic_transform_ir_stmt_print: call to ic_transform_ir_let_print failed");
                 return 0;
             }
             break;
 
         case ic_transform_ir_stmt_type_ret:
-            if (!ic_transform_ir_ret_print(&(stmt->u.ret), indent)) {
+            if (!ic_transform_ir_ret_print(fd, &(stmt->u.ret), indent)) {
                 puts("ic_transform_ir_stmt_print: call to ic_transform_ir_ret_print failed");
                 return 0;
             }
             break;
 
         case ic_transform_ir_stmt_type_if:
-            if (!ic_transform_ir_if_print(&(stmt->u.sif), indent)) {
+            if (!ic_transform_ir_if_print(fd, &(stmt->u.sif), indent)) {
                 puts("ic_transform_ir_stmt_print: call to ic_transform_ir_if_print failed");
                 return 0;
             }

@@ -108,7 +108,7 @@ unsigned int ic_field_destroy(struct ic_field *field, unsigned int free_field) {
 }
 
 /* print the field to stdout */
-void ic_field_print(struct ic_field *field) {
+void ic_field_print(FILE *fd, struct ic_field *field) {
     char *perm_str;
 
     if (!field) {
@@ -122,6 +122,6 @@ void ic_field_print(struct ic_field *field) {
         return;
     }
 
-    printf("%s%s::", perm_str, ic_symbol_contents(&(field->name)));
-    ic_type_ref_print(&(field->type));
+    fprintf(fd, "%s%s::", perm_str, ic_symbol_contents(&(field->name)));
+    ic_type_ref_print(fd, &(field->type));
 }

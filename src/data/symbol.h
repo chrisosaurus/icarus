@@ -62,6 +62,6 @@ int ic_symbol_length(struct ic_symbol *symbol);
 char ic_symbol_get(struct ic_symbol *symbol, unsigned int offset);
 
 /* print this symbol */
-void ic_symbol_print(struct ic_symbol *symbol);
+void ic_symbol_print(FILE *fd, struct ic_symbol *symbol);
 
 #endif

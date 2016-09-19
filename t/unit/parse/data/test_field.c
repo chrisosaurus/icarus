@@ -44,7 +44,7 @@ int main(void) {
 
     /* output field */
     puts("Output:");
-    ic_field_print(field);
+    ic_field_print(stdout, field);
     puts("");
 
     return 0;

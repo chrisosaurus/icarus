@@ -20,7 +20,7 @@
 /* print levels worth of indent levels
  * an indent level is defined in parse.c
  */
-void ic_parse_print_indent(unsigned int levels);
+void ic_parse_print_indent(FILE *fd, unsigned int levels);
 
 /**** parse/field.c ****/
 

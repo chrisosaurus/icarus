@@ -343,7 +343,7 @@ struct ic_decl *ic_parse_decl_func_header(struct ic_token_list *token_list) {
 
     if (token->id != IC_IDENTIFIER) {
         printf("ic_parse_decl_func_header: expected IC_IDENTIFIER token, got: ");
-        ic_token_id_print_debug(token->id);
+        ic_token_id_print_debug(stdout, token->id);
         puts("");
         return 0;
     }
@@ -596,7 +596,7 @@ struct ic_decl *ic_parse_decl_op(struct ic_token_list *token_list) {
 
     if (!ic_token_isoperator(token)) {
         puts("ic_parse_decl_op: token was not an operator");
-        ic_token_print_debug(token);
+        ic_token_print_debug(stdout, token);
         return 0;
     }
 

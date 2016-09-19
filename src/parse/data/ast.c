@@ -153,7 +153,7 @@ unsigned int ic_ast_length(struct ic_ast *ast) {
 }
 
 /* calls print on all elements within ast */
-void ic_ast_print(struct ic_ast *ast) {
+void ic_ast_print(FILE *fd, struct ic_ast *ast) {
     /* current offset into pvector */
     unsigned int i = 0;
     /* length of ast pvector */
@@ -184,13 +184,13 @@ void ic_ast_print(struct ic_ast *ast) {
         }
 
         /* call print on it*/
-        ic_decl_print(decl, &indent_level);
+        ic_decl_print(fd, decl, &indent_level);
 
         /* pad with newlines between them
          * unless we are the last item
          */
         if (i < (len - 1)) {
-            puts("");
+            fputs("\n", fd);
         }
     }
 }

@@ -29,7 +29,7 @@ void normal(void) {
     assert(ic_symbol_get(str, 7) == 0);
 
     /* cannot test output */
-    ic_symbol_print(str);
+    ic_symbol_print(stdout, str);
 
     assert(1 == ic_symbol_destroy(str, 1));
 }
@@ -43,7 +43,7 @@ void abnormal(void) {
     assert(0 == ic_symbol_destroy(0, 0));
 
     /* cannot test output */
-    ic_symbol_print(0);
+    ic_symbol_print(stdout, 0);
 }
 
 int main(void) {

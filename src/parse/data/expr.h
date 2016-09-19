@@ -105,7 +105,7 @@ unsigned int ic_expr_func_call_length(struct ic_expr_func_call *fcall);
 struct ic_symbol *ic_expr_func_call_get_symbol(struct ic_expr_func_call *fcall);
 
 /* print this func call */
-void ic_expr_func_call_print(struct ic_expr_func_call *fcall, unsigned int *indent_level);
+void ic_expr_func_call_print(FILE *fd, struct ic_expr_func_call *fcall, unsigned int *indent_level);
 
 /* a use of an identifier (variable)
  */
@@ -144,7 +144,7 @@ unsigned int ic_expr_identifier_destroy(struct ic_expr_identifier *identifier, u
 struct ic_symbol *ic_expr_identifier_symbol(struct ic_expr_identifier *identifier);
 
 /* print this identifier */
-void ic_expr_identifier_print(struct ic_expr_identifier *identifier, unsigned int *indent_level);
+void ic_expr_identifier_print(FILE *fd, struct ic_expr_identifier *identifier, unsigned int *indent_level);
 
 enum ic_expr_constant_tag {
     ic_expr_constant_type_integer,
@@ -211,7 +211,7 @@ struct ic_string *ic_expr_constant_get_string(struct ic_expr_constant *constant)
 unsigned int *ic_expr_constant_get_boolean(struct ic_expr_constant *constant);
 
 /* print this constant */
-void ic_expr_constant_print(struct ic_expr_constant *constant, unsigned int *indent_level);
+void ic_expr_constant_print(FILE *fd, struct ic_expr_constant *constant, unsigned int *indent_level);
 
 enum ic_expr_operator_tag {
     ic_expr_operator_type_unary,
@@ -286,7 +286,7 @@ unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, enum ic_ex
 unsigned int ic_expr_operator_destroy(struct ic_expr_operator *op, unsigned int free_op);
 
 /* print this operator */
-void ic_expr_operator_print(struct ic_expr_operator *op, unsigned int *indent_level);
+void ic_expr_operator_print(FILE *fd, struct ic_expr_operator *op, unsigned int *indent_level);
 
 struct ic_expr_faccess {
     /* a field access is made up of a left expr and a right identifier
@@ -326,7 +326,7 @@ unsigned int ic_expr_faccess_init(struct ic_expr_faccess *faccess, struct ic_exp
 unsigned int ic_expr_faccess_destroy(struct ic_expr_faccess *faccess, unsigned int free_faccess);
 
 /* print this fieldaccess */
-void ic_expr_faccess_print(struct ic_expr_faccess *faccess, unsigned int *indent_level);
+void ic_expr_faccess_print(FILE *fd, struct ic_expr_faccess *faccess, unsigned int *indent_level);
 
 enum ic_expr_tag {
     ic_expr_type_func_call,
@@ -433,6 +433,6 @@ struct ic_expr_operator *ic_expr_get_operator(struct ic_expr *expr);
 struct ic_expr_faccess *ic_expr_get_faccess(struct ic_expr *expr);
 
 /* print this expr */
-void ic_expr_print(struct ic_expr *expr, unsigned int *indent_level);
+void ic_expr_print(FILE *fd, struct ic_expr *expr, unsigned int *indent_level);
 
 #endif

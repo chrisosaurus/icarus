@@ -116,7 +116,7 @@ unsigned int ic_backend_pancake_instructions_get_label(struct ic_backend_pancake
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_instructions_print(struct ic_backend_pancake_instructions *instructions, FILE *file);
+unsigned int ic_backend_pancake_instructions_print(FILE *fd, struct ic_backend_pancake_instructions *instructions);
 
 /* load bytecode instructions from file
  *

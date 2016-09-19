@@ -81,7 +81,7 @@ unsigned int ic_b2c_compile_stmt(struct ic_kludge *input_kludge, struct ic_trans
 
         default:
             puts("ic_b2c_compile_stmt: stmt had impossible tag:");
-            ic_transform_ir_stmt_print(tstmt, &indent_level);
+            ic_transform_ir_stmt_print(stdout, tstmt, &indent_level);
 
             return 0;
             break;
@@ -268,7 +268,7 @@ unsigned int ic_b2c_compile_stmt_assign(struct ic_kludge *input_kludge, struct i
     }
 
     puts("ic_b2c_compile_stmt_assign: called on");
-    ic_transform_ir_assign_print(assign, &indent_level);
+    ic_transform_ir_assign_print(stdout, assign, &indent_level);
 
     puts("ic_b2c_compile_stmt_assign: unimplemented");
     return 0;

@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    if (!ic_backend_pancake_instructions_print(instructions, out_file)) {
+    if (!ic_backend_pancake_instructions_print(out_file, instructions)) {
         puts("main: call to ic_backend_pancake_instructions_print failed");
         exit(1);
     }

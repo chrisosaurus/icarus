@@ -397,11 +397,11 @@ struct ic_token *ic_token_list_expect(struct ic_token_list *list, enum ic_token_
 
     if (token->id != id) {
         fputs("ic_token_list_expect: expected token :", stdout);
-        ic_token_id_print_debug(id);
+        ic_token_id_print_debug(stdout, id);
         fputs("\nbut got:", stdout);
-        ic_token_id_print_debug(token->id);
+        ic_token_id_print_debug(stdout, token->id);
         puts("");
-        ic_token_debug(token);
+        ic_token_debug(stdout, token);
         return 0;
     }
 
@@ -435,11 +435,11 @@ struct ic_token *ic_token_list_expect_important(struct ic_token_list *list, enum
 
     if (token->id != id) {
         fputs("ic_token_list_expect_important: expected token :", stdout);
-        ic_token_id_print_debug(id);
+        ic_token_id_print_debug(stdout, id);
         fputs("\nbut got:", stdout);
-        ic_token_id_print_debug(token->id);
+        ic_token_id_print_debug(stdout, token->id);
         puts("");
-        ic_token_debug(token);
+        ic_token_debug(stdout, token);
         return 0;
     }
 
@@ -484,7 +484,7 @@ unsigned int ic_token_list_counter(struct ic_token_list *list) {
  * this will NOT use the token's iterator method
  * so no external side effects occur
  */
-void ic_token_list_print(struct ic_token_list *list) {
+void ic_token_list_print(FILE *fd, struct ic_token_list *list) {
     /* current token in list */
     struct ic_token *token = 0;
     /* current offset into token list */
@@ -507,7 +507,7 @@ void ic_token_list_print(struct ic_token_list *list) {
             return;
         }
 
-        ic_token_print(token);
+        ic_token_print(fd, token);
     }
 }
 
@@ -515,7 +515,7 @@ void ic_token_list_print(struct ic_token_list *list) {
  * this will NOT use the token's iterator method
  * so no external side effects occur
  */
-void ic_token_list_print_debug(struct ic_token_list *list) {
+void ic_token_list_print_debug(FILE *fd, struct ic_token_list *list) {
     /* current token in list */
     struct ic_token *token = 0;
     /* current offset into token list */
@@ -539,8 +539,8 @@ void ic_token_list_print_debug(struct ic_token_list *list) {
         }
 
         if (i) {
-            fputs(" ", stdout);
+            fputs(" ", fd);
         }
-        ic_token_print_debug(token);
+        ic_token_print_debug(fd, token);
     }
 }

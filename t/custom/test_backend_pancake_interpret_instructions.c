@@ -27,7 +27,7 @@ int main(void) {
         return 0;
     }
 
-    if (!ic_backend_pancake_value_stack_print(runtime_data->value_stack, stdout)) {
+    if (!ic_backend_pancake_value_stack_print(stdout, runtime_data->value_stack)) {
         puts("main: call to ic_backend_pancake_value_stack_print failed");
         return 0;
     }

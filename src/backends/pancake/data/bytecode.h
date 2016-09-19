@@ -129,7 +129,7 @@ unsigned int ic_backend_pancake_bytecode_destroy(struct ic_backend_pancake_bytec
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_bytecode_print(struct ic_backend_pancake_bytecode *bytecode, FILE *file);
+unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_pancake_bytecode *bytecode);
 
 /* set arg1 as void* on bytecode
  *

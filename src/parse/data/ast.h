@@ -56,6 +56,6 @@ int ic_ast_append(struct ic_ast *ast, struct ic_decl *decl);
 unsigned int ic_ast_length(struct ic_ast *ast);
 
 /* calls print on all elements within ast */
-void ic_ast_print(struct ic_ast *ast);
+void ic_ast_print(FILE *fd, struct ic_ast *ast);
 
 #endif

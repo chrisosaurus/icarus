@@ -229,7 +229,7 @@ struct ic_symbol *ic_type_ref_get_symbol(struct ic_type_ref *type) {
             break;
 
         default:
-            puts("ic_type_print: type->type was impossible type_type");
+            puts("ic_type_get_symbol: type->type was impossible type_type");
             return 0;
             break;
     }
@@ -238,7 +238,7 @@ struct ic_symbol *ic_type_ref_get_symbol(struct ic_type_ref *type) {
 }
 
 /* print this this type */
-void ic_type_ref_print(struct ic_type_ref *type) {
+void ic_type_ref_print(FILE *fd, struct ic_type_ref *type) {
     if (!type) {
         puts("ic_type_print: type was null");
         return;
@@ -250,7 +250,7 @@ void ic_type_ref_print(struct ic_type_ref *type) {
 
         case ic_type_ref_symbol:
             /* if we are of type symbol then just print that symbol */
-            ic_symbol_print(&(type->u.sym));
+            ic_symbol_print(fd, &(type->u.sym));
             break;
 
         default:

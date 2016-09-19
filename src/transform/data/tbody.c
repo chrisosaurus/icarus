@@ -82,7 +82,7 @@ unsigned int ic_transform_body_destroy(struct ic_transform_body *tbody, unsigned
  * returns 1 on success
  * returns 0 on failures
  */
-unsigned int ic_transform_body_print(struct ic_transform_body *tbody, unsigned int *indent) {
+unsigned int ic_transform_body_print(FILE *fd, struct ic_transform_body *tbody, unsigned int *indent) {
     unsigned int i = 0;
     unsigned int len = 0;
     struct ic_transform_ir_stmt *tstmt = 0;
@@ -109,7 +109,7 @@ unsigned int ic_transform_body_print(struct ic_transform_body *tbody, unsigned i
 
         /* always indent at same level */
         fake_indent = *indent;
-        if (!ic_transform_ir_stmt_print(tstmt, &fake_indent)) {
+        if (!ic_transform_ir_stmt_print(fd, tstmt, &fake_indent)) {
             puts("ic_transform_body_print: call to ic_transform_stmt_print failed");
             return 0;
         }

@@ -40,6 +40,6 @@ unsigned int ic_backend_pancake_value_copy(struct ic_backend_pancake_value *valu
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_value_print(struct ic_backend_pancake_value *value, FILE *file);
+unsigned int ic_backend_pancake_value_print(FILE *fd, struct ic_backend_pancake_value *value);
 
 #endif /* IC_BACKEND_PANCAKE_VALUE_H */

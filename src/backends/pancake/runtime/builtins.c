@@ -86,7 +86,7 @@ unsigned int i_println_string(struct ic_backend_pancake_value_stack *value_stack
     if (value->tag != ic_backend_pancake_value_type_string) {
         puts("i_println_string: value was not of expected type string");
         fputs("found: ", stdout);
-        ic_backend_pancake_value_print(value, stdout);
+        ic_backend_pancake_value_print(stdout, value);
         return 0;
     }
 
@@ -127,7 +127,7 @@ unsigned int i_println_uint(struct ic_backend_pancake_value_stack *value_stack) 
     if (value->tag != ic_backend_pancake_value_type_uint) {
         puts("i_println_uint: value was not of expected type uint");
         fputs("found: ", stdout);
-        ic_backend_pancake_value_print(value, stdout);
+        ic_backend_pancake_value_print(stdout, value);
         return 0;
     }
 
@@ -168,7 +168,7 @@ unsigned int i_println_sint(struct ic_backend_pancake_value_stack *value_stack) 
     if (value->tag != ic_backend_pancake_value_type_sint) {
         puts("i_println_string: value was not of expected type int");
         fputs("found: ", stdout);
-        ic_backend_pancake_value_print(value, stdout);
+        ic_backend_pancake_value_print(stdout, value);
         return 0;
     }
 
@@ -209,7 +209,7 @@ unsigned int i_println_bool(struct ic_backend_pancake_value_stack *value_stack) 
     if (value->tag != ic_backend_pancake_value_type_bool) {
         puts("i_println_string: value was not of expected type bool");
         fputs("found: ", stdout);
-        ic_backend_pancake_value_print(value, stdout);
+        ic_backend_pancake_value_print(stdout, value);
         return 0;
     }
 
@@ -253,7 +253,7 @@ unsigned int i_plus_uint_uint(struct ic_backend_pancake_value_stack *value_stack
     if (value->tag != ic_backend_pancake_value_type_uint) {
         puts("i_plus_uint_uint: value was not of expected type uint");
         fputs("found: ", stdout);
-        ic_backend_pancake_value_print(value, stdout);
+        ic_backend_pancake_value_print(stdout, value);
         return 0;
     }
 
@@ -274,7 +274,7 @@ unsigned int i_plus_uint_uint(struct ic_backend_pancake_value_stack *value_stack
     if (value->tag != ic_backend_pancake_value_type_uint) {
         puts("i_plus_uint_uint: value was not of expected type uint");
         fputs("found: ", stdout);
-        ic_backend_pancake_value_print(value, stdout);
+        ic_backend_pancake_value_print(stdout, value);
         return 0;
     }
 
@@ -328,7 +328,7 @@ unsigned int i_plus_sint_sint(struct ic_backend_pancake_value_stack *value_stack
     if (value->tag != ic_backend_pancake_value_type_sint) {
         puts("i_plus_sint_sint: value was not of expected type sint");
         fputs("found: ", stdout);
-        ic_backend_pancake_value_print(value, stdout);
+        ic_backend_pancake_value_print(stdout, value);
         return 0;
     }
 
@@ -349,7 +349,7 @@ unsigned int i_plus_sint_sint(struct ic_backend_pancake_value_stack *value_stack
     if (value->tag != ic_backend_pancake_value_type_sint) {
         puts("i_plus_sint_sint: value was not of expected type sint");
         fputs("found: ", stdout);
-        ic_backend_pancake_value_print(value, stdout);
+        ic_backend_pancake_value_print(stdout, value);
         return 0;
     }
 
@@ -403,7 +403,7 @@ unsigned int i_minus_uint_uint(struct ic_backend_pancake_value_stack *value_stac
     if (value->tag != ic_backend_pancake_value_type_uint) {
         puts("i_minus_uint_uint: value was not of expected type uint");
         fputs("found: ", stdout);
-        ic_backend_pancake_value_print(value, stdout);
+        ic_backend_pancake_value_print(stdout, value);
         return 0;
     }
 
@@ -424,7 +424,7 @@ unsigned int i_minus_uint_uint(struct ic_backend_pancake_value_stack *value_stac
     if (value->tag != ic_backend_pancake_value_type_uint) {
         puts("i_minus_uint_uint: value was not of expected type uint");
         fputs("found: ", stdout);
-        ic_backend_pancake_value_print(value, stdout);
+        ic_backend_pancake_value_print(stdout, value);
         return 0;
     }
 
@@ -484,7 +484,7 @@ unsigned int i_minus_sint_sint(struct ic_backend_pancake_value_stack *value_stac
     if (value->tag != ic_backend_pancake_value_type_sint) {
         puts("i_minus_sint_sint: value was not of expected type sint");
         fputs("found: ", stdout);
-        ic_backend_pancake_value_print(value, stdout);
+        ic_backend_pancake_value_print(stdout, value);
         return 0;
     }
 
@@ -505,7 +505,7 @@ unsigned int i_minus_sint_sint(struct ic_backend_pancake_value_stack *value_stac
     if (value->tag != ic_backend_pancake_value_type_sint) {
         puts("i_minus_sint_sint: value was not of expected type sint");
         fputs("found: ", stdout);
-        ic_backend_pancake_value_print(value, stdout);
+        ic_backend_pancake_value_print(stdout, value);
         return 0;
     }
 

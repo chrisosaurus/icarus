@@ -255,7 +255,7 @@ struct ic_symbol *ic_transform_gen_name(char *prefix, unsigned int tcount) {
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_print(struct ic_kludge *kludge) {
+unsigned int ic_transform_print(FILE *fd, struct ic_kludge *kludge) {
     /* i for kludge fdecls */
     unsigned int i = 0;
     /* len for kludge fdecls */
@@ -289,7 +289,7 @@ unsigned int ic_transform_print(struct ic_kludge *kludge) {
         }
 
         /* header for fdecl */
-        ic_decl_func_print_header(fdecl, &fake_indent);
+        ic_decl_func_print_header(fd, fdecl, &fake_indent);
 
         /* get transformed body */
         tbody = fdecl->tbody;
@@ -299,13 +299,13 @@ unsigned int ic_transform_print(struct ic_kludge *kludge) {
         }
 
         /* print transformed body */
-        if (!ic_transform_body_print(tbody, &indent)) {
+        if (!ic_transform_body_print(fd, tbody, &indent)) {
             puts("ic_transform_print: call to ic_transform_body_print failed");
             return 0;
         }
 
         /* of fdecl body */
-        puts("end");
+        fputs("end\n", fd);
     }
 
     return 1;

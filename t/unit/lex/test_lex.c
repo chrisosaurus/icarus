@@ -63,12 +63,12 @@ int main(void) {
                 printf("test_lex: token didnt match expected for i '%d'\n", i);
                 printf("for input '%s'\n", input);
                 printf("lexed as:");
-                ic_token_list_print_debug(token_list);
+                ic_token_list_print_debug(stdout, token_list);
                 printf("\nfor expected_offset '%d' I got '%d' and expected '%d'\n", expected_offset, token->id, expected[expected_offset]);
                 printf("got:");
-                ic_token_id_print_debug(token->id);
+                ic_token_id_print_debug(stdout, token->id);
                 printf("\nexpected:");
-                ic_token_id_print_debug(expected[expected_offset]);
+                ic_token_id_print_debug(stdout, expected[expected_offset]);
                 puts("");
                 return 1;
             }

@@ -34,7 +34,7 @@ int main(void) {
 
     puts("\nparser output:");
     puts("----------------");
-    ic_ast_print(ast);
+    ic_ast_print(stdout, ast);
     puts("----------------\n");
 
     if (!ic_ast_destroy(ast, 1)) {

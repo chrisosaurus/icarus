@@ -151,7 +151,7 @@ unsigned int ic_body_length(struct ic_body *body) {
 }
 
 /* print this body */
-void ic_body_print(struct ic_body *body, unsigned int *indent_level) {
+void ic_body_print(FILE *fd, struct ic_body *body, unsigned int *indent_level) {
     struct ic_stmt *stmt = 0;
     unsigned int i = 0;
     unsigned int len = 0;
@@ -177,7 +177,7 @@ void ic_body_print(struct ic_body *body, unsigned int *indent_level) {
             continue;
         }
 
-        ic_stmt_print(stmt, indent_level);
+        ic_stmt_print(fd, stmt, indent_level);
     }
 
     /* decr indent level after body */

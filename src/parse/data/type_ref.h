@@ -97,6 +97,6 @@ unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, un
 struct ic_symbol *ic_type_ref_get_symbol(struct ic_type_ref *type);
 
 /* print this this type */
-void ic_type_ref_print(struct ic_type_ref *type);
+void ic_type_ref_print(FILE *fd, struct ic_type_ref *type);
 
 #endif

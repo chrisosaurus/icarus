@@ -68,32 +68,32 @@ unsigned int ic_backend_pancake_value_copy(struct ic_backend_pancake_value *valu
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_value_print(struct ic_backend_pancake_value *value, FILE *file) {
+unsigned int ic_backend_pancake_value_print(FILE *fd, struct ic_backend_pancake_value *value) {
     if (!value) {
         puts("ic_backend_pancake_value_print: value was null");
         return 0;
     }
 
-    if (!file) {
-        puts("ic_backend_pancake_value_print: file was null");
+    if (!fd) {
+        puts("ic_backend_pancake_value_print: fd was null");
         return 0;
     }
 
     switch (value->tag) {
         case ic_backend_pancake_value_type_bool:
-            fprintf(file, "bool: %u\n", value->u.boolean);
+            fprintf(fd, "bool: %u\n", value->u.boolean);
             break;
 
         case ic_backend_pancake_value_type_uint:
-            fprintf(file, "uint: %u\n", value->u.uint);
+            fprintf(fd, "uint: %u\n", value->u.uint);
             break;
 
         case ic_backend_pancake_value_type_sint:
-            fprintf(file, "sint: %d\n", value->u.sint);
+            fprintf(fd, "sint: %d\n", value->u.sint);
             break;
 
         case ic_backend_pancake_value_type_string:
-            fprintf(file, "string: %s\n", value->u.string);
+            fprintf(fd, "string: %s\n", value->u.string);
             break;
 
         case ic_backend_pancake_value_type_ref:

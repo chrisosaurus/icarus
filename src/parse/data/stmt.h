@@ -45,7 +45,7 @@ unsigned int ic_stmt_ret_destroy(struct ic_stmt_ret *ret, unsigned int free_ret)
 struct ic_expr *ic_stmt_ret_get_expr(struct ic_stmt_ret *ret);
 
 /* print this return */
-void ic_stmt_ret_print(struct ic_stmt_ret *ret, unsigned int *indent_level);
+void ic_stmt_ret_print(FILE *fd, struct ic_stmt_ret *ret, unsigned int *indent_level);
 
 /* a let statement
  *  let identifier::type = init
@@ -142,7 +142,7 @@ unsigned int ic_stmt_let_set_inferred_type(struct ic_stmt_let *let, struct ic_ty
 struct ic_expr *ic_stmt_let_get_expr(struct ic_stmt_let *let);
 
 /* print this let */
-void ic_stmt_let_print(struct ic_stmt_let *let, unsigned int *indent_level);
+void ic_stmt_let_print(FILE *fd, struct ic_stmt_let *let, unsigned int *indent_level);
 
 /* an assignment statement
  *  x = y
@@ -193,7 +193,7 @@ struct ic_expr *ic_stmt_assign_get_left(struct ic_stmt_assign *assign);
 struct ic_expr *ic_stmt_assign_get_right(struct ic_stmt_assign *assign);
 
 /* print this assign */
-void ic_stmt_assign_print(struct ic_stmt_assign *assign, unsigned int *indent_level);
+void ic_stmt_assign_print(FILE *fd, struct ic_stmt_assign *assign, unsigned int *indent_level);
 
 /* an if statement
  *  if expr
@@ -239,7 +239,7 @@ unsigned int ic_stmt_if_destroy(struct ic_stmt_if *sif, unsigned int free_if);
 struct ic_expr *ic_stmt_if_get_expr(struct ic_stmt_if *sif);
 
 /* print this if */
-void ic_stmt_if_print(struct ic_stmt_if *sif, unsigned int *indent_level);
+void ic_stmt_if_print(FILE *fd, struct ic_stmt_if *sif, unsigned int *indent_level);
 
 /* a for statement
  *  for expr in iterator
@@ -304,7 +304,7 @@ struct ic_stmt *ic_stmt_for_get_stmt(struct ic_stmt_for *sfor, unsigned int i);
 unsigned int ic_stmt_for_length(struct ic_stmt_for *sfor);
 
 /* print this for */
-void ic_stmt_for_print(struct ic_stmt_for *sfor, unsigned int *indent_level);
+void ic_stmt_for_print(FILE *fd, struct ic_stmt_for *sfor, unsigned int *indent_level);
 
 /* a while statement
  *  while expr
@@ -363,7 +363,7 @@ struct ic_stmt *ic_stmt_while_get_stmt(struct ic_stmt_while *swhile, unsigned in
 unsigned int ic_stmt_while_length(struct ic_stmt_while *swhile);
 
 /* print this if */
-void ic_stmt_while_print(struct ic_stmt_while *swhile, unsigned int *indent_level);
+void ic_stmt_while_print(FILE *fd, struct ic_stmt_while *swhile, unsigned int *indent_level);
 
 enum ic_stmt_tag {
     ic_stmt_type_ret,
@@ -477,6 +477,6 @@ struct ic_stmt_while *ic_stmt_get_swhile(struct ic_stmt *stmt);
 struct ic_expr *ic_stmt_get_expr(struct ic_stmt *stmt);
 
 /* print this stmt */
-void ic_stmt_print(struct ic_stmt *stmt, unsigned int *indent_level);
+void ic_stmt_print(FILE *fd, struct ic_stmt *stmt, unsigned int *indent_level);
 
 #endif

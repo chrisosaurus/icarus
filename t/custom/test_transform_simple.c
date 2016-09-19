@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
     }
 
     /* print tir */
-    if (!ic_transform_print(kludge)) {
+    if (!ic_transform_print(stdout, kludge)) {
         puts("transform print failed");
         exit(1);
     }

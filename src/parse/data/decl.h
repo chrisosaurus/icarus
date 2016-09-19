@@ -127,15 +127,15 @@ unsigned int ic_decl_func_isbuiltin(struct ic_decl_func *fdecl);
 /* print decl_func
  * this will print a reproduction of the function from the ast
  */
-void ic_decl_func_print(struct ic_decl_func *fdecl, unsigned int *indent_level);
+void ic_decl_func_print(FILE *fd, struct ic_decl_func *fdecl, unsigned int *indent_level);
 /* print decl_func header
  * this will print a reproduction of the function header from the ast
  */
-void ic_decl_func_print_header(struct ic_decl_func *fdecl, unsigned int *indent_level);
+void ic_decl_func_print_header(FILE *fd, struct ic_decl_func *fdecl, unsigned int *indent_level);
 /* print decl_func body
  * this will print a reproduction of the function body from the ast
  */
-void ic_decl_func_print_body(struct ic_decl_func *fdecl, unsigned int *indent_level);
+void ic_decl_func_print_body(FILE *fd, struct ic_decl_func *fdecl, unsigned int *indent_level);
 
 /* return a string representation of this function's call signature
  *
@@ -293,10 +293,10 @@ unsigned int ic_decl_type_mark_builtin(struct ic_decl_type *tdecl);
  */
 unsigned int ic_decl_type_isbuiltin(struct ic_decl_type *tdecl);
 
-/* print the decl_type to stdout */
-void ic_decl_type_print(struct ic_decl_type *tdecl, unsigned int *indent_level);
-void ic_decl_type_print_header(struct ic_decl_type *tdecl, unsigned int *indent_level);
-void ic_decl_type_print_body(struct ic_decl_type *tdecl, unsigned int *indent_level);
+/* print the decl_type to provided fd */
+void ic_decl_type_print(FILE *fd, struct ic_decl_type *tdecl, unsigned int *indent_level);
+void ic_decl_type_print_header(FILE *fd, struct ic_decl_type *tdecl, unsigned int *indent_level);
+void ic_decl_type_print_body(FILE *fd, struct ic_decl_type *tdecl, unsigned int *indent_level);
 
 /* get the char * contents of the name
  *
@@ -353,8 +353,8 @@ unsigned int ic_decl_op_init(struct ic_decl_op *op, char *from_src, unsigned int
  */
 unsigned int ic_decl_op_destroy(struct ic_decl_op *op, unsigned int free_op);
 
-/* print the decl_op to stdout */
-void ic_decl_op_print(struct ic_decl_op *op, unsigned int *indent_level);
+/* print the decl_op to provided fd */
+void ic_decl_op_print(FILE *fd, struct ic_decl_op *op, unsigned int *indent_level);
 
 enum ic_decl_tag {
     ic_decl_tag_func,
@@ -437,6 +437,6 @@ struct ic_decl_op *ic_decl_get_op(struct ic_decl *decl);
 unsigned int ic_decl_mark_builtin(struct ic_decl *decl);
 
 /* print contents of ic_decl */
-void ic_decl_print(struct ic_decl *decl, unsigned int *indent_level);
+void ic_decl_print(FILE *fd, struct ic_decl *decl, unsigned int *indent_level);
 
 #endif

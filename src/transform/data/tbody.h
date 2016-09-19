@@ -39,7 +39,7 @@ unsigned int ic_transform_body_destroy(struct ic_transform_body *tbody, unsigned
  * returns 1 on success
  * returns 0 on failures
  */
-unsigned int ic_transform_body_print(struct ic_transform_body *tbody, unsigned int *indent);
+unsigned int ic_transform_body_print(FILE *fd, struct ic_transform_body *tbody, unsigned int *indent);
 
 /* append tstmt to tbody
  *

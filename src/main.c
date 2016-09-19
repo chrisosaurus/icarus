@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
 
     puts("\nlexer output:");
     puts("----------------");
-    ic_token_list_print(token_list);
+    ic_token_list_print(stdout, token_list);
     puts("----------------\n");
 
     ast = ic_parse(token_list);
@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
 
     puts("\nparser output:");
     puts("----------------");
-    ic_ast_print(ast);
+    ic_ast_print(stdout, ast);
     puts("----------------\n");
 
     if (!ic_kludge_populate(kludge, ast)) {
@@ -111,7 +111,7 @@ int main(int argc, char **argv) {
         exit(1);
     }
     puts("----------------");
-    if (!ic_transform_print(kludge)) {
+    if (!ic_transform_print(stdout, kludge)) {
         puts("call to ic_transform_print failed");
         exit(1);
     }
