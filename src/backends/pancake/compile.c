@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#include "../../data/scope.h"
 #include "../../analyse/data/kludge.h"
+#include "../../data/scope.h"
 #include "../../parse/data/expr.h"
 #include "../../transform/data/tbody.h"
 #include "data/bytecode.h"

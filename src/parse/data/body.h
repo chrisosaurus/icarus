@@ -1,8 +1,8 @@
 #ifndef ICARU_BODY_H
 #define ICARU_BODY_H
 
-#include "../../data/scope.h"
 #include "../../data/pvector.h"
+#include "../../data/scope.h"
 
 /* predeclare ic_stmt to allow use of *ic_stmt
  * as type

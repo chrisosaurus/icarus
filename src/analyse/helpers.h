@@ -1,8 +1,8 @@
 #ifndef ICARUS_ANALYSE_HELPERS_H
 #define ICARUS_ANALYSE_HELPERS_H
 
-#include "../data/scope.h"
 #include "../data/pvector.h"
+#include "../data/scope.h"
 #include "../parse/data/expr.h"
 #include "../parse/data/stmt.h"
 #include "data/kludge.h"
