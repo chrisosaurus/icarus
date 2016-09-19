@@ -15,13 +15,15 @@ char *ic_strdup(char *ch) {
 
     len = strlen(ch);
 
-    buffer = calloc(len, sizeof(char));
+    buffer = calloc(len + 1, sizeof(char));
     if (!buffer) {
         puts("ic_strdup: call to calloc failed");
         return 0;
     }
 
     strncpy(buffer, ch, len);
+
+    buffer[len] = '\0';
 
     return buffer;
 }

@@ -130,7 +130,8 @@ char *ic_labeller_generate(struct ic_labeller *labeller) {
 
     total_len = labeller->seed_len + digits;
 
-    out_str = calloc(total_len, sizeof(char));
+    /* total_len + 1 for terminating \0 */
+    out_str = calloc(total_len + 1, sizeof(char));
     if (!out_str) {
         puts("ic_labeller_generate: call to calloc failed");
         return 0;
