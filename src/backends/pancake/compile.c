@@ -6,6 +6,7 @@
 #include "data/bytecode.h"
 #include "data/instructions.h"
 #include "data/local.h"
+#include "data/scope.h"
 #include "pancake.h"
 
 /* compile an fdecl into bytecode
@@ -20,28 +21,28 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_dict *locals, struct ic_transform_ir_stmt *tstmt);
+unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_backend_pancake_scope *scope, struct ic_transform_ir_stmt *tstmt);
 
 /* compile an tbody into bytecode
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_transform_body *fdecl_tbody, struct ic_dict *locals);
+unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_transform_body *fdecl_tbody, struct ic_backend_pancake_scope *scope);
 
 /* compile an expr (function call) into pancake bytecode
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_dict *locals, struct ic_transform_ir_expr *texpr, unsigned int *is_void);
+unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_backend_pancake_scope *scope, struct ic_transform_ir_expr *texpr, unsigned int *is_void);
 
 /* compile an function call into pancake bytecode
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_dict *locals, struct ic_transform_ir_fcall *tfcall, unsigned int *is_void);
+unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_backend_pancake_scope *scope, struct ic_transform_ir_fcall *tfcall, unsigned int *is_void);
 
 /* add a push instruction for a constant
  *
@@ -181,9 +182,9 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     char *local_name_ch = 0;
 
     /* dict from char* to pancake/data/local */
-    struct ic_dict *locals = 0;
+    struct ic_backend_pancake_scope *scope = 0;
     /* pvector of keys to dict, as we cannot recover these from dict */
-    struct ic_pvector *locals_keys = 0;
+    struct ic_pvector *scope_keys = 0;
 
     /* current local */
     struct ic_backend_pancake_local *local = 0;
@@ -258,14 +259,14 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     /* instantiate dict mapping
      *  name -> {accessed::bool, location::int, value::literal_constant}
      */
-    locals = ic_dict_new();
-    if (!locals) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_dict_new failed");
+    scope = ic_backend_pancake_scope_new(0);
+    if (!scope) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_scope_new failed");
         return 0;
     }
 
-    locals_keys = ic_pvector_new(0);
-    if (!locals_keys) {
+    scope_keys = ic_pvector_new(0);
+    if (!scope_keys) {
         puts("ic_backend_pancake_compile_fdecl: call to ic_pvector_new failed");
         return 0;
     }
@@ -301,12 +302,12 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
             return 0;
         }
 
-        if (!ic_dict_insert(locals, local_name_ch, local)) {
-            puts("ic_backend_pancake_compile_fdecl: call to ic_dict_insert failed");
+        if (!ic_backend_pancake_scope_insert(scope, local_name_ch, local)) {
+            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_scope_insert failed");
             return 0;
         }
 
-        if (-1 == ic_pvector_append(locals_keys, local_name_ch)) {
+        if (-1 == ic_pvector_append(scope_keys, local_name_ch)) {
             puts("ic_backend_pancake_compile_fdecl: call to ic_pvector_append failed");
             return 0;
         }
@@ -318,7 +319,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
         return 0;
     }
 
-    if (!ic_backend_pancake_compile_body(instructions, kludge, fdecl_tbody, locals)) {
+    if (!ic_backend_pancake_compile_body(instructions, kludge, fdecl_tbody, scope)) {
         puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_compile_body failed");
         return 0;
     }
@@ -336,17 +337,17 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
      *    add pop-return address instruction
      *    jump to return address
      */
-    len = ic_pvector_length(locals_keys);
+    len = ic_pvector_length(scope_keys);
     for (i = 0; i < len; ++i) {
-        local_name_ch = ic_pvector_get(locals_keys, i);
+        local_name_ch = ic_pvector_get(scope_keys, i);
         if (!local_name_ch) {
             puts("ic_backend_pancake_compile_fdecl: call to ic_pvector_get failed");
             return 0;
         }
 
-        local = ic_dict_get(locals, local_name_ch);
+        local = ic_backend_pancake_scope_get(scope, local_name_ch);
         if (!local) {
-            puts("ic_backend_pancake_compile_fdecl: call to ic_dict_get failed");
+            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_scope_get failed");
             return 0;
         }
 
@@ -371,21 +372,18 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
         return 0;
     }
 
-    /* destroy locals_keys pvector
+    /* destroy scope_keys pvector
      * free it
      * keys are all managed by arg->name symbo
      */
-    if (!ic_pvector_destroy(locals_keys, 1, 0)) {
+    if (!ic_pvector_destroy(scope_keys, 1, 0)) {
         puts("ic_backend_pancake_compile_fdecl: call to ic_pvector_destroy failed");
         return 0;
     }
 
-    /* destroy dict
-     * free dict
-     * free values (all locals created in this scope)
-     */
-    if (!ic_dict_destroy(locals, 1, 1)) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_dict_destroy failed");
+    /* destroy scope */
+    if (!ic_backend_pancake_scope_destroy(scope, 1)) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_scope_destroy failed");
         return 0;
     }
 
@@ -397,7 +395,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_dict *locals, struct ic_transform_ir_stmt *tstmt) {
+unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_backend_pancake_scope *scope, struct ic_transform_ir_stmt *tstmt) {
     /* let, used only if tstmt is let
      * used to decompose let
      */
@@ -431,8 +429,8 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
         return 0;
     }
 
-    if (!locals) {
-        puts("ic_backend_pancake_compile_stmt: locals was null");
+    if (!scope) {
+        puts("ic_backend_pancake_compile_stmt: scope was null");
         return 0;
     }
 
@@ -466,7 +464,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
     switch (tstmt->tag) {
         case ic_transform_ir_stmt_type_expr:
             texpr = &(tstmt->u.expr);
-            if (!ic_backend_pancake_compile_expr(instructions, kludge, locals, texpr, &fcall_is_void)) {
+            if (!ic_backend_pancake_compile_expr(instructions, kludge, scope, texpr, &fcall_is_void)) {
                 puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_compile_expr failed");
                 return 0;
             }
@@ -504,8 +502,8 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
                         puts("ic_backend_pancake_compile_stmt: call to ic_symbol_contents failed");
                         return 0;
                     }
-                    if (!ic_dict_insert(locals, let_name_ch, local)) {
-                        puts("ic_backend_pancake_compile_stmt: call to ic_dict_insert failed");
+                    if (!ic_backend_pancake_scope_insert(scope, let_name_ch, local)) {
+                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_scope_insert failed");
                         return 0;
                     }
                     break;
@@ -524,7 +522,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
                     /* compile fcall */
                     tlet_expr = &(tlet->u.expr);
                     texpr = tlet_expr->expr;
-                    if (!ic_backend_pancake_compile_expr(instructions, kludge, locals, texpr, &fcall_is_void)) {
+                    if (!ic_backend_pancake_compile_expr(instructions, kludge, scope, texpr, &fcall_is_void)) {
                         puts("ic_backend_pancake_compile_stmt: let expr call to ic_backend_pancake_compile_expr failed");
                         return 0;
                     }
@@ -559,8 +557,8 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
                         puts("ic_backend_pancake_compile_stmt: call to ic_symbol_contents failed");
                         return 0;
                     }
-                    if (!ic_dict_insert(locals, let_name_ch, local)) {
-                        puts("ic_backend_pancake_compile_stmt: call to ic_dict_insert failed");
+                    if (!ic_backend_pancake_scope_insert(scope, let_name_ch, local)) {
+                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_scope_insert failed");
                         return 0;
                     }
 
@@ -580,9 +578,9 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
                 puts("ic_backend_pancake_compile_stmt: call to ic_symbol_contents failed");
                 return 0;
             }
-            local = ic_dict_get(locals, ret_name);
+            local = ic_backend_pancake_scope_get(scope, ret_name);
             if (!local) {
-                puts("ic_backend_pancake_compile_stmt: call to ic_dict_get failed");
+                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_scope_get failed");
                 return 0;
             }
             /* mark as accessed */
@@ -757,7 +755,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_transform_body *fdecl_tbody, struct ic_dict *locals) {
+unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_transform_body *fdecl_tbody, struct ic_backend_pancake_scope *scope) {
     /* current offset into body */
     unsigned int i = 0;
     /* len of body */
@@ -780,8 +778,8 @@ unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructi
         return 0;
     }
 
-    if (!locals) {
-        puts("ic_backend_pancake_compile_body: locals was null");
+    if (!scope) {
+        puts("ic_backend_pancake_compile_body: scope was null");
         return 0;
     }
 
@@ -794,7 +792,7 @@ unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructi
             return 0;
         }
 
-        if (!ic_backend_pancake_compile_stmt(instructions, kludge, locals, tstmt)) {
+        if (!ic_backend_pancake_compile_stmt(instructions, kludge, scope, tstmt)) {
             puts("ic_backend_pancake_compile_body: call to ic_backend_compile_stmt failed");
             return 0;
         }
@@ -808,7 +806,7 @@ unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructi
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_dict *locals, struct ic_transform_ir_expr *texpr, unsigned int *is_void) {
+unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_backend_pancake_scope *scope, struct ic_transform_ir_expr *texpr, unsigned int *is_void) {
     struct ic_transform_ir_fcall *tfcall = 0;
     if (!instructions) {
         puts("ic_backend_pancake_compile_expr: instructions was null");
@@ -820,8 +818,8 @@ unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructi
         return 0;
     }
 
-    if (!locals) {
-        puts("ic_backend_pancake_compile_expr: locals was null");
+    if (!scope) {
+        puts("ic_backend_pancake_compile_expr: scope was null");
         return 0;
     }
 
@@ -842,7 +840,7 @@ unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructi
         return 0;
     }
 
-    if (!ic_backend_pancake_compile_fcall(instructions, kludge, locals, tfcall, is_void)) {
+    if (!ic_backend_pancake_compile_fcall(instructions, kludge, scope, tfcall, is_void)) {
         puts("ic_backend_pancake_compile_body: let expr call to ic_backend_pancake_compile_fcall failed");
         return 0;
     }
@@ -941,7 +939,7 @@ unsigned int ic_backend_pancake_compile_push_constant(struct ic_backend_pancake_
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_dict *locals, struct ic_transform_ir_fcall *tfcall, unsigned int *is_void) {
+unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_backend_pancake_scope *scope, struct ic_transform_ir_fcall *tfcall, unsigned int *is_void) {
     /* length of fcall args */
     unsigned int len = 0;
     /* current offset into fcall args */
@@ -971,8 +969,8 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
         return 0;
     }
 
-    if (!locals) {
-        puts("ic_backend_pancake_compile_fcall: locals was null");
+    if (!scope) {
+        puts("ic_backend_pancake_compile_fcall: scope was null");
         return 0;
     }
 
@@ -999,9 +997,9 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
             puts("ic_backend_pancake_compile_fcall: call to ic_symbol_contents failed");
             return 0;
         }
-        arg_local = ic_dict_get(locals, arg_name);
+        arg_local = ic_backend_pancake_scope_get(scope, arg_name);
         if (!arg_local) {
-            puts("ic_backend_pancake_compile_fcall: call to ic_dict_get failed");
+            puts("ic_backend_pancake_compile_fcall: call to ic_backend_pancake_scope_get failed");
             return 0;
         }
         /* mark as accessed */
