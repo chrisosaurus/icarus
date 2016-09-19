@@ -1332,6 +1332,7 @@ struct ic_transform_ir_stmt *ic_transform_ir_stmt_if_new(struct ic_symbol *cond_
 
     if (!ic_transform_ir_if_init(&(stmt->u.sif), cond_sym)) {
         puts("ic_transform_ir_stmt_let_expr_new: call to ic_transform_ir_if_init failed");
+        free(stmt);
         return 0;
     }
 
