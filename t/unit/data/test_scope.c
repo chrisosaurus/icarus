@@ -2,16 +2,15 @@
 #include <stdio.h>  /* puts */
 #include <string.h> /* strncmp */
 
-#include "../../../../src/analyse/data/scope.h"
-#include "../../../../src/analyse/data/slot.h"
+#include "../../../src/data/scope.h"
 
 void normal(void) {
     struct ic_scope *parent;
     struct ic_scope *scope;
 
-    struct ic_slot data_1;
-    struct ic_slot data_2;
-    struct ic_slot data_3;
+    int data_1;
+    int data_2;
+    int data_3;
 
     puts("testing scope");
 

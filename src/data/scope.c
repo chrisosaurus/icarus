@@ -68,16 +68,7 @@ unsigned int ic_scope_destroy(struct ic_scope *scope, unsigned int free_scope) {
         return 0;
     }
 
-    /* call free on parent first
-     * FIXME consider not parent freeing
-     */
-    if (scope->parent) {
-        if (!ic_scope_destroy(scope->parent, free_scope)) {
-            puts("ic_scope_destroy: call to scope_destroy on parent failed");
-            return 0;
-        }
-    }
-
+    /* Doesn't free parent */
     scope->parent = 0;
 
     /* do not destroy dict (as it is within the scope)
@@ -102,7 +93,7 @@ unsigned int ic_scope_destroy(struct ic_scope *scope, unsigned int free_scope) {
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_scope_insert(struct ic_scope *scope, char *key, struct ic_slot *data) {
+unsigned int ic_scope_insert(struct ic_scope *scope, char *key, void *data) {
     if (!scope) {
         puts("ic_scope_insert: scope was null");
         return 0;
@@ -134,8 +125,8 @@ unsigned int ic_scope_insert(struct ic_scope *scope, char *key, struct ic_slot *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_slot *ic_scope_get(struct ic_scope *scope, char *key) {
-    struct ic_slot *data = 0;
+void *ic_scope_get(struct ic_scope *scope, char *key) {
+    void *data = 0;
 
     if (!scope) {
         puts("ic_scope_get: scope was null");
@@ -168,7 +159,7 @@ struct ic_slot *ic_scope_get(struct ic_scope *scope, char *key) {
  * returns * on success
  * returns 0 on failure
  */
-struct ic_slot *ic_scope_get_from_symbol(struct ic_scope *scope, struct ic_symbol *key) {
+void *ic_scope_get_from_symbol(struct ic_scope *scope, struct ic_symbol *key) {
     char *key_chars = 0;
 
     if (!scope) {
@@ -198,7 +189,7 @@ struct ic_slot *ic_scope_get_from_symbol(struct ic_scope *scope, struct ic_symbo
  * returns * on success
  * returns 0 on failure
  */
-struct ic_slot *ic_scope_get_nofollow(struct ic_scope *scope, char *key) {
+void *ic_scope_get_nofollow(struct ic_scope *scope, char *key) {
     if (!scope) {
         puts("ic_scope_get_nofollow: scope was null");
         return 0;
@@ -212,9 +203,7 @@ struct ic_slot *ic_scope_get_nofollow(struct ic_scope *scope, char *key) {
     return ic_dict_get(&(scope->contents), key);
 }
 
-/* add a new type decl to this scope
- * this will insert into dict_tname and also
- * into tdecls
+/* delete the item stored under key
  *
  * returns 1 on success
  * returns 0 on failure

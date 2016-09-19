@@ -1,10 +1,8 @@
-#ifndef ICARUS_CLUDGE_H
-#define ICARUS_CLUDGE_H
+#ifndef ICARUS_SCOPE_H
+#define ICARUS_SCOPE_H
 
-#include "../../data/dict.h"
-#include "../../data/symbol.h"
-
-struct ic_slot;
+#include "dict.h"
+#include "symbol.h"
 
 /* this is a scope used in the analyse phase
  * this is not intended for runtime usage
@@ -16,9 +14,8 @@ struct ic_slot;
 struct ic_scope {
     struct ic_scope *parent;
 
-    /* map of variables in a scope
-     * variable name (char*) -> slot
-     * FIXME contents are undefined
+    /* map of char* to void* contents
+     * FIXME ownership undefined
      */
     struct ic_dict contents;
 };
@@ -56,7 +53,7 @@ unsigned int ic_scope_destroy(struct ic_scope *scope, unsigned int free_scope);
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_scope_insert(struct ic_scope *scope, char *key, struct ic_slot *data);
+unsigned int ic_scope_insert(struct ic_scope *scope, char *key, void *data);
 
 /* retrieve contents by string
  *
@@ -66,7 +63,7 @@ unsigned int ic_scope_insert(struct ic_scope *scope, char *key, struct ic_slot *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_slot *ic_scope_get(struct ic_scope *scope, char *key);
+void *ic_scope_get(struct ic_scope *scope, char *key);
 
 /* retrieve contents by symbol
  *
@@ -76,7 +73,7 @@ struct ic_slot *ic_scope_get(struct ic_scope *scope, char *key);
  * returns * on success
  * returns 0 on failure
  */
-struct ic_slot *ic_scope_get_from_symbol(struct ic_scope *scope, struct ic_symbol *key);
+void *ic_scope_get_from_symbol(struct ic_scope *scope, struct ic_symbol *key);
 
 /* retrieve contents by string
  *
@@ -86,11 +83,9 @@ struct ic_slot *ic_scope_get_from_symbol(struct ic_scope *scope, struct ic_symbo
  * returns * on success
  * returns 0 on failure
  */
-struct ic_slot *ic_scope_get_nofollow(struct ic_scope *scope, char *key);
+void *ic_scope_get_nofollow(struct ic_scope *scope, char *key);
 
-/* add a new type decl to this scope
- * this will insert into dict_tname and also
- * into tdecls
+/* delete the item stored under key
  *
  * returns 1 on success
  * returns 0 on failure

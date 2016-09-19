@@ -1,7 +1,7 @@
 #ifndef ICARU_BODY_H
 #define ICARU_BODY_H
 
-#include "../../analyse/data/scope.h"
+#include "../../data/scope.h"
 #include "../../data/pvector.h"
 
 /* predeclare ic_stmt to allow use of *ic_stmt

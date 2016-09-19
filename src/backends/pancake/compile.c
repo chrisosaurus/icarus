@@ -1,12 +1,12 @@
 #include <stdio.h>
 
+#include "../../data/scope.h"
 #include "../../analyse/data/kludge.h"
 #include "../../parse/data/expr.h"
 #include "../../transform/data/tbody.h"
 #include "data/bytecode.h"
 #include "data/instructions.h"
 #include "data/local.h"
-#include "data/scope.h"
 #include "pancake.h"
 
 /* compile an fdecl into bytecode
@@ -21,28 +21,28 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_backend_pancake_scope *scope, struct ic_transform_ir_stmt *tstmt);
+unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_stmt *tstmt);
 
 /* compile an tbody into bytecode
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_transform_body *fdecl_tbody, struct ic_backend_pancake_scope *scope);
+unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_transform_body *fdecl_tbody, struct ic_scope *scope);
 
 /* compile an expr (function call) into pancake bytecode
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_backend_pancake_scope *scope, struct ic_transform_ir_expr *texpr, unsigned int *is_void);
+unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_expr *texpr, unsigned int *is_void);
 
 /* compile an function call into pancake bytecode
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_backend_pancake_scope *scope, struct ic_transform_ir_fcall *tfcall, unsigned int *is_void);
+unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_fcall *tfcall, unsigned int *is_void);
 
 /* add a push instruction for a constant
  *
@@ -182,7 +182,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     char *local_name_ch = 0;
 
     /* dict from char* to pancake/data/local */
-    struct ic_backend_pancake_scope *scope = 0;
+    struct ic_scope *scope = 0;
     /* pvector of keys to dict, as we cannot recover these from dict */
     struct ic_pvector *scope_keys = 0;
 
@@ -259,9 +259,9 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     /* instantiate dict mapping
      *  name -> {accessed::bool, location::int, value::literal_constant}
      */
-    scope = ic_backend_pancake_scope_new(0);
+    scope = ic_scope_new(0);
     if (!scope) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_scope_new failed");
+        puts("ic_backend_pancake_compile_fdecl: call to ic_scope_new failed");
         return 0;
     }
 
@@ -302,8 +302,8 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
             return 0;
         }
 
-        if (!ic_backend_pancake_scope_insert(scope, local_name_ch, local)) {
-            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_scope_insert failed");
+        if (!ic_scope_insert(scope, local_name_ch, local)) {
+            puts("ic_backend_pancake_compile_fdecl: call to ic_scope_insert failed");
             return 0;
         }
 
@@ -345,9 +345,9 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
             return 0;
         }
 
-        local = ic_backend_pancake_scope_get(scope, local_name_ch);
+        local = ic_scope_get(scope, local_name_ch);
         if (!local) {
-            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_scope_get failed");
+            puts("ic_backend_pancake_compile_fdecl: call to ic_scope_get failed");
             return 0;
         }
 
@@ -382,8 +382,8 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     }
 
     /* destroy scope */
-    if (!ic_backend_pancake_scope_destroy(scope, 1)) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_scope_destroy failed");
+    if (!ic_scope_destroy(scope, 1)) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_scope_destroy failed");
         return 0;
     }
 
@@ -395,7 +395,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_backend_pancake_scope *scope, struct ic_transform_ir_stmt *tstmt) {
+unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_stmt *tstmt) {
     /* let, used only if tstmt is let
      * used to decompose let
      */
@@ -502,8 +502,8 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
                         puts("ic_backend_pancake_compile_stmt: call to ic_symbol_contents failed");
                         return 0;
                     }
-                    if (!ic_backend_pancake_scope_insert(scope, let_name_ch, local)) {
-                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_scope_insert failed");
+                    if (!ic_scope_insert(scope, let_name_ch, local)) {
+                        puts("ic_backend_pancake_compile_stmt: call to ic_scope_insert failed");
                         return 0;
                     }
                     break;
@@ -557,8 +557,8 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
                         puts("ic_backend_pancake_compile_stmt: call to ic_symbol_contents failed");
                         return 0;
                     }
-                    if (!ic_backend_pancake_scope_insert(scope, let_name_ch, local)) {
-                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_scope_insert failed");
+                    if (!ic_scope_insert(scope, let_name_ch, local)) {
+                        puts("ic_backend_pancake_compile_stmt: call to ic_scope_insert failed");
                         return 0;
                     }
 
@@ -578,9 +578,9 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
                 puts("ic_backend_pancake_compile_stmt: call to ic_symbol_contents failed");
                 return 0;
             }
-            local = ic_backend_pancake_scope_get(scope, ret_name);
+            local = ic_scope_get(scope, ret_name);
             if (!local) {
-                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_scope_get failed");
+                puts("ic_backend_pancake_compile_stmt: call to ic_scope_get failed");
                 return 0;
             }
             /* mark as accessed */
@@ -755,7 +755,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_transform_body *fdecl_tbody, struct ic_backend_pancake_scope *scope) {
+unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_transform_body *fdecl_tbody, struct ic_scope *scope) {
     /* current offset into body */
     unsigned int i = 0;
     /* len of body */
@@ -806,7 +806,7 @@ unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructi
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_backend_pancake_scope *scope, struct ic_transform_ir_expr *texpr, unsigned int *is_void) {
+unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_expr *texpr, unsigned int *is_void) {
     struct ic_transform_ir_fcall *tfcall = 0;
     if (!instructions) {
         puts("ic_backend_pancake_compile_expr: instructions was null");
@@ -939,7 +939,7 @@ unsigned int ic_backend_pancake_compile_push_constant(struct ic_backend_pancake_
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_backend_pancake_scope *scope, struct ic_transform_ir_fcall *tfcall, unsigned int *is_void) {
+unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_fcall *tfcall, unsigned int *is_void) {
     /* length of fcall args */
     unsigned int len = 0;
     /* current offset into fcall args */
@@ -997,9 +997,9 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
             puts("ic_backend_pancake_compile_fcall: call to ic_symbol_contents failed");
             return 0;
         }
-        arg_local = ic_backend_pancake_scope_get(scope, arg_name);
+        arg_local = ic_scope_get(scope, arg_name);
         if (!arg_local) {
-            puts("ic_backend_pancake_compile_fcall: call to ic_backend_pancake_scope_get failed");
+            puts("ic_backend_pancake_compile_fcall: call to ic_scope_get failed");
             return 0;
         }
         /* mark as accessed */
