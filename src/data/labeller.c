@@ -96,13 +96,14 @@ unsigned int ic_labeller_destroy(struct ic_labeller *labeller, unsigned int free
  * returns 0 on failure
  */
 char *ic_labeller_generate(struct ic_labeller *labeller) {
+    /* our output string */
     char *out_str = 0;
-
-    /* support up to 4 digits and \0 */
-    char number[5];
+    /* number of digits we need */
     int digits = 0;
-
+    /* return value from snprintf */
     int ret;
+    /* total len we will need */
+    int total_len = 0;
 
     if (!labeller) {
         puts("ic_labeller_generate: labeller was null");
@@ -127,28 +128,18 @@ char *ic_labeller_generate(struct ic_labeller *labeller) {
         digits = 1;
     }
 
-    ret = snprintf(number, 4, "%u", labeller->next_count);
-    if (ret != digits) {
-        printf("ic_labeller_generate: expected to print '%u' digits but instead printed '%d'\n", digits, ret);
-        return 0;
-    }
+    total_len = labeller->seed_len + digits;
 
-    /* set null byte */
-    number[digits] = '\0';
-
-    out_str = calloc(labeller->seed_len + digits, sizeof(char));
+    out_str = calloc(total_len, sizeof(char));
     if (!out_str) {
         puts("ic_labeller_generate: call to calloc failed");
         return 0;
     }
 
-    if (!strncpy(out_str, labeller->seed, labeller->seed_len)) {
-        puts("ic_labeller_generate: first call to strncpy failed");
-        return 0;
-    }
-
-    if (!strncpy(out_str + labeller->seed_len, number, digits)) {
-        puts("ic_labeller_generate: second call to strncpy failed");
+    /* total_len + 1 for terminating \0 */
+    ret = snprintf(out_str, total_len + 1, "%s%u", labeller->seed, labeller->next_count);
+    if (ret != total_len) {
+        printf("ic_labeller_generate: expected to print '%d' digits but instead printed '%d'\n", total_len, ret);
         return 0;
     }
 

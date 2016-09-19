@@ -1,7 +1,7 @@
 #include <assert.h> /* assert */
 #include <stdio.h>  /* puts */
-#include <string.h> /* strncmp */
 #include <stdlib.h> /* free */
+#include <string.h> /* strncmp */
 
 #include "../../../src/data/labeller.h"
 
