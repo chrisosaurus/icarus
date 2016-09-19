@@ -45,8 +45,8 @@ my $cases = [
       ----------------
       ----------------
       fn main() -> Void
-          let _l1::String = "Hello world"
-          println(_l1)
+          let _l0::String = "Hello world"
+          println(_l0)
       end
 
       backend pancake selected (PENDING):
@@ -149,29 +149,29 @@ my $cases = [
       ----------------
       ----------------
       fn bar(a::Sint) -> Sint
-          let _l1::Sint = 7
-          let _t1::Sint = plus(_l1, a)
-          return _t1
+          let _l0::Sint = 7
+          let _t0::Sint = plus(_l0, a)
+          return _t0
       end
       fn foo(a::Sint) -> Sint
-          let _l1::Sint = 4
-          let _t2::Sint = plus(a, _l1)
-          let _t1::Sint = bar(_t2)
-          return _t1
+          let _l0::Sint = 4
+          let _t1::Sint = plus(a, _l0)
+          let _t0::Sint = bar(_t1)
+          return _t0
       end
       fn baz(a::Sint) -> Sint
-          let _l1::Sint = 3
-          let b::Sint = plus(a, _l1)
-          let _t1::Sint = bar(b)
-          return _t1
+          let _l0::Sint = 3
+          let b::Sint = plus(a, _l0)
+          let _t0::Sint = bar(b)
+          return _t0
       end
       fn main() -> Void
+          let _l0::Sint = 7
+          let _t0::Sint = foo(_l0)
+          println(_t0)
           let _l1::Sint = 7
-          let _t1::Sint = foo(_l1)
+          let _t1::Sint = baz(_l1)
           println(_t1)
-          let _l2::Sint = 7
-          let _t2::Sint = baz(_l2)
-          println(_t2)
       end
 
       backend pancake selected (PENDING):
@@ -184,8 +184,8 @@ my $cases = [
       pushint 7
       copyarg 0
       call_builtin plus(Sint,Sint) 2
-      store _t1
-      load _t1
+      store _t0
+      load _t0
       save
       clean_stack
       restore
@@ -196,11 +196,11 @@ my $cases = [
       copyarg 0
       pushint 4
       call_builtin plus(Sint,Sint) 2
-      store _t2
-      load _t2
-      call bar(Sint) 1
       store _t1
       load _t1
+      call bar(Sint) 1
+      store _t0
+      load _t0
       save
       clean_stack
       restore
@@ -214,8 +214,8 @@ my $cases = [
       store b
       load b
       call bar(Sint) 1
-      store _t1
-      load _t1
+      store _t0
+      load _t0
       save
       clean_stack
       restore
@@ -225,13 +225,13 @@ my $cases = [
       label main()
       pushint 7
       call foo(Sint) 1
-      store _t1
-      load _t1
+      store _t0
+      load _t0
       call_builtin println(Sint) 1
       pushint 7
       call baz(Sint) 1
-      store _t2
-      load _t2
+      store _t1
+      load _t1
       call_builtin println(Sint) 1
       clean_stack
       return_void

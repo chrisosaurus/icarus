@@ -8,20 +8,10 @@
 #include "../parse/data/decl.h"
 #include "../parse/data/stmt.h"
 #include "data/tbody.h"
-#include "data/tcounter.h"
 #include "transform.h"
 
 #pragma GCC diagnostic ignored "-Wunused-function"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
-
-#define TCOUNT_MAX_SIZE 10
-
-/* generate a str from a string and unsigned int
- *
- * returns * on success
- * returns 0 on failure
- */
-struct ic_symbol *ic_transform_gen_name(char *prefix, unsigned int tcount);
 
 /* perform translation of all fdecls on kludge
  *
@@ -163,93 +153,6 @@ unsigned int ic_transform(struct ic_kludge *kludge) {
     return 1;
 }
 
-/* generate a str from a string and unsigned int
- *
- * returns * on success
- * returns 0 on failure
- */
-struct ic_symbol *ic_transform_gen_name(char *prefix, unsigned int tcount) {
-    /* our resulting sym */
-    struct ic_symbol *sym = 0;
-
-    /* string used for generating symbol */
-    struct ic_string *str = 0;
-    char *str_ch = 0;
-    int str_len = 0;
-    /* maximum of TCOUNT_MAX_SIZE digits */
-    char tcount_ch[TCOUNT_MAX_SIZE];
-    int tcount_ch_printed = 0;
-
-    /* prefix len */
-    size_t prefix_len = 0;
-
-    if (!prefix) {
-        puts("ic_transform_gen_name: prefix was null");
-        return 0;
-    }
-
-    if (!tcount) {
-        puts("ic_transform_gen_name: tcount was zero");
-        return 0;
-    }
-
-    /* get len */
-    prefix_len = strlen(prefix);
-    if (!prefix_len) {
-        puts("ic_transform_gen_name: call to strlen failed");
-        return 0;
-    }
-
-    /* use user provided prefix */
-    str = ic_string_new(prefix, prefix_len);
-    if (!str) {
-        puts("ic_transform_gen_name: call to ic_string_new failed");
-        return 0;
-    }
-
-    /* convert tcount to string */
-    tcount_ch_printed = snprintf(tcount_ch, TCOUNT_MAX_SIZE, "%d", tcount);
-    if (tcount_ch_printed == TCOUNT_MAX_SIZE) {
-        puts("WARNING: ic_transform_gen_name: snprintf printed same TCOUNT_MAX_SIZE chars");
-    }
-
-    /* concat */
-    if (!ic_string_append_char(str, tcount_ch, tcount_ch_printed)) {
-        puts("ic_transform_gen_name: call to ic_string_append_char failed");
-        return 0;
-    }
-
-    /* convert to symbol */
-    str_ch = ic_string_contents(str);
-    if (!str_ch) {
-        puts("ic_transform_gen_name: call to ic_string_contents failed");
-        return 0;
-    }
-
-    str_len = ic_string_length(str);
-    if (-1 == str_len) {
-        puts("ic_transform_gen_name: call to ic_string_length failed");
-        return 0;
-    }
-
-    sym = ic_symbol_new(str_ch, str_len);
-    if (!sym) {
-        puts("ic_transform_gen_name: call to ic_symbol_new failed");
-        return 0;
-    }
-
-    /* destroy string
-     * safe as symbol_new performs a strncpy
-     */
-    str_ch = 0;
-    if (!ic_string_destroy(str, 1)) {
-        puts("ic_transform_gen_name: call to ic_string_destroy failed");
-        return 0;
-    }
-
-    return sym;
-}
-
 /* print out all transformed items within kludge
  *
  * returns 1 on success
@@ -353,8 +256,6 @@ static unsigned int ic_transform_fdecls(struct ic_kludge *kludge) {
  * returns 0 on failure
  */
 static unsigned int ic_transform_fdecl(struct ic_kludge *kludge, struct ic_decl_func *func) {
-    struct ic_transform_counter *tcounter = 0;
-
     if (!kludge) {
         puts("ic_transform_fdecl: kludge was null");
         return 0;
@@ -371,15 +272,8 @@ static unsigned int ic_transform_fdecl(struct ic_kludge *kludge, struct ic_decl_
         return 0;
     }
 
-    /* create tcounter */
-    tcounter = ic_transform_counter_new();
-    if (!tcounter) {
-        puts("ic_transform_fdecl: call to ic_transform_counter_new failed");
-        return 0;
-    }
-
     /* populate tbody */
-    func->tbody = ic_transform_body_new(tcounter);
+    func->tbody = ic_transform_body_new();
     if (!func->tbody) {
         puts("ic_transform_fdecl: call to ic_transform_body_new failed");
         return 0;
@@ -800,10 +694,10 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
         return 0;
     }
 
-    /* create new nested body sharing tcounter */
-    tif->then_tbody = ic_transform_body_new(tbody->tcounter);
+    /* create new nested body */
+    tif->then_tbody = ic_transform_body_new_child(tbody);
     if (!tif->then_tbody) {
-        puts("ic_transform_fdecl: call to ic_transform_body_new failed");
+        puts("ic_transform_fdecl: call to ic_transform_body_new_child failed");
         return 0;
     }
 
@@ -817,8 +711,8 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
      * deal with optional else clause
      */
     if (sif->else_body) {
-        /* create new nested body sharing tcounter */
-        tif->else_tbody = ic_transform_body_new(tbody->tcounter);
+        /* create new nested body */
+        tif->else_tbody = ic_transform_body_new_child(tbody);
         if (!tif->else_tbody) {
             puts("ic_transform_fdecl: call to ic_transform_body_new failed");
             return 0;
@@ -1042,7 +936,7 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
     }
 
     /* FIXME TODO */
-    /* register on tbody->tcounter */
+    /* register on tbody */
     /* generate new unique temporary symbol */
     /* create a new let for this expr */
     /* append new let to tbody */
@@ -1051,9 +945,9 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
     switch (expr->tag) {
         case ic_expr_type_func_call:
             /* generate name */
-            sym = ic_transform_gen_name("_t", ic_transform_counter_register_temporary(tbody->tcounter));
+            sym = ic_transform_body_register_temporary(tbody);
             if (!sym) {
-                puts("ic_transform_new_temp: call to ic_transform_gen_name failed");
+                puts("ic_transform_new_temp: call to ic_transform_body_register_temporary failed");
                 return 0;
             }
 
@@ -1111,9 +1005,9 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
 
         case ic_expr_type_constant:
             /* generate name */
-            sym = ic_transform_gen_name("_l", ic_transform_counter_register_literal(tbody->tcounter));
+            sym = ic_transform_body_register_literal(tbody);
             if (!sym) {
-                puts("ic_transform_new_temp: call to ic_transform_gen_name failed");
+                puts("ic_transform_new_temp: call to ic_transform_body_register_literal failed");
                 return 0;
             }
 
@@ -1156,9 +1050,9 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
             }
 
             /* generate name */
-            sym = ic_transform_gen_name("_t", ic_transform_counter_register_temporary(tbody->tcounter));
+            sym = ic_transform_body_register_temporary(tbody);
             if (!sym) {
-                puts("ic_transform_new_temp: call to ic_transform_gen_name failed");
+                puts("ic_transform_new_temp: call to ic_transform_body_register_temporary failed");
                 return 0;
             }
 

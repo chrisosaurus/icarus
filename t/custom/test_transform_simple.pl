@@ -19,16 +19,16 @@ EOF
 
 my $expected = <<EOF;
 fn get_greeting(name::String) -> String
-    let _l1::String = "Hello there "
-    let _t2::String = concat(_l1, name)
-    let _l2::String = ", very nice to meet you"
-    let _t1::String = concat(_t2, _l2)
-    return _t1
+    let _l0::String = "Hello there "
+    let _t1::String = concat(_l0, name)
+    let _l1::String = ", very nice to meet you"
+    let _t0::String = concat(_t1, _l1)
+    return _t0
 end
 fn main() -> Void
-    let _l1::String = "Jennifer"
-    let _t1::String = get_greeting(_l1)
-    println(_t1)
+    let _l0::String = "Jennifer"
+    let _t0::String = get_greeting(_l0)
+    println(_t0)
 end
 EOF
 

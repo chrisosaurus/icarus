@@ -108,19 +108,20 @@ this will show us the parser outputting it's understanding of our code
 and show us the transformed IR version of this
 
     fn get_str(name::String) -> String
-        let _l1::String = "Hello there "
-        let _t2::String = concat(_l1, name)
-        let _l2::String = ", very nice to meet you"
-        let _t1::String = concat(_t2, _l2)
-        return _t1
+        let _l0::String = "Hello there "
+        let _t1::String = concat(_l0, name)
+        let _l1::String = ", very nice to meet you"
+        let _t0::String = concat(_t1, _l1)
+        return _t0
     end
     fn main() -> Void
-        let _l1::String = "Jennifer"
-        let _t1::String = get_str(_l1)
-        println(_t1)
+        let _l0::String = "Jennifer"
+        let _t0::String = get_str(_l0)
+        println(_t0)
     end
 
 which will output (to out.c):
+
 
     #include "backends/2c/builtins.c"
     /* get_str(String) -> String */
@@ -129,17 +130,17 @@ which will output (to out.c):
     Void i_main_a();
     /* get_str(String) -> String */
     String * i_get_str_a_String(String *name){
-    String *_l1 = ic_string_new("Hello there ", 12);
-    String *_t2 = i_concat_a_String_String(_l1, name);
-    String *_l2 = ic_string_new(", very nice to meet you", 23);
-    String *_t1 = i_concat_a_String_String(_t2, _l2);
-    return _t1;
+    String *_l0 = ic_string_new("Hello there ", 12);
+    String *_t1 = i_concat_a_String_String(_l0, name);
+    String *_l1 = ic_string_new(", very nice to meet you", 23);
+    String *_t0 = i_concat_a_String_String(_t1, _l1);
+    return _t0;
     }
     /* main() -> Void */
     Void i_main_a(){
-    String *_l1 = ic_string_new("Jennifer", 8);
-    String *_t1 = i_get_str_a_String(_l1);
-    i_println_a_String(_t1);
+    String *_l0 = ic_string_new("Jennifer", 8);
+    String *_t0 = i_get_str_a_String(_l0);
+    i_println_a_String(_t0);
     }
     #include "backends/2c/entry.c"
 
@@ -181,8 +182,8 @@ which shows us
         println(s)
     end
     fn main() -> Void
-        let _l1::String = "Hello world"
-        foo(_l1)
+        let _l0::String = "Hello world"
+        foo(_l0)
     end
 
     backend pancake selected (PENDING):

@@ -2,15 +2,16 @@
 #include <stdlib.h> /* calloc, free */
 
 #include "tbody.h"
-#include "tcounter.h"
 
-/* allocate and initialise a new tbody
+/* allocate and initialise a new tbody with no parent
  *
  * returns 1 on success
  * returns 0 on failure
  */
-struct ic_transform_body *ic_transform_body_new(struct ic_transform_counter *tcounter) {
+struct ic_transform_body *ic_transform_body_new(void) {
     struct ic_transform_body *tbody = 0;
+    struct ic_labeller *labeller_tmp = 0;
+    struct ic_labeller *labeller_lit = 0;
 
     tbody = calloc(1, sizeof(struct ic_transform_body));
     if (!tbody) {
@@ -18,8 +19,48 @@ struct ic_transform_body *ic_transform_body_new(struct ic_transform_counter *tco
         return 0;
     }
 
-    if (!ic_transform_body_init(tbody, tcounter)) {
+    labeller_tmp = ic_labeller_new("_t");
+    if (!labeller_tmp) {
+        puts("ic_transform_body_new: call to ic_labeller_new failed");
+        return 0;
+    }
+
+    labeller_lit = ic_labeller_new("_l");
+    if (!labeller_lit) {
+        puts("ic_transform_body_new: call to ic_labeller_new failed");
+        return 0;
+    }
+
+    if (!ic_transform_body_init(tbody, labeller_tmp, labeller_lit)) {
         puts("ic_transform_body_new: call to ic_transform_body_init failed");
+        return 0;
+    }
+
+    return tbody;
+}
+
+/* allocate and initialise a new tbody with a parent
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+struct ic_transform_body *ic_transform_body_new_child(struct ic_transform_body *parent) {
+    struct ic_transform_body *tbody = 0;
+    struct ic_labeller *labeller_tmp = 0;
+    struct ic_labeller *labeller_lit = 0;
+
+    tbody = calloc(1, sizeof(struct ic_transform_body));
+    if (!tbody) {
+        puts("ic_transform_body_new_child: call to calloc failed");
+        return 0;
+    }
+
+    /* inherit labellers from parent body */
+    labeller_tmp = parent->labeller_tmp;
+    labeller_lit = parent->labeller_lit;
+
+    if (!ic_transform_body_init(tbody, labeller_tmp, labeller_lit)) {
+        puts("ic_transform_body_new_child: call to ic_transform_body_init failed");
         return 0;
     }
 
@@ -31,9 +72,19 @@ struct ic_transform_body *ic_transform_body_new(struct ic_transform_counter *tco
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_body_init(struct ic_transform_body *tbody, struct ic_transform_counter *tcounter) {
+unsigned int ic_transform_body_init(struct ic_transform_body *tbody, struct ic_labeller *labeller_tmp, struct ic_labeller *labeller_lit) {
     if (!tbody) {
         puts("ic_transform_body_init: tbody was null");
+        return 0;
+    }
+
+    if (!labeller_tmp) {
+        puts("ic_transform_body_init: labeller_tmp was null");
+        return 0;
+    }
+
+    if (!labeller_lit) {
+        puts("ic_transform_body_init: labeller_lit was null");
         return 0;
     }
 
@@ -42,7 +93,8 @@ unsigned int ic_transform_body_init(struct ic_transform_body *tbody, struct ic_t
         return 0;
     }
 
-    tbody->tcounter = tcounter;
+    tbody->labeller_tmp = labeller_tmp;
+    tbody->labeller_lit = labeller_lit;
 
     return 1;
 }
@@ -67,6 +119,16 @@ unsigned int ic_transform_body_destroy(struct ic_transform_body *tbody, unsigned
    */
     if (!ic_pvector_destroy(&(tbody->tstmts), 0, 0)) {
         puts("ic_transform_body_destroy: call to ic_pvector_destroy failed");
+        return 0;
+    }
+
+    if (!ic_labeller_destroy(tbody->labeller_tmp, 1)) {
+        puts("ic_transform_body_destroy: call to ic_labeller_destroy for tmp failed");
+        return 0;
+    }
+
+    if (!ic_labeller_destroy(tbody->labeller_lit, 1)) {
+        puts("ic_transform_body_destroy: call to ic_labeller_destroy for lit failed");
         return 0;
     }
 
@@ -180,46 +242,46 @@ struct ic_transform_ir_stmt *ic_transform_body_get(struct ic_transform_body *tbo
     return tstmt;
 }
 
-/* get a unique literal number within this counter
+/* get a unique label for a temporary within this counter
  *
  * returns count > 0 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_body_register_literal(struct ic_transform_body *tbody) {
-    unsigned int ncount = 0;
-
-    if (!tbody) {
-        puts("ic_transform_body_register_literal: tbody was null");
-        return 0;
-    }
-
-    ncount = ic_transform_counter_register_literal(tbody->tcounter);
-    if (!ncount) {
-        puts("ic_transform_body_register_literal: call to ic_transform_counter_register_literal failed");
-        return 0;
-    }
-
-    return ncount;
-}
-
-/* get a unique temporary number within this counter
- *
- * returns count > 0 on success
- * returns 0 on failure
- */
-unsigned int ic_transform_body_register_temporary(struct ic_transform_body *tbody) {
-    unsigned int ncount = 0;
+struct ic_symbol *ic_transform_body_register_temporary(struct ic_transform_body *tbody) {
+    struct ic_symbol *sym = 0;
 
     if (!tbody) {
         puts("ic_transform_body_register_temporary: tbody was null");
         return 0;
     }
 
-    ncount = ic_transform_counter_register_temporary(tbody->tcounter);
-    if (!ncount) {
-        puts("ic_transform_body_register_temporary: call to ic_transform_counter_register_temporary failed");
+    sym = ic_labeller_generate_symbol(tbody->labeller_tmp);
+    if (!sym) {
+        puts("ic_transform_body_register_temporary: call to ic_labeller_generate_symbol failed");
         return 0;
     }
 
-    return ncount;
+    return sym;
+}
+
+/* get a unique label for a literal within this counter
+ *
+ * returns count > 0 on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_transform_body_register_literal(struct ic_transform_body *tbody) {
+    struct ic_symbol *sym = 0;
+
+    if (!tbody) {
+        puts("ic_transform_body_register_literal: tbody was null");
+        return 0;
+    }
+
+    sym = ic_labeller_generate_symbol(tbody->labeller_lit);
+    if (!sym) {
+        puts("ic_transform_body_register_literal: call to ic_labeller_generate_symbol failed");
+        return 0;
+    }
+
+    return sym;
 }
