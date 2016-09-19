@@ -49,29 +49,14 @@ unsigned int ic_b2c_compile_stmt(struct ic_kludge *input_kludge, struct ic_trans
 
         case ic_transform_ir_stmt_type_let:
             return ic_b2c_compile_stmt_let(input_kludge, &(tstmt->u.let), out);
-            if (!ic_b2c_compile_stmt_expr(input_kludge, &(tstmt->u.expr), out)) {
-                puts("ic_b2c_compile_stmt: call to ic_b2c_compile_stmt_let failed");
-                return 0;
-            }
-            return 1;
             break;
 
         case ic_transform_ir_stmt_type_ret:
             return ic_b2c_compile_stmt_ret(input_kludge, &(tstmt->u.ret), out);
-            if (!ic_b2c_compile_stmt_expr(input_kludge, &(tstmt->u.expr), out)) {
-                puts("ic_b2c_compile_stmt: call to ic_b2c_compile_stmt_ret failed");
-                return 0;
-            }
-            return 1;
             break;
 
         case ic_transform_ir_stmt_type_assign:
             return ic_b2c_compile_stmt_assign(input_kludge, &(tstmt->u.assign), out);
-            if (!ic_b2c_compile_stmt_expr(input_kludge, &(tstmt->u.expr), out)) {
-                puts("ic_b2c_compile_stmt: call to ic_b2c_compile_stmt_assign failed");
-                return 0;
-            }
-            return 1;
             break;
 
         case ic_transform_ir_stmt_type_if:
