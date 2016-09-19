@@ -74,11 +74,6 @@ unsigned int ic_backend_pancake_value_print(FILE *fd, struct ic_backend_pancake_
         return 0;
     }
 
-    if (!fd) {
-        puts("ic_backend_pancake_value_print: fd was null");
-        return 0;
-    }
-
     switch (value->tag) {
         case ic_backend_pancake_value_type_bool:
             fprintf(fd, "bool: %u\n", value->u.boolean);

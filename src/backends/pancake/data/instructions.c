@@ -349,11 +349,6 @@ unsigned int ic_backend_pancake_instructions_print(FILE *fd, struct ic_backend_p
         return 0;
     }
 
-    if (!fd) {
-        puts("ic_backend_pancake_instructions_print: fd was null");
-        return 0;
-    }
-
     len = instructions->len;
     for (i = 0; i < len; ++i) {
         if (i > 0) {

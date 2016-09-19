@@ -208,11 +208,6 @@ unsigned int ic_backend_pancake_value_stack_print(FILE *fd, struct ic_backend_pa
         return 0;
     }
 
-    if (!fd) {
-        puts("ic_backend_pancake_value_stack_print: fd was null");
-        return 0;
-    }
-
     len = value_stack->head;
 
     /* NB: has to be >= */
