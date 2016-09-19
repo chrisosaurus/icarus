@@ -61,6 +61,7 @@ struct ic_transform_body *ic_transform_body_new_child(struct ic_transform_body *
 
     if (!ic_transform_body_init(tbody, labeller_tmp, labeller_lit)) {
         puts("ic_transform_body_new_child: call to ic_transform_body_init failed");
+        free(tbody);
         return 0;
     }
 
