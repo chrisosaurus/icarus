@@ -501,6 +501,7 @@ struct ic_transform_ir_if *ic_transform_ir_if_new(struct ic_symbol *cond_sym) {
 
     if (!ic_transform_ir_if_init(tif, cond_sym)) {
         puts("ir_transform_ir_if_new: call to ic_transform_if_init failed");
+        free(tif);
         return 0;
     }
 
