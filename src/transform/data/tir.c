@@ -560,7 +560,7 @@ unsigned int ic_transform_ir_if_destroy(struct ic_transform_ir_if *tif, unsigned
  * return 0 on failure
  */
 unsigned int ic_transform_ir_if_print(FILE *fd, struct ic_transform_ir_if *tif, unsigned int *indent) {
-    unsigned int fake_indent = *indent + 1;
+    unsigned int fake_indent = 0;
 
     if (!tif) {
         puts("ic_transform_ir_if_print: if was null");
@@ -571,6 +571,8 @@ unsigned int ic_transform_ir_if_print(FILE *fd, struct ic_transform_ir_if *tif, 
         puts("ic_transform_ir_if_print: indent was null");
         return 0;
     }
+
+    fake_indent = *indent + 1;
 
     ic_parse_print_indent(fd, *indent);
 
