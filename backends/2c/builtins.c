@@ -172,6 +172,30 @@ Sint * i_modulo_a_Sint_Sint(Sint *a, Sint *b){
     i = ic_sint_new(a->integer % b->integer);
     return i;
 }
+/* builtin fn lessthan(a::Sint, b::Sint) -> Bool */
+Bool * i_lessthan_a_Sint_Sint(Sint *a, Sint *b){
+    Bool *r = 0;
+    r = ic_bool_new(a->integer < b->integer);
+    return r;
+}
+/* builtin fn greaterthan(a::Sint, b::Sint) -> Bool */
+Bool * i_greaterthan_a_Sint_Sint(Sint *a, Sint *b){
+    Bool *r = 0;
+    r = ic_bool_new(a->integer > b->integer);
+    return r;
+}
+/* builtin fn lessthanequal(a::Sint, b::Sint) -> Bool */
+Bool * i_lessthaequaln_a_Sint_Sint(Sint *a, Sint *b){
+    Bool *r = 0;
+    r = ic_bool_new(a->integer <= b->integer);
+    return r;
+}
+/* builtin fn greaterthaequaln(a::Sint, b::Sint) -> Bool */
+Bool * i_greaterthaequaln_a_Sint_Sint(Sint *a, Sint *b){
+    Bool *r = 0;
+    r = ic_bool_new(a->integer >= b->integer);
+    return r;
+}
 
 /* builtin type Unsigned int */
 typedef struct Uint{
@@ -231,6 +255,30 @@ Uint * i_modulo_a_Uint_Uint(Uint *a, Uint *b){
     Uint *i = 0;
     i = ic_uint_new(a->integer % b->integer);
     return i;
+}
+/* builtin fn lessthan(a::Uint, b::Uint) -> Bool */
+Bool * i_lessthan_a_Uint_Uint(Uint *a, Uint *b){
+    Bool *r = 0;
+    r = ic_bool_new(a->integer < b->integer);
+    return r;
+}
+/* builtin fn greaterthan(a::Uint, b::Uint) -> Bool */
+Bool * i_greaterthan_a_Uint_Uint(Uint *a, Uint *b){
+    Bool *r = 0;
+    r = ic_bool_new(a->integer > b->integer);
+    return r;
+}
+/* builtin fn lessthanequal(a::Uint, b::Uint) -> Bool */
+Bool * i_lessthaequaln_a_Uint_Uint(Uint *a, Uint *b){
+    Bool *r = 0;
+    r = ic_bool_new(a->integer <= b->integer);
+    return r;
+}
+/* builtin fn greaterthaequaln(a::Uint, b::Uint) -> Bool */
+Bool * i_greaterthaequaln_a_Uint_Uint(Uint *a, Uint *b){
+    Bool *r = 0;
+    r = ic_bool_new(a->integer >= b->integer);
+    return r;
 }
 
 /* builtin type String */
