@@ -430,6 +430,10 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
             instruction = ic_backend_pancake_instructions_add(instructions, icp_pushuint);
         } else if (!strcmp("pushint", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_pushint);
+        } else if (!strcmp("pushstr", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
+        } else if (!strcmp("pushbool", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_pushbool);
         } else if (!strcmp("call_builtin", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_call_builtin);
         } else if (!strcmp("exit", op)) {
@@ -450,8 +454,6 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
             instruction = ic_backend_pancake_instructions_add(instructions, icp_return_void);
         } else if (!strcmp("copyarg", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_copyarg);
-        } else if (!strcmp("pushstr", op)) {
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
         } else if (!strcmp("store", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_store);
         } else if (!strcmp("load", op)) {
@@ -502,6 +504,19 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                 }
                 if (!ic_backend_pancake_bytecode_arg1_set_sint(instruction, sint_arg1)) {
                     puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_sint failed");
+                    return 0;
+                }
+                break;
+
+            case icp_pushbool:
+                /* consume bool */
+                ret = fscanf(file, "%u", &uint_arg1);
+                if (ret == EOF || ret == 0) {
+                    puts("ic_backend_pancake_instructions_load: read failed for pushuint");
+                    return 0;
+                }
+                if (!ic_backend_pancake_bytecode_arg1_set_bool(instruction, uint_arg1)) {
+                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_uint failed");
                     return 0;
                 }
                 break;

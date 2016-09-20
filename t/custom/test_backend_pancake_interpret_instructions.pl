@@ -148,6 +148,31 @@ my $cases = [
       3
       ',
   },
+  {
+    input => '
+      label entry
+      call foo() 0
+      exit
+      label foo()
+      pushbool 0
+      pushbool 1
+      pushuint 5
+      pushuint 6
+      call_builtin lessthan_equal(Uint,Uint) 2
+      call_builtin println(Bool) 1
+      call_builtin println(Bool) 1
+      call_builtin println(Bool) 1
+      return_void
+      ',
+    # 5 <= 6
+    # 1
+    # 0
+    expected => '
+      True
+      True
+      False
+      ',
+  },
 ];
 
 # whitespace sensitivity sucks
