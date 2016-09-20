@@ -4,8 +4,12 @@
 
 #include "builtins.h"
 
-#define INIT(type) \
-    struct ic_backend_pancake_value *value = 0;
+#define INIT(type)                              \
+    struct ic_backend_pancake_value *value = 0; \
+    if (!value_stack) {                         \
+        puts("value_stack was null");           \
+        return 0;                               \
+    }
 
 #define READ(name, type)                                                              \
     value = ic_backend_pancake_value_stack_peek(value_stack);                         \
@@ -24,7 +28,7 @@
     }                                                                                 \
     name = value->u.type;
 
-#define RESULT(type, result)                                  \
+#define RESULT(result, type)                                  \
     value = ic_backend_pancake_value_stack_push(value_stack); \
     if (!value) {                                             \
         puts("stack_push failed");                            \
@@ -113,34 +117,10 @@ ic_backend_function_sig ic_backend_pancake_builtins_table_get(char *str) {
  * returns 0 on failure
  */
 unsigned int i_println_string(struct ic_backend_pancake_value_stack *value_stack) {
-    struct ic_backend_pancake_value *value = 0;
     char *str = 0;
+    INIT();
 
-    if (!value_stack) {
-        puts("i_println_string: value_stack was null");
-        return 0;
-    }
-
-    value = ic_backend_pancake_value_stack_peek(value_stack);
-
-    if (!value) {
-        puts("i_println_string: call to ic_backend_pancake_value_stack_peek failed");
-        return 0;
-    }
-
-    if (value->tag != ic_backend_pancake_value_type_string) {
-        puts("i_println_string: value was not of expected type string");
-        fputs("found: ", stdout);
-        ic_backend_pancake_value_print(stdout, value);
-        return 0;
-    }
-
-    if (!ic_backend_pancake_value_stack_pop(value_stack)) {
-        puts("i_println_string: call to ic_backend_pancake_value_stack_pop failed");
-        return 0;
-    }
-
-    str = value->u.string;
+    READ(str, string);
 
     puts(str);
     return 1;
@@ -154,34 +134,10 @@ unsigned int i_println_string(struct ic_backend_pancake_value_stack *value_stack
  * returns 0 on failure
  */
 unsigned int i_println_uint(struct ic_backend_pancake_value_stack *value_stack) {
-    struct ic_backend_pancake_value *value = 0;
     unsigned int uint = 0;
+    INIT();
 
-    if (!value_stack) {
-        puts("i_println_uint: value_stack was null");
-        return 0;
-    }
-
-    value = ic_backend_pancake_value_stack_peek(value_stack);
-
-    if (!value) {
-        puts("i_println_uint: call to ic_backend_pancake_value_stack_peek failed");
-        return 0;
-    }
-
-    if (value->tag != ic_backend_pancake_value_type_uint) {
-        puts("i_println_uint: value was not of expected type uint");
-        fputs("found: ", stdout);
-        ic_backend_pancake_value_print(stdout, value);
-        return 0;
-    }
-
-    if (!ic_backend_pancake_value_stack_pop(value_stack)) {
-        puts("i_println_uint: call to ic_backend_pancake_value_stack_pop failed");
-        return 0;
-    }
-
-    uint = value->u.uint;
+    READ(uint, uint);
 
     printf("%u\n", uint);
     return 1;
@@ -195,34 +151,10 @@ unsigned int i_println_uint(struct ic_backend_pancake_value_stack *value_stack) 
  * returns 0 on failure
  */
 unsigned int i_println_sint(struct ic_backend_pancake_value_stack *value_stack) {
-    struct ic_backend_pancake_value *value = 0;
     int sint = 0;
+    INIT();
 
-    if (!value_stack) {
-        puts("i_println_string: value_stack was null");
-        return 0;
-    }
-
-    value = ic_backend_pancake_value_stack_peek(value_stack);
-
-    if (!value) {
-        puts("i_println_string: call to ic_backend_pancake_value_stack_peek failed");
-        return 0;
-    }
-
-    if (value->tag != ic_backend_pancake_value_type_sint) {
-        puts("i_println_string: value was not of expected type int");
-        fputs("found: ", stdout);
-        ic_backend_pancake_value_print(stdout, value);
-        return 0;
-    }
-
-    if (!ic_backend_pancake_value_stack_pop(value_stack)) {
-        puts("i_println_string: call to ic_backend_pancake_value_stack_pop failed");
-        return 0;
-    }
-
-    sint = value->u.sint;
+    READ(sint, sint);
 
     printf("%d\n", sint);
     return 1;
@@ -236,34 +168,10 @@ unsigned int i_println_sint(struct ic_backend_pancake_value_stack *value_stack) 
  * returns 0 on failure
  */
 unsigned int i_println_bool(struct ic_backend_pancake_value_stack *value_stack) {
-    struct ic_backend_pancake_value *value = 0;
     bool boolean = 0;
+    INIT();
 
-    if (!value_stack) {
-        puts("i_println_string: value_stack was null");
-        return 0;
-    }
-
-    value = ic_backend_pancake_value_stack_peek(value_stack);
-
-    if (!value) {
-        puts("i_println_string: call to ic_backend_pancake_value_stack_peek failed");
-        return 0;
-    }
-
-    if (value->tag != ic_backend_pancake_value_type_boolean) {
-        puts("i_println_string: value was not of expected type bool");
-        fputs("found: ", stdout);
-        ic_backend_pancake_value_print(stdout, value);
-        return 0;
-    }
-
-    if (!ic_backend_pancake_value_stack_pop(value_stack)) {
-        puts("i_println_string: call to ic_backend_pancake_value_stack_pop failed");
-        return 0;
-    }
-
-    boolean = value->u.boolean;
+    READ(boolean, boolean);
 
     if (boolean) {
         puts("True");
@@ -282,69 +190,17 @@ unsigned int i_println_bool(struct ic_backend_pancake_value_stack *value_stack) 
  * returns 0 on failure
  */
 unsigned int i_plus_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
-    struct ic_backend_pancake_value *value = 0;
     unsigned int uint_one = 0;
     unsigned int uint_two = 0;
     unsigned int answer = 0;
+    INIT();
 
-    if (!value_stack) {
-        puts("i_plus_uint_uint: value_stack was null");
-        return 0;
-    }
+    READ(uint_two, uint);
+    READ(uint_one, uint);
 
-    value = ic_backend_pancake_value_stack_peek(value_stack);
+    answer = uint_one + uint_two;
 
-    if (!value) {
-        puts("i_plus_uint_uint: call to ic_backend_pancake_value_stack_peek failed");
-        return 0;
-    }
-
-    if (value->tag != ic_backend_pancake_value_type_uint) {
-        puts("i_plus_uint_uint: value was not of expected type uint");
-        fputs("found: ", stdout);
-        ic_backend_pancake_value_print(stdout, value);
-        return 0;
-    }
-
-    if (!ic_backend_pancake_value_stack_pop(value_stack)) {
-        puts("i_plus_uint_uint: call to ic_backend_pancake_value_stack_pop failed");
-        return 0;
-    }
-
-    uint_one = value->u.uint;
-
-    value = ic_backend_pancake_value_stack_peek(value_stack);
-
-    if (!value) {
-        puts("i_plus_uint_uint: call to ic_backend_pancake_value_stack_peek failed");
-        return 0;
-    }
-
-    if (value->tag != ic_backend_pancake_value_type_uint) {
-        puts("i_plus_uint_uint: value was not of expected type uint");
-        fputs("found: ", stdout);
-        ic_backend_pancake_value_print(stdout, value);
-        return 0;
-    }
-
-    if (!ic_backend_pancake_value_stack_pop(value_stack)) {
-        puts("i_plus_uint_uint: call to ic_backend_pancake_value_stack_pop failed");
-        return 0;
-    }
-
-    uint_two = value->u.uint;
-
-    /* args are in reverse order */
-    answer = uint_two + uint_one;
-
-    value = ic_backend_pancake_value_stack_push(value_stack);
-    if (!value) {
-        puts("i_plus_uint_uint: call to ic_backend_pancake_value_stack_push failed");
-        return 0;
-    }
-
-    value->tag = ic_backend_pancake_value_type_uint;
-    value->u.uint = answer;
+    RESULT(answer, uint);
 
     return 1;
 }
@@ -358,69 +214,17 @@ unsigned int i_plus_uint_uint(struct ic_backend_pancake_value_stack *value_stack
  * returns 0 on failure
  */
 unsigned int i_plus_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
-    struct ic_backend_pancake_value *value = 0;
     int sint_one = 0;
     int sint_two = 0;
     int answer = 0;
+    INIT();
 
-    if (!value_stack) {
-        puts("i_plus_sint_sint: value_stack was null");
-        return 0;
-    }
+    READ(sint_two, sint);
+    READ(sint_one, sint);
 
-    value = ic_backend_pancake_value_stack_peek(value_stack);
+    answer = sint_one + sint_two;
 
-    if (!value) {
-        puts("i_plus_sint_sint: call to ic_backend_pancake_value_stack_peek failed");
-        return 0;
-    }
-
-    if (value->tag != ic_backend_pancake_value_type_sint) {
-        puts("i_plus_sint_sint: value was not of expected type sint");
-        fputs("found: ", stdout);
-        ic_backend_pancake_value_print(stdout, value);
-        return 0;
-    }
-
-    if (!ic_backend_pancake_value_stack_pop(value_stack)) {
-        puts("i_plus_sint_sint: call to ic_backend_pancake_value_stack_pop failed");
-        return 0;
-    }
-
-    sint_one = value->u.sint;
-
-    value = ic_backend_pancake_value_stack_peek(value_stack);
-
-    if (!value) {
-        puts("i_plus_sint_sint: call to ic_backend_pancake_value_stack_peek failed");
-        return 0;
-    }
-
-    if (value->tag != ic_backend_pancake_value_type_sint) {
-        puts("i_plus_sint_sint: value was not of expected type sint");
-        fputs("found: ", stdout);
-        ic_backend_pancake_value_print(stdout, value);
-        return 0;
-    }
-
-    if (!ic_backend_pancake_value_stack_pop(value_stack)) {
-        puts("i_plus_sint_sint: call to ic_backend_pancake_value_stack_pop failed");
-        return 0;
-    }
-
-    sint_two = value->u.sint;
-
-    /* args are in reverse order */
-    answer = sint_two + sint_one;
-
-    value = ic_backend_pancake_value_stack_push(value_stack);
-    if (!value) {
-        puts("i_plus_sint_sint: call to ic_backend_pancake_value_stack_push failed");
-        return 0;
-    }
-
-    value->tag = ic_backend_pancake_value_type_sint;
-    value->u.sint = answer;
+    RESULT(answer, sint);
 
     return 1;
 }
@@ -434,75 +238,22 @@ unsigned int i_plus_sint_sint(struct ic_backend_pancake_value_stack *value_stack
  * returns 0 on failure
  */
 unsigned int i_minus_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
-    struct ic_backend_pancake_value *value = 0;
     unsigned int uint_one = 0;
     unsigned int uint_two = 0;
     unsigned int answer = 0;
+    INIT();
 
-    if (!value_stack) {
-        puts("i_minus_uint_uint: value_stack was null");
-        return 0;
-    }
+    READ(uint_two, uint);
+    READ(uint_one, uint);
 
-    value = ic_backend_pancake_value_stack_peek(value_stack);
-
-    if (!value) {
-        puts("i_minus_uint_uint: call to ic_backend_pancake_value_stack_peek failed");
-        return 0;
-    }
-
-    if (value->tag != ic_backend_pancake_value_type_uint) {
-        puts("i_minus_uint_uint: value was not of expected type uint");
-        fputs("found: ", stdout);
-        ic_backend_pancake_value_print(stdout, value);
-        return 0;
-    }
-
-    if (!ic_backend_pancake_value_stack_pop(value_stack)) {
-        puts("i_minus_uint_uint: call to ic_backend_pancake_value_stack_pop failed");
-        return 0;
-    }
-
-    uint_one = value->u.uint;
-
-    value = ic_backend_pancake_value_stack_peek(value_stack);
-
-    if (!value) {
-        puts("i_minus_uint_uint: call to ic_backend_pancake_value_stack_peek failed");
-        return 0;
-    }
-
-    if (value->tag != ic_backend_pancake_value_type_uint) {
-        puts("i_minus_uint_uint: value was not of expected type uint");
-        fputs("found: ", stdout);
-        ic_backend_pancake_value_print(stdout, value);
-        return 0;
-    }
-
-    if (!ic_backend_pancake_value_stack_pop(value_stack)) {
-        puts("i_minus_uint_uint: call to ic_backend_pancake_value_stack_pop failed");
-        return 0;
-    }
-
-    uint_two = value->u.uint;
-
-    /* args are in reverse order
-     * if we would rollover then stop at 0
-     */
-    if (uint_one > uint_two) {
+    /* if we would rollover then stop at 0 */
+    if (uint_two > uint_one) {
         answer = 0;
     } else {
-        answer = uint_two - uint_one;
+        answer = uint_one - uint_two;
     }
 
-    value = ic_backend_pancake_value_stack_push(value_stack);
-    if (!value) {
-        puts("i_minus_uint_uint: call to ic_backend_pancake_value_stack_push failed");
-        return 0;
-    }
-
-    value->tag = ic_backend_pancake_value_type_uint;
-    value->u.uint = answer;
+    RESULT(answer, uint);
 
     return 1;
 }
@@ -516,69 +267,17 @@ unsigned int i_minus_uint_uint(struct ic_backend_pancake_value_stack *value_stac
  * returns 0 on failure
  */
 unsigned int i_minus_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
-    struct ic_backend_pancake_value *value = 0;
     int sint_one = 0;
     int sint_two = 0;
     int answer = 0;
+    INIT();
 
-    if (!value_stack) {
-        puts("i_minus_sint_sint: value_stack was null");
-        return 0;
-    }
+    READ(sint_two, sint);
+    READ(sint_one, sint);
 
-    value = ic_backend_pancake_value_stack_peek(value_stack);
+    answer = sint_one - sint_two;
 
-    if (!value) {
-        puts("i_minus_sint_sint: call to ic_backend_pancake_value_stack_peek failed");
-        return 0;
-    }
-
-    if (value->tag != ic_backend_pancake_value_type_sint) {
-        puts("i_minus_sint_sint: value was not of expected type sint");
-        fputs("found: ", stdout);
-        ic_backend_pancake_value_print(stdout, value);
-        return 0;
-    }
-
-    if (!ic_backend_pancake_value_stack_pop(value_stack)) {
-        puts("i_minus_sint_sint: call to ic_backend_pancake_value_stack_pop failed");
-        return 0;
-    }
-
-    sint_one = value->u.sint;
-
-    value = ic_backend_pancake_value_stack_peek(value_stack);
-
-    if (!value) {
-        puts("i_minus_sint_sint: call to ic_backend_pancake_value_stack_peek failed");
-        return 0;
-    }
-
-    if (value->tag != ic_backend_pancake_value_type_sint) {
-        puts("i_minus_sint_sint: value was not of expected type sint");
-        fputs("found: ", stdout);
-        ic_backend_pancake_value_print(stdout, value);
-        return 0;
-    }
-
-    if (!ic_backend_pancake_value_stack_pop(value_stack)) {
-        puts("i_minus_sint_sint: call to ic_backend_pancake_value_stack_pop failed");
-        return 0;
-    }
-
-    sint_two = value->u.sint;
-
-    /* args are in reverse order */
-    answer = sint_two - sint_one;
-
-    value = ic_backend_pancake_value_stack_push(value_stack);
-    if (!value) {
-        puts("i_minus_sint_sint: call to ic_backend_pancake_value_stack_push failed");
-        return 0;
-    }
-
-    value->tag = ic_backend_pancake_value_type_sint;
-    value->u.sint = answer;
+    RESULT(answer, sint);
 
     return 1;
 }
@@ -594,7 +293,7 @@ unsigned int i_lessthan_equal_uint_uint(struct ic_backend_pancake_value_stack *v
 
     answer = uint_one <= uint_two;
 
-    RESULT(boolean, answer);
+    RESULT(answer, boolean);
     return 1;
 }
 
@@ -609,7 +308,7 @@ unsigned int i_lessthan_equal_sint_sint(struct ic_backend_pancake_value_stack *v
 
     answer = sint_one <= sint_two;
 
-    RESULT(boolean, answer);
+    RESULT(answer, boolean);
     return 1;
 }
 
@@ -624,7 +323,7 @@ unsigned int i_greaterthan_equal_uint_uint(struct ic_backend_pancake_value_stack
 
     answer = uint_one >= uint_two;
 
-    RESULT(boolean, answer);
+    RESULT(answer, boolean);
     return 1;
 }
 
@@ -639,7 +338,7 @@ unsigned int i_greaterthan_equal_sint_sint(struct ic_backend_pancake_value_stack
 
     answer = sint_one >= sint_two;
 
-    RESULT(boolean, answer);
+    RESULT(answer, boolean);
     return 1;
 }
 
@@ -654,7 +353,7 @@ unsigned int i_lessthan_uint_uint(struct ic_backend_pancake_value_stack *value_s
 
     answer = uint_one < uint_two;
 
-    RESULT(boolean, answer);
+    RESULT(answer, boolean);
     return 1;
 }
 
@@ -669,7 +368,7 @@ unsigned int i_lessthan_sint_sint(struct ic_backend_pancake_value_stack *value_s
 
     answer = sint_one < sint_two;
 
-    RESULT(boolean, answer);
+    RESULT(answer, boolean);
     return 1;
 }
 
@@ -684,7 +383,7 @@ unsigned int i_greaterthan_uint_uint(struct ic_backend_pancake_value_stack *valu
 
     answer = uint_one > uint_two;
 
-    RESULT(boolean, answer);
+    RESULT(answer, boolean);
     return 1;
 }
 
@@ -699,6 +398,6 @@ unsigned int i_greaterthan_sint_sint(struct ic_backend_pancake_value_stack *valu
 
     answer = sint_one > sint_two;
 
-    RESULT(boolean, answer);
+    RESULT(answer, boolean);
     return 1;
 }
