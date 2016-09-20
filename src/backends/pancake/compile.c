@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "../../analyse/data/kludge.h"
+#include "../../data/labeller.h"
 #include "../../data/scope.h"
 #include "../../parse/data/expr.h"
 #include "../../transform/data/tbody.h"
@@ -8,6 +9,8 @@
 #include "data/instructions.h"
 #include "data/local.h"
 #include "pancake.h"
+
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 
 /* compile an fdecl into bytecode
  *
@@ -21,28 +24,28 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_stmt *tstmt);
+unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_stmt *tstmt, struct ic_labeller *labeller);
 
 /* compile an tbody into bytecode
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_transform_body *fdecl_tbody, struct ic_scope *scope);
+unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_transform_body *fdecl_tbody, struct ic_scope *scope, struct ic_labeller *labeller);
 
 /* compile an expr (function call) into pancake bytecode
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_expr *texpr, unsigned int *is_void);
+unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_expr *texpr, unsigned int *is_void, struct ic_labeller *labeller);
 
 /* compile an function call into pancake bytecode
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_fcall *tfcall, unsigned int *is_void);
+unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_fcall *tfcall, unsigned int *is_void, struct ic_labeller *labeller);
 
 /* add a push instruction for a constant
  *
@@ -189,6 +192,9 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     /* current local */
     struct ic_backend_pancake_local *local = 0;
 
+    /* labeller for this fdecl */
+    struct ic_labeller *labeller = 0;
+
     if (!instructions) {
         puts("ic_backend_pancake_compile_fdecl: instructions was null");
         return 0;
@@ -219,6 +225,12 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     fdecl_sig_call = ic_decl_func_sig_call(fdecl);
     if (!fdecl_sig_call) {
         puts("ic_backend_pancake_compile_fdecl: call to ic_decl_func_sig_call failed");
+        return 0;
+    }
+
+    labeller = ic_labeller_new(fdecl_sig_call);
+    if (!labeller) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_labeller_new failed");
         return 0;
     }
 
@@ -319,7 +331,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
         return 0;
     }
 
-    if (!ic_backend_pancake_compile_body(instructions, kludge, fdecl_tbody, scope)) {
+    if (!ic_backend_pancake_compile_body(instructions, kludge, fdecl_tbody, scope, labeller)) {
         puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_compile_body failed");
         return 0;
     }
@@ -387,6 +399,12 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
         return 0;
     }
 
+    /* destroy labeller */
+    if (!ic_labeller_destroy(labeller, 1)) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_labeller_destroy failed");
+        return 0;
+    }
+
     return 1;
 }
 
@@ -395,7 +413,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_stmt *tstmt) {
+unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_stmt *tstmt, struct ic_labeller *labeller) {
     /* let, used only if tstmt is let
      * used to decompose let
      */
@@ -464,7 +482,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
     switch (tstmt->tag) {
         case ic_transform_ir_stmt_type_expr:
             texpr = &(tstmt->u.expr);
-            if (!ic_backend_pancake_compile_expr(instructions, kludge, scope, texpr, &fcall_is_void)) {
+            if (!ic_backend_pancake_compile_expr(instructions, kludge, scope, texpr, &fcall_is_void, labeller)) {
                 puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_compile_expr failed");
                 return 0;
             }
@@ -522,7 +540,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
                     /* compile fcall */
                     tlet_expr = &(tlet->u.expr);
                     texpr = tlet_expr->expr;
-                    if (!ic_backend_pancake_compile_expr(instructions, kludge, scope, texpr, &fcall_is_void)) {
+                    if (!ic_backend_pancake_compile_expr(instructions, kludge, scope, texpr, &fcall_is_void, labeller)) {
                         puts("ic_backend_pancake_compile_stmt: let expr call to ic_backend_pancake_compile_expr failed");
                         return 0;
                     }
@@ -755,7 +773,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_transform_body *fdecl_tbody, struct ic_scope *scope) {
+unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_transform_body *fdecl_tbody, struct ic_scope *scope, struct ic_labeller *labeller) {
     /* current offset into body */
     unsigned int i = 0;
     /* len of body */
@@ -792,7 +810,7 @@ unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructi
             return 0;
         }
 
-        if (!ic_backend_pancake_compile_stmt(instructions, kludge, scope, tstmt)) {
+        if (!ic_backend_pancake_compile_stmt(instructions, kludge, scope, tstmt, labeller)) {
             puts("ic_backend_pancake_compile_body: call to ic_backend_compile_stmt failed");
             return 0;
         }
@@ -806,7 +824,7 @@ unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructi
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_expr *texpr, unsigned int *is_void) {
+unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_expr *texpr, unsigned int *is_void, struct ic_labeller *labeller) {
     struct ic_transform_ir_fcall *tfcall = 0;
     if (!instructions) {
         puts("ic_backend_pancake_compile_expr: instructions was null");
@@ -840,7 +858,7 @@ unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructi
         return 0;
     }
 
-    if (!ic_backend_pancake_compile_fcall(instructions, kludge, scope, tfcall, is_void)) {
+    if (!ic_backend_pancake_compile_fcall(instructions, kludge, scope, tfcall, is_void, labeller)) {
         puts("ic_backend_pancake_compile_body: let expr call to ic_backend_pancake_compile_fcall failed");
         return 0;
     }
@@ -939,7 +957,7 @@ unsigned int ic_backend_pancake_compile_push_constant(struct ic_backend_pancake_
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_fcall *tfcall, unsigned int *is_void) {
+unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_fcall *tfcall, unsigned int *is_void, struct ic_labeller *labeller) {
     /* length of fcall args */
     unsigned int len = 0;
     /* current offset into fcall args */
