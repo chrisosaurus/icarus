@@ -156,21 +156,63 @@ my $cases = [
       label foo()
       pushbool 0
       pushbool 1
+      call_builtin println(Bool) 1
+      call_builtin println(Bool) 1
+      pushuint 5
+      pushuint 6
+      call_builtin greaterthan_equal(Uint,Uint) 2
+      call_builtin println(Bool) 1
+      pushuint 5
+      pushuint 6
+      call_builtin greaterthan(Uint,Uint) 2
+      call_builtin println(Bool) 1
       pushuint 5
       pushuint 6
       call_builtin lessthan_equal(Uint,Uint) 2
       call_builtin println(Bool) 1
+      pushuint 5
+      pushuint 6
+      call_builtin lessthan(Uint,Uint) 2
       call_builtin println(Bool) 1
+      pushint 5
+      pushint 6
+      call_builtin greaterthan_equal(Sint,Sint) 2
+      call_builtin println(Bool) 1
+      pushint 5
+      pushint 6
+      call_builtin greaterthan(Sint,Sint) 2
+      call_builtin println(Bool) 1
+      pushint 5
+      pushint 6
+      call_builtin lessthan_equal(Sint,Sint) 2
+      call_builtin println(Bool) 1
+      pushint 5
+      pushint 6
+      call_builtin lessthan(Sint,Sint) 2
       call_builtin println(Bool) 1
       return_void
       ',
-    # 5 <= 6
     # 1
     # 0
+    # 5 >= 6
+    # 5 > 6
+    # 5 <= 6
+    # 5 < 6
+    # 5 >= 6
+    # 5 > 6
+    # 5 <= 6
+    # 5 < 6
     expected => '
+      True
+      False
+      False
+      False
       True
       True
       False
+      False
+      True
+      True
       ',
   },
 ];
