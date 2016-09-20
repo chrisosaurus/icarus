@@ -219,7 +219,7 @@ Current holes
 Current focus
 =============
 
-The `transform` phase - which outputs the new Icarus Transform IR
-
-The `pancake` interpreter - catching up quickly to `2c` backend
+The two backends are now on-par with each other,
+so the focus has now shifted to adding some more of the basic language
+features.
 
