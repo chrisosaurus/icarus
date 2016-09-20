@@ -11,21 +11,21 @@
         return 0;                               \
     }
 
-#define READ(name, type)                                                              \
-    value = ic_backend_pancake_value_stack_peek(value_stack);                         \
-    if (!value) {                                                                     \
-        puts("stack_peek failed");                                                    \
-        return 0;                                                                     \
-    }                                                                                 \
-    if (value->tag != ic_backend_pancake_value_type_##type) {                         \
-        fputs("value was not of expected type\n, found:", stdout);                    \
-        ic_backend_pancake_value_print(stdout, value);                                \
-        return 0;                                                                     \
-    }                                                                                 \
-    if (!ic_backend_pancake_value_stack_pop(value_stack)) {                           \
-        puts("i_minus_sint_sint: call to ic_backend_pancake_value_stack_pop failed"); \
-        return 0;                                                                     \
-    }                                                                                 \
+#define READ(name, type)                                           \
+    value = ic_backend_pancake_value_stack_peek(value_stack);      \
+    if (!value) {                                                  \
+        puts("stack_peek failed");                                 \
+        return 0;                                                  \
+    }                                                              \
+    if (value->tag != ic_backend_pancake_value_type_##type) {      \
+        fputs("value was not of expected type\n, found:", stdout); \
+        ic_backend_pancake_value_print(stdout, value);             \
+        return 0;                                                  \
+    }                                                              \
+    if (!ic_backend_pancake_value_stack_pop(value_stack)) {        \
+        puts("stack_pop failed");                                  \
+        return 0;                                                  \
+    }                                                              \
     name = value->u.type;
 
 #define RESULT(result, type)                                  \
