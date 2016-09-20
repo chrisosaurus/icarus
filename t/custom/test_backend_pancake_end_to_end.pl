@@ -243,6 +243,94 @@ my $cases = [
       17
       ',
   },
+  {
+    input => '
+      fn main()
+        let b1 = True
+        println(b1)
+        let b2 = False
+        println(b2)
+
+        println(6 < 15)
+      end
+      ',
+    expected => '
+      lexer output:
+      ----------------
+
+      fn main()
+        let b1 = True
+        println(b1)
+        let b2 = False
+        println(b2)
+
+        println(6 < 15)
+      end
+      ----------------
+
+
+      parser output:
+      ----------------
+      # main()
+      fn main() -> Void
+          let b1 = True
+          println(b1)
+          let b2 = False
+          println(b2)
+          println(6 < 15)
+      end
+      ----------------
+
+
+      analyse output:
+      ----------------
+      warning: main implementation pending, icarus is currently only partially functional
+      analysis complete
+      ----------------
+
+
+      transform output (PENDING):
+      ----------------
+      ----------------
+      fn main() -> Void
+          let b1::Bool = True
+          println(b1)
+          let b2::Bool = False
+          println(b2)
+          let _l0::Sint = 6
+          let _l1::Sint = 15
+          let _t0::Bool = lessthan(_l0, _l1)
+          println(_t0)
+      end
+
+      backend pancake selected (PENDING):
+      Pancake bytecode:
+      ==========================
+      label entry
+      call main() 0
+      exit
+      label main()
+      pushbool 1
+      call_builtin println(Bool) 1
+      pushbool 0
+      call_builtin println(Bool) 1
+      pushint 6
+      pushint 15
+      call_builtin lessthan(Sint,Sint) 2
+      store _t0
+      load _t0
+      call_builtin println(Bool) 1
+      clean_stack
+      return_void
+      ==========================
+
+      Pancake interpreter output
+      ==========================
+      True
+      False
+      True
+      ',
+  },
 ];
 
 # whitespace sensitivity sucks
