@@ -184,14 +184,14 @@ Bool * i_greaterthan_a_Sint_Sint(Sint *a, Sint *b){
     r = ic_bool_new(a->integer > b->integer);
     return r;
 }
-/* builtin fn lessthanequal(a::Sint, b::Sint) -> Bool */
-Bool * i_lessthaequaln_a_Sint_Sint(Sint *a, Sint *b){
+/* builtin fn lessthan_equal(a::Sint, b::Sint) -> Bool */
+Bool * i_lessthan_equal_a_Sint_Sint(Sint *a, Sint *b){
     Bool *r = 0;
     r = ic_bool_new(a->integer <= b->integer);
     return r;
 }
-/* builtin fn greaterthaequaln(a::Sint, b::Sint) -> Bool */
-Bool * i_greaterthaequaln_a_Sint_Sint(Sint *a, Sint *b){
+/* builtin fn greaterthan_equal(a::Sint, b::Sint) -> Bool */
+Bool * i_greaterthan_equal_a_Sint_Sint(Sint *a, Sint *b){
     Bool *r = 0;
     r = ic_bool_new(a->integer >= b->integer);
     return r;
@@ -268,14 +268,14 @@ Bool * i_greaterthan_a_Uint_Uint(Uint *a, Uint *b){
     r = ic_bool_new(a->integer > b->integer);
     return r;
 }
-/* builtin fn lessthanequal(a::Uint, b::Uint) -> Bool */
-Bool * i_lessthaequaln_a_Uint_Uint(Uint *a, Uint *b){
+/* builtin fn lessthan_equal(a::Uint, b::Uint) -> Bool */
+Bool * i_lessthan_equal_a_Uint_Uint(Uint *a, Uint *b){
     Bool *r = 0;
     r = ic_bool_new(a->integer <= b->integer);
     return r;
 }
-/* builtin fn greaterthaequaln(a::Uint, b::Uint) -> Bool */
-Bool * i_greaterthaequaln_a_Uint_Uint(Uint *a, Uint *b){
+/* builtin fn greaterthan_equal(a::Uint, b::Uint) -> Bool */
+Bool * i_greaterthan_equal_a_Uint_Uint(Uint *a, Uint *b){
     Bool *r = 0;
     r = ic_bool_new(a->integer >= b->integer);
     return r;
