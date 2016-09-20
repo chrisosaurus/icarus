@@ -4,6 +4,35 @@
 
 #include "builtins.h"
 
+#define INIT(type) \
+    struct ic_backend_pancake_value *value = 0;
+
+#define READ(name, type)                                                              \
+    value = ic_backend_pancake_value_stack_peek(value_stack);                         \
+    if (!value) {                                                                     \
+        puts("stack_peek failed");                                                    \
+        return 0;                                                                     \
+    }                                                                                 \
+    if (value->tag != ic_backend_pancake_value_type_##type) {                         \
+        fputs("value was not of expected type\n, found:", stdout);                    \
+        ic_backend_pancake_value_print(stdout, value);                                \
+        return 0;                                                                     \
+    }                                                                                 \
+    if (!ic_backend_pancake_value_stack_pop(value_stack)) {                           \
+        puts("i_minus_sint_sint: call to ic_backend_pancake_value_stack_pop failed"); \
+        return 0;                                                                     \
+    }                                                                                 \
+    name = value->u.type;
+
+#define RESULT(type, result)                                  \
+    value = ic_backend_pancake_value_stack_push(value_stack); \
+    if (!value) {                                             \
+        puts("stack_push failed");                            \
+        return 0;                                             \
+    }                                                         \
+    value->tag = ic_backend_pancake_value_type_##type;        \
+    value->u.type = result;
+
 unsigned int i_println_string(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int i_println_sint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int i_println_uint(struct ic_backend_pancake_value_stack *value_stack);
@@ -12,8 +41,16 @@ unsigned int i_plus_uint_uint(struct ic_backend_pancake_value_stack *value_stack
 unsigned int i_plus_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int i_minus_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int i_minus_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int i_lessthan_equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int i_lessthan_equal_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int i_greaterthan_equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int i_greaterthan_equal_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int i_lessthan_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int i_lessthan_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int i_greaterthan_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int i_greaterthan_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
 
-#define ic_backend_pancake_builtins_table_len 8
+#define ic_backend_pancake_builtins_table_len 16
 
 /* table mapping user-land names to internal names */
 struct ic_backend_pancake_builtins_table_type {
@@ -28,6 +65,14 @@ struct ic_backend_pancake_builtins_table_type {
     {"plus(Sint,Sint)", i_plus_sint_sint},
     {"minus(Uint,Uint)", i_minus_uint_uint},
     {"minus(Sint,Sint)", i_minus_sint_sint},
+    {"lessthan(Uint,Uint)", i_lessthan_uint_uint},
+    {"lessthan(Sint,Sint)", i_lessthan_sint_sint},
+    {"greaterthan(Uint,Uint)", i_greaterthan_uint_uint},
+    {"greaterthan(Sint,Sint)", i_greaterthan_sint_sint},
+    {"lessthan_equal(Uint,Uint)", i_lessthan_equal_uint_uint},
+    {"lessthan_equal(Sint,Sint)", i_lessthan_equal_sint_sint},
+    {"greaterthan_equal(Uint,Uint)", i_greaterthan_equal_uint_uint},
+    {"greaterthan_equal(Sint,Sint)", i_greaterthan_equal_sint_sint},
 };
 
 /* get builtin function for user-land name
@@ -206,7 +251,7 @@ unsigned int i_println_bool(struct ic_backend_pancake_value_stack *value_stack) 
         return 0;
     }
 
-    if (value->tag != ic_backend_pancake_value_type_bool) {
+    if (value->tag != ic_backend_pancake_value_type_boolean) {
         puts("i_println_string: value was not of expected type bool");
         fputs("found: ", stdout);
         ic_backend_pancake_value_print(stdout, value);
@@ -220,7 +265,11 @@ unsigned int i_println_bool(struct ic_backend_pancake_value_stack *value_stack) 
 
     boolean = value->u.boolean;
 
-    printf("%d\n", boolean);
+    if (boolean) {
+        puts("True");
+    } else {
+        puts("False");
+    }
     return 1;
 }
 
@@ -294,6 +343,7 @@ unsigned int i_plus_uint_uint(struct ic_backend_pancake_value_stack *value_stack
         return 0;
     }
 
+    value->tag = ic_backend_pancake_value_type_uint;
     value->u.uint = answer;
 
     return 1;
@@ -369,6 +419,7 @@ unsigned int i_plus_sint_sint(struct ic_backend_pancake_value_stack *value_stack
         return 0;
     }
 
+    value->tag = ic_backend_pancake_value_type_sint;
     value->u.sint = answer;
 
     return 1;
@@ -450,6 +501,7 @@ unsigned int i_minus_uint_uint(struct ic_backend_pancake_value_stack *value_stac
         return 0;
     }
 
+    value->tag = ic_backend_pancake_value_type_uint;
     value->u.uint = answer;
 
     return 1;
@@ -525,7 +577,128 @@ unsigned int i_minus_sint_sint(struct ic_backend_pancake_value_stack *value_stac
         return 0;
     }
 
+    value->tag = ic_backend_pancake_value_type_sint;
     value->u.sint = answer;
 
+    return 1;
+}
+
+unsigned int i_lessthan_equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
+    unsigned int uint_one = 0;
+    unsigned int uint_two = 0;
+    int answer = 0;
+    INIT();
+
+    READ(uint_two, uint);
+    READ(uint_one, uint);
+
+    answer = uint_one <= uint_two;
+
+    RESULT(boolean, answer);
+    return 1;
+}
+
+unsigned int i_lessthan_equal_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
+    int sint_one = 0;
+    int sint_two = 0;
+    int answer = 0;
+    INIT();
+
+    READ(sint_two, sint);
+    READ(sint_one, sint);
+
+    answer = sint_one <= sint_two;
+
+    RESULT(boolean, answer);
+    return 1;
+}
+
+unsigned int i_greaterthan_equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
+    unsigned int uint_one = 0;
+    unsigned int uint_two = 0;
+    int answer = 0;
+    INIT();
+
+    READ(uint_two, uint);
+    READ(uint_one, uint);
+
+    answer = uint_one >= uint_two;
+
+    RESULT(boolean, answer);
+    return 1;
+}
+
+unsigned int i_greaterthan_equal_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
+    int sint_one = 0;
+    int sint_two = 0;
+    int answer = 0;
+    INIT();
+
+    READ(sint_two, sint);
+    READ(sint_one, sint);
+
+    answer = sint_one >= sint_two;
+
+    RESULT(boolean, answer);
+    return 1;
+}
+
+unsigned int i_lessthan_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
+    unsigned int uint_one = 0;
+    unsigned int uint_two = 0;
+    int answer = 0;
+    INIT();
+
+    READ(uint_two, uint);
+    READ(uint_one, uint);
+
+    answer = uint_one < uint_two;
+
+    RESULT(boolean, answer);
+    return 1;
+}
+
+unsigned int i_lessthan_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
+    int sint_one = 0;
+    int sint_two = 0;
+    int answer = 0;
+    INIT();
+
+    READ(sint_two, sint);
+    READ(sint_one, sint);
+
+    answer = sint_one < sint_two;
+
+    RESULT(boolean, answer);
+    return 1;
+}
+
+unsigned int i_greaterthan_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
+    unsigned int uint_one = 0;
+    unsigned int uint_two = 0;
+    int answer = 0;
+    INIT();
+
+    READ(uint_two, uint);
+    READ(uint_one, uint);
+
+    answer = uint_one > uint_two;
+
+    RESULT(boolean, answer);
+    return 1;
+}
+
+unsigned int i_greaterthan_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
+    int sint_one = 0;
+    int sint_two = 0;
+    int answer = 0;
+    INIT();
+
+    READ(sint_two, sint);
+    READ(sint_one, sint);
+
+    answer = sint_one > sint_two;
+
+    RESULT(boolean, answer);
     return 1;
 }

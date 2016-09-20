@@ -35,7 +35,7 @@ unsigned int ic_backend_pancake_value_copy(struct ic_backend_pancake_value *valu
     value_to->tag = value_from->tag;
 
     switch (value_from->tag) {
-        case ic_backend_pancake_value_type_bool:
+        case ic_backend_pancake_value_type_boolean:
             value_to->u.boolean = value_from->u.boolean;
             break;
 
@@ -75,7 +75,7 @@ unsigned int ic_backend_pancake_value_print(FILE *fd, struct ic_backend_pancake_
     }
 
     switch (value->tag) {
-        case ic_backend_pancake_value_type_bool:
+        case ic_backend_pancake_value_type_boolean:
             fprintf(fd, "bool: %u\n", value->u.boolean);
             break;
 

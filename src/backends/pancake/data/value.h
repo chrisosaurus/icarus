@@ -2,7 +2,7 @@
 #define IC_BACKEND_PANCAKE_VALUE_H
 
 enum ic_backend_pancake_value_type {
-    ic_backend_pancake_value_type_bool,
+    ic_backend_pancake_value_type_boolean,
     ic_backend_pancake_value_type_uint,
     ic_backend_pancake_value_type_sint,
     ic_backend_pancake_value_type_string,

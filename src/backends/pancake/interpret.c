@@ -104,7 +104,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                     return 0;
                 }
 
-                value->tag = ic_backend_pancake_value_type_bool;
+                value->tag = ic_backend_pancake_value_type_boolean;
                 value->u.boolean = boolean;
 
                 break;
@@ -181,7 +181,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                     return 0;
                 }
 
-                if (value->tag != ic_backend_pancake_value_type_bool) {
+                if (value->tag != ic_backend_pancake_value_type_boolean) {
                     puts("ic_backend_pancake_interpret: value->tag was not of type boolean");
                     return 0;
                 }
@@ -218,7 +218,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                     return 0;
                 }
 
-                if (value->tag != ic_backend_pancake_value_type_bool) {
+                if (value->tag != ic_backend_pancake_value_type_boolean) {
                     puts("ic_backend_pancake_interpret: value->tag was not of type boolean");
                     return 0;
                 }
