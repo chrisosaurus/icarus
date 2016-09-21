@@ -10,6 +10,7 @@
 unsigned int ic_b2c_compile_stmt_ret(struct ic_kludge *input_kludge, struct ic_transform_ir_ret *ret, FILE *out);
 unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_transform_ir_let *let, FILE *out);
 unsigned int ic_b2c_compile_stmt_assign(struct ic_kludge *input_kludge, struct ic_transform_ir_assign *assign, FILE *out);
+unsigned int ic_b2c_compile_stmt_if(struct ic_kludge *input_kludge, struct ic_transform_ir_if *tif, FILE *out);
 unsigned int ic_b2c_compile_stmt_expr(struct ic_kludge *input_kludge, struct ic_transform_ir_expr *expr, FILE *out);
 
 /* compile a given stmt to specified file
@@ -60,8 +61,7 @@ unsigned int ic_b2c_compile_stmt(struct ic_kludge *input_kludge, struct ic_trans
             break;
 
         case ic_transform_ir_stmt_type_if:
-            puts("ic_b2c_compile_stmt: if statements not yet supported");
-            return 0;
+            return ic_b2c_compile_stmt_if(input_kludge, &(tstmt->u.sif), out);
             break;
 
         default:
@@ -256,6 +256,26 @@ unsigned int ic_b2c_compile_stmt_assign(struct ic_kludge *input_kludge, struct i
     ic_transform_ir_assign_print(stdout, assign, &indent_level);
 
     puts("ic_b2c_compile_stmt_assign: unimplemented");
+    return 0;
+}
+
+unsigned int ic_b2c_compile_stmt_if(struct ic_kludge *input_kludge, struct ic_transform_ir_if *tif, FILE *out) {
+    if (!input_kludge) {
+        puts("ic_b2c_compile_stmt_if: input_kludge was null");
+        return 0;
+    }
+
+    if (!tif) {
+        puts("ic_b2c_compile_stmt_if: tif was null");
+        return 0;
+    }
+
+    if (!out) {
+        puts("ic_b2c_compile_stmt_if: out was null");
+        return 0;
+    }
+
+    puts("ic_b2c_compile_stmt_if: unimplemented");
     return 0;
 }
 
