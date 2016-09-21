@@ -122,24 +122,23 @@ and show us the transformed IR version of this
 
 which will output (to out.c):
 
-
     #include "backends/2c/builtins.c"
     /* get_str(String) -> String */
-    String * i_get_str_a_String(String *name);
+    String i_get_str_a_String(String name);
     /* main() -> Void */
     Void i_main_a();
     /* get_str(String) -> String */
-    String * i_get_str_a_String(String *name){
-    String *_l0 = ic_string_new("Hello there ", 12);
-    String *_t1 = i_concat_a_String_String(_l0, name);
-    String *_l1 = ic_string_new(", very nice to meet you", 23);
-    String *_t0 = i_concat_a_String_String(_t1, _l1);
+    String i_get_str_a_String(String name){
+    String _l0 = ic_string_new("Hello there ", 12);
+    String _t1 = i_concat_a_String_String(_l0, name);
+    String _l1 = ic_string_new(", very nice to meet you", 23);
+    String _t0 = i_concat_a_String_String(_t1, _l1);
     return _t0;
     }
     /* main() -> Void */
     Void i_main_a(){
-    String *_l0 = ic_string_new("Jennifer", 8);
-    String *_t0 = i_get_str_a_String(_l0);
+    String _l0 = ic_string_new("Jennifer", 8);
+    String _t0 = i_get_str_a_String(_l0);
     i_println_a_String(_t0);
     }
     #include "backends/2c/entry.c"

@@ -16,60 +16,50 @@ void * ic_alloc(size_t size){
     return v;
 }
 
-/* pre-declarations */
-typedef struct Void Void;
-typedef struct Bool Bool;
-typedef struct Sint Sint;
-typedef struct Uint Uint;
-typedef struct String String;
+/* pre-declarations
+ * types should be opaque
+ */
+typedef void Void;
+typedef uint8_t Bool;
+typedef int32_t Sint;
+typedef uint32_t Uint;
+typedef struct String * String;
 
-Bool * ic_bool_new(unsigned int boolean);
-Sint * ic_sint_new(int32_t integer);
-Uint * ic_uint_new(uint32_t integer);
-String * ic_string_new(char *str, unsigned int len);
+Bool ic_bool_new(uint8_t boolean);
+Sint ic_sint_new(int32_t integer);
+Uint ic_uint_new(uint32_t integer);
+String ic_string_new(char *str, unsigned int len);
 
 /* builtin fn println() */
 void i_println_a(void){
     puts("");
 }
 
-/* builtin type Void */
-typedef struct Void{
-} Void;
-
-
-/* builtin type Bool */
-typedef struct Bool{
-    unsigned int boolean;
-} Bool;
-
 /* builtin fn print(a::Bool) */
-void i_print_a_Bool(Bool *b){
-    if( b->boolean ){
+void i_print_a_Bool(Bool b){
+    if( b ){
         fputs("True", stdout);
     } else {
         fputs("False", stdout);
     }
 }
 /* builtin fn println(a::Bool) */
-void i_println_a_Bool(Bool *b){
+void i_println_a_Bool(Bool b){
     i_print_a_Bool(b);
     i_println_a();
 }
-Bool * ic_bool_new(unsigned int boolean){
-    Bool *b = 0;
-    b = ic_alloc(sizeof(Bool));
-    b->boolean = boolean;
+Bool ic_bool_new(uint8_t boolean){
+    Bool b = boolean;
     return b;
 }
 /* builtin fn equal(a::Bool, b::Bool) -> Bool */
-Bool * i_equal_a_Bool_Bool(Bool *a, Bool *b){
-    if( a->boolean == 0 && b->boolean == 0 ){
+Bool i_equal_a_Bool_Bool(Bool a, Bool b){
+    if( a == 0 && b == 0 ){
         /* return truthy boolean */
         return ic_bool_new(1);
     }
 
-    if( a->boolean && b->boolean ){
+    if( a && b ){
         /* return truthy boolean */
         return ic_bool_new(1);
     }
@@ -78,8 +68,8 @@ Bool * i_equal_a_Bool_Bool(Bool *a, Bool *b){
     return ic_bool_new(0);
 }
 /* builtin fn not(a::Bool) -> Bool */
-Bool * i_not_a_Bool(Bool *a){
-    if( a->boolean ){
+Bool i_not_a_Bool(Bool a){
+    if( a ){
         /* return falsey boolean */
         return ic_bool_new(0);
     } else {
@@ -88,8 +78,8 @@ Bool * i_not_a_Bool(Bool *a){
     }
 }
 /* builtin fn and(a::Bool, b::Bool) -> Bool */
-Bool * i_and_a_Bool_Bool(Bool *a, Bool *b){
-    if( a->boolean && b->boolean ){
+Bool i_and_a_Bool_Bool(Bool a, Bool b){
+    if( a && b ){
         /* return truthy boolean */
         return ic_bool_new(1);
     }
@@ -97,13 +87,13 @@ Bool * i_and_a_Bool_Bool(Bool *a, Bool *b){
     return ic_bool_new(0);
 }
 /* builtin fn or(a::Bool, b::Bool) -> Bool */
-Bool * i_or_a_Bool_Bool(Bool *a, Bool *b){
-    if( a->boolean ){
+Bool i_or_a_Bool_Bool(Bool a, Bool b){
+    if( a ){
         /* return truthy boolean */
         return ic_bool_new(1);
     }
 
-    if( b->boolean ){
+    if( b ){
         /* return truthy boolean */
         return ic_bool_new(1);
     }
@@ -113,29 +103,22 @@ Bool * i_or_a_Bool_Bool(Bool *a, Bool *b){
 }
 
 
-/* builtin type Signed int */
-typedef struct Sint{
-    int32_t integer;
-} Sint;
-
-Sint * ic_sint_new(int32_t integer){
-    Sint *i = 0;
-    i = ic_alloc(sizeof(Sint));
-    i->integer = integer;
+Sint ic_sint_new(int32_t integer){
+    Sint i = integer;
     return i;
 }
 /* builtin fn print(a::Sint) */
-void i_print_a_Sint(Sint *i){
-    printf("%"PRId32, i->integer);
+void i_print_a_Sint(Sint i){
+    printf("%"PRId32, i);
 }
 /* builtin fn println(a::Sint) */
-void i_println_a_Sint(Sint *i){
+void i_println_a_Sint(Sint i){
     i_print_a_Sint(i);
     i_println_a();
 }
 /* builtin fn equal(a::Sint, b::Sint) -> Bool */
-Bool * i_equal_a_Sint_Sint(Sint *a, Sint *b){
-    if( a->integer == b->integer ){
+Bool i_equal_a_Sint_Sint(Sint a, Sint b){
+    if( a == b ){
         /* return truthy boolean */
         return ic_bool_new(1);
     }
@@ -143,83 +126,76 @@ Bool * i_equal_a_Sint_Sint(Sint *a, Sint *b){
     return ic_bool_new(0);
 }
 /* builtin fn plus(a::Sint, b::Sint) -> Sint */
-Sint * i_plus_a_Sint_Sint(Sint *a, Sint *b){
-    Sint *i = 0;
-    i = ic_sint_new(a->integer + b->integer);
+Sint i_plus_a_Sint_Sint(Sint a, Sint b){
+    Sint i = 0;
+    i = ic_sint_new(a + b);
     return i;
 }
 /* builtin fn minus(a::Sint, b::Sint) -> Sint */
-Sint * i_minus_a_Sint_Sint(Sint *a, Sint *b){
-    Sint *i = 0;
-    i = ic_sint_new(a->integer - b->integer);
+Sint i_minus_a_Sint_Sint(Sint a, Sint b){
+    Sint i = 0;
+    i = ic_sint_new(a - b);
     return i;
 }
 /* builtin fn multiply(a::Sint, b::Sint) -> Sint */
-Sint * i_multiply_a_Sint_Sint(Sint *a, Sint *b){
-    Sint *i = 0;
-    i = ic_sint_new(a->integer * b->integer);
+Sint i_multiply_a_Sint_Sint(Sint a, Sint b){
+    Sint i = 0;
+    i = ic_sint_new(a * b);
     return i;
 }
 /* builtin fn divide(a::Sint, b::Sint) -> Sint */
-Sint * i_divide_a_Sint_Sint(Sint *a, Sint *b){
-    Sint *i = 0;
-    i = ic_sint_new(a->integer / b->integer);
+Sint i_divide_a_Sint_Sint(Sint a, Sint b){
+    Sint i = 0;
+    i = ic_sint_new(a / b);
     return i;
 }
 /* builtin fn modulo(a::Sint, b::Sint) -> Sint */
-Sint * i_modulo_a_Sint_Sint(Sint *a, Sint *b){
-    Sint *i = 0;
-    i = ic_sint_new(a->integer % b->integer);
+Sint i_modulo_a_Sint_Sint(Sint a, Sint b){
+    Sint i = 0;
+    i = ic_sint_new(a % b);
     return i;
 }
 /* builtin fn lessthan(a::Sint, b::Sint) -> Bool */
-Bool * i_lessthan_a_Sint_Sint(Sint *a, Sint *b){
-    Bool *r = 0;
-    r = ic_bool_new(a->integer < b->integer);
+Bool i_lessthan_a_Sint_Sint(Sint a, Sint b){
+    Bool r = 0;
+    r = ic_bool_new(a < b);
     return r;
 }
 /* builtin fn greaterthan(a::Sint, b::Sint) -> Bool */
-Bool * i_greaterthan_a_Sint_Sint(Sint *a, Sint *b){
-    Bool *r = 0;
-    r = ic_bool_new(a->integer > b->integer);
+Bool i_greaterthan_a_Sint_Sint(Sint a, Sint b){
+    Bool r = 0;
+    r = ic_bool_new(a > b);
     return r;
 }
 /* builtin fn lessthan_equal(a::Sint, b::Sint) -> Bool */
-Bool * i_lessthan_equal_a_Sint_Sint(Sint *a, Sint *b){
-    Bool *r = 0;
-    r = ic_bool_new(a->integer <= b->integer);
+Bool i_lessthan_equal_a_Sint_Sint(Sint a, Sint b){
+    Bool r = 0;
+    r = ic_bool_new(a <= b);
     return r;
 }
 /* builtin fn greaterthan_equal(a::Sint, b::Sint) -> Bool */
-Bool * i_greaterthan_equal_a_Sint_Sint(Sint *a, Sint *b){
-    Bool *r = 0;
-    r = ic_bool_new(a->integer >= b->integer);
+Bool i_greaterthan_equal_a_Sint_Sint(Sint a, Sint b){
+    Bool r = 0;
+    r = ic_bool_new(a >= b);
     return r;
 }
 
-/* builtin type Unsigned int */
-typedef struct Uint{
-    uint32_t integer;
-} Uint;
-
-Uint * ic_uint_new(uint32_t integer){
-    Uint *i = 0;
-    i = ic_alloc(sizeof(Uint));
-    i->integer = integer;
+Uint ic_uint_new(uint32_t integer){
+    Uint i = integer;
     return i;
 }
 /* builtin fn print(a::Sint) */
-void i_print_a_Uint(Uint *i){
-    printf("%"PRId32, i->integer);
+void i_print_a_Uint(Uint i){
+    printf("%"PRId32, i);
 }
 /* builtin fn println(a::Sint) */
-void i_println_a_Uint(Uint *i){
+void i_println_a_Uint(Uint i){
     i_print_a_Uint(i);
     i_println_a();
 }
 /* builtin fn equal(a::Sint, b::Sint) -> Bool */
-Bool * i_equal_a_Uint_Uint(Uint *a, Uint *b){
-    if( a->integer == b->integer ){
+Bool i_equal_a_Uint_Uint(Uint a, Uint b){
+    if( a == b ){
         /* return truthy boolean */
         return ic_bool_new(1);
     }
@@ -227,68 +203,68 @@ Bool * i_equal_a_Uint_Uint(Uint *a, Uint *b){
     return ic_bool_new(0);
 }
 /* builtin fn plus(a::Sint, b::Sint) -> Sint */
-Uint * i_plus_a_Uint_Uint(Uint *a, Uint *b){
-    Uint *i = 0;
-    i = ic_uint_new(a->integer + b->integer);
+Uint i_plus_a_Uint_Uint(Uint a, Uint b){
+    Uint i = 0;
+    i = ic_uint_new(a + b);
     return i;
 }
 /* builtin fn minus(a::Sint, b::Sint) -> Sint */
-Uint * i_minus_a_Uint_Uint(Uint *a, Uint *b){
-    Uint *i = 0;
-    i = ic_uint_new(a->integer - b->integer);
+Uint i_minus_a_Uint_Uint(Uint a, Uint b){
+    Uint i = 0;
+    i = ic_uint_new(a - b);
     return i;
 }
 /* builtin fn multiply(a::Sint, b::Sint) -> Sint */
-Uint * i_multiply_a_Uint_Uint(Uint *a, Uint *b){
-    Uint *i = 0;
-    i = ic_uint_new(a->integer * b->integer);
+Uint i_multiply_a_Uint_Uint(Uint a, Uint b){
+    Uint i = 0;
+    i = ic_uint_new(a * b);
     return i;
 }
 /* builtin fn divide(a::Sint, b::Sint) -> Sint */
-Uint * i_divide_a_Uint_Uint(Uint *a, Uint *b){
-    Uint *i = 0;
-    i = ic_uint_new(a->integer / b->integer);
+Uint i_divide_a_Uint_Uint(Uint a, Uint b){
+    Uint i = 0;
+    i = ic_uint_new(a / b);
     return i;
 }
 /* builtin fn modulo(a::Sint, b::Sint) -> Sint */
-Uint * i_modulo_a_Uint_Uint(Uint *a, Uint *b){
-    Uint *i = 0;
-    i = ic_uint_new(a->integer % b->integer);
+Uint i_modulo_a_Uint_Uint(Uint a, Uint b){
+    Uint i = 0;
+    i = ic_uint_new(a % b);
     return i;
 }
 /* builtin fn lessthan(a::Uint, b::Uint) -> Bool */
-Bool * i_lessthan_a_Uint_Uint(Uint *a, Uint *b){
-    Bool *r = 0;
-    r = ic_bool_new(a->integer < b->integer);
+Bool i_lessthan_a_Uint_Uint(Uint a, Uint b){
+    Bool r = 0;
+    r = ic_bool_new(a < b);
     return r;
 }
 /* builtin fn greaterthan(a::Uint, b::Uint) -> Bool */
-Bool * i_greaterthan_a_Uint_Uint(Uint *a, Uint *b){
-    Bool *r = 0;
-    r = ic_bool_new(a->integer > b->integer);
+Bool i_greaterthan_a_Uint_Uint(Uint a, Uint b){
+    Bool r = 0;
+    r = ic_bool_new(a > b);
     return r;
 }
 /* builtin fn lessthan_equal(a::Uint, b::Uint) -> Bool */
-Bool * i_lessthan_equal_a_Uint_Uint(Uint *a, Uint *b){
-    Bool *r = 0;
-    r = ic_bool_new(a->integer <= b->integer);
+Bool i_lessthan_equal_a_Uint_Uint(Uint a, Uint b){
+    Bool r = 0;
+    r = ic_bool_new(a <= b);
     return r;
 }
 /* builtin fn greaterthan_equal(a::Uint, b::Uint) -> Bool */
-Bool * i_greaterthan_equal_a_Uint_Uint(Uint *a, Uint *b){
-    Bool *r = 0;
-    r = ic_bool_new(a->integer >= b->integer);
+Bool i_greaterthan_equal_a_Uint_Uint(Uint a, Uint b){
+    Bool r = 0;
+    r = ic_bool_new(a >= b);
     return r;
 }
 
 /* builtin type String */
-typedef struct String{
+struct String{
     char *str;
     unsigned int len;
-} String;
+};
 
-String * ic_string_new(char *str, unsigned int len){
-    String *s = 0;
+String ic_string_new(char *str, unsigned int len){
+    String s = 0;
     s = ic_alloc(sizeof(String));
     /* FIXME sharing str */
     s->str = str;
@@ -296,16 +272,16 @@ String * ic_string_new(char *str, unsigned int len){
     return s;
 }
 /* builtin fn print(a::String) */
-void i_print_a_String(String *s){
+void i_print_a_String(String s){
     printf("%s", s->str);
 }
 /* builtin fn println(a::String) */
-void i_println_a_String(String *s){
+void i_println_a_String(String s){
     i_print_a_String(s);
     i_println_a();
 }
 /* builtin fn equal(a::String, b::String) -> Bool */
-Bool * i_equal_a_String_String(String *a, String *b){
+Bool i_equal_a_String_String(String a, String b){
     if( strcmp(a->str, b->str) ){
         /* return falsey boolean */
         return ic_bool_new(0);
@@ -314,8 +290,8 @@ Bool * i_equal_a_String_String(String *a, String *b){
     return ic_bool_new(1);
 }
 /* builtin fn concat(a::String, b::String) -> String */
-String * i_concat_a_String_String(String *a, String *b){
-    String *s = 0;
+String i_concat_a_String_String(String a, String b){
+    String s = 0;
     s = ic_alloc(sizeof(String));
     s->len = a->len + b->len;
     s->str = ic_alloc(s->len);

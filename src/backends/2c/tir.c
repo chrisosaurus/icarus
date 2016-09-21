@@ -164,8 +164,8 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_t
                 return 0;
             }
 
-            /* print "type *name = " */
-            fprintf(out, "%s *%s = ", let_str, let_name);
+            /* print "type name = " */
+            fprintf(out, "%s %s = ", let_str, let_name);
 
             /* literal */
             literal = let->u.lit.literal;
@@ -208,8 +208,8 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_t
                 return 0;
             }
 
-            /* print "type *name = " */
-            fprintf(out, "%s *%s = ", let_str, let_name);
+            /* print "type name = " */
+            fprintf(out, "%s %s = ", let_str, let_name);
 
             /* expression */
             expr = let_expr->expr;

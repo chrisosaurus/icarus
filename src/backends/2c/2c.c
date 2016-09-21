@@ -260,8 +260,6 @@ unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct i
     char *arg_name = 0;
     char *arg_type = 0;
 
-    unsigned int is_void = 0;
-
     if (!kludge) {
         puts("ic_b2c_generate_functions_header: kludge was null");
         return 0;
@@ -292,27 +290,19 @@ unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct i
     /* print comment */
     fprintf(f, "/* %s */\n", func_sig_full);
 
-    is_void = ic_decl_func_is_void(fdecl);
-
-    if (is_void) {
-        /* print comment */
-        fprintf(f, "Void %s(", func_sig_mangled);
-    } else {
-        if (!fdecl->ret_type) {
-            puts("ic_b2c_generate_function_headers: fdecl lacked return type");
-            return 0;
-        }
-
-        /* FIXME need to convert to c type */
-        func_return_type_str = ic_symbol_contents(fdecl->ret_type);
-        if (!func_return_type_str) {
-            puts("ic_b2c_generate_function_headers: call to ic_symbol_contents failed for return type");
-            return 0;
-        }
-
-        /* print type and then * for c-pointer */
-        fprintf(f, "%s * %s(", func_return_type_str, func_sig_mangled);
+    if (!fdecl->ret_type) {
+        puts("ic_b2c_generate_function_headers: fdecl lacked return type");
+        return 0;
     }
+
+    /* FIXME need to convert to c type */
+    func_return_type_str = ic_symbol_contents(fdecl->ret_type);
+    if (!func_return_type_str) {
+        puts("ic_b2c_generate_function_headers: call to ic_symbol_contents failed for return type");
+        return 0;
+    }
+
+    fprintf(f, "%s %s(", func_return_type_str, func_sig_mangled);
 
     /* output arguments */
     len = ic_pvector_length(&(fdecl->args));
@@ -331,7 +321,7 @@ unsigned int ic_b2c_generate_functions_header(struct ic_kludge *kludge, struct i
         arg_type = ic_symbol_contents(ic_type_ref_get_symbol(&(arg->type)));
 
         /* generate */
-        fprintf(f, "%s *%s", arg_type, arg_name);
+        fprintf(f, "%s %s", arg_type, arg_name);
     }
 
     /* closing brace*/
