@@ -3,7 +3,7 @@
 
 #include "../../analyse/data/kludge.h"
 #include "../../parse/data/stmt.h"
-#include "../../transform/data/tir.h"
+#include "../../transform/data/tbody.h"
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
@@ -12,6 +12,54 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_t
 unsigned int ic_b2c_compile_stmt_assign(struct ic_kludge *input_kludge, struct ic_transform_ir_assign *assign, FILE *out);
 unsigned int ic_b2c_compile_stmt_if(struct ic_kludge *input_kludge, struct ic_transform_ir_if *tif, FILE *out);
 unsigned int ic_b2c_compile_stmt_expr(struct ic_kludge *input_kludge, struct ic_transform_ir_expr *expr, FILE *out);
+
+/* compile a given body to specified file
+ *
+ * generate a c program
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_b2c_compile_body(struct ic_kludge *input_kludge, struct ic_transform_body *tbody, FILE *out) {
+    /* current tir_stmt in tir_body */
+    struct ic_transform_ir_stmt *tstmt = 0;
+    /* index of current tir_stmt in tir_body */
+    unsigned int i = 0;
+    /* length of tir_body */
+    unsigned int len = 0;
+
+    if (!input_kludge) {
+        puts("ic_b2c_compile_body: input_kludge was null");
+        return 0;
+    }
+
+    if (!tbody) {
+        puts("ic_b2c_compile_body: tbody was null");
+        return 0;
+    }
+
+    if (!out) {
+        puts("ic_b2c_compile_body: out was null");
+        return 0;
+    }
+
+    len = ic_transform_body_length(tbody);
+
+    for (i = 0; i < len; ++i) {
+        tstmt = ic_transform_body_get(tbody, i);
+        if (!tstmt) {
+            puts("ic_b2c_compile_body: call to ic_transform_body_get failed");
+            return 0;
+        }
+
+        if (!ic_b2c_compile_stmt(input_kludge, tstmt, out)) {
+            puts("ic_b2c_compile_body: call to ic_b2c_compile_stmt failed");
+            return 0;
+        }
+    }
+
+    return 1;
+}
 
 /* compile a given stmt to specified file
  *
@@ -260,6 +308,9 @@ unsigned int ic_b2c_compile_stmt_assign(struct ic_kludge *input_kludge, struct i
 }
 
 unsigned int ic_b2c_compile_stmt_if(struct ic_kludge *input_kludge, struct ic_transform_ir_if *tif, FILE *out) {
+    struct ic_symbol *cond = 0;
+    char *cond_ch = 0;
+
     if (!input_kludge) {
         puts("ic_b2c_compile_stmt_if: input_kludge was null");
         return 0;
@@ -275,8 +326,47 @@ unsigned int ic_b2c_compile_stmt_if(struct ic_kludge *input_kludge, struct ic_tr
         return 0;
     }
 
-    puts("ic_b2c_compile_stmt_if: unimplemented");
-    return 0;
+    /* transform guarantees us that the cond will always be a name of an
+     * in-scope boolean literal which we can just test
+     */
+
+    cond = tif->cond;
+    if (!cond) {
+        puts("ic_b2c_compile_stmt_if: cond on tif was null");
+        return 0;
+    }
+
+    cond_ch = ic_symbol_contents(cond);
+    if (!cond_ch) {
+        puts("ic_b2c_compile_stmt_if: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    fprintf(out, "if (%s) {\n", cond_ch);
+
+    if (!tif->then_tbody) {
+        puts("ic_b2c_compile_stmt_if: then_tbody on tif was null");
+        return 0;
+    }
+    /* if body */
+    if (!ic_b2c_compile_body(input_kludge, tif->then_tbody, out)) {
+        puts("ic_b2c_compile_stmt_if: call to ic_b2c_compile_body failed for then_tbody");
+        return 0;
+    }
+
+    /* optional else */
+    if (tif->else_tbody) {
+        fputs("} else {\n", out);
+        /* else body */
+        if (!ic_b2c_compile_body(input_kludge, tif->else_tbody, out)) {
+            puts("ic_b2c_compile_stmt_if: call to ic_b2c_compile_body failed for else_tbody");
+            return 0;
+        }
+    }
+
+    fputs("}\n", out);
+
+    return 1;
 }
 
 unsigned int ic_b2c_compile_stmt_expr(struct ic_kludge *input_kludge, struct ic_transform_ir_expr *expr, FILE *out) {

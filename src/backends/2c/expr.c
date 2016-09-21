@@ -173,7 +173,7 @@ unsigned int ic_b2c_compile_expr_constant(struct ic_kludge *input_kludge, struct
         case ic_expr_constant_type_integer:
             /* FIXME leaks memory from integer temporary */
 
-            fprintf(out, "ic_sint_new(%ld)\n", constant->u.integer);
+            fprintf(out, "ic_sint_new(%ld)", constant->u.integer);
 
             return 1;
 

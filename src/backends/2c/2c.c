@@ -374,13 +374,6 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f) {
 }
 
 unsigned int ic_b2c_generate_functions_body(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f) {
-    /* current tir_stmt in tir_body */
-    struct ic_transform_ir_stmt *tstmt = 0;
-    /* index of current tir_stmt in tir_body */
-    unsigned int i = 0;
-    /* length of tir_body */
-    unsigned int len = 0;
-
     if (!kludge) {
         puts("ic_b2c_generate_functions_body: kludge was null");
         return 0;
@@ -396,19 +389,9 @@ unsigned int ic_b2c_generate_functions_body(struct ic_kludge *kludge, struct ic_
         return 0;
     }
 
-    len = ic_transform_body_length(fdecl->tbody);
-
-    for (i = 0; i < len; ++i) {
-        tstmt = ic_transform_body_get(fdecl->tbody, i);
-        if (!tstmt) {
-            puts("ic_b2c_generate_functions_body: call to ic_transform_body_get failed");
-            return 0;
-        }
-
-        if (!ic_b2c_compile_stmt(kludge, tstmt, f)) {
-            puts("ic_b2c_generate_functions_body: call to ic_b2c_compile_stmt failed");
-            return 0;
-        }
+    if (!ic_b2c_compile_body(kludge, fdecl->tbody, f)) {
+        puts("ic_b2c_generate_functions_body: call to ic_b2c_compile_body failed");
+        return 0;
     }
 
     return 1;
