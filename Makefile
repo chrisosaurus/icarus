@@ -153,7 +153,7 @@ compile: clean icarus
 	./icarus example/simple.ic out.c
 
 format:
-	find src/ t/ -iname '*.[ch]' | xargs clang-format -style=file -i
+	find src/ t/ backends/ -iname '*.[ch]' | xargs clang-format -style=file -i
 
 man:
 	man -l icarus.1
