@@ -105,6 +105,9 @@ test_custom: $(OBJ) icarus
 	@echo running test_backend_2c_simple.pl
 	t/custom/test_backend_2c_simple.pl
 
+	@echo running test_backend_2c_end_to_end_output_only.pl
+	t/custom/test_backend_2c_end_to_end_output_only.pl
+
 	@echo -e "\n\ncompiling t/custom/test_backend_pancake_compile_simple.c to bin/t/custom/test_backend_pancake_compile_simple"
 	@mkdir -p `dirname bin/t/custom/test_backend_pancake_compile_simple`
 	@${CC} t/custom/test_backend_pancake_compile_simple.c -o bin/t/custom/test_backend_pancake_compile_simple ${CFLAGS} ${LDFLAGS} ${OBJ}
