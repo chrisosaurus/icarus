@@ -163,6 +163,12 @@ struct ic_transform_ir_let_literal *ic_transform_ir_let_get_literal(struct ic_tr
  */
 struct ic_transform_ir_let_expr *ic_transform_ir_let_get_expr(struct ic_transform_ir_let *let);
 
+/* FIXME TODO isn't very powerful yet, for example
+ *  dict["key"] = value
+ *  array[index] = value
+ *  f.a = "foo"
+ * are all currently not representable with this assign
+ */
 struct ic_transform_ir_assign {
     struct ic_symbol *left;
     struct ic_transform_ir_expr *right;

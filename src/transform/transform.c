@@ -608,6 +608,11 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_sc
  * returns 0 on failure
  */
 static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_assign *assign) {
+    struct ic_expr_identifier *id = 0;
+    struct ic_expr_func_call *fcall = 0;
+    struct ic_transform_ir_assign *tassign = 0;
+    struct ic_transform_ir_stmt *tstmt = 0;
+
     if (!kludge) {
         puts("ic_transform_stmt_assign: kludge was null");
         return 0;
@@ -633,8 +638,90 @@ static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic
         return 0;
     }
 
-    puts("ic_transform_stmt_assign: unimplemented");
-    return 0;
+    if (!assign->left) {
+        puts("ic_transform_stmt_assign: assign->left was null");
+        return 0;
+    }
+
+    if (!assign->right) {
+        puts("ic_transform_stmt_assign: assign->right was null");
+        return 0;
+    }
+
+    switch (assign->left->tag) {
+        case ic_expr_type_identifier:
+            id = &(assign->left->u.id);
+            break;
+
+        default:
+            puts("ic_transform_stmt_assign: assign->left was not an identifier");
+            return 0;
+            break;
+    }
+
+    switch (assign->right->tag) {
+        case ic_expr_type_identifier:
+            puts("ic_transform_stmt_assign: assign->right identifier unsupported");
+            return 0;
+            break;
+
+        case ic_expr_type_constant:
+            puts("ic_transform_stmt_assign: assign->right constant unsupported");
+            return 0;
+            break;
+
+        case ic_expr_type_func_call:
+            fcall = &(assign->right->u.fcall);
+            break;
+
+        default:
+            puts("ic_transform_stmt_assign: unsupported case");
+            return 0;
+            break;
+    }
+
+    tstmt = ic_transform_ir_stmt_new(ic_transform_ir_stmt_type_assign);
+    if (!tstmt) {
+        puts("ic_transform_stmt_assign: call to ic_transform_ir_stmt_new failed");
+        return 0;
+    }
+
+    tassign = &(tstmt->u.assign);
+
+    /* from
+     *  struct ic_stmt_assign {
+     *      struct ic_expr *left;
+     *      struct ic_expr *right;
+     *  };
+     */
+
+    /* to
+     *  struct ic_transform_ir_assign {
+     *      struct ic_symbol *left;
+     *      struct ic_transform_ir_expr *right;
+     *  };
+     */
+
+    tassign->left = &(id->identifier);
+
+    tassign->right = ic_transform_ir_expr_new();
+    if (!tassign->right) {
+        puts("ic_transform_stmt_assign: call to ic_transform_ir_expr_new failed");
+        return 0;
+    }
+
+    tassign->right->fcall = ic_transform_fcall(kludge, scope, tbody, fcall);
+    if (!tassign->right->fcall) {
+        puts("ic_transform_stmt_assign: call to ic_transform_fcall failed");
+        return 0;
+    }
+
+    if (!ic_transform_body_append(tbody, tstmt)) {
+        puts("ic_transform_stmt_assign: call to ic_transform_body_append failed");
+        return 0;
+    }
+
+    return 1;
 }
 
 /* perform translation of a single `if` stmt within a body

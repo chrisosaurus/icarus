@@ -475,7 +475,7 @@ unsigned int ic_transform_ir_assign_print(FILE *fd, struct ic_transform_ir_assig
     /* trailing \n */
     fputs("\n", fd);
 
-    return 0;
+    return 1;
 }
 
 /* allocate and initialise a new if
@@ -1082,6 +1082,13 @@ unsigned int ic_transform_ir_stmt_print(FILE *fd, struct ic_transform_ir_stmt *s
         case ic_transform_ir_stmt_type_if:
             if (!ic_transform_ir_if_print(fd, &(stmt->u.sif), indent)) {
                 puts("ic_transform_ir_stmt_print: call to ic_transform_ir_if_print failed");
+                return 0;
+            }
+            break;
+
+        case ic_transform_ir_stmt_type_assign:
+            if (!ic_transform_ir_assign_print(fd, &(stmt->u.assign), indent)) {
+                puts("ic_transform_ir_stmt_print: call to ic_transform_ir_assign_print failed");
                 return 0;
             }
             break;
