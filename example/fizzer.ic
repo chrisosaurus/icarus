@@ -1,0 +1,34 @@
+fn is_div(a::Sint, b::Sint) -> Bool
+    let rem = a % b
+    return rem == 0
+end
+
+fn fizzer(num::Sint)
+    let str = ""
+
+    if is_div(num, 3)
+        str = concat(str, "Fizz")
+    end
+
+    if is_div(num, 5)
+        str = concat(str, "Buzz")
+    end
+
+    if length(str) == 0
+        println(num)
+    else
+        println(str)
+    end
+end
+
+fn main()
+    # icarus currently lacks for loops and ranges
+    # so this is a poor-mans fizzbuzz-derived demo
+    fizzer(1)
+    fizzer(2)
+    fizzer(3)
+    fizzer(4)
+    fizzer(5)
+    fizzer(15)
+end
+
