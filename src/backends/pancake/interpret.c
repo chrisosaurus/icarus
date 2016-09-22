@@ -243,6 +243,155 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 break;
 
+            /* jmp_label label::string */
+            case icp_jmp_label:
+                str = ic_backend_pancake_bytecode_arg1_get_char(instruction);
+                if (!str) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_bytecode_arg1_get_char failed");
+                    return 0;
+                }
+
+                /* offset to jump to
+                 * NB: this cannot be 0 as 0 is always our entry point and not a valid function
+                 * address
+                 */
+                new_offset = ic_backend_pancake_instructions_get_label(instructions, str);
+
+                if (!new_offset) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_instructions_get_label failed");
+                    printf("Couldn't find address of function '%s' called at offset '%u'\n", str, cur_offset);
+                    return 0;
+                }
+
+                /* jump to offset */
+                if (!ic_backend_pancake_instructions_set_offset(instructions, new_offset)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_instructions_set_offset failed");
+                    return 0;
+                }
+
+                /* do not advance this round */
+                continue;
+                break;
+
+            /* jif_label label::string */
+            case icp_jif_label:
+                /* inspect top of stack
+                 * if true then jmp
+                 */
+                /* get value */
+                value = ic_backend_pancake_value_stack_peek(value_stack);
+
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_peek failed");
+                    return 0;
+                }
+
+                if (value->tag != ic_backend_pancake_value_type_boolean) {
+                    puts("ic_backend_pancake_interpret: value->tag was not of type boolean");
+                    return 0;
+                }
+
+                boolean = value->u.boolean;
+
+                /* consume value */
+                if (!ic_backend_pancake_value_stack_pop(value_stack)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_pop failed");
+                    return 0;
+                }
+
+                /* if false, then break and do nothing */
+                if (!boolean) {
+                    break;
+                }
+
+                str = ic_backend_pancake_bytecode_arg1_get_char(instruction);
+                if (!str) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_bytecode_arg1_get_char failed");
+                    return 0;
+                }
+
+                /* offset to jump to
+                 * NB: this cannot be 0 as 0 is always our entry point and not a valid function
+                 * address
+                 */
+                new_offset = ic_backend_pancake_instructions_get_label(instructions, str);
+
+                if (!new_offset) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_instructions_get_label failed");
+                    printf("Couldn't find address of function '%s' called at offset '%u'\n", str, cur_offset);
+                    return 0;
+                }
+
+                /* jump to offset */
+                if (!ic_backend_pancake_instructions_set_offset(instructions, new_offset)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_instructions_set_offset failed");
+                    return 0;
+                }
+
+                /* do not advance this round */
+                continue;
+                break;
+
+            /* jnif_label label::string */
+            case icp_jnif_label:
+                /* FIXME TODO inspect top of stack
+                 * if false then jmp
+                 */
+
+                /* get value */
+                value = ic_backend_pancake_value_stack_peek(value_stack);
+
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_peek failed");
+                    return 0;
+                }
+
+                if (value->tag != ic_backend_pancake_value_type_boolean) {
+                    puts("ic_backend_pancake_interpret: value->tag was not of type boolean");
+                    return 0;
+                }
+
+                boolean = value->u.boolean;
+
+                /* consume value */
+                if (!ic_backend_pancake_value_stack_pop(value_stack)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_pop failed");
+                    return 0;
+                }
+
+                /* if true, then break and do nothing */
+                if (boolean) {
+                    break;
+                }
+
+                str = ic_backend_pancake_bytecode_arg1_get_char(instruction);
+                if (!str) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_bytecode_arg1_get_char failed");
+                    return 0;
+                }
+
+                /* offset to jump to
+                 * NB: this cannot be 0 as 0 is always our entry point and not a valid function
+                 * address
+                 */
+                new_offset = ic_backend_pancake_instructions_get_label(instructions, str);
+
+                if (!new_offset) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_instructions_get_label failed");
+                    printf("Couldn't find address of function '%s' called at offset '%u'\n", str, cur_offset);
+                    return 0;
+                }
+
+                /* jump to offset */
+                if (!ic_backend_pancake_instructions_set_offset(instructions, new_offset)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_instructions_set_offset failed");
+                    return 0;
+                }
+
+                /* do not advance this round */
+                continue;
+                break;
+
             /* pop n::uint */
             case icp_pop:
                 uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);

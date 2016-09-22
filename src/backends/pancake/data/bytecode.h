@@ -44,6 +44,12 @@ enum ic_backend_pancake_bytecode_type {
     icp_jif,
     /* jnif addr::uint */
     icp_jnif,
+    /* jmp_label label::string */
+    icp_jmp_label,
+    /* jif_label label::string */
+    icp_jif_label,
+    /* jnif_label label::string */
+    icp_jnif_label,
     /* panic desc::str */
     icp_panic,
     /* exit_success */

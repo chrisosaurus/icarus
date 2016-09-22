@@ -59,6 +59,35 @@ my $cases = [
       True
       ',
   },
+  {
+    input => '
+      fn main()
+        if 4 < 5
+          println("4 < 5")
+        else
+          println("4 >= 5")
+        end
+      end
+      ',
+    expected => '
+      4 < 5
+      ',
+  },
+  {
+    input => '
+      fn main()
+        if 4 < 5
+          println("4 < 5")
+        end
+        if 4 >= 5
+          println("4 >= 5")
+        end
+      end
+      ',
+    expected => '
+      4 < 5
+      ',
+  },
 ];
 
 # whitespace sensitivity sucks

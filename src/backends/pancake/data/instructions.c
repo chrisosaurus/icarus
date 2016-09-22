@@ -458,6 +458,12 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
             instruction = ic_backend_pancake_instructions_add(instructions, icp_store);
         } else if (!strcmp("load", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_load);
+        } else if (!strcmp("jmp_label", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_jmp_label);
+        } else if (!strcmp("jif_label", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_jif_label);
+        } else if (!strcmp("jnif_label", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_jnif_label);
         } else {
             printf("ic_backend_pancake_instructions_load: unsupported instruction '%s'\n", op);
             return 0;
@@ -521,12 +527,15 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                 }
                 break;
 
+            case icp_jmp_label:
+            case icp_jif_label:
+            case icp_jnif_label:
             case icp_store:
             case icp_load:
                 /* consume str */
                 ret = fscanf(file, "%s", str_arg1);
                 if (ret == EOF || ret == 0) {
-                    puts("ic_backend_pancake_instructions_load: read failed for store/load");
+                    puts("ic_backend_pancake_instructions_load: read failed for store/load/j*_label");
                     return 0;
                 }
 
