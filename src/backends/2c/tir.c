@@ -283,7 +283,9 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_t
 }
 
 unsigned int ic_b2c_compile_stmt_assign(struct ic_kludge *input_kludge, struct ic_transform_ir_assign *assign, FILE *out) {
-    unsigned int indent_level = 1;
+    char *left_str = 0;
+    struct ic_symbol *left_sym = 0;
+    struct ic_transform_ir_expr *expr = 0;
 
     if (!input_kludge) {
         puts("ic_b2c_compile_stmt_assign: input_kludge was null");
@@ -300,11 +302,33 @@ unsigned int ic_b2c_compile_stmt_assign(struct ic_kludge *input_kludge, struct i
         return 0;
     }
 
-    puts("ic_b2c_compile_stmt_assign: called on");
-    ic_transform_ir_assign_print(stdout, assign, &indent_level);
+    left_sym = assign->left;
+    if (!left_sym) {
+        puts("ic_b2c_compile_stmt_assign: call to ic_type_name failed");
+        return 0;
+    }
 
-    puts("ic_b2c_compile_stmt_assign: unimplemented");
-    return 0;
+    left_str = ic_symbol_contents(left_sym);
+    if (!left_str) {
+        puts("ic_b2c_compile_stmt_assign: call to ic_symbol_contents failed for let type");
+        return 0;
+    }
+
+    /* print "name = " */
+    fprintf(out, "%s = ", left_str);
+
+    /* expression */
+    expr = assign->right;
+
+    if (!ic_b2c_compile_expr(input_kludge, expr, out)) {
+        puts("ic_b2c_compile_stmt_assign: call to ic_b2c_compile_expr failed");
+        return 0;
+    }
+
+    /* closing semicolon and trailing \n */
+    fputs(";\n", out);
+
+    return 1;
 }
 
 unsigned int ic_b2c_compile_stmt_if(struct ic_kludge *input_kludge, struct ic_transform_ir_if *tif, FILE *out) {
