@@ -101,6 +101,15 @@ Bool i_or_a_Bool_Bool(Bool a, Bool b) {
     /* return falsey boolean */
     return ic_bool_new(0);
 }
+/* builtin fn to_str(a::Bool) -> String */
+String i_to_str_a_Bool(Bool a) {
+    /* FIXME TODO should re-use constants */
+    if (a) {
+        return ic_string_new("True", 5);
+    } else {
+        return ic_string_new("False", 6);
+    }
+}
 
 Sint ic_sint_new(int32_t integer) {
     Sint i = integer;
@@ -297,4 +306,33 @@ String i_concat_a_String_String(String a, String b) {
     strncpy(s->str, a->str, a->len);
     strncpy(&(s->str[a->len]), b->str, b->len);
     return s;
+}
+/* builtin fn length(a::String) -> Uint */
+Uint i_length_a_String(String a) {
+    return a->len;
+}
+
+/* builtin fn equal(a::Sint, b::Uint) -> Bool */
+Bool i_equal_a_Sint_Uint(Sint a, Uint b) {
+    Sint tmp = 0;
+    if (b < 0) {
+        return 0;
+    }
+    tmp = b;
+    if (a == b) {
+        return 1;
+    }
+    return 0;
+}
+/* builtin fn equal(a::Uint, b::Sint) -> Bool */
+Bool i_equal_a_Uint_Sint(Uint a, Sint b) {
+    Sint tmp = 0;
+    if (a < 0) {
+        return 0;
+    }
+    tmp = a;
+    if (a == b) {
+        return 1;
+    }
+    return 0;
 }

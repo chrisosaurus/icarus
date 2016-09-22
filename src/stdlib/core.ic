@@ -9,6 +9,7 @@ builtin fn equal(a::Bool, b::Bool) -> Bool
 builtin fn not(a::Bool) -> Bool
 builtin fn and(a::Bool, b::Bool) -> Bool
 builtin fn or(a::Bool, b::Bool) -> Bool
+builtin fn to_str(a::Bool) -> String
 
 builtin type Sint
 builtin fn print(a::Sint)
@@ -38,6 +39,11 @@ builtin fn greaterthan_equal(a::Uint, b::Uint) -> Bool
 builtin fn greaterthan(a::Uint, b::Uint) -> Bool
 builtin fn lessthan(a::Uint, b::Uint) -> Bool
 
+# FIXME TODO these may be less needed once we have
+# fixed the outstanding 'bug' around literal behavior
+builtin fn equal(a::Uint, b::Sint) -> Bool
+builtin fn equal(a::Sint, b::Uint) -> Bool
+
 builtin type String
 builtin fn print(a::String)
 builtin fn println(a::String)
@@ -48,6 +54,7 @@ builtin fn concat(a::String, b::String) -> String
 # here we use `concat` as the primitive and `plus` as the alias
 # as `concat` is more descriptive
 # fn plus(a::String, b::String) -> String return concat(a, b) end
+builtin fn length(a::String) -> Uint
 
 builtin op + plus
 builtin op - minus
