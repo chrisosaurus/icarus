@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "builtins.h"
@@ -57,8 +58,9 @@ unsigned int i_to_str_bool(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int i_length_string(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int i_equal_sint_uint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int i_equal_uint_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int i_concat_string_string(struct ic_backend_pancake_value_stack *value_stack);
 
-#define ic_backend_pancake_builtins_table_len 20
+#define ic_backend_pancake_builtins_table_len 21
 
 /* table mapping user-land names to internal names */
 struct ic_backend_pancake_builtins_table_type {
@@ -85,6 +87,7 @@ struct ic_backend_pancake_builtins_table_type {
     {"length(String)", i_length_string},
     {"equal(Uint,Sint)", i_equal_uint_sint},
     {"equal(Sint,Uint)", i_equal_sint_uint},
+    {"concat(String,String)", i_concat_string_string},
 };
 
 /* get builtin function for user-land name
@@ -486,5 +489,32 @@ unsigned int i_equal_uint_sint(struct ic_backend_pancake_value_stack *value_stac
     }
 
     RESULT(answer, boolean);
+    return 1;
+}
+
+unsigned int i_concat_string_string(struct ic_backend_pancake_value_stack *value_stack) {
+    char *str1 = 0;
+    char *str2 = 0;
+    char *answer = 0;
+    size_t len = 0;
+    INIT();
+
+    READ(str2, string);
+    READ(str1, string);
+
+    len = strlen(str1);
+    len += strlen(str2);
+    len += 1; /* \0 */
+
+    answer = calloc(len, sizeof(char));
+    if (!answer) {
+        puts("concat(String,String): call to calloc failed");
+        return 0;
+    }
+
+    strcpy(answer, str1);
+    strcat(answer, str2);
+
+    RESULT(answer, string);
     return 1;
 }
