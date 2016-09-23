@@ -88,6 +88,20 @@ my $cases = [
       4 < 5
       ',
   },
+  {
+    input => '
+      fn get_str(name::String) -> String
+          return concat(concat("Hello there ", name), ", very nice to meet you")
+      end
+
+      fn main() -> Void
+          println(get_str("Jennifer"))
+      end
+      ',
+    expected => '
+      Hello there Jennifer, very nice to meet you
+      ',
+  },
 ];
 
 # whitespace sensitivity sucks

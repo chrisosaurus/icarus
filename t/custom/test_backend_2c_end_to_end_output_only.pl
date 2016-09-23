@@ -90,6 +90,20 @@ my $cases = [
   },
   {
     input => '
+      fn get_str(name::String) -> String
+          return concat(concat("Hello there ", name), ", very nice to meet you")
+      end
+
+      fn main() -> Void
+          println(get_str("Jennifer"))
+      end
+      ',
+    expected => '
+      Hello there Jennifer, very nice to meet you
+      ',
+  },
+  {
+    input => '
       fn is_div(a::Sint, b::Sint) -> Bool
           let rem = a % b
           return rem == 0

@@ -202,34 +202,38 @@ we can see the output:
 Work so far - pancake backend
 ========================
 
-if we have the following data in `here.ic`
+if we have the following data in `example/jennifer.ic`
 
-    fn foo(s::String)
-      println(s)
+    fn get_str(name::String) -> String
+        return concat(concat("Hello there ", name), ", very nice to meet you")
     end
 
-    fn main()
-      foo("Hello world")
+    fn main() -> Void
+        println(get_str("Jennifer"))
     end
 
 we can run this through the `pancake` backend which will
 first compile it to bytecode and then interpret it
 
-    ./icarus here.ic pancake
+    ./icarus example/jennifer.ic pancake
 
 which shows us
 
     ...
-
     transform output (PENDING):
     ----------------
     ----------------
-    fn foo(s::String) -> Void
-        println(s)
+    fn get_str(name::String) -> String
+        let _l0::String = "Hello there "
+        let _t1::String = concat(_l0, name)
+        let _l1::String = ", very nice to meet you"
+        let _t0::String = concat(_t1, _l1)
+        return _t0
     end
     fn main() -> Void
-        let _l0::String = "Hello world"
-        foo(_l0)
+        let _l0::String = "Jennifer"
+        let _t0::String = get_str(_l0)
+        println(_t0)
     end
 
     backend pancake selected (PENDING):
@@ -238,21 +242,35 @@ which shows us
     label entry
     call main() 0
     exit
-    label foo(String)
+    label get_str(String)
+    pushstr "Hello there "
     copyarg 0
-    call_builtin println(String) 1
-    pop 1
+    call_builtin concat(String,String) 2
+    store _t1
+    load _t1
+    pushstr ", very nice to meet you"
+    call_builtin concat(String,String) 2
+    store _t0
+    load _t0
+    save
+    clean_stack
+    restore
+    return_value
+    clean_stack
     return_void
     label main()
-    pushstr Hello world
-    call foo(String) 1
+    pushstr "Jennifer"
+    call get_str(String) 1
+    store _t0
+    load _t0
+    call_builtin println(String) 1
+    clean_stack
     return_void
     ==========================
 
     Pancake interpreter output
     ==========================
-    Hello world
-
+    Hello there Jennifer, very nice to meet you
 
 Current holes
 =============
