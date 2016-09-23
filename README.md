@@ -56,6 +56,8 @@ the below example will not yet run in Icarus
         fizzbuzz(1, 100)
     end
 
+A simpler version is shown below which will run in Icarus
+
 
 Progress
 ========
@@ -79,78 +81,123 @@ Work so far - 2c backend
 
 The life of a simple icarus program
 
-if we input the following file (1.ic):
+if we input the following file (`example/fizzer.ic)):
 
-    fn get_str(name::String) -> String
-        return concat(concat("Hello there ", name), ", very nice to meet you")
+    fn is_div(a::Sint, b::Sint) -> Bool
+        let rem = a % b
+        return rem == 0
+    end
+
+    fn fizzer(num::Sint)
+        let str = ""
+
+        if is_div(num, 3)
+            str = concat(str, "Fizz")
+        end
+
+        if is_div(num, 5)
+            str = concat(str, "Buzz")
+        end
+
+        if length(str) == 0
+            println(num)
+        else
+            println(str)
+        end
+    end
+
+    fn fizzbuzz(from::Sint, to::Sint)
+      if from < to
+        fizzer(from)
+        from = plus(from, 1)
+        fizzbuzz(from, to)
+      end
     end
 
     fn main()
-      println(get_str("Jennifer"))
+        # icarus currently lacks for loops and ranges
+        # so this is a poor-mans fizzbuzz-derived demo
+        fizzbuzz(1, 20)
     end
 
 we can then compile this via:
 
-    ./icarus 1.ic 2c out.c
+    ./icarus example/fizzer.ic 2c fizzer.c
 
 this will show us the parser outputting it's understanding of our code
 
-    # get_str(String)
-    fn get_str(name::String) -> String
-        return concat(concat("Hello there ", name), ", very nice to meet you")
-    end
-
-    # main()
-    fn main() -> Void
-        println(get_str("Jennifer"))
-    end
-
 and show us the transformed IR version of this
 
-    fn get_str(name::String) -> String
-        let _l0::String = "Hello there "
-        let _t1::String = concat(_l0, name)
-        let _l1::String = ", very nice to meet you"
-        let _t0::String = concat(_t1, _l1)
+    fn is_div(a::Sint, b::Sint) -> Bool
+        let rem::Sint = modulo(a, b)
+        let _l0::Sint = 0
+        let _t0::Bool = equal(rem, _l0)
         return _t0
     end
+    fn fizzer(num::Sint) -> Void
+        let str::String = ""
+        let _l0::Sint = 3
+        let _t0::Bool = is_div(num, _l0)
+        if _t0
+            let _l1::String = "Fizz"
+            str = concat(str, _l1)
+        end
+        let _l2::Sint = 5
+        let _t1::Bool = is_div(num, _l2)
+        if _t1
+            let _l3::String = "Buzz"
+            str = concat(str, _l3)
+        end
+        let _t3::Uint = length(str)
+        let _l4::Sint = 0
+        let _t2::Bool = equal(_t3, _l4)
+        if _t2
+            println(num)
+        else
+            println(str)
+        end
+    end
+    fn fizzbuzz(from::Sint, to::Sint) -> Void
+        let _t0::Bool = lessthan(from, to)
+        if _t0
+            fizzer(from)
+            let _l0::Sint = 1
+            from = plus(from, _l0)
+            fizzbuzz(from, to)
+        end
+    end
     fn main() -> Void
-        let _l0::String = "Jennifer"
-        let _t0::String = get_str(_l0)
-        println(_t0)
+        let _l0::Sint = 1
+        let _l1::Sint = 20
+        fizzbuzz(_l0, _l1)
     end
 
-which will output (to out.c):
+which will produce a c program `fizzer.c`if we compile and run this:
 
-    #include "backends/2c/builtins.c"
-    /* get_str(String) -> String */
-    String i_get_str_a_String(String name);
-    /* main() -> Void */
-    Void i_main_a();
-    /* get_str(String) -> String */
-    String i_get_str_a_String(String name){
-    String _l0 = ic_string_new("Hello there ", 12);
-    String _t1 = i_concat_a_String_String(_l0, name);
-    String _l1 = ic_string_new(", very nice to meet you", 23);
-    String _t0 = i_concat_a_String_String(_t1, _l1);
-    return _t0;
-    }
-    /* main() -> Void */
-    Void i_main_a(){
-    String _l0 = ic_string_new("Jennifer", 8);
-    String _t0 = i_get_str_a_String(_l0);
-    i_println_a_String(_t0);
-    }
-    #include "backends/2c/entry.c"
+    gcc fizzer.c -o fizzer
+    ./fizzer
 
-if we compile and run this, we can see:
+we can see the output:
 
-    gcc out.c
-    ./a.out
-
-the output:
-
-    Hello there Jennifer, very nice to meet you
+    1
+    2
+    Fizz
+    4
+    Buzz
+    Fizz
+    7
+    8
+    Fizz
+    Buzz
+    11
+    Fizz
+    13
+    14
+    FizzBuzz
+    16
+    17
+    Fizz
+    19
 
 Work so far - pancake backend
 ========================
