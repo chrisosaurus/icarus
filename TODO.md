@@ -54,6 +54,7 @@ testing debt:
 technical debt:
 ---------------
 
+* transform_ir_expr should handle: fcall, identifier, literal
 * compile if should prefer relative jmps rather than j*_labels
 * operator_destroy doesn't cleanup fcall
 * should only return a pointer, all other values should be return via pointer in args, so that return values can always be tested for failure

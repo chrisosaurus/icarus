@@ -163,11 +163,15 @@ struct ic_transform_ir_let_literal *ic_transform_ir_let_get_literal(struct ic_tr
  */
 struct ic_transform_ir_let_expr *ic_transform_ir_let_get_expr(struct ic_transform_ir_let *let);
 
-/* FIXME TODO isn't very powerful yet, for example
- *  dict["key"] = value
- *  array[index] = value
- *  f.a = "foo"
- * are all currently not representable with this assign
+/* the left hand-size here is fine
+ * as we only need to support
+ *   foo = expr
+ *
+ * we want to transform things of the form
+ *  a[b] = c
+ *  a.b = c
+ * into
+ *  set(a, b, c)
  */
 struct ic_transform_ir_assign {
     struct ic_symbol *left;
@@ -255,6 +259,15 @@ unsigned int ic_transform_ir_if_destroy(struct ic_transform_ir_if *tif, unsigned
  */
 unsigned int ic_transform_ir_if_print(FILE *fd, struct ic_transform_ir_if *tif, unsigned int *indent);
 
+/* FIXME TODO
+ * ir_expr isn't powerful enough
+ * ideally this should be either:
+ *  an fcall
+ *  an identifier name
+ *  a literal
+ *
+ * and then let_ should be changed to match
+ */
 struct ic_transform_ir_expr {
     struct ic_transform_ir_fcall *fcall;
 };
