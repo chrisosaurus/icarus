@@ -147,10 +147,6 @@ $(TESTO) : $(TESTOUT)/% : %.c
 test_success:
 	@echo -e "\n\ntesting success\n"
 
-readme:
-	@echo -e "\n\ngenerating README.md"
-	perl scripts/update_readme.pl
-
 compile: clean icarus
 	rm -f out.c
 	./icarus example/simple.ic out.c
@@ -164,5 +160,5 @@ man:
 analyze: clean
 	scan-build make
 
-.PHONY: all clean cleanobj test test_custom example readme compile format man analyze
+.PHONY: all clean cleanobj test test_custom example compile format man analyze
 
