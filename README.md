@@ -124,9 +124,7 @@ we can then compile this via:
 
     ./icarus example/fizzer.ic 2c fizzer.c
 
-this will show us the parser outputting it's understanding of our code
-
-and show us the transformed IR version of this
+which will show us the transformed IR version of this:
 
     fn is_div(a::Sint, b::Sint) -> Bool
         let rem::Sint = modulo(a, b)
@@ -172,7 +170,9 @@ and show us the transformed IR version of this
         fizzbuzz(_l0, _l1)
     end
 
-which will produce a c program `fizzer.c`if we compile and run this:
+and it will produce a c program `fizzer.c`.
+
+if we compile and run this:
 
     gcc fizzer.c -o fizzer
     ./fizzer
