@@ -265,7 +265,7 @@ Current holes
 Current focus
 =============
 
-The two backends are now on-par with each other,
+The two backends are roughly now on-par with each other,
 so the focus has now shifted to adding some more of the basic language
 features.
 
