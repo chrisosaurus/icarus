@@ -113,15 +113,18 @@ my $cases = [
           end
       end
 
+      fn fizzbuzz(from::Sint, to::Sint)
+        if from < to
+          fizzer(from)
+          from = plus(from, 1)
+          fizzbuzz(from, to)
+        end
+      end
+
       fn main()
           # icarus currently lacks for loops and ranges
           # so this is a poor-mans fizzbuzz-derived demo
-          fizzer(1)
-          fizzer(2)
-          fizzer(3)
-          fizzer(4)
-          fizzer(5)
-          fizzer(15)
+          fizzbuzz(1, 20)
       end
       ',
     expected => '
@@ -130,7 +133,20 @@ my $cases = [
       Fizz
       4
       Buzz
+      Fizz
+      7
+      8
+      Fizz
+      Buzz
+      11
+      Fizz
+      13
+      14
       FizzBuzz
+      16
+      17
+      Fizz
+      19
       '
   },
 ];
