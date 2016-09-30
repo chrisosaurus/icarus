@@ -1,6 +1,8 @@
 #ifndef ICARUS_FIELD_H
 #define ICARUS_FIELD_H
 
+#include <stdbool.h>
+
 #include "../../data/pvector.h"
 #include "../../data/symbol.h"
 #include "type_ref.h"
@@ -22,6 +24,7 @@ struct ic_field {
     struct ic_symbol name;
     struct ic_type_ref type;
     unsigned int permissions;
+    bool assigned_to;
 };
 
 /* allocate and return a new field

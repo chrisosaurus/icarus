@@ -202,54 +202,28 @@ we can see the output:
 Work so far - pancake backend
 ========================
 
-if we have the following data in `example/jennifer.ic`
-
-    fn get_str(name::String) -> String
-        return concat(concat("Hello there ", name), ", very nice to meet you")
-    end
-
-    fn main() -> Void
-        println(get_str("Jennifer"))
-    end
-
-we can run this through the `pancake` backend which will
+we can run this same example through the `pancake` backend which will
 first compile it to bytecode and then interpret it
 
-    ./icarus example/jennifer.ic pancake
+    ./icarus example/fizzer.ic pancake
 
 which shows us
 
     ...
-    transform output (PENDING):
-    ----------------
-    ----------------
-    fn get_str(name::String) -> String
-        let _l0::String = "Hello there "
-        let _t1::String = concat(_l0, name)
-        let _l1::String = ", very nice to meet you"
-        let _t0::String = concat(_t1, _l1)
-        return _t0
-    end
-    fn main() -> Void
-        let _l0::String = "Jennifer"
-        let _t0::String = get_str(_l0)
-        println(_t0)
-    end
-
     backend pancake selected (PENDING):
     Pancake bytecode:
     ==========================
     label entry
     call main() 0
     exit
-    label get_str(String)
-    pushstr "Hello there "
+    label is_div(Sint,Sint)
+    copyarg 1
     copyarg 0
-    call_builtin concat(String,String) 2
-    store _t1
-    load _t1
-    pushstr ", very nice to meet you"
-    call_builtin concat(String,String) 2
+    call_builtin modulo(Sint,Sint) 2
+    store rem
+    load rem
+    pushint 0
+    call_builtin equal(Sint,Sint) 2
     store _t0
     load _t0
     save
@@ -258,19 +232,99 @@ which shows us
     return_value
     clean_stack
     return_void
-    label main()
-    pushstr "Jennifer"
-    call get_str(String) 1
+    label fizzer(Sint)
+    pushstr ""
+    store str
+    copyarg 0
+    pushint 3
+    call is_div(Sint,Sint) 2
     store _t0
     load _t0
+    jnif_label fizzer(Sint)0
+    load str
+    pushstr "Fizz"
+    call_builtin concat(String,String) 2
+    store str
+    label fizzer(Sint)0
+    copyarg 0
+    pushint 5
+    call is_div(Sint,Sint) 2
+    store _t1
+    load _t1
+    jnif_label fizzer(Sint)1
+    load str
+    pushstr "Buzz"
+    call_builtin concat(String,String) 2
+    store str
+    label fizzer(Sint)1
+    load str
+    call_builtin length(String) 1
+    store _t3
+    load _t3
+    pushint 0
+    call_builtin equal(Uint,Sint) 2
+    store _t2
+    load _t2
+    jnif_label fizzer(Sint)2
+    copyarg 0
+    call_builtin println(Sint) 1
+    jmp_label fizzer(Sint)3
+    label fizzer(Sint)2
+    load str
     call_builtin println(String) 1
+    label fizzer(Sint)3
+    clean_stack
+    return_void
+    label fizzbuzz(Sint,Sint)
+    copyarg 1
+    store from
+    load from
+    copyarg 0
+    call_builtin lessthan(Sint,Sint) 2
+    store _t0
+    load _t0
+    jnif_label fizzbuzz(Sint,Sint)0
+    load from
+    call fizzer(Sint) 1
+    load from
+    pushint 1
+    call_builtin plus(Sint,Sint) 2
+    store from
+    load from
+    copyarg 0
+    call fizzbuzz(Sint,Sint) 2
+    label fizzbuzz(Sint,Sint)0
+    clean_stack
+    return_void
+    label main()
+    pushint 1
+    pushint 20
+    call fizzbuzz(Sint,Sint) 2
     clean_stack
     return_void
     ==========================
 
     Pancake interpreter output
     ==========================
-    Hello there Jennifer, very nice to meet you
+    1
+    2
+    Fizz
+    4
+    Buzz
+    Fizz
+    7
+    8
+    Fizz
+    Buzz
+    11
+    Fizz
+    13
+    14
+    FizzBuzz
+    16
+    17
+    Fizz
+    19
 
 Current holes
 =============

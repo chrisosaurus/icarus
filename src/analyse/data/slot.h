@@ -4,9 +4,27 @@
 #include <stdbool.h>
 
 #include "../../data/symbol.h"
+#include "../../parse/data/stmt.h"
 #include "type.h"
 
-/* a slot represents an argument or a variable at the semantic analyse phase
+enum ic_slot_type {
+    /* this slot maps to a let */
+    ic_slot_type_let,
+    /* this slot maps to an arg */
+    ic_slot_type_arg,
+    /* this slot maps to the field on a struct - unsupported*/
+    ic_slot_type_field,
+    /* this slot maps to the value within a map/array - unsupported*/
+    ic_slot_type_value
+};
+
+/* a slot represents the mapping from a name to one of:
+ *  - an argument
+ *  - a local variable (via let assignment)
+ *  - a field on a struct (unsupported)
+ *  - the value within an array/map (unsupported)
+ * during the semantic analyse phase
+ *
  * examples:
  *
  *      fn foo(a::Int) ... end
@@ -49,6 +67,14 @@ struct ic_slot {
      * was this slot declared with a &
      */
     bool reference;
+
+    /* type of this slot */
+    enum ic_slot_type tag;
+    /* original item that causes this slot to be created */
+    union {
+        struct ic_field *arg;
+        struct ic_stmt_let *let;
+    } source;
 };
 
 /* allocate and init a new slot
@@ -56,14 +82,14 @@ struct ic_slot {
  * returns 1 on success
  * returns 0 on failure
  */
-struct ic_slot *ic_slot_new(struct ic_symbol *name, struct ic_type *type, unsigned int permissions, bool reference);
+struct ic_slot *ic_slot_new(struct ic_symbol *name, struct ic_type *type, unsigned int permissions, bool reference, enum ic_slot_type slot_type, void *source);
 
 /* init an existing slot
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct ic_type *type, unsigned int permissions, bool reference);
+unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct ic_type *type, unsigned int permissions, bool reference, enum ic_slot_type slot_type, void *source);
 
 /* destroy slot
  * will only free slot if `free_slot` is true
@@ -74,5 +100,18 @@ unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct i
  * returns 0 on failure
  */
 unsigned int ic_slot_destroy(struct ic_slot *slot, unsigned int free_slot);
+
+/* result of attempted assignment to this slot */
+enum ic_slot_assign_result {
+    ic_slot_assign_result_internal_error = 0,
+    ic_slot_assign_result_success = 1,
+    ic_slot_assign_result_permission_denied = 2
+};
+
+/* attempt to mark this slot as being the target of assignment
+ *
+ * returns ic_slot_assign result to indicate result
+ */
+enum ic_slot_assign_result ic_slot_assign(struct ic_slot *slot);
 
 #endif

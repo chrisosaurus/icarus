@@ -1,6 +1,8 @@
 #ifndef ICARUS_TRANSFORM_IR_H
 #define ICARUS_TRANSFOMR_IR_H
 
+#include <stdbool.h>
+
 #include "../../analyse/data/type.h"
 #include "../../data/pvector.h"
 #include "../../data/symbol.h"
@@ -111,6 +113,12 @@ struct ic_transform_ir_let {
         struct ic_transform_ir_let_literal lit;
         struct ic_transform_ir_let_expr expr;
     } u;
+
+    /* if this tlet ever assigned to
+     *
+     * set during transform phase from ic_stmt_let->assigned_to
+     */
+    bool assigned_to;
 };
 
 /* allocate and initialise a new let

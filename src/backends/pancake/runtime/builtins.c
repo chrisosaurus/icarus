@@ -56,11 +56,14 @@ unsigned int i_greaterthan_uint_uint(struct ic_backend_pancake_value_stack *valu
 unsigned int i_greaterthan_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int i_to_str_bool(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int i_length_string(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int i_equal_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int i_equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int i_equal_sint_uint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int i_equal_uint_sint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int i_concat_string_string(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int i_modulo_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
 
-#define ic_backend_pancake_builtins_table_len 21
+#define ic_backend_pancake_builtins_table_len 24
 
 /* table mapping user-land names to internal names */
 struct ic_backend_pancake_builtins_table_type {
@@ -85,9 +88,12 @@ struct ic_backend_pancake_builtins_table_type {
     {"greaterthan_equal(Sint,Sint)", i_greaterthan_equal_sint_sint},
     {"to_str(Bool)", i_to_str_bool},
     {"length(String)", i_length_string},
+    {"equal(Sint,Sint)", i_equal_sint_sint},
+    {"equal(Uint,Uint)", i_equal_uint_uint},
     {"equal(Uint,Sint)", i_equal_uint_sint},
     {"equal(Sint,Uint)", i_equal_sint_uint},
     {"concat(String,String)", i_concat_string_string},
+    {"modulo(Sint,Sint)", i_modulo_sint_sint},
 };
 
 /* get builtin function for user-land name
@@ -442,6 +448,36 @@ unsigned int i_length_string(struct ic_backend_pancake_value_stack *value_stack)
     return 1;
 }
 
+unsigned int i_equal_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
+    int sint_one = 0;
+    int sint_two = 0;
+    bool answer = 0;
+    INIT();
+
+    READ(sint_two, sint);
+    READ(sint_one, sint);
+
+    answer = sint_one == sint_two;
+
+    RESULT(answer, boolean);
+    return 1;
+}
+
+unsigned int i_equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
+    int uint_one = 0;
+    int uint_two = 0;
+    bool answer = 0;
+    INIT();
+
+    READ(uint_two, sint);
+    READ(uint_one, sint);
+
+    answer = uint_one == uint_two;
+
+    RESULT(answer, boolean);
+    return 1;
+}
+
 unsigned int i_equal_sint_uint(struct ic_backend_pancake_value_stack *value_stack) {
     unsigned int uint = 0;
     int sint = 0;
@@ -516,5 +552,20 @@ unsigned int i_concat_string_string(struct ic_backend_pancake_value_stack *value
     strcat(answer, str2);
 
     RESULT(answer, string);
+    return 1;
+}
+
+unsigned int i_modulo_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
+    int sint_one = 0;
+    int sint_two = 0;
+    int answer = 0;
+    INIT();
+
+    READ(sint_two, sint);
+    READ(sint_one, sint);
+
+    answer = sint_one % sint_two;
+
+    RESULT(answer, sint);
     return 1;
 }

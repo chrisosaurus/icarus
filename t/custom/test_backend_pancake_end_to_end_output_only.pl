@@ -102,6 +102,101 @@ my $cases = [
       Hello there Jennifer, very nice to meet you
       ',
   },
+  {
+    input => '
+      fn foo(i::Sint) -> Sint
+        return i + 1
+      end
+
+      fn main()
+        let a = 5
+        a = foo(a)
+        println(a)
+      end
+      ',
+    expected => '
+      6
+      ',
+  },
+  {
+    input => '
+      fn foo(a::Sint, b::Sint, c::Sint)
+        println(a)
+        println(b)
+        println(c)
+      end
+
+      fn main()
+        foo(4, 5, 6)
+      end
+      ',
+    expected => '
+      4
+      5
+      6
+      ',
+  },
+  {
+    input => '
+      fn is_div(a::Sint, b::Sint) -> Bool
+          let rem = a % b
+          return rem == 0
+      end
+
+      fn fizzer(num::Sint)
+          let str = ""
+
+          if is_div(num, 3)
+              str = concat(str, "Fizz")
+          end
+
+          if is_div(num, 5)
+              str = concat(str, "Buzz")
+          end
+
+          if length(str) == 0
+              println(num)
+          else
+              println(str)
+          end
+      end
+
+      fn fizzbuzz(from::Sint, to::Sint)
+        if from < to
+          fizzer(from)
+          from = plus(from, 1)
+          fizzbuzz(from, to)
+        end
+      end
+
+      fn main()
+          # icarus currently lacks for loops and ranges
+          # so this is a poor-mans fizzbuzz-derived demo
+          fizzbuzz(1, 20)
+      end
+      ',
+    expected => '
+      1
+      2
+      Fizz
+      4
+      Buzz
+      Fizz
+      7
+      8
+      Fizz
+      Buzz
+      11
+      Fizz
+      13
+      14
+      FizzBuzz
+      16
+      17
+      Fizz
+      19
+      '
+  },
 ];
 
 # whitespace sensitivity sucks

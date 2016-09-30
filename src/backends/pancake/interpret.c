@@ -512,7 +512,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
 
                 /* the offset of our arg into the value_stack */
-                value_stack_offset += uint;
+                value_stack_offset -= uint;
 
                 /* value to copy onto head of stack */
                 value = ic_backend_pancake_value_stack_get_offset(value_stack, value_stack_offset);

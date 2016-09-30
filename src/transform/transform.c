@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "../analyse/data/kludge.h"
+#include "../analyse/data/slot.h"
 #include "../analyse/helpers.h"
 #include "../data/pvector.h"
 #include "../parse/data/body.h"
@@ -494,6 +495,7 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_sc
     struct ic_transform_ir_expr *expr = 0;
     struct ic_transform_ir_stmt *stmt = 0;
     struct ic_transform_ir_fcall *tir_fcall = 0;
+    struct ic_transform_ir_let *tlet = 0;
 
     if (!kludge) {
         puts("ic_transform_stmt_let: kludge was null");
@@ -566,8 +568,12 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_sc
                 return 0;
             }
 
-            /* success */
-            return 1;
+            tlet = ic_transform_ir_stmt_get_let(stmt);
+            if (!tlet) {
+                puts("ic_transform_stmt_let: call to ic_transform_ir_stmt_get_let failed");
+                return 0;
+            }
+
             break;
 
         case ic_expr_type_identifier:
@@ -587,8 +593,12 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_sc
                 return 0;
             }
 
-            /* success */
-            return 1;
+            tlet = ic_transform_ir_stmt_get_let(stmt);
+            if (!tlet) {
+                puts("ic_transform_stmt_let: call to ic_transform_ir_stmt_get_let failed");
+                return 0;
+            }
+
             break;
 
         default:
@@ -596,6 +606,14 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_sc
             return 0;
             break;
     }
+
+    if (!tlet) {
+        puts("ic_transform_stmt_let: tlet was null");
+        return 0;
+    }
+
+    /* copy over assigned_t0 field */
+    tlet->assigned_to = let->assigned_to;
 
     return 1;
 }
@@ -612,6 +630,8 @@ static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic
     struct ic_expr_func_call *fcall = 0;
     struct ic_transform_ir_assign *tassign = 0;
     struct ic_transform_ir_stmt *tstmt = 0;
+    char *ch = 0;
+    struct ic_slot *slot = 0;
 
     if (!kludge) {
         puts("ic_transform_stmt_assign: kludge was null");
@@ -703,6 +723,19 @@ static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic
      */
 
     tassign->left = &(id->identifier);
+
+    /* mark left as requiring runtime storage */
+    ch = ic_symbol_contents(tassign->left);
+    if (!ch) {
+        puts("ic_transform_stmt_assign: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    slot = ic_scope_get(scope, ch);
+    if (!slot) {
+        puts("ic_transform_stmt_assign: call to ic_scope_get failed");
+        return 0;
+    }
 
     tassign->right = ic_transform_ir_expr_new();
     if (!tassign->right) {

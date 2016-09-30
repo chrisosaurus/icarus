@@ -64,6 +64,7 @@ unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int 
     }
 
     field->permissions = permissions;
+    field->assigned_to = 0;
 
     return 1;
 }

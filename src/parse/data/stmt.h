@@ -1,6 +1,8 @@
 #ifndef ICARUS_STATEMENT_H
 #define ICARUS_STATEMENT_H
 
+#include <stdbool.h>
+
 #include "../../data/symbol.h"
 #include "body.h"
 #include "expr.h"
@@ -75,6 +77,13 @@ struct ic_stmt_let {
      * parse stmt and parse expr
      */
     struct ic_expr *init;
+
+    /* if this let ever assigned to
+     * or only read from
+     *
+     * used in transform phase to populate tlet->assigned_to
+     */
+    bool assigned_to;
 };
 
 /* allocate and initialise a new let

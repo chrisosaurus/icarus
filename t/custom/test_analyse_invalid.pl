@@ -80,7 +80,7 @@ analysis failed
 
 'fn foo() let a::Sint = 5 a = "hello" end'
 =>
-'ic_analyse_body: assignment between invalid types
+'ic_analyse_body: assign: assignment between invalid types
 ic_analyse_body: unimplemented in error case
 ic_analyse_decl_func: call to ic_analyse_body for validating body failed
 ic_analyse_decl_func: error

@@ -12,6 +12,69 @@
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wunused-variable"
 
+/* mark this expr as being on the left-hand side of an assignment
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_analyse_mark_assigned(struct ic_scope *scope, struct ic_expr *expr) {
+    struct ic_expr_identifier *id = 0;
+    struct ic_symbol *sym = 0;
+    struct ic_slot *slot = 0;
+    enum ic_slot_assign_result assign_result;
+
+    if (!scope) {
+        puts("ic_analyse_mark_assigned: scope was null");
+        return 0;
+    }
+
+    if (!expr) {
+        puts("ic_analyse_mark_assigned: expr was null");
+        return 0;
+    }
+
+    if (expr->tag != ic_expr_type_identifier) {
+        puts("ic_analyse_mark_assigned: expr->tag was not identifier: unsupported assignment target");
+        return 0;
+    }
+
+    id = ic_expr_get_identifier(expr);
+    if (!id) {
+        puts("ic_analyse_mark_assigned: call to ic_expr_get_identifier failed");
+        return 0;
+    }
+
+    sym = &(id->identifier);
+
+    slot = ic_scope_get_from_symbol(scope, sym);
+    if (!slot) {
+        puts("ic_analyse_mark_assigned: call to ic_scope_get_from_symbol failed");
+        return 0;
+    }
+
+    assign_result = ic_slot_assign(slot);
+    switch (assign_result) {
+        case ic_slot_assign_result_internal_error:
+            puts("ic_analyse_mark_assigned: assignment failed due to internal error");
+            return 0;
+            break;
+
+        case ic_slot_assign_result_success:
+            /* victory */
+            return 1;
+
+        case ic_slot_assign_result_permission_denied:
+            puts("ic_analyse_mark_assigned: assignment failed due to permission denied");
+            return 0;
+            break;
+
+        default:
+            puts("ic_analyse_mark_assigned: assignment result was of unknown type");
+            return 0;
+            break;
+    }
+}
+
 /* iterate through the field list checking:
  *  a) all field's names are unique within this list
  *  b) all field's types exist in this kludge
@@ -419,53 +482,58 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                 /* pull out assignment stmt */
                 assign = ic_stmt_get_assign(stmt);
                 if (!assign) {
-                    puts("ic_analyse_body: if: call to ic_stmt_get_assign failed");
+                    puts("ic_analyse_body: assign: call to ic_stmt_get_assign failed");
                     goto ERROR;
                 }
 
                 /* left expr */
                 expr = ic_stmt_assign_get_left(assign);
                 if (!expr) {
-                    puts("ic_analyse_body: if: call to ic_stmt_assign_get_left failed");
+                    puts("ic_analyse_body: assign: call to ic_stmt_assign_get_left failed");
+                    goto ERROR;
+                }
+
+                if (!ic_analyse_mark_assigned(body->scope, expr)) {
+                    puts("ic_analyse_body: assign: call to ic_analyse_mark_assigned failed");
                     goto ERROR;
                 }
 
                 /* get type of left */
                 type = ic_analyse_infer(kludge, body->scope, expr);
                 if (!type) {
-                    puts("ic_analyse_body: expr: call to ic_analyse_infer failed");
+                    puts("ic_analyse_body: assign: call to ic_analyse_infer failed");
                     goto ERROR;
                 }
 
                 /* if either type is void then this is an error */
                 if (ic_type_isvoid(type)) {
-                    puts("ic_analyse_body: attempt to assign to void variable");
+                    puts("ic_analyse_body: assign: attempt to assign to void variable");
                     goto ERROR;
                 }
 
                 /* right expr */
                 expr = ic_stmt_assign_get_right(assign);
                 if (!expr) {
-                    puts("ic_analyse_body: if: call to ic_stmt_assign_get_right failed");
+                    puts("ic_analyse_body: assign: call to ic_stmt_assign_get_right failed");
                     goto ERROR;
                 }
 
                 /* get type of right */
                 other_type = ic_analyse_infer(kludge, body->scope, expr);
                 if (!other_type) {
-                    puts("ic_analyse_body: expr: call to ic_analyse_infer failed");
+                    puts("ic_analyse_body: assign: call to ic_analyse_infer failed");
                     goto ERROR;
                 }
 
                 /* if either type is void then this is an error */
                 if (ic_type_isvoid(other_type)) {
-                    puts("ic_analyse_body: attempt to assign void value");
+                    puts("ic_analyse_body: assign: attempt to assign void value");
                     goto ERROR;
                 }
 
                 /* both types must be the same */
                 if (!ic_type_equal(type, other_type)) {
-                    puts("ic_analyse_body: assignment between invalid types");
+                    puts("ic_analyse_body: assign: assignment between invalid types");
                     goto ERROR;
                 }
 
@@ -1242,7 +1310,7 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
      *
      *                (name, type, mut, ref)
      */
-    slot = ic_slot_new(&(let->identifier), type, let->permissions, 0);
+    slot = ic_slot_new(&(let->identifier), type, let->permissions, 0, ic_slot_type_let, let);
     if (!slot) {
         puts("ic_analyse_let: call to ic_slot_new failed");
         return 0;

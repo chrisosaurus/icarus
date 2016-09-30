@@ -291,7 +291,7 @@ unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func 
          * args are not mutable so always 0
          * references are not yet supported so 0 FIXME
          */
-        slot = ic_slot_new(&(arg->name), arg_type, 0, 0);
+        slot = ic_slot_new(&(arg->name), arg_type, 0, 0, ic_slot_type_arg, arg);
         if (!slot) {
             puts("ic_analyse_decl_func: call to ic_slot_new failed");
             goto ERROR;
