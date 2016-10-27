@@ -1,5 +1,5 @@
 # 2c supports
-# pancake lacks
+# pancake supports
 fn is_div(a::Sint, b::Sint) -> Bool
     let rem = a % b
     return rem == 0
