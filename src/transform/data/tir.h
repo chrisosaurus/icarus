@@ -114,9 +114,11 @@ struct ic_transform_ir_let {
         struct ic_transform_ir_let_expr expr;
     } u;
 
-    /* if this tlet ever assigned to
+    /* if this tlet is ever assigned to
      *
      * set during transform phase from ic_stmt_let->assigned_to
+     *
+     * this is used by some backends to perform optimisations around variable allocation
      */
     bool assigned_to;
 };
