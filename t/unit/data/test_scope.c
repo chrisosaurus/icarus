@@ -27,11 +27,13 @@ void normal(void) {
 
     /* test we cannot pull anything out yet */
     assert(0 == ic_scope_get(scope, "hello"));
+    assert(0 == ic_scope_exists(scope, "hello"));
 
     /* add something */
     assert(1 == ic_scope_insert(scope, "hello", &data_1));
 
     /* check that the insert was actually a success */
+    assert(1 == ic_scope_exists(scope, "hello"));
     assert(&data_1 == ic_scope_get(scope, "hello"));
 
     /* check something doesn't exist */
@@ -51,6 +53,12 @@ void normal(void) {
 
     /* test fetch through child */
     assert(&data_2 == ic_scope_get(scope, "world"));
+
+    /* test exists through child */
+    assert(1 == ic_scope_exists(scope, "world"));
+
+    /* test exists_nofollow through child */
+    assert(0 == ic_scope_exists_nofollow(scope, "world"));
 
     /* test that child cannot see through _nofollow */
     assert(0 == ic_scope_get_nofollow(scope, "world"));

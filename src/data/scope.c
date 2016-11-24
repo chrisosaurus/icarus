@@ -203,6 +203,63 @@ void *ic_scope_get_nofollow(struct ic_scope *scope, char *key) {
     return ic_dict_get(&(scope->contents), key);
 }
 
+/* check if specified key already exists in scope chain
+ *
+ * FIXME no way to indicate error
+ *
+ * this will first search the current scope
+ * then, if a parent exists, it will continue search up parents
+ *
+ * returns 1 if key exists
+ * returns 0 if key doesn't exist or on error
+ */
+unsigned int ic_scope_exists(struct ic_scope *scope, char *key) {
+    if (!scope) {
+        puts("ic_scope_exists: scope was null");
+        return 0;
+    }
+
+    if (!key) {
+        puts("ic_scope_exists: key was null");
+        return 0;
+    }
+
+    if (ic_dict_exists(&(scope->contents), key)) {
+        return 1;
+    }
+
+    if (scope->parent) {
+        return ic_scope_exists(scope->parent, key);
+    }
+
+    return 0;
+}
+
+/* check if specified key already exists in this scope
+ *
+ * FIXME no way to indicate error
+ *
+ * returns 1 if key exists
+ * returns 0 if key doesn't exist or on error
+ */
+unsigned int ic_scope_exists_nofollow(struct ic_scope *scope, char *key) {
+    if (!scope) {
+        puts("ic_scope_exists_nofollow: scope was null");
+        return 0;
+    }
+
+    if (!key) {
+        puts("ic_scope_exists_nofollow: key was null");
+        return 0;
+    }
+
+    if (ic_dict_exists(&(scope->contents), key)) {
+        return 1;
+    }
+
+    return 0;
+}
+
 /* delete the item stored under key
  *
  * returns 1 on success
