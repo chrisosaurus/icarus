@@ -140,15 +140,16 @@ void *ic_scope_get(struct ic_scope *scope, char *key) {
 
     data = ic_scope_get_nofollow(scope, key);
 
-    /* recurse up parent tree if that is an option */
-    if (!data) {
-        if (scope->parent) {
-            /* recurse on parent */
-            data = ic_scope_get(scope->parent, key);
-        }
+    if (data) {
+        return data;
     }
 
-    return data;
+    /* recurse up parent tree if that is an option */
+    if (scope->parent) {
+        return ic_scope_get(scope->parent, key);
+    }
+
+    return 0;
 }
 
 /* retrieve contents by symbol
