@@ -49,6 +49,11 @@ struct ic_ast *ic_parse(struct ic_token_list *token_list) {
     /* current token */
     struct ic_token *token = 0;
 
+    if (!token_list) {
+        puts("ic_parse: token_list was null");
+        return 0;
+    }
+
     /* allocate and initialise our ast */
     ast = ic_ast_new();
     if (!ast) {
