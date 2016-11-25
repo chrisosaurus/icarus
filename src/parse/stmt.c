@@ -39,6 +39,11 @@ static struct ic_stmt *ic_parse_stmt_ret(struct ic_token_list *token_list) {
     /* current token */
     struct ic_token *token = 0;
 
+    if (!token_list) {
+        puts("ic_parse_stmt_ret: token_list was null");
+        return 0;
+    }
+
     /* allocate and initialise */
     stmt = ic_stmt_new(ic_stmt_type_ret);
     if (!stmt) {
@@ -111,6 +116,11 @@ static struct ic_stmt *ic_parse_stmt_let(struct ic_token_list *token_list) {
 
     /* current token */
     struct ic_token *token = 0;
+
+    if (!token_list) {
+        puts("ic_parse_stmt_let: token_list was null");
+        return 0;
+    }
 
     /* allocate and initialise */
     stmt = ic_stmt_new(ic_stmt_type_let);
@@ -234,6 +244,11 @@ static struct ic_stmt *ic_parse_stmt_if(struct ic_token_list *token_list) {
     /* current token */
     struct ic_token *token = 0;
 
+    if (!token_list) {
+        puts("ic_parse_stmt_if: token_list was null");
+        return 0;
+    }
+
     /* there are a few cases of if we care about at this point
      *
      *  if expr then
@@ -351,6 +366,11 @@ static struct ic_stmt *ic_parse_stmt_for(struct ic_token_list *token_list) {
     /* current token */
     struct ic_token *token = 0;
 
+    if (!token_list) {
+        puts("ic_parse_stmt_for: token_list was null");
+        return 0;
+    }
+
     /* there are a few cases of if we care about at this point
      *
      *  for expr in iterator
@@ -432,6 +452,11 @@ static struct ic_stmt *ic_parse_stmt_while(struct ic_token_list *token_list) {
     /* current token */
     struct ic_token *token = 0;
 
+    if (!token_list) {
+        puts("ic_parse_stmt_while: token_list was null");
+        return 0;
+    }
+
     /* there are a few cases of if we care about at this point
      *
      *  while expr
@@ -495,6 +520,11 @@ static struct ic_stmt *ic_parse_stmt_expr(struct ic_token_list *token_list) {
     enum ic_stmt_tag tag = ic_stmt_type_expr;
     /* our next token */
     struct ic_token *token = 0;
+
+    if (!token_list) {
+        puts("ic_parse_stmt_expr: token_list was null");
+        return 0;
+    }
 
     expr = ic_parse_expr(token_list);
     if (!expr) {
@@ -574,6 +604,11 @@ struct ic_stmt *ic_parse_stmt(struct ic_token_list *token_list) {
 #ifdef DEBUG_PARSE_STMT
     puts("ic_parse_stmt: entered");
 #endif
+
+    if (!token_list) {
+        puts("ic_parse_stmt: token_list was null");
+        return 0;
+    }
 
     token = ic_token_list_peek_important(token_list);
     if (!token) {
