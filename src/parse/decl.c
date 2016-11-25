@@ -173,6 +173,11 @@ struct ic_decl *ic_parse_decl_type_body(struct ic_token_list *token_list, struct
         return 0;
     }
 
+    if (!decl) {
+        puts("ic_parse_decl_type_body: decl was null");
+        return 0;
+    }
+
     /* fetch our tdecl from within decl */
     tdecl = ic_decl_get_tdecl(decl);
     if (!tdecl) {
@@ -257,6 +262,11 @@ struct ic_decl *ic_parse_decl_enum(struct ic_token_list *token_list) {
     puts("ic_parse_decl_enum called");
 #endif
 
+    if (!token_list) {
+        puts("ic_parse_decl_enum: token_list was null");
+        return 0;
+    }
+
     puts("ic_parse_decl_enum: UNIMPLEMENTED");
 
     /* FIXME */
@@ -267,6 +277,11 @@ struct ic_decl *ic_parse_decl_union(struct ic_token_list *token_list) {
 #ifdef DEBUG_PARSE
     puts("ic_parse_decl_union called");
 #endif
+
+    if (!token_list) {
+        puts("ic_parse_decl_union: token_list was null");
+        return 0;
+    }
 
     puts("ic_parse_decl_union: UNIMPLEMENTED");
 
@@ -486,6 +501,16 @@ struct ic_decl *ic_parse_decl_func_body(struct ic_token_list *token_list, struct
     puts("ic_parse_decl_func called");
 #endif
 
+    if (!token_list) {
+        puts("ic_parse_decl_func_body: token_list was null");
+        return 0;
+    }
+
+    if (!decl) {
+        puts("ic_parse_decl_func_body: decl was null");
+        return 0;
+    }
+
     /* fetch our fdecl from within decl */
     fdecl = ic_decl_get_fdecl(decl);
     if (!fdecl) {
@@ -564,6 +589,11 @@ struct ic_decl *ic_parse_decl_op(struct ic_token_list *token_list) {
 #ifdef DEBUG_PARSE
     puts("ic_parse_decl_op called");
 #endif
+
+    if (!token_list) {
+        puts("ic_parse_decl_op: token_list was null");
+        return 0;
+    }
 
     /* allocate and init our decl */
     decl = ic_decl_new(ic_decl_tag_builtin_op);
