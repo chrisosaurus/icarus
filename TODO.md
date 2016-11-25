@@ -66,7 +66,6 @@ technical debt:
 * the parse module was written using the old lexer system and then retrofitted to the new, it could probably use some refactoring now that the lex output is more sane
 * token_list api needs some cleanup, no one ever really uses the non _important calls
 * `fdecl`, `tdecl`, `decl_type`, `decl_func` are all intermixed
-* parse functions don't seem to check their arguments as well as analyse does
 * see docs/coding.md 'Error handling' section
 * all objects (esp. containers) need destructors (see `./scripts/destruct_audit.sh` for current list)
 * add pvector/parray destructor helper which takes a function * and iterates through it's contents passing to function
