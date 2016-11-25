@@ -37,7 +37,7 @@ Obvious cases
 here we can immediately see that `14` should be typed as `Uint`.
 
 
-### indirection return
+### indirection return - one layer
 
     fn foo() -> Uint
       let a = 14
@@ -46,6 +46,19 @@ here we can immediately see that `14` should be typed as `Uint`.
 
 The hard part here is that the typing of `a` cannot be determined until it is
 seen that it is returned later on, and therefore must be typed as `Uint`.
+
+
+### indirect return - many layers
+
+    fn foo() -> Uint
+      let a = 14
+      let b = 15 + a
+      let c = a + b
+      return c
+    end
+
+Here the typing for `a` and `b` must be inferred through `c` via the final
+`return c`.
 
 
 ### type construction
