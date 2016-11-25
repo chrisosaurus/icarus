@@ -489,6 +489,11 @@ static struct ic_expr *ic_parse_expr_operator(struct ic_token_list *token_list, 
         return 0;
     }
 
+    if (!left) {
+        puts("ic_parse_expr_operator: left was null");
+        return 0;
+    }
+
     /* build our new expr */
     expr = ic_expr_new(ic_expr_type_operator);
     if (!expr) {
@@ -553,48 +558,53 @@ static struct ic_expr *ic_parse_expr_fieldaccess(struct ic_token_list *token_lis
     struct ic_token *token = 0;
 
     if (!token_list) {
-        puts("ic_parse_expr_faccess: token_list was null");
+        puts("ic_parse_expr_fieldaccess: token_list was null");
+        return 0;
+    }
+
+    if (!left) {
+        puts("ic_parse_expr_fieldaccess: left was null");
         return 0;
     }
 
     /* build our new expr */
     expr = ic_expr_new(ic_expr_type_field_access);
     if (!expr) {
-        puts("ic_parse_expr_faccess: call to ic_expr_new failed");
+        puts("ic_parse_expr_fieldaccess: call to ic_expr_new failed");
         return 0;
     }
 
     /* op handling */
     token = ic_token_list_next_important(token_list);
     if (!token) {
-        puts("ic_parse_expr_faccess: operator call to token list next important failed");
+        puts("ic_parse_expr_fieldaccess: operator call to token list next important failed");
         return 0;
     }
 
     /* our right expr can only be an identifier */
     right = ic_parse_expr_single_token(token_list);
     if (!right) {
-        puts("ic_parse_expr_faccess: right call to ic_parse_expr failed");
+        puts("ic_parse_expr_fieldaccess: right call to ic_parse_expr failed");
         free(expr);
         return 0;
     }
 
     /* check it is an identifier */
     if (right->tag != ic_expr_type_identifier) {
-        puts("ic_parse_expr_faccess: right token was not an identifier");
+        puts("ic_parse_expr_fieldaccess: right token was not an identifier");
         return 0;
     }
 
     /* get our internal faccess */
     faccess = ic_expr_get_faccess(expr);
     if (!faccess) {
-        puts("ic_parse_expr_faccess: call to ic_expr_get_faccess failed");
+        puts("ic_parse_expr_fieldaccess: call to ic_expr_get_faccess failed");
         return 0;
     }
 
     /* init our faccess */
     if (!ic_expr_faccess_init(faccess, left, right)) {
-        puts("ic_parse_expr_faccess: call to ic_expr_faccess_init failed");
+        puts("ic_parse_expr_fieldaccess: call to ic_expr_faccess_init failed");
         free(expr);
         free(left);
         free(right);
