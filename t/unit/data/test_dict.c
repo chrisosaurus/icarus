@@ -18,7 +18,7 @@ void normal(void) {
     assert(0 == ic_dict_get(dict, "hello"));
 
     /* test set doesn't yet work */
-    assert(0 == ic_dict_set(dict, "hello", &data_1));
+    assert(0 == ic_dict_update(dict, "hello", &data_1));
 
     /* add something */
     assert(ic_dict_insert(dict, "hello", &data_1));
@@ -31,12 +31,14 @@ void normal(void) {
 
     /* play around a bit */
     assert(&data_1 == ic_dict_get(dict, "hello"));
-    assert(&data_1 == ic_dict_set(dict, "hello", &data_2));
+    assert(&data_1 == ic_dict_update(dict, "hello", &data_2));
     assert(&data_2 == ic_dict_get(dict, "hello"));
+    assert(1 == ic_dict_set(dict, "hello", &data_1));
+    assert(&data_1 == ic_dict_get(dict, "hello"));
     assert(0 == ic_dict_get(dict, "world"));
 
     /* test delete */
-    assert(&data_2 == ic_dict_delete(dict, "hello"));
+    assert(&data_1 == ic_dict_delete(dict, "hello"));
     assert(0 == ic_dict_delete(dict, "hello"));
     assert(0 == ic_dict_delete(dict, "world"));
 
@@ -50,6 +52,7 @@ void abnormal(void) {
     /* check all the dict null cases */
     assert(0 == ic_dict_init(0));
     assert(0 == ic_dict_get(0, 0));
+    assert(0 == ic_dict_update(0, 0, 0));
     assert(0 == ic_dict_set(0, 0, 0));
     assert(0 == ic_dict_insert(0, 0, 0));
     assert(0 == ic_dict_exists(0, 0));

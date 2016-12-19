@@ -70,7 +70,6 @@ technical debt:
 * all objects (esp. containers) need destructors (see `./scripts/destruct_audit.sh` for current list)
 * add pvector/parray destructor helper which takes a function * and iterates through it's contents passing to function
 * add shims to allow ic_pvector_destroy to be called on each type
-* ic_dict interface set/insert is non-ideal, see linear_hash upstream TODO
 * ic_scope insert interface is non-ideal
  - should push problem onto linear_hash, should have: insert(new), update(existing), set(either)
  - will have to reflect in other libraries

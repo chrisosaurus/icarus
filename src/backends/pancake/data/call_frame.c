@@ -96,16 +96,9 @@ unsigned int ic_backend_pancake_call_frame_set(struct ic_backend_pancake_call_fr
         }
     }
 
-    if (ic_dict_exists(call_frame->local_vars, key)) {
-        if (!ic_dict_set(call_frame->local_vars, key, value)) {
-            puts("ic_backend_pancake_call_frame_set: call to ic_dict_set failed");
-            return 0;
-        }
-    } else {
-        if (!ic_dict_insert(call_frame->local_vars, key, value)) {
-            puts("ic_backend_pancake_call_frame_set: call to ic_dict_insert failed");
-            return 0;
-        }
+    if (!ic_dict_set(call_frame->local_vars, key, value)) {
+        puts("ic_backend_pancake_call_frame_set: call to ic_dict_set failed");
+        return 0;
     }
 
     return 1;

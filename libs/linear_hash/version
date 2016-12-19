@@ -1,8 +1,10 @@
-https://github.com/mkfifo/linear_hash
-
-commit 66e934eb84c615be6a008476de5d0d04b672b13e
+commit 5b0f5f8e0a991c8a14c1355bbd8d96059df7a651
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Wed Jun 29 15:00:46 2016 +1000
+Date:   Mon Dec 19 21:03:52 2016 +1100
 
-    removing additional usage of // comment
+    API change
+
+    old calls to `lh_set(table, key, data)` should be replaced with `lh_update(table, key, data)`.
+
+    `lh_set(table, key, data)` will now map to either an insert or update as needed.
 

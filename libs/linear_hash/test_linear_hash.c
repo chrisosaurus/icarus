@@ -84,7 +84,7 @@ void new_insert_get_destroy(void){
     puts("success!");
 }
 
-void set(void){
+void update(void){
     /* our simple hash table */
     struct lh_table *table = 0;
 
@@ -107,7 +107,7 @@ void set(void){
     /* temporary data pointer used for testing get */
     int *data = 0;
 
-    puts("\ntesting set functionality");
+    puts("\ntesting update functionality");
 
     puts("creating table");
     table = lh_new();
@@ -144,13 +144,13 @@ void set(void){
     assert( data_3 == *data );
 
 
-    puts("testing set");
-    puts("testing set failure for non-existing key");
-    data = lh_set(table, "foobarr", &data_1);
+    puts("testing update");
+    puts("testing update failure for non-existing key");
+    data = lh_update(table, "foobarr", &data_1);
     assert( 0 == data );
 
-    puts("two set");
-    data = lh_set(table, key_2, &new_data_2);
+    puts("two update");
+    data = lh_update(table, key_2, &new_data_2);
     assert(data);
     assert( *data == data_2 );
     assert( 3 == lh_nelems(table) );
@@ -159,8 +159,8 @@ void set(void){
     assert(data);
     assert( *data == new_data_2 );
 
-    puts("three set");
-    data = lh_set(table, key_3, &new_data_3);
+    puts("three update");
+    data = lh_update(table, key_3, &new_data_3);
     assert(data);
     assert( *data == data_3 );
     assert( 3 == lh_nelems(table) );
@@ -169,8 +169,8 @@ void set(void){
     assert(data);
     assert( *data == new_data_3 );
 
-    puts("one set");
-    data = lh_set(table, key_1, &new_data_1);
+    puts("one update");
+    data = lh_update(table, key_1, &new_data_1);
     assert(data);
     assert( *data == data_1 );
     assert( 3 == lh_nelems(table) );
@@ -183,6 +183,107 @@ void set(void){
     assert( lh_destroy(table, 1, 0) );
     puts("success!");
 }
+
+void set(void){
+    /* our simple hash table */
+    struct lh_table *table = 0;
+
+    /* some keys */
+    char *key_1 = "rhubarb";
+    char *key_2 = "carrot";
+    char *key_3 = "potato";
+
+    /* some data */
+    int data_1 = 1;
+    int data_2 = 2;
+    int data_3 = 3;
+
+    /* some data we override with */
+    int new_data_1 = 14;
+    int new_data_2 = 15;
+    int new_data_3 = 16;
+
+
+    /* temporary data pointer used for testing get */
+    int *data = 0;
+
+    puts("\ntesting set functionality");
+
+    puts("creating table");
+    table = lh_new();
+    assert(table);
+    assert( 32 == table->size );
+    assert( 0 == lh_nelems(table) );
+
+
+    puts("inserting some data with set");
+    assert( lh_set(table, key_1, &data_1) );
+    assert( 1 == lh_nelems(table) );
+    assert( 0 == lh_get(table, key_2) );
+    assert( 0 == lh_get(table, key_3) );
+
+    data = lh_get(table, key_1);
+    assert(data);
+    assert( data_1 == *data );
+
+
+    assert( lh_set(table, key_2, &data_2) );
+    assert( 2 == lh_nelems(table) );
+    assert( 0 == lh_get(table, key_3) );
+
+    data = lh_get(table, key_2);
+    assert(data);
+    assert( data_2 == *data );
+
+
+    assert( lh_set(table, key_3, &data_3) );
+    assert( 3 == lh_nelems(table) );
+
+    data = lh_get(table, key_3);
+    assert(data);
+    assert( data_3 == *data );
+
+
+    puts("testing update with set");
+
+    puts("two set");
+    assert( lh_set(table, key_2, &new_data_2) );
+    data = lh_get(table, key_2);
+    assert(data);
+    assert( *data == new_data_2 );
+    assert( 3 == lh_nelems(table) );
+
+    data = lh_get(table, key_2);
+    assert(data);
+    assert( *data == new_data_2 );
+
+    puts("three set");
+    assert( lh_update(table, key_3, &new_data_3) );
+    data = lh_get(table, key_3);
+    assert(data);
+    assert( *data == new_data_3 );
+    assert( 3 == lh_nelems(table) );
+
+    data = lh_get(table, key_3);
+    assert(data);
+    assert( *data == new_data_3 );
+
+    puts("one set");
+    assert( lh_update(table, key_1, &new_data_1) );
+    data = lh_get(table, key_1);
+    assert(data);
+    assert( *data == new_data_1 );
+    assert( 3 == lh_nelems(table) );
+
+    data = lh_get(table, key_1);
+    assert(data);
+    assert( *data == new_data_1 );
+
+
+    assert( lh_destroy(table, 1, 0) );
+    puts("success!");
+}
+
 
 void delete(void){
     /* our simple hash table */
@@ -719,12 +820,17 @@ void error_handling(void){
     /* cannot insert if already exists */
     assert( 0 == lh_insert(table, key_1, &data_1) );
 
+    /* lh_update */
+    puts("testing lh_update");
+    assert( 0 == lh_update(0, key_1, &data_1) );
+    assert( 0 == lh_update(table, 0, &data_1) );
+    /* cannot set if doesn't already exist */
+    assert( 0 == lh_update(table, key_3, &data_3) );
+
     /* lh_set */
     puts("testing lh_set");
     assert( 0 == lh_set(0, key_1, &data_1) );
     assert( 0 == lh_set(table, 0, &data_1) );
-    /* cannot set if doesn't already exist */
-    assert( 0 == lh_set(table, key_3, &data_3) );
 
     /* lh_get */
     puts("testing lh_get");
@@ -1193,6 +1299,8 @@ void artificial(void){
 
 int main(void){
     new_insert_get_destroy();
+
+    update();
 
     set();
 

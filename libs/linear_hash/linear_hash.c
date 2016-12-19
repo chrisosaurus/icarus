@@ -816,23 +816,23 @@ LH_INSERT_FOUND:
     return 1;
 }
 
-/* set `data` under `key`
+/* update `data` under `key`
  * this will only succeed if lh_exists(table, key)
  *
  * returns old data on success
  * returns 0 on failure
  */
-void * lh_set(struct lh_table *table, const char *key, void *data){
+void * lh_update(struct lh_table *table, const char *key, void *data){
     struct lh_entry *she = 0;
     void * old_data = 0;
 
     if( ! table ){
-        puts("lh_set: table undef");
+        puts("lh_update: table undef");
         return 0;
     }
 
     if( ! key ){
-        puts("lh_set: key undef");
+        puts("lh_update: key undef");
         return 0;
     }
 
@@ -853,6 +853,39 @@ void * lh_set(struct lh_table *table, const char *key, void *data){
 
     /* return old data */
     return old_data;
+}
+
+/* set `data` under `key`
+ *
+ * this will either insert or update depending on if key already exists
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int lh_set(struct lh_table *table, const char *key, void *data){
+    if( ! table ){
+        puts("lh_set: table undef");
+        return 0;
+    }
+
+    if( ! key ){
+        puts("lh_set: key undef");
+        return 0;
+    }
+
+    if( lh_exists(table, key) ){
+        if( ! lh_update(table, key, data) ){
+            puts("lh_set: call to lh_update failed");
+            return 0;
+        }
+    } else {
+        if( ! lh_insert(table, key, data) ){
+            puts("lh_set: call to lh_insert failed");
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
 /* get `data` stored under `key`

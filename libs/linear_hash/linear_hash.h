@@ -163,13 +163,22 @@ unsigned int lh_exists(const struct lh_table *table, const char *key);
  */
 unsigned int lh_insert(struct lh_table *table, const char *key, void *data);
 
-/* set `data` under `key`
+/* update `data` under `key`
  * this will only succeed if lh_exists(table, key)
  *
  * returns old data on success
  * returns 0 on failure
  */
-void * lh_set(struct lh_table *table, const char *key, void *data);
+void * lh_update(struct lh_table *table, const char *key, void *data);
+
+/* set `data` under `key`
+ *
+ * this will either insert or update depending on if key already exists
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int lh_set(struct lh_table *table, const char *key, void *data);
 
 /* get `data` stored under `key`
  *

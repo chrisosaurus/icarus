@@ -56,14 +56,30 @@ void *ic_dict_get(struct ic_dict *dict, char *key) {
     return lh_get(&(dict->lht), key);
 }
 
-/* set data in dict at key
- * set only works if the key already exists
- *  set will NOT insert new keys
+/* update data in dict at key
+ * update only works if the key already exists
+ *  update will NOT insert new keys
  *
  * returns old data on success
  * returns 0 on failure
  */
-void *ic_dict_set(struct ic_dict *dict, char *key, void *data) {
+void *ic_dict_update(struct ic_dict *dict, char *key, void *data) {
+    if (!dict) {
+        puts("ic_dict_update: dict was null");
+        return 0;
+    }
+
+    return lh_update(&(dict->lht), key, data);
+}
+
+/* set data under key in dict
+ *
+ * will perform either an insert or an update
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_dict_set(struct ic_dict *dict, char *key, void *data) {
     if (!dict) {
         puts("ic_dict_set: dict was null");
         return 0;
