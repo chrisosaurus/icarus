@@ -160,5 +160,8 @@ man:
 analyze: clean
 	scan-build make
 
-.PHONY: all clean cleanobj test test_custom example compile format man analyze
+update-libs: clean
+	./scripts/update_libs.pl
+
+.PHONY: all clean cleanobj test test_custom example compile format man analyze update-libs
 
