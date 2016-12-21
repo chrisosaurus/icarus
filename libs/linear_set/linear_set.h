@@ -29,9 +29,9 @@
 #include <stddef.h> /* size_t */
 
 enum ls_entry_state {
-    ls_ENTRY_EMPTY,
-    ls_ENTRY_OCCUPIED,
-    ls_ENTRY_DUMMY /* was occupied but now delete */
+    LS_ENTRY_EMPTY,
+    LS_ENTRY_OCCUPIED,
+    LS_ENTRY_DUMMY /* was occupied but now delete */
 };
 
 struct ls_entry {
@@ -169,6 +169,27 @@ unsigned int ls_insert(struct ls_set *set, const char *key);
  * returns 0 on failure
  */
 unsigned int ls_delete(struct ls_set *set, const char *key);
+
+/* iterate through all keys in this set
+ * calling the provided function on each key.
+ *
+ * the function cannot modify the key.
+ * the function should not access the set in anyway including:
+ *  modifying the set in anyway
+ *  calling any other set functions
+ *
+ * the function will be given the value of the `state` pointer for each call,
+ * this is useful for passing state between calls to the function as well as
+ * for returning results
+ *
+ * the function should return
+ *  1 if it wants the iteration to continue
+ *  0 if it wants the iteration to stop
+ *
+ * returns 1 on success
+ * returns 0 on success
+ */
+unsigned int ls_iterate(struct ls_set *set, void *state, unsigned int (*each)(void *state, const char *key));
 
 #endif /* ifndef LINEAR_SET_H */
 

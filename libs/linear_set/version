@@ -1,8 +1,5 @@
-https://github.com/mkfifo/linear_set
-
-commit 7950fb5a89b5dcfecf1e63ed0192082ae4dd43b4
+commit da45c66c0ceaae140fcb2d0af5fd038ab24a636b
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Wed Jun 29 15:02:38 2016 +1000
+Date:   Tue Dec 20 22:59:04 2016 +1100
 
-    replacing usage of // comment
-
+    Adding ls_iterate for iterating through every key in set

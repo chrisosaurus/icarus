@@ -174,7 +174,7 @@ unsigned int ls_entry_init(struct ls_entry *entry,
     /* setup our simple fields */
     entry->hash    = hash;
     entry->key_len = key_len;
-    entry->state   = ls_ENTRY_OCCUPIED;
+    entry->state   = LS_ENTRY_OCCUPIED;
 
     /* we duplicate the string */
     entry->key = ls_strdupn(key, key_len);
@@ -254,7 +254,7 @@ struct ls_entry * ls_find_entry(const struct ls_set *set, const char *key){
         cur = &(set->entries[i]);
 
         /* if this is an empty then we stop */
-        if( cur->state == ls_ENTRY_EMPTY ){
+        if( cur->state == LS_ENTRY_EMPTY ){
             /* failed to find element */
 #ifdef DEBUG
             puts("ls_find_entry: failed to find key, encountered empty");
@@ -263,7 +263,7 @@ struct ls_entry * ls_find_entry(const struct ls_set *set, const char *key){
         }
 
         /* if this is a dummy then we skip but continue */
-        if( cur->state == ls_ENTRY_DUMMY ){
+        if( cur->state == LS_ENTRY_DUMMY ){
             continue;
         }
 
@@ -279,7 +279,7 @@ struct ls_entry * ls_find_entry(const struct ls_set *set, const char *key){
         cur = &(set->entries[i]);
 
         /* if this is an empty then we stop */
-        if( cur->state == ls_ENTRY_EMPTY ){
+        if( cur->state == LS_ENTRY_EMPTY ){
             /* failed to find element */
 #ifdef DEBUG
             puts("ls_find_entry: failed to find key, encountered empty");
@@ -288,7 +288,7 @@ struct ls_entry * ls_find_entry(const struct ls_set *set, const char *key){
         }
 
         /* if this is a dummy then we skip but continue */
-        if( cur->state == ls_ENTRY_DUMMY ){
+        if( cur->state == LS_ENTRY_DUMMY ){
             continue;
         }
 
@@ -596,7 +596,7 @@ unsigned int ls_resize(struct ls_set *set, size_t new_size){
         cur = &(set->entries[i]);
 
         /* if we are not occupied then skip */
-        if( cur->state != ls_ENTRY_OCCUPIED ){
+        if( cur->state != LS_ENTRY_OCCUPIED ){
             continue;
         }
 
@@ -605,7 +605,7 @@ unsigned int ls_resize(struct ls_set *set, size_t new_size){
 
         for( j = new_pos; j < new_size; ++ j){
             /* skip if not empty */
-            if( new_entries[j].state != ls_ENTRY_EMPTY ){
+            if( new_entries[j].state != LS_ENTRY_EMPTY ){
                 continue;
             }
             goto LS_RESIZE_FOUND;
@@ -613,7 +613,7 @@ unsigned int ls_resize(struct ls_set *set, size_t new_size){
 
         for( j = 0; j < new_pos; ++ j){
             /* skip if not empty */
-            if( new_entries[j].state != ls_ENTRY_EMPTY ){
+            if( new_entries[j].state != LS_ENTRY_EMPTY ){
                 continue;
             }
             goto LS_RESIZE_FOUND;
@@ -754,7 +754,7 @@ unsigned int ls_insert(struct ls_set *set, const char *key){
     for( i=pos; i < set->size; ++i ){
         she = &(set->entries[i]);
         /* if taken keep searching */
-        if( she->state == ls_ENTRY_OCCUPIED ){
+        if( she->state == LS_ENTRY_OCCUPIED ){
             continue;
         }
 
@@ -766,7 +766,7 @@ unsigned int ls_insert(struct ls_set *set, const char *key){
     for( i=0; i < pos; ++i ){
         she = &(set->entries[i]);
         /* if taken keep searching */
-        if( she->state == ls_ENTRY_OCCUPIED ){
+        if( she->state == LS_ENTRY_OCCUPIED ){
             continue;
         }
 
@@ -856,7 +856,7 @@ unsigned int ls_delete(struct ls_set *set, const char *key){
         cur = &(set->entries[i]);
 
         /* if this is an empty then we stop */
-        if( cur->state == ls_ENTRY_EMPTY ){
+        if( cur->state == LS_ENTRY_EMPTY ){
             /* failed to find element */
 #ifdef DEBUG
             puts("ls_delete: failed to find key, encountered empty");
@@ -865,7 +865,7 @@ unsigned int ls_delete(struct ls_set *set, const char *key){
         }
 
         /* if this is a dummy then we skip but continue */
-        if( cur->state == ls_ENTRY_DUMMY ){
+        if( cur->state == LS_ENTRY_DUMMY ){
             continue;
         }
 
@@ -883,7 +883,7 @@ unsigned int ls_delete(struct ls_set *set, const char *key){
         cur = &(set->entries[i]);
 
         /* if this is an empty then we stop */
-        if( cur->state == ls_ENTRY_EMPTY ){
+        if( cur->state == LS_ENTRY_EMPTY ){
             /* failed to find element */
 #ifdef DEBUG
             puts("ls_delete: failed to find key, encountered empty");
@@ -892,7 +892,7 @@ unsigned int ls_delete(struct ls_set *set, const char *key){
         }
 
         /* if this is a dummy then we skip but continue */
-        if( cur->state == ls_ENTRY_DUMMY ){
+        if( cur->state == LS_ENTRY_DUMMY ){
             continue;
         }
 
@@ -914,7 +914,7 @@ LS_DELETE_FOUND:
         cur->key = 0;
         cur->key_len = 0;
         cur->hash = 0;
-        cur->state = ls_ENTRY_DUMMY;
+        cur->state = LS_ENTRY_DUMMY;
 
         /* decrement number of elements */
         --set->n_elems;
@@ -923,4 +923,60 @@ LS_DELETE_FOUND:
         return 1;
 }
 
+/* iterate through all keys in this set
+ * calling the provided function on each key.
+ *
+ * the function cannot modify the key.
+ * the function should not access the set in anyway including:
+ *  modifying the set in anyway
+ *  calling any other set functions
+ *
+ * the function will be given the value of the `state` pointer for each call,
+ * this is useful for passing state between calls to the function as well as
+ * for returning results
+ *
+ * the function should return
+ *  1 if it wants the iteration to continue
+ *  0 if it wants the iteration to stop
+ *
+ * returns 1 on success
+ * returns 0 on success
+ */
+unsigned int ls_iterate(struct ls_set *set, void *state, unsigned int (*each)(void *state, const char *key)){
+    /* index into table we are considering */
+    unsigned int i = 0;
+    unsigned int len = 0;
+    /* current entry we are considering */
+    struct ls_entry *entry = 0;
+    /* return value from user supplied function */
+    unsigned int ret = 0;
+
+    if( ! set ){
+        puts("ls_iterate: set undef");
+        return 0;
+    }
+
+    if( ! each ){
+        puts("ls_iterate: each undef");
+        return 0;
+    }
+
+    len = set->size;
+
+    for( i=0; i<len; ++i ){
+        entry = &(set->entries[i]);
+
+        if( entry->state == LS_ENTRY_OCCUPIED ){
+            ret = each(state, entry->key);
+
+            /* if ret == 0 then user wants us to stop */
+            if( ret == 0 ){
+                return 1;
+            }
+        }
+    }
+
+    return 1;
+
+}
 

@@ -4,6 +4,7 @@
 #include <assert.h> /* assert */
 #include <stdio.h> /* puts */
 #include <stdlib.h> /* calloc */
+#include <string.h> /* strlen */
 
 #include "linear_set.h"
 
@@ -386,6 +387,13 @@ void error_handling(void){
     /* cannot delete a non-existent key */
     assert( 0 == ls_delete(set, key_3) );
 
+    /* ls_iterate */
+    puts("testing ls_iterate");
+    /* table undef */
+    assert( 0 == ls_iterate(0, 0, 0) );
+    /* user-provided function undef */
+    assert( 0 == ls_iterate(set, 0, 0) );
+
     /* ls_tune_threshold */
     puts("testing ls_tune_threshold");
     assert( 0 == ls_tune_threshold(0, 0) );
@@ -571,7 +579,7 @@ void rollover(void){
      * the intention here is to force the second for loop
      * for insert and delete to activate
      */
-    set->entries[3].state = ls_ENTRY_OCCUPIED;
+    set->entries[3].state = LS_ENTRY_OCCUPIED;
 
     /* force insert to roll over */
     assert( ls_insert(set, key) );
@@ -580,7 +588,7 @@ void rollover(void){
     assert( ls_delete(set, key) );
 
     /* make sure to remark as empty */
-    set->entries[3].state = ls_ENTRY_EMPTY;
+    set->entries[3].state = LS_ENTRY_EMPTY;
 
     /* force resize to 2 */
     assert( ls_resize(set, 2) );
@@ -661,8 +669,8 @@ void artificial(void){
 
     puts("manipulating and testing of find and insert");
     /* fill only positions */
-    set->entries[0].state = ls_ENTRY_OCCUPIED;
-    set->entries[1].state = ls_ENTRY_OCCUPIED;
+    set->entries[0].state = LS_ENTRY_OCCUPIED;
+    set->entries[1].state = LS_ENTRY_OCCUPIED;
 
     /* this should trigger the final return 0 of ls_find_entry */
     assert( 0 == ls_find_entry(set, "hello") );
@@ -671,40 +679,40 @@ void artificial(void){
     assert( 0 == ls_insert(set, "c") );
 
     puts("further manipulation for ls_find_entry");
-    set->entries[0].state = ls_ENTRY_DUMMY;
-    set->entries[1].state = ls_ENTRY_DUMMY;
+    set->entries[0].state = LS_ENTRY_DUMMY;
+    set->entries[1].state = LS_ENTRY_DUMMY;
     assert( 0 == ls_find_entry(set, "c") );
 
-    set->entries[0].state   = ls_ENTRY_OCCUPIED;
+    set->entries[0].state   = LS_ENTRY_OCCUPIED;
     set->entries[0].hash    = 98; /* collide with b */
     set->entries[0].key_len = 2;
-    set->entries[1].state   = ls_ENTRY_OCCUPIED;
+    set->entries[1].state   = LS_ENTRY_OCCUPIED;
     set->entries[0].hash    = 98;
     set->entries[1].key_len = 2;
     assert( 0 == ls_find_entry(set, "b") );
 
-    set->entries[0].state   = ls_ENTRY_OCCUPIED;
+    set->entries[0].state   = LS_ENTRY_OCCUPIED;
     set->entries[0].hash    = 99; /* force hash collision with c */
     set->entries[0].key_len = 4; /* but with different len */
     set->entries[0].key     = "a";
-    set->entries[1].state   = ls_ENTRY_OCCUPIED;
+    set->entries[1].state   = LS_ENTRY_OCCUPIED;
     set->entries[1].hash    = 99; /* force hash collision with c */
     set->entries[1].key_len = 1;  /* with same len */
     set->entries[1].key     = "b"; /* but different key */
     assert( 0 == ls_find_entry(set, "c") );
 
     assert( ls_resize(set, 3) );
-    set->entries[0].state   = ls_ENTRY_OCCUPIED;
+    set->entries[0].state   = LS_ENTRY_OCCUPIED;
     set->entries[0].hash    = 98; /* force hash collision with b */
     set->entries[0].key_len = 4;  /* but with different len */
     set->entries[0].key     = "a";
 
-    set->entries[1].state   = ls_ENTRY_OCCUPIED;
+    set->entries[1].state   = LS_ENTRY_OCCUPIED;
     set->entries[1].hash    = 98; /* force hash collision with b */
     set->entries[1].key_len = 1;  /* with same len */
     set->entries[1].key     = "a"; /* but different key */
 
-    set->entries[2].state   = ls_ENTRY_DUMMY;
+    set->entries[2].state   = LS_ENTRY_DUMMY;
     assert( 0 == ls_find_entry(set, "b") );
 
     puts("manipulation to provoke ls_resize");
@@ -720,15 +728,15 @@ void artificial(void){
      * will increase n_elems and resize will refuse to
      * shrink below n_elems
      */
-    set->entries[0].state   = ls_ENTRY_OCCUPIED;
+    set->entries[0].state   = LS_ENTRY_OCCUPIED;
     set->entries[0].hash    = 101;
-    set->entries[1].state   = ls_ENTRY_OCCUPIED;
+    set->entries[1].state   = LS_ENTRY_OCCUPIED;
     set->entries[1].hash    = 101;
-    set->entries[2].state   = ls_ENTRY_OCCUPIED;
+    set->entries[2].state   = LS_ENTRY_OCCUPIED;
     set->entries[2].hash    = 101;
-    set->entries[3].state   = ls_ENTRY_OCCUPIED;
+    set->entries[3].state   = LS_ENTRY_OCCUPIED;
     set->entries[3].hash    = 101;
-    set->entries[4].state   = ls_ENTRY_OCCUPIED;
+    set->entries[4].state   = LS_ENTRY_OCCUPIED;
     set->entries[4].hash    = 101;
     /* we won't be able to fit everything in! */
     assert( 0 ==  ls_resize(set, 4) );
@@ -752,57 +760,57 @@ void artificial(void){
      *  for key 'g' we get hash '3'
      */
 
-    set->entries[4].state   = ls_ENTRY_EMPTY;
+    set->entries[4].state   = LS_ENTRY_EMPTY;
     assert( ls_resize(set, 4) );
 
-    set->entries[0].state   = ls_ENTRY_OCCUPIED;
+    set->entries[0].state   = LS_ENTRY_OCCUPIED;
     set->entries[0].hash    = 99; /* hash collide with c */
     set->entries[0].key_len = 2; /* different key len*/
 
-    set->entries[1].state   = ls_ENTRY_OCCUPIED;
+    set->entries[1].state   = LS_ENTRY_OCCUPIED;
     set->entries[1].hash    = 99;
     set->entries[1].key_len = 1;
     set->entries[1].key     = "z"; /* different key */
 
-    set->entries[2].state   = ls_ENTRY_DUMMY;
+    set->entries[2].state   = LS_ENTRY_DUMMY;
 
-    set->entries[3].state   = ls_ENTRY_OCCUPIED;
+    set->entries[3].state   = LS_ENTRY_OCCUPIED;
     set->entries[3].hash    = 99;
 
     assert( 0 == ls_delete(set, "c") );
 
-    set->entries[0].state   = ls_ENTRY_OCCUPIED;
+    set->entries[0].state   = LS_ENTRY_OCCUPIED;
     set->entries[0].hash    = 1; /* hash differ */
 
-    set->entries[1].state   = ls_ENTRY_OCCUPIED;
+    set->entries[1].state   = LS_ENTRY_OCCUPIED;
     set->entries[1].hash    = 100; /* hash collide with d */
     set->entries[1].key_len = 2; /* different key len*/
 
-    set->entries[2].state   = ls_ENTRY_OCCUPIED;
+    set->entries[2].state   = LS_ENTRY_OCCUPIED;
     set->entries[2].hash    = 100;
     set->entries[2].key_len = 1;
     set->entries[2].key     = "z"; /* different key */
 
-    set->entries[3].state   = ls_ENTRY_DUMMY;
+    set->entries[3].state   = LS_ENTRY_DUMMY;
 
     assert( 0 == ls_delete(set, "d") );
 
     /* we want to force wrap around
      * and then encounter an empty
      */
-    set->entries[0].state   = ls_ENTRY_EMPTY;
+    set->entries[0].state   = LS_ENTRY_EMPTY;
 
-    set->entries[1].state   = ls_ENTRY_OCCUPIED;
+    set->entries[1].state   = LS_ENTRY_OCCUPIED;
     set->entries[1].hash    = 99; /* hash collide with c */
     set->entries[1].key_len = 2; /* different key len*/
     set->entries[1].key     = "z"; /* different key */
 
-    set->entries[2].state   = ls_ENTRY_OCCUPIED;
+    set->entries[2].state   = LS_ENTRY_OCCUPIED;
     set->entries[2].hash    = 99; /* hash collide with c */
     set->entries[2].key_len = 2; /* different key len*/
     set->entries[2].key     = "z"; /* different key */
 
-    set->entries[3].state   = ls_ENTRY_OCCUPIED;
+    set->entries[3].state   = LS_ENTRY_OCCUPIED;
     set->entries[3].hash    = 99; /* hash collide with c */
     set->entries[3].key_len = 2; /* different key len*/
     set->entries[3].key     = "z"; /* different key */
@@ -810,6 +818,146 @@ void artificial(void){
     assert( 0 == ls_delete(set, "c") );
 
 
+    puts("success!");
+}
+
+/* function used by our iterate test below */
+unsigned int iterate_sum(void *state, const char *key){
+    unsigned int *state_sums = 0;
+
+    if( ! state ){
+        puts("iterate_each: state undef");
+        assert(0);
+    }
+
+    if( ! key ){
+        puts("iterate_each: key undef");
+        assert(0);
+    }
+
+    state_sums = state;
+
+    state_sums[0] += strlen(key);
+    state_sums[1] += 1;
+
+    printf("iterate_sum: saw key '%s'\n", key);
+
+    return 1;
+}
+
+/* function used by our iterate test below */
+unsigned int iterate_first(void *state, const char *key){
+    unsigned int *state_firsts = 0;
+
+    if( ! state ){
+        puts("iterate_each: state undef");
+        assert(0);
+    }
+
+    if( ! key ){
+        puts("iterate_each: key undef");
+        assert(0);
+    }
+
+    state_firsts = state;
+
+    state_firsts[0] = strlen(key);
+    state_firsts[1] += 1;
+
+    printf("iterate_first: saw key '%s'\n", key);
+
+    return 0;
+}
+
+void iteration(void){
+    /* our simple hash set */
+    struct ls_set *set = 0;
+
+    /* some keys */
+    char *key_1 = "aa";
+    char *key_2 = "bbbb";
+    char *key_3 = "cccccc";
+
+    /* some data */
+    unsigned int data_1 = 3;
+    unsigned int data_2 = 5;
+    unsigned int data_3 = 7;
+
+    /* the value we pass to our iterate function
+     * the first element [0] is used for summing the length of keys
+     * the second element [1] is used to count the number of times called
+     */
+    unsigned int sums[] = {0, 0};
+    /* our expected answers */
+    unsigned int expected_sums[] = {
+        2 + 4 + 6, /* strlen(key_1) + strlen(key_2) + strlen(key_3) */
+        3, /* called 3 times */
+    };
+
+    /* the value we pass to our iterate_first function
+     * first value [0] is key length of first item seen
+     * second value [1] is the number of times iterate_first is called
+     */
+    unsigned int firsts[] = { 0, 0 };
+    unsigned int expected_firsts[] = {
+        2, /* strlen(key_1); */
+        1, /* we should only be called once */
+    };
+
+    puts("\ntesting iteration functionality");
+
+    puts("creating set");
+    set = ls_new();
+    assert(set);
+    assert( 0 == ls_nelems(set) );
+
+
+    puts("inserting some data");
+    assert( ls_insert(set, key_1) );
+    assert( 1 == ls_nelems(set) );
+    assert( ls_insert(set, key_2) );
+    assert( 2 == ls_nelems(set) );
+    assert( ls_insert(set, key_3) );
+    assert( 3 == ls_nelems(set) );
+
+    puts("testing iteration");
+    /* iterate through all 3 values
+     * sum up length of all keys
+     * record number of times called
+     */
+    assert( ls_iterate(set, sums, iterate_sum) );
+    if( sums[0] != expected_sums[0] ){
+        printf("iteration failed: expected key len sum '%u' but got '%u'\n",
+            expected_sums[0],
+            sums[0]);
+        assert( sums[0] == expected_sums[0] );
+    }
+    if( sums[1] != expected_sums[1] ){
+        printf("iteration failed: expected to be called '%u' times, but got '%u'\n",
+            expected_sums[1],
+            sums[1]);
+        assert( sums[1] == expected_sums[1] );
+    }
+
+    /* iterate and stop after first item (returning 0 to signal stop)
+     * record key length of last (and only) item seen
+     * count number of times called
+     */
+    assert( ls_iterate(set, firsts, iterate_first) );
+    if( firsts[0] != expected_firsts[0] ){
+        printf("iteration failed: expected key len firsts '%u' but got '%u'\n",
+            expected_firsts[0],
+            firsts[0]);
+        assert( firsts[0] == expected_firsts[0] );
+    }
+    if( firsts[1] != expected_firsts[1] ){
+        printf("iteration failed: expected to be called '%u' times, but got '%u'\n",
+            expected_firsts[1],
+            firsts[1]);
+        assert( firsts[1] == expected_firsts[1] );
+    }
+
+    assert( ls_destroy(set, 1) );
     puts("success!");
 }
 
@@ -833,6 +981,8 @@ int main(void){
     threshold();
 
     artificial();
+
+    iteration();
 
     puts("\noverall testing success!");
 
