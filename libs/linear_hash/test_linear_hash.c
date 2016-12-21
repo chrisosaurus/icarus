@@ -4,6 +4,7 @@
 #include <assert.h> /* assert */
 #include <stdio.h> /* puts */
 #include <stdlib.h> /* calloc */
+#include <string.h> /* strlen */
 
 #include "linear_hash.h"
 
@@ -845,6 +846,13 @@ void error_handling(void){
     /* cannot delete a non-existent key */
     assert( 0 == lh_delete(table, key_3) );
 
+    /* lh_iterate */
+    puts("testing lh_iterate");
+    /* table undef */
+    assert( 0 == lh_iterate(0, 0, 0) );
+    /* user-function undef */
+    assert( 0 == lh_iterate(table, 0, 0) );
+
     /* lh_tune_threshold */
     puts("testing lh_tune_threshold");
     assert( 0 == lh_tune_threshold(0, 0) );
@@ -1297,6 +1305,181 @@ void artificial(void){
     puts("success!");
 }
 
+/* function used by our iterate test below */
+unsigned int iterate_sum(void *state, const char *key, void **data){
+    unsigned int *state_sums = 0;
+    unsigned int **data_int = 0;
+
+    if( ! state ){
+        puts("iterate_each: state undef");
+        assert(0);
+    }
+
+    if( ! key ){
+        puts("iterate_each: key undef");
+        assert(0);
+    }
+
+    if( ! data ){
+        puts("iterate_each: data undef");
+        assert(0);
+    }
+
+    data_int = (unsigned int **) data;
+    state_sums = state;
+
+    state_sums[0] += strlen(key);
+    state_sums[1] += **data_int;
+    state_sums[2] += 1;
+
+    printf("iterate_sum: saw pair ('%s': '%u')\n", key, **data_int);
+
+    return 1;
+}
+
+/* function used by our iterate test below */
+unsigned int iterate_first(void *state, const char *key, void **data){
+    unsigned int *state_firsts = 0;
+    unsigned int **data_int = 0;
+
+    if( ! state ){
+        puts("iterate_each: state undef");
+        assert(0);
+    }
+
+    if( ! key ){
+        puts("iterate_each: key undef");
+        assert(0);
+    }
+
+    if( ! data ){
+        puts("iterate_each: data undef");
+        assert(0);
+    }
+
+    data_int = (unsigned int **) data;
+    state_firsts = state;
+
+    state_firsts[0] = strlen(key);
+    state_firsts[1] = **data_int;
+    state_firsts[2] += 1;
+
+    printf("iterate_first: saw pair ('%s': '%u')\n", key, **data_int);
+
+    return 0;
+}
+
+void iteration(void){
+    /* our simple hash table */
+    struct lh_table *table = 0;
+
+    /* some keys */
+    char *key_1 = "aa";
+    char *key_2 = "bbbb";
+    char *key_3 = "cccccc";
+
+    /* some data */
+    unsigned int data_1 = 3;
+    unsigned int data_2 = 5;
+    unsigned int data_3 = 7;
+
+    /* the value we pass to our iterate function
+     * the first element [0] is used for summing the length of keys
+     * the second element [1] is used for summing the data
+     * the third element [2] is used to count the number of times called
+     */
+    unsigned int sums[] = {0, 0, 0};
+    /* our expected answers */
+    unsigned int expected_sums[] = {
+        2 + 4 + 6, /* strlen(key_1) + strlen(key_2) + strlen(key_3) */
+        data_1 + data_2 + data_3,
+        3, /* called 3 times */
+    };
+
+    /* the value we pass to our iterate_first function
+     * first value [0] is key length of first item seen
+     * second value [1] is value of first data seen
+     * third value [2] is the number of times iterate_first is called
+     */
+    unsigned int firsts[] = { 0, 0, 0 };
+    unsigned int expected_firsts[] = {
+        2, /* strlen(key_1); */
+        data_1,
+        1, /* we should only be called once */
+    };
+
+    puts("\ntesting iteration functionality");
+
+    puts("creating table");
+    table = lh_new();
+    assert(table);
+    assert( 0 == lh_nelems(table) );
+
+
+    puts("inserting some data");
+    assert( lh_insert(table, key_1, &data_1) );
+    assert( 1 == lh_nelems(table) );
+    assert( lh_insert(table, key_2, &data_2) );
+    assert( 2 == lh_nelems(table) );
+    assert( lh_insert(table, key_3, &data_3) );
+    assert( 3 == lh_nelems(table) );
+
+    puts("testing iteration");
+    /* iterate through all 3 values
+     * sum up length of all keys
+     * sum up all data items
+     * record number of times called
+     */
+    assert( lh_iterate(table, sums, iterate_sum) );
+    if( sums[0] != expected_sums[0] ){
+        printf("iteration failed: expected key len sum '%u' but got '%u'\n",
+            expected_sums[0],
+            sums[0]);
+        assert( sums[0] == expected_sums[0] );
+    }
+    if( sums[1] != expected_sums[1] ){
+        printf("iteration failed: expected data sum '%u' but got '%u'\n",
+            expected_sums[1],
+            sums[1]);
+        assert( sums[1] == expected_sums[1] );
+    }
+    if( sums[2] != expected_sums[2] ){
+        printf("iteration failed: expected to be called '%u' times, but got '%u'\n",
+            expected_sums[2],
+            sums[2]);
+        assert( sums[2] == expected_sums[2] );
+    }
+
+    /* iterate and stop after first item (returning 0 to signal stop)
+     * record key length of last (and only) item seen
+     * record last (and only) data seen
+     * count number of times called
+     */
+    assert( lh_iterate(table, firsts, iterate_first) );
+    if( firsts[0] != expected_firsts[0] ){
+        printf("iteration failed: expected key len firsts '%u' but got '%u'\n",
+            expected_firsts[0],
+            firsts[0]);
+        assert( firsts[0] == expected_firsts[0] );
+    }
+    if( firsts[1] != expected_firsts[1] ){
+        printf("iteration failed: expected data firsts '%u' but got '%u'\n",
+            expected_firsts[1],
+            firsts[1]);
+        assert( firsts[1] == expected_firsts[1] );
+    }
+    if( firsts[2] != expected_firsts[2] ){
+        printf("iteration failed: expected to be called '%u' times, but got '%u'\n",
+            expected_firsts[2],
+            firsts[2]);
+        assert( firsts[2] == expected_firsts[2] );
+    }
+
+
+    assert( lh_destroy(table, 1, 0) );
+    puts("success!");
+}
+
 int main(void){
     new_insert_get_destroy();
 
@@ -1323,6 +1506,8 @@ int main(void){
     threshold();
 
     artificial();
+
+    iteration();
 
     puts("\noverall testing success!");
 

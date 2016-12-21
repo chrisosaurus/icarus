@@ -1,10 +1,5 @@
-commit 5b0f5f8e0a991c8a14c1355bbd8d96059df7a651
+commit 0f90c019b874c9fb1ee3d2e313657516192940e2
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Mon Dec 19 21:03:52 2016 +1100
+Date:   Tue Dec 20 22:47:12 2016 +1100
 
-    API change
-
-    old calls to `lh_set(table, key, data)` should be replaced with `lh_update(table, key, data)`.
-
-    `lh_set(table, key, data)` will now map to either an insert or update as needed.
-
+    Minor lh_iterate doc fix

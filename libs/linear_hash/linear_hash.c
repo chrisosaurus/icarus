@@ -1038,4 +1038,59 @@ LH_DELETE_FOUND:
         return old_data;
 }
 
+/* iterate through all key/value pairs in this hash table
+ * calling the provided function on each pair.
+ *
+ * the function is allowed to modify the value but cannot modify the key.
+ * the function should not access the hash table in anyway including:
+ *  modifying the hash table other than through the value pointer given
+ *  calling any other hash table functions
+ *
+ * the function will be given the value of the `state` pointer for each call,
+ * this is useful for passing state between calls to the function as well as
+ * for returning results
+ *
+ * the function should return
+ *  1 if it wants the iteration to continue
+ *  0 if it wants the iteration to stop
+ *
+ * returns 1 on success
+ * returns 0 on success
+ */
+unsigned int lh_iterate(struct lh_table *table, void *state, unsigned int (*each)(void *state, const char *key, void **data)){
+    /* index into table we are considering */
+    unsigned int i = 0;
+    unsigned int len = 0;
+    /* current entry we are considering */
+    struct lh_entry *entry = 0;
+    /* return value from user supplied function */
+    unsigned int ret = 0;
+
+    if( ! table ){
+        puts("lh_iterate: table undef");
+        return 0;
+    }
+
+    if( ! each ){
+        puts("lh_iterate: each undef");
+        return 0;
+    }
+
+    len = table->size;
+
+    for( i=0; i<len; ++i ){
+        entry = &(table->entries[i]);
+
+        if( entry->state == LH_ENTRY_OCCUPIED ){
+            ret = each(state, entry->key, &(entry->data));
+
+            /* if ret == 0 then user wants us to stop */
+            if( ret == 0 ){
+                return 1;
+            }
+        }
+    }
+
+    return 1;
+}
 
