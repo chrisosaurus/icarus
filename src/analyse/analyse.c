@@ -133,8 +133,10 @@ unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type 
     }
 
     /* fill in field_dict
-     * FIXME this is iterating through fields twice
-     * FIXME it is also fetching type from string twice
+     * FIXME this is iterating through fields twice as we already iterate
+     *       through once in ic_analyse_field_list
+     * FIXME likewise it is also fetching type from string twice
+     *       once here, and once in ic_analyse_field_list
      */
     len = ic_pvector_length(&(tdecl->fields));
     for (i = 0; i < len; ++i) {
@@ -152,6 +154,9 @@ unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type 
          *
          *  FIXME check / consider this
          *  FIXME duplicated code from analyse_field_list
+         *  FIXME do we allow co-recursive types
+         *  FIXME what about N-level-recursive types?
+         *        Foo includes Bar, Bar includes Baz, Bac includes Foo.
          */
         type_sym = ic_type_ref_get_symbol(&(field->type));
         if (!type_sym) {
