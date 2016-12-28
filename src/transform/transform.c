@@ -164,7 +164,7 @@ unsigned int ic_transform_print(FILE *fd, struct ic_kludge *kludge) {
     unsigned int i = 0;
     /* len for kludge fdecls */
     unsigned int len = 0;
-    /* current tdecl we are considering */
+    /* current fdecl we are considering */
     struct ic_decl_func *fdecl = 0;
     /* pointer to tbody within */
     struct ic_transform_body *tbody = 0;
