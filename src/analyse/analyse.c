@@ -142,7 +142,7 @@ unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type 
     for (i = 0; i < len; ++i) {
         field = ic_pvector_get(&(tdecl->fields), i);
         if (!field) {
-            puts("ic_analyse_field_list: call to ic_pvector_get failed");
+            puts("ic_analyse_decl_type: call to ic_pvector_get failed");
             goto ERROR;
         }
 
@@ -160,26 +160,26 @@ unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type 
          */
         type_sym = ic_type_ref_get_symbol(&(field->type));
         if (!type_sym) {
-            puts("ic_analyse_decl_type call to ic_type_ref_get_symbol_failed");
+            puts("ic_analyse_decl_type: call to ic_type_ref_get_symbol_failed");
             goto ERROR;
         }
 
         type_str = ic_symbol_contents(type_sym);
         if (!type_str) {
-            puts("ic_analyse_decl_type call to ic_symbol_contents failed");
+            puts("ic_analyse_decl_type: call to ic_symbol_contents failed");
             goto ERROR;
         }
 
         /* check that this field's type exists */
         field_type = ic_kludge_get_type(kludge, type_str);
         if (!field_type) {
-            puts("ic_analyse_decl_type call to ic_kludge_get_type failed");
+            puts("ic_analyse_decl_type: call to ic_kludge_get_type failed");
             goto ERROR;
         }
 
         /* insert this type into field_dict */
         if (!ic_decl_type_add_field_type(tdecl, ic_symbol_contents(&(field->name)), field_type)) {
-            puts("ic_analyse_decl_type call to ic_decl_type_add_field_type failed");
+            puts("ic_analyse_decl_type: call to ic_decl_type_add_field_type failed");
             goto ERROR;
         }
     }
