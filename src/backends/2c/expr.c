@@ -45,10 +45,6 @@ unsigned int ic_b2c_compile_expr(struct ic_kludge *input_kludge, struct ic_trans
 }
 
 unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic_transform_ir_fcall *fcall, FILE *out) {
-    /* indent level used for _print calls for debug
-   * FIXME gross
-   */
-    unsigned int indent_level = 1;
     /* function decl */
     struct ic_decl_func *fdecl = 0;
     /* mangled function signature, suitable for output */
@@ -74,10 +70,6 @@ unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic
         puts("ic_b2c_compile_expr_fcall: out was null");
         return 0;
     }
-
-    puts("ic_b2c_compile_expr_fcall: call for");
-    ic_expr_func_call_print(stdout, fcall->fcall, &indent_level);
-    puts("");
 
     fdecl = ic_expr_func_call_get_fdecl(fcall->fcall);
     if (!fdecl) {
