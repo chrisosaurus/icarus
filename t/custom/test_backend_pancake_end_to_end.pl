@@ -355,7 +355,7 @@ sub run {
   print $fh $input;
   close $fh;
 
-  my $output = `$path $in_tmp_file pancake`;
+  my $output = `$path pancake $in_tmp_file --debug`;
   my $status = $?;
 
   `rm $in_tmp_file`;

@@ -17,7 +17,7 @@ char *ic_read_slurp_filename(char *filename) {
     /* open file */
     file = fopen(filename, "r");
     if (!file) {
-        puts("ERROR: fopen failed in read_slurp_filename");
+        printf("ERROR: fopen failed in read_slurp_filename for file '%s'\n", filename);
         perror("read_slurp_filename::fopen");
         return 0;
     }

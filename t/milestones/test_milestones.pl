@@ -180,7 +180,7 @@ sub check_2c {
   run_cmd_die("rm -rf $basename");
 
   {
-    my $cmd_0 = "./icarus t/milestones/${basename}.ic 2c ${cout}";
+    my $cmd_0 = "./icarus 2c t/milestones/${basename}.ic -o ${cout}";
     my $prog_0 = run_cmd_bool($cmd_0);
     if( not $prog_0 ){
       if( 'fail-compile' eq "$expected_progress" ){
@@ -259,7 +259,7 @@ sub check_pancake {
   die if @_;
 
   {
-    my $cmd_0 = "./icarus t/milestones/${basename}.ic pancake";
+    my $cmd_0 = "./icarus pancake t/milestones/${basename}.ic";
     my $runtime_output = run_cmd_undef($cmd_0);
     if( not defined $runtime_output ){
       if( 'fail-runtime' eq "$expected_progress" ){

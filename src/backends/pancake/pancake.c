@@ -11,12 +11,18 @@
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake(struct ic_kludge *kludge) {
+unsigned int ic_backend_pancake(struct ic_kludge *kludge, struct ic_opts *opts){
+
     struct ic_backend_pancake_instructions *instructions = 0;
     struct ic_backend_pancake_runtime_data *runtime_data = 0;
 
     if (!kludge) {
         puts("ic_backend_pancake: kludge was null");
+        return 0;
+    }
+
+    if (!opts) {
+        puts("ic_backend_pancake: opts was null");
         return 0;
     }
 
@@ -26,18 +32,20 @@ unsigned int ic_backend_pancake(struct ic_kludge *kludge) {
         return 0;
     }
 
-    /* print instructions */
-    puts("Pancake bytecode:");
-    puts("==========================");
-    if (!ic_backend_pancake_instructions_print(stdout, instructions)) {
-        puts("ic_backend_pancake: call to ic_backend_pancake_instructions_print failed");
-        return 0;
-    }
-    puts("==========================");
-    puts("");
+    if( opts->debug ) {
+      /* print instructions */
+      puts("Pancake bytecode:");
+      puts("==========================");
+      if (!ic_backend_pancake_instructions_print(stdout, instructions)) {
+          puts("ic_backend_pancake: call to ic_backend_pancake_instructions_print failed");
+          return 0;
+      }
+      puts("==========================");
+      puts("");
 
-    puts("Pancake interpreter output");
-    puts("==========================");
+      puts("Pancake interpreter output");
+      puts("==========================");
+    }
 
     runtime_data = ic_backend_pancake_runtime_data_new(instructions);
     if (!runtime_data) {

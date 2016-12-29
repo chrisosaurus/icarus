@@ -196,7 +196,7 @@ sub run {
   `rm $out_tmp_file`;
 
   # compile .ic to .c
-  my $output = `$path $in_tmp_file 2c $out_tmp_file`;
+  my $output = `$path 2c -i $in_tmp_file -o $out_tmp_file`;
   my $exit_status = $?;
 
   `rm $in_tmp_file`;

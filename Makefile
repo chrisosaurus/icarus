@@ -102,9 +102,11 @@ test_custom: $(OBJ) icarus
 	@echo running test_transform_simple.pl
 	t/custom/test_transform_simple.pl
 
+	@echo -e "\n"
 	@echo running test_backend_2c_simple.pl
 	t/custom/test_backend_2c_simple.pl
 
+	@echo -e "\n"
 	@echo running test_backend_2c_end_to_end_output_only.pl
 	t/custom/test_backend_2c_end_to_end_output_only.pl
 
@@ -126,6 +128,7 @@ test_custom: $(OBJ) icarus
 	@echo running test_backend_pancake_interpret_instructions.pl
 	t/custom/test_backend_pancake_interpret_instructions.pl
 
+	@echo -e "\n"
 	@echo running test_backend_pancake_end_to_end.pl
 	t/custom/test_backend_pancake_end_to_end.pl
 

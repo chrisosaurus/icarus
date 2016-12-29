@@ -122,7 +122,7 @@ if we input the following file (`example/fizzer.ic)):
 
 we can then compile this via:
 
-    ./icarus example/fizzer.ic 2c fizzer.c
+    ./icarus 2c example/fizzer.ic -o fizzer.c
 
 which will show us the transformed IR version of this:
 
@@ -205,7 +205,7 @@ Work so far - pancake backend
 we can run this same example through the `pancake` backend which will
 first compile it to bytecode and then interpret it
 
-    ./icarus example/fizzer.ic pancake
+    ./icarus pancake example/fizzer.ic
 
 which shows us
 
