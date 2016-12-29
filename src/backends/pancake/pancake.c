@@ -50,16 +50,16 @@ unsigned int ic_backend_pancake(struct ic_kludge *kludge, struct ic_opts *opts) 
 
     /* if out_filename is specified then output pancake bytecode */
     if (opts->out_filename) {
-      out_fh = fopen(opts->out_filename, "w");
-      if (!out_fh) {
-        printf("ic_backend_pancake: call to fopen failed for file '%s'\n", opts->out_filename);
-        return 0;
-      }
-      if (!ic_backend_pancake_instructions_print(out_fh, instructions)) {
-          puts("ic_backend_pancake: call to ic_backend_pancake_instructions_print failed");
-          return 0;
-      }
-      fclose(out_fh);
+        out_fh = fopen(opts->out_filename, "w");
+        if (!out_fh) {
+            printf("ic_backend_pancake: call to fopen failed for file '%s'\n", opts->out_filename);
+            return 0;
+        }
+        if (!ic_backend_pancake_instructions_print(out_fh, instructions)) {
+            puts("ic_backend_pancake: call to ic_backend_pancake_instructions_print failed");
+            return 0;
+        }
+        fclose(out_fh);
     }
 
     runtime_data = ic_backend_pancake_runtime_data_new(instructions);
