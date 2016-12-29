@@ -206,3 +206,21 @@ MATCHED:
 
     return 0;
 }
+
+/* allocate and init a new opts
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_opts *ic_arg_opts_new(void) {
+    struct ic_opts *opts = 0;
+
+    opts = calloc(1, sizeof(struct ic_opts));
+
+    if (!opts) {
+        puts("ic_arg_opts_new: call to calloc failed");
+        return 0;
+    }
+
+    return opts;
+}

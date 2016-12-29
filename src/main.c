@@ -238,9 +238,9 @@ struct ic_opts *main_args(int argc, char **argv) {
     struct ic_opts *opts = 0;
     unsigned int command_count = 0;
 
-    opts = calloc(1, sizeof(struct ic_opts));
+    opts = ic_arg_opts_new();
     if (!opts) {
-        puts("failed to allocate space for options");
+        puts("main_args: call to ic_arg_opts_new failed");
         return 0;
     }
 
@@ -262,7 +262,7 @@ struct ic_opts *main_args(int argc, char **argv) {
     };
 
     if (!ic_arg_parse(commands, arguments, argv, argc, &(opts->in_filename))) {
-        puts("fail to parse arguments");
+        puts("main: Failed to parse arguments");
         return 0;
     }
 
@@ -282,20 +282,20 @@ struct ic_opts *main_args(int argc, char **argv) {
         opts->pancake = 1;
     } else if (command_count > 1) {
         /* cannot specify more than one command */
-        puts("Cannot specify more than one command");
+        puts("main: Cannot specify more than one command");
         return 0;
     }
 
     /* input file must be specified */
     if (0 == opts->in_filename) {
-        puts("No input file specified");
+        puts("main: No input file specified");
         return 0;
     }
 
     /* for 2c we must have an output file */
     if (opts->o2c) {
         if (0 == opts->out_filename) {
-            puts("Command 2c specified but no output file provided");
+            puts("main: Command 2c specified but no output file provided");
             return 0;
         }
     }

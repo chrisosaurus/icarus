@@ -45,4 +45,11 @@ struct ic_command {
  */
 unsigned int ic_arg_parse(struct ic_command commands[], struct ic_arg args[], char **argv, int argc, char **default_option);
 
+/* allocate and init a new opts
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_opts *ic_arg_opts_new(void);
+
 #endif
