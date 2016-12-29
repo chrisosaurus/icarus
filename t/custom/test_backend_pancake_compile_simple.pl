@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use v5.10;
 
-my $path = "bin/t/custom/test_backend_pancake_compile_simple";
+my $path = "./icarus";
 
 die "Could not find '$path'\n" unless -e $path;
 
@@ -41,14 +41,15 @@ close $fh;
 
 # using mktemp here just to get name
 my $out_tmp_file = `mktemp TESTING_BACKEND_PANCAKE_COMPILE_SIMPLE_XXX.out`;
+`rm -f $out_tmp_file`;
 
-my $output = `$path $in_tmp_file $out_tmp_file`;
+my $output = `$path pancake $in_tmp_file -o $out_tmp_file`;
 my $exit_status = $?;
 
 `rm $in_tmp_file`;
 
 if( $exit_status != 0 ){
-  `rm $out_tmp_file`;
+  `rm -f $out_tmp_file`;
   say "Icarus 2c exit status was not as expected";
   say "=======\nGot:\n$output";
   die "exit_status was '$exit_status', expected 0";
@@ -56,7 +57,7 @@ if( $exit_status != 0 ){
 
 # finally run program
 $output = `cat $out_tmp_file`;
-`rm $out_tmp_file`;
+`rm -f $out_tmp_file`;
 
 if( $exit_status != 0 || $output ne $expected ){
     say "Output was not as expected";
