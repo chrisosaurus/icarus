@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use v5.10;
 
-my $path = "bin/t/custom/test_transform_simple";
+my $path = "./icarus";
 
 die "Could not find '$path'\n" unless -e $path;
 
@@ -38,7 +38,7 @@ open( my $fh, ">", "$tmp_file" ) or die "failed to open tmp file '$tmp_file'";
 print $fh $input;
 close $fh;
 
-my $output = `$path $tmp_file`;
+my $output = `$path transform $tmp_file`;
 my $exit_status = $?;
 
 `rm $tmp_file`;

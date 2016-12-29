@@ -3,14 +3,13 @@ use strict;
 use warnings;
 use v5.10;
 
-my $path = "bin/t/custom/test_analyse_current";
+my $path = "./icarus";
 
 die "Could not find '$path'\n" unless -e $path;
 
-my $output = `$path`;
+my $output = `$path check example/current.ic`;
 my $exit_status = $?;
 my $expected = <<EOF;
-(partial) analyse was a success
 EOF
 
 if( $exit_status != 0 || $output ne $expected ){

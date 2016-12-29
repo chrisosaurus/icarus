@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use v5.10;
 
-my $path = "bin/t/custom/test_analyse_invalid";
+my $path = "./icarus";
 
 # filename to use for temp
 my $filename = "analyse_invalid_testing.ic";
@@ -106,7 +106,7 @@ for my $key (keys %invalid_programs){
     close($fh);
 
     # run program
-    my $output = `$path $filename`;
+    my $output = `$path check $filename`;
     my $exit_status = $?;
 
     # check exit code and output

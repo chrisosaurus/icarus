@@ -131,6 +131,11 @@ unsigned int icarus(struct ic_opts *opts) {
 
     /* if our command was 'transform' then stop here */
     if (opts->transform) {
+        if (!ic_transform_print(stdout, kludge)) {
+            puts("call to ic_transform_print failed");
+            exit(1);
+        }
+
         /* success */
         goto CLEANUP;
     }
