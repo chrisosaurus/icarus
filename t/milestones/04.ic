@@ -1,11 +1,11 @@
-fn add_one(i::Sint) -> Sint
+fn add_one(i::Sint)
   let x::Sint = 0
   x = 1 + i
-  return x
+  println(i)
+  println(x)
 end
 
 fn main()
-  let x::Sint = add_one(5)
-  println(x)
+  add_one(5)
 end
 

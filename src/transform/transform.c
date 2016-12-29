@@ -694,6 +694,14 @@ static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic
             fcall = &(assign->right->u.fcall);
             break;
 
+        case ic_expr_type_operator:
+            if (!assign->right->u.op.fcall) {
+                puts("ic_transform_stmt_assign: operator didn't have fcall set");
+                return 0;
+            }
+            fcall = assign->right->u.op.fcall;
+            break;
+
         default:
             puts("ic_transform_stmt_assign: unsupported case");
             return 0;

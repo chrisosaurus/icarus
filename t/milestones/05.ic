@@ -1,8 +1,11 @@
-type Foo
-  i::Sint
+fn add_one(i::Sint) -> Sint
+  let x::Sint = 0
+  x = 1 + i
+  return x
 end
 
 fn main()
-  let f::Foo = Foo(5)
-  println(f.i)
+  let x::Sint = add_one(5)
+  println(x)
 end
+

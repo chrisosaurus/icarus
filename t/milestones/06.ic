@@ -2,12 +2,7 @@ type Foo
   i::Sint
 end
 
-fn unpack(f::Foo) -> Sint
- return f.i
-end
-
 fn main()
-  let f::Foo = Foo(3)
-  println(unpack(f))
+  let f::Foo = Foo(5)
+  println(f.i)
 end
-
