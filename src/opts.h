@@ -1,6 +1,8 @@
 #ifndef IC_OPTS_H
 #define IC_OPTS_H
 
+#include <stdbool.h>
+
 struct ic_opts {
     bool check;
     bool transform;
