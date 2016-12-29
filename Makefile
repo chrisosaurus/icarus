@@ -124,9 +124,7 @@ test_custom: $(OBJ) icarus
 	@echo running test_backend_pancake_end_to_end.pl
 	t/custom/test_backend_pancake_end_to_end.pl
 
-	@echo -e "\n\ncompiling t/custom/test_backend_pancake_end_to_end_output_only.c to bin/t/custom/test_backend_pancake_end_to_end_output_only"
-	@mkdir -p `dirname bin/t/custom/test_backend_pancake_end_to_end_output_only`
-	@${CC} t/custom/test_backend_pancake_end_to_end_output_only.c -o bin/t/custom/test_backend_pancake_end_to_end_output_only ${CFLAGS} ${LDFLAGS} ${OBJ}
+	@echo -e "\n"
 	@echo running test_backend_pancake_end_to_end_output_only.pl
 	t/custom/test_backend_pancake_end_to_end_output_only.pl
 

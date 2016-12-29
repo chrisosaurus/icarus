@@ -4,7 +4,7 @@ use warnings;
 use v5.10;
 use IPC::Open3;
 
-my $path = "bin/t/custom/test_backend_pancake_end_to_end_output_only";
+my $path = "./icarus";
 
 die "Could not find '$path'\n" unless -e $path;
 
@@ -224,7 +224,7 @@ sub run {
   print $fh $input;
   close $fh;
 
-  my $output = `$path $in_tmp_file`;
+  my $output = `$path pancake $in_tmp_file`;
   my $status = $?;
 
   `rm $in_tmp_file`;
