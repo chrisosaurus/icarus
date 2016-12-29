@@ -3,6 +3,6 @@
 02 pass pass
 03 pass pass
 04 pass pass
-05 fail-compile fail-runtime
+05 pass pass
 06 fail-compile fail-runtime
 07 fail-compile fail-runtime

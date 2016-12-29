@@ -434,7 +434,7 @@ static unsigned int ic_transform_stmt(struct ic_kludge *kludge, struct ic_scope 
 static unsigned int ic_transform_stmt_ret(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_ret *ret) {
     struct ic_expr *expr = 0;
     struct ic_transform_ir_stmt *stmt = 0;
-    struct ic_symbol *new_tmp = 0;
+    struct ic_symbol *name = 0;
 
     if (!kludge) {
         puts("ic_transform_stmt_ret: kludge was null");
@@ -462,13 +462,19 @@ static unsigned int ic_transform_stmt_ret(struct ic_kludge *kludge, struct ic_sc
     }
 
     expr = ret->ret;
-    new_tmp = ic_transform_new_temp(kludge, scope, tbody, expr);
-    if (!new_tmp) {
-        puts("ic_transform_stmt_ret: call to ic_transform_new_temp failed");
-        return 0;
+
+    /* if expr is already an identifier then we don't need a temp */
+    if (expr->tag == ic_expr_type_identifier) {
+        name = &expr->u.id.identifier;
+    } else {
+        name = ic_transform_new_temp(kludge, scope, tbody, expr);
+        if (!name) {
+            puts("ic_transform_stmt_ret: call to ic_transform_new_temp failed");
+            return 0;
+        }
     }
 
-    stmt = ic_transform_ir_stmt_ret_new(new_tmp);
+    stmt = ic_transform_ir_stmt_ret_new(name);
     if (!stmt) {
         puts("ic_transform_stmt_ret: call to ic_transform_ir_stmt_ret_new failed");
         return 0;
