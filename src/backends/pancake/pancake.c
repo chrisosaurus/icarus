@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "../../analyse/data/kludge.h"
 #include "../../data/dict.h"
@@ -16,6 +17,9 @@ unsigned int ic_backend_pancake(struct ic_kludge *kludge, struct ic_opts *opts) 
     struct ic_backend_pancake_instructions *instructions = 0;
     struct ic_backend_pancake_runtime_data *runtime_data = 0;
     FILE *out_fh = 0;
+
+    /* do we need to close the fh or not */
+    unsigned int close_fh = 0;
 
     if (!kludge) {
         puts("ic_backend_pancake: kludge was null");
@@ -50,7 +54,13 @@ unsigned int ic_backend_pancake(struct ic_kludge *kludge, struct ic_opts *opts) 
 
     /* if out_filename is specified then output pancake bytecode */
     if (opts->out_filename) {
-        out_fh = fopen(opts->out_filename, "w");
+        if (0 == strcmp("-", opts->out_filename)) {
+            out_fh = stdout;
+        } else {
+            out_fh = fopen(opts->out_filename, "w");
+            close_fh = 1;
+        }
+
         if (!out_fh) {
             printf("ic_backend_pancake: call to fopen failed for file '%s'\n", opts->out_filename);
             return 0;
@@ -59,7 +69,10 @@ unsigned int ic_backend_pancake(struct ic_kludge *kludge, struct ic_opts *opts) 
             puts("ic_backend_pancake: call to ic_backend_pancake_instructions_print failed");
             return 0;
         }
-        fclose(out_fh);
+
+        if (close_fh) {
+            fclose(out_fh);
+        }
     }
 
     runtime_data = ic_backend_pancake_runtime_data_new(instructions);
