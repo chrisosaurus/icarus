@@ -54,7 +54,7 @@ void help(void) {
           icarus check --input foo.ic  # perform static analysis on file `foo.ic`\n\
           icarus 2c -i foo.ic -o foo.c # compile `foo.ic` to c and output that in new file `foo.c`\n\
 \n\
-       ");
+");
 }
 
 struct ic_opts *main_args(int argc, char **argv) {

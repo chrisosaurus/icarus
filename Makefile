@@ -89,6 +89,10 @@ test_custom: $(OBJ) icarus
 	t/custom/test_arguments_version.pl
 
 	@echo -e "\n"
+	@echo running test_arguments_help.pl
+	t/custom/test_arguments_help.pl
+
+	@echo -e "\n"
 	@echo running test_analyse_current.pl
 	t/custom/test_analyse_current.pl
 
