@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use v5.10;
 
-my $path = "bin/t/custom/test_backend_pancake_interpret_simple";
+my $path = "./icarus";
 
 die "Could not find '$path'\n" unless -e $path;
 
@@ -27,7 +27,7 @@ open( my $fh, ">", "$in_tmp_file" ) or die "failed to open tmp file '$in_tmp_fil
 print $fh $input;
 close $fh;
 
-my $output = `$path $in_tmp_file`;
+my $output = `$path pancake $in_tmp_file`;
 my $exit_status = $?;
 
 `rm $in_tmp_file`;
