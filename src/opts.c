@@ -184,13 +184,13 @@ MATCHED:
             c = argument->thing;
             /* check if argument is already set */
             if (*c) {
-                printf("Icarus error: argument '%s' set multiple times\n", argument->l);
+                printf("Icarus error: option '%s' set multiple times\n", argument->l);
                 exit(1);
             }
             ++*i;
             if (*i >= argc) {
-                puts("arg_handle: ran out of arguments");
-                return -1;
+                printf("Icarus error: no argument provided for option '%s'\n", argument->l);
+                exit(1);
             }
             *c = argv[*i];
             return 2;
