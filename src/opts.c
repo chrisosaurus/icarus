@@ -182,6 +182,11 @@ MATCHED:
         case arg_type_string:
             /* set string to next argument in argv and consume */
             c = argument->thing;
+            /* check if argument is already set */
+            if (*c) {
+                printf("Icarus error: argument '%s' set multiple times\n", argument->l);
+                exit(1);
+            }
             ++*i;
             if (*i >= argc) {
                 puts("arg_handle: ran out of arguments");
