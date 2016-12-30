@@ -263,14 +263,14 @@ static unsigned int check_options(struct ic_opts *opts) {
     /* input file must be specified */
     if (0 == opts->in_filename) {
         puts("Icarus error: No input file specified");
-        return 0;
+        exit(1);
     }
 
     /* for 2c we must have an output file */
     if (opts->o2c) {
         if (0 == opts->out_filename) {
             puts("Icarus error: Command 2c specified but no output file provided");
-            return 0;
+            exit(1);
         }
     }
 
