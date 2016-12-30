@@ -341,3 +341,16 @@ The two backends are roughly now on-par with each other,
 so the focus has now shifted to adding some more of the basic language
 features.
 
+
+Usage
+====
+
+Icarus has both a help option and a man page,
+you can invoke them like so:
+
+    # view icarus builtin help
+    ./icarus --help
+
+    # view icarus man page
+    man -l icarus.1
+
