@@ -81,7 +81,7 @@ Work so far - 2c backend
 
 The life of a simple icarus program
 
-if we input the following file (`example/fizzer.ic)):
+if we input the following file (which can be found in `example/fizzer.ic`):
 
     fn is_div(a::Sint, b::Sint) -> Bool
         let rem = a % b
