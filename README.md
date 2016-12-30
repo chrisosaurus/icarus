@@ -120,9 +120,9 @@ if we input the following file (`example/fizzer.ic)):
         fizzbuzz(1, 20)
     end
 
-we can then compile this via:
+we can then compile to C this via:
 
-    ./icarus 2c example/fizzer.ic -o fizzer.c
+    ./icarus 2c example/fizzer.ic -o fizzer.c --debug
 
 which will show us the transformed IR version of this:
 
@@ -205,7 +205,7 @@ Work so far - pancake backend
 we can run this same example through the `pancake` backend which will
 first compile it to bytecode and then interpret it
 
-    ./icarus pancake example/fizzer.ic
+    ./icarus pancake example/fizzer.ic --debug
 
 which shows us
 
