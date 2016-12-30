@@ -8,9 +8,8 @@ TODO:
 * sort out transform ownership - it is a mess
 * complete tir print implementations
 * automate running of `make format` - either as part of compile and/or test
-* automate running of milestone/*.ic and compare output to milestone/*.exp - these can serve as tests - need 'template' so we know which we expected to pass and fail
-* uncommented `plus` alias for `concat` in stdlib/core.ic
 * remove FIXME and commented out error handling in 2c once functions_body is implemented : /* FIXME TODO silencing error for now */
+* uncommented `plus` alias for `concat` in stdlib/core.ic
 * output generation includes a semi-builtin from src/core.ic: fn plus(a::String, b::String) -> String return concat(a, b) end appearing as String plus();
 * rejig _print infra to always have a _str method (or similar) and have _print simply call this
   to string logic should not be inside _print
