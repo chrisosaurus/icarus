@@ -343,7 +343,22 @@ features.
 
 
 Usage
-====
+=====
+
+You can build icarus by cloning this repository and running make,
+any issues with this process should be reported here.
+
+    make
+
+You can run your first icarus program through the interpreter `pancake` like so:
+
+    ./icarus example/fizzer.ic
+
+You can run your first icarus program through the 2c compiler like so:
+
+    ./icarus 2c example/fizzer.ic -o fizzer.c
+    gcc fizzer.c -o fizzer
+    ./fizzer
 
 Icarus has both a help option and a man page,
 you can invoke them like so:
@@ -353,4 +368,5 @@ you can invoke them like so:
 
     # view icarus man page
     man -l icarus.1
+
 
