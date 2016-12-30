@@ -61,7 +61,6 @@ icarus [command] [options]\n\
 
 struct ic_opts *main_args(int argc, char **argv) {
     struct ic_opts *opts = 0;
-    unsigned int command_count = 0;
 
     opts = ic_arg_opts_new();
     if (!opts) {
@@ -101,30 +100,5 @@ struct ic_opts *main_args(int argc, char **argv) {
         exit(1);
     }
 
-    command_count = opts->check + opts->transform + opts->o2c + opts->pancake;
-    if (0 == command_count) {
-        /* default to pancake */
-        opts->pancake = 1;
-    } else if (command_count > 1) {
-        /* cannot specify more than one command */
-        puts("main: Cannot specify more than one command");
-        return 0;
-    }
-
-    /* input file must be specified */
-    if (0 == opts->in_filename) {
-        puts("main: No input file specified");
-        return 0;
-    }
-
-    /* for 2c we must have an output file */
-    if (opts->o2c) {
-        if (0 == opts->out_filename) {
-            puts("main: Command 2c specified but no output file provided");
-            return 0;
-        }
-    }
-
-    /* otherwise looking good */
     return opts;
 }
