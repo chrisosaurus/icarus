@@ -1,13 +1,15 @@
 .TH icarus 1 icarus
 
+
 .SH NAME
 Icarus - Programming language (and implementation) designed as an experiment to explore static verification of mutation contracts.
 
+
 .SH SYNOPSIS
 .B icarus
-\fI\,SOURCE\/\fR
-[\fI\,BACKEND\/\fR]
-[\fI\,BACKEND-ARGS\/\fR]
+[\fI\,COMMAND\/\fR]
+[\fI\,OPTIONS\/\fR]
+
 
 .SH COPYRIGHT AND LICENSE
 .B Icarus
@@ -16,61 +18,127 @@ is Copyright (C) 2015-2016 Chris Hall
 .B Icarus
 is released under the terms of the MIT license
 
+
+.SH COMMAND
+
+.IR check
+.br
+.RS
+perform static analysis on input file
+.RE
+.P
+
+.IR transform
+.br
+.RS
+transform input file
+.RE
+.P
+
+.IR 2c
+.br
+.RS
+run 2c - compiles icarus code to C
+.RE
+.P
+
+.IR pancake
+.br
+.RS
+run pancake - the icarus interpreter
+.RE
+.P
+
+.IR <default>
+.br
+.RS
+defaults to `pancake` if a command is omitted
+.RE
+.P
+
+
 .SH OPTIONS
 
-.IR SOURCE:
+.IR debug
 .br
 .RS
-relative path to input icarus source file
+enable icarus internal debug output
 .RE
 .P
 
-.IR BACKEND
-can be one of:
+.IR help,     -h
+.br
 .RS
-
-.IP 2c
-.br
-backend to compile to c
-.br
-requires an output filename in BACKEND-ARGS.
-.P
-
-.IP pancake
-.br
-stack-vm interpreter backend
-.br
-requires no BACKEND-ARGS.
-.P
-
+print this help message
 .RE
+.P
 
-.IR BACKEND-ARGS:
+.IR input,
+-i
+.I file
+.br
 .RS
-.IP output-filename
-output filename (relative path) required for some backends
-.P
+input filename
 .RE
+.P
+
+.IR output,
+-o
+.I file
+.br
+.RS
+output filename
+.RE
+.P
+
+.IR version
+.br
+.RS
+print version of icarus
+.RE
+.P
+
+.IR <default>
+.br
+.RS
+an argument will default to being an `input` file if the preceding option is omitted
+.RE
+.P
+
 
 .SH EXAMPLES
+
 .TP
-icarus input.ic
-verify input.ic
+icarus foo.ic
+run file `foo.ic` through `pancake`
+
 .TP
-icarus input.ic pancake
-run pancake interpreter over input.ic
+icarus check --input foo.ic
+perform static analysis on file `foo.ic`
+
 .TP
-icarus input.ic 2c out.c
-compile input.ic using the 2c compiler and place the output in out.c
+icarus 2c -i foo.ic -o foo.c
+compile `foo.ic` to c and output that in new file `foo.c`
+
+.TP
+icarus pancake foo.ic --debug
+run `foo.ic` through pancake with debug output
+
+.TP
+icarus -h
+print this help page
+
 
 .SH AUTHORS
 Chris Hall
 <followingthepath at gmail d0t com>
 
+
 .SH BUGS
 All bug reports for
 .B Icarus
 should either be reported on github at https://github.com/mkfifo/icarus or emailed to the author(s)
+
 
 .SH SOURCE
 The source code for
