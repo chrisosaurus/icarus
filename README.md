@@ -62,7 +62,11 @@ A simpler version is shown below which will run in Icarus
 Progress
 ========
 
-Icarus is currently working towards a minimal proof of concept, in that context:
+Icarus is very early in development and so is currently working towards a
+minimal proof of concept.
+
+Icarus currently lacks many of the basics you need would need in order to
+write interesting programs.
 
 Complete to a basic level (good enough for minimal proof of concept):
 
@@ -326,13 +330,6 @@ which shows us
     Fizz
     19
 
-Current holes
-=============
-
-* The IR is incomplete
-* The compiler (2c) is incomplete
-* The interpreter (pancake) is incomplete
-
 
 Current focus
 =============
@@ -340,6 +337,12 @@ Current focus
 The two backends are roughly now on-par with each other,
 so the focus has now shifted to adding some more of the basic language
 features.
+
+I think the most essentials parts to add are:
+
+ * user defined data types - structs, unions, and enums
+ * parameterised (generic) data types - such as Vector<T> and Maybe<T>
+ * looping constructs - for loops
 
 
 Usage
@@ -350,18 +353,20 @@ any issues with this process should be reported here.
 
     make
 
-You can run your first icarus program through the interpreter `pancake` like so:
+You can run your first icarus program through the interpreter `pancake`:
 
     ./icarus example/fizzer.ic
 
-You can run your first icarus program through the 2c compiler like so:
+You can run your first icarus program through the 2c compiler,
+compile the c,
+and then execute the output:
 
     ./icarus 2c example/fizzer.ic -o fizzer.c
     gcc fizzer.c -o fizzer
     ./fizzer
 
 Icarus has both a help option and a man page,
-you can invoke them like so:
+you can view them like so:
 
     # view icarus builtin help
     ./icarus --help
