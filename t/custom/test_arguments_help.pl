@@ -8,27 +8,29 @@ my $path = "./icarus";
 die "Could not find '$path'\n" unless -e $path;
 
 my $expected = <<EOF;
-      icarus [command] [options]
+icarus [command] [options]
 
-        command:
-          check          : perform static analysis on input file
-          transform      : transform input file
-          2c             : pass input file to backend 2c
-          pancake        : (default) pass input file to backend pancake
-          <default>      : defaults to `pancake`
+  command:
+    check                          : perform static analysis on input file
+    transform                      : transform input file
+    2c                             : run 2c - compiles icarus code to C
+    pancake                        : run pancake - the icarus interpreter
+    <default>                      : defaults to `pancake` if a command is omitted
 
-        options:
-          --output, -o   : output filename
-          --input,  -i   : input filename
-          --debug enable : icarus compiler debug options
-          --version      : print version of icarus compiler
-          --help, -h     : print this help message
-          <default>      : will try to interpret as an input file, if none is already specified
+  options:
+    --debug                        : enable icarus internal debug output
+    --help,     -h                 : print this help message
+    --input,    -i     file        : input filename
+    --output,   -o     file        : output filename
+    --version                      : print version of icarus
+    <default>                      : an argument will default to being an `input` file if the preceding option is omitted
 
-        examples:
-          icarus foo.ic                # run file `foo.ic` through `pancake`
-          icarus check --input foo.ic  # perform static analysis on file `foo.ic`
-          icarus 2c -i foo.ic -o foo.c # compile `foo.ic` to c and output that in new file `foo.c`
+  examples:
+    icarus foo.ic                  # run file `foo.ic` through `pancake`
+    icarus check --input foo.ic    # perform static analysis on file `foo.ic`
+    icarus 2c -i foo.ic -o foo.c   # compile `foo.ic` to c and output that in new file `foo.c`
+    icarus pancake foo.ic --debug  # run `foo.ic` through pancake with debug output
+    icarus -h                      # print this help page
 
 
 EOF

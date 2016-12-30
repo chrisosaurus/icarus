@@ -32,27 +32,29 @@ void version(void) {
 
 void help(void) {
     puts("\
-      icarus [command] [options]\n\
+icarus [command] [options]\n\
 \n\
-        command:\n\
-          check          : perform static analysis on input file\n\
-          transform      : transform input file\n\
-          2c             : pass input file to backend 2c\n\
-          pancake        : (default) pass input file to backend pancake\n\
-          <default>      : defaults to `pancake`\n\
+  command:\n\
+    check                          : perform static analysis on input file\n\
+    transform                      : transform input file\n\
+    2c                             : run 2c - compiles icarus code to C\n\
+    pancake                        : run pancake - the icarus interpreter\n\
+    <default>                      : defaults to `pancake` if a command is omitted\n\
 \n\
-        options:\n\
-          --output, -o   : output filename\n\
-          --input,  -i   : input filename\n\
-          --debug enable : icarus compiler debug options\n\
-          --version      : print version of icarus compiler\n\
-          --help, -h     : print this help message\n\
-          <default>      : will try to interpret as an input file, if none is already specified\n\
+  options:\n\
+    --debug                        : enable icarus internal debug output\n\
+    --help,     -h                 : print this help message\n\
+    --input,    -i     file        : input filename\n\
+    --output,   -o     file        : output filename\n\
+    --version                      : print version of icarus\n\
+    <default>                      : an argument will default to being an `input` file if the preceding option is omitted\n\
 \n\
-        examples:\n\
-          icarus foo.ic                # run file `foo.ic` through `pancake`\n\
-          icarus check --input foo.ic  # perform static analysis on file `foo.ic`\n\
-          icarus 2c -i foo.ic -o foo.c # compile `foo.ic` to c and output that in new file `foo.c`\n\
+  examples:\n\
+    icarus foo.ic                  # run file `foo.ic` through `pancake`\n\
+    icarus check --input foo.ic    # perform static analysis on file `foo.ic`\n\
+    icarus 2c -i foo.ic -o foo.c   # compile `foo.ic` to c and output that in new file `foo.c`\n\
+    icarus pancake foo.ic --debug  # run `foo.ic` through pancake with debug output\n\
+    icarus -h                      # print this help page\n\
 \n\
 ");
 }
