@@ -117,6 +117,68 @@ unsigned int ic_scope_insert(struct ic_scope *scope, char *key, void *data) {
     return 1;
 }
 
+/* update an existing entry to this scope
+ * this will insert into content, key must already exist
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_scope_update(struct ic_scope *scope, char *key, void *data){
+    if (!scope) {
+        puts("ic_scope_update: scope was null");
+        return 0;
+    }
+
+    if (!key) {
+        puts("ic_scope_update: key was null");
+        return 0;
+    }
+
+    if (!data) {
+        puts("ic_scope_update: data was null");
+        return 0;
+    }
+
+    if (!ic_dict_update(&(scope->contents), key, data)) {
+        puts("ic_scope_update: call to ic_dict_update failed");
+        return 0;
+    }
+
+    return 1;
+}
+
+/* set a key in this scope
+ * this will insert into content, doesn't matter if key exists or not
+ *
+ * will perform either an insert or update, as appropriate
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_scope_set(struct ic_scope *scope, char *key, void *data){
+    if (!scope) {
+        puts("ic_scope_set: scope was null");
+        return 0;
+    }
+
+    if (!key) {
+        puts("ic_scope_set: key was null");
+        return 0;
+    }
+
+    if (!data) {
+        puts("ic_scope_set: data was null");
+        return 0;
+    }
+
+    if (!ic_dict_set(&(scope->contents), key, data)) {
+        puts("ic_scope_set: call to ic_dict_set failed");
+        return 0;
+    }
+
+    return 1;
+}
+
 /* retrieve contents by string
  *
  * this will first search the current scope

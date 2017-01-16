@@ -39,6 +39,23 @@ void normal(void) {
     /* check something doesn't exist */
     assert(0 == ic_scope_get(scope, "world"));
 
+    puts("testing update and set");
+
+    /* update an existing key to new value */
+    assert(1 == ic_scope_exists(scope, "hello"));
+    assert(1 == ic_scope_update(scope, "hello", &data_2));
+    assert(&data_2 == ic_scope_get(scope, "hello"));
+
+    /* set an existing key to new value */
+    assert(1 == ic_scope_exists(scope, "hello"));
+    assert(1 == ic_scope_set(scope, "hello", &data_1));
+    assert(&data_1 == ic_scope_get(scope, "hello"));
+
+    /* set a new key */
+    assert(0 == ic_scope_exists(scope, "completely unique key"));
+    assert(1 == ic_scope_set(scope, "completely unique key", &data_1));
+    assert(&data_1 == ic_scope_get(scope, "completely unique key"));
+
     puts("testing parent functionality");
 
     /* test insertion into parent */

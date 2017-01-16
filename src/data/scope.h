@@ -55,6 +55,24 @@ unsigned int ic_scope_destroy(struct ic_scope *scope, unsigned int free_scope);
  */
 unsigned int ic_scope_insert(struct ic_scope *scope, char *key, void *data);
 
+/* update an existing entry to this scope
+ * this will insert into content, key must already exist
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_scope_update(struct ic_scope *scope, char *key, void *data);
+
+/* set a key in this scope
+ * this will insert into content, doesn't matter if key exists or not
+ *
+ * will perform either an insert or update, as appropriate
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_scope_set(struct ic_scope *scope, char *key, void *data);
+
 /* retrieve contents by string
  *
  * this will first search the current scope
