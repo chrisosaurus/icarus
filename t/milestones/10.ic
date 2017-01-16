@@ -1,0 +1,6 @@
+fn main()
+    let &arr::Vector[String]
+    &arr.append("Fizz")
+    &arr.append("Buzz")
+    println(join(" ", arr))
+end
