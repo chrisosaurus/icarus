@@ -30,7 +30,7 @@ the below example will not yet run in Icarus
 
     fn fizzbuzz(from::Sint, to::Sint)
         for num in range(from, to)
-            let &arr::Vector<String>
+            let &arr::Vector[String]
 
             if is_div(num, 3)
                 &arr.append("Fizz")
