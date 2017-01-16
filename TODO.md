@@ -69,7 +69,7 @@ technical debt:
 * all objects (esp. containers) need destructors (see `./scripts/destruct_audit.sh` for current list)
 * add pvector/parray destructor helper which takes a function * and iterates through it's contents passing to function
 * add shims to allow ic_pvector_destroy to be called on each type
-
+* any usage of `ic_symbol_contents(&` inline (without checking return value) should be killed with fire
 
 considerations:
 ---------------
