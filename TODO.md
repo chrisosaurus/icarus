@@ -69,8 +69,6 @@ technical debt:
 * all objects (esp. containers) need destructors (see `./scripts/destruct_audit.sh` for current list)
 * add pvector/parray destructor helper which takes a function * and iterates through it's contents passing to function
 * add shims to allow ic_pvector_destroy to be called on each type
-* ic_scope insert interface *was* non-ideal
- - now fixed - need to update older uses of it
 
 
 considerations:

@@ -303,8 +303,8 @@ unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func 
         }
 
         /* insert slot into scope */
-        if (!ic_scope_insert(scope, ic_symbol_contents(&(arg->name)), slot)) {
-            puts("ic_analyse_decl_func: call to ic_scope_insert failed");
+        if (!ic_scope_insert_symbol(scope, &(arg->name), slot)) {
+            puts("ic_analyse_decl_func: call to ic_scope_insert_symbol failed");
             goto ERROR;
         }
 
