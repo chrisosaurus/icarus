@@ -268,7 +268,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     }
 
     /* skip builtin function */
-    if (fdecl->builtin) {
+    if (ic_decl_func_isbuiltin(fdecl)) {
         // printf("warning: ic_backend_pancake_compile_fdecl: skipping builtin fdecl '%s'\n", fdecl_sig_call);
         return 1;
     }
