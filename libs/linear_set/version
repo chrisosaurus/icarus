@@ -1,5 +1,5 @@
-commit da45c66c0ceaae140fcb2d0af5fd038ab24a636b
+commit bd427f6db25a66bba7b6d78c54b7419f4f2add2d
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Tue Dec 20 22:59:04 2016 +1100
+Date:   Mon Jan 16 20:43:42 2017 +1100
 
-    Adding ls_iterate for iterating through every key in set
+    updating TODO
