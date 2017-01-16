@@ -27,7 +27,6 @@ void normal(void) {
     assert(scope);
     assert(parent == scope->parent);
 
-
     puts("testing simple insert and get");
 
     /* test we cannot pull anything out yet */
@@ -44,43 +43,41 @@ void normal(void) {
     /* check something doesn't exist */
     assert(0 == ic_scope_get(scope, "world"));
 
-
     puts("testing symbol insert and get");
     {
-      /* insert completely new key via normal insert
+        /* insert completely new key via normal insert
        * fetch by get_from_symbol
        */
-      char *sym_char_1 = "unique symbol key 1";
-      struct ic_symbol *sym_1 = 0;
-      sym_1 = ic_symbol_new(sym_char_1, strlen(sym_char_1));
-      assert(sym_1);
+        char *sym_char_1 = "unique symbol key 1";
+        struct ic_symbol *sym_1 = 0;
+        sym_1 = ic_symbol_new(sym_char_1, strlen(sym_char_1));
+        assert(sym_1);
 
-      assert(0 == ic_scope_get(scope, sym_char_1));
-      assert(1 == ic_scope_insert(scope, sym_char_1, &data_1));
-      data = ic_scope_get_from_symbol(scope, sym_1);
-      assert(data);
-      assert(data == &data_1);
+        assert(0 == ic_scope_get(scope, sym_char_1));
+        assert(1 == ic_scope_insert(scope, sym_char_1, &data_1));
+        data = ic_scope_get_from_symbol(scope, sym_1);
+        assert(data);
+        assert(data == &data_1);
 
-      assert(1 == ic_symbol_destroy(sym_1, 1));
+        assert(1 == ic_symbol_destroy(sym_1, 1));
     }
     {
-      /* insert completely new key via insert_symbol
+        /* insert completely new key via insert_symbol
        * fetch via normal insert
        */
-      char *sym_char_2 = "unique symbol key 2";
-      struct ic_symbol *sym_2 = 0;
-      sym_2 = ic_symbol_new(sym_char_2, strlen(sym_char_2));
-      assert(sym_2);
+        char *sym_char_2 = "unique symbol key 2";
+        struct ic_symbol *sym_2 = 0;
+        sym_2 = ic_symbol_new(sym_char_2, strlen(sym_char_2));
+        assert(sym_2);
 
-      assert(0 == ic_scope_get(scope, sym_char_2));
-      assert(1 == ic_scope_insert_symbol(scope, sym_2, &data_2));
-      data = ic_scope_get(scope, sym_char_2);
-      assert(data);
-      assert(data == &data_2);
+        assert(0 == ic_scope_get(scope, sym_char_2));
+        assert(1 == ic_scope_insert_symbol(scope, sym_2, &data_2));
+        data = ic_scope_get(scope, sym_char_2);
+        assert(data);
+        assert(data == &data_2);
 
-      assert(1 == ic_symbol_destroy(sym_2, 1));
+        assert(1 == ic_symbol_destroy(sym_2, 1));
     }
-
 
     puts("testing update and set");
 
@@ -99,37 +96,35 @@ void normal(void) {
     assert(1 == ic_scope_set(scope, "completely unique key", &data_1));
     assert(&data_1 == ic_scope_get(scope, "completely unique key"));
 
-
     puts("testing symbol update and set");
     {
-      /* set new key using set_symbol
+        /* set new key using set_symbol
        * check using get_from_symbol
        * then update using update_symbol
        * check using normal get
        */
 
-      char *sym_char_3 = "unique symbol key 3";
-      struct ic_symbol *sym_3 = 0;
-      sym_3 = ic_symbol_new(sym_char_3, strlen(sym_char_3));
-      assert(sym_3);
+        char *sym_char_3 = "unique symbol key 3";
+        struct ic_symbol *sym_3 = 0;
+        sym_3 = ic_symbol_new(sym_char_3, strlen(sym_char_3));
+        assert(sym_3);
 
-      assert(0 == ic_scope_get(scope, sym_char_3));
-      assert(1 == ic_scope_insert_symbol(scope, sym_3, &data_1));
-      data = ic_scope_get_from_symbol(scope, sym_3);
-      assert(data);
-      assert(data == &data_1);
+        assert(0 == ic_scope_get(scope, sym_char_3));
+        assert(1 == ic_scope_insert_symbol(scope, sym_3, &data_1));
+        data = ic_scope_get_from_symbol(scope, sym_3);
+        assert(data);
+        assert(data == &data_1);
 
-      assert(1 == ic_scope_exists(scope, sym_char_3));
-      assert(data);
-      assert(data == &data_1);
-      assert(1 == ic_scope_update_symbol(scope, sym_3, &data_1));
-      data = ic_scope_get(scope, sym_char_3);
-      assert(data);
-      assert(data == &data_1);
+        assert(1 == ic_scope_exists(scope, sym_char_3));
+        assert(data);
+        assert(data == &data_1);
+        assert(1 == ic_scope_update_symbol(scope, sym_3, &data_1));
+        data = ic_scope_get(scope, sym_char_3);
+        assert(data);
+        assert(data == &data_1);
 
-      assert(1 == ic_symbol_destroy(sym_3, 1));
+        assert(1 == ic_symbol_destroy(sym_3, 1));
     }
-
 
     puts("testing parent functionality");
 
@@ -160,7 +155,6 @@ void normal(void) {
     assert(&data_2 == ic_scope_get(parent, "world"));
     assert(&data_3 == ic_scope_get(scope, "world"));
 
-
     puts("testing delete");
 
     /* test delete */
@@ -172,7 +166,6 @@ void normal(void) {
     assert(1 == ic_scope_delete(parent, "world"));
     /* successful delete */
     assert(1 == ic_scope_delete(scope, "world"));
-
 
     puts("testing destroy");
 

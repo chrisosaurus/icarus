@@ -123,7 +123,7 @@ unsigned int ic_scope_insert(struct ic_scope *scope, char *key, void *data) {
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_scope_insert_symbol(struct ic_scope *scope, struct ic_symbol *key, void *data){
+unsigned int ic_scope_insert_symbol(struct ic_scope *scope, struct ic_symbol *key, void *data) {
     char *key_chars = 0;
 
     if (!scope) {
@@ -151,7 +151,7 @@ unsigned int ic_scope_insert_symbol(struct ic_scope *scope, struct ic_symbol *ke
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_scope_update(struct ic_scope *scope, char *key, void *data){
+unsigned int ic_scope_update(struct ic_scope *scope, char *key, void *data) {
     if (!scope) {
         puts("ic_scope_update: scope was null");
         return 0;
@@ -181,7 +181,7 @@ unsigned int ic_scope_update(struct ic_scope *scope, char *key, void *data){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_scope_update_symbol(struct ic_scope *scope, struct ic_symbol *key, void *data){
+unsigned int ic_scope_update_symbol(struct ic_scope *scope, struct ic_symbol *key, void *data) {
     char *key_chars = 0;
 
     if (!scope) {
@@ -211,7 +211,7 @@ unsigned int ic_scope_update_symbol(struct ic_scope *scope, struct ic_symbol *ke
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_scope_set(struct ic_scope *scope, char *key, void *data){
+unsigned int ic_scope_set(struct ic_scope *scope, char *key, void *data) {
     if (!scope) {
         puts("ic_scope_set: scope was null");
         return 0;
@@ -243,7 +243,7 @@ unsigned int ic_scope_set(struct ic_scope *scope, char *key, void *data){
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_scope_set_symbol(struct ic_scope *scope, struct ic_symbol *key, void *data){
+unsigned int ic_scope_set_symbol(struct ic_scope *scope, struct ic_symbol *key, void *data) {
     char *key_chars = 0;
 
     if (!scope) {
