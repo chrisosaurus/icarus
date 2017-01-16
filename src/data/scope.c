@@ -117,6 +117,34 @@ unsigned int ic_scope_insert(struct ic_scope *scope, char *key, void *data) {
     return 1;
 }
 
+/* insert a new entry to this scope
+ * this will insert into content, key must not already exist
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_scope_insert_symbol(struct ic_scope *scope, struct ic_symbol *key, void *data){
+    char *key_chars = 0;
+
+    if (!scope) {
+        puts("ic_scope_insert_symbol: scope was null");
+        return 0;
+    }
+
+    if (!key) {
+        puts("ic_scope_insert_symbol: key was null");
+        return 0;
+    }
+
+    key_chars = ic_symbol_contents(key);
+    if (!key_chars) {
+        puts("ic_scope_insert_symbol: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    return ic_scope_insert(scope, key_chars, data);
+}
+
 /* update an existing entry to this scope
  * this will insert into content, key must already exist
  *
@@ -145,6 +173,34 @@ unsigned int ic_scope_update(struct ic_scope *scope, char *key, void *data){
     }
 
     return 1;
+}
+
+/* update an existing entry to this scope
+ * this will insert into content, key must already exist
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_scope_update_symbol(struct ic_scope *scope, struct ic_symbol *key, void *data){
+    char *key_chars = 0;
+
+    if (!scope) {
+        puts("ic_scope_update_symbol: scope was null");
+        return 0;
+    }
+
+    if (!key) {
+        puts("ic_scope_update_symbol: key was null");
+        return 0;
+    }
+
+    key_chars = ic_symbol_contents(key);
+    if (!key_chars) {
+        puts("ic_scope_update_symbol: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    return ic_scope_update(scope, key_chars, data);
 }
 
 /* set a key in this scope
@@ -177,6 +233,36 @@ unsigned int ic_scope_set(struct ic_scope *scope, char *key, void *data){
     }
 
     return 1;
+}
+
+/* set a key in this scope
+ * this will insert into content, doesn't matter if key exists or not
+ *
+ * will perform either an insert or update, as appropriate
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_scope_set_symbol(struct ic_scope *scope, struct ic_symbol *key, void *data){
+    char *key_chars = 0;
+
+    if (!scope) {
+        puts("ic_scope_set_symbol: scope was null");
+        return 0;
+    }
+
+    if (!key) {
+        puts("ic_scope_set_symbol: key was null");
+        return 0;
+    }
+
+    key_chars = ic_symbol_contents(key);
+    if (!key_chars) {
+        puts("ic_scope_set_symbol: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    return ic_scope_update(scope, key_chars, data);
 }
 
 /* retrieve contents by string
@@ -226,18 +312,18 @@ void *ic_scope_get_from_symbol(struct ic_scope *scope, struct ic_symbol *key) {
     char *key_chars = 0;
 
     if (!scope) {
-        puts("ic_scope_get_symbol: scope was null");
+        puts("ic_scope_get_from_symbol: scope was null");
         return 0;
     }
 
     if (!key) {
-        puts("ic_scope_get_symbol: key was null");
+        puts("ic_scope_get_from_symbol: key was null");
         return 0;
     }
 
     key_chars = ic_symbol_contents(key);
     if (!key_chars) {
-        puts("ic_scope_get_symbol: call to ic_symbol_contents failed");
+        puts("ic_scope_get_from_symbol: call to ic_symbol_contents failed");
         return 0;
     }
 
