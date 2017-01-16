@@ -337,7 +337,7 @@ features.
 I think the most essentials parts to add are:
 
  * user defined data types - structs, unions, and enums
- * parameterised (generic) data types - such as Vector<T> and Maybe<T>
+ * parameterised (generic) data types - such as Vector[T] and Maybe[T]
  * looping constructs - for loops
 
 
