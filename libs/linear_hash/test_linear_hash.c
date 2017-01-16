@@ -16,8 +16,15 @@ unsigned int lh_entry_eq(struct lh_entry *cur, unsigned long int hash, unsigned 
 char * lh_strdupn(char *str, size_t len);
 unsigned int lh_entry_init(struct lh_entry *entry, unsigned long int hash, char *key, size_t key_len, void *data);
 unsigned int lh_entry_destroy(struct lh_entry *entry, unsigned int free_data);
-struct lh_entry * lh_find_entry(struct lh_table *table, char *key);
+unsigned int lh_insert_internal(struct lh_table *table, struct lh_entry *entry, unsigned long int hash, const char *key, size_t key_len, void *data);
 
+enum lh_find_entry_state {
+    LH_FIND_ENTRY_STATE_ERROR  = 0,
+    LH_FIND_ENTRY_STATE_EXISTS = 1,
+    LH_FIND_ENTRY_STATE_SLOT   = 2,
+};
+
+enum lh_find_entry_state lh_find_entry(const struct lh_table *table, unsigned long int hash, const char *key, size_t key_len, struct lh_entry **entry);
 
 void new_insert_get_destroy(void){
     /* our simple hash table */
@@ -47,12 +54,15 @@ void new_insert_get_destroy(void){
     assert( 0 == lh_load(table) );
 
 
-    puts("testing insert and get");
+    puts("testing insert, exists, and get");
     puts("one insert");
     assert( lh_insert(table, key_1, &data_1) );
     assert( 1 == lh_nelems(table));
     assert( 0 == lh_get(table, key_2) );
     assert( 0 == lh_get(table, key_3) );
+
+    puts("one exists");
+    assert( lh_exists(table, key_1) );
 
     puts("one get");
     data = lh_get(table, key_1);
@@ -65,6 +75,9 @@ void new_insert_get_destroy(void){
     assert( 2 == lh_nelems(table) );
     assert( 0 == lh_get(table, key_3) );
 
+    puts("two exists");
+    assert( lh_exists(table, key_2) );
+
     puts("two get");
     data = lh_get(table, key_2);
     assert(data);
@@ -74,6 +87,9 @@ void new_insert_get_destroy(void){
     puts("three insert");
     assert( lh_insert(table, key_3, &data_3) );
     assert( 3 == lh_nelems(table) );
+
+    puts("three exists");
+    assert( lh_exists(table, key_3) );
 
     puts("three get");
     data = lh_get(table, key_3);
@@ -807,6 +823,10 @@ void error_handling(void){
     puts("testing lh_resize");
     assert( 0 == lh_resize(0, 100) );
     assert( 0 == lh_resize(table, 0) );
+    /* resize should refuse if it is less than or equal
+     * to the number of elements we already have inserted
+     */
+    assert( 0 == lh_resize(table, 1) );
 
     /* lh_exists */
     puts("testing lh_exists");
@@ -872,6 +892,8 @@ void internal(void){
     struct lh_entry she;
     struct lh_entry static_she;
     char * str = 0;
+    enum lh_find_entry_state find_entry_state;
+    struct lh_entry *entry = 0;
 
     puts("\ntesting internal functions");
 
@@ -900,14 +922,38 @@ void internal(void){
     assert(  lh_entry_destroy(&static_she, 1) );
 
     /* lh_find_entry */
-    puts("testing lh_find_entry");
-    assert( 0 == lh_find_entry(0, "hello") );
-    assert( 0 == lh_find_entry(&table, 0) );
+    puts("testing lh_find_entry error handling");
+    /* null table */
+    find_entry_state = lh_find_entry(0, 0, "hello", 0, &entry);
+    assert( LH_FIND_ENTRY_STATE_ERROR == find_entry_state );
+    /* null key */
+    find_entry_state = lh_find_entry(&table, 0, 0, 0, &entry);
+    assert( LH_FIND_ENTRY_STATE_ERROR == find_entry_state );
+    /* null entry */
+    find_entry_state = lh_find_entry(&table, 0, "hello", 0, 0);
+    assert( LH_FIND_ENTRY_STATE_ERROR == find_entry_state );
+
+    /* hash 0 and key_len 0 but valid find
+     * need a valid table for this
+     */
+    assert( lh_init(&table, 10) );
+    find_entry_state = lh_find_entry(&table, 0, "hello", 0, &entry);
+    assert( LH_FIND_ENTRY_STATE_SLOT == find_entry_state );
 
     /* lh_entry_eq */
     puts("testing lh_entry_eq");
     assert( 0 == lh_entry_eq(0, 0, 0, 0) );
     assert( 0 == lh_entry_eq(&she, 0, 0, 0) );
+
+    /* lh_insert_internal */
+    puts("testing lh_insert_internal");
+    /* insert_internal(table, entry, hash, key, key_len, data) */
+    assert( 0 == lh_insert_internal(0, 0, 0, 0, 0, 0) );
+    assert( 0 == lh_insert_internal(&table, 0, 0, 0, 0, 0) );
+    assert( 0 == lh_insert_internal(&table, entry, 0, 0, 0, 0) );
+
+    /* cleanup */
+    assert( lh_destroy(&table, 0, 0) );
 
     puts("success!");
 }
@@ -1141,6 +1187,8 @@ void threshold(void){
 void artificial(void){
     struct lh_table *table = 0;
     int data = 1;
+    struct lh_entry *entry = 0;
+    enum lh_find_entry_state find_entry_state;
 
     puts("\ntesting artificial linear search failure");
 
@@ -1155,25 +1203,30 @@ void artificial(void){
     /* fill only positions */
     table->entries[0].state = LH_ENTRY_OCCUPIED;
     table->entries[1].state = LH_ENTRY_OCCUPIED;
-
-    /* this should trigger the final return 0 of lh_find_entry */
-    assert( 0 == lh_find_entry(table, "hello") );
-
-    /* likewise an insert should fail */
+    /* an insert should fail as this table is full */
     assert( 0 == lh_insert(table, "c", &data) );
 
     puts("further manipulation for lh_find_entry");
     table->entries[0].state = LH_ENTRY_DUMMY;
     table->entries[1].state = LH_ENTRY_DUMMY;
-    assert( 0 == lh_find_entry(table, "c") );
+    entry = 0;
+    find_entry_state = lh_find_entry(table, 0, "c", 0, &entry);
+    assert( LH_FIND_ENTRY_STATE_SLOT == find_entry_state );
+    /* check that entry was changed */
+    assert( 0 != entry );
 
     table->entries[0].state   = LH_ENTRY_OCCUPIED;
     table->entries[0].hash    = 98; /* collide with b */
-    table->entries[0].key_len = 2;
+    table->entries[0].key_len = 2;  /* with different key_len */
     table->entries[1].state   = LH_ENTRY_OCCUPIED;
-    table->entries[0].hash    = 98;
-    table->entries[1].key_len = 2;
-    assert( 0 == lh_find_entry(table, "b") );
+    table->entries[0].hash    = 98; /* collide with b */
+    table->entries[1].key_len = 2;  /* with different key_len */
+    /* table full, no possible space, error */
+    entry = 0;
+    find_entry_state = lh_find_entry(table, 0, "b", 0, &entry);
+    assert( LH_FIND_ENTRY_STATE_ERROR == find_entry_state );
+    /* check entry is unchanged */
+    assert( 0 == entry );
 
     table->entries[0].state   = LH_ENTRY_OCCUPIED;
     table->entries[0].hash    = 99; /* force hash collision with c */
@@ -1183,7 +1236,12 @@ void artificial(void){
     table->entries[1].hash    = 99; /* force hash collision with c */
     table->entries[1].key_len = 1;  /* with same len */
     table->entries[1].key     = "b"; /* but different key */
-    assert( 0 == lh_find_entry(table, "c") );
+    /* table is full, fail */
+    entry = 0;
+    find_entry_state = lh_find_entry(table, 0, "c", 0, &entry);
+    assert( LH_FIND_ENTRY_STATE_ERROR == find_entry_state );
+    /* check entry is unchanged */
+    assert( 0 == entry );
 
     assert( lh_resize(table, 3) );
     table->entries[0].state   = LH_ENTRY_OCCUPIED;
@@ -1196,8 +1254,42 @@ void artificial(void){
     table->entries[1].key_len = 1;  /* with same len */
     table->entries[1].key     = "a"; /* but different key */
 
+    /* finally a place to insert */
     table->entries[2].state   = LH_ENTRY_DUMMY;
-    assert( 0 == lh_find_entry(table, "b") );
+    entry = 0;
+    find_entry_state = lh_find_entry(table, 0, "c", 0, &entry);
+    assert( LH_FIND_ENTRY_STATE_SLOT == find_entry_state );
+    /* check entry was changed */
+    assert( 0 != entry );
+    assert( entry == &(table->entries[2]) );
+
+    /* we want to force wrap around
+     * and then encounter a dummy
+     */
+    assert( lh_resize(table, 4) );
+    table->entries[0].state   = LH_ENTRY_DUMMY;
+
+    table->entries[1].state   = LH_ENTRY_OCCUPIED;
+    table->entries[1].hash    = 99; /* hash collide with c */
+    table->entries[1].key_len = 2; /* different key len*/
+    table->entries[1].key     = "z"; /* different key */
+
+    table->entries[2].state   = LH_ENTRY_OCCUPIED;
+    table->entries[2].hash    = 99; /* hash collide with c */
+    table->entries[2].key_len = 2; /* different key len*/
+    table->entries[2].key     = "z"; /* different key */
+
+    table->entries[3].state   = LH_ENTRY_OCCUPIED;
+    table->entries[3].hash    = 99; /* hash collide with c */
+    table->entries[3].key_len = 2; /* different key len*/
+    table->entries[3].key     = "z"; /* different key */
+
+    entry = 0;
+    find_entry_state = lh_find_entry(table, 0, "c", 0, &entry);
+    assert( LH_FIND_ENTRY_STATE_SLOT == find_entry_state );
+    /* check entry was changed */
+    assert( 0 != entry );
+    assert( entry == &(table->entries[0]) );
 
     puts("manipulation to provoke lh_resize");
     assert( lh_resize(table, 5) );
