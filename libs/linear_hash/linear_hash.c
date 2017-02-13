@@ -974,6 +974,16 @@ unsigned int lh_set(struct lh_table *table, const char *key, void *data){
         return 0;
     }
 
+    /* determine if we have to resize
+     * note we are checking the load before the find OR insert
+     */
+    if( lh_load(table) >= table->threshold ){
+        if( ! lh_resize(table, table->size * LH_SCALING_FACTOR) ){
+            puts("lh_insert: call to lh_resize failed");
+            return 0;
+        }
+    }
+
     key_len = strlen(key);
     hash = lh_hash(key, key_len);
 

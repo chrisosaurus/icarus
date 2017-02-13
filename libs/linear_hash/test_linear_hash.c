@@ -1572,6 +1572,157 @@ void iteration(void){
     puts("success!");
 }
 
+char * test_keys[] = {
+	"whether",
+	"urbane",
+	"unbiased",
+	"astern",
+	"belted",
+	"magic stream before him. Go visit the Prairies in June, when for scores",
+	"week",
+	"am",
+	"myself involuntarily pausing before coffin warehouses, and bringing up",
+	"there.",
+	"besides",
+	"any",
+	"tell",
+	"sea-sick--grow quarrelsome--don't sleep of nights--do not enjoy",
+	"slave?",
+	"doubtless,",
+	"place",
+	"island",
+	"waves,",
+	"constant surveillance of me, and secretly dogs me, and influences me",
+	"obey",
+	"deck.",
+	"in",
+	"atmosphere",
+	"hypos",
+	"dogs",
+	"ONE",
+	"all.",
+	"sand,",
+	"country;",
+	"offices",
+	"particularly",
+	"perils",
+	"leaves",
+	"grasshopper",
+	"Hook to Coenties Slip, and from thence, by Whitehall, northward. What",
+	"wholesome",
+	"Chief among these motives was the overwhelming idea of the great",
+	"Whenever",
+	"street,",
+	"prevalent",
+	"mole",
+	"doubtless, my going on this whaling voyage, formed part of the grand",
+	"rag",
+	"meaning.",
+	"meet;",
+	"looking",
+	"seated",
+	"coasts.",
+	"whenever",
+	"must",
+	"streets",
+	"dale, and leaves you there by a pool in the stream. There is magic",
+	"but",
+	"to",
+	"quarrelsome--don't",
+	"sleeps",
+	"Finally,",
+	"Deep",
+	"induced",
+	"world,",
+	"element",
+	"first",
+	"damp,",
+};
+
+void test_resize_insert(void){
+    /* our simple hash table */
+    struct lh_table *table = 0;
+
+    unsigned int i = 0;
+    char * key = 0;
+    unsigned int test_keys_len = sizeof(test_keys) / sizeof(test_keys[0]);
+
+    unsigned int data = 14;
+
+    puts("\ntesting resize on insert functionality");
+
+    puts("creating table");
+    table = lh_new();
+    assert(table);
+    assert( 0 == lh_nelems(table) );
+    /* current default size is 32 */
+    assert( 32 == table->size );
+
+    puts("testing sets and resize point");
+    for( i = 0; i < test_keys_len; ++i ){
+      key = test_keys[i];
+      assert( lh_insert(table, key, &data) );
+
+      /* threshold is currently 60%
+       *  32 * 0.6 = 19.2
+       *  64 * 0.6 = 38.4
+       * 128 * 0.6 = 76.8
+       */
+      if( i < 20 ){
+        assert( 32 == table->size );
+      } else if( i < 39 ) {
+        assert( 64 == table->size );
+      } else {
+        assert( 128 == table->size );
+      }
+    }
+
+    assert( lh_destroy(table, 1, 0) );
+    puts("success!");
+}
+
+void test_resize_set(void){
+    /* our simple hash table */
+    struct lh_table *table = 0;
+
+    unsigned int i = 0;
+    char * key = 0;
+    unsigned int test_keys_len = sizeof(test_keys) / sizeof(test_keys[0]);
+
+    unsigned int data = 14;
+
+    puts("\ntesting resize on set functionality");
+
+    puts("creating table");
+    table = lh_new();
+    assert(table);
+    assert( 0 == lh_nelems(table) );
+    /* current default size is 32 */
+    assert( 32 == table->size );
+
+    puts("testing sets and resize point");
+    for( i = 0; i < test_keys_len; ++i ){
+      key = test_keys[i];
+      assert( lh_set(table, key, &data) );
+
+      /* threshold is currently 60%
+       *  32 * 0.6 = 19.2
+       *  64 * 0.6 = 38.4
+       * 128 * 0.6 = 76.8
+       */
+      if( i < 20 ){
+        assert( 32 == table->size );
+      } else if( i < 39 ) {
+        assert( 64 == table->size );
+      } else {
+        assert( 128 == table->size );
+      }
+    }
+
+    assert( lh_destroy(table, 1, 0) );
+    puts("success!");
+}
+
 int main(void){
     new_insert_get_destroy();
 
@@ -1600,6 +1751,10 @@ int main(void){
     artificial();
 
     iteration();
+
+    test_resize_insert();
+
+    test_resize_set();
 
     puts("\noverall testing success!");
 

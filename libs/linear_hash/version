@@ -1,5 +1,8 @@
-commit 3c28963422421f32bc4a239f02aac4a5fce300c3
+commit ea30b55d19ec56e95e93f3916e1650dda2d45c91
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Mon Jan 16 20:42:32 2017 +1100
+Date:   Mon Feb 13 20:38:40 2017 +1100
 
-    updating TODO
+    Lh_set now correctly enforces capacity
+    
+    Lh_set may not call lh_resize
+    Added unit testing on lh_insert and lh_set resizing
