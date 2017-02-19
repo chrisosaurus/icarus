@@ -142,14 +142,6 @@ unsigned int icarus(struct ic_opts *opts) {
         exit(1);
     }
 
-    if (opts->debug) {
-        puts("----------------");
-        if (!ic_transform_print(stdout, kludge)) {
-            puts("call to ic_transform_print failed");
-            exit(1);
-        }
-    }
-
     /* if our command was 'transform' then stop here */
     if (opts->transform) {
         if (!ic_transform_print(stdout, kludge)) {
@@ -159,6 +151,18 @@ unsigned int icarus(struct ic_opts *opts) {
 
         /* success */
         goto CLEANUP;
+    }
+
+    /* if debug, output transform information
+     * must do after above if block to prevent double-printing
+     * when debug and transform are both specified
+     */
+    if (opts->debug) {
+        puts("----------------");
+        if (!ic_transform_print(stdout, kludge)) {
+            puts("call to ic_transform_print failed");
+            exit(1);
+        }
     }
 
     /* backend time */
