@@ -84,6 +84,8 @@ unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic
         return 0;
     }
 
+    fputs("  ", out);
+
     /* omit function name */
     fputs(fdecl_sig_mangled, out);
 

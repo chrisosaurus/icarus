@@ -155,7 +155,7 @@ unsigned int ic_b2c_compile_stmt_ret(struct ic_kludge *input_kludge, struct ic_t
         return 0;
     }
 
-    fprintf(out, "return %s;\n", ret_str);
+    fprintf(out, "  return %s;\n", ret_str);
 
     return 1;
 }
@@ -214,7 +214,7 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_t
             }
 
             /* print "type name = " */
-            fprintf(out, "%s %s = ", let_str, let_name);
+            fprintf(out, "  %s %s = ", let_str, let_name);
 
             /* literal */
             literal = let->u.lit.literal;
@@ -258,7 +258,7 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_t
             }
 
             /* print "type name = " */
-            fprintf(out, "%s %s = ", let_str, let_name);
+            fprintf(out, "  %s %s = ", let_str, let_name);
 
             /* expression */
             expr = let_expr->expr;
@@ -302,7 +302,7 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_t
             }
 
             /* print "type name = " */
-            fprintf(out, "%s %s = ", let_str, let_name);
+            fprintf(out, "  %s %s = ", let_str, let_name);
 
             let_sym = let_faccess->left;
             let_str = ic_symbol_contents(let_sym);
@@ -367,7 +367,7 @@ unsigned int ic_b2c_compile_stmt_assign(struct ic_kludge *input_kludge, struct i
     }
 
     /* print "name = " */
-    fprintf(out, "%s = ", left_str);
+    fprintf(out, "  %s = ", left_str);
 
     /* expression */
     expr = assign->right;
@@ -418,7 +418,7 @@ unsigned int ic_b2c_compile_stmt_if(struct ic_kludge *input_kludge, struct ic_tr
         return 0;
     }
 
-    fprintf(out, "if (%s) {\n", cond_ch);
+    fprintf(out, "  if (%s) {\n", cond_ch);
 
     if (!tif->then_tbody) {
         puts("ic_b2c_compile_stmt_if: then_tbody on tif was null");
