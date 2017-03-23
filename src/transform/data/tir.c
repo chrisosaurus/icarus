@@ -438,6 +438,13 @@ unsigned int ic_transform_ir_let_print(FILE *fd, struct ic_transform_ir_let *let
             }
             break;
 
+        case ic_transform_ir_let_type_faccess:
+            if (!ic_transform_ir_let_faccess_print(fd, &(let->u.faccess), indent)) {
+                puts("ic_transform_ir_let_print: call to ic_transform_let_faccess_print failed");
+                return 0;
+            }
+            break;
+
         default:
             puts("ic_transform_ir_let_print: impossible let type");
             return 0;
