@@ -878,6 +878,12 @@ unsigned int ic_decl_type_init(struct ic_decl_type *tdecl, char *name_src, unsig
         return 0;
     }
 
+    /* init sig mangled full */
+    if (!ic_string_init_empty(&(tdecl->sig_mangled_full))) {
+        puts("ic_decl_type_init: call to ic_string_init_empty for field_dict failed");
+        return 0;
+    }
+
     tdecl->isvoid = 0;
     tdecl->isbool = 0;
     tdecl->builtin = 0;
@@ -939,6 +945,12 @@ unsigned int ic_decl_type_destroy(struct ic_decl_type *tdecl, unsigned int free_
     /* destroy field_dict */
     if (!ic_dict_destroy(&(tdecl->field_dict), 0, 0)) {
         puts("ic_decl_type_destroy: call to ic_dict_destroy failed");
+        return 0;
+    }
+
+    /* destroy sig mangled full */
+    if (!ic_string_destroy(&(tdecl->sig_mangled_full), 0)) {
+        puts("ic_decl_type_destroy: call to ic_string_destroy failed");
         return 0;
     }
 
@@ -1114,6 +1126,194 @@ char *ic_decl_type_str(struct ic_decl_type *tdecl) {
     }
 
     return ic_symbol_contents(&(tdecl->name));
+}
+
+/* return a mangled representation of this function full signature
+ *
+ * the char* returned is a string stored within tdecl,
+ * this means the caller must not free or mutate this string
+ *
+ * for the type
+ *  type Foo
+ *    i::Sint
+ *    u::Uint
+ *    b::Bar
+ *  end
+ *
+ * this should generate the function
+ *
+ *  struct Foo * ic_Foo_a_Sint_Uint_Bar(Sint *i, Uint *u, Bar *b);
+ *
+ * returns char* on success
+ * returns 0 on failure
+ */
+char *ic_decl_type_sig_mangled_full(struct ic_decl_type *tdecl) {
+    struct ic_string *sig_str = 0;
+
+    unsigned int n_fields = 0;
+    unsigned int i_field = 0;
+    struct ic_field *field = 0;
+    struct ic_symbol *field_name_sym = 0;
+    struct ic_symbol *field_type_sym = 0;
+
+    struct ic_string *generated_fargs;
+
+    char *ch = 0;
+
+    if (!tdecl) {
+        puts("ic_decl_type_sig_mangled_full: tdecl was null");
+        return 0;
+    }
+
+    /* cache str pointer */
+    sig_str = &(tdecl->sig_mangled_full);
+
+    if (ic_string_length(sig_str) == 0) {
+        /* string was empty, generate */
+
+        /* return type */
+        if (!ic_string_append_symbol(sig_str, &(tdecl->name))) {
+            puts("ic_decl_type_sig_mangled_full: call to ic_string_append_char failed");
+            return 0;
+        }
+
+        /* function name */
+        if (!ic_string_append_char(sig_str, " i_", 3)) {
+            puts("ic_decl_type_sig_mangled_full: call to ic_string_append_char failed");
+            return 0;
+        }
+
+        if (!ic_string_append_symbol(sig_str, &(tdecl->name))) {
+            puts("ic_decl_type_sig_mangled_full: call to ic_string_append_symbol failed");
+            return 0;
+        }
+
+        if (!ic_string_append_char(sig_str, "_a", 2)) {
+            puts("ic_decl_type_sig_mangled_full: call to ic_string_append_char failed");
+            return 0;
+        }
+
+        /* arguments */
+
+        generated_fargs = ic_string_new_empty();
+        if (!generated_fargs) {
+            puts("ic_decl_type_sig_mangled_full: call to ic_string_new_empty failed");
+            return 0;
+        }
+
+        n_fields = ic_decl_type_field_length(tdecl);
+
+        for (i_field = 0; i_field < n_fields; ++i_field) {
+            if (i_field > 0) {
+                if (!ic_string_append_char(generated_fargs, ", ", 2)) {
+                    puts("ic_decl_type_sig_mangled_full: call to ic_string_append_char failed");
+                    return 0;
+                }
+            }
+
+            if (!ic_string_append_char(sig_str, "_", 1)) {
+                puts("ic_decl_type_sig_mangled_full: call to ic_string_append_char failed");
+                return 0;
+            }
+
+            field = ic_decl_type_field_get(tdecl, i_field);
+            if (!field) {
+                puts("ic_decl_type_sig_mangled_full: call to ic_decl_type_field_get failed");
+                return 0;
+            }
+
+            field_name_sym = &(field->name);
+
+            field_type_sym = ic_type_ref_get_symbol(&(field->type));
+            if (!field_type_sym) {
+                puts("ic_decl_type_sig_mangled_full: call to ic_type_ref_get_symbol failed");
+                return 0;
+            }
+
+            if (!ic_string_append_symbol(sig_str, field_type_sym)) {
+                puts("ic_decl_type_sig_mangled_full: call to ic_string_append_symbol failed");
+                return 0;
+            }
+
+            if (!ic_string_append_symbol(generated_fargs, field_type_sym)) {
+                puts("ic_decl_type_sig_mangled_full: call to ic_string_append_symbol failed");
+                return 0;
+            }
+
+            if (!ic_string_append_char(generated_fargs, " ", 1)) {
+                puts("ic_decl_type_sig_mangled_full: call to ic_string_append_char failed");
+                return 0;
+            }
+
+            if (!ic_string_append_symbol(generated_fargs, field_name_sym)) {
+                puts("ic_decl_type_sig_mangled_full: call to ic_string_append_symbol failed");
+                return 0;
+            }
+        }
+
+        if (!ic_string_append_char(sig_str, "(", 3)) {
+            puts("ic_decl_type_sig_mangled_full: call to ic_string_append_char failed");
+            return 0;
+        }
+
+        if (!ic_string_append(sig_str, generated_fargs)) {
+            puts("ic_decl_type_sig_mangled_full: call to ic_string_append failed");
+            return 0;
+        }
+
+        if (!ic_string_append_char(sig_str, ")", 1)) {
+            puts("ic_decl_type_sig_mangled_full: call to ic_string_append_char failed");
+            return 0;
+        }
+    }
+
+    ch = ic_string_contents(sig_str);
+    if (!ch) {
+        puts("ic_decl_type_sig_mangled_full: failed to get string contents");
+        return 0;
+    }
+
+    return ch;
+}
+
+/* returns number of fields
+ *
+ * returns number on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_field_length(struct ic_decl_type *tdecl) {
+    unsigned int n = 0;
+
+    if (!tdecl) {
+        puts("ic_decl_type_field_length: tdecl was null");
+        return 0;
+    }
+
+    n = ic_pvector_length(&(tdecl->fields));
+
+    return n;
+}
+
+/* get field by number
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_field *ic_decl_type_field_get(struct ic_decl_type *tdecl, unsigned int field_number) {
+    struct ic_field *field = 0;
+
+    if (!tdecl) {
+        puts("ic_decl_typefield_get: tdecl was null");
+        return 0;
+    }
+
+    field = ic_pvector_get(&(tdecl->fields), field_number);
+    if (!field) {
+        puts("ic_decl_type_field_get: call to ic_pvector_get failed");
+        return 0;
+    }
+
+    return field;
 }
 
 /* get the type of a field by name

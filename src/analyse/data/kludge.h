@@ -45,6 +45,11 @@ struct ic_kludge {
     /* list of Func decls */
     struct ic_pvector fdecls;
 
+    /* list of default constructors that need to be generated
+     * list of Type decl
+     */
+    struct ic_pvector default_constructors;
+
     /* list of Errors
      * FIXME no error type yet
      */
@@ -96,8 +101,7 @@ unsigned int ic_kludge_populate(struct ic_kludge *kludge, struct ic_ast *ast);
 unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *tdecl);
 
 /* add a new func decl to this kludge
- * this will insert into dict_fname and also
- * into fsigs
+ * this will insert into dict_fname and fsigs
  *
  * returns 1 on success
  * returns 0 on failure
@@ -105,12 +109,20 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *
 unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_decl_func *fdecl);
 
 /* add a new op decl to this kludge
- * this will insert into dict_op and also
+ * this will insert into dict_op
  *
  * returns 1 on success
  * returns 0 on failure
  */
 unsigned int ic_kludge_add_op(struct ic_kludge *kludge, struct ic_decl_op *op);
+
+/* add a new default constructor func decl to this kludge
+ * this will insert into dict_fname and default_constructors
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_kludge_add_default_constructor(struct ic_kludge *kludge, struct ic_decl_type *tdecl, struct ic_decl_func *fdecl);
 
 /* retrieve ic_type by string
  *

@@ -110,8 +110,29 @@ void abnormal(void) {
     assert(1 == ic_string_destroy(str, 1));
 }
 
+void empty_append(void) {
+    struct ic_string str;
+    struct ic_string *tstr = 0;
+
+    assert(1 == ic_string_init_empty(&str));
+    assert(0 == ic_string_length(&str));
+
+    assert(1 == ic_string_append_char(&str, "hello", 5));
+    assert(5 == ic_string_length(&str));
+
+    tstr = ic_string_new(" happy", 6);
+    assert(tstr);
+    assert(6 == ic_string_length(tstr));
+    assert(1 == ic_string_append(&str, tstr));
+    assert(11 == ic_string_length(&str));
+
+    assert(1 == ic_string_destroy(tstr, 1));
+    assert(1 == ic_string_destroy(&str, 0));
+}
+
 int main(void) {
     normal();
+    empty_append();
     abnormal();
 
     return 0;

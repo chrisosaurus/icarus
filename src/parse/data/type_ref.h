@@ -89,7 +89,7 @@ unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, un
 
 /* return a symbol representing this type
  *
- * if type is unknown then 0 is reuturned
+ * if type is unknown then 0 is returned
  * if type is symbol then the symbol is returned
  *
  * returns 0 on failure

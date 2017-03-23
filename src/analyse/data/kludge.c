@@ -147,6 +147,12 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge) {
         return 0;
     }
 
+    /* pvector default_constructors */
+    if (!ic_pvector_init(&(kludge->default_constructors), 0)) {
+        puts("ic_kludge_init: fdecl: call to ic_pvector_init failed");
+        return 0;
+    }
+
     /* pvector error */
     if (!ic_pvector_init(&(kludge->errors), 0)) {
         puts("ic_kludge_init: errors: call to ic_pvector_init failed");
@@ -255,6 +261,16 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
         return 0;
     }
 
+    /* cleanup default_constructors
+     * ic_pvector_destroy(*vec, free_vec, (*destroy_item)());
+     * do not free_vec as it is a member of kludge
+     * TODO FIXME destroy elements as these were made in analysis
+     */
+    if (!ic_pvector_destroy(&(kludge->default_constructors), 0, 0)) {
+        puts("ic_kludge_destroy: call to ic_pvector_destroy for default_constructors failed");
+        return 0;
+    }
+
     /* iterate through errors destroying each error
      *      list of Errors
      *      struct ic_pvector errors;
@@ -349,8 +365,7 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *
 }
 
 /* add a new func decl to this kludge
- * this will insert into dict_fname and also
- * into fsigs
+ * this will insert into dict_fname and fsigs
  *
  * returns 1 on success
  * returns 0 on failure
@@ -400,7 +415,7 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_decl_func *
 }
 
 /* add a new op decl to this kludge
- * this will insert into dict_op and also
+ * this will insert into dict_op
  *
  * returns 1 on success
  * returns 0 on failure
@@ -444,6 +459,61 @@ unsigned int ic_kludge_add_op(struct ic_kludge *kludge, struct ic_decl_op *op) {
     /* insert into dict_op */
     if (!ic_dict_insert(&(kludge->dict_op), from_str, to_sym)) {
         puts("ic_kludge_add_op: ic_dict_insert failed");
+        return 0;
+    }
+
+    return 1;
+}
+
+/* add a new default constructor func decl to this kludge
+ * this will insert into dict_fname and default_constructors
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_kludge_add_default_constructor(struct ic_kludge *kludge, struct ic_decl_type *tdecl, struct ic_decl_func *fdecl) {
+
+    char *str = 0;
+
+    if (!kludge) {
+        puts("ic_kludge_add_default_constructor: kludge was null");
+        return 0;
+    }
+    if (!tdecl) {
+        puts("ic_kludge_add_default_constructor: fdecl was null");
+        return 0;
+    }
+    if (!fdecl) {
+        puts("ic_kludge_add_default_constructor: fdecl was null");
+        return 0;
+    }
+
+    /* cache str
+     * do not need to free as this char* is stored on the fdecl
+     */
+    str = ic_decl_func_sig_call(fdecl);
+    if (!str) {
+        puts("ic_kludge_add_default_constructor: call to ic_decl_func_sig_call failed");
+        return 0;
+    }
+
+    /* check for exists first to aid diagnostics */
+    if (ic_dict_exists(&(kludge->dict_fsig), str)) {
+        printf("ic_kludge_add_default_constructor: function signature '%s' already exists on this kludge\n", str);
+        return 0;
+    }
+
+    /* insert into dict fsig
+     * returns 0 on failure
+     */
+    if (!ic_dict_insert(&(kludge->dict_fsig), str, fdecl)) {
+        puts("ic_kludge_add_default_constructor: call to ic_dict_insert failed");
+        return 0;
+    }
+
+    /* insert into list of fdecls */
+    if (-1 == ic_pvector_append(&(kludge->default_constructors), tdecl)) {
+        puts("ic_kludge_add_default_constructor: call to ic_pvector_append failed");
         return 0;
     }
 

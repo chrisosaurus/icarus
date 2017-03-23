@@ -214,6 +214,21 @@ struct ic_decl_type {
      */
     struct ic_dict field_dict;
 
+    /* full mangled signature
+     *
+     * for the type
+     *  type Foo
+     *    i::Sint
+     *    u::Uint
+     *    b::Bar
+     *  end
+     *
+     * this should generate the function
+     *
+     *  struct Foo * ic_Foo_a_Sint_Uint_Bar(Sint *i, Uint *u, Bar *b);
+     */
+    struct ic_string sig_mangled_full;
+
     /* 1 if this is the void type
      * 0 if this is not the void type
      */
@@ -304,6 +319,41 @@ void ic_decl_type_print_body(FILE *fd, struct ic_decl_type *tdecl, unsigned int 
  * returns 0 on failure
  */
 char *ic_decl_type_str(struct ic_decl_type *tdecl);
+
+/* return a mangled representation of this function full signature
+ *
+ * the char* returned is a string stored within tdecl,
+ * this means the caller must not free or mutate this string
+ *
+ * for the type
+ *  type Foo
+ *    i::Sint
+ *    u::Uint
+ *    b::Bar
+ *  end
+ *
+ * this should generate the function
+ *
+ *  struct Foo * ic_Foo_a_Sint_Uint_Bar(Sint *i, Uint *u, Bar *b);
+ *
+ * returns char* on success
+ * returns 0 on failure
+ */
+char *ic_decl_type_sig_mangled_full(struct ic_decl_type *tdecl);
+
+/* get number of fields
+ *
+ * returns number on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_field_length(struct ic_decl_type *tdecl);
+
+/* get field by number
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_field *ic_decl_type_field_get(struct ic_decl_type *tdecl, unsigned int field_number);
 
 /* get the type of a field by name
  *

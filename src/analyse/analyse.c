@@ -110,6 +110,11 @@ unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type 
     char *type_str = 0;
     struct ic_type *field_type = 0;
 
+    /* func decl for default type constructor */
+    struct ic_decl_func *constructor_decl = 0;
+    /* length of type_str used for generating cons */
+    unsigned int type_str_len = 0;
+
     if (!kludge) {
         puts("ic_analyse_decl_type: kludge was null");
         return 0;
@@ -180,6 +185,57 @@ unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type 
         /* insert this type into field_dict */
         if (!ic_decl_type_add_field_type(tdecl, ic_symbol_contents(&(field->name)), field_type)) {
             puts("ic_analyse_decl_type: call to ic_decl_type_add_field_type failed");
+            goto ERROR;
+        }
+    }
+
+    /* for non-builtin types we need to make sure that the backend generates
+     * an appropriate default constructor for this type
+     */
+    if (!ic_decl_type_isbuiltin(tdecl)) {
+        /* not a builtin, so we need to ensure backend generates a default
+         * constructor
+         *
+         * we also need to insert an appropriate function signature into
+         * kludge->dict_fsig so that any calls to this constructor are typed correctly
+         */
+
+        type_str = ic_symbol_contents(&(tdecl->name));
+        type_str_len = ic_symbol_length(&(tdecl->name));
+
+        constructor_decl = ic_decl_func_new(type_str, type_str_len);
+        if (!constructor_decl) {
+            puts("ic_analyse_decl_type: call to ic_decl_func_new failed");
+            goto ERROR;
+        }
+
+        /* associate constructor return value with type */
+        if (!ic_decl_func_set_return(constructor_decl, type_str, ic_symbol_length(type_sym))) {
+            puts("ic_analyse_decl_type: call to ic_decl_func_set_return failed");
+            goto ERROR;
+        }
+
+        /* populate func decl arguments....
+         * TODO FIXME this now means that the fields are shared between the fdecl and tdecl
+         * TODO FIXME iterating over the fields... once again (3rd time is the charm)
+         * TODO FIXME backends do not take this into account
+         */
+        len = ic_pvector_length(&(tdecl->fields));
+        for (i = 0; i < len; ++i) {
+            field = ic_pvector_get(&(tdecl->fields), i);
+            if (!field) {
+                puts("ic_analyse_decl_type: call to ic_pvector_get failed");
+                goto ERROR;
+            }
+
+            if (!ic_decl_func_add_arg(constructor_decl, field)) {
+                puts("ic_analyse_decl_type: call to ic_decl_func_add_arg failed");
+                goto ERROR;
+            }
+        }
+
+        if (!ic_kludge_add_default_constructor(kludge, tdecl, constructor_decl)) {
+            puts("ic_analyse_decl_type: call to ic_kludge_add_default_constructor failed");
             goto ERROR;
         }
     }
