@@ -229,6 +229,120 @@ unsigned int ic_transform_ir_let_expr_print(FILE *fd, struct ic_transform_ir_let
     return 1;
 }
 
+/* allocate and initialise a new let_faccess
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_let_faccess *ic_transform_ir_let_faccess_new(void) {
+    struct ic_transform_ir_let_faccess *let = 0;
+
+    let = calloc(1, sizeof(struct ic_transform_ir_let_faccess));
+    if (!let) {
+        puts("ir_transform_ir_let_faccess_new: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_transform_ir_let_faccess_init(let)) {
+        puts("ir_transform_ir_let_faccess_new: call to ic_transform_let_expr_init failed");
+        return 0;
+    }
+
+    return let;
+}
+
+/* initialise an existing let_faccess
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_let_faccess_init(struct ic_transform_ir_let_faccess *let) {
+    if (!let) {
+        puts("ic_transform_ir_let_faccess_init: let was null");
+        return 0;
+    }
+
+    let->name = 0;
+    let->type = 0;
+    let->left = 0;
+    let->right = 0;
+
+    return 1;
+}
+
+/* destroy let_faccess
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * will only free let if `free_let` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_let_faccess_destroy(struct ic_transform_ir_let_faccess *let, unsigned int free_let) {
+    if (!let) {
+        puts("ic_transform_ir_let_faccess_destroy: let was null");
+        return 0;
+    }
+
+    if (free_let) {
+        free(let);
+    }
+
+    return 1;
+}
+
+/* print let_faccess
+ *
+ * returns 1 on success
+ * return 0 on failure
+ */
+unsigned int ic_transform_ir_let_faccess_print(FILE *fd, struct ic_transform_ir_let_faccess *let, unsigned int *indent) {
+    if (!let) {
+        puts("ic_transform_ir_let_faccess_print: let was null");
+        return 0;
+    }
+
+    if (!indent) {
+        puts("ic_transform_ir_let_faccess_print: indent was null");
+        return 0;
+    }
+
+    if (!let->name || !let->type || !let->left || !let->right) {
+        puts("ic_transform_ir_let_faccess_print: this let is not ready for printing - has null fields");
+        return 0;
+    }
+
+    ic_parse_print_indent(fd, *indent);
+
+    fputs("let ", fd);
+
+    /* identifier name */
+    ic_symbol_print(fd, let->name);
+
+    fputs("::", fd);
+
+    /* type */
+    ic_type_print(fd, let->type);
+
+    fputs(" = ", fd);
+
+    ic_symbol_print(fd, let->left);
+
+    fputs(".", fd);
+
+    ic_symbol_print(fd, let->right);
+
+    /* trailing \n */
+    fputs("\n", fd);
+
+    return 1;
+}
+
 /* allocate and initialise a new let
  *
  * TODO doesn't touch any of the contained elements
@@ -1285,6 +1399,58 @@ struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_expr_new(struct ic_symbol 
     stmt->u.let.u.expr.name = name;
     stmt->u.let.u.expr.type = type;
     stmt->u.let.u.expr.expr = expr;
+
+    return stmt;
+}
+
+/* allocate and initialise a new stmt->let->faccess
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_faccess_new(struct ic_symbol *name, struct ic_type *type, struct ic_symbol *left, struct ic_symbol *right) {
+    struct ic_transform_ir_stmt *stmt = 0;
+
+    if (!name) {
+        puts("ic_transform_ir_stmt_let_faccess_new: name was null");
+        return 0;
+    }
+
+    if (!type) {
+        puts("ic_transform_ir_stmt_let_faccess_new: type was null");
+        return 0;
+    }
+
+    if (!left) {
+        puts("ic_transform_ir_stmt_let_faccess_new: left was null");
+        return 0;
+    }
+
+    if (!right) {
+        puts("ic_transform_ir_stmt_let_faccess_new: right was null");
+        return 0;
+    }
+
+    stmt = ic_transform_ir_stmt_new(ic_transform_ir_stmt_type_let);
+    if (!stmt) {
+        puts("ic_transform_ir_stmt_let_faccess_new: call to ic_transform_ir_stmt_new failed");
+        return 0;
+    }
+
+    if (!ic_transform_ir_let_init(&(stmt->u.let), ic_transform_ir_let_type_faccess)) {
+        puts("ic_transform_ir_stmt_let_faccess_new: call to ic_transform_ir_let_init failed");
+        return 0;
+    }
+
+    if (!ic_transform_ir_let_faccess_init(&(stmt->u.let.u.faccess))) {
+        puts("ic_transform_ir_stmt_let_faccess_new: call to ic_transform_ir_let_expr_init failed");
+        return 0;
+    }
+
+    stmt->u.let.u.faccess.name = name;
+    stmt->u.let.u.faccess.type = type;
+    stmt->u.let.u.faccess.left = left;
+    stmt->u.let.u.faccess.right = right;
 
     return stmt;
 }

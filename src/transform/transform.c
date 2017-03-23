@@ -1048,6 +1048,10 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
     struct ic_transform_ir_fcall *tir_fcall = 0;
     /* tir expr wrapping fcall used in func_call case */
     struct ic_transform_ir_expr *tir_expr = 0;
+    /* left symbol for faccess */
+    struct ic_symbol *left_sym = 0;
+    /* right symbol for faccess */
+    struct ic_symbol *right_sym = 0;
 
     if (!kludge) {
         puts("ic_transform_new_temp: kludge was null");
@@ -1233,8 +1237,57 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
             break;
 
         case ic_expr_type_field_access:
-            puts("ic_transform_new_temp: expr->tag field_access not yet supported");
-            return 0;
+            /* generate name */
+            sym = ic_transform_body_register_temporary(tbody);
+            if (!sym) {
+                puts("ic_transform_new_temp: call to ic_transform_body_register_temporary failed");
+                return 0;
+            }
+
+            /* get return type of inner struct field */
+            type = ic_analyse_infer(kludge, scope, expr);
+            if (!type) {
+                puts("ic_transform_new_temp: call to ic_analyse_infer failed");
+                return 0;
+            }
+
+            if (!expr->u.faccess.left) {
+                puts("ic_transform_new_temp: faccess left was null");
+                return 0;
+            }
+
+            if (!expr->u.faccess.left) {
+                puts("ic_transform_new_temp: faccess right was null");
+                return 0;
+            }
+
+            if (expr->u.faccess.left->tag != ic_expr_type_identifier) {
+                puts("ic_transform_new_temp: faccess left was not id");
+                return 0;
+            }
+
+            if (expr->u.faccess.right->tag != ic_expr_type_identifier) {
+                puts("ic_transform_new_temp: faccess right was not id");
+                return 0;
+            }
+
+            left_sym = &(expr->u.faccess.left->u.id.identifier);
+            right_sym = &(expr->u.faccess.right->u.id.identifier);
+
+            /* generate new statement */
+            tir_stmt = ic_transform_ir_stmt_let_faccess_new(sym, type, left_sym, right_sym);
+            if (!tir_stmt) {
+                puts("ic_transform_new_temp: call to ic_transform_ir_stmt_let_expr_new failed");
+                return 0;
+            }
+
+            if (!ic_transform_body_append(tbody, tir_stmt)) {
+                puts("ic_transform_new_temp: call to ic_transform_body_append failed");
+                return 0;
+            }
+
+            /* success */
+            return sym;
             break;
 
         default:
@@ -1398,8 +1451,12 @@ static struct ic_symbol *ic_transform_fcall_arg(struct ic_kludge *kludge, struct
             break;
 
         case ic_expr_type_field_access:
-            puts("ic_transform_fcall_arg: unsupported/unimplemented arg->tag: field_access");
-            return 0;
+            sym = ic_transform_new_temp(kludge, scope, tbody, arg);
+            if (!sym) {
+                puts("ic_transform_fcall_arg: call to ic_transform_new_temp (for field access) failed");
+                return 0;
+            }
+            return sym;
             break;
 
         default:

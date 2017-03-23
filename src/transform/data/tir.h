@@ -102,9 +102,53 @@ unsigned int ic_transform_ir_let_expr_destroy(struct ic_transform_ir_let_expr *l
  */
 unsigned int ic_transform_ir_let_expr_print(FILE *fd, struct ic_transform_ir_let_expr *let, unsigned int *indent);
 
+struct ic_transform_ir_let_faccess {
+    struct ic_symbol *name;
+    struct ic_type *type;
+    struct ic_symbol *left;
+    struct ic_symbol *right;
+};
+
+/* allocate and initialise a new let_faccess
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_let_faccess *ic_transform_ir_let_faccess_new(void);
+
+/* initialise an existing let_faccess
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_let_faccess_init(struct ic_transform_ir_let_faccess *let);
+
+/* destroy let_faccess
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * will only free let if `free_faccess` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_let_faccess_destroy(struct ic_transform_ir_let_faccess *let, unsigned int free_faccess);
+
+/* print let_faccess
+ *
+ * returns 1 on success
+ * return 0 on failure
+ */
+unsigned int ic_transform_ir_let_faccess_print(FILE *fd, struct ic_transform_ir_let_faccess *let, unsigned int *indent);
+
 enum ic_transform_ir_let_tag {
     ic_transform_ir_let_type_literal,
-    ic_transform_ir_let_type_expr
+    ic_transform_ir_let_type_expr,
+    ic_transform_ir_let_type_faccess
 };
 
 struct ic_transform_ir_let {
@@ -112,6 +156,7 @@ struct ic_transform_ir_let {
     union {
         struct ic_transform_ir_let_literal lit;
         struct ic_transform_ir_let_expr expr;
+        struct ic_transform_ir_let_faccess faccess;
     } u;
 
     /* if this tlet is ever assigned to
@@ -269,14 +314,9 @@ unsigned int ic_transform_ir_if_destroy(struct ic_transform_ir_if *tif, unsigned
  */
 unsigned int ic_transform_ir_if_print(FILE *fd, struct ic_transform_ir_if *tif, unsigned int *indent);
 
-/* FIXME TODO
- * ir_expr isn't powerful enough
- * ideally this should be either:
- *  an fcall
- *  an identifier name
- *  a literal
- *
- * and then let_ should be changed to match
+/* an expr is only ever a function call
+ * in void context we only call a function for it's side effects
+ * all other things that yield a value are dealt with as let expressions
  */
 struct ic_transform_ir_expr {
     struct ic_transform_ir_fcall *fcall;
@@ -517,6 +557,13 @@ struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_literal_new(struct ic_symb
  * returns 0 on failure
  */
 struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_expr_new(struct ic_symbol *name, struct ic_type *type, struct ic_transform_ir_expr *expr);
+
+/* allocate and initialise a new stmt->let->faccess
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_faccess_new(struct ic_symbol *name, struct ic_type *type, struct ic_symbol *left, struct ic_symbol *right);
 
 /* allocate and initialise a new stmt->ret
  *

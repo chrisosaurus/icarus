@@ -169,6 +169,7 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_t
     struct ic_expr_constant *literal = 0;
 
     struct ic_transform_ir_let_expr *let_expr = 0;
+    struct ic_transform_ir_let_faccess *let_faccess = 0;
     struct ic_transform_ir_expr *expr = 0;
 
     if (!input_kludge) {
@@ -269,6 +270,57 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_t
 
             /* closing semicolon and trailing \n */
             fputs(";\n", out);
+
+            return 1;
+            break;
+
+        case ic_transform_ir_let_type_faccess:
+            /* let name::type = foo.bar */
+            /* goes to */
+            /* c_type_str name = foo->bar */
+
+            let_faccess = &(let->u.faccess);
+
+            let_type = let_faccess->type;
+
+            let_sym = ic_type_name(let_type);
+            if (!let_sym) {
+                puts("ic_b2c_compile_stmt_let: call to ic_type_name failed");
+                return 0;
+            }
+
+            let_str = ic_symbol_contents(let_sym);
+            if (!let_str) {
+                puts("ic_b2c_compile_stmt_let: call to ic_symbol_contents failed for let type");
+                return 0;
+            }
+
+            let_name = ic_symbol_contents(let_faccess->name);
+            if (!let_name) {
+                puts("ic_b2c_compile_stmt_let: call to ic_symbol_contents failed for let name");
+                return 0;
+            }
+
+            /* print "type name = " */
+            fprintf(out, "%s %s = ", let_str, let_name);
+
+            let_sym = let_faccess->left;
+            let_str = ic_symbol_contents(let_sym);
+            if (!let_str) {
+                puts("ic_b2c_compile_stmt_let: call to ic_symbol_contents failed for let type");
+                return 0;
+            }
+
+            fprintf(out, "%s->", let_str);
+
+            let_sym = let_faccess->right;
+            let_str = ic_symbol_contents(let_sym);
+            if (!let_str) {
+                puts("ic_b2c_compile_stmt_let: call to ic_symbol_contents failed for let type");
+                return 0;
+            }
+
+            fprintf(out, "%s;\n", let_str);
 
             return 1;
             break;
