@@ -1251,28 +1251,33 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
                 return 0;
             }
 
+            if (!expr->u.faccess.right) {
+                puts("ic_transform_new_temp: faccess right was null");
+                return 0;
+            }
+
+            /* right must always be an id */
+            if (expr->u.faccess.right->tag != ic_expr_type_identifier) {
+                puts("ic_transform_new_temp: faccess right was not id");
+                return 0;
+            }
+            right_sym = &(expr->u.faccess.right->u.id.identifier);
+
             if (!expr->u.faccess.left) {
                 puts("ic_transform_new_temp: faccess left was null");
                 return 0;
             }
 
-            if (!expr->u.faccess.left) {
-                puts("ic_transform_new_temp: faccess right was null");
-                return 0;
+            /* left can either be an id or a compound expression */
+            if (expr->u.faccess.left->tag == ic_expr_type_identifier) {
+                left_sym = &(expr->u.faccess.left->u.id.identifier);
+            } else {
+                left_sym = ic_transform_new_temp(kludge, scope, tbody, expr->u.faccess.left);
+                if (!left_sym) {
+                    puts("ic_transform_new_temp: call to ic_transform_new_temp failed");
+                    return 0;
+                }
             }
-
-            if (expr->u.faccess.left->tag != ic_expr_type_identifier) {
-                puts("ic_transform_new_temp: faccess left was not id");
-                return 0;
-            }
-
-            if (expr->u.faccess.right->tag != ic_expr_type_identifier) {
-                puts("ic_transform_new_temp: faccess right was not id");
-                return 0;
-            }
-
-            left_sym = &(expr->u.faccess.left->u.id.identifier);
-            right_sym = &(expr->u.faccess.right->u.id.identifier);
 
             /* generate new statement */
             tir_stmt = ic_transform_ir_stmt_let_faccess_new(sym, type, left_sym, right_sym);
