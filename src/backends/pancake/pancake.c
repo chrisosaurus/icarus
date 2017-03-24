@@ -47,10 +47,15 @@ static unsigned int ic_backend_pancake_run(struct ic_backend_pancake_instruction
         puts("\npancake value_stack after execution finished:");
         puts("----------------");
         if (!ic_backend_pancake_value_stack_print(stdout, runtime_data->value_stack)) {
-            puts("ic_backend_pancake_from_bytecode: call to ic_backend_pancake_value_stack_print failed");
+            puts("ic_backend_pancake_run: call to ic_backend_pancake_value_stack_print failed");
             return 0;
         }
         puts("----------------\n");
+    }
+
+    if (!ic_backend_pancake_runtime_data_destroy(runtime_data, 1)) {
+        puts("ic_backend_pancake_run: call to ic_backend_pancake_runtime_data_destroy failed");
+        return 0;
     }
 
     return 1;
