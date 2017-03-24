@@ -195,11 +195,8 @@ unsigned int ic_transform_print(FILE *fd, struct ic_kludge *kludge) {
             continue;
         }
 
-        /* header for tdecl */
-        ic_decl_type_print_header(fd, tdecl, &fake_indent);
-
-        /* print body */
-        ic_decl_type_print_body(fd, tdecl, &fake_indent);
+        /* print tdecl */
+        ic_decl_type_print(fd, tdecl, &fake_indent);
     }
 
     /* go over fdecls */
