@@ -24,14 +24,18 @@ fn print(f::Foo) -> Void
     print(f.b)
 end
 
-# add_one(Sint)
-fn add_one(i::Sint) -> Sint
-    return i + 1
+# maybe_add_one(Bool,Sint)
+fn maybe_add_one(b::Bool, i::Sint) -> Sint
+    if b == True
+        return i + 1
+    else
+        return i
+    end
 end
 
 # main()
 fn main() -> Void
-    let f::Foo = Foo(add_one(1), "hello")
+    let f::Foo = Foo(maybe_add_one(True, 1), "hello")
     print(f)
 end
 ----------------

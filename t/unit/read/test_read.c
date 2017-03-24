@@ -4,7 +4,7 @@
 
 #include "../../../src/read/read.h"
 
-static char *expected = "# user defined type with 2 fields, an Sint and a String\n\
+static char *expected = "# user defined type with 2 fields, a Sint and a String\n\
 type Foo\n\
     a::Sint\n\
     b::String\n\
@@ -16,14 +16,18 @@ fn print(f::Foo)\n\
     print(f.b)\n\
 end\n\
 \n\
-# simple function to test return values\n\
-fn add_one(i::Sint) -> Sint\n\
-    return i+1\n\
+# simple function to test return values and branching\n\
+fn maybe_add_one(b::Bool, i::Sint) -> Sint\n\
+    if b == True\n\
+        return i+1\n\
+    else\n\
+        return i\n\
+    end\n\
 end\n\
 \n\
 # entry point for program\n\
 fn main()\n\
-    let f::Foo = Foo(add_one(1), \"hello\")\n\
+    let f::Foo = Foo(maybe_add_one(True, 1), \"hello\")\n\
     print(f)\n\
 end\n\
 \n\

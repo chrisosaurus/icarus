@@ -1,4 +1,4 @@
-# user defined type with 2 fields, an Sint and a String
+# user defined type with 2 fields, a Sint and a String
 type Foo
     a::Sint
     b::String
@@ -10,14 +10,18 @@ fn print(f::Foo)
     print(f.b)
 end
 
-# simple function to test return values
-fn add_one(i::Sint) -> Sint
-    return i+1
+# simple function to test return values and branching
+fn maybe_add_one(b::Bool, i::Sint) -> Sint
+    if b == True
+        return i+1
+    else
+        return i
+    end
 end
 
 # entry point for program
 fn main()
-    let f::Foo = Foo(add_one(1), "hello")
+    let f::Foo = Foo(maybe_add_one(True, 1), "hello")
     print(f)
 end
 
