@@ -109,6 +109,10 @@ test_custom: $(OBJ) icarus
 	t/custom/test_backend_2c_hello.pl
 
 	@echo -e "\n"
+	@echo running test_backend_2c_simple.pl
+	t/custom/test_backend_2c_simple.pl
+
+	@echo -e "\n"
 	@echo running test_backend_2c_end_to_end_output_only.pl
 	t/custom/test_backend_2c_end_to_end_output_only.pl
 
