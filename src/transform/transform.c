@@ -503,6 +503,8 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_sc
     struct ic_transform_ir_fcall *tir_fcall = 0;
     struct ic_transform_ir_let *tlet = 0;
 
+    unsigned int fake_indent = 1;
+
     if (!kludge) {
         puts("ic_transform_stmt_let: kludge was null");
         return 0;
@@ -583,7 +585,8 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_sc
             break;
 
         case ic_expr_type_identifier:
-            puts("ic_transform_stmt_let: unsupported let->init->tag: identifier");
+            puts("ic_transform_stmt_let: unsupported let->init->tag: identifier in statement:");
+            ic_stmt_let_print(stdout, let, &fake_indent);
             return 0;
             break;
 
