@@ -160,12 +160,14 @@ unsigned int ic_transform(struct ic_kludge *kludge) {
  * returns 0 on failure
  */
 unsigned int ic_transform_print(FILE *fd, struct ic_kludge *kludge) {
-    /* i for kludge fdecls */
+    /* i for kludge fdecls / tdecls */
     unsigned int i = 0;
-    /* len for kludge fdecls */
+    /* len for kludge fdecls / tdecls */
     unsigned int len = 0;
     /* current fdecl we are considering */
     struct ic_decl_func *fdecl = 0;
+    /* current tdecl we are considering */
+    struct ic_decl_type *tdecl = 0;
     /* pointer to tbody within */
     struct ic_transform_body *tbody = 0;
     /* indent level */
@@ -178,6 +180,29 @@ unsigned int ic_transform_print(FILE *fd, struct ic_kludge *kludge) {
         return 0;
     }
 
+    /* go over tdecls */
+    len = ic_pvector_length(&(kludge->tdecls));
+
+    for (i = 0; i < len; ++i) {
+        tdecl = ic_pvector_get(&(kludge->tdecls), i);
+        if (!tdecl) {
+            puts("ic_transform_print: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        /* skip printing of builtins */
+        if (ic_decl_type_isbuiltin(tdecl)) {
+            continue;
+        }
+
+        /* header for tdecl */
+        ic_decl_type_print_header(fd, tdecl, &fake_indent);
+
+        /* print body */
+        ic_decl_type_print_body(fd, tdecl, &fake_indent);
+    }
+
+    /* go over fdecls */
     len = ic_pvector_length(&(kludge->fdecls));
 
     for (i = 0; i < len; ++i) {

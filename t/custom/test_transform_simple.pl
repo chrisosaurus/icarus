@@ -8,6 +8,10 @@ my $path = "./icarus transform example/simple.ic";
 my $output = `$path`;
 my $exit_status = $?;
 my $expected = <<EOF;
+type Foo
+    a::Sint
+    b::String
+end
 fn println(f::Foo) -> Void
     let _l0::String = "Foo{"
     print(_l0)
