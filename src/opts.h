@@ -14,6 +14,8 @@ struct ic_opts {
     char *in_filename;
     char *out_filename;
 
+    char *in_bytecode_filename;
+
     bool debug;
 
     bool version;

@@ -4,7 +4,7 @@ use warnings;
 use v5.10;
 use IPC::Open3;
 
-my $path = "bin/t/custom/test_backend_pancake_interpret_instructions";
+my $path = "./icarus";
 
 die "Could not find '$path'\n" unless -e $path;
 
@@ -17,9 +17,12 @@ my $cases = [
       exit
       ',
     expected => '
+      pancake value_stack after execution finished:
+      ----------------
       uint: 27
       uint: 7
       uint: 176
+      ----------------
       '
   },
   {
@@ -34,8 +37,11 @@ my $cases = [
       exit
       ',
     expected => '
+      pancake value_stack after execution finished:
+      ----------------
       uint: 16
       uint: 4
+      ----------------
       '
   },
   {
@@ -46,6 +52,9 @@ my $cases = [
       ',
     expected => '
       17
+      pancake value_stack after execution finished:
+      ----------------
+      ----------------
       '
   },
   {
@@ -56,7 +65,10 @@ my $cases = [
       exit
       ',
     expected => '
+      pancake value_stack after execution finished:
+      ----------------
       sint: -2
+      ----------------
       '
   },
   {
@@ -67,7 +79,10 @@ my $cases = [
       exit
       ',
     expected => '
+      pancake value_stack after execution finished:
+      ----------------
       uint: 0
+      ----------------
       '
   },
   {
@@ -77,6 +92,9 @@ my $cases = [
       exit
       ',
     expected =>'
+      pancake value_stack after execution finished:
+      ----------------
+      ----------------
       ',
   },
   {
@@ -88,8 +106,11 @@ my $cases = [
       exit
       ',
     expected =>'
+      pancake value_stack after execution finished:
+      ----------------
       uint: 3
       uint: 5
+      ----------------
       ',
   },
   {
@@ -112,7 +133,10 @@ my $cases = [
       ',
     expected => '
       5
+      pancake value_stack after execution finished:
+      ----------------
       uint: 5
+      ----------------
       ',
   },
 
@@ -124,6 +148,9 @@ my $cases = [
       ',
     expected => '
       hello world
+      pancake value_stack after execution finished:
+      ----------------
+      ----------------
       ',
   },
   {
@@ -146,6 +173,9 @@ my $cases = [
       5
       3
       3
+      pancake value_stack after execution finished:
+      ----------------
+      ----------------
       ',
   },
   {
@@ -213,6 +243,9 @@ my $cases = [
       False
       True
       True
+      pancake value_stack after execution finished:
+      ----------------
+      ----------------
       ',
   },
 ];
@@ -239,7 +272,7 @@ sub run {
   my $expected = shift // die;
   die if @_;
 
-  my $pid = open3(my $write, my $read, my $error, "$path") or die "Failed to open $path";
+  my $pid = open3(my $write, my $read, my $error, "$path -d --bytecode -") or die "Failed to open $path";
   print $write $input;
   close $write;
   waitpid($pid, 0);
@@ -253,6 +286,13 @@ sub run {
 
   if( $status != 0 ){
       say "Command return non-zero exit code '${status}";
+      say "\n=====\nFor input:";
+      say "$input";
+      say "\n=====\nExpected output:";
+      say "$expected";
+      say "\n=====\nGot output:";
+      say "$output";
+      say "\n=====\n";
       die "Command return non-zero exit code '${status}";
   }
 

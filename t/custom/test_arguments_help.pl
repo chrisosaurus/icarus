@@ -24,6 +24,7 @@ icarus [command] [options]
     --help,     -h                 : print this help message
     --input,    -i     file        : input filename
     --output,   -o     file        : output filename
+    --bytecode         file        : provide input file containing pancake bytecode - only valid with pancake backend
     --version                      : print version of icarus
     <default>                      : an argument will default to being an `input` file if the preceding option is omitted
 

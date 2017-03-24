@@ -48,6 +48,7 @@ icarus [command] [options]\n\
     --help,     -h                 : print this help message\n\
     --input,    -i     file        : input filename\n\
     --output,   -o     file        : output filename\n\
+    --bytecode         file        : provide input file containing pancake bytecode - only valid with pancake backend\n\
     --version                      : print version of icarus\n\
     <default>                      : an argument will default to being an `input` file if the preceding option is omitted\n\
 \n\
@@ -84,6 +85,7 @@ struct ic_opts *main_args(int argc, char **argv) {
         {"input", 'i', arg_type_string, &(opts->in_filename)},
         {"output", 'o', arg_type_string, &(opts->out_filename)},
         {"debug", 'd', arg_type_bool, &(opts->debug)},
+        {"bytecode", 0, arg_type_string, &(opts->in_bytecode_filename)},
         {"version", 0, arg_type_bool, &(opts->version)},
         {"help", 'h', arg_type_bool, &(opts->help)},
         IC_ARG_END,

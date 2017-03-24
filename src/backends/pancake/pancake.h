@@ -28,4 +28,12 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
  */
 unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data *runtime_data);
 
+/* load bytecode from file (opts->in_bytecode_filename) and then interpret it
+ * in a fresh pancake runtime
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_run_bytecode_from_file(struct ic_opts *opts);
+
 #endif /* IC_BACKEND_PANCAKE_H */

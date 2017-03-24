@@ -21,7 +21,7 @@ TODO:
 * the analysis system currently has no idea about permissions
 * remove ic_type, as builtin and user defined types now both use ic_decl_type
 * analyse needs to check for failing to return from a non-void function
-* finished population of decl_type.field_dict
+* finish population of decl_type.field_dict
 * think through type_ref interface, and storing ic_type when found on fields/type_refs during ic_analyse_decl_type/ic_analyse_field_list
 * remove parse/expr.c next_token usage, see IC_PERIOD handling comments in parse/expr.c
 * tokens should be used throughout parsing; passing around strings is lame, tokens should also be recorded against every ast node for traceability
@@ -54,7 +54,7 @@ testing debt:
 technical debt:
 ---------------
 
-* transform_ir_expr should handle: fcall, identifier, literal
+* transform__ir_expr should handle: fcall, identifier, literal
 * pancake compile if should prefer relative jmps rather than j*_labels
 * operator_destroy doesn't cleanup fcall
 * should only return a pointer, all other values should be return via pointer in args, so that return values can always be tested for failure
@@ -65,7 +65,7 @@ technical debt:
 * figure out ownership of left/right or first/second for expr_faccess/expr_operator
 * the parse module was written using the old lexer system and then retrofitted to the new, it could probably use some refactoring now that the lex output is more sane
 * token_list api needs some cleanup, no one ever really uses the non _important calls
-* `fdecl`, `tdecl`, `decl_type`, `decl_func` are all intermixed
+* `fdecl`, `tdecl`, `decl__type`, `decl_func` are all intermixed
 * see docs/coding.md 'Error handling' section
 * all objects (esp. containers) need destructors (see `./scripts/destruct_audit.sh` for current list)
 * add pvector/parray destructor helper which takes a function * and iterates through it's contents passing to function

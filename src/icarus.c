@@ -1,5 +1,6 @@
 #include <stdio.h>  /* puts, printf */
 #include <stdlib.h> /* exit, free */
+#include <string.h> /* strcmp */
 
 #include "analyse/analyse.h"     /* ic_kludge */
 #include "lex/lexer.h"           /* ic_lex */
@@ -38,7 +39,23 @@ unsigned int icarus(struct ic_opts *opts) {
 
     if (!check_options(opts)) {
         puts("icarus: call to check_options failed");
-        return 0;
+        exit(1);
+    }
+
+    /* there is a special case when we are loading pancake bytecode from a file
+     * this means we don't have to do any of the usual load / lex / analyse / transform phases
+     *
+     * instead jump right into loading bytecode from file and interpreting it
+     *
+     * then exit with success
+     */
+    if (opts->pancake && opts->in_bytecode_filename) {
+        if (!ic_backend_pancake_run_bytecode_from_file(opts)) {
+            puts("Failed to run pancake bytecode from file");
+            exit(1);
+        }
+        /* success */
+        goto CLEANUP;
     }
 
     kludge = ic_kludge_new();
@@ -291,7 +308,21 @@ static unsigned int check_options(struct ic_opts *opts) {
     }
 
     /* input file must be specified */
-    if (0 == opts->in_filename) {
+    if (opts->in_filename) {
+        /* input file has to exist or be '-' (stdin) */
+        if (0 == strcmp("-", opts->in_filename)) {
+        } else if (!file_exists(opts->in_filename)) {
+            printf("Icarus error: input file '%s' could not be read\n", opts->in_filename);
+            exit(1);
+        }
+    } else if (opts->in_bytecode_filename) {
+        /* input file has to exist or be '-' (stdin) */
+        if (0 == strcmp("-", opts->in_bytecode_filename)) {
+        } else if (!file_exists(opts->in_bytecode_filename)) {
+            printf("Icarus error: input file '%s' could not be read\n", opts->in_bytecode_filename);
+            exit(1);
+        }
+    } else {
         puts("Icarus error: No input file specified");
         exit(1);
     }
@@ -302,12 +333,6 @@ static unsigned int check_options(struct ic_opts *opts) {
             puts("Icarus error: Command 2c specified but no output file provided");
             exit(1);
         }
-    }
-
-    /* input file has to exist */
-    if (!file_exists(opts->in_filename)) {
-        printf("Icarus error: input file '%s' could not be read\n", opts->out_filename);
-        exit(1);
     }
 
     if (opts->out_filename) {
