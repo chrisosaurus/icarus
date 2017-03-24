@@ -30,7 +30,7 @@ end
 
 # maybe_add_one(Bool,Sint)
 fn maybe_add_one(b::Bool, i::Sint) -> Sint
-    if b == True
+    if b
         return i + 1
     else
         return i

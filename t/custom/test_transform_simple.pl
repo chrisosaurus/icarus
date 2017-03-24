@@ -27,12 +27,10 @@ fn println(f::Foo) -> Void
     println(_l3)
 end
 fn maybe_add_one(b::Bool, i::Sint) -> Sint
-    let _l0::Bool = True
-    let _t0::Bool = equal(b, _l0)
-    if _t0
-        let _l1::Sint = 1
-        let _t1::Sint = plus(i, _l1)
-        return _t1
+    if b
+        let _l0::Sint = 1
+        let _t0::Sint = plus(i, _l0)
+        return _t0
     else
         return i
     end

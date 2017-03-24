@@ -807,6 +807,10 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
     struct ic_transform_ir_stmt *tstmt = 0;
     struct ic_transform_ir_if *tif = 0;
     struct ic_symbol *cond_sym = 0;
+
+    struct ic_expr_identifier *expr_id = 0;
+    struct ic_type *expr_id_type = 0;
+
     if (!kludge) {
         puts("ic_transform_stmt_if: kludge was null");
         return 0;
@@ -832,11 +836,45 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
         return 0;
     }
 
-    /* process if-expr */
-    cond_sym = ic_transform_new_temp(kludge, scope, tbody, sif->expr);
-    if (!cond_sym) {
-        puts("ic_transform_stmt_if: call to ic_transform_new_temp failed");
+    if (!sif->expr) {
+        puts("ic_transform_stmt_if: sif->expr was null");
         return 0;
+    }
+
+    /* if our if-expr is already an id to a boolean, no need to process */
+    if (sif->expr->tag == ic_expr_type_identifier) {
+        /* if this is an identifier, it must be of type boolean otherwise this
+       * is an error
+       */
+        expr_id = ic_expr_get_identifier(sif->expr);
+        if (!expr_id) {
+            puts("ic_transform_stmt_if: call to ic_expr_get_identifier failed");
+            return 0;
+        }
+
+        cond_sym = &(expr_id->identifier);
+
+        /* FIXME TODO test if this is of type boolean */
+
+        expr_id_type = ic_analyse_infer(kludge, scope, sif->expr);
+        if (!expr_id_type) {
+            puts("ic_transform_stmt_if: call to ic_analyse_infer failed");
+            return 0;
+        }
+
+        if (!ic_type_isbool(expr_id_type)) {
+            puts("ic_transform_stmt_if: error: identifier was not of type Bool");
+            printf("  identifier: '%s'\n", ic_symbol_contents(cond_sym));
+            return 0;
+        }
+
+    } else {
+        /* process if-expr */
+        cond_sym = ic_transform_new_temp(kludge, scope, tbody, sif->expr);
+        if (!cond_sym) {
+            puts("ic_transform_stmt_if: call to ic_transform_new_temp failed");
+            return 0;
+        }
     }
 
     /* make our new tif */

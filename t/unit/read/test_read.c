@@ -21,7 +21,7 @@ end\n\
 \n\
 # simple function to test return values and branching\n\
 fn maybe_add_one(b::Bool, i::Sint) -> Sint\n\
-    if b == True\n\
+    if b\n\
         return i+1\n\
     else\n\
         return i\n\

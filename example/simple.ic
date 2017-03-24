@@ -15,7 +15,7 @@ end
 
 # simple function to test return values and branching
 fn maybe_add_one(b::Bool, i::Sint) -> Sint
-    if b == True
+    if b
         return i+1
     else
         return i
