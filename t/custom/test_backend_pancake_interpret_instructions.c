@@ -19,17 +19,17 @@ int main(void) {
     runtime_data = ic_backend_pancake_runtime_data_new(instructions);
     if (!runtime_data) {
         puts("main: call to ic_backend_pancake_runtime_data_new failed");
-        return 0;
+        exit(1);
     }
 
     if (!ic_backend_pancake_interpret(runtime_data)) {
         puts("main: call to ic_backend_pancake_interpret failed");
-        return 0;
+        exit(1);
     }
 
     if (!ic_backend_pancake_value_stack_print(stdout, runtime_data->value_stack)) {
         puts("main: call to ic_backend_pancake_value_stack_print failed");
-        return 0;
+        exit(1);
     }
 
     return 0;
