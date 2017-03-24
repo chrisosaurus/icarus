@@ -33,14 +33,14 @@ clean_stack
 return_void
 EOF
 
-my $in_tmp_file = `mktemp TESTING_BACKEND_PANCAKE_COMPILE_SIMPLE_XXX.ic`;
+my $in_tmp_file = `mktemp TESTING_BACKEND_PANCAKE_COMPILE_HELLO_XXX.ic`;
 chomp($in_tmp_file);
 open( my $fh, ">", "$in_tmp_file" ) or die "failed to open tmp file '$in_tmp_file'";
 print $fh $input;
 close $fh;
 
 # using mktemp here just to get name
-my $out_tmp_file = `mktemp TESTING_BACKEND_PANCAKE_COMPILE_SIMPLE_XXX.out`;
+my $out_tmp_file = `mktemp TESTING_BACKEND_PANCAKE_COMPILE_HELLO_XXX.out`;
 `rm -f $out_tmp_file`;
 
 my $output = `$path pancake $in_tmp_file -o $out_tmp_file`;
@@ -71,6 +71,6 @@ if( $exit_status != 0 || $output ne $expected ){
     }
 }
 
-say "test_backend_pancake_compile_simple successs";
+say "test_backend_pancake_compile_hello successs";
 say "=======\nGot correct output:\n$output";
 

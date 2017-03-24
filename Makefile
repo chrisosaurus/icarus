@@ -113,12 +113,12 @@ test_custom: $(OBJ) icarus
 	t/custom/test_backend_2c_end_to_end_output_only.pl
 
 	@echo -e "\n"
-	@echo running test_backend_pancake_compile_simple.pl
-	t/custom/test_backend_pancake_compile_simple.pl
+	@echo running test_backend_pancake_compile_hello.pl
+	t/custom/test_backend_pancake_compile_hello.pl
 
 	@echo -e "\n"
-	@echo running test_backend_pancake_interpret_simple.pl
-	t/custom/test_backend_pancake_interpret_simple.pl
+	@echo running test_backend_pancake_interpret_hello.pl
+	t/custom/test_backend_pancake_interpret_hello.pl
 
 	@echo -e "\n\ncompiling t/custom/test_backend_pancake_interpret_instructions.c to bin/t/custom/test_backend_pancake_interpret_instructions"
 	@mkdir -p `dirname bin/t/custom/test_backend_pancake_interpret_instructions`

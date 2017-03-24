@@ -21,7 +21,7 @@ my $expected = <<EOF;
 Hello world
 EOF
 
-my $in_tmp_file = `mktemp TESTING_BACKEND_PANCAKE_interpret_SIMPLE_XXX.ic`;
+my $in_tmp_file = `mktemp TESTING_BACKEND_PANCAKE_interpret_HELLO_XXX.ic`;
 chomp($in_tmp_file);
 open( my $fh, ">", "$in_tmp_file" ) or die "failed to open tmp file '$in_tmp_file'";
 print $fh $input;
@@ -50,6 +50,6 @@ if( $exit_status != 0 || $output ne $expected ){
     }
 }
 
-say "test_backend_pancake_interpret_simple successs";
+say "test_backend_pancake_interpret_hello successs";
 say "=======\nGot correct output:\n$output";
 
