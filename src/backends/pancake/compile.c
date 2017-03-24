@@ -722,6 +722,11 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
 
                     break;
 
+                case ic_transform_ir_let_type_faccess:
+                    puts("ic_backend_pancake_compile_stmt: let faccess not yet supported by pancake backend");
+                    return 0;
+                    break;
+
                 default:
                     puts("ic_backend_pancake_compile_stmt: let impossible case");
                     return 0;
