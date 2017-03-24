@@ -4,46 +4,20 @@ type Foo
     b::String
 end
 
-fn d(i::Sint)
-    print(i)
-end
-
-fn d(s::String)
-    print(s)
-end
-
-# break apart a Foo and call d on each field
-fn d(f::Foo)
-    d(f.a)
-    d(f.b)
+# break apart a Foo and call print on each field
+fn print(f::Foo)
+    print(f.a)
+    print(f.b)
 end
 
 # simple function to test return values
 fn add_one(i::Sint) -> Sint
-    let tmp = i
-    tmp = i + 1
-    return tmp
-end
-
-fn maybe_add_one(i::Sint, b::Bool) -> Sint
-    # FIXME this doesn't work `if i == 2 and b`
-    # due to lack of operator precedence
-    if b and i == 2
-        i = i + 1
-    end
-
-    return i
+    return i+1
 end
 
 # entry point for program
 fn main()
-    let f::Foo = Foo(add_one(1) "hello")
-
-    f.a = maybe_add_one(f.a, True)
-
-    d(f)
+    let f::Foo = Foo(add_one(1), "hello")
+    print(f)
 end
-
-# hack to work around lack of constructors
-builtin fn Foo(a::Sint, b::String) -> Foo
 

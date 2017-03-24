@@ -18,45 +18,22 @@ type Foo
     b::String
 end
 
-# d(Sint)
-fn d(i::Sint) -> Void
-    print(i)
-end
-
-# d(String)
-fn d(s::String) -> Void
-    print(s)
-end
-
-# d(Foo)
-fn d(f::Foo) -> Void
-    d(f.a)
-    d(f.b)
+# print(Foo)
+fn print(f::Foo) -> Void
+    print(f.a)
+    print(f.b)
 end
 
 # add_one(Sint)
 fn add_one(i::Sint) -> Sint
-    let tmp = i
-    tmp = i + 1
-    return tmp
-end
-
-# maybe_add_one(Sint,Bool)
-fn maybe_add_one(i::Sint, b::Bool) -> Sint
-    if b and i == 2
-        i = i + 1
-    end
-    return i
+    return i + 1
 end
 
 # main()
 fn main() -> Void
     let f::Foo = Foo(add_one(1), "hello")
-    f.a = maybe_add_one(f.a, True)
-    d(f)
+    print(f)
 end
-
-builtin fn Foo(a::Sint, b::String) -> Foo
 ----------------
 
 EOF

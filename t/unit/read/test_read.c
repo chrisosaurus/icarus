@@ -10,48 +10,22 @@ type Foo\n\
     b::String\n\
 end\n\
 \n\
-fn d(i::Sint)\n\
-    print(i)\n\
-end\n\
-\n\
-fn d(s::String)\n\
-    print(s)\n\
-end\n\
-\n\
-# break apart a Foo and call d on each field\n\
-fn d(f::Foo)\n\
-    d(f.a)\n\
-    d(f.b)\n\
+# break apart a Foo and call print on each field\n\
+fn print(f::Foo)\n\
+    print(f.a)\n\
+    print(f.b)\n\
 end\n\
 \n\
 # simple function to test return values\n\
 fn add_one(i::Sint) -> Sint\n\
-    let tmp = i\n\
-    tmp = i + 1\n\
-    return tmp\n\
-end\n\
-\n\
-fn maybe_add_one(i::Sint, b::Bool) -> Sint\n\
-    # FIXME this doesn't work `if i == 2 and b`\n\
-    # due to lack of operator precedence\n\
-    if b and i == 2\n\
-        i = i + 1\n\
-    end\n\
-\n\
-    return i\n\
+    return i+1\n\
 end\n\
 \n\
 # entry point for program\n\
 fn main()\n\
-    let f::Foo = Foo(add_one(1) \"hello\")\n\
-\n\
-    f.a = maybe_add_one(f.a, True)\n\
-\n\
-    d(f)\n\
+    let f::Foo = Foo(add_one(1), \"hello\")\n\
+    print(f)\n\
 end\n\
-\n\
-# hack to work around lack of constructors\n\
-builtin fn Foo(a::Sint, b::String) -> Foo\n\
 \n\
 ";
 
