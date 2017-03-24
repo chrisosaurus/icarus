@@ -1265,6 +1265,11 @@ char *ic_decl_type_sig_mangled_full(struct ic_decl_type *tdecl) {
             puts("ic_decl_type_sig_mangled_full: call to ic_string_append_char failed");
             return 0;
         }
+
+        if (!ic_string_destroy(generated_fargs, 1)) {
+            puts("ic_decl_type_sig_mangled_full: call to ic_string_destroy failed");
+            return 0;
+        }
     }
 
     ch = ic_string_contents(sig_str);
