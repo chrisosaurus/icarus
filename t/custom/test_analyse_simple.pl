@@ -7,7 +7,7 @@ my $path = "./icarus";
 
 die "Could not find '$path'\n" unless -e $path;
 
-my $output = `$path check example/current.ic`;
+my $output = `$path check example/simple.ic`;
 my $exit_status = $?;
 my $expected = <<EOF;
 EOF
@@ -24,5 +24,5 @@ if( $exit_status != 0 || $output ne $expected ){
     }
 }
 
-say "test_analyse_current successs";
+say "test_analyse_simple successs";
 

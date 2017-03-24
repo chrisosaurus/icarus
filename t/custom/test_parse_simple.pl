@@ -18,10 +18,14 @@ type Foo
     b::String
 end
 
-# print(Foo)
-fn print(f::Foo) -> Void
+# println(Foo)
+fn println(f::Foo) -> Void
+    print("Foo{")
+    print("a:")
     print(f.a)
+    print(", b:")
     print(f.b)
+    println("}")
 end
 
 # maybe_add_one(Bool,Sint)
@@ -36,7 +40,13 @@ end
 # main()
 fn main() -> Void
     let f::Foo = Foo(maybe_add_one(True, 1), "hello")
-    print(f)
+    println(f)
+    let x = 6
+    if x > 14
+        println("x > 14")
+    else
+        println("x <= 14")
+    end
 end
 ----------------
 

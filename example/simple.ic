@@ -4,10 +4,13 @@ type Foo
     b::String
 end
 
-# break apart a Foo and call print on each field
-fn print(f::Foo)
+fn println(f::Foo)
+    print("Foo{")
+    print("a:")
     print(f.a)
+    print(", b:")
     print(f.b)
+    println("}")
 end
 
 # simple function to test return values and branching
@@ -22,6 +25,13 @@ end
 # entry point for program
 fn main()
     let f::Foo = Foo(maybe_add_one(True, 1), "hello")
-    print(f)
+    println(f)
+
+    let x = 6
+    if x > 14
+        println("x > 14")
+    else
+        println("x <= 14")
+    end
 end
 
