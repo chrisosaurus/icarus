@@ -32,7 +32,7 @@ fn main() -> Void
 end
 EOF
 
-my $tmp_file = `mktemp TESTING_TRANSFORM_SIMPLE_XXX.ic`;
+my $tmp_file = `mktemp TESTING_TRANSFORM_HELLO_XXX.ic`;
 chomp($tmp_file);
 open( my $fh, ">", "$tmp_file" ) or die "failed to open tmp file '$tmp_file'";
 print $fh $input;
@@ -55,5 +55,5 @@ if( $exit_status != 0 || $output ne $expected ){
     }
 }
 
-say "test_transform_simple successs";
+say "test_transform_hello successs";
 

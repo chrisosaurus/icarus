@@ -21,14 +21,14 @@ my $expected = <<EOF;
 Hello there Jennifer, very nice to meet you
 EOF
 
-my $in_tmp_file = `mktemp TESTING_BACKEND_2C_SIMPLE_XXX.ic`;
+my $in_tmp_file = `mktemp TESTING_BACKEND_2C_HELLO_XXX.ic`;
 chomp($in_tmp_file);
 open( my $fh, ">", "$in_tmp_file" ) or die "failed to open tmp file '$in_tmp_file'";
 print $fh $input;
 close $fh;
 
 # using mktemp here just to get name
-my $out_tmp_file = `mktemp TESTING_BACKEND_2C_SIMPLE_XXX.c`;
+my $out_tmp_file = `mktemp TESTING_BACKEND_2C_HELLO_XXX.c`;
 # have to remove right away, as icarus 2c wants to create
 `rm $out_tmp_file`;
 
@@ -74,6 +74,6 @@ if( $exit_status != 0 || $output ne $expected ){
     }
 }
 
-say "test_backend_2c_simple successs";
+say "test_backend_2c_hello successs";
 say "=======\nGot correct output:\n$output";
 
