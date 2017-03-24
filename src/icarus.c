@@ -85,11 +85,16 @@ unsigned int icarus(struct ic_opts *opts) {
         exit(1);
     }
 
-    if (opts->debug) {
+    if (opts->debug || opts->lex) {
         puts("\nlexer output:");
         puts("----------------");
         ic_token_list_print(stdout, token_list);
         puts("----------------\n");
+    }
+
+    if (opts->lex) {
+        /* if our command was lex we stop here */
+        goto CLEANUP;
     }
 
     ast = ic_parse(token_list);
@@ -98,11 +103,16 @@ unsigned int icarus(struct ic_opts *opts) {
         exit(1);
     }
 
-    if (opts->debug) {
+    if (opts->debug || opts->parse) {
         puts("\nparser output:");
         puts("----------------");
         ic_ast_print(stdout, ast);
         puts("----------------\n");
+    }
+
+    if (opts->parse) {
+        /* if our command was parse we stop here */
+        goto CLEANUP;
     }
 
     if (!ic_kludge_populate(kludge, ast)) {
@@ -192,28 +202,44 @@ unsigned int icarus(struct ic_opts *opts) {
 CLEANUP:
     /* clean up time */
 
-    if (!ic_kludge_destroy(kludge, 1)) {
-        puts("main: ic_kludge_destroy call failed");
+    if (kludge) {
+        if (!ic_kludge_destroy(kludge, 1)) {
+            puts("main: ic_kludge_destroy call failed");
+        }
     }
 
-    if (!ic_ast_destroy(ast, 1)) {
-        puts("main: ic_ast_destroy call failed");
+    if (ast) {
+        if (!ic_ast_destroy(ast, 1)) {
+            puts("main: ic_ast_destroy call failed");
+        }
     }
 
-    if (!ic_ast_destroy(core_ast, 1)) {
-        puts("main: ic_ast_destroy call failed");
+    if (core_ast) {
+        if (!ic_ast_destroy(core_ast, 1)) {
+            puts("main: ic_ast_destroy call failed");
+        }
     }
 
-    if (!ic_token_list_destroy(token_list, 1)) {
-        puts("ic_token_list_destroy failed");
+    if (token_list) {
+        if (!ic_token_list_destroy(token_list, 1)) {
+            puts("ic_token_list_destroy failed");
+        }
     }
 
-    if (!ic_token_list_destroy(core_token_list, 1)) {
-        puts("ic_token_list_destroy failed");
+    if (core_token_list) {
+        if (!ic_token_list_destroy(core_token_list, 1)) {
+            puts("ic_token_list_destroy failed");
+        }
     }
 
-    free(source);
-    free(core_source);
+    if (source) {
+        free(source);
+    }
+
+    if (core_source) {
+        free(core_source);
+    }
+
     free(opts);
 
     return 1;
@@ -284,16 +310,29 @@ static unsigned int check_options(struct ic_opts *opts) {
         exit(1);
     }
 
-    /* if an output file was provided, it has to NOT exist */
     if (opts->out_filename) {
+        /* if an output file was provided, it has to NOT exist */
         if (file_exists(opts->out_filename)) {
             printf("Icarus error: output file '%s' already exists\n", opts->out_filename);
+            exit(1);
+        }
+        /* an output file doesn't make sense for some options */
+        if (opts->lex) {
+            puts("Icarus error: output file specified with command 'lex' doesn't make sense");
+            exit(1);
+        }
+        if (opts->parse) {
+            puts("Icarus error: output file specified with command 'parse' doesn't make sense");
+            exit(1);
+        }
+        if (opts->check) {
+            puts("Icarus error: output file specified with command 'check' doesn't make sense");
             exit(1);
         }
     }
 
     /* check command(s) set */
-    command_count = opts->check + opts->transform + opts->o2c + opts->pancake;
+    command_count = opts->lex + opts->parse + opts->check + opts->transform + opts->o2c + opts->pancake;
     if (0 == command_count) {
         /* default to pancake */
         opts->pancake = 1;

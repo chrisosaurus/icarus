@@ -3,11 +3,11 @@ use strict;
 use warnings;
 use v5.10;
 
-my $path = "bin/t/custom/test_lex_simple";
+my $path = "./icarus";
 
 die "Could not find '$path'\n" unless -e $path;
 
-my $output = `$path`;
+my $output = `$path lex example/simple.ic`;
 my $exit_status = $?;
 my $expected = <<EOF;
 

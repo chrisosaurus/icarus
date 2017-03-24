@@ -11,6 +11,8 @@ my $expected = <<EOF;
 icarus [command] [options]
 
   command:
+    lex                            : lex input file and output token from lexer
+    parse                          : parse input file and output parser view
     check                          : perform static analysis on input file
     transform                      : transform input file
     2c                             : run 2c - compiles icarus code to C

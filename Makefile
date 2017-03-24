@@ -72,15 +72,9 @@ test_custom: $(OBJ) icarus
 	@echo running test_token_print.pl
 	t/custom/test_token_print.pl
 
-	@echo -e "\n\ncompiling t/custom/test_lex_simple.c to bin/t/custom/test_lex_simple"
-	@mkdir -p `dirname bin/t/custom/test_lex_simple`
-	@${CC} t/custom/test_lex_simple.c -o bin/t/custom/test_lex_simple ${CFLAGS} ${LDFLAGS} ${OBJ}
 	@echo running test_lex_simple.pl
 	t/custom/test_lex_simple.pl
 
-	@echo -e "\n\ncompiling t/custom/test_parse_simple.c to bin/t/custom/test_parse_simple"
-	@mkdir -p `dirname bin/t/custom/test_parse_simple`
-	@${CC} t/custom/test_parse_simple.c -o bin/t/custom/test_parse_simple ${CFLAGS} ${LDFLAGS} ${OBJ}
 	@echo running test_parse_simple.pl
 	t/custom/test_parse_simple.pl
 

@@ -35,6 +35,8 @@ void help(void) {
 icarus [command] [options]\n\
 \n\
   command:\n\
+    lex                            : lex input file and output token from lexer\n\
+    parse                          : parse input file and output parser view\n\
     check                          : perform static analysis on input file\n\
     transform                      : transform input file\n\
     2c                             : run 2c - compiles icarus code to C\n\
@@ -69,6 +71,8 @@ struct ic_opts *main_args(int argc, char **argv) {
     }
 
     struct ic_command commands[] = {
+        {"lex", &opts->lex},
+        {"parse", &opts->parse},
         {"check", &opts->check},
         {"transform", &opts->transform},
         {"2c", &opts->o2c},

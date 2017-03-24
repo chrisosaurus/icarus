@@ -4,6 +4,8 @@
 #include <stdbool.h>
 
 struct ic_opts {
+    bool lex;
+    bool parse;
     bool check;
     bool transform;
     bool o2c;
