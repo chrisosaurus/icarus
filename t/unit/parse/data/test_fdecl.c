@@ -38,5 +38,7 @@ int main(void) {
     puts("Output:");
     ic_decl_func_print(stdout, fdecl, &fake_indent);
 
+    assert(ic_decl_func_destroy(fdecl, 1));
+
     return 0;
 }
