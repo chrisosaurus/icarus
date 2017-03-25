@@ -60,6 +60,11 @@ unsigned int ic_kludge_populate(struct ic_kludge *kludge, struct ic_ast *ast) {
                 }
                 break;
 
+            case ic_decl_tag_union:
+                puts("ic_kludge_populate: unions not yet supported");
+                return 0;
+                break;
+
             default:
                 puts("ic_kludge_populate: decl had impossible type");
                 return 0;
