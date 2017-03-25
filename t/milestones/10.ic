@@ -1,6 +1,5 @@
 fn main()
-    let &arr::Vector[String]
-    &arr.append("Fizz")
-    &arr.append("Buzz")
-    println(join(" ", arr))
+    for num in range(1, 10)
+        println(num)
+    end
 end
