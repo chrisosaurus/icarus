@@ -369,6 +369,90 @@ struct ic_type *ic_decl_type_get_field_type(struct ic_decl_type *tdecl, char *fi
  */
 unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char *field_name, struct ic_type *type);
 
+struct ic_decl_union {
+    struct ic_symbol name;
+
+    /* a pointer vector of field(s) */
+    struct ic_pvector fields;
+
+    /* a map from (char *) -> type *
+     * used for looking up the type of a field by name
+     * this is filled in during analyse time by
+     *  ic_analyse_decl_union
+     */
+    struct ic_dict field_dict;
+};
+
+/* allocate and return a new decl_union
+ * only needs name and len
+ * will also allocate an empty pvector for fields
+ *
+ * returns new ic_field * on success
+ * returns 0 on failure
+ */
+struct ic_decl_union *ic_decl_union_new(char *name_src, unsigned int name_len);
+
+/* initialise an existing decl_union
+ * only needs name and len
+ * will also allocate an empty pvector for fields
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_union_init(struct ic_decl_union *udecl, char *name_src, unsigned int name_len);
+
+/* calls destroy on every element within
+ *
+ * this will only free the udecl if `free_udecl` is truthy
+ *
+ * the caller must determine if it is appropriate
+ * or not to call free(decl)
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_union_destroy(struct ic_decl_union *udecl, unsigned int free_udecl);
+
+/* add a new field to types list of fields
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_union_add_field(struct ic_decl_union *udecl, struct ic_field *field);
+
+/* print the decl_union to provided fd */
+void ic_decl_union_print(FILE *fd, struct ic_decl_union *udecl, unsigned int *indent_level);
+void ic_decl_union_print_header(FILE *fd, struct ic_decl_union *udecl, unsigned int *indent_level);
+void ic_decl_union_print_body(FILE *fd, struct ic_decl_union *udecl, unsigned int *indent_level);
+
+/* get number of fields
+ *
+ * returns number on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_union_field_length(struct ic_decl_union *udecl);
+
+/* get field by number
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_field *ic_decl_union_field_get(struct ic_decl_union *udecl, unsigned int field_number);
+
+/* get the type of a field by name
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type *ic_decl_union_get_field_type(struct ic_decl_union *udecl, char *field_name);
+
+/* add field to field_dict
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_union_add_field_type(struct ic_decl_union *udecl, char *field_name, struct ic_type *type);
+
 /* an op decl is only a mapping of a symbol (say '+')
  * to another (say 'plus')
  */

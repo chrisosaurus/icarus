@@ -124,7 +124,7 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
     struct ic_field *field = 0;
 
     if (!fdecl) {
-        puts("ic_decl_type_destroy: fdecl was null");
+        puts("ic_decl_func_destroy: fdecl was null");
         return 0;
     }
 
@@ -132,7 +132,7 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
      * since it is an element on fdecl
      */
     if (!ic_symbol_destroy(&(fdecl->name), 0)) {
-        puts("ic_decl_type_destroy: for name call to ic_symbol_destroy failed");
+        puts("ic_decl_func_destroy: for name call to ic_symbol_destroy failed");
         return 0;
     }
 
@@ -140,7 +140,7 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
      * since it is an element on fdecl
      */
     if (!ic_string_destroy(&(fdecl->sig_call), 0)) {
-        puts("ic_decl_type_destroy: for sig_call call to ic_string_destroy failed");
+        puts("ic_decl_func_destroy: for sig_call call to ic_string_destroy failed");
         return 0;
     }
 
@@ -148,7 +148,7 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
      * since it is an element on fdecl
      */
     if (!ic_string_destroy(&(fdecl->sig_full), 0)) {
-        puts("ic_decl_type_destroy: for sig_full call to ic_string_destroy failed");
+        puts("ic_decl_func_destroy: for sig_full call to ic_string_destroy failed");
         return 0;
     }
 
@@ -156,7 +156,7 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
      * since it is an element on fdecl
      */
     if (!ic_string_destroy(&(fdecl->sig_mangled), 0)) {
-        puts("ic_decl_type_destroy: for sig_full call to ic_string_mangled failed");
+        puts("ic_decl_func_destroy: for sig_full call to ic_string_mangled failed");
         return 0;
     }
 
@@ -165,7 +165,7 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
     for (i = 0; i < len; ++i) {
         field = ic_pvector_get(&(fdecl->args), i);
         if (!field) {
-            puts("ic_decl_type_destroy: call to ic_pvector_get failed");
+            puts("ic_decl_func_destroy: call to ic_pvector_get failed");
             return 0;
         }
 
@@ -173,7 +173,7 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
          * free_field set to 1
          */
         if (!ic_field_destroy(field, 1)) {
-            puts("ic_decl_type_destroy: call to ic_field_destroy failed");
+            puts("ic_decl_func_destroy: call to ic_field_destroy failed");
             return 0;
         }
     }
@@ -187,7 +187,7 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
          *    fdecl->ret_type = ic_symbol_new(type, type_len);
          */
         if (!ic_symbol_destroy(fdecl->ret_type, 1)) {
-            puts("ic_decl_type_destroy: for ret_type call to ic_symbol_destroy failed");
+            puts("ic_decl_func_destroy: for ret_type call to ic_symbol_destroy failed");
             return 0;
         }
     }
@@ -196,7 +196,7 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
      * since it is an element on fdecl
      */
     if (!ic_body_destroy(&(fdecl->body), 0)) {
-        puts("ic_decl_type_destroy: for body call to ic_body_destroy failed");
+        puts("ic_decl_func_destroy: for body call to ic_body_destroy failed");
         return 0;
     }
 
@@ -205,7 +205,7 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
        * free as it is a pointer member
        */
         if (!ic_transform_body_destroy(fdecl->tbody, 1)) {
-            puts("ic_decl_type_destroy: for tbody call to ic_transform_body_destroy failed");
+            puts("ic_decl_func_destroy: for tbody call to ic_transform_body_destroy failed");
             return 0;
         }
     }
@@ -860,6 +860,11 @@ unsigned int ic_decl_type_init(struct ic_decl_type *tdecl, char *name_src, unsig
         return 0;
     }
 
+    if (!name_len) {
+        puts("ic_decl_type_init: name_len was zero");
+        return 0;
+    }
+
     /* initialise name */
     if (!ic_symbol_init(&(tdecl->name), name_src, name_len)) {
         puts("ic_decl_type_init: call to ic_symbol_init for name failed");
@@ -1371,6 +1376,333 @@ unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char *field
 
     if (!ic_dict_insert(&(tdecl->field_dict), field_name, type)) {
         printf("ic_decl_type_add_field_type: failed to insert type for field name '%s' into dict\n", field_name);
+        return 0;
+    }
+
+    return 1;
+}
+
+/* allocate and return a new decl_union
+ * only needs name and len
+ * will also allocate an empty pvector for fields
+ *
+ * returns new ic_field * on success
+ * returns 0 on failure
+ */
+struct ic_decl_union *ic_decl_union_new(char *name_src, unsigned int name_len) {
+    struct ic_decl_union *udecl = 0;
+
+    if (!name_src) {
+        puts("ic_decl_union_new: name_src was null");
+        return 0;
+    }
+
+    if (!name_len) {
+        puts("ic_decl_union_new: name_len was zero");
+        return 0;
+    }
+
+    udecl = calloc(1, sizeof(struct ic_decl_union));
+    if (!udecl) {
+        puts("ic_decl_union_new: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_decl_union_init(udecl, name_src, name_len)) {
+        puts("ic_decl_union_new: call to ic_decl_union_init failed");
+        return 0;
+    }
+
+    return udecl;
+}
+
+/* initialise an existing decl_union
+ * only needs name and len
+ * will also allocate an empty pvector for fields
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_union_init(struct ic_decl_union *udecl, char *name_src, unsigned int name_len) {
+    if (!udecl) {
+        puts("ic_decl_union_init: udecl was null");
+        return 0;
+    }
+
+    if (!name_src) {
+        puts("ic_decl_union_init: name_src was null");
+        return 0;
+    }
+
+    if (!name_len) {
+        puts("ic_decl_union_init: name_len was zero");
+        return 0;
+    }
+
+    /* initialise name */
+    if (!ic_symbol_init(&(udecl->name), name_src, name_len)) {
+        puts("ic_decl_union_init: call to ic_symbol_init for name failed");
+        return 0;
+    }
+
+    /* init fields pvector */
+    if (!ic_pvector_init(&(udecl->fields), 0)) {
+        puts("ic_decl_union_init: call to ic_pvector_init for fields failed");
+        return 0;
+    }
+
+    /* init field dict */
+    if (!ic_dict_init(&(udecl->field_dict))) {
+        puts("ic_decl_union_init: call to ic_dict_init for field_dict failed");
+        return 0;
+    }
+
+    return 1;
+}
+
+/* calls destroy on every element within
+ *
+ * this will only free the udecl if `free_udecl` is truthy
+ *
+ * the caller must determine if it is appropriate
+ * or not to call free(decl)
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_union_destroy(struct ic_decl_union *udecl, unsigned int free_udecl) {
+    struct ic_field *field = 0;
+    int i = 0;
+    int len = 0;
+
+    if (!udecl) {
+        puts("ic_decl_union_destroy: udecl was null");
+        return 0;
+    }
+
+    /* free symbol contents but do not free symbol itself
+     * since it is an element on tdecl
+     */
+    if (!ic_symbol_destroy(&(udecl->name), 0)) {
+        puts("ic_decl_union_destroy: call to ic_symbol_destroy failed");
+        return 0;
+    }
+
+    len = ic_pvector_length(&(udecl->fields));
+    if (len == -1) {
+        puts("ic_decl_union_destroy: call to ic_body_length failed");
+        return 0;
+    }
+
+    /* loop through each item destroying */
+    for (i = 0; i < len; ++i) {
+        field = ic_pvector_get(&(udecl->fields), i);
+        if (!field) {
+            puts("ic_decl_union_destroy: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        /* dispatch to field destroy
+         * free_field set to 1
+         */
+        if (!ic_field_destroy(field, 1)) {
+            puts("ic_union_type_destroy: call to ic_field_destroy failed");
+            return 0;
+        }
+    }
+
+    /* destroy field_dict */
+    if (!ic_dict_destroy(&(udecl->field_dict), 0, 0)) {
+        puts("ic_decl_union_destroy: call to ic_dict_destroy failed");
+        return 0;
+    }
+
+    if (free_udecl) {
+        free(udecl);
+    }
+
+    return 1;
+}
+
+/* add a new field to types list of fields
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+
+unsigned int ic_decl_union_add_field(struct ic_decl_union *udecl, struct ic_field *field) {
+    if (!udecl) {
+        puts("ic_decl_type_add_field: udecl was null");
+        return 0;
+    }
+
+    if (!field) {
+        puts("ic_decl_type_add_field: field was null");
+        return 0;
+    }
+
+    if (-1 == ic_pvector_append(&(udecl->fields), field)) {
+        puts("ic_decl_type_add_field: call to ic_pvector_append failed");
+        return 0;
+    }
+
+    return 1;
+}
+
+/* print the decl_union to provided fd */
+void ic_decl_union_print(FILE *fd, struct ic_decl_union *udecl, unsigned int *indent_level) {
+    if (!udecl) {
+        puts("ic_decl_union_print: udecl was null");
+        return;
+    }
+    if (!indent_level) {
+        puts("ic_decl_union_print: indent_level was null");
+        return;
+    }
+
+    ic_decl_union_print_header(fd, udecl, indent_level);
+    ic_decl_union_print_body(fd, udecl, indent_level);
+}
+
+void ic_decl_union_print_header(FILE *fd, struct ic_decl_union *udecl, unsigned int *indent_level) {
+    if (!udecl) {
+        puts("ic_decl_union_print_header: udecl was null");
+        return;
+    }
+    if (!indent_level) {
+        puts("ic_decl_union_print_header: indent_level was null");
+        return;
+    }
+
+    /* print type and name */
+    fprintf(fd, "union %s\n", ic_symbol_contents(&(udecl->name)));
+}
+
+void ic_decl_union_print_body(FILE *fd, struct ic_decl_union *udecl, unsigned int *indent_level) {
+    unsigned int i = 0;
+
+    if (!udecl) {
+        puts("ic_decl_union_print_body: udecl was null");
+        return;
+    }
+    if (!indent_level) {
+        puts("ic_decl_union_print_body: indent_level was null");
+        return;
+    }
+
+    /* increment indent level before body */
+    ++*indent_level;
+
+    /* iterate through pvector fields
+     * prefix each field with a 2 spaces  and postfix each with a \n
+     */
+    for (i = 0; i < ic_pvector_length(&(udecl->fields)); ++i) {
+        /* print indent */
+        ic_parse_print_indent(fd, *indent_level);
+
+        /* print field contents */
+        ic_field_print(fd, ic_pvector_get(&(udecl->fields), i));
+
+        /* postfix newline */
+        fputs("\n", fd);
+    }
+
+    /* decrement indent level after body */
+    --*indent_level;
+
+    fputs("end\n", fd);
+}
+
+/* get number of fields
+ *
+ * returns number on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_union_field_length(struct ic_decl_union *udecl) {
+    unsigned int n = 0;
+
+    if (!udecl) {
+        puts("ic_decl_union_field_length: udecl was null");
+        return 0;
+    }
+
+    n = ic_pvector_length(&(udecl->fields));
+
+    return n;
+}
+
+/* get field by number
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_field *ic_decl_union_field_get(struct ic_decl_union *udecl, unsigned int field_number) {
+    struct ic_field *field = 0;
+
+    if (!udecl) {
+        puts("ic_decl_typefield_get: udecl was null");
+        return 0;
+    }
+
+    field = ic_pvector_get(&(udecl->fields), field_number);
+    if (!field) {
+        puts("ic_decl_union_field_get: call to ic_pvector_get failed");
+        return 0;
+    }
+
+    return field;
+}
+
+/* get the type of a field by name
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type *ic_decl_union_get_field_type(struct ic_decl_union *udecl, char *field_name) {
+    struct ic_type *type = 0;
+
+    if (!udecl) {
+        puts("ic_decl_union_get_field_type: udecl was null");
+        return 0;
+    }
+
+    if (!field_name) {
+        puts("ic_decl_union_get_field_type: field_name was null");
+        return 0;
+    }
+
+    type = ic_dict_get(&(udecl->field_dict), field_name);
+    if (!type) {
+        printf("ic_decl_union_get_field_type: failed to get type for field name '%s' from dict\n", field_name);
+        return 0;
+    }
+
+    return type;
+}
+
+/* add field to field_dict
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_union_add_field_type(struct ic_decl_union *udecl, char *field_name, struct ic_type *type) {
+    if (!udecl) {
+        puts("ic_decl_union_add_field_type: udecl was null");
+        return 0;
+    }
+
+    if (!field_name) {
+        puts("ic_decl_union_add_field_type: field_name was null");
+        return 0;
+    }
+
+    if (!type) {
+        puts("ic_decl_union_add_field_type: type was null");
+        return 0;
+    }
+
+    if (!ic_dict_insert(&(udecl->field_dict), field_name, type)) {
+        printf("ic_decl_union_add_field_type: failed to insert type for field name '%s' into dict\n", field_name);
         return 0;
     }
 
