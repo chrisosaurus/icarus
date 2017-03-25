@@ -1941,6 +1941,14 @@ unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl) {
             }
             break;
 
+        case ic_decl_tag_union:
+            /* destroy all elements but not not (0) free udecl itself */
+            if (!ic_decl_union_destroy(&(decl->u.udecl), 0)) {
+                puts("ic_decl_destroy: call to ic_decl_union_destroy failed");
+                return 0;
+            }
+            break;
+
         case ic_decl_tag_builtin_op:
             if (!ic_decl_op_destroy(&(decl->u.op), 0)) {
                 puts("ic_decl_destroy: call to ic_decl_op_destroy failed");
@@ -2075,6 +2083,11 @@ unsigned int ic_decl_mark_builtin(struct ic_decl *decl) {
             }
             break;
 
+        case ic_decl_tag_union:
+            puts("ic_decl_mark_builtin: unions cannot be marked as builtin");
+            return 0;
+            break;
+
         default:
             puts("ic_decl_mark_builtin: unknown tag");
             return 0;
@@ -2101,6 +2114,9 @@ void ic_decl_print(FILE *fd, struct ic_decl *decl, unsigned int *indent_level) {
             break;
         case ic_decl_tag_type:
             ic_decl_type_print(fd, ic_decl_get_tdecl(decl), indent_level);
+            break;
+        case ic_decl_tag_union:
+            ic_decl_union_print(fd, ic_decl_get_udecl(decl), indent_level);
             break;
         case ic_decl_tag_builtin_func:
             fputs("builtin ", stdout);

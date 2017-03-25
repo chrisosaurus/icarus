@@ -5,41 +5,13 @@
 #include "../../../../src/parse/data/decl.h"
 #include "../../../../src/parse/permissions.h"
 
-int main(void) {
+void test_fdecl(void) {
     struct ic_field *field = 0;
     struct ic_decl *decl = 0;
-    struct ic_decl_type *tdecl = 0;
     struct ic_decl_func *fdecl = 0;
     /* fake indent level */
     unsigned int fake_indent = 0;
-
-    /* test type decl */
-    decl = ic_decl_new(ic_decl_tag_type);
-    assert(decl);
-    /* check type */
-    assert(decl->tag == ic_decl_tag_type);
-
-    /* check that trying to pull out the wrong type is an error */
-    assert(0 == ic_decl_get_fdecl(decl));
-
-    /* check that getting the right type out is fine */
-    tdecl = ic_decl_get_tdecl(decl);
-    assert(tdecl);
-
-    /* initialise tdecl */
-    assert(1 == ic_decl_type_init(tdecl, "Foo", 3));
-
-    /* add a single field */
-    field = ic_field_new("bar", 3, "Baz", 3, ic_parse_perm_default());
-    assert(1 == ic_decl_type_add_field(tdecl, field));
-
-    /* test display */
-    printf("Expected:\ntype Foo\n    bar::Baz\nend\n");
-    /* print it out */
-    puts("Output:");
-    ic_decl_print(stdout, decl, &fake_indent);
-
-    puts("");
+    char *ch = 0;
 
     /* test func decl */
     decl = ic_decl_new(ic_decl_tag_func);
@@ -49,6 +21,8 @@ int main(void) {
 
     /* check that trying to pull out the wrong type is an error */
     assert(0 == ic_decl_get_tdecl(decl));
+    assert(0 == ic_decl_get_udecl(decl));
+    assert(0 == ic_decl_get_op(decl));
 
     /* check that getting the right type out is fine */
     fdecl = ic_decl_get_fdecl(decl);
@@ -57,15 +31,161 @@ int main(void) {
     /* initialise fdecl */
     assert(1 == ic_decl_func_init(fdecl, "Foo", 3));
 
+    ch = ic_symbol_contents(&(fdecl->name));
+    assert(ch);
+    assert(0 == strcmp(ch, "Foo"));
+
     /* add a single field */
     field = ic_field_new("bar", 3, "Baz", 3, ic_parse_perm_default());
     assert(1 == ic_decl_func_add_arg(fdecl, field));
 
-    /* test display */
-    printf("Expected:\n# Foo(Baz)\nfn Foo(bar::Baz) -> Void\nend\n");
-    /* print it out */
-    puts("Output:");
-    ic_decl_print(stdout, decl, &fake_indent);
+    assert(ic_decl_destroy(decl, 1));
+
+    puts("Success");
+}
+
+void test_tdecl(void) {
+    struct ic_field *field = 0;
+    struct ic_decl *decl = 0;
+    struct ic_decl_type *tdecl = 0;
+    /* fake indent level */
+    unsigned int fake_indent = 0;
+    char *ch = 0;
+
+    /* test type decl */
+    decl = ic_decl_new(ic_decl_tag_type);
+    assert(decl);
+    /* check type */
+    assert(decl->tag == ic_decl_tag_type);
+
+    /* check that trying to pull out the wrong type is an error */
+    assert(0 == ic_decl_get_fdecl(decl));
+    assert(0 == ic_decl_get_udecl(decl));
+    assert(0 == ic_decl_get_op(decl));
+
+    /* check that getting the right type out is fine */
+    tdecl = ic_decl_get_tdecl(decl);
+    assert(tdecl);
+
+    /* initialise tdecl */
+    assert(1 == ic_decl_type_init(tdecl, "Foo", 3));
+
+    ch = ic_symbol_contents(&(tdecl->name));
+    assert(ch);
+    assert(0 == strcmp(ch, "Foo"));
+
+    assert(0 == ic_decl_type_field_length(tdecl));
+    /* add a single field */
+    field = ic_field_new("bar", 3, "Baz", 3, ic_parse_perm_default());
+    assert(1 == ic_decl_type_add_field(tdecl, field));
+    assert(1 == ic_decl_type_field_length(tdecl));
+
+    field = ic_decl_type_field_get(tdecl, 0);
+    assert(field);
+
+    ch = ic_symbol_contents(&(field->name));
+    assert(ch);
+    assert(0 == strcmp(ch, "bar"));
+
+    assert(ic_decl_destroy(decl, 1));
+
+    puts("Success");
+}
+
+void test_udecl(void) {
+    struct ic_field *field = 0;
+    struct ic_decl *decl = 0;
+    struct ic_decl_union *udecl = 0;
+    /* fake indent level */
+    unsigned int fake_indent = 0;
+    char *ch = 0;
+
+    /* test union decl */
+    decl = ic_decl_new(ic_decl_tag_union);
+    assert(decl);
+    /* check type */
+    assert(decl->tag == ic_decl_tag_union);
+
+    /* check that trying to pull out the wrong type is an error */
+    assert(0 == ic_decl_get_fdecl(decl));
+    assert(0 == ic_decl_get_tdecl(decl));
+    assert(0 == ic_decl_get_op(decl));
+
+    /* check that getting the right type out is fine */
+    udecl = ic_decl_get_udecl(decl);
+    assert(udecl);
+
+    /* initialise udecl */
+    assert(1 == ic_decl_union_init(udecl, "Foo", 3));
+
+    ch = ic_symbol_contents(&(udecl->name));
+    assert(ch);
+    assert(0 == strcmp(ch, "Foo"));
+
+    assert(0 == ic_decl_union_field_length(udecl));
+    /* add a single field */
+    field = ic_field_new("bar", 3, "Baz", 3, ic_parse_perm_default());
+    assert(1 == ic_decl_union_add_field(udecl, field));
+    assert(1 == ic_decl_union_field_length(udecl));
+
+    field = ic_decl_union_field_get(udecl, 0);
+    assert(field);
+
+    ch = ic_symbol_contents(&(field->name));
+    assert(ch);
+    assert(0 == strcmp(ch, "bar"));
+
+    assert(ic_decl_destroy(decl, 1));
+
+    puts("Success");
+}
+
+void test_op(void) {
+    struct ic_field *field = 0;
+    struct ic_decl *decl = 0;
+    struct ic_decl_op *op = 0;
+    /* fake indent level */
+    unsigned int fake_indent = 0;
+    char *ch = 0;
+
+    /* test type decl */
+    decl = ic_decl_new(ic_decl_tag_builtin_op);
+    assert(decl);
+    /* check type */
+    assert(decl->tag == ic_decl_tag_builtin_op);
+
+    /* check that trying to pull out the wrong type is an error */
+    assert(0 == ic_decl_get_fdecl(decl));
+    assert(0 == ic_decl_get_tdecl(decl));
+    assert(0 == ic_decl_get_udecl(decl));
+
+    /* check that getting the right type out is fine */
+    op = ic_decl_get_op(decl);
+    assert(op);
+
+    /* initialise tdecl */
+    assert(1 == ic_decl_op_init(op, "Foo", 3, "Barr", 4));
+
+    ch = ic_symbol_contents(&(op->from));
+    assert(ch);
+    assert(0 == strcmp(ch, "Foo"));
+
+    ch = ic_symbol_contents(&(op->to));
+    assert(ch);
+    assert(0 == strcmp(ch, "Barr"));
+
+    assert(ic_decl_destroy(decl, 1));
+
+    puts("Success");
+}
+
+int main(void) {
+    test_fdecl();
+    test_tdecl();
+    test_udecl();
+    test_op();
+
+    puts("Success");
 
     return 0;
 }
