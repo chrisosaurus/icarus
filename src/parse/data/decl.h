@@ -493,6 +493,7 @@ void ic_decl_op_print(FILE *fd, struct ic_decl_op *op, unsigned int *indent_leve
 enum ic_decl_tag {
     ic_decl_tag_func,
     ic_decl_tag_type,
+    ic_decl_tag_union,
     ic_decl_tag_builtin_func,
     ic_decl_tag_builtin_type,
     ic_decl_tag_builtin_op
@@ -503,6 +504,7 @@ struct ic_decl {
     union {
         struct ic_decl_func fdecl;
         struct ic_decl_type tdecl;
+        struct ic_decl_union udecl;
         struct ic_decl_op op;
     } u;
 };
@@ -554,6 +556,14 @@ struct ic_decl_func *ic_decl_get_fdecl(struct ic_decl *decl);
  * returns 0 on failure
  */
 struct ic_decl_type *ic_decl_get_tdecl(struct ic_decl *decl);
+
+/* returns pointer to ic_decl_union element
+ * this function will only success if the decl is of type decl_union
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_decl_union *ic_decl_get_udecl(struct ic_decl *decl);
 
 /* returns pointer to ic_decl_op element
 * this function will only success if the decl is of type decl_op

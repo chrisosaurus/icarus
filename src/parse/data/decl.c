@@ -2005,6 +2005,27 @@ struct ic_decl_type *ic_decl_get_tdecl(struct ic_decl *decl) {
     return &(decl->u.tdecl);
 }
 
+/* returns pointer to ic_decl_union element
+ * this function will only success if the decl is of type decl_union
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_decl_union *ic_decl_get_udecl(struct ic_decl *decl) {
+    if (!decl) {
+        puts("ic_decl_get_udecl: decl was null");
+        return 0;
+    }
+
+    /* check we are the right type */
+    if (decl->tag != ic_decl_tag_union) {
+        return 0;
+    }
+
+    /* unbox */
+    return &(decl->u.udecl);
+}
+
 /* returns pointer to ic_decl_op element
  * this function will only success if the decl is of type decl_op
  *

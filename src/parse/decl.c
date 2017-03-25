@@ -274,18 +274,181 @@ struct ic_decl *ic_parse_decl_enum(struct ic_token_list *token_list) {
 }
 
 struct ic_decl *ic_parse_decl_union(struct ic_token_list *token_list) {
-#ifdef DEBUG_PARSE
-    puts("ic_parse_decl_union called");
-#endif
+    /* our resulting ic_decl */
+    struct ic_decl *decl = 0;
 
     if (!token_list) {
-        puts("ic_parse_decl_union: token_list was null");
+        puts("ic_parse_decl_type: token_list was null");
         return 0;
     }
 
-    puts("ic_parse_decl_union: UNIMPLEMENTED");
+    decl = ic_parse_decl_union_header(token_list);
+    if (!decl) {
+        puts("ic_parse_decl_type: call to ic_parse_decl_union_header failed");
+        return 0;
+    }
 
-    /* FIXME */
+    decl = ic_parse_decl_union_body(token_list, decl);
+    if (!decl) {
+        puts("ic_parse_decl_type: call to ic_parse_decl_union_body failed");
+        return 0;
+    }
+
+    return decl;
+}
+
+struct ic_decl *ic_parse_decl_union_header(struct ic_token_list *token_list) {
+    /* our resulting ic_decl */
+    struct ic_decl *decl = 0;
+    /* our udecl within the decl */
+    struct ic_decl_union *udecl = 0;
+    /* current token we are looking at */
+    struct ic_token *token = 0;
+
+    if (!token_list) {
+        puts("ic_parse_decl_union_header: token_list was null");
+        return 0;
+    }
+
+    /* check we really are at a `union` token */
+    token = ic_token_list_expect_important(token_list, IC_UNION);
+    if (!token) {
+        puts("ic_parse_decl_union_header: call to ic_token_list_expect_important failed for UNION");
+        return 0;
+    }
+
+    /* allocate and init our decl */
+    decl = ic_decl_new(ic_decl_tag_union);
+    if (!decl) {
+        puts("ic_parse_decl_union_header: call to ic_decl_new failed");
+        return 0;
+    }
+
+    /* fetch our udecl from within decl */
+    udecl = ic_decl_get_udecl(decl);
+    if (!udecl) {
+        puts("ic_parse_decl_union_header: call to ic_decl_get_udecl failed");
+        free(decl);
+        return 0;
+    }
+
+    /* get our type name */
+    token = ic_token_list_next_important(token_list);
+    if (!token) {
+        puts("ic_parse_decl_union_header: call to ic_token_list_next failed for func name");
+        return 0;
+    }
+
+    /* initialise our udecl */
+    if (!ic_decl_union_init(udecl, ic_token_get_string(token), ic_token_get_string_length(token))) {
+        puts("ic_parse_decl_union_header: call to ic_decl_union_init failed");
+        free(decl);
+        return 0;
+    }
+
+    return decl;
+}
+
+struct ic_decl *ic_parse_decl_union_body(struct ic_token_list *token_list, struct ic_decl *decl) {
+    /* parsed field */
+    struct ic_field *field = 0;
+    /* our udecl within the decl */
+    struct ic_decl_union *udecl = 0;
+    /* used to mark success of while loop */
+    int success = 0;
+    /* current token we are looking at */
+    struct ic_token *token = 0;
+
+#ifdef DEBUG_PARSE
+    puts("ic_parse_decl_type called");
+#endif
+
+    if (!token_list) {
+        puts("ic_parse_decl_union_body: token_list was null");
+        return 0;
+    }
+
+    if (!decl) {
+        puts("ic_parse_decl_union_body: decl was null");
+        return 0;
+    }
+
+    /* fetch our udecl from within decl */
+    udecl = ic_decl_get_udecl(decl);
+    if (!udecl) {
+        puts("ic_parse_decl_union_body: call to ic_decl_get_udecl failed");
+        free(decl);
+        return 0;
+    }
+
+    /* iterate through all tokens */
+    /* keep iterating through all the tokens until we find an unexpected 'end' */
+    while ((token = ic_token_list_peek_important(token_list))) {
+        /* check if this is the end */
+        if (token->id == IC_END) {
+            success = 1;
+            break;
+        }
+
+        /* otherwise this is a field
+         * parse it
+         */
+        field = ic_parse_field(token_list);
+        if (!field) {
+            puts("ic_parse_decl_union_body: call to ic_parse_field failed");
+
+            /* free decl and all contents */
+            if (!ic_decl_destroy(decl, 1)) {
+                puts("ic_parse_decl_union_body: in error tidyup call to ic_decl_destroy failed");
+            }
+            return 0;
+        }
+
+        /* and store it */
+        if (!ic_decl_union_add_field(udecl, field)) {
+            puts("ic_parse_decl_union_body: call to ic_decl_union_add_field failed");
+
+            /* free field and all contents */
+            if (!ic_field_destroy(field, 1)) {
+                puts("ic_parse_decl_union_body: in error tidyup call to ic_field_destroy failed");
+            }
+
+            /* free decl and all contents */
+            if (!ic_decl_destroy(decl, 1)) {
+                puts("ic_parse_decl_union_body: in error tidyup call to ic_decl_destroy failed");
+            }
+            return 0;
+        }
+
+        /* increment of i is handled by ic_parse_field */
+    }
+
+    /* if it is then consume */
+    token = ic_token_list_expect_important(token_list, IC_END);
+    if (!token) {
+        puts("ic_parse_decl_union_body: call to ic_token_list_expect for end failed");
+        return 0;
+    }
+
+    /* if success is 1 then this means we hit `end` as
+     * we expected and our type decl is finished
+     */
+    if (success) {
+        /* victory ! */
+        return decl;
+    }
+
+    /* if ret is not 1 then
+     * this means we ran out of tokens
+     * this is an error case as `end` should cause the
+     * successful return
+     */
+    puts("ic_parse_decl_union_body: something went wrong in finding end");
+
+    /* free decl and all contents */
+    if (!ic_decl_destroy(decl, 1)) {
+        puts("ic_parse_decl_union_body: in error tidyup call to ic_decl_destroy failed");
+    }
     return 0;
 }
 
