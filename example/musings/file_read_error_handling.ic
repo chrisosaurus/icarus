@@ -9,10 +9,10 @@ end
 # this will require a lot of blocks that are of the form
 #
 #    let &f::File = match File(file_name)
-#        case OK(x)
-#            yield x
-#        case Err(x)
-#            return Err(x)
+#        case value::File
+#            yield value
+#        case error::Err
+#            return error
 #    end
 #
 # we may want to introduce a shorthand / macro that is equivalent
@@ -21,19 +21,20 @@ end
 #
 #   this has to be syntax/macro as it may return from the current scope
 
+builtin fn open(file_name::String) -> Result<File>
 
 fn read_file(file_name::String) -> Result[Vector[Line]]
     let &v = Vector[Line]()
 
-    let &f::File = match File(file_name)
-        case OK(x)
-            yield x
-        case Err(x)
-            return Err(x)
+    let &f::File = match open(file_name)
+        case value::File
+            yield value
+        case error:Err
+            return error
     end
 
-    for (line, count) in enumerate(&f)
-        append(&v, Line(count line))
+    for (contents, count) in enumerate(f)
+        append(&v, Line(count, contents))
     end
 
     # box our Vector up as a success and return
@@ -43,10 +44,10 @@ end
 
 fn main(file_name::String)
     let results = match read_file(file_name)
-        case Err(x)
-            return Err(x)
-        case Ok(x)
-            yield x
+        case value::Vector[Line]
+            yield value
+        case error::Err
+            return error
     end
 
     for line in results

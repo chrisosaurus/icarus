@@ -3,14 +3,12 @@ builtin fn index_of(str::String, c::Char) -> Maybe[Sint]
 fn split(str::String, c::Char) -> [String]
     let idx = index_of(s, c)
     match idx
-        Sint
-            let before = s[0,   idx]
-            let after  = s[idx, len(s)]
+        case something::Sint
+            let before = s[0,   something]
+            let after  = s[something, len(s)]
             return [before, after]
-        end
         else
             return [str]
-        end
     end
 end
 

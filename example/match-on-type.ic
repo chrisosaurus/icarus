@@ -21,7 +21,7 @@ match m
 end
 
 union Container
-    i::Sint
+    &i::Sint
     s::String
     f::Foo
 end
@@ -30,16 +30,16 @@ fn bar(&c::Container)
     # unwrap Container and perform action based on type
     # compiler to enforce that *all* possible types are handled
     # compiler also enforces that any 'unwrapping' is safe
-    match c
-        case Sint
+    match &c
+        case &i::Sint
             # can only unwrap c.i as we know we must be an Sint
-            &c.i += 14
-        case String
+            &i += 14
+        case s::String
             # can only unwrap c.s as we know we must be a String
-            print(c.s)
-        case Foo
+            print(s)
+        case f::Foo
             # can only unwrap c.f as we know we must be a Foo
-            do-something-with-foo(c.f)
+            do-something-with-foo(f)
     end
 end
 

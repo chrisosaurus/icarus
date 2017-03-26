@@ -22,12 +22,10 @@ fn getNth[T](l::LinkedList[T], nth::Sint) -> Maybe[T]
     # this is equiv. to the pythonic range(1, nth - 1)
     for i in [1..nth)
         match n.next
-            case Node
-                n = n.next
-            end
+            case node::Node
+                n = node
             else
-                return Empty
-            end
+                return Nothing()
         end
     end
 

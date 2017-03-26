@@ -3,7 +3,7 @@ fn main()
 
     if expr
         body
-    elsif expr
+    elseif expr
         # FIXME need to decide on elseif/elif/whatever
         # would rather keep it a single token (so avoiding 'else if')
         body
@@ -42,11 +42,11 @@ fn main()
     # testing on type
     # do we need a keyword before each type?
     match expr
-        TypeA a
+        case a::TypeA
             body
-        TypeB b
+        case c::TypeB
             body
-        TypeC c
+        case c::TypeC
             body
         else
             body
