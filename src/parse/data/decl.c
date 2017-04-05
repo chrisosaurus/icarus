@@ -1346,7 +1346,7 @@ struct ic_type *ic_decl_type_get_field_type(struct ic_decl_type *tdecl, char *fi
 
     type = ic_dict_get(&(tdecl->field_dict), field_name);
     if (!type) {
-        printf("ic_decl_type_get_field_type: failed to get type for field name '%s' from dict\n", field_name);
+        printf("ic_decl_type_get_field_type: failed to get type for field '%s' on type '%s'\n", field_name, ic_symbol_contents(&(tdecl->name)));
         return 0;
     }
 
@@ -1673,7 +1673,7 @@ struct ic_type *ic_decl_union_get_field_type(struct ic_decl_union *udecl, char *
 
     type = ic_dict_get(&(udecl->field_dict), field_name);
     if (!type) {
-        printf("ic_decl_union_get_field_type: failed to get type for field name '%s' from dict\n", field_name);
+        printf("ic_decl_type_get_field_type: failed to get type for field '%s' on type '%s'\n", field_name, ic_symbol_contents(&(udecl->name)));
         return 0;
     }
 
