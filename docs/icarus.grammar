@@ -1,0 +1,80 @@
+(* an attempt to capture the Icarus grammar in EBNF notation *)
+
+program = decl* ;
+
+decl = union-decl
+     | type-decl
+     | func-decl ;
+
+union-decl = "union", type-decl-name, type-decl-body, "end" ;
+type-decl = "type", type-decl-name, type-decl-body, "end" ;
+
+type-decl-name = symbol ;
+type-decl-body = field* ;
+
+field = symbol, "::", type-ref ;
+
+type-ref = symbol ;
+
+func-decl = ("func" | "fn"), func-decl-name, "(", func-decl-arg-list, ")", body, "end" ;
+func-decl-name = symbol ;
+func-decl-arg-list = field* ;
+
+body = stmt* ;
+
+stmt = let-stmt
+     | return-stmt
+     | assignment-stmt
+     | if-stmt
+     | for-stmt
+     | while-stmt
+     | match-stmt
+     | function-call ;
+
+let-stmt = "let", symbol, ("::" type-ref)?, "=", expr ;
+
+(* TODO FIXME optional expr here leads to ambiguity *)
+return-stmt = "return", expr? ;
+
+if-stmt = "if", expr, body, "end" ;
+
+for-stmt = "for", for-lhs, "in", expr, body, "end" ;
+for-lhs = symbol ;
+
+while-stmt = "while", expr, body, "end" ;
+
+match-stmt = "match", expr, match-body, "end" ;
+match-body = ("case", symbol, "::", type-ref, body)+, ("else", body)?, "end" ;
+
+(* fcall and assignment are ambiguous, not LL(1) *)
+function-call = symbol, "(", expr*, ")" ;
+
+assignment-stmt = assignment-stmt-lhs, "=", expr ;
+assignment-stmt-lhs = symbol ;
+
+(* TODO FIXME expr undefined *)
+expr = ;
+
+(* once array access and generics are added the following input
+    foo[bar,...]...
+   will be ambiguous.
+   if followed by `=` then this is an assignment into an array
+   if followed by `(` then this is a function call
+   if followed by `.` then this is a member access on a struct
+ *)
+
+
+letter = "A" | "B" | "C" | "D" | "E" | "F" | "G"
+       | "H" | "I" | "J" | "K" | "L" | "M" | "N"
+       | "O" | "P" | "Q" | "R" | "S" | "T" | "U"
+       | "V" | "W" | "X" | "Y" | "Z"
+       | "a" | "b" | "c" | "d" | "e" | "f" | "g"
+       | "h" | "i" | "j" | "k" | "l" | "m" | "n"
+       | "o" | "p" | "q" | "r" | "s" | "t" | "u"
+       | "v" | "w" | "x" | "y" | "z" ;
+
+digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+
+symbol = letter , { letter | digit | "_" } ;
+
+
