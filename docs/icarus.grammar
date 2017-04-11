@@ -1,4 +1,6 @@
-(* an attempt to capture the Icarus grammar in EBNF notation *)
+(* an attempt to capture the Icarus grammar in EBNF notation
+   this file also includes a partial 'attribute grammar' which attempts to show
+   a mapping from Icarus constructs to the corresponding C *)
 
 program = decl* ;
 
@@ -8,17 +10,21 @@ decl = union-decl
 
 union-decl = "union", type-decl-name, type-decl-body, "end" ;
 type-decl = "type", type-decl-name, type-decl-body, "end" ;
+(*[ "typedef struct", type-decl-name, "{", type-decl-body, "} ", type-decl-name, ";" ]*)
 
 type-decl-name = symbol ;
 type-decl-body = field* ;
+(*[ ForEach(field, [field, ";"]) ]*)
 
 field = symbol, "::", type-ref ;
+(*[ type-ref, " ", symbol ]*)
 
 type-ref = symbol ;
 
-func-decl = ("func" | "fn"), func-decl-name, "(", func-decl-arg-list, ")", body, "end" ;
+func-decl = ("func" | "fn"), func-decl-name, "(", func-decl-arg-list, ")", ("->", type-ref)?, body, "end" ;
 func-decl-name = symbol ;
-func-decl-arg-list = field* ;
+func-decl-arg-list = (field, (",", field)*)? ;
+(*[ ForEach(field, [field, ", "]) ]*)
 
 body = stmt* ;
 
@@ -32,22 +38,31 @@ stmt = let-stmt
      | function-call ;
 
 let-stmt = "let", symbol, ("::" type-ref)?, "=", expr ;
+(*[ type-ref, " ", symbol, " = ", expr ]*)
 
 (* TODO FIXME optional expr here leads to ambiguity *)
 return-stmt = "return", expr? ;
 
-if-stmt = "if", expr, body, "end" ;
+if-stmt = "if", expr, body, ("elseif", expr, body)*, ("else", body)?, "end" ;
+(*[ "if (", expr, "){", body, }",
+    ForEach("elseif", [" else if (", expr, "){", body, "}"]),
+    ForEach("else", [" else {", body, "}"]) ]*)
 
 for-stmt = "for", for-lhs, "in", expr, body, "end" ;
 for-lhs = symbol ;
 
 while-stmt = "while", expr, body, "end" ;
+(*[ "while (", expr, "){", body, "}" ]*)
 
 match-stmt = "match", expr, match-body, "end" ;
+(*[ "switch (", expr, "->tag){", match-body, "}" ]*)
 match-body = ("case", symbol, "::", type-ref, body)+, ("else", body)?, "end" ;
+(*[ ForEach("case", ["case ", type-ref, ": ", body, "break;"]),
+    ForEach("else", ["default: ", body, "break;"]) ]*)
 
 (* fcall and assignment are ambiguous, not LL(1) *)
-function-call = symbol, "(", expr*, ")" ;
+function-call = symbol, "(", function-call-arg-list, ")" ;
+function-call-arg-list = (expr, (",", expr)*)? ;
 
 assignment-stmt = assignment-stmt-lhs, "=", expr ;
 assignment-stmt-lhs = symbol ;
