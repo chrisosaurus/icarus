@@ -4,9 +4,6 @@
 
 #include "parse.h"
 
-/* ignore unused parameter warnings */
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-
 struct ic_decl *ic_parse_decl_builtin(struct ic_token_list *token_list) {
     /* our resulting ic_decl */
     struct ic_decl *decl = 0;

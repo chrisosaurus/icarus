@@ -8,9 +8,6 @@
 #include "../permissions.h"
 #include "expr.h"
 
-/* ignore unused parameter */
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-
 /* allocate and initialise a new func call
  *
  * returns pointer on success

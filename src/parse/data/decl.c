@@ -12,9 +12,6 @@
 #include "field.h"
 #include "stmt.h"
 
-/* FIXME crutch for unused param */
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-
 /* allocate and initialise a new decl_func
  *
  * returns new decl_func on success
@@ -1832,6 +1829,10 @@ unsigned int ic_decl_op_destroy(struct ic_decl_op *op, unsigned int free_op) {
 void ic_decl_op_print(FILE *fd, struct ic_decl_op *op, unsigned int *indent_level) {
     if (!op) {
         puts("ic_decl_op_print: op was null");
+        return;
+    }
+    if (!indent_level) {
+        puts("ic_decl_op_print: indent_level was null");
         return;
     }
 

@@ -7,15 +7,6 @@
 #include "data/stmt.h"
 #include "parse.h"
 
-/* ignore unused parameter warnings */
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-
-/* ignore unused functions */
-#pragma GCC diagnostic ignored "-Wunused-function"
-
-/* ignore unused variable */
-#pragma GCC diagnostic ignored "-Wunused-variable"
-
 /* there are currently 3 types of statements
  *  let
  *  if

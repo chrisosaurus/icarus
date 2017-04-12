@@ -3,9 +3,6 @@
 #include "data/body.h"
 #include "parse.h"
 
-/* ignore unused parameter warnings */
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-
 /* parse a body
  * a body ends when an unmatched `end` is found, this will be consumed
  *

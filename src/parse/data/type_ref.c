@@ -4,8 +4,6 @@
 #include "decl.h"
 #include "type_ref.h"
 
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-
 /* allocate and intialise a new type
  * this will set type.type to unknown
  *

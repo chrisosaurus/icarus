@@ -5,18 +5,6 @@
 
 #include "parse.h"
 
-/* ignore unused parameter warnings */
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-
-/* ignore unused functions */
-#pragma GCC diagnostic ignored "-Wunused-function"
-
-/* ignore unused variables */
-#pragma GCC diagnostic ignored "-Wunused-variable"
-
-/* ignore unused variables that are set */
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-
 /* current supported expression types:
  *  func call
  *  identifier
@@ -131,10 +119,6 @@ static struct ic_expr *ic_parse_expr_identifier(struct ic_token_list *token_list
     /* pointer to our internal id */
     struct ic_expr_identifier *id = 0;
 
-    /* iter into this identifier */
-    unsigned int iter = 0;
-    /* current char in identifier we are checking */
-    char ch = 0;
     /* permissions */
     unsigned int permissions = 0;
 
@@ -475,13 +459,9 @@ static struct ic_expr *ic_parse_expr_operator(struct ic_token_list *token_list, 
     /* an operator is made up of
      *  single-token operator expr
      */
-    /* our operator char* and len */
-    char *op_start = 0;
-    unsigned int op_len = 0;
     /* our right child */
     struct ic_expr *right = 0;
 
-    /* operator token */
     struct ic_token *token = 0;
 
     if (!token_list) {
@@ -629,9 +609,6 @@ static struct ic_expr *ic_parse_expr_perm(struct ic_token_list *token_list) {
 
     /* our permissions */
     unsigned int permissions = 0;
-
-    /* operator token */
-    struct ic_token *token = 0;
 
     if (!token_list) {
         puts("ic_parse_expr_perm: token_list was null");

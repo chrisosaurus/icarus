@@ -11,7 +11,7 @@
 #include "data/tbody.h"
 #include "transform.h"
 
-#pragma GCC diagnostic ignored "-Wunused-function"
+/* FIXME TODO ic_transform_stmt_for scope unused as unimplemented */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
 /* perform translation of all fdecls on kludge
@@ -958,6 +958,7 @@ static unsigned int ic_transform_stmt_for(struct ic_kludge *kludge, struct ic_sc
         return 0;
     }
 
+    /* FIXME TODO once implemented remove pragma at top */
     puts("ic_transform_stmt_for: unimplemented");
     return 0;
 }

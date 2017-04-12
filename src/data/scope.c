@@ -3,11 +3,6 @@
 
 #include "scope.h"
 
-/* ignored unused parameter
- * pending implementation
- */
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-
 /* alloc and init a new scope
  *
  * parent may be null

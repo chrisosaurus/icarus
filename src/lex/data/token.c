@@ -3,8 +3,6 @@
 
 #include "token.h"
 
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-
 /* alloc and init a new token
  *
  * returns * on success

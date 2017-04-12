@@ -5,9 +5,6 @@
 #include "string.h"
 #include "symbol.h"
 
-/* FIXME crutch for unused param */
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-
 /* build a new string from a char* and a length
  * this will allocate a new buffer and strncpy n
  * chars from source into the string
