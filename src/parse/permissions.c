@@ -31,21 +31,23 @@
 /* our default permission is IC_VALUE */
 #define IC_PERM_DEFAULT IC_VALUE
 
+/* clang-format off */
 /* map of token_id to permission
  * Note that we have a few 'spare'
  */
 unsigned int ic_parse_perm_map[] = {
-        /*               IMMUT      READ      WRITE      STORE    */
-        [IC_VALUE] = IC_IMMUT | IC_READ | 0 | IC_STORE,
-        [IC_DOLLAR] = 0 | IC_READ | 0 | 0,
-        [IC_PERCENT] = 0 | IC_READ | 0 | IC_STORE,
-        [IC_AMPERSAND] = 0 | IC_READ | IC_WRITE | 0,
-        [IC_AT] = 0 | IC_READ | IC_WRITE | IC_STORE,
-        [IC_ASTERISK] = 0 | 0 | 0 | 0,
-        [IC_CARET] = 0 | 0 | 0 | 0,
-        [IC_PLUS] = 0 | 0 | 0 | 0,
-        [IC_MINUS] = 0 | 0 | 0 | 0,
+        /*               IMMUT    | READ    | WRITE    | STORE    */
+        [IC_VALUE]     = IC_IMMUT | IC_READ | 0        | IC_STORE,
+        [IC_DOLLAR]    = 0        | IC_READ | 0        | 0,
+        [IC_PERCENT]   = 0        | IC_READ | 0        | IC_STORE,
+        [IC_AMPERSAND] = 0        | IC_READ | IC_WRITE | 0,
+        [IC_AT]        = 0        | IC_READ | IC_WRITE | IC_STORE,
+        [IC_ASTERISK]  = 0        | 0       | 0        | 0,
+        [IC_CARET]     = 0        | 0       | 0        | 0,
+        [IC_PLUS]      = 0        | 0       | 0        | 0,
+        [IC_MINUS]     = 0        | 0       | 0        | 0,
 };
+/* clang-format on */
 
 /* get permissions for this token_id */
 unsigned int ic_parse_perm(enum ic_token_id id) {
