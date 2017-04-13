@@ -16,6 +16,7 @@ my %libs = (
     files => [qw/
       linear_hash.c
       linear_hash.h
+      linear_hash_internal.h
       test_linear_hash.c
     /],
   },
