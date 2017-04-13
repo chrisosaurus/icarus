@@ -26,6 +26,7 @@ my %libs = (
     files => [qw/
       linear_set.c
       linear_set.h
+      linear_set_internal.h
       test_linear_set.c
     /],
   },
