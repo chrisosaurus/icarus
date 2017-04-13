@@ -31,6 +31,7 @@
 #include <stddef.h> /* size_t */
 
 #include "linear_set.h"
+#include "linear_set_internal.h"
 
 /* default number of slots */
 #define LS_DEFALT_SIZE  32
@@ -44,11 +45,6 @@
  * default is 6 so 60 %
  */
 #define LS_DEFALT_THRESHOLD 6
-
-/* leaving this in place as we have some internal only helper functions
- * that we only exposed to allow for easy testing and extension
- */
-#pragma GCC diagnostic ignored "-Wmissing-prototypes"
 
 /**********************************************
  **********************************************

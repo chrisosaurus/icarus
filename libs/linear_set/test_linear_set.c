@@ -7,17 +7,7 @@
 #include <string.h> /* strlen */
 
 #include "linear_set.h"
-
-/* headers for internal functions within linear_set.c
- * that are not exposed via the header
- * these would be static but we want to be able to test them
- */
-unsigned int ls_entry_eq(struct ls_entry *cur, unsigned long int hash, unsigned long int key_len, char *key);
-char * ls_strdupn(char *str, size_t len);
-unsigned int ls_entry_init(struct ls_entry *entry, unsigned long int hash, char *key, size_t key_len);
-unsigned int ls_entry_destroy(struct ls_entry *entry);
-struct ls_entry * ls_find_entry(struct ls_set *set, char *key);
-
+#include "linear_set_internal.h"
 
 void new_insert_exists_destroy(void){
     /* our simple hash set */
