@@ -1,8 +1,5 @@
-commit ea30b55d19ec56e95e93f3916e1650dda2d45c91
+commit 8e32d4800e613740577c6a68d766852a47d7463a
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Mon Feb 13 20:38:40 2017 +1100
+Date:   Thu Apr 13 11:58:27 2017 +1000
 
-    Lh_set now correctly enforces capacity
-    
-    Lh_set may not call lh_resize
-    Added unit testing on lh_insert and lh_set resizing
+    Removing use of pragmas, declaring internal-only functions in new header.

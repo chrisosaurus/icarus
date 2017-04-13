@@ -7,24 +7,7 @@
 #include <string.h> /* strlen */
 
 #include "linear_hash.h"
-
-/* headers for internal functions within linear_hash.c
- * that are not exposed via the header
- * these would be static but we want to be able to test them
- */
-unsigned int lh_entry_eq(struct lh_entry *cur, unsigned long int hash, unsigned long int key_len, char *key);
-char * lh_strdupn(char *str, size_t len);
-unsigned int lh_entry_init(struct lh_entry *entry, unsigned long int hash, char *key, size_t key_len, void *data);
-unsigned int lh_entry_destroy(struct lh_entry *entry, unsigned int free_data);
-unsigned int lh_insert_internal(struct lh_table *table, struct lh_entry *entry, unsigned long int hash, const char *key, size_t key_len, void *data);
-
-enum lh_find_entry_state {
-    LH_FIND_ENTRY_STATE_ERROR  = 0,
-    LH_FIND_ENTRY_STATE_EXISTS = 1,
-    LH_FIND_ENTRY_STATE_SLOT   = 2,
-};
-
-enum lh_find_entry_state lh_find_entry(const struct lh_table *table, unsigned long int hash, const char *key, size_t key_len, struct lh_entry **entry);
+#include "linear_hash_internal.h"
 
 void new_insert_get_destroy(void){
     /* our simple hash table */
@@ -437,7 +420,10 @@ void collision(void){
     assert( lh_resize(table, 9) );
     assert( 9 == table->size );
     assert( 0 == lh_nelems(table) );
+
+    /* 0 * 100 / 9 = 0 % loading */
     assert( 0 == lh_load(table) );
+    assert( 9 == table->size );
 
 
     puts("inserting some data");
@@ -447,6 +433,9 @@ void collision(void){
     assert(data);
     assert( data_1 == *data );
 
+    /* 1 * 100 / 9 =  11% loading */
+    assert( 11 == lh_load(table) );
+    assert( 9 == table->size );
 
     assert( lh_insert(table, key_2, &data_2) );
     assert( 2 == lh_nelems(table) );
@@ -454,6 +443,9 @@ void collision(void){
     assert(data);
     assert( data_2 == *data );
 
+    /* 2 * 100 / 9 =  22% loading */
+    assert( 22 == lh_load(table) );
+    assert( 9 == table->size );
 
     assert( lh_insert(table, key_3, &data_3) );
     assert( 3 == lh_nelems(table) );
@@ -461,11 +453,19 @@ void collision(void){
     assert(data);
     assert( data_3 == *data );
 
+    /* 3 * 100 / 9 =  33% loading */
+    assert( 33 == lh_load(table) );
+    assert( 9 == table->size );
+
     assert( lh_insert(table, key_4, &data_4) );
     assert( 4 == lh_nelems(table) );
     data = lh_get(table, key_4);
     assert(data);
     assert( data_4 == *data );
+
+    /* 4 * 100 / 9 =  44% loading */
+    assert( 44 == lh_load(table) );
+    assert( 9 == table->size );
 
     assert( lh_insert(table, key_5, &data_5) );
     assert( 5 == lh_nelems(table) );
@@ -473,11 +473,20 @@ void collision(void){
     assert(data);
     assert( data_5 == *data );
 
+    /* 5 * 100 / 9 =  55% loading */
+    assert( 55 == lh_load(table) );
+    assert( 9 == table->size );
+
     assert( lh_insert(table, key_6, &data_6) );
     assert( 6 == lh_nelems(table) );
     data = lh_get(table, key_6);
     assert(data);
     assert( data_6 == *data );
+
+    /* 6 * 100 / 9 =  66% loading */
+    assert( 66 == lh_load(table) );
+    /* next insert should resize */
+    assert( 9 == table->size );
 
     assert( lh_insert(table, key_7, &data_7) );
     assert( 7 == lh_nelems(table) );
@@ -485,11 +494,20 @@ void collision(void){
     assert(data);
     assert( data_7 == *data );
 
+    /* that last insert should have triggered a resize */
+    /* 7 * 100 / 18 =  38% loading */
+    assert( 38 == lh_load(table) );
+    assert( 18 == table->size );
+
     assert( lh_insert(table, key_8, &data_8) );
     assert( 8 == lh_nelems(table) );
     data = lh_get(table, key_8);
     assert(data);
     assert( data_8 == *data );
+
+    /* 8 * 100 / 18 =  44% loading */
+    assert( 44 == lh_load(table) );
+    assert( 18 == table->size );
 
     assert( lh_insert(table, key_9, &data_9) );
     assert( 9 == lh_nelems(table) );
@@ -497,11 +515,11 @@ void collision(void){
     assert(data);
     assert( data_9 == *data );
 
+    /* 9 * 100 / 18 =  50% loading */
+    assert( 50 == lh_load(table) );
+    assert( 18 == table->size );
+
     assert( 9 == lh_nelems(table) );
-    /* assert that our resize succeeded and we
-     * are not full */
-    assert( 10 > lh_load(table) );
-    assert( 9 < table->size );
 
     puts("testing we can still get everything out");
 
@@ -877,7 +895,7 @@ void error_handling(void){
     puts("testing lh_tune_threshold");
     assert( 0 == lh_tune_threshold(0, 0) );
     assert( 0 == lh_tune_threshold(table, 0) );
-    assert( 0 == lh_tune_threshold(table, 11) );
+    assert( 0 == lh_tune_threshold(table, 101) );
 
     /* lh_destroy */
     assert( 0 == lh_destroy(0, 1, 0) );
@@ -1004,15 +1022,15 @@ void load_resize(void){
 
     /* insert tests resize before inserting
      * so from it's view at that time:
-     * 0 / 4 = 0 % loading
+     * 0 * 100 / 4 = 0 % loading
      * no resize
      */
     assert( 4 == table->size );
     assert( 1 == lh_nelems(table) );
     /* however the load now will be
-     * 1 / 4 = 25 %
+     * 1 * 100 / 4 = 25 %
      */
-    assert( 2 == lh_load(table) );
+    assert( 25 == lh_load(table) );
 
 
     assert( lh_insert(table, key_2, &data_2) );
@@ -1024,15 +1042,15 @@ void load_resize(void){
 
     /* insert tests resize before inserting
      * so from it's view at that time:
-     * 1 / 4 = 25 % loading
+     * 1 * 100 / 4 = 25 % loading
      * no resize
      */
     assert( 4 == table->size );
     assert( 2 == lh_nelems(table) );
     /* however the load now will be
-     * 2 / 4 = 50 %
+     * 2 * 100 / 4 = 50 %
      */
-    assert( 5 == lh_load(table) );
+    assert( 50 == lh_load(table) );
 
 
     assert( lh_insert(table, key_3, &data_3) );
@@ -1043,16 +1061,16 @@ void load_resize(void){
 
     /* insert tests resize before inserting
      * so from it's view at that time:
-     * 2 / 4 = 50 % loading
+     * 2 * 100 / 4 = 50 % loading
      * no resize
      */
     assert( 4 == table->size );
     assert( 3 == lh_nelems(table) );
     /* however the load now will be
-     * 3 / 4 = 70 %
-     * so this will trigger a resize (as 70 >= 60)
+     * 3 * 100 / 4 = 75 %
+     * so this will trigger a resize (as 75 >= 60)
      */
-    assert( 7 == lh_load(table) );
+    assert( 75 == lh_load(table) );
 
 
     assert( lh_insert(table, key_4, &data_4) );
@@ -1063,15 +1081,15 @@ void load_resize(void){
 
     /* insert tests resize before inserting
      * so from it's view at that time:
-     * 3 / 4 = 75 % loading
+     * 3 * 100 / 4 = 75 % loading
      * so resize called to double
      */
     assert( 8 == table->size );
     assert( 4 == lh_nelems(table) );
     /* and after resizing the load now will be
-     * 4 / 8 = 50 %
+     * 4 * 100 / 8 = 50 %
      */
-    assert( 5 == lh_load(table) );
+    assert( 50 == lh_load(table) );
 
 
     assert( lh_destroy(table, 1, 0) );
@@ -1154,8 +1172,8 @@ void threshold(void){
     assert( lh_resize(table, 4) );
 
     /* tune to only resize at 100% */
-    assert( lh_tune_threshold(table, 10) );
-    assert( 10 == table->threshold );
+    assert( lh_tune_threshold(table, 100) );
+    assert( 100 == table->threshold );
 
     /* insert 4 times checking there has been no resizing */
     assert( lh_insert(table, "a", &data) );
@@ -1178,7 +1196,7 @@ void threshold(void){
     assert( lh_insert(table, "e", &data) );
     assert( 5 == lh_nelems(table) );
     assert( 8 == table->size );
-    assert( 10 == table->threshold );
+    assert( 100 == table->threshold );
 
     assert( lh_destroy(table, 1, 0) );
     puts("success!");

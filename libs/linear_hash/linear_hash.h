@@ -51,7 +51,10 @@ struct lh_table {
     size_t size;
     /* number of elements stored in hash */
     size_t n_elems;
-    /* threshold that triggers an automatic resize */
+    /* threshold percentage that triggers an automatic resize
+     * if (n_elems / table->size >= threshold) { resize }
+     * 1 <= threshold >= 100
+     */
     unsigned int threshold;
     /* array of lh_entry(s) */
     struct lh_entry *entries;
@@ -73,13 +76,13 @@ unsigned int lh_nelems(const struct lh_table *table);
 unsigned int lh_load(const struct lh_table *table);
 
 /* set the load that we resize at
- * load is (table->n_elems * 10) / table->size
+ * load is table->n_elems / table->size
  *
  * this sets lh_table->threshold
  * this defaults to LH_DEFAULT_THRESHOLD in linear_hash.c
- * this is set to 6 (meaning 60% full) by default
+ * this is set to 60 (meaning 60% full) by default
  *
- * this will accept any value between 1 (10%) to 10 (100%)
+ * this will accept any value between 1 (1%) to 100 (100%) inclusive
  *
  * returns 1 on success
  * returns 0 on failure

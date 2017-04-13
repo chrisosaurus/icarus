@@ -31,6 +31,7 @@
 #include <stddef.h> /* size_t */
 
 #include "linear_hash.h"
+#include "linear_hash_internal.h"
 
 /* default number of slots */
 #define LH_DEFAULT_SIZE  32
@@ -38,19 +39,13 @@
 /* factor we grow the number of slots by each resize */
 #define LH_SCALING_FACTOR 2
 
-/* default loading factor we resize after in base 10
- * 0 through to 10
+/* default loading factor (percentage) we resize after
  *
- * default is 6 so 60 %
+ * 1 through to 100 (inclusive)
+ *
+ * default is 60%
  */
-#define LH_DEFAULT_THRESHOLD 6
-
-/* leaving this in place as we have some internal only helper functions
- * that we only exposed to allow for easy testing and extension
- */
-#pragma GCC diagnostic ignored "-Wmissing-prototypes"
-
-
+#define LH_DEFAULT_THRESHOLD 60
 
 /**********************************************
  **********************************************
@@ -60,12 +55,14 @@
  **********************************************
  ***********************************************/
 
-/* NOTE these helper functions are not exposed in our header
- * but are not static so as to allow easy unit testing
- * or extension
+/* NOTE these helper functions are not part of our public interface
+ * and so are not exposed in linear_hash.h
+ * instead these are exposed in linear_hash_internal.h
+ * to make testing easier
  */
 
 /* logic for testing if the current entry is eq to the
+ *
  * provided hash, key_len and key
  * this is to centralise the once scattered logic
  */
@@ -264,26 +261,6 @@ unsigned int lh_entry_destroy(struct lh_entry *entry, unsigned int free_data){
     return 1;
 }
 
-enum lh_find_entry_state {
-    /* error:
-     *  arguments were bad
-     *  call to internal function failed
-     *  failed to find dummy OR empty
-     */
-    LH_FIND_ENTRY_STATE_ERROR  = 0,
-
-    /* key did exist
-     * returned entry that is occupied
-     */
-    LH_FIND_ENTRY_STATE_EXISTS = 1,
-
-    /* key didn't already exist
-     * returned entry that is either dummy or empty
-     * returned entry is place that key *should* go
-     */
-    LH_FIND_ENTRY_STATE_SLOT   = 2,
-};
-
 /* centralised searching logic
  * will find where a key is *if* it exists
  * otherwise will find where a key *should* be
@@ -445,10 +422,10 @@ unsigned int lh_nelems(const struct lh_table *table){
     return table->n_elems;
 }
 
-/* function to calculate load
+/* function to calculate load percentage
  * (table->n_elems * 10) / table->size
  *
- * returns loading factor 0 -> 10 on success
+ * returns loading factor 0 -> 100 on success
  * returns 0 on failure
  */
 unsigned int lh_load(const struct lh_table *table){
@@ -457,20 +434,17 @@ unsigned int lh_load(const struct lh_table *table){
         return 0;
     }
 
-    /* here we multiply by 10 to avoid floating point
-     * as we only care about the most significant figure
-     */
-    return (table->n_elems * 10) / table->size;
+    return (table->n_elems * 100) / table->size;
 }
 
 /* set the load that we resize at
- * load is (table->n_elems * 10) / table->size
+ * load is table->n_elems / table->size
  *
  * this sets lh_table->threshold
  * this defaults to LH_DEFAULT_THRESHOLD in linear_hash.c
- * this is set to 6 (meaning 60% full) by default
+ * this is set to 60 (meaning 60% full) by default
  *
- * this will accept any value between 1 (10%) to 10 (100%)
+ * this will accept any value between 1 (1%) to 100 (100%) inclusive
  *
  * returns 1 on success
  * returns 0 on failure
@@ -481,7 +455,7 @@ unsigned int lh_tune_threshold(struct lh_table *table, unsigned int threshold){
         return 0;
     }
 
-    if( threshold < 1 || threshold > 10 ){
+    if( threshold < 1 || threshold > 100 ){
         puts("lh_tune_threshold: threshold must be between 1 and 9 (inclusive)");
         return 0;
     }
