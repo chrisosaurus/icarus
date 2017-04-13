@@ -8,10 +8,6 @@
 #include "data/slot.h"
 #include "helpers.h"
 
-/* ignored unused parameter and variables */
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#pragma GCC diagnostic ignored "-Wunused-variable"
-
 /* mark this expr as being on the left-hand side of an assignment
  *
  * returns 1 on success
@@ -587,7 +583,6 @@ struct ic_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_scope
     /* temporaries */
     struct ic_symbol *sym = 0;
     char *ch = 0;
-    struct ic_slot *slot = 0;
     struct ic_decl_func *fdecl = 0;
 
     if (!kludge) {
@@ -1159,23 +1154,6 @@ struct ic_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scop
 
     puts("ic_analyse_infer: unimplemented");
     return 0;
-}
-
-/* check a statement for validity
- *
- * FIXME need a way of signalling and passing errors
- *
- * examples:
- *  check let f::Foo = Foo(addone(1),"hello")
- *  check d(f)
- *  check print(s)
- *
- * returns 1 for success
- * returns 0 on failure
- */
-unsigned int ic_analyse_check(struct ic_kludge *kludge, struct ic_stmt *stmt) {
-    puts("ic_analyse_check: unimplemented");
-    exit(1);
 }
 
 /* perform analyse of let statement in the provided body

@@ -8,8 +8,6 @@
 #include "../../../read/read.h"
 #include "instructions.h"
 
-#pragma GCC diagnostic ignored "-Wunused-variable"
-
 #define IC_BACKEND_PANCAKE_INSTRUCTIONS_START_SIZE 1024
 
 /* alloc and init a new instructions
@@ -386,7 +384,6 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
     unsigned int uint_arg1;
     unsigned int uint_arg2;
     int sint_arg1;
-    int sint_arg2;
 
     int ret = 0;
 

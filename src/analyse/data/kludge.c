@@ -7,8 +7,6 @@
 #include "kludge.h"
 #include "type.h"
 
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-
 /* populate the kludge from the provided ast
  * this call will break apart the ast to populate the
  * fields stored on kludge

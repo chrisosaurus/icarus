@@ -10,6 +10,10 @@
 #include "data/local.h"
 #include "pancake.h"
 
+/* TODO FIXME labeller isn't used in many functions
+ * revisit why we pass this around and if it should be part of the
+ * general interface
+ */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
 /* compile an fdecl into bytecode

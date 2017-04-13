@@ -3,9 +3,6 @@
 
 #include "slot.h"
 
-/* ignored unused parameters until implementation is complete */
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-
 /* allocate and init a new slot
  *
  * returns 1 on success

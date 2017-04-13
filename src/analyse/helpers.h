@@ -55,20 +55,6 @@ struct ic_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_ex
 
 struct ic_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall);
 
-/* check a statement for validity
- *
- * FIXME need a way of signalling and passing errors
- *
- * examples:
- *  check let f::Foo = Foo(addone(1),"hello")
- *  check d(f)
- *  check print(s)
- *
- * returns 1 for success
- * returns 0 on failure
- */
-unsigned int ic_analyse_check(struct ic_kludge *kludge, struct ic_stmt *stmt);
-
 /* perform analyse of let statement in the provided body
  *
  * returns 1 for success

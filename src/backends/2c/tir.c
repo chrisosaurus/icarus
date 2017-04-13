@@ -5,8 +5,6 @@
 #include "../../parse/data/stmt.h"
 #include "../../transform/data/tbody.h"
 
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-
 unsigned int ic_b2c_compile_stmt_ret(struct ic_kludge *input_kludge, struct ic_transform_ir_ret *ret, FILE *out);
 unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_transform_ir_let *let, FILE *out);
 unsigned int ic_b2c_compile_stmt_assign(struct ic_kludge *input_kludge, struct ic_transform_ir_assign *assign, FILE *out);

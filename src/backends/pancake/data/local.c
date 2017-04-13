@@ -3,8 +3,6 @@
 
 #include "local.h"
 
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-
 /* allocate and init a new local
  *
  * returns * on success

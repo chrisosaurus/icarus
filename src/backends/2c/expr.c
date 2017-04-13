@@ -4,8 +4,6 @@
 #include "../../parse/data/expr.h"
 #include "../../transform/data/tir.h"
 
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-
 unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic_transform_ir_fcall *fcall, FILE *out);
 unsigned int ic_b2c_compile_expr_constant(struct ic_kludge *input_kludge, struct ic_expr_constant *constant, FILE *out);
 

@@ -7,8 +7,6 @@
 #include "expr.h"
 #include "tir.h"
 
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-
 unsigned int ic_b2c_generate(struct ic_kludge *kludge, FILE *f);
 unsigned int ic_b2c_generate_builtins(struct ic_kludge *kludge, FILE *f);
 

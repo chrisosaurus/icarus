@@ -6,9 +6,6 @@
 
 #include "runtime/builtins.h"
 
-#pragma GCC diagnostic ignored "-Wunused-variable"
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-
 #define PANCAKE_INTERPRET_DEBUG 0
 
 /* interpret bytecode in runtime_data
