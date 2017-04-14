@@ -170,7 +170,7 @@ unsigned int ic_b2c_compile_expr_constant(struct ic_kludge *input_kludge, struct
             break;
 
         case ic_expr_constant_type_boolean:
-            fprintf(out, "ic_bool_new(%u)\n", constant->u.boolean);
+            fprintf(out, "ic_bool_new(%u)", constant->u.boolean);
 
             return 1;
 

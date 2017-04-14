@@ -21,7 +21,6 @@ void test_fdecl(void) {
 
     /* check that trying to pull out the wrong type is an error */
     assert(0 == ic_decl_get_tdecl(decl));
-    assert(0 == ic_decl_get_udecl(decl));
     assert(0 == ic_decl_get_op(decl));
 
     /* check that getting the right type out is fine */
@@ -44,7 +43,7 @@ void test_fdecl(void) {
     puts("Success");
 }
 
-void test_tdecl(void) {
+void test_tdecl_struct(void) {
     struct ic_field *field = 0;
     struct ic_decl *decl = 0;
     struct ic_decl_type *tdecl = 0;
@@ -60,7 +59,6 @@ void test_tdecl(void) {
 
     /* check that trying to pull out the wrong type is an error */
     assert(0 == ic_decl_get_fdecl(decl));
-    assert(0 == ic_decl_get_udecl(decl));
     assert(0 == ic_decl_get_op(decl));
 
     /* check that getting the right type out is fine */
@@ -68,9 +66,9 @@ void test_tdecl(void) {
     assert(tdecl);
 
     /* initialise tdecl */
-    assert(1 == ic_decl_type_init(tdecl, "Foo", 3));
+    assert(1 == ic_decl_type_init_struct(tdecl, "Foo", 3));
 
-    ch = ic_symbol_contents(&(tdecl->name));
+    ch = ic_symbol_contents(ic_decl_type_get_name(tdecl));
     assert(ch);
     assert(0 == strcmp(ch, "Foo"));
 
@@ -92,43 +90,42 @@ void test_tdecl(void) {
     puts("Success");
 }
 
-void test_udecl(void) {
+void test_tdecl_union(void) {
     struct ic_field *field = 0;
     struct ic_decl *decl = 0;
-    struct ic_decl_union *udecl = 0;
+    struct ic_decl_type *tdecl = 0;
     /* fake indent level */
     unsigned int fake_indent = 0;
     char *ch = 0;
 
-    /* test union decl */
-    decl = ic_decl_new(ic_decl_tag_union);
+    /* test type decl */
+    decl = ic_decl_new(ic_decl_tag_type);
     assert(decl);
     /* check type */
-    assert(decl->tag == ic_decl_tag_union);
+    assert(decl->tag == ic_decl_tag_type);
 
     /* check that trying to pull out the wrong type is an error */
     assert(0 == ic_decl_get_fdecl(decl));
-    assert(0 == ic_decl_get_tdecl(decl));
     assert(0 == ic_decl_get_op(decl));
 
     /* check that getting the right type out is fine */
-    udecl = ic_decl_get_udecl(decl);
-    assert(udecl);
+    tdecl = ic_decl_get_tdecl(decl);
+    assert(tdecl);
 
-    /* initialise udecl */
-    assert(1 == ic_decl_union_init(udecl, "Foo", 3));
+    /* initialise tdecl */
+    assert(1 == ic_decl_type_init_union(tdecl, "Foo", 3));
 
-    ch = ic_symbol_contents(&(udecl->name));
+    ch = ic_symbol_contents(ic_decl_type_get_name(tdecl));
     assert(ch);
     assert(0 == strcmp(ch, "Foo"));
 
-    assert(0 == ic_decl_union_field_length(udecl));
+    assert(0 == ic_decl_type_field_length(tdecl));
     /* add a single field */
     field = ic_field_new("bar", 3, "Baz", 3, ic_parse_perm_default());
-    assert(1 == ic_decl_union_add_field(udecl, field));
-    assert(1 == ic_decl_union_field_length(udecl));
+    assert(1 == ic_decl_type_add_field(tdecl, field));
+    assert(1 == ic_decl_type_field_length(tdecl));
 
-    field = ic_decl_union_field_get(udecl, 0);
+    field = ic_decl_type_field_get(tdecl, 0);
     assert(field);
 
     ch = ic_symbol_contents(&(field->name));
@@ -157,7 +154,6 @@ void test_op(void) {
     /* check that trying to pull out the wrong type is an error */
     assert(0 == ic_decl_get_fdecl(decl));
     assert(0 == ic_decl_get_tdecl(decl));
-    assert(0 == ic_decl_get_udecl(decl));
 
     /* check that getting the right type out is fine */
     op = ic_decl_get_op(decl);
@@ -181,8 +177,8 @@ void test_op(void) {
 
 int main(void) {
     test_fdecl();
-    test_tdecl();
-    test_udecl();
+    test_tdecl_struct();
+    test_tdecl_union();
     test_op();
 
     puts("Success");

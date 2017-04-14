@@ -21,6 +21,45 @@ unsigned int ic_analyse(struct ic_kludge *kludge);
  */
 unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type *tdecl);
 
+/* generate the constructor(s) for this type
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_analyse_decl_type_generate_constructor(struct ic_kludge *kludge, struct ic_decl_type *tdecl);
+
+/* takes a decl_type_struct and performs analysis
+ *
+ * FIXME need a way of signalling and passing errors
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_analyse_decl_type_struct(struct ic_kludge *kludge, struct ic_decl_type_struct *tdecl_struct);
+
+/* generate the constructor(s) for this type
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_analyse_decl_type_struct_generate_constructor(struct ic_kludge *kludge, struct ic_decl_type *tdecl, struct ic_decl_type_struct *tdecl_struct);
+
+/* takes a decl_type_union and performs analysis
+ *
+ * FIXME need a way of signalling and passing errors
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl_type_union *tdecl_union);
+
+/* generate the constructor(s) for this type
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_analyse_decl_type_union_generate_constructor(struct ic_kludge *kludge, struct ic_decl_type *tdecl, struct ic_decl_type_union *tdecl_union);
+
 /* takes a decl_func and performs analysis
  *
  * FIXME need a way of signalling and passing errors

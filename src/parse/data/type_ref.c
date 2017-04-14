@@ -222,6 +222,8 @@ unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, un
  * returns 0 on failure
  */
 struct ic_symbol *ic_type_ref_get_symbol(struct ic_type_ref *type) {
+    struct ic_symbol *sym = 0;
+
     if (!type) {
         puts("ic_type_ref_get_symbol: type was null");
         return 0;
@@ -236,12 +238,18 @@ struct ic_symbol *ic_type_ref_get_symbol(struct ic_type_ref *type) {
 
         case ic_type_ref_symbol:
             /* just return the symbol */
-            return &(type->u.sym);
+            sym = &(type->u.sym);
+            return sym;
             break;
 
         case ic_type_ref_resolved:
             /* the decl_type already has a symbol name */
-            return &(type->u.tdecl->name);
+            sym = ic_decl_type_get_name(type->u.tdecl);
+            if (!sym) {
+                puts("ic_type_ref_get_symbol: call to ic_decl_type_get_name failed");
+                return 0;
+            }
+            return sym;
             break;
 
         default:
@@ -338,6 +346,8 @@ struct ic_decl_type *ic_type_ref_get_type_decl(struct ic_type_ref *type) {
 
 /* print this this type */
 void ic_type_ref_print(FILE *fd, struct ic_type_ref *type) {
+    struct ic_symbol *sym = 0;
+
     if (!type) {
         puts("ic_type_ref_print: type was null");
         return;
@@ -349,11 +359,17 @@ void ic_type_ref_print(FILE *fd, struct ic_type_ref *type) {
 
         case ic_type_ref_symbol:
             /* if we are of type symbol then just print that symbol */
-            ic_symbol_print(fd, &(type->u.sym));
+            sym = &(type->u.sym);
+            ic_symbol_print(fd, sym);
             break;
 
         case ic_type_ref_resolved:
-            ic_symbol_print(fd, &(type->u.tdecl->name));
+            sym = ic_decl_type_get_name(type->u.tdecl);
+            if (!sym) {
+                puts("ic_type_ref_print: call to ic_decl_type_get_name failed");
+                return;
+            }
+            ic_symbol_print(fd, sym);
             break;
 
         default:

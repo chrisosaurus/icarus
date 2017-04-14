@@ -201,7 +201,7 @@ unsigned int ic_decl_func_is_void(struct ic_decl_func *fdecl);
  * gives the symbol 'Foo' and the
  * fields (a, Int) and (b, String)
  */
-struct ic_decl_type {
+struct ic_decl_type_struct {
     struct ic_symbol name;
 
     /* a pointer vector of field(s) */
@@ -238,9 +238,6 @@ struct ic_decl_type {
      * 0 if this is not the bool type
      */
     unsigned int isbool;
-
-    /* 1 for builtin, 0 for not */
-    unsigned int builtin;
 };
 
 /* allocate and return a new decl_type
@@ -250,7 +247,7 @@ struct ic_decl_type {
  * returns new ic_field * on success
  * returns 0 on failure
  */
-struct ic_decl_type *ic_decl_type_new(char *name_src, unsigned int name_len);
+struct ic_decl_type_struct *ic_decl_type_struct_new(char *name_src, unsigned int name_len);
 
 /* initialise an existing decl_type
  * only needs name and len
@@ -259,7 +256,7 @@ struct ic_decl_type *ic_decl_type_new(char *name_src, unsigned int name_len);
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_init(struct ic_decl_type *tdecl, char *name_src, unsigned int name_len);
+unsigned int ic_decl_type_struct_init(struct ic_decl_type_struct *tdecl, char *name_src, unsigned int name_len);
 
 /* calls destroy on every element within
  *
@@ -271,78 +268,71 @@ unsigned int ic_decl_type_init(struct ic_decl_type *tdecl, char *name_src, unsig
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_destroy(struct ic_decl_type *tdecl, unsigned int free_tdecl);
+unsigned int ic_decl_type_struct_destroy(struct ic_decl_type_struct *tdecl, unsigned int free_tdecl);
+
+/* get symbol of name for this type
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_decl_type_struct_get_name(struct ic_decl_type_struct *tdecl);
 
 /* mark the supplied decl as the void type
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_mark_void(struct ic_decl_type *tdecl);
+unsigned int ic_decl_type_struct_mark_void(struct ic_decl_type_struct *tdecl);
 
 /* mark the supplied decl as the bool type
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_mark_bool(struct ic_decl_type *tdecl);
+unsigned int ic_decl_type_struct_mark_bool(struct ic_decl_type_struct *tdecl);
 
 /* add a new field to types list of fields
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_add_field(struct ic_decl_type *tdecl, struct ic_field *field);
-
-/* mark this tdecl as being a builtin
- *
- * returns 1 on success
- * returns 0 on failure
- */
-unsigned int ic_decl_type_mark_builtin(struct ic_decl_type *tdecl);
-
-/* test if builtin
- *
- * returns 1 if builtin
- * returns 0 otherwise
- */
-unsigned int ic_decl_type_isbuiltin(struct ic_decl_type *tdecl);
+unsigned int ic_decl_type_struct_add_field(struct ic_decl_type_struct *tdecl, struct ic_field *field);
 
 /* test if bool
  *
  * returns 1 if bool
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_isbool(struct ic_decl_type *tdecl);
+unsigned int ic_decl_type_struct_isbool(struct ic_decl_type_struct *tdecl);
 
 /* test if void
  *
  * returns 1 if void
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_isvoid(struct ic_decl_type *tdecl);
+unsigned int ic_decl_type_struct_isvoid(struct ic_decl_type_struct *tdecl);
 
 /* print the decl_type to provided fd */
-void ic_decl_type_print(FILE *fd, struct ic_decl_type *tdecl, unsigned int *indent_level);
-void ic_decl_type_print_header(FILE *fd, struct ic_decl_type *tdecl, unsigned int *indent_level);
-void ic_decl_type_print_body(FILE *fd, struct ic_decl_type *tdecl, unsigned int *indent_level);
+void ic_decl_type_struct_print(FILE *fd, struct ic_decl_type_struct *tdecl, unsigned int *indent_level);
+void ic_decl_type_struct_print_header(FILE *fd, struct ic_decl_type_struct *tdecl, unsigned int *indent_level);
+void ic_decl_type_struct_print_body(FILE *fd, struct ic_decl_type_struct *tdecl, unsigned int *indent_level);
 
 /* print debug information for this type */
-void ic_decl_type_print_debug(FILE *fd, struct ic_decl_type *tdecl);
+void ic_decl_type_struct_print_debug(FILE *fd, struct ic_decl_type_struct *tdecl);
 
 /* return the symbol name of this types
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_symbol *ic_decl_type_name(struct ic_decl_type *tdecl);
+struct ic_symbol *ic_decl_type_struct_name(struct ic_decl_type_struct *tdecl);
 
 /* get the char * contents of the name
  *
  * returns char * on success
  * returns 0 on failure
  */
-char *ic_decl_type_str(struct ic_decl_type *tdecl);
+char *ic_decl_type_struct_str(struct ic_decl_type_struct *tdecl);
 
 /* return a mangled representation of this function full signature
  *
@@ -363,7 +353,268 @@ char *ic_decl_type_str(struct ic_decl_type *tdecl);
  * returns char* on success
  * returns 0 on failure
  */
-char *ic_decl_type_sig_mangled_full(struct ic_decl_type *tdecl);
+char *ic_decl_type_struct_sig_mangled_full(struct ic_decl_type_struct *tdecl);
+
+/* get number of fields
+ *
+ * returns number on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_struct_field_length(struct ic_decl_type_struct *tdecl);
+
+/* get field by number
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_field *ic_decl_type_struct_field_get(struct ic_decl_type_struct *tdecl, unsigned int field_number);
+
+/* get the type of a field by name
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type *ic_decl_type_struct_get_field_type(struct ic_decl_type_struct *tdecl, char *field_name);
+
+/* add field to field_dict
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_struct_add_field_type(struct ic_decl_type_struct *tdecl, char *field_name, struct ic_decl_type *type);
+
+/* compare 2 types for equality
+ *
+ * returns 1 if equal
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_struct_equal(struct ic_decl_type_struct *a, struct ic_decl_type_struct *b);
+
+struct ic_decl_type_union {
+    struct ic_symbol name;
+
+    /* a pointer vector of field(s) */
+    struct ic_pvector fields;
+
+    /* a map from (char *) -> type *
+     * used for looking up the type of a field by name
+     * this is filled in during analyse time by
+     *  ic_analyse_decl_union
+     */
+    struct ic_dict field_dict;
+};
+
+/* allocate and return a new decl_union
+ * only needs name and len
+ * will also allocate an empty pvector for fields
+ *
+ * returns new ic_field * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type_union *ic_decl_type_union_new(char *name_src, unsigned int name_len);
+
+/* initialise an existing decl_union
+ * only needs name and len
+ * will also allocate an empty pvector for fields
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_union_init(struct ic_decl_type_union *udecl, char *name_src, unsigned int name_len);
+
+/* calls destroy on every element within
+ *
+ * this will only free the udecl if `free_udecl` is truthy
+ *
+ * the caller must determine if it is appropriate
+ * or not to call free(decl)
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_union_destroy(struct ic_decl_type_union *udecl, unsigned int free_udecl);
+
+/* get symbol of name for this type
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_decl_type_union_get_name(struct ic_decl_type_union *udecl);
+
+/* add a new field to types list of fields
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_union_add_field(struct ic_decl_type_union *udecl, struct ic_field *field);
+
+/* print the decl_union to provided fd */
+void ic_decl_type_union_print(FILE *fd, struct ic_decl_type_union *udecl, unsigned int *indent_level);
+void ic_decl_type_union_print_header(FILE *fd, struct ic_decl_type_union *udecl, unsigned int *indent_level);
+void ic_decl_type_union_print_body(FILE *fd, struct ic_decl_type_union *udecl, unsigned int *indent_level);
+
+/* print debug information for this type */
+void ic_decl_type_union_print_debug(FILE *fd, struct ic_decl_type_union *udecl);
+
+/* return the symbol name of this types
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_decl_type_union_name(struct ic_decl_type_union *tdecl);
+
+/* get the char * contents of the name
+ *
+ * returns char * on success
+ * returns 0 on failure
+ */
+char *ic_decl_type_union_str(struct ic_decl_type_union *tdecl);
+
+/* get number of fields
+ *
+ * returns number on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_union_field_length(struct ic_decl_type_union *udecl);
+
+/* get field by number
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_field *ic_decl_type_union_field_get(struct ic_decl_type_union *udecl, unsigned int field_number);
+
+/* get the type of a field by name
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type *ic_decl_type_union_get_field_type(struct ic_decl_type_union *udecl, char *field_name);
+
+/* add field to field_dict
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_union_add_field_type(struct ic_decl_type_union *udecl, char *field_name, struct ic_decl_type *type);
+
+/* compare types for equality
+ *
+ * returns 1 if equals
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_union_equal(struct ic_decl_type_union *a, struct ic_decl_type_union *b);
+
+enum ic_decl_type_tag {
+    ic_decl_type_tag_struct,
+    ic_decl_type_tag_union,
+};
+
+/* Note: decl_type lacks a _new and _init as it only makes sense
+ * in the context of one of its subtypes
+ */
+struct ic_decl_type {
+    enum ic_decl_type_tag tag;
+    union {
+        struct ic_decl_type_struct tstruct;
+        struct ic_decl_type_union tunion;
+    } u;
+    /* 1 for builtin, 0 for not */
+    unsigned int builtin;
+};
+
+/* allocate and initialise a new ic_decl_type as a struct
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type *ic_decl_type_new_struct(char *name_src, unsigned int name_len);
+
+/* initialise an existing ic_decl_type as a struct
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_init_struct(struct ic_decl_type *tdecl, char *name_src, unsigned int name_len);
+
+/* allocate and initialise a new ic_decl_type as a union
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type *ic_decl_type_new_union(char *name_src, unsigned int name_len);
+
+/* initialise an existing ic_decl_type as a union
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_init_union(struct ic_decl_type *tdecl, char *name_src, unsigned int name_len);
+
+/* destroy an ic_decl_type
+ *
+ * will only free tdecl of free_tdectl is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_destroy(struct ic_decl_type *tdecl, unsigned int free_tdecl);
+
+/* mark this tdecl as being a builtin
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_mark_builtin(struct ic_decl_type *tdecl);
+
+/* test if builtin
+ *
+ * returns 1 if builtin
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_isbuiltin(struct ic_decl_type *tdecl);
+
+/* get symbol of name for this type
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_decl_type_get_name(struct ic_decl_type *tdecl);
+
+/* fetch a pointer to the internal decl_type_struct
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type_struct *ic_decl_type_get_struct(struct ic_decl_type *tdecl);
+
+/* fetch a pointer to the internal decl_type_union
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type_union *ic_decl_type_get_union(struct ic_decl_type *tdecl);
+
+/* return the symbol name of this type
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_decl_type_name(struct ic_decl_type *tdecl);
+
+/* get the char * contents of the name
+ *
+ * returns char * on success
+ * returns 0 on failure
+ */
+char *ic_decl_type_str(struct ic_decl_type *tdecl);
+
+/* add a new field to types list of fields
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_add_field(struct ic_decl_type *tdecl, struct ic_field *field);
 
 /* get number of fields
  *
@@ -393,96 +644,41 @@ struct ic_decl_type *ic_decl_type_get_field_type(struct ic_decl_type *tdecl, cha
  */
 unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char *field_name, struct ic_decl_type *type);
 
-/* compare 2 types for equality
+/* the full signature for the constructor of this type
  *
- * returns 1 if equal
+ * returns * on success
+ * returns 0 on failure
+ */
+char *ic_decl_type_sig_mangled_full(struct ic_decl_type *tdecl);
+
+/* test if bool
+ *
+ * returns 1 if bool
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_isbool(struct ic_decl_type *tdecl);
+
+/* test if void
+ *
+ * returns 1 if void
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_isvoid(struct ic_decl_type *tdecl);
+
+/* compare types for equality
+ *
+ * returns 1 if equals
  * returns 0 otherwise
  */
 unsigned int ic_decl_type_equal(struct ic_decl_type *a, struct ic_decl_type *b);
 
-struct ic_decl_union {
-    struct ic_symbol name;
+/* print the decl_type to provided fd */
+void ic_decl_type_print(FILE *fd, struct ic_decl_type *tdecl, unsigned int *indent_level);
+void ic_decl_type_print_header(FILE *fd, struct ic_decl_type *tdecl, unsigned int *indent_level);
+void ic_decl_type_print_body(FILE *fd, struct ic_decl_type *tdecl, unsigned int *indent_level);
 
-    /* a pointer vector of field(s) */
-    struct ic_pvector fields;
-
-    /* a map from (char *) -> type *
-     * used for looking up the type of a field by name
-     * this is filled in during analyse time by
-     *  ic_analyse_decl_union
-     */
-    struct ic_dict field_dict;
-};
-
-/* allocate and return a new decl_union
- * only needs name and len
- * will also allocate an empty pvector for fields
- *
- * returns new ic_field * on success
- * returns 0 on failure
- */
-struct ic_decl_union *ic_decl_union_new(char *name_src, unsigned int name_len);
-
-/* initialise an existing decl_union
- * only needs name and len
- * will also allocate an empty pvector for fields
- *
- * returns 1 on success
- * returns 0 on failure
- */
-unsigned int ic_decl_union_init(struct ic_decl_union *udecl, char *name_src, unsigned int name_len);
-
-/* calls destroy on every element within
- *
- * this will only free the udecl if `free_udecl` is truthy
- *
- * the caller must determine if it is appropriate
- * or not to call free(decl)
- *
- * returns 1 on success
- * returns 0 on failure
- */
-unsigned int ic_decl_union_destroy(struct ic_decl_union *udecl, unsigned int free_udecl);
-
-/* add a new field to types list of fields
- *
- * returns 1 on success
- * returns 0 on failure
- */
-unsigned int ic_decl_union_add_field(struct ic_decl_union *udecl, struct ic_field *field);
-
-/* print the decl_union to provided fd */
-void ic_decl_union_print(FILE *fd, struct ic_decl_union *udecl, unsigned int *indent_level);
-void ic_decl_union_print_header(FILE *fd, struct ic_decl_union *udecl, unsigned int *indent_level);
-void ic_decl_union_print_body(FILE *fd, struct ic_decl_union *udecl, unsigned int *indent_level);
-
-/* get number of fields
- *
- * returns number on success
- * returns 0 on failure
- */
-unsigned int ic_decl_union_field_length(struct ic_decl_union *udecl);
-
-/* get field by number
- *
- * returns * on success
- * returns 0 on failure
- */
-struct ic_field *ic_decl_union_field_get(struct ic_decl_union *udecl, unsigned int field_number);
-
-/* get the type of a field by name
- *
- * returns * on success
- * returns 0 on failure
- */
-struct ic_decl_type *ic_decl_union_get_field_type(struct ic_decl_union *udecl, char *field_name);
-
-/* add field to field_dict
- *
- * returns 1 on success
- * returns 0 on failure
- */
-unsigned int ic_decl_union_add_field_type(struct ic_decl_union *udecl, char *field_name, struct ic_decl_type *type);
+/* print debug information for this type */
+void ic_decl_type_print_debug(FILE *fd, struct ic_decl_type *tdecl);
 
 /* an op decl is only a mapping of a symbol (say '+')
  * to another (say 'plus')
@@ -521,10 +717,10 @@ unsigned int ic_decl_op_destroy(struct ic_decl_op *op, unsigned int free_op);
 /* print the decl_op to provided fd */
 void ic_decl_op_print(FILE *fd, struct ic_decl_op *op, unsigned int *indent_level);
 
+/* FIXME TODO should this level be aware of builtin? */
 enum ic_decl_tag {
     ic_decl_tag_func,
     ic_decl_tag_type,
-    ic_decl_tag_union,
     ic_decl_tag_builtin_func,
     ic_decl_tag_builtin_type,
     ic_decl_tag_builtin_op
@@ -535,7 +731,6 @@ struct ic_decl {
     union {
         struct ic_decl_func fdecl;
         struct ic_decl_type tdecl;
-        struct ic_decl_union udecl;
         struct ic_decl_op op;
     } u;
 };
@@ -587,14 +782,6 @@ struct ic_decl_func *ic_decl_get_fdecl(struct ic_decl *decl);
  * returns 0 on failure
  */
 struct ic_decl_type *ic_decl_get_tdecl(struct ic_decl *decl);
-
-/* returns pointer to ic_decl_union element
- * this function will only success if the decl is of type decl_union
- *
- * returns pointer on success
- * returns 0 on failure
- */
-struct ic_decl_union *ic_decl_get_udecl(struct ic_decl *decl);
 
 /* returns pointer to ic_decl_op element
 * this function will only success if the decl is of type decl_op

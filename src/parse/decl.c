@@ -104,8 +104,14 @@ struct ic_decl *ic_parse_decl_type_header(struct ic_token_list *token_list) {
     struct ic_decl *decl = 0;
     /* our tdecl within the decl */
     struct ic_decl_type *tdecl = 0;
+    /* our tdecl_struct within the tdecl */
+    struct ic_decl_type_struct *tdecl_struct = 0;
     /* current token we are looking at */
     struct ic_token *token = 0;
+    /* token string */
+    char *token_str = 0;
+    /* token string length */
+    unsigned int token_str_len = 0;
 
     if (!token_list) {
         puts("ic_parse_decl_type_header: token_list was null");
@@ -130,25 +136,58 @@ struct ic_decl *ic_parse_decl_type_header(struct ic_token_list *token_list) {
     tdecl = ic_decl_get_tdecl(decl);
     if (!tdecl) {
         puts("ic_parse_decl_type_header: call to ic_decl_get_tdecl failed");
-        free(decl);
-        return 0;
+        goto ERROR;
     }
 
     /* get our type name */
     token = ic_token_list_next_important(token_list);
     if (!token) {
         puts("ic_parse_decl_type_header: call to ic_token_list_next failed for func name");
-        return 0;
+        goto ERROR;
     }
 
-    /* initialise our tdecl */
-    if (!ic_decl_type_init(tdecl, ic_token_get_string(token), ic_token_get_string_length(token))) {
-        puts("ic_parse_decl_type_header: call to ic_decl_type_init failed");
-        free(decl);
-        return 0;
+    token_str = ic_token_get_string(token);
+    if (!token_str) {
+        puts("ic_parse_decl_type_header: call to ic_token_get_string failed for func name");
+        goto ERROR;
+    }
+    token_str_len = ic_token_get_string_length(token);
+
+    /* initialise our tdecl_struct */
+    if (!ic_decl_type_init_struct(tdecl, token_str, token_str_len)) {
+        puts("ic_parse_decl_type_header: call to ic_decl_type_init_struct failed");
+        goto ERROR;
+    }
+
+    tdecl_struct = ic_decl_type_get_struct(tdecl);
+    if (!tdecl_struct) {
+        puts("ic_parse_decl_type_header: call to ic_decl_type_get_struct failed");
+        goto ERROR;
+    }
+
+    /* if this is a 'special' type, then mark it so */
+    if (!strncmp(token_str, "Void", 4)) {
+        /* if this is the void type then mark it as so */
+        if (!ic_decl_type_struct_mark_void(tdecl_struct)) {
+            puts("ic_parse_decl_type_header: call to ic_decl_type_struct_mark_void failed");
+            goto ERROR;
+        }
+    } else if (!strncmp(token_str, "Bool", 4)) {
+        /* if this is the bool type then mark it as so */
+        if (!ic_decl_type_struct_mark_bool(tdecl_struct)) {
+            puts("ic_parse_decl_type_header: call to ic_decl_type_struct_mark_bool failed");
+            goto ERROR;
+        }
     }
 
     return decl;
+
+ERROR:
+    puts("ic_parse_decl_type_header: error");
+    if (decl) {
+        free(decl);
+    }
+    return 0;
 }
 
 struct ic_decl *ic_parse_decl_type_body(struct ic_token_list *token_list, struct ic_decl *decl) {
@@ -297,8 +336,8 @@ struct ic_decl *ic_parse_decl_union(struct ic_token_list *token_list) {
 struct ic_decl *ic_parse_decl_union_header(struct ic_token_list *token_list) {
     /* our resulting ic_decl */
     struct ic_decl *decl = 0;
-    /* our udecl within the decl */
-    struct ic_decl_union *udecl = 0;
+    /* our tdecl within the decl */
+    struct ic_decl_type *tdecl = 0;
     /* current token we are looking at */
     struct ic_token *token = 0;
 
@@ -315,16 +354,16 @@ struct ic_decl *ic_parse_decl_union_header(struct ic_token_list *token_list) {
     }
 
     /* allocate and init our decl */
-    decl = ic_decl_new(ic_decl_tag_union);
+    decl = ic_decl_new(ic_decl_tag_type);
     if (!decl) {
         puts("ic_parse_decl_union_header: call to ic_decl_new failed");
         return 0;
     }
 
-    /* fetch our udecl from within decl */
-    udecl = ic_decl_get_udecl(decl);
-    if (!udecl) {
-        puts("ic_parse_decl_union_header: call to ic_decl_get_udecl failed");
+    /* fetch our tdecl from within decl */
+    tdecl = ic_decl_get_tdecl(decl);
+    if (!tdecl) {
+        puts("ic_parse_decl_union_header: call to ic_decl_get_tdecl failed");
         free(decl);
         return 0;
     }
@@ -336,9 +375,9 @@ struct ic_decl *ic_parse_decl_union_header(struct ic_token_list *token_list) {
         return 0;
     }
 
-    /* initialise our udecl */
-    if (!ic_decl_union_init(udecl, ic_token_get_string(token), ic_token_get_string_length(token))) {
-        puts("ic_parse_decl_union_header: call to ic_decl_union_init failed");
+    /* initialise our tdecl */
+    if (!ic_decl_type_init_union(tdecl, ic_token_get_string(token), ic_token_get_string_length(token))) {
+        puts("ic_parse_decl_union_header: call to ic_decl_type_init_union failed");
         free(decl);
         return 0;
     }
@@ -349,8 +388,8 @@ struct ic_decl *ic_parse_decl_union_header(struct ic_token_list *token_list) {
 struct ic_decl *ic_parse_decl_union_body(struct ic_token_list *token_list, struct ic_decl *decl) {
     /* parsed field */
     struct ic_field *field = 0;
-    /* our udecl within the decl */
-    struct ic_decl_union *udecl = 0;
+    /* our tdecl within the decl */
+    struct ic_decl_type *tdecl = 0;
     /* used to mark success of while loop */
     int success = 0;
     /* current token we are looking at */
@@ -370,10 +409,10 @@ struct ic_decl *ic_parse_decl_union_body(struct ic_token_list *token_list, struc
         return 0;
     }
 
-    /* fetch our udecl from within decl */
-    udecl = ic_decl_get_udecl(decl);
-    if (!udecl) {
-        puts("ic_parse_decl_union_body: call to ic_decl_get_udecl failed");
+    /* fetch our tdecl from within decl */
+    tdecl = ic_decl_get_tdecl(decl);
+    if (!tdecl) {
+        puts("ic_parse_decl_union_body: call to ic_decl_get_tdecl failed");
         free(decl);
         return 0;
     }
@@ -402,8 +441,8 @@ struct ic_decl *ic_parse_decl_union_body(struct ic_token_list *token_list, struc
         }
 
         /* and store it */
-        if (!ic_decl_union_add_field(udecl, field)) {
-            puts("ic_parse_decl_union_body: call to ic_decl_union_add_field failed");
+        if (!ic_decl_type_add_field(tdecl, field)) {
+            puts("ic_parse_decl_union_body: call to ic_decl_type_add_field failed");
 
             /* free field and all contents */
             if (!ic_field_destroy(field, 1)) {

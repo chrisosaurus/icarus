@@ -96,6 +96,129 @@ ERROR:
  * returns 0 on failure
  */
 unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type *tdecl) {
+    struct ic_decl_type_struct *tdecl_struct = 0;
+    struct ic_decl_type_union *tdecl_union = 0;
+
+    if (!kludge) {
+        puts("ic_analyse_decl_type: kludge was null");
+        return 0;
+    }
+
+    if (!tdecl) {
+        puts("ic_analyse_decl_type: tdecl was null");
+        return 0;
+    }
+
+    switch (tdecl->tag) {
+        case ic_decl_type_tag_struct:
+            tdecl_struct = ic_decl_type_get_struct(tdecl);
+            if (!tdecl_struct) {
+                puts("ic_analsye_decl_type: call to ic_decl_type_get_struct failed");
+                return 0;
+            }
+            if (!ic_analyse_decl_type_struct(kludge, tdecl_struct)) {
+                puts("ic_analsye_decl_type: call to ic_analyse_decl_type_struct failed");
+                return 0;
+            }
+            break;
+
+        case ic_decl_type_tag_union:
+            tdecl_union = ic_decl_type_get_union(tdecl);
+            if (!tdecl_union) {
+                puts("ic_analsye_decl_type: call to ic_decl_type_get_union failed");
+                return 0;
+            }
+            if (!ic_analyse_decl_type_union(kludge, tdecl_union)) {
+                puts("ic_analsye_decl_type: call to ic_analyse_decl_type_union failed");
+                return 0;
+            }
+            break;
+
+        default:
+            puts("ic_analyse_decl_type: unknown tag");
+            return 0;
+            break;
+    }
+
+    /* for non-builtin types we need to make sure that the backend generates
+     * an appropriate default constructor for this type
+     */
+    if (!ic_decl_type_isbuiltin(tdecl)) {
+        if (!ic_analyse_decl_type_generate_constructor(kludge, tdecl)) {
+            puts("ic_analyse_decl_type: call to ic_analyse_decl_type_generate_constructor failed");
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+/* generate the constructor(s) for this type
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_analyse_decl_type_generate_constructor(struct ic_kludge *kludge, struct ic_decl_type *tdecl) {
+    struct ic_decl_type_struct *tdecl_struct = 0;
+    struct ic_decl_type_union *tdecl_union = 0;
+
+    if (!kludge) {
+        puts("ic_analyse_decl_type_generate_constructor: kludge was null");
+        return 0;
+    }
+
+    if (!tdecl) {
+        puts("ic_analyse_decl_type_generate_constructor: tdecl was null");
+        return 0;
+    }
+
+    if (tdecl->builtin != 0) {
+        puts("ic_analyse_decl_type_generate_constructor: tdecl was builtin");
+        return 0;
+    }
+
+    switch (tdecl->tag) {
+        case ic_decl_type_tag_struct:
+            tdecl_struct = ic_decl_type_get_struct(tdecl);
+            if (!tdecl_struct) {
+                puts("ic_analyse_decl_type_generate_constructor: call to ic_decl_type_get_struct failed");
+                return 0;
+            }
+            if (!ic_analyse_decl_type_struct_generate_constructor(kludge, tdecl, tdecl_struct)) {
+                puts("ic_analyse_decl_type_generate_constructor: call to ic_analyse_decl_type_struct_generate_constructor failed");
+                return 0;
+            }
+            return 1;
+            break;
+
+        case ic_decl_type_tag_union:
+            tdecl_union = ic_decl_type_get_union(tdecl);
+            if (!tdecl_union) {
+                puts("ic_analyse_decl_type_generate_conunionor: call to ic_decl_type_get_union failed");
+                return 0;
+            }
+            if (!ic_analyse_decl_type_union_generate_constructor(kludge, tdecl, tdecl_union)) {
+                puts("ic_analyse_decl_type_generate_conunionor: call to ic_analyse_decl_type_union_generate_constructor failed");
+                return 0;
+            }
+            return 1;
+            break;
+
+        default:
+            puts("ic_analyse_decl_type_generate_constructor: unknown tag");
+            return 0;
+            break;
+    }
+}
+
+/* takes a decl_type_struct and performs analysis
+ *
+ * FIXME need a way of signalling and passing errors
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_analyse_decl_type_struct(struct ic_kludge *kludge, struct ic_decl_type_struct *tdecl_struct) {
     /* name of current type we are trying to declare */
     char *this_type = 0;
 
@@ -110,30 +233,25 @@ unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type 
     char *type_str = 0;
     struct ic_decl_type *field_type = 0;
 
-    /* func decl for default type constructor */
-    struct ic_decl_func *constructor_decl = 0;
-    /* length of type_str used for generating cons */
-    unsigned int type_str_len = 0;
-
     if (!kludge) {
-        puts("ic_analyse_decl_type: kludge was null");
+        puts("ic_analyse_decl_type_struct: kludge was null");
         return 0;
     }
 
-    if (!tdecl) {
-        puts("ic_analyse_decl_type: tdecl was null");
+    if (!tdecl_struct) {
+        puts("ic_analyse_decl_type_struct: tdecl_struct was null");
         return 0;
     }
 
-    this_type = ic_decl_type_str(tdecl);
+    this_type = ic_decl_type_struct_str(tdecl_struct);
     if (!this_type) {
-        puts("ic_analyse_decl_type: for this_type: call to ic_decl_type_str failed");
+        puts("ic_analyse_decl_type_struct: for this_type: call to ic_decl_type_struct_str failed");
         return 0;
     }
 
     /* check fields */
-    if (!ic_analyse_field_list("type declaration", this_type, kludge, &(tdecl->fields), this_type)) {
-        puts("ic_analyse_decl_type: call to ic_analyse_field_list for field validation failed");
+    if (!ic_analyse_field_list("type declaration", this_type, kludge, &(tdecl_struct->fields), this_type)) {
+        puts("ic_analyse_decl_type_struct: call to ic_analyse_field_list for field validation failed");
         goto ERROR;
     }
 
@@ -143,11 +261,11 @@ unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type 
      * FIXME likewise it is also fetching type from string twice
      *       once here, and once in ic_analyse_field_list
      */
-    len = ic_pvector_length(&(tdecl->fields));
+    len = ic_pvector_length(&(tdecl_struct->fields));
     for (i = 0; i < len; ++i) {
-        field = ic_pvector_get(&(tdecl->fields), i);
+        field = ic_pvector_get(&(tdecl_struct->fields), i);
         if (!field) {
-            puts("ic_analyse_decl_type: call to ic_pvector_get failed");
+            puts("ic_analyse_decl_type_struct: call to ic_pvector_get failed");
             goto ERROR;
         }
 
@@ -165,77 +283,26 @@ unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type 
          */
         type_sym = ic_type_ref_get_symbol(&(field->type));
         if (!type_sym) {
-            puts("ic_analyse_decl_type: call to ic_type_ref_get_symbol_failed");
+            puts("ic_analyse_decl_type_struct: call to ic_type_ref_get_symbol_failed");
             goto ERROR;
         }
 
         type_str = ic_symbol_contents(type_sym);
         if (!type_str) {
-            puts("ic_analyse_decl_type: call to ic_symbol_contents failed");
+            puts("ic_analyse_decl_type_struct: call to ic_symbol_contents failed");
             goto ERROR;
         }
 
         /* check that this field's type exists */
         field_type = ic_kludge_get_decl_type(kludge, type_str);
         if (!field_type) {
-            puts("ic_analyse_decl_type: call to ic_kludge_get_type failed");
+            puts("ic_analyse_decl_type_struct: call to ic_kludge_get_type failed");
             goto ERROR;
         }
 
         /* insert this type into field_dict */
-        if (!ic_decl_type_add_field_type(tdecl, ic_symbol_contents(&(field->name)), field_type)) {
-            puts("ic_analyse_decl_type: call to ic_decl_type_add_field_type failed");
-            goto ERROR;
-        }
-    }
-
-    /* for non-builtin types we need to make sure that the backend generates
-     * an appropriate default constructor for this type
-     */
-    if (!ic_decl_type_isbuiltin(tdecl)) {
-        /* not a builtin, so we need to ensure backend generates a default
-         * constructor
-         *
-         * we also need to insert an appropriate function signature into
-         * kludge->dict_fsig so that any calls to this constructor are typed correctly
-         */
-
-        type_str = ic_symbol_contents(&(tdecl->name));
-        type_str_len = ic_symbol_length(&(tdecl->name));
-
-        constructor_decl = ic_decl_func_new(type_str, type_str_len);
-        if (!constructor_decl) {
-            puts("ic_analyse_decl_type: call to ic_decl_func_new failed");
-            goto ERROR;
-        }
-
-        /* associate constructor return value with type */
-        if (!ic_decl_func_set_return(constructor_decl, type_str, ic_symbol_length(type_sym))) {
-            puts("ic_analyse_decl_type: call to ic_decl_func_set_return failed");
-            goto ERROR;
-        }
-
-        /* populate func decl arguments....
-         * TODO FIXME this now means that the fields are shared between the fdecl and tdecl
-         * TODO FIXME iterating over the fields... once again (3rd time is the charm)
-         * TODO FIXME backends do not take this into account
-         */
-        len = ic_pvector_length(&(tdecl->fields));
-        for (i = 0; i < len; ++i) {
-            field = ic_pvector_get(&(tdecl->fields), i);
-            if (!field) {
-                puts("ic_analyse_decl_type: call to ic_pvector_get failed");
-                goto ERROR;
-            }
-
-            if (!ic_decl_func_add_arg(constructor_decl, field)) {
-                puts("ic_analyse_decl_type: call to ic_decl_func_add_arg failed");
-                goto ERROR;
-            }
-        }
-
-        if (!ic_kludge_add_default_constructor(kludge, tdecl, constructor_decl)) {
-            puts("ic_analyse_decl_type: call to ic_kludge_add_default_constructor failed");
+        if (!ic_decl_type_struct_add_field_type(tdecl_struct, ic_symbol_contents(&(field->name)), field_type)) {
+            puts("ic_analyse_decl_type_struct: call to ic_decl_type_struct_add_field_type failed");
             goto ERROR;
         }
     }
@@ -244,7 +311,160 @@ unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type 
 
 ERROR:
 
-    puts("ic_analyse_decl_type: error");
+    puts("ic_analyse_decl_type_struct: error");
+    return 0;
+}
+
+/* generate the constructor(s) for this type
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_analyse_decl_type_struct_generate_constructor(struct ic_kludge *kludge, struct ic_decl_type *tdecl, struct ic_decl_type_struct *tdecl_struct) {
+    struct ic_symbol *type_sym = 0;
+    char *type_str = 0;
+    /* length of type_str used for generating cons */
+    int type_str_len = 0;
+
+    /* current offset into field */
+    unsigned int i = 0;
+    /* cached len of field */
+    unsigned int len = 0;
+    /* current field */
+    struct ic_field *field = 0;
+
+    /* func decl for default type constructor */
+    struct ic_decl_func *constructor_decl = 0;
+
+    if (!kludge) {
+        puts("ic_analyse_decl_type_struct_generate_constructor: kludge was null");
+        return 0;
+    }
+
+    if (!tdecl) {
+        puts("ic_analyse_decl_type_struct_generate_constructor: tdecl was null");
+        return 0;
+    }
+
+    if (!tdecl_struct) {
+        puts("ic_analyse_decl_type_struct_generate_constructor: tdecl_struct was null");
+        return 0;
+    }
+
+    /* not a builtin, so we need to ensure backend generates a default
+     * constructor
+     *
+     * we also need to insert an appropriate function signature into
+     * kludge->dict_fsig so that any calls to this constructor are typed correctly
+     */
+
+    type_sym = ic_decl_type_struct_get_name(tdecl_struct);
+    if (!type_sym) {
+        puts("ic_analyse_decl_type_struct_generate_constructor: call to ic_decl_type_struct_get_name failed");
+        goto ERROR;
+    }
+
+    type_str = ic_symbol_contents(type_sym);
+    if (!type_str) {
+        puts("ic_analyse_decl_type_struct_generate_constructor: call to ic_symbol_contents failed");
+        goto ERROR;
+    }
+
+    type_str_len = ic_symbol_length(type_sym);
+    if (-1 == type_str_len) {
+        puts("ic_analyse_decl_type_struct_generate_constructor: call to ic_symbol_length failed");
+        goto ERROR;
+    }
+
+    constructor_decl = ic_decl_func_new(type_str, type_str_len);
+    if (!constructor_decl) {
+        puts("ic_analyse_decl_type_struct_generate_constructor: call to ic_decl_func_new failed");
+        goto ERROR;
+    }
+
+    /* associate constructor return value with type */
+    if (!ic_decl_func_set_return(constructor_decl, type_str, ic_symbol_length(type_sym))) {
+        puts("ic_analyse_decl_type_struct_generate_constructor: call to ic_decl_func_set_return failed");
+        goto ERROR;
+    }
+
+    /* populate func decl arguments....
+     * TODO FIXME this now means that the fields are shared between the fdecl and tdecl
+     * TODO FIXME iterating over the fields... once again (3rd time is the charm)
+     * TODO FIXME backends do not take this into account
+     */
+    len = ic_pvector_length(&(tdecl_struct->fields));
+    for (i = 0; i < len; ++i) {
+        field = ic_pvector_get(&(tdecl_struct->fields), i);
+        if (!field) {
+            puts("ic_analyse_decl_type_struct_generate_constructor: call to ic_pvector_get failed");
+            goto ERROR;
+        }
+
+        if (!ic_decl_func_add_arg(constructor_decl, field)) {
+            puts("ic_analyse_decl_type_struct_generate_constructor: call to ic_decl_func_add_arg failed");
+            goto ERROR;
+        }
+    }
+
+    if (!ic_kludge_add_default_constructor(kludge, tdecl, constructor_decl)) {
+        puts("ic_analyse_decl_type_struct_generate_constructor: call to ic_kludge_add_default_constructor failed");
+        goto ERROR;
+    }
+
+    /* success */
+    return 1;
+
+ERROR:
+
+    puts("ic_analyse_decl_type_struct_generate_constructor: error");
+    return 0;
+}
+
+/* takes a decl_type_union and performs analysis
+ *
+ * FIXME need a way of signalling and passing errors
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl_type_union *tdecl_union) {
+    if (!kludge) {
+        puts("ic_analyse_decl_type_union: kludge was null");
+        return 0;
+    }
+
+    if (!tdecl_union) {
+        puts("ic_analyse_decl_type_union: tdecl_union was null");
+        return 0;
+    }
+
+    puts("ic_analyse_decl_type_union: not implemented yet");
+    return 0;
+}
+
+/* generate the constructor(s) for this type
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_analyse_decl_type_union_generate_constructor(struct ic_kludge *kludge, struct ic_decl_type *tdecl, struct ic_decl_type_union *tdecl_union) {
+    if (!kludge) {
+        puts("ic_analyse_decl_type_union_generate_constructor: kludge was null");
+        return 0;
+    }
+
+    if (!tdecl) {
+        puts("ic_analyse_decl_type_union_generate_constructor: tdecl was null");
+        return 0;
+    }
+
+    if (!tdecl_union) {
+        puts("ic_analyse_decl_type_union_generate_constructor: tdecl_union was null");
+        return 0;
+    }
+
+    puts("ic_analyse_decl_type_union_generate_constructor: not implemented yet");
     return 0;
 }
 

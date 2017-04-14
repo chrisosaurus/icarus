@@ -12,25 +12,26 @@ int main(void) {
     unsigned int fake_indent = 0;
 
     /* test decl_type */
-    tdecl = ic_decl_type_new("Foo", 3);
+    tdecl = ic_decl_type_new_struct("Foo", 3);
     assert(tdecl);
 
     /* check type name is correct */
-    assert(!strncmp(ic_symbol_contents(&(tdecl->name)), "Foo", 3));
+    assert(!strncmp(ic_symbol_contents(ic_decl_type_get_name(tdecl)), "Foo", 3));
 
-    /* check vector is zero used
-     * FIXME expose lenght methods
-     */
-    assert(tdecl->fields.used == 0);
+    assert(0 == ic_decl_type_field_length(tdecl));
 
     /* add some fields */
     field = ic_field_new("a", 1, "Sint", 3, ic_parse_perm_default());
     assert(field);
     assert(1 == ic_decl_type_add_field(tdecl, field));
 
+    assert(1 == ic_decl_type_field_length(tdecl));
+
     field = ic_field_new("b", 1, "String", 6, ic_parse_perm_default());
     assert(field);
     assert(1 == ic_decl_type_add_field(tdecl, field));
+
+    assert(2 == ic_decl_type_field_length(tdecl));
 
     printf("Should see:\ntype Foo\n    a::Sint\n    b::String\nend\n");
 

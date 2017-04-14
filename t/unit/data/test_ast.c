@@ -6,39 +6,17 @@
 #include "../../../src/parse/permissions.h"
 
 void basic(void) {
-    struct ic_field *field = 0;
-    struct ic_decl_type *tdecl = 0;
     struct ic_ast *ast;
-    /* fake indent level */
-    unsigned int fake_indent = 0;
 
-    /* test decl_type */
-    tdecl = ic_decl_type_new("Foo", 3);
-    assert(tdecl);
+    struct ic_decl *decl_1 = 0;
+    struct ic_decl *decl_2 = 0;
 
-    /* check type name is correct */
-    assert(!strncmp(ic_symbol_contents(&(tdecl->name)), "Foo", 3));
+    decl_1 = ic_decl_new(ic_decl_tag_func);
+    assert(decl_1);
 
-    /* check vector is zero used
-     * FIXME should expose length methods
-     */
-    assert(tdecl->fields.used == 0);
+    decl_2 = ic_decl_new(ic_decl_tag_type);
+    assert(decl_2);
 
-    /* add some fields */
-    field = ic_field_new("a", 1, "Sint", 3, ic_parse_perm_default());
-    assert(field);
-    assert(1 == ic_decl_type_add_field(tdecl, field));
-
-    field = ic_field_new("b", 1, "String", 6, ic_parse_perm_default());
-    assert(field);
-    assert(1 == ic_decl_type_add_field(tdecl, field));
-
-    printf("Should see:\ntype Foo\n    a::Sint\n    b::String\nend\n");
-
-    /* output type */
-    ic_decl_type_print(stdout, tdecl, &fake_indent);
-
-    /* test ast itself */
     ast = ic_ast_new();
     assert(ast);
 
@@ -48,11 +26,16 @@ void basic(void) {
     /* check that out of bounds accesses fail */
     assert(ic_ast_get(ast, 0) == 0);
 
-    /* FIXME once we have working ic_decl we need to test ic_ast
-     * more thoroughly
-     */
+    /* append returns index of new item */
+    assert(0 == ic_ast_append(ast, decl_1));
+    assert(ic_ast_length(ast) == 1);
+    assert(decl_1 == ic_ast_get(ast, 0));
 
-    assert(1 == ic_decl_type_destroy(tdecl, 1));
+    /* append returns index of new item */
+    assert(1 == ic_ast_append(ast, decl_2));
+    assert(ic_ast_length(ast) == 2);
+    assert(decl_2 == ic_ast_get(ast, 1));
+
     assert(1 == ic_ast_destroy(ast, 1));
 }
 

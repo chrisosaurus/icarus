@@ -45,8 +45,8 @@ struct ic_kludge {
     /* list of Func decls */
     struct ic_pvector fdecls;
 
-    /* list of default constructors that need to be generated
-     * list of Type decl
+    /* list of types for which default constructors need to be generated
+     * list of decl_type
      */
     struct ic_pvector default_constructors;
 

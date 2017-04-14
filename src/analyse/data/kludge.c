@@ -57,11 +57,6 @@ unsigned int ic_kludge_populate(struct ic_kludge *kludge, struct ic_ast *ast) {
                 }
                 break;
 
-            case ic_decl_tag_union:
-                puts("ic_kludge_populate: unions not yet supported");
-                return 0;
-                break;
-
             default:
                 puts("ic_kludge_populate: decl had impossible type");
                 return 0;
@@ -327,20 +322,6 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *
         return 0;
     }
 
-    if (!strncmp(str, "Void", 4)) {
-        /* if this is the void type then mark it as so */
-        if (!ic_decl_type_mark_void(tdecl)) {
-            puts("ic_kludge_add_tdecl: call to ic_decl_type_mark_void failed");
-            return 0;
-        }
-    } else if (!strncmp(str, "Bool", 4)) {
-        /* if this is the bool type then mark it as so */
-        if (!ic_decl_type_mark_bool(tdecl)) {
-            puts("ic_kludge_add_tdecl: call to ic_decl_type_mark_bool failed");
-            return 0;
-        }
-    }
-
     /* insert into dict tname
      * returns 0 on failure
      */
@@ -472,10 +453,12 @@ unsigned int ic_kludge_add_default_constructor(struct ic_kludge *kludge, struct 
         puts("ic_kludge_add_default_constructor: kludge was null");
         return 0;
     }
+
     if (!tdecl) {
-        puts("ic_kludge_add_default_constructor: fdecl was null");
+        puts("ic_kludge_add_default_constructor: tdecl was null");
         return 0;
     }
+
     if (!fdecl) {
         puts("ic_kludge_add_default_constructor: fdecl was null");
         return 0;
@@ -504,7 +487,7 @@ unsigned int ic_kludge_add_default_constructor(struct ic_kludge *kludge, struct 
         return 0;
     }
 
-    /* insert into list of fdecls */
+    /* insert into list of types with default cons */
     if (-1 == ic_pvector_append(&(kludge->default_constructors), tdecl)) {
         puts("ic_kludge_add_default_constructor: call to ic_pvector_append failed");
         return 0;
