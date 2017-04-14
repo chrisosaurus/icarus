@@ -527,6 +527,8 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_sc
 
     unsigned int fake_indent = 1;
 
+    struct ic_decl_type *tdecl = 0;
+
     if (!kludge) {
         puts("ic_transform_stmt_let: kludge was null");
         return 0;
@@ -588,7 +590,13 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_sc
             /* FIXME TODO ownership ... */
             expr->fcall = tir_fcall;
 
-            stmt = ic_transform_ir_stmt_let_expr_new(&(let->identifier), let->inferred_type, expr);
+            tdecl = ic_type_ref_get_type_decl(&(let->tref));
+            if (!tdecl){
+                puts("ic_transform_stmt_let: call to ic_type_ref_get_type_decl failed");
+                return 0;
+            }
+
+            stmt = ic_transform_ir_stmt_let_expr_new(&(let->identifier), tdecl, expr);
             if (!stmt) {
                 puts("ic_transform_stmt_let: call to ic_transform_ir_stmt_let_expr_new failed");
                 return 0;
@@ -614,7 +622,14 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_sc
 
         case ic_expr_type_constant:
             cons = &(let->init->u.cons);
-            stmt = ic_transform_ir_stmt_let_literal_new(&(let->identifier), let->inferred_type, cons);
+
+            tdecl = ic_type_ref_get_type_decl(&(let->tref));
+            if (!tdecl){
+                puts("ic_transform_stmt_let: call to ic_type_ref_get_type_decl failed");
+                return 0;
+            }
+
+            stmt = ic_transform_ir_stmt_let_literal_new(&(let->identifier), tdecl, cons);
             if (!stmt) {
                 puts("ic_transform_stmt_let: call to ic_transform_ir_stmt_let_literal_new failed");
                 return 0;
@@ -809,7 +824,7 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
     struct ic_symbol *cond_sym = 0;
 
     struct ic_expr_identifier *expr_id = 0;
-    struct ic_type *expr_id_type = 0;
+    struct ic_decl_type *expr_id_type = 0;
 
     if (!kludge) {
         puts("ic_transform_stmt_if: kludge was null");
@@ -862,7 +877,7 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
             return 0;
         }
 
-        if (!ic_type_isbool(expr_id_type)) {
+        if (!ic_decl_type_isbool(expr_id_type)) {
             puts("ic_transform_stmt_if: error: identifier was not of type Bool");
             printf("  identifier: '%s'\n", ic_symbol_contents(cond_sym));
             return 0;
@@ -1101,7 +1116,7 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
     /* symbol */
     struct ic_symbol *sym = 0;
     /* type */
-    struct ic_type *type = 0;
+    struct ic_decl_type *type = 0;
 
     /* constant used in literal case */
     struct ic_expr_constant *constant = 0;

@@ -10,7 +10,7 @@
 /* a Kludge is the output from the analyse stage of icarus
  *
  * a Kludge consists of the following:
- *      dict Type name -> ic_type
+ *      dict Type name -> ic_decl_type
  *      dict Func sig  -> Func decl
  *      dict op name -> func name (symbol)
  *      list Type decls
@@ -20,7 +20,7 @@
  *      AAST - annotated AST
  */
 struct ic_kludge {
-    /* dict Type name (char *) -> ic_type */
+    /* dict Type name (char *) -> ic_decl_type */
     struct ic_dict dict_tname;
 
     /* dict Func sig (char *)  -> Func decl */
@@ -92,15 +92,14 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
 unsigned int ic_kludge_populate(struct ic_kludge *kludge, struct ic_ast *ast);
 
 /* add a new type decl to this kludge
- * this will insert into tdecls
- * it will also construct a new ic_type and insert into dict_tname
+ * this will insert into tdecls and dict_tname
  *
  * returns 1 on success
  * returns 0 on failure
  */
 unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *tdecl);
 
-/* add a new func decl to this kludge
+/* add a new decl_func to this kludge
  * this will insert into dict_fname and fsigs
  *
  * returns 1 on success
@@ -108,7 +107,7 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *
  */
 unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_decl_func *fdecl);
 
-/* add a new op decl to this kludge
+/* add a new decl_op to this kludge
  * this will insert into dict_op
  *
  * returns 1 on success
@@ -124,35 +123,35 @@ unsigned int ic_kludge_add_op(struct ic_kludge *kludge, struct ic_decl_op *op);
  */
 unsigned int ic_kludge_add_default_constructor(struct ic_kludge *kludge, struct ic_decl_type *tdecl, struct ic_decl_func *fdecl);
 
-/* retrieve ic_type by string
+/* retrieve ic_decl_type by string
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_type *ic_kludge_get_type(struct ic_kludge *kludge, char *tdecl_str);
+struct ic_decl_type *ic_kludge_get_decl_type(struct ic_kludge *kludge, char *tdecl_str);
 
-/* retrieve ic_type by symbol
+/* retrieve ic_decl_type by symbol
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_type *ic_kludge_get_type_from_symbol(struct ic_kludge *kludge, struct ic_symbol *type);
+struct ic_decl_type *ic_kludge_get_decl_type_from_symbol(struct ic_kludge *kludge, struct ic_symbol *type);
 
-/* retrieve ic_type by type_ref
+/* retrieve ic_decl_type by type_ref
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_type *ic_kludge_get_type_from_typeref(struct ic_kludge *kludge, struct ic_type_ref *type_ref);
+struct ic_decl_type *ic_kludge_get_decl_type_from_typeref(struct ic_kludge *kludge, struct ic_type_ref *type_ref);
 
-/* retrieve func decl by string
+/* retrieve ic_decl_func by string
  *
  * returns * on success
  * returns 0 on failure
  */
 struct ic_decl_func *ic_kludge_get_fdecl(struct ic_kludge *kludge, char *fdecl_str);
 
-/* retrieve func decl by symbol
+/* retrieve ic_decl_func by symbol
  *
  * returns * on success
  * returns 0 on failure

@@ -1052,6 +1052,34 @@ unsigned int ic_decl_type_isbuiltin(struct ic_decl_type *tdecl) {
     return tdecl->builtin == 1;
 }
 
+/* test if bool
+ *
+ * returns 1 if bool
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_isbool(struct ic_decl_type *tdecl){
+    if (!tdecl) {
+        puts("ic_decl_type_isbool: tdecl was null");
+        return 0;
+    }
+
+    return tdecl->isbool == 1;
+}
+
+/* test if void
+ *
+ * returns 1 if void
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_isvoid(struct ic_decl_type *tdecl){
+    if (!tdecl) {
+        puts("ic_decl_type_isvoid: tdecl was null");
+        return 0;
+    }
+
+    return tdecl->isvoid == 1;
+}
+
 /* print the decl_type to stdout */
 void ic_decl_type_print(FILE *fd, struct ic_decl_type *tdecl, unsigned int *indent_level) {
     if (!tdecl) {
@@ -1114,6 +1142,33 @@ void ic_decl_type_print_body(FILE *fd, struct ic_decl_type *tdecl, unsigned int 
     --*indent_level;
 
     fputs("end\n", fd);
+}
+
+/* print debug information for this type */
+void ic_decl_type_print_debug(FILE *fd, struct ic_decl_type *tdecl){
+    unsigned int fake_indent = 0;
+
+    if (!tdecl) {
+        puts("ic_decl_type_print_debug: tdecl was null");
+        return;
+    }
+
+    fputs("found: ", fd);
+    ic_decl_type_print_header(fd, tdecl, &fake_indent);
+}
+
+/* return the symbol name of this types
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_decl_type_name(struct ic_decl_type *tdecl){
+  if (!tdecl) {
+    puts("ic_decl_type_name: tdecl was null");
+    return 0;
+  }
+
+  return &(tdecl->name);
 }
 
 /* get the char * contents of the name
@@ -1328,8 +1383,8 @@ struct ic_field *ic_decl_type_field_get(struct ic_decl_type *tdecl, unsigned int
  * returns * on success
  * returns 0 on failure
  */
-struct ic_type *ic_decl_type_get_field_type(struct ic_decl_type *tdecl, char *field_name) {
-    struct ic_type *type = 0;
+struct ic_decl_type *ic_decl_type_get_field_type(struct ic_decl_type *tdecl, char *field_name) {
+    struct ic_decl_type *type = 0;
 
     if (!tdecl) {
         puts("ic_decl_type_get_field_type: tdecl was null");
@@ -1355,7 +1410,7 @@ struct ic_type *ic_decl_type_get_field_type(struct ic_decl_type *tdecl, char *fi
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char *field_name, struct ic_type *type) {
+unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char *field_name, struct ic_decl_type *type) {
     if (!tdecl) {
         puts("ic_decl_type_add_field_type: tdecl was null");
         return 0;
@@ -1377,6 +1432,25 @@ unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char *field
     }
 
     return 1;
+}
+
+/* compare 2 types for equality
+ *
+ * returns 1 if equal
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_equal(struct ic_decl_type *a, struct ic_decl_type *b){
+  if (!a){
+    puts("ic_decl_type_equal: a was null");
+    return 0;
+  }
+
+  if (!b){
+    puts("ic_decl_type_equal: b was null");
+    return 0;
+  }
+
+  return a == b;
 }
 
 /* allocate and return a new decl_union
@@ -1655,8 +1729,8 @@ struct ic_field *ic_decl_union_field_get(struct ic_decl_union *udecl, unsigned i
  * returns * on success
  * returns 0 on failure
  */
-struct ic_type *ic_decl_union_get_field_type(struct ic_decl_union *udecl, char *field_name) {
-    struct ic_type *type = 0;
+struct ic_decl_type *ic_decl_union_get_field_type(struct ic_decl_union *udecl, char *field_name) {
+    struct ic_decl_type *type = 0;
 
     if (!udecl) {
         puts("ic_decl_union_get_field_type: udecl was null");
@@ -1682,7 +1756,7 @@ struct ic_type *ic_decl_union_get_field_type(struct ic_decl_union *udecl, char *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_union_add_field_type(struct ic_decl_union *udecl, char *field_name, struct ic_type *type) {
+unsigned int ic_decl_union_add_field_type(struct ic_decl_union *udecl, char *field_name, struct ic_decl_type *type) {
     if (!udecl) {
         puts("ic_decl_union_add_field_type: udecl was null");
         return 0;

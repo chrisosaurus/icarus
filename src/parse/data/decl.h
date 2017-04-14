@@ -207,7 +207,7 @@ struct ic_decl_type {
     /* a pointer vector of field(s) */
     struct ic_pvector fields;
 
-    /* a map from (char *) -> type *
+    /* a map from (char *) -> decl_type *
      * used for looking up the type of a field by name
      * this is filled in during analyse time by
      *  ic_analyse_decl_type
@@ -308,10 +308,34 @@ unsigned int ic_decl_type_mark_builtin(struct ic_decl_type *tdecl);
  */
 unsigned int ic_decl_type_isbuiltin(struct ic_decl_type *tdecl);
 
+/* test if bool
+ *
+ * returns 1 if bool
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_isbool(struct ic_decl_type *tdecl);
+
+/* test if void
+ *
+ * returns 1 if void
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_isvoid(struct ic_decl_type *tdecl);
+
 /* print the decl_type to provided fd */
 void ic_decl_type_print(FILE *fd, struct ic_decl_type *tdecl, unsigned int *indent_level);
 void ic_decl_type_print_header(FILE *fd, struct ic_decl_type *tdecl, unsigned int *indent_level);
 void ic_decl_type_print_body(FILE *fd, struct ic_decl_type *tdecl, unsigned int *indent_level);
+
+/* print debug information for this type */
+void ic_decl_type_print_debug(FILE *fd, struct ic_decl_type *tdecl);
+
+/* return the symbol name of this types
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_decl_type_name(struct ic_decl_type *tdecl);
 
 /* get the char * contents of the name
  *
@@ -360,14 +384,21 @@ struct ic_field *ic_decl_type_field_get(struct ic_decl_type *tdecl, unsigned int
  * returns * on success
  * returns 0 on failure
  */
-struct ic_type *ic_decl_type_get_field_type(struct ic_decl_type *tdecl, char *field_name);
+struct ic_decl_type *ic_decl_type_get_field_type(struct ic_decl_type *tdecl, char *field_name);
 
 /* add field to field_dict
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char *field_name, struct ic_type *type);
+unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char *field_name, struct ic_decl_type *type);
+
+/* compare 2 types for equality
+ *
+ * returns 1 if equal
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_equal(struct ic_decl_type *a, struct ic_decl_type *b);
 
 struct ic_decl_union {
     struct ic_symbol name;
@@ -444,14 +475,14 @@ struct ic_field *ic_decl_union_field_get(struct ic_decl_union *udecl, unsigned i
  * returns * on success
  * returns 0 on failure
  */
-struct ic_type *ic_decl_union_get_field_type(struct ic_decl_union *udecl, char *field_name);
+struct ic_decl_type *ic_decl_union_get_field_type(struct ic_decl_union *udecl, char *field_name);
 
 /* add field to field_dict
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_union_add_field_type(struct ic_decl_union *udecl, char *field_name, struct ic_type *type);
+unsigned int ic_decl_union_add_field_type(struct ic_decl_union *udecl, char *field_name, struct ic_decl_type *type);
 
 /* an op decl is only a mapping of a symbol (say '+')
  * to another (say 'plus')

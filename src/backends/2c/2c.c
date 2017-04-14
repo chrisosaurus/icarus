@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../../analyse/data/type.h"
 #include "../../transform/data/tbody.h"
 #include "2c.h"
 #include "expr.h"

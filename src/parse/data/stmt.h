@@ -57,20 +57,13 @@ struct ic_stmt_let {
 
     struct ic_symbol identifier;
 
-    /* type is optionally declared at parse time
-     * and may be set instead at analyse time
-     * via inference
-     *
-     * if this is null then we did not have a type
-     * declared at parse time
-     */
-    struct ic_symbol *declared_type;
 
-    /* type we know of at analysis time
-     * this could either be via the declared type
-     * or inferred from the init expr.
+    /* may be set at parse time from user-declared types (symbol)
+     * set at analysis time (decl_type) either from
+     *  a) elevating the user-declared type
+     *  b) inferring type from expr
      */
-    struct ic_type *inferred_type;
+    struct ic_type_ref tref;
 
     /* FIXME making this an ic_expr *
      * to simplify interface between
@@ -113,12 +106,7 @@ unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let)
 
 /* set declared type on this let
  *
- * this sets the symbol `declared_type`
- *
- * this is used for types declared in source,
- * this is set at parse time
- *
- * this is an error if either types have already been set
+ * this is an error if the type has already been set
  *
  * returns 1 on success
  * returns 0 on failure
@@ -127,21 +115,14 @@ unsigned int ic_stmt_let_set_declared_type(struct ic_stmt_let *let, char *type_s
 
 /* set inferred type on this let
  *
- * this sets the type ref `inferred_type`
+* this is set at analysis time
  *
- * this is used for the type we know of
- * at analsyis time, this could be from
- * the declared type in source or via
- * the type of the init. expr.
- *
- * this is set at analysis time
- *
- * this is an error if inferred type is already set
+ * this is an error if the type is already set
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_stmt_let_set_inferred_type(struct ic_stmt_let *let, struct ic_type *type);
+unsigned int ic_stmt_let_set_inferred_type(struct ic_stmt_let *let, struct ic_decl_type *type);
 
 /* get the ic_expr * contained within
  *

@@ -3,9 +3,9 @@
 
 #include <stdbool.h>
 
-#include "../../analyse/data/type.h"
 #include "../../data/pvector.h"
 #include "../../data/symbol.h"
+#include "../../parse/data/decl.h"
 
 /* IR:
  *  let name type literal
@@ -20,7 +20,7 @@
 
 struct ic_transform_ir_let_literal {
     struct ic_symbol *name;
-    struct ic_type *type;
+    struct ic_decl_type *type;
     struct ic_expr_constant *literal;
 };
 
@@ -62,7 +62,7 @@ unsigned int ic_transform_ir_let_literal_print(FILE *fd, struct ic_transform_ir_
 
 struct ic_transform_ir_let_expr {
     struct ic_symbol *name;
-    struct ic_type *type;
+    struct ic_decl_type *type;
     struct ic_transform_ir_expr *expr;
 };
 
@@ -104,7 +104,7 @@ unsigned int ic_transform_ir_let_expr_print(FILE *fd, struct ic_transform_ir_let
 
 struct ic_transform_ir_let_faccess {
     struct ic_symbol *name;
-    struct ic_type *type;
+    struct ic_decl_type *type;
     struct ic_symbol *left;
     struct ic_symbol *right;
 };
@@ -549,21 +549,21 @@ struct ic_transform_ir_assign *ic_transform_ir_stmt_get_assign(struct ic_transfo
  * returns * on success
  * returns 0 on failure
  */
-struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_literal_new(struct ic_symbol *name, struct ic_type *type, struct ic_expr_constant *literal);
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_literal_new(struct ic_symbol *name, struct ic_decl_type *type, struct ic_expr_constant *literal);
 
 /* allocate and initialise a new stmt->let->expr
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_expr_new(struct ic_symbol *name, struct ic_type *type, struct ic_transform_ir_expr *expr);
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_expr_new(struct ic_symbol *name, struct ic_decl_type *type, struct ic_transform_ir_expr *expr);
 
 /* allocate and initialise a new stmt->let->faccess
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_faccess_new(struct ic_symbol *name, struct ic_type *type, struct ic_symbol *left, struct ic_symbol *right);
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_faccess_new(struct ic_symbol *name, struct ic_decl_type *type, struct ic_symbol *left, struct ic_symbol *right);
 
 /* allocate and initialise a new stmt->ret
  *

@@ -100,7 +100,7 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
     /* set of all field names used */
     struct ic_set *set = 0;
     /* for each field this captures the type we resolve it to */
-    struct ic_type *field_type = 0;
+    struct ic_decl_type *field_type = 0;
 
     if (!unit) {
         puts("ic_analyse_field_list: unit was null");
@@ -196,7 +196,7 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
         }
 
         /* check that this field's type exists */
-        field_type = ic_kludge_get_type(kludge, type_str);
+        field_type = ic_kludge_get_decl_type(kludge, type_str);
         if (!field_type) {
             printf("ic_analyse_field_list: type '%s' mentioned in '%s' for '%s' does not exist within this kludge\n",
                    type_str,
@@ -206,7 +206,7 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
         }
 
         /* check this is not the void type */
-        if (field_type->u.decl->isvoid) {
+        if (ic_decl_type_isvoid(field_type)) {
             puts("ic_analyse_field_list: void type used in field list");
             goto ERROR;
         }
@@ -270,9 +270,9 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
     /* expr from stmt */
     struct ic_expr *expr = 0;
     /* type  expression */
-    struct ic_type *type = 0;
+    struct ic_decl_type *type = 0;
     /* another type when we need to juggle */
-    struct ic_type *other_type = 0;
+    struct ic_decl_type *other_type = 0;
     /* ret from stmt */
     struct ic_stmt_ret *ret = 0;
     /* if from stmt */
@@ -350,9 +350,14 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                     goto ERROR;
                 }
 
-                other_type = ic_kludge_get_type_from_symbol(kludge, fdecl->ret_type);
+                other_type = ic_kludge_get_decl_type_from_symbol(kludge, fdecl->ret_type);
+                if (!other_type){
+                    puts("ic_analyse_body: call to ic_kludge_get_decl_from_symbol failed");
+                    goto ERROR;
+                }
+
                 /* compare to declared return type */
-                if (!ic_type_equal(type, other_type)) {
+                if (!ic_decl_type_equal(type, other_type)) {
                     /* Void is a concrete type so type being null is an error */
                     puts("ic_analyse_body: ret: returned type did not match declared");
                     goto ERROR;
@@ -405,16 +410,16 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                 /* check if this expression is void
                  * as a void has no boolean interpretation
                  */
-                if (ic_type_isvoid(type)) {
+                if (ic_decl_type_isvoid(type)) {
                     puts("ic_analyse_body: if: void expression used as if condition");
-                    ic_type_print_debug(stdout, type);
+                    ic_decl_type_print_debug(stdout, type);
                     goto ERROR;
                 }
 
                 /* this expression must be of type bool */
-                if (!ic_type_isbool(type)) {
+                if (!ic_decl_type_isbool(type)) {
                     puts("ic_analyse_body: if: expression was not of type bool");
-                    ic_type_print_debug(stdout, type);
+                    ic_decl_type_print_debug(stdout, type);
                     goto ERROR;
                 }
 
@@ -502,7 +507,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                 }
 
                 /* if either type is void then this is an error */
-                if (ic_type_isvoid(type)) {
+                if (ic_decl_type_isvoid(type)) {
                     puts("ic_analyse_body: assign: attempt to assign to void variable");
                     goto ERROR;
                 }
@@ -522,13 +527,13 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                 }
 
                 /* if either type is void then this is an error */
-                if (ic_type_isvoid(other_type)) {
+                if (ic_decl_type_isvoid(other_type)) {
                     puts("ic_analyse_body: assign: attempt to assign void value");
                     goto ERROR;
                 }
 
                 /* both types must be the same */
-                if (!ic_type_equal(type, other_type)) {
+                if (!ic_decl_type_equal(type, other_type)) {
                     puts("ic_analyse_body: assign: assignment between invalid types");
                     goto ERROR;
                 }
@@ -550,7 +555,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                 }
 
                 /* check if type is non-void so we can warn */
-                if (!ic_type_isvoid(type)) {
+                if (!ic_decl_type_isvoid(type)) {
                     /* warn about non-void in void context
                      * FIXME make this more useful
                      */
@@ -576,9 +581,9 @@ ERROR:
     return 0;
 }
 
-struct ic_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall) {
+struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall) {
     /* our resulting type */
-    struct ic_type *type = 0;
+    struct ic_decl_type *type = 0;
 
     /* temporaries */
     struct ic_symbol *sym = 0;
@@ -679,7 +684,7 @@ struct ic_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_scope
     }
 
     /* get return type from this function we found */
-    type = ic_kludge_get_type(kludge, ch);
+    type = ic_kludge_get_decl_type(kludge, ch);
     if (!type) {
         printf("ic_analyse_infer_fcall: could not find return type '%s'\n", ch);
         return 0;
@@ -688,9 +693,9 @@ struct ic_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_scope
     return type;
 }
 
-static struct ic_type *ic_analyse_infer_faccess(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_faccess *faccess) {
+static struct ic_decl_type *ic_analyse_infer_faccess(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_faccess *faccess) {
     /* our resulting type */
-    struct ic_type *type = 0;
+    struct ic_decl_type *type = 0;
     /* temporary */
     struct ic_expr_identifier *id = 0;
 
@@ -726,7 +731,7 @@ static struct ic_type *ic_analyse_infer_faccess(struct ic_kludge *kludge, struct
     /* get the type of this identifier as field on type
      * FIXME line is a bit too busy
      */
-    type = ic_decl_type_get_field_type(ic_type_get_decl(type), ic_symbol_contents(ic_expr_identifier_symbol(id)));
+    type = ic_decl_type_get_field_type(type, ic_symbol_contents(ic_expr_identifier_symbol(id)));
     if (!type) {
         puts("ic_analyse_infer_faccess: ic_decl_type_get_field failed");
         return 0;
@@ -735,9 +740,9 @@ static struct ic_type *ic_analyse_infer_faccess(struct ic_kludge *kludge, struct
     return type;
 }
 
-static struct ic_type *ic_analyse_infer_identifier(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_identifier *id) {
+static struct ic_decl_type *ic_analyse_infer_identifier(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_identifier *id) {
     /* our resulting type */
-    struct ic_type *type = 0;
+    struct ic_decl_type *type = 0;
 
     /* temporary intermediaries */
     char *ch = 0;
@@ -802,9 +807,9 @@ static struct ic_type *ic_analyse_infer_identifier(struct ic_kludge *kludge, str
     return type;
 }
 
-struct ic_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_expr_constant *cons) {
+struct ic_decl_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_expr_constant *cons) {
     /* our resulting type */
-    struct ic_type *type = 0;
+    struct ic_decl_type *type = 0;
 
     if (!kludge) {
         puts("ic_analyse_infer_constant: kludge was null");
@@ -827,7 +832,7 @@ struct ic_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_ex
          */
         case ic_expr_constant_type_integer:
             /* FIXME decide on type case sensitivity */
-            type = ic_kludge_get_type(kludge, "Sint");
+            type = ic_kludge_get_decl_type(kludge, "Sint");
             if (!type) {
                 puts("ic_analyse_infer_constant: Sint: call to ic_kludge_get_type failed");
                 return 0;
@@ -844,7 +849,7 @@ struct ic_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_ex
          */
         case ic_expr_constant_type_string:
             /* FIXME decide on type case sensitivity */
-            type = ic_kludge_get_type(kludge, "String");
+            type = ic_kludge_get_decl_type(kludge, "String");
             if (!type) {
                 puts("ic_analyse_infer_constant: String: call to ic_kludge_get_type failed");
                 return 0;
@@ -854,7 +859,7 @@ struct ic_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_ex
 
         case ic_expr_constant_type_boolean:
             /* FIXME decide on type case sensitivity */
-            type = ic_kludge_get_type(kludge, "Bool");
+            type = ic_kludge_get_decl_type(kludge, "Bool");
             if (!type) {
                 puts("ic_analyse_infer_constant: Bool: call to ic_kludge_get_type failed");
                 return 0;
@@ -872,9 +877,9 @@ struct ic_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_ex
     return 0;
 }
 
-static struct ic_type *ic_analyse_infer_operator(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_operator *op) {
+static struct ic_decl_type *ic_analyse_infer_operator(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_operator *op) {
     /* our resulting type */
-    struct ic_type *type = 0;
+    struct ic_decl_type *type = 0;
 
     /* temporaries */
     char *op_str = 0;
@@ -999,9 +1004,9 @@ static struct ic_type *ic_analyse_infer_operator(struct ic_kludge *kludge, struc
  * returns ic_type * on success
  * returns 0 on failure
  */
-struct ic_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr) {
+struct ic_decl_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr) {
     /* our resulting type */
-    struct ic_type *type = 0;
+    struct ic_decl_type *type = 0;
 
     /* unwrapped values */
     struct ic_expr_constant *cons = 0;
@@ -1163,11 +1168,10 @@ struct ic_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scop
  */
 unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_stmt_let *let) {
     struct ic_slot *slot = 0;
-    struct ic_type *type = 0;
-    char *type_str = 0;
+    struct ic_decl_type *type = 0;
 
     struct ic_expr *init_expr = 0;
-    struct ic_type *init_type = 0;
+    struct ic_decl_type *init_type = 0;
 
     int ret = 0;
 
@@ -1246,34 +1250,39 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
     }
 
     /* if let->type is set we must compare it to the init expr */
-    if (let->declared_type) {
-        /* we need to take the let->type (symbol) and convert it to a full
-         * ic_type
-         */
-        if (!ic_symbol_length(let->declared_type)) {
-            puts("ic_analyse_let: using let->type failed");
-            return 0;
-        }
-
-        type_str = ic_symbol_contents(let->declared_type);
-        /* FIXME eventually this declared type will be optional */
-        if (!type_str) {
-            puts("ic_analyse_let: call to ic_symbol_contents failed");
-            return 0;
-        }
-
-        /* fetch type from kludge */
-        type = ic_kludge_get_type(kludge, type_str);
-        if (!type) {
-            /* FIXME type not found
-             * need helpful error message
-             */
-            printf("ic_analyse_let: failed to find type '%s'\n", type_str);
-            return 0;
-        }
-    } else {
-        /* if no type is declared then we use the one from out init expr */
+    switch (let->tref.tag){
+      case ic_type_ref_unknown:
+        /* no declared let type, just use inferred type */
         type = init_type;
+        break;
+
+      case ic_type_ref_symbol:
+        /* type declared, compare */
+        type = ic_kludge_get_decl_type_from_typeref(kludge, &(let->tref));
+        if (!type){
+          puts("ic_analyse_let: failed to find type from typeref");
+          printf("failed to find declared type '%s'\n", ic_symbol_contents(ic_type_ref_get_symbol(&(let->tref))));
+          return 0;
+        }
+
+        /* if an init expression exists, verify it's type is the same as the declared */
+        if (!ic_decl_type_equal(init_type, type)) {
+            puts("ic_analyse_let: let init type did not match declared type");
+            return 0;
+        }
+        break;
+
+      case ic_type_ref_resolved:
+        /* error, type shouldn't already be resolved */
+        puts("ic_analyse_let: internal error: tref.tag was ic_type_ref_resolved");
+        return 0;
+        break;
+
+      default:
+        /* error, impossible tref.tag */
+        puts("ic_analyse_let: impossible tref.tag");
+        return 0;
+        break;
     }
 
     /* either way we set the type we now have for this let */
@@ -1297,12 +1306,6 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
     /* need to store slot in body->scope */
     if (!ic_scope_insert_symbol(body->scope, &(let->identifier), slot)) {
         puts("ic_analyse_let: call to ic_scope_insert_symbol failed");
-        return 0;
-    }
-
-    /* if an init expression exists, verify it's type is the same as the declared */
-    if (!ic_type_equal(init_type, type)) {
-        puts("ic_analyse_let: let init type did not match declared type");
         return 0;
     }
 
@@ -1331,7 +1334,7 @@ char *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, str
     /* current argument */
     struct ic_expr *expr = 0;
     /* type of current argument */
-    struct ic_type *expr_type = 0;
+    struct ic_decl_type *expr_type = 0;
     /* current arg type's name */
     struct ic_symbol *type_name = 0;
     /* current arg's permissions */
@@ -1425,7 +1428,7 @@ char *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, str
         }
 
         /* current arg's type's name */
-        type_name = ic_type_name(expr_type);
+        type_name = ic_decl_type_name(expr_type);
         if (!type_name) {
             printf("ic_analyse_fcall_str: call to ic_type_name failed for argument '%d'\n", i);
             goto ERROR;

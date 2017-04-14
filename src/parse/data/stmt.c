@@ -173,11 +173,13 @@ unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned in
         return 0;
     }
 
+    if (!ic_type_ref_init(&(let->tref))){
+        puts("ic_smtm_let_init: call to ic_type_ref_init failed");
+        return 0;
+    }
+
     /* zero out init */
     let->init = 0;
-
-    let->declared_type = 0;
-    let->inferred_type = 0;
 
     let->permissions = permissions;
 
@@ -203,12 +205,9 @@ unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let)
         return 0;
     }
 
-    /* free = 1 as pointer */
-    if (let->declared_type) {
-        if (!ic_symbol_destroy(let->declared_type, 1)) {
-            puts("ic_stmt_let_destroy: type called to ic_symbol_destroy failed");
-            return 0;
-        }
+    if (!ic_type_ref_destroy(&(let->tref), 0)){
+        puts("ic_stmt_let_destroy: type called to ic_type_ref_destroy failed");
+        return 0;
     }
 
     if (let->init) {
@@ -229,12 +228,7 @@ unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let)
 
 /* set declared type on this let
  *
- * this sets the symbol `declared_type`
- *
- * this is used for types declared in source,
- * this is set at parse time
- *
- * this is an error if either types have already been set
+ * this is an error if the type has already been set
  *
  * returns 1 on success
  * returns 0 on failure
@@ -255,19 +249,8 @@ unsigned int ic_stmt_let_set_declared_type(struct ic_stmt_let *let, char *type_s
         return 0;
     }
 
-    if (let->declared_type) {
-        puts("ic_stmt_let_set_declared_type: let already had declared type");
-        return 0;
-    }
-
-    if (let->inferred_type) {
-        puts("ic_stmt_let_set_declared_type: let already had declared type");
-        return 0;
-    }
-
-    let->declared_type = ic_symbol_new(type_src, type_len);
-    if (!let->declared_type) {
-        puts("ic_smtm_let_declared_init: call to ic_symbol_new for type failed");
+    if (!ic_type_ref_set_symbol(&(let->tref), type_src, type_len)){
+        puts("ic_stmt_let_set_declared_type: call to ic_type_ref_set_symbol failed");
         return 0;
     }
 
@@ -276,21 +259,12 @@ unsigned int ic_stmt_let_set_declared_type(struct ic_stmt_let *let, char *type_s
 
 /* set inferred type on this let
  *
- * this sets the type ref `inferred_type`
- *
- * this is used for the type we know of
- * at analsyis time, this could be from
- * the declared type in source or via
- * the type of the init. expr.
- *
- * this is set at analysis time
- *
- * this is an error if inferred type is already set
+ * this is an error if tye type is already set
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_stmt_let_set_inferred_type(struct ic_stmt_let *let, struct ic_type *type) {
+unsigned int ic_stmt_let_set_inferred_type(struct ic_stmt_let *let, struct ic_decl_type *type) {
     if (!let) {
         puts("ic_stmt_let_set_inferred_type: let was null");
         return 0;
@@ -301,12 +275,10 @@ unsigned int ic_stmt_let_set_inferred_type(struct ic_stmt_let *let, struct ic_ty
         return 0;
     }
 
-    if (let->inferred_type) {
-        puts("ic_stmt_let_set_inferred_type: let already had inferred type");
+    if (!ic_type_ref_set_type_decl(&(let->tref), type)){
+        puts("ic_stmt_let_set_declared_type: call to ic_type_ref_set_type_decl failed");
         return 0;
     }
-
-    let->inferred_type = type;
 
     return 1;
 }
@@ -352,9 +324,9 @@ void ic_stmt_let_print(FILE *fd, struct ic_stmt_let *let, unsigned int *indent_l
     ic_symbol_print(fd, &(let->identifier));
 
     /* declared type on let is optional */
-    if (let->declared_type) {
+    if (let->tref.tag != ic_type_ref_unknown){
         fputs("::", fd);
-        ic_symbol_print(fd, let->declared_type);
+        ic_type_ref_print(fd, &(let->tref));
     }
 
     fputs(" = ", fd);

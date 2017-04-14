@@ -159,7 +159,7 @@ unsigned int ic_b2c_compile_stmt_ret(struct ic_kludge *input_kludge, struct ic_t
 }
 
 unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_transform_ir_let *let, FILE *out) {
-    struct ic_type *let_type = 0;
+    struct ic_decl_type *let_type = 0;
     char *let_name = 0;
     struct ic_symbol *let_sym = 0;
     char *let_str = 0;
@@ -193,9 +193,9 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_t
 
             let_type = let->u.lit.type;
 
-            let_sym = ic_type_name(let_type);
+            let_sym = ic_decl_type_name(let_type);
             if (!let_sym) {
-                puts("ic_b2c_compile_stmt_let: call to ic_type_name failed");
+                puts("ic_b2c_compile_stmt_let: call to ic_decl_type_name failed");
                 return 0;
             }
 
@@ -237,9 +237,9 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_t
 
             let_type = let_expr->type;
 
-            let_sym = ic_type_name(let_type);
+            let_sym = ic_decl_type_name(let_type);
             if (!let_sym) {
-                puts("ic_b2c_compile_stmt_let: call to ic_type_name failed");
+                puts("ic_b2c_compile_stmt_let: call to ic_decl_type_name failed");
                 return 0;
             }
 
@@ -281,9 +281,9 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_t
 
             let_type = let_faccess->type;
 
-            let_sym = ic_type_name(let_type);
+            let_sym = ic_decl_type_name(let_type);
             if (!let_sym) {
-                puts("ic_b2c_compile_stmt_let: call to ic_type_name failed");
+                puts("ic_b2c_compile_stmt_let: call to ic_decl_type_name failed");
                 return 0;
             }
 
@@ -354,7 +354,7 @@ unsigned int ic_b2c_compile_stmt_assign(struct ic_kludge *input_kludge, struct i
 
     left_sym = assign->left;
     if (!left_sym) {
-        puts("ic_b2c_compile_stmt_assign: call to ic_type_name failed");
+        puts("ic_b2c_compile_stmt_assign: assign->left was falsey");
         return 0;
     }
 

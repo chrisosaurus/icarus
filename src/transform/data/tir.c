@@ -77,6 +77,8 @@ unsigned int ic_transform_ir_let_literal_destroy(struct ic_transform_ir_let_lite
  */
 unsigned int ic_transform_ir_let_literal_print(FILE *fd, struct ic_transform_ir_let_literal *let, unsigned int *indent) {
     unsigned int fake_indent = 0;
+    char * type_name = 0;
+
     if (!let) {
         puts("ic_transform_ir_let_literal_print: let was null");
         return 0;
@@ -99,12 +101,14 @@ unsigned int ic_transform_ir_let_literal_print(FILE *fd, struct ic_transform_ir_
     /* identifier name */
     ic_symbol_print(fd, let->name);
 
-    fputs("::", fd);
+    /* type name */
+    type_name = ic_decl_type_str(let->type);
+    if (!type_name){
+      puts("ic_transform_ir_let_literal_print: call to ic_decl_type_str failed");
+      return 0;
+    }
 
-    /* type */
-    ic_type_print(fd, let->type);
-
-    fputs(" = ", fd);
+    fprintf(fd, "::%s = ", type_name);
 
     /* literal */
     ic_expr_constant_print(fd, let->literal, &fake_indent);
@@ -188,6 +192,8 @@ unsigned int ic_transform_ir_let_expr_destroy(struct ic_transform_ir_let_expr *l
  */
 unsigned int ic_transform_ir_let_expr_print(FILE *fd, struct ic_transform_ir_let_expr *let, unsigned int *indent) {
     unsigned int fake_indent = 0;
+    char *type_name = 0;
+
     if (!let) {
         puts("ic_transform_ir_let_expr_print: let was null");
         return 0;
@@ -210,12 +216,14 @@ unsigned int ic_transform_ir_let_expr_print(FILE *fd, struct ic_transform_ir_let
     /* identifier name */
     ic_symbol_print(fd, let->name);
 
-    fputs("::", fd);
+    /* type name */
+    type_name = ic_decl_type_str(let->type);
+    if (!type_name){
+        puts("ic_transform_ir_let_expr_print: call to ic_decl_type_str failed");
+        return 0;
+    }
 
-    /* type */
-    ic_type_print(fd, let->type);
-
-    fputs(" = ", fd);
+    fprintf(fd, "::%s = ", type_name);
 
     /* expr */
     if (!ic_transform_ir_expr_print(fd, let->expr, &fake_indent)) {
@@ -302,6 +310,8 @@ unsigned int ic_transform_ir_let_faccess_destroy(struct ic_transform_ir_let_facc
  * return 0 on failure
  */
 unsigned int ic_transform_ir_let_faccess_print(FILE *fd, struct ic_transform_ir_let_faccess *let, unsigned int *indent) {
+    char *type_name = 0;
+
     if (!let) {
         puts("ic_transform_ir_let_faccess_print: let was null");
         return 0;
@@ -324,12 +334,14 @@ unsigned int ic_transform_ir_let_faccess_print(FILE *fd, struct ic_transform_ir_
     /* identifier name */
     ic_symbol_print(fd, let->name);
 
-    fputs("::", fd);
-
     /* type */
-    ic_type_print(fd, let->type);
+    type_name = ic_decl_type_str(let->type);
+    if (!type_name){
+        puts("ic_transform_ir_let_faccess_print: call to ic_decl_type_str failed");
+        return 0;
+    }
 
-    fputs(" = ", fd);
+    fprintf(fd, "::%s = ", type_name);
 
     ic_symbol_print(fd, let->left);
 
@@ -1323,7 +1335,7 @@ struct ic_transform_ir_assign *ic_transform_ir_stmt_get_assign(struct ic_transfo
  * returns * on success
  * returns 0 on failure
  */
-struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_literal_new(struct ic_symbol *name, struct ic_type *type, struct ic_expr_constant *literal) {
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_literal_new(struct ic_symbol *name, struct ic_decl_type *type, struct ic_expr_constant *literal) {
     struct ic_transform_ir_stmt *stmt = 0;
 
     if (!name) {
@@ -1369,7 +1381,7 @@ struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_literal_new(struct ic_symb
  * returns * on success
  * returns 0 on failure
  */
-struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_expr_new(struct ic_symbol *name, struct ic_type *type, struct ic_transform_ir_expr *expr) {
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_expr_new(struct ic_symbol *name, struct ic_decl_type *type, struct ic_transform_ir_expr *expr) {
     struct ic_transform_ir_stmt *stmt = 0;
 
     if (!name) {
@@ -1415,7 +1427,7 @@ struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_expr_new(struct ic_symbol 
  * returns * on success
  * returns 0 on failure
  */
-struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_faccess_new(struct ic_symbol *name, struct ic_type *type, struct ic_symbol *left, struct ic_symbol *right) {
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_faccess_new(struct ic_symbol *name, struct ic_decl_type *type, struct ic_symbol *left, struct ic_symbol *right) {
     struct ic_transform_ir_stmt *stmt = 0;
 
     if (!name) {

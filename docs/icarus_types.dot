@@ -1,0 +1,62 @@
+/* view this file with `xdot` */
+
+digraph icarus {
+
+  decl [shape=record, label="{decl|func / type}"];
+  decl -> decl_func;
+  decl -> decl_type;
+
+  {
+    rank=same;
+    decl_func [shape=record, label="{decl_func|name|args (fields)|return type|body (stmts)}"];
+    decl_type [shape=record, label="{decl_type|name|void / builtin / struct / union / enum}"];
+  }
+
+  decl_func -> stmt [style=dotted];
+  decl_type -> decl_type_struct;
+  decl_type -> decl_type_union;
+  decl_type -> decl_type_enum;
+
+  {
+    rank=same;
+    decl_type_struct [shape=record, label="{decl_type_struct|fields}"];
+    decl_type_union  [shape=record, label="{decl_type_union |fields}"];
+    decl_type_enum   [shape=record, label="{decl_type_enum  |labels}"];
+  }
+
+  decl_func -> field [style=dotted];
+  decl_type_struct -> field [style=dotted];
+  decl_type_union -> field [style=dotted];
+
+  field [shape=record, label="{field|name|type_ref}"];
+  field -> type_ref;
+
+  type_ref [shape=record, label="{type_ref|symbol / found}"];
+  type_ref -> decl_type [style=dotted];
+
+  stmt [shape=record, label="{stmt| return / let / assign / if / for / while / expr}"];
+
+  stmt -> stmt_return;
+  stmt -> stmt_let;
+  stmt -> stmt_assign;
+  stmt -> stmt_if;
+  stmt -> stmt_for;
+  stmt -> stmt_while;
+  stmt -> expr;
+
+  {
+    rank=same;
+    stmt_return [shape=record, label="{stmt_return|expr}"];
+    stmt_let    [shape=record, label="{stmt_let|permission|identifier|type|expr}"];
+    stmt_assign [shape=record, label="{stmt_assign|expr (left)|expr (right)}"];
+    stmt_if     [shape=record, label="{stmt_if|expr (test)|then (stmts)|else (stmts)}"];
+    stmt_for    [shape=record, label="{stmt_for}"];
+    stmt_while  [shape=record, label="{stmt_while}"];
+  }
+
+  expr [shape=record, label="{expr}"];
+
+
+}
+
+

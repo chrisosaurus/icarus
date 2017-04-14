@@ -5,7 +5,6 @@
 #include "../../data/pvector.h"
 #include "../../parse/data/decl.h"
 #include "kludge.h"
-#include "type.h"
 
 /* populate the kludge from the provided ast
  * this call will break apart the ast to populate the
@@ -296,15 +295,13 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
 }
 
 /* add a new type decl to this kludge
- * this will insert into tdecls
- * it will also construct a new ic_type and insert into dict_tname
+ * this will insert into tdecls and dict_tname
  *
  * returns 1 on success
  * returns 0 on failure
  */
 unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *tdecl) {
     char *str = 0;
-    struct ic_type *type = 0;
 
     if (!kludge) {
         puts("ic_kludge_add_tdecl: kludge was null");
@@ -330,13 +327,6 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *
         return 0;
     }
 
-    /* construct new ic_type */
-    type = ic_type_new_tdecl(tdecl);
-    if (!type) {
-        puts("ic_kludge_add_tdecl: call to ic_type_new_tdecl failed");
-        return 0;
-    }
-
     if (!strncmp(str, "Void", 4)) {
         /* if this is the void type then mark it as so */
         if (!ic_decl_type_mark_void(tdecl)) {
@@ -354,7 +344,7 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *
     /* insert into dict tname
      * returns 0 on failure
      */
-    if (!ic_dict_insert(&(kludge->dict_tname), str, type)) {
+    if (!ic_dict_insert(&(kludge->dict_tname), str, tdecl)) {
         puts("ic_kludge_add_tdecl: call to ic_dict_insert failed");
         return 0;
     }
@@ -367,7 +357,7 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *
     return 1;
 }
 
-/* add a new func decl to this kludge
+/* add a new decl_func to this kludge
  * this will insert into dict_fname and fsigs
  *
  * returns 1 on success
@@ -523,77 +513,125 @@ unsigned int ic_kludge_add_default_constructor(struct ic_kludge *kludge, struct 
     return 1;
 }
 
-/* retrieve ic_type by string
+/* retrieve ic_decl_type by string
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_type *ic_kludge_get_type(struct ic_kludge *kludge, char *tdecl_str) {
+struct ic_decl_type *ic_kludge_get_decl_type(struct ic_kludge *kludge, char *tdecl_str) {
+    struct ic_decl_type *tdecl = 0;
+
     if (!kludge) {
-        puts("ic_kludge_get_type: kludge was null");
+        puts("ic_kludge_get_decl_type: kludge was null");
         return 0;
     }
 
     if (!tdecl_str) {
-        puts("ic_kludge_get_type: tdecl_str was null");
+        puts("ic_kludge_get_decl_type: tdecl_str was null");
         return 0;
     }
 
-    return ic_dict_get(&(kludge->dict_tname), tdecl_str);
+    tdecl = ic_dict_get(&(kludge->dict_tname), tdecl_str);
+    if (!tdecl) {
+        /* remain silent as we want to be able to check for the non-existance of types */
+        return 0;
+    }
+
+    return tdecl;
 }
 
-/* retrieve ic_type by symbol
+/* retrieve ic_decl_type by symbol
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_type *ic_kludge_get_type_from_symbol(struct ic_kludge *kludge, struct ic_symbol *type) {
+struct ic_decl_type *ic_kludge_get_decl_type_from_symbol(struct ic_kludge *kludge, struct ic_symbol *type) {
     char *type_str = 0;
+    struct ic_decl_type *tdecl = 0;
 
     if (!kludge) {
-        puts("ic_kludge_get_type_from_symbol: kludge was null");
+        puts("ic_kludge_get_decl_type_from_symbol: kludge was null");
         return 0;
     }
 
     if (!type) {
-        puts("ic_kludge_get_type_from_symbol: type was null");
+        puts("ic_kludge_get_decl_type_from_symbol: type was null");
         return 0;
     }
 
     type_str = ic_symbol_contents(type);
     if (!type_str) {
-        puts("ic_kludge_get_type_from_symbol: call to ic_symbol_contents failed");
+        puts("ic_kludge_get_decl_type_from_symbol: call to ic_symbol_contents failed");
         return 0;
     }
 
-    return ic_kludge_get_type(kludge, type_str);
+    tdecl = ic_kludge_get_decl_type(kludge, type_str);
+    if (!tdecl) {
+        /* remain silent as we want to be able to check for the non-existance of types */
+        return 0;
+    }
+
+    return tdecl;
 }
 
-/* retrieve ic_type by type_ref
+/* retrieve ic_decl_type by type_ref
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_type *ic_kludge_get_type_from_typeref(struct ic_kludge *kludge, struct ic_type_ref *type_ref) {
+struct ic_decl_type *ic_kludge_get_decl_type_from_typeref(struct ic_kludge *kludge, struct ic_type_ref *type_ref) {
+    struct ic_decl_type *tdecl = 0;
+    struct ic_symbol *type_sym = 0;
+
     if (!kludge) {
-        puts("ic_kludge_get_type_from_typeref: kludge was null");
+        puts("ic_kludge_get_decl_type_from_typeref: kludge was null");
         return 0;
     }
 
     if (!type_ref) {
-        puts("ic_kludge_get_type_from_typeref: type was null");
+        puts("ic_kludge_get_decl_type_from_typeref: type was null");
         return 0;
     }
 
-    if (type_ref->tag != ic_type_ref_symbol) {
-        puts("ic_kludge_get_type_from_typeref: type ref was not of type symbol");
+    switch (type_ref->tag){
+      case ic_type_ref_unknown:
+        puts("ic_kludge_get_decl_type_from_typeref: type ref was still unknown");
         return 0;
-    }
+        break;
 
-    return ic_kludge_get_type_from_symbol(kludge, &(type_ref->u.sym));
+      case ic_type_ref_symbol:
+        type_sym = ic_type_ref_get_symbol(type_ref);
+        if (!type_sym){
+            puts("ic_kludge_get_decl_type_from_typeref: call to ic_type_ref_get_symbol failed");
+            return 0;
+        }
+
+        tdecl = ic_kludge_get_decl_type_from_symbol(kludge, type_sym);
+        if (!tdecl){
+          /* remain silent as we want to be able to check for the non-existance of types */
+            return 0;
+        }
+
+        return tdecl;
+        break;
+
+      case ic_type_ref_resolved:
+        tdecl = ic_type_ref_get_type_decl(type_ref);
+        if (!tdecl){
+            puts("ic_kludge_get_decl_type_from_typeref: call to ic_type_ref_get_type_decl failed");
+            return 0;
+        }
+        return tdecl;
+        break;
+
+      default:
+        puts("ic_kludge_get_decl_type_from_typeref: impossible type_ref tag");
+        return 0;
+        break;
+    }
 }
 
-/* retrieve func decl by string
+/* retrieve ic_decl_func by string
  *
  * returns * on success
  * returns 0 on failure
@@ -612,7 +650,7 @@ struct ic_decl_func *ic_kludge_get_fdecl(struct ic_kludge *kludge, char *fdecl_s
     return ic_dict_get(&(kludge->dict_fsig), fdecl_str);
 }
 
-/* retrieve func decl by symbol
+/* retrieve ic_decl_func by symbol
  *
  * returns * on success
  * returns 0 on failure
@@ -739,7 +777,7 @@ int ic_kludge_identifier_exists(struct ic_kludge *kludge, struct ic_scope *scope
     }
 
     /* check for existing type */
-    if (ic_kludge_get_type(kludge, identifier)) {
+    if (ic_kludge_get_decl_type(kludge, identifier)) {
         /* identifier was found as a type in kludge */
         return 1;
     }
@@ -790,7 +828,7 @@ int ic_kludge_identifier_exists_symbol(struct ic_kludge *kludge, struct ic_scope
     }
 
     /* check for existing type */
-    if (ic_kludge_get_type_from_symbol(kludge, identifier)) {
+    if (ic_kludge_get_decl_type_from_symbol(kludge, identifier)) {
         /* identifier was found as a type in kludge */
         return 1;
     }

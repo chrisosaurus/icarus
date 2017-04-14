@@ -108,7 +108,7 @@ unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type 
 
     struct ic_symbol *type_sym = 0;
     char *type_str = 0;
-    struct ic_type *field_type = 0;
+    struct ic_decl_type *field_type = 0;
 
     /* func decl for default type constructor */
     struct ic_decl_func *constructor_decl = 0;
@@ -176,7 +176,7 @@ unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type 
         }
 
         /* check that this field's type exists */
-        field_type = ic_kludge_get_type(kludge, type_str);
+        field_type = ic_kludge_get_decl_type(kludge, type_str);
         if (!field_type) {
             puts("ic_analyse_decl_type: call to ic_kludge_get_type failed");
             goto ERROR;
@@ -268,7 +268,7 @@ unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func 
     /* length of args */
     unsigned int len = 0;
     /* arg type */
-    struct ic_type *arg_type = 0;
+    struct ic_decl_type *arg_type = 0;
     /* slot created for arg */
     struct ic_slot *slot = 0;
 
@@ -342,9 +342,9 @@ unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func 
         }
 
         /* get arg type */
-        arg_type = ic_kludge_get_type_from_typeref(kludge, &(arg->type));
+        arg_type = ic_kludge_get_decl_type_from_typeref(kludge, &(arg->type));
         if (!arg_type) {
-            puts("ic_analyse_decl_func: call to ic_kludge_get_type_from_typeref failed");
+            puts("ic_analyse_decl_func: call to ic_kludge_get_decl_type_from_typeref failed");
             goto ERROR;
         }
 

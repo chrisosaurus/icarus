@@ -18,24 +18,19 @@ enum ic_type_ref_tag {
      */
     ic_type_ref_symbol,
 
-    /* error type
-     * this is NOT a runtime error
-     *
-     * this value is used by the analysis module to
-     * indicate an error during inference such as
-     * being unable to find the type mentioned
-     *
-     * FIXME it may be that errors are moved out of here
+    /* we have found a concrete type for this
+     * this is filled in during the analysis phase
      */
-    ic_type_ref_error
+    ic_type_ref_resolved,
+
 };
 
 struct ic_type_ref {
     enum ic_type_ref_tag tag;
     union {
         /* no value for unknown */
-        struct ic_symbol sym; /* value for ic_type_symbol */
-        /* FIXME need a structure for an error */
+        struct ic_symbol sym;       /* value for ic_type_ref_symbol */
+        struct ic_decl_type *tdecl; /* value for ic_type_ref_resolved */
     } u;
 };
 
@@ -80,7 +75,9 @@ unsigned int ic_type_ref_symbol_init(struct ic_type_ref *type, char *type_str, u
 unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_type);
 
 /* set the sym on this type from the provided string
- * this will change type.type to sym
+ * this will change type_ref.tag to sym
+ *
+ * this is an error if type_ref.tag was already resolved
  *
  * returns 1 on success
  * returns 0 on failure
@@ -89,12 +86,30 @@ unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, un
 
 /* return a symbol representing this type
  *
- * if type is unknown then 0 is returned
- * if type is symbol then the symbol is returned
+ * if type_ref is unknown then 0 is returned
+ * if type_ref is symbol then the symbol is returned
+ * if type_ref is resolved then the symbol for that type is returned
  *
  * returns 0 on failure
  */
 struct ic_symbol *ic_type_ref_get_symbol(struct ic_type_ref *type);
+
+/* set the decl_type on this type_ref
+ * this will change type.tag to resolved
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_type_ref_set_type_decl(struct ic_type_ref *type, struct ic_decl_type *tdecl);
+
+/* return the underlying decl_type
+ *
+ * if type_ref.tag is not resolved then this is an error
+ *
+ * return * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type *ic_type_ref_get_type_decl(struct ic_type_ref *type);
 
 /* print this this type */
 void ic_type_ref_print(FILE *fd, struct ic_type_ref *type);

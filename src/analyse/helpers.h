@@ -49,11 +49,11 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
  * returns ic_type * on success
  * returns 0 on failure
  */
-struct ic_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr);
+struct ic_decl_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr);
 
-struct ic_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_expr_constant *cons);
+struct ic_decl_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_expr_constant *cons);
 
-struct ic_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall);
+struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall);
 
 /* perform analyse of let statement in the provided body
  *
