@@ -77,7 +77,7 @@ unsigned int ic_transform_ir_let_literal_destroy(struct ic_transform_ir_let_lite
  */
 unsigned int ic_transform_ir_let_literal_print(FILE *fd, struct ic_transform_ir_let_literal *let, unsigned int *indent) {
     unsigned int fake_indent = 0;
-    char * type_name = 0;
+    char *type_name = 0;
 
     if (!let) {
         puts("ic_transform_ir_let_literal_print: let was null");
@@ -103,9 +103,9 @@ unsigned int ic_transform_ir_let_literal_print(FILE *fd, struct ic_transform_ir_
 
     /* type name */
     type_name = ic_decl_type_str(let->type);
-    if (!type_name){
-      puts("ic_transform_ir_let_literal_print: call to ic_decl_type_str failed");
-      return 0;
+    if (!type_name) {
+        puts("ic_transform_ir_let_literal_print: call to ic_decl_type_str failed");
+        return 0;
     }
 
     fprintf(fd, "::%s = ", type_name);
@@ -218,7 +218,7 @@ unsigned int ic_transform_ir_let_expr_print(FILE *fd, struct ic_transform_ir_let
 
     /* type name */
     type_name = ic_decl_type_str(let->type);
-    if (!type_name){
+    if (!type_name) {
         puts("ic_transform_ir_let_expr_print: call to ic_decl_type_str failed");
         return 0;
     }
@@ -336,7 +336,7 @@ unsigned int ic_transform_ir_let_faccess_print(FILE *fd, struct ic_transform_ir_
 
     /* type */
     type_name = ic_decl_type_str(let->type);
-    if (!type_name){
+    if (!type_name) {
         puts("ic_transform_ir_let_faccess_print: call to ic_decl_type_str failed");
         return 0;
     }

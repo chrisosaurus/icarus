@@ -1057,7 +1057,7 @@ unsigned int ic_decl_type_isbuiltin(struct ic_decl_type *tdecl) {
  * returns 1 if bool
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_isbool(struct ic_decl_type *tdecl){
+unsigned int ic_decl_type_isbool(struct ic_decl_type *tdecl) {
     if (!tdecl) {
         puts("ic_decl_type_isbool: tdecl was null");
         return 0;
@@ -1071,7 +1071,7 @@ unsigned int ic_decl_type_isbool(struct ic_decl_type *tdecl){
  * returns 1 if void
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_isvoid(struct ic_decl_type *tdecl){
+unsigned int ic_decl_type_isvoid(struct ic_decl_type *tdecl) {
     if (!tdecl) {
         puts("ic_decl_type_isvoid: tdecl was null");
         return 0;
@@ -1145,7 +1145,7 @@ void ic_decl_type_print_body(FILE *fd, struct ic_decl_type *tdecl, unsigned int 
 }
 
 /* print debug information for this type */
-void ic_decl_type_print_debug(FILE *fd, struct ic_decl_type *tdecl){
+void ic_decl_type_print_debug(FILE *fd, struct ic_decl_type *tdecl) {
     unsigned int fake_indent = 0;
 
     if (!tdecl) {
@@ -1162,13 +1162,13 @@ void ic_decl_type_print_debug(FILE *fd, struct ic_decl_type *tdecl){
  * returns * on success
  * returns 0 on failure
  */
-struct ic_symbol *ic_decl_type_name(struct ic_decl_type *tdecl){
-  if (!tdecl) {
-    puts("ic_decl_type_name: tdecl was null");
-    return 0;
-  }
+struct ic_symbol *ic_decl_type_name(struct ic_decl_type *tdecl) {
+    if (!tdecl) {
+        puts("ic_decl_type_name: tdecl was null");
+        return 0;
+    }
 
-  return &(tdecl->name);
+    return &(tdecl->name);
 }
 
 /* get the char * contents of the name
@@ -1439,18 +1439,18 @@ unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char *field
  * returns 1 if equal
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_equal(struct ic_decl_type *a, struct ic_decl_type *b){
-  if (!a){
-    puts("ic_decl_type_equal: a was null");
-    return 0;
-  }
+unsigned int ic_decl_type_equal(struct ic_decl_type *a, struct ic_decl_type *b) {
+    if (!a) {
+        puts("ic_decl_type_equal: a was null");
+        return 0;
+    }
 
-  if (!b){
-    puts("ic_decl_type_equal: b was null");
-    return 0;
-  }
+    if (!b) {
+        puts("ic_decl_type_equal: b was null");
+        return 0;
+    }
 
-  return a == b;
+    return a == b;
 }
 
 /* allocate and return a new decl_union

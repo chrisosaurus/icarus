@@ -593,41 +593,41 @@ struct ic_decl_type *ic_kludge_get_decl_type_from_typeref(struct ic_kludge *klud
         return 0;
     }
 
-    switch (type_ref->tag){
-      case ic_type_ref_unknown:
-        puts("ic_kludge_get_decl_type_from_typeref: type ref was still unknown");
-        return 0;
-        break;
-
-      case ic_type_ref_symbol:
-        type_sym = ic_type_ref_get_symbol(type_ref);
-        if (!type_sym){
-            puts("ic_kludge_get_decl_type_from_typeref: call to ic_type_ref_get_symbol failed");
+    switch (type_ref->tag) {
+        case ic_type_ref_unknown:
+            puts("ic_kludge_get_decl_type_from_typeref: type ref was still unknown");
             return 0;
-        }
+            break;
 
-        tdecl = ic_kludge_get_decl_type_from_symbol(kludge, type_sym);
-        if (!tdecl){
-          /* remain silent as we want to be able to check for the non-existance of types */
+        case ic_type_ref_symbol:
+            type_sym = ic_type_ref_get_symbol(type_ref);
+            if (!type_sym) {
+                puts("ic_kludge_get_decl_type_from_typeref: call to ic_type_ref_get_symbol failed");
+                return 0;
+            }
+
+            tdecl = ic_kludge_get_decl_type_from_symbol(kludge, type_sym);
+            if (!tdecl) {
+                /* remain silent as we want to be able to check for the non-existance of types */
+                return 0;
+            }
+
+            return tdecl;
+            break;
+
+        case ic_type_ref_resolved:
+            tdecl = ic_type_ref_get_type_decl(type_ref);
+            if (!tdecl) {
+                puts("ic_kludge_get_decl_type_from_typeref: call to ic_type_ref_get_type_decl failed");
+                return 0;
+            }
+            return tdecl;
+            break;
+
+        default:
+            puts("ic_kludge_get_decl_type_from_typeref: impossible type_ref tag");
             return 0;
-        }
-
-        return tdecl;
-        break;
-
-      case ic_type_ref_resolved:
-        tdecl = ic_type_ref_get_type_decl(type_ref);
-        if (!tdecl){
-            puts("ic_kludge_get_decl_type_from_typeref: call to ic_type_ref_get_type_decl failed");
-            return 0;
-        }
-        return tdecl;
-        break;
-
-      default:
-        puts("ic_kludge_get_decl_type_from_typeref: impossible type_ref tag");
-        return 0;
-        break;
+            break;
     }
 }
 

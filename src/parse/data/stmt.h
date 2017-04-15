@@ -57,7 +57,6 @@ struct ic_stmt_let {
 
     struct ic_symbol identifier;
 
-
     /* may be set at parse time from user-declared types (symbol)
      * set at analysis time (decl_type) either from
      *  a) elevating the user-declared type
