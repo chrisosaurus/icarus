@@ -478,19 +478,27 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
         }
     }
 
-    /* insert a cleanup and return_void instruction
-     * if a function used a return statement then it is likely we will never
-     * actually hit these instructions
-     *
-     * FIXME TODO only insert if not preceeded by return statement
-     */
-    if (!ic_backend_pancake_instructions_add(instructions, icp_clean_stack)) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
+    /* fetch last instruction to check if we already returned */
+    instruction = ic_backend_pancake_instructions_get_last(instructions);
+    if (!instruction) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_get_last failed");
         return 0;
     }
-    if (!ic_backend_pancake_instructions_add(instructions, icp_return_void)) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
-        return 0;
+
+    /* if last instruction was a return, then do nothing */
+    if (instruction->tag != icp_return_value) {
+        /* it wasn't a return, so insert return and cleanup instructions */
+
+        /* insert a cleanup and return_void instruction */
+        if (!ic_backend_pancake_instructions_add(instructions, icp_clean_stack)) {
+            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
+            return 0;
+        }
+
+        if (!ic_backend_pancake_instructions_add(instructions, icp_return_void)) {
+            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
+            return 0;
+        }
     }
 
     /* destroy scope_keys pvector
@@ -1619,9 +1627,43 @@ unsigned int ic_backend_pancake_generate_constructors(struct ic_backend_pancake_
         return 0;
     }
 
+    /* `type` is a name which maps to a pair
+     * type => ( total_size, dict field_name => (field_offset, type) )
+     *
+     * the constructor needs to know the size to allocate and how to
+     * init the fields
+     *
+     * every access of a field needs to know the field offsets
+     * only need field type information at static time
+     * for things such as nested access
+     * f.a.b
+     * requires knowing the type of `f` and `f.a`
+     *
+     * although tir will have already simplified this...
+     *
+     *   type Foo
+     *    a::Sint
+     *    b::Sint
+     *    s::String
+     *   end
+     *
+     * should generate
+     *
+     *   label Foo(Sint,Sint,String)
+     *   alloc 192 // 3 * 64bit
+     *   write_to_offset 0 0
+     *   write_to_offset 1 1
+     *   write_to_offset 2 2
+     *   save
+     *   clean_stack
+     *   restore
+     *   return_value
+     *
+     */
+
     /* FIXME TODO unimplemented
-   * only error if there is work to do
-   */
+     * only error if there is work to do
+     */
     n_types = ic_pvector_length(&(kludge->default_constructors));
     if (n_types > 0) {
         puts("ic_backend_pancake_generate_constructors: not implemented, asked to do work");

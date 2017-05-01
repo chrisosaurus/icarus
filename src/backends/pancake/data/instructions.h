@@ -48,9 +48,16 @@ unsigned int ic_backend_pancake_instructions_destroy(struct ic_backend_pancake_i
  * will resize as needed
  *
  * returns * on success
- * returns 0 on falure
+ * returns 0 on failure
  */
 struct ic_backend_pancake_bytecode *ic_backend_pancake_instructions_add(struct ic_backend_pancake_instructions *instructions, enum ic_backend_pancake_bytecode_type type);
+
+/* return last instruction inserted
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_backend_pancake_bytecode *ic_backend_pancake_instructions_get_last(struct ic_backend_pancake_instructions *instructions);
 
 /* get current length of instructions
  *

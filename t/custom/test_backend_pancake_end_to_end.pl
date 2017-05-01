@@ -62,8 +62,6 @@ my $cases = [
       clean_stack
       restore
       return_value
-      clean_stack
-      return_void
       label foo(Sint)
       copyarg 0
       pushint 4
@@ -77,8 +75,6 @@ my $cases = [
       clean_stack
       restore
       return_value
-      clean_stack
-      return_void
       label baz(Sint)
       copyarg 0
       pushint 3
@@ -92,8 +88,6 @@ my $cases = [
       clean_stack
       restore
       return_value
-      clean_stack
-      return_void
       label main()
       pushint 7
       call foo(Sint) 1

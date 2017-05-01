@@ -113,7 +113,7 @@ unsigned int ic_backend_pancake_instructions_destroy(struct ic_backend_pancake_i
  * will resize as needed
  *
  * returns * on success
- * returns 0 on falure
+ * returns 0 on failure
  */
 struct ic_backend_pancake_bytecode *ic_backend_pancake_instructions_add(struct ic_backend_pancake_instructions *instructions, enum ic_backend_pancake_bytecode_type type) {
     struct ic_backend_pancake_bytecode *bytecode = 0;
@@ -144,6 +144,36 @@ struct ic_backend_pancake_bytecode *ic_backend_pancake_instructions_add(struct i
 
     /* increment len counter */
     instructions->len += 1;
+
+    return bytecode;
+}
+
+/* return last instruction inserted
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_backend_pancake_bytecode *ic_backend_pancake_instructions_get_last(struct ic_backend_pancake_instructions *instructions) {
+    unsigned int len = 0;
+    struct ic_backend_pancake_bytecode *bytecode = 0;
+
+    if (!instructions) {
+        puts("ic_backend_pancake_instructions_get_last: instructions was null");
+        return 0;
+    }
+
+    len = instructions->len;
+
+    if (len == 0) {
+        puts("ic_backend_pancake_instructions_get_last: instructions was empty");
+        return 0;
+    }
+
+    bytecode = ic_backend_pancake_instructions_get(instructions, len - 1);
+    if (!bytecode) {
+        puts("ic_backend_pancake_instructions_get_last: call to ic_backend_pancake_instructions_get failed");
+        return 0;
+    }
 
     return bytecode;
 }
