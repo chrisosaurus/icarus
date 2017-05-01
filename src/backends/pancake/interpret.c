@@ -494,7 +494,18 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 break;
 
-            /* copyarg argn::uint */
+            /* copyarg argn::uint
+             * copyarg at offset argn onto stack
+             * Note: arguments to functions are pushed in order
+             *       a function call pushes the arguments, and then records the stack
+             *       position when the function call starts
+             *       `copyarg 0` will refer to the 0th argument before the fcall started
+             *       which is the *last* argument
+             *       if you had 3 arguments then,
+             *       copyarg 0 - 3rd argument
+             *       copyarg 1 - 2nd argument
+             *       copyarg 2 - 1st argument
+             */
             case icp_copyarg:
                 call_frame = ic_backend_pancake_call_frame_stack_peek(call_frame_stack);
                 if (!call_frame) {
@@ -729,6 +740,34 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
             case icp_tailcall_void:
             /* tailcall_value fname::string argn::uint */
             case icp_tailcall_value:
+                puts("ic_backend_pancake_interpret: unimplemeneted bytecode instruction");
+                return 0;
+                break;
+
+            /* alloc slots::uint
+             * allocate a new object with this many slots
+             * a slot is usually 64 bits
+             */
+            case icp_alloc:
+                puts("ic_backend_pancake_interpret: unimplemeneted bytecode instruction");
+                return 0;
+                break;
+
+            /* store_offset slot::uint
+             * let value = pop()
+             * let object = peek()
+             * store value at offset `slot` within object
+             */
+            case icp_store_offset:
+                puts("ic_backend_pancake_interpret: unimplemeneted bytecode instruction");
+                return 0;
+                break;
+
+            /* load_offset slot::uint
+             * let object = peek()
+             * load value at offset `slot` within object and push onto stack
+             */
+            case icp_load_offset:
                 puts("ic_backend_pancake_interpret: unimplemeneted bytecode instruction");
                 return 0;
                 break;

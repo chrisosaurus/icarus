@@ -359,6 +359,24 @@ unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_panca
             return 1;
             break;
 
+        case icp_alloc:
+            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            fprintf(fd, "alloc %u", uint);
+            return 1;
+            break;
+
+        case icp_store_offset:
+            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            fprintf(fd, "store_offset %u", uint);
+            return 1;
+            break;
+
+        case icp_load_offset:
+            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            fprintf(fd, "load_offset %u", uint);
+            return 1;
+            break;
+
         default:
             puts("ic_backend_pancake_bytecode_print: impossible case");
             return 0;
@@ -782,6 +800,12 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_uint(struct ic_backend_pancake
         case icp_jif:
         /* jnif addr::uint */
         case icp_jnif:
+        /* alloc slots::uint */
+        case icp_alloc:
+        /* store_offset slot::uint */
+        case icp_store_offset:
+        /* load_offset slot::uint */
+        case icp_load_offset:
             break;
 
         default:

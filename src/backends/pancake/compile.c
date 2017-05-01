@@ -1652,11 +1652,11 @@ unsigned int ic_backend_pancake_generate_constructors(struct ic_backend_pancake_
      *   label Foo(Sint,Sint,String)
      *   alloc 3 // allocate a 3 cell object
      *   copyarg 0
-     *   store_to_offset 0
+     *   store_offset 0
      *   cpyarg 1
-     *   store_to_offset 1
+     *   store_offset 1
      *   copyarg 2
-     *   store_to_offset 2
+     *   store_offset 2
      *   save
      *   clean_stack
      *   restore
@@ -1674,7 +1674,7 @@ unsigned int ic_backend_pancake_generate_constructors(struct ic_backend_pancake_
      *   pushint 4
      *   pushint 1
      *   call Foo(Sint,Sint,String) 3
-     *   copy_offset 0
+     *   load_offset 0
      *   call_builtin println(Sint) 1
      *   pushint 4
      *   store_offset 0

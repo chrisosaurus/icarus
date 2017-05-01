@@ -491,6 +491,12 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
             instruction = ic_backend_pancake_instructions_add(instructions, icp_jif_label);
         } else if (!strcmp("jnif_label", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_jnif_label);
+        } else if (!strcmp("alloc", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_alloc);
+        } else if (!strcmp("store_offset", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_store_offset);
+        } else if (!strcmp("load_offset", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset);
         } else {
             printf("ic_backend_pancake_instructions_load: unsupported instruction '%s'\n", op);
             return 0;
@@ -668,6 +674,45 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
             case icp_return_value:
             case icp_exit:
                 /* nothing more to do */
+                break;
+
+            case icp_alloc:
+                /* consume uint */
+                ret = fscanf(file, "%u", &uint_arg1);
+                if (ret == EOF || ret == 0) {
+                    puts("ic_backend_pancake_instructions_load: read failed for alloc");
+                    return 0;
+                }
+                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, uint_arg1)) {
+                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_uint failed");
+                    return 0;
+                }
+                break;
+
+            case icp_store_offset:
+                /* consume uint */
+                ret = fscanf(file, "%u", &uint_arg1);
+                if (ret == EOF || ret == 0) {
+                    puts("ic_backend_pancake_instructions_load: read failed for store_offset");
+                    return 0;
+                }
+                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, uint_arg1)) {
+                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_uint failed");
+                    return 0;
+                }
+                break;
+
+            case icp_load_offset:
+                /* consume uint */
+                ret = fscanf(file, "%u", &uint_arg1);
+                if (ret == EOF || ret == 0) {
+                    puts("ic_backend_pancake_instructions_load: read failed for load_offset");
+                    return 0;
+                }
+                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, uint_arg1)) {
+                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_uint failed");
+                    return 0;
+                }
                 break;
 
             default:

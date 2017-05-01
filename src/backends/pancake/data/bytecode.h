@@ -89,6 +89,22 @@ enum ic_backend_pancake_bytecode_type {
      * resets stack-frame back to how it was before caller inserted args
      */
     icp_clean_stack,
+    /* alloc slots::uint
+     * allocate a new object with this many slots
+     * a slot is usually 64 bits
+     */
+    icp_alloc,
+    /* store_offset slot::uint
+     * let value = pop()
+     * let object = peek()
+     * store value at offset `slot` within object
+     */
+    icp_store_offset,
+    /* load_offset slot::uint
+     * let object = peek()
+     * load value at offset `slot` within object and push onto stack
+     */
+    icp_load_offset,
 };
 
 enum ic_backend_pancake_bytecode_arg_type {
