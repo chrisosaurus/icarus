@@ -94,6 +94,10 @@ test_custom: $(OBJ) icarus
 	t/custom/test_analyse_simple.pl
 
 	@echo -e "\n"
+	@echo running test_analyse_union.pl
+	t/custom/test_analyse_union.pl
+
+	@echo -e "\n"
 	@echo running test_analyse_invalid.pl
 	t/custom/test_analyse_invalid.pl
 
