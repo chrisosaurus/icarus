@@ -230,8 +230,6 @@ which shows us
     clean_stack
     restore
     return_value
-    clean_stack
-    return_void
     label fizzer(Sint)
     pushstr ""
     store str
