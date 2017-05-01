@@ -3,6 +3,7 @@
 
 #include "../../data/symbol.h"
 #include "../parse.h"
+#include "../permissions.h"
 #include "body.h"
 #include "stmt.h"
 
@@ -911,6 +912,11 @@ struct ic_expr *ic_stmt_while_get_expr(struct ic_stmt_while *swhile) {
         return 0;
     }
 
+    if (!swhile->expr) {
+        puts("ic_stmt_while_get_expr: swhile->expr was null");
+        return 0;
+    }
+
     /* return our expr innards */
     return swhile->expr;
 }
@@ -975,6 +981,457 @@ void ic_stmt_while_print(FILE *fd, struct ic_stmt_while *swhile, unsigned int *i
      * body will handle incr and decr of the indent level
      */
     ic_body_print(fd, swhile->body, indent_level);
+
+    /* statements are displayed on their own line */
+    /* print indent */
+    ic_parse_print_indent(fd, *indent_level);
+    fputs("end\n", fd);
+}
+
+/* allocate and initialise a new ic_stmt_match
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_stmt_match *ic_stmt_match_new(void) {
+    struct ic_stmt_match *match = 0;
+
+    match = calloc(1, sizeof(struct ic_stmt_match));
+    if (!match) {
+        puts("ic_stmt_match_new: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_stmt_match_init(match)) {
+        puts("ic_stmt_match_new: call to ic_stmt_match_init failed");
+        return 0;
+    }
+
+    return match;
+}
+
+/* initialise an existing new ic_stmt_match
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_match_init(struct ic_stmt_match *match) {
+    if (!match) {
+        puts("ic_stmt_match_init: match was null");
+        return 0;
+    }
+
+    match->expr = 0;
+    match->else_body = 0;
+
+    if (!ic_pvector_init(&(match->cases), 0)) {
+        puts("ic_stmt_match_init: call to ic_pvector_init failed");
+        return 0;
+    }
+
+    return 1;
+}
+
+/* destroy match
+ *
+ * only frees stmt_match if `free_match` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_match_destroy(struct ic_stmt_match *match, unsigned int free_match) {
+    int i = 0;
+    int len = 0;
+    struct ic_stmt_case *scase = 0;
+
+    if (!match) {
+        puts("ic_stmt_match_destroy: match was null");
+        return 0;
+    }
+
+    if (match->expr) {
+        if (!ic_expr_destroy(match->expr, 1)) {
+            puts("ic_stmt_match_destroy: call to ic_expr_destroy failed");
+            return 0;
+        }
+    }
+
+    if (match->else_body) {
+        if (!ic_body_destroy(match->else_body, 1)) {
+            puts("ic_stmt_match_destroy: call to ic_body_destroy failed");
+            return 0;
+        }
+    }
+
+    len = ic_pvector_length(&(match->cases));
+    if (len > 0) {
+        for (i = 0; i < len; ++i) {
+            scase = ic_pvector_get(&(match->cases), i);
+            if (!scase) {
+                puts("ic_stmt_match_destroy: call to ic_pvector_get failed");
+                return 0;
+            }
+
+            if (!ic_stmt_case_destroy(scase, 1)) {
+                puts("ic_stmt_match_destroy: call to ic_stmt_case_destroy failed");
+                return 0;
+            }
+        }
+    }
+
+    if (!ic_pvector_destroy(&(match->cases), 0, 0)) {
+        puts("ic_stmt_match_destroy: call to ic_pvector_destroy failed");
+        return 0;
+    }
+
+    if (free_match) {
+        free(match);
+    }
+
+    return 1;
+}
+
+/* returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr *ic_stmt_match_get_expr(struct ic_stmt_match *match) {
+    if (!match) {
+        puts("ic_stmt_match_get_expr: match was null");
+        return 0;
+    }
+
+    if (!match->expr) {
+        puts("ic_stmt_match_get_expr: match->expr was null");
+        return 0;
+    }
+
+    return match->expr;
+}
+
+/* returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_body *ic_stmt_match_get_else_body(struct ic_stmt_match *match) {
+    if (!match) {
+        puts("ic_stmt_match_get_else_body: match was null");
+        return 0;
+    }
+
+    if (!match->else_body) {
+        puts("ic_stmt_match_get_else_body: match->else_body was null");
+        return 0;
+    }
+
+    return match->else_body;
+}
+
+/* get stmt_case of offset i within cases
+ *
+ * returns pointer to element on success
+ * returns 0 on failure
+ */
+struct ic_stmt_case *ic_stmt_match_cases_get(struct ic_stmt_match *match, unsigned int i) {
+    struct ic_stmt_case *scase = 0;
+
+    if (!match) {
+        puts("ic_stmt_match_cases_get: match was null");
+        return 0;
+    }
+
+    scase = ic_pvector_get(&(match->cases), i);
+    if (!scase) {
+        puts("ic_stmt_match_cases_get: call to ic_pvector_get failed");
+        return 0;
+    }
+
+    return scase;
+}
+
+/* get length of body
+ *
+ * returns length on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_match_cases_length(struct ic_stmt_match *match) {
+    unsigned int len = 0;
+
+    if (!match) {
+        puts("ic_stmt_match_cases_length: match was null");
+        return 0;
+    }
+
+    len = ic_pvector_length(&(match->cases));
+    return len;
+}
+
+/* print this if */
+void ic_stmt_match_print(FILE *fd, struct ic_stmt_match *match, unsigned int *indent_level) {
+    unsigned int fake_indent = 0;
+    unsigned int i = 0;
+    unsigned int len = 0;
+    struct ic_stmt_case *scase = 0;
+
+    if (!fd) {
+        puts("ic_stmt_match_print: fd was null");
+        return;
+    }
+
+    if (!match) {
+        puts("ic_stmt_match_print: match was null");
+        return;
+    }
+
+    if (!indent_level) {
+        puts("ic_stmt_match_print: indent_level was null");
+        return;
+    }
+
+    /* print indent */
+    ic_parse_print_indent(fd, *indent_level);
+
+    /* we want to print
+     *  match expr
+     *    cases...
+     *    else...
+     *    end
+     *  end
+     */
+    fputs("match ", fd);
+    ic_expr_print(fd, match->expr, &fake_indent);
+    fputs("\n", fd);
+
+    len = ic_stmt_match_cases_length(match);
+
+    ++*indent_level;
+    for (i = 0; i < len; ++i) {
+        scase = ic_stmt_match_cases_get(match, i);
+        if (!scase) {
+            puts("ic_stmt_match_print: call to ic_stmt_match_cases_get");
+            return;
+        }
+
+        ic_parse_print_indent(fd, *indent_level);
+        fputs("case ", fd);
+        ic_field_print(fd, &(scase->field));
+        fputs("\n", fd);
+
+        ic_body_print(fd, scase->body, indent_level);
+    }
+
+    if (match->else_body) {
+        ic_parse_print_indent(fd, *indent_level);
+        fputs("else\n", fd);
+        ic_body_print(fd, match->else_body, indent_level);
+    }
+
+    ic_parse_print_indent(fd, *indent_level);
+    fputs("end\n", fd);
+
+    --*indent_level;
+
+    ic_parse_print_indent(fd, *indent_level);
+    fputs("end\n", fd);
+}
+
+/* allocate and initialise a new ic_stmt_case
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_stmt_case *ic_stmt_case_new(char *id_ch, unsigned int id_len, char *type_ch, unsigned int type_len, struct ic_body *body) {
+    struct ic_stmt_case *scase = 0;
+
+    if (!id_ch) {
+        puts("ic_stmt_case_new: id_ch was null");
+        return 0;
+    }
+
+    if (!id_len) {
+        puts("ic_stmt_case_new: id_len was 0");
+        return 0;
+    }
+
+    if (!type_ch) {
+        puts("ic_stmt_case_new: type_ch was null");
+        return 0;
+    }
+
+    if (!type_len) {
+        puts("ic_stmt_case_new: type_len was 0");
+        return 0;
+    }
+
+    if (!body) {
+        puts("ic_stmt_case_new: body was null");
+        return 0;
+    }
+
+    /* alloc */
+    scase = calloc(1, sizeof(struct ic_stmt_case));
+    if (!scase) {
+        puts("ic_stmt_case_new: calloc failed");
+        return 0;
+    }
+
+    /* init */
+    if (!ic_stmt_case_init(scase, id_ch, id_len, type_ch, type_len, body)) {
+        puts("ic_stmt_case_new: call to ic_stmt_case_init failed");
+        free(scase);
+        return 0;
+    }
+
+    return scase;
+}
+
+/* initialise an existing new ic_stmt_case
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_case_init(struct ic_stmt_case *scase, char *id_ch, unsigned int id_len, char *type_ch, unsigned int type_len, struct ic_body *body) {
+    if (!scase) {
+        puts("ic_stmt_case_init: scase was null");
+        return 0;
+    }
+
+    if (!id_ch) {
+        puts("ic_stmt_case_init: id_ch was null");
+        return 0;
+    }
+
+    if (!id_len) {
+        puts("ic_stmt_case_init: id_len was 0");
+        return 0;
+    }
+
+    if (!type_ch) {
+        puts("ic_stmt_case_init: type_ch was null");
+        return 0;
+    }
+
+    if (!type_len) {
+        puts("ic_stmt_case_init: type_len was 0");
+        return 0;
+    }
+
+    if (!body) {
+        puts("ic_stmt_case_init: body was null");
+        return 0;
+    }
+
+    scase->body = body;
+
+    if (!ic_field_init(&(scase->field), id_ch, id_len, type_ch, type_len, ic_parse_perm_default())) {
+        puts("ic_stmt_case_init: call to ic_field_init failed");
+        return 0;
+    }
+
+    /* return success */
+    return 1;
+}
+
+/* destroy case
+ *
+ * only frees stmt_case if `free_case` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_case_destroy(struct ic_stmt_case *scase, unsigned int free_case) {
+    if (!scase) {
+        puts("ic_stmt_case_destroy: scase was null");
+        return 0;
+    }
+
+    /* free_field = 0 as member */
+    if (!ic_field_destroy(&(scase->field), 0)) {
+        puts("ic_stmt_case_destroy: call to ic_field_destroy failed");
+        return 0;
+    }
+
+    /* free_body = 0 as member */
+    if (!ic_body_destroy(scase->body, 0)) {
+        puts("ic_stmt_case_destroy: call to ic_body_destroy failed");
+        return 0;
+    }
+
+    if (free_case) {
+        free(scase);
+    }
+
+    return 1;
+}
+
+/* returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_field *ic_stmt_case_get_field(struct ic_stmt_case *scase) {
+    if (!scase) {
+        puts("ic_stmt_case_get_field: scase was null");
+        return 0;
+    }
+
+    /* return our expr innards */
+    return &(scase->field);
+}
+
+/* get statement of offset i within the body
+ *
+ * returns pointer to element on success
+ * returns 0 on failure
+ */
+struct ic_stmt *ic_stmt_case_get_stmt(struct ic_stmt_case *scase, unsigned int i) {
+    if (!scase) {
+        puts("ic_stmt_case_get_stmt: scase was null");
+        return 0;
+    }
+
+    /* let body do the lifting */
+    return ic_body_get(scase->body, i);
+}
+
+/* get length of body
+ *
+ * returns length on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_case_length(struct ic_stmt_case *scase) {
+    if (!scase) {
+        puts("ic_stmt_case_length: scase was null");
+        return 0;
+    }
+
+    /* let body do the lifting */
+    return ic_body_length(scase->body);
+}
+
+/* print this if */
+void ic_stmt_case_print(FILE *fd, struct ic_stmt_case *scase, unsigned int *indent_level) {
+    if (!scase) {
+        puts("ic_stmt_case_print: scase was null");
+        return;
+    }
+    if (!indent_level) {
+        puts("ic_stmt_case_print: indent_level was null");
+        return;
+    }
+
+    /* print indent */
+    ic_parse_print_indent(fd, *indent_level);
+
+    /* we want to print
+     *  case expr
+     *      body
+     *  end
+     */
+    fputs("case ", fd);
+    ic_field_print(fd, &(scase->field));
+    fputs("\n", fd);
+
+    /* print body
+     * body will handle incr and decr of the indent level
+     */
+    ic_body_print(fd, scase->body, indent_level);
 
     /* statements are displayed on their own line */
     /* print indent */
@@ -1077,6 +1534,14 @@ unsigned int ic_stmt_destroy(struct ic_stmt *stmt, unsigned int free_stmt) {
             /* do not free as member */
             if (!ic_stmt_while_destroy(&(stmt->u.swhile), 0)) {
                 puts("ic_stmt_destroy: call to ic_stmt_while_destroy failed");
+                return 0;
+            }
+            break;
+
+        case ic_stmt_type_match:
+            /* do not free as member */
+            if (!ic_stmt_match_destroy(&(stmt->u.match), 0)) {
+                puts("ic_stmt_destroy: call to ic_stmt_match_destroy failed");
                 return 0;
             }
             break;
@@ -1247,6 +1712,28 @@ struct ic_stmt_while *ic_stmt_get_swhile(struct ic_stmt *stmt) {
     return &(stmt->u.swhile);
 }
 
+/* get a pointer to the match within
+ * will only succeed if ic_stmt is of the correct type
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_stmt_match *ic_stmt_get_match(struct ic_stmt *stmt) {
+    if (!stmt) {
+        puts("ic_stmt_get_match: stmt was null");
+        return 0;
+    }
+
+    /* check type before giving out */
+    if (stmt->tag != ic_stmt_type_match) {
+        puts("ic_stmt_get_match: not of the correct type");
+        return 0;
+    }
+
+    /* otherwise give them what they asked for */
+    return &(stmt->u.match);
+}
+
 /* get a pointer to the expr within
  * will only succeed if ic_stmt is of the correct type
  *
@@ -1303,6 +1790,10 @@ void ic_stmt_print(FILE *fd, struct ic_stmt *stmt, unsigned int *indent_level) {
 
         case ic_stmt_type_while:
             ic_stmt_while_print(fd, &(stmt->u.swhile), indent_level);
+            break;
+
+        case ic_stmt_type_match:
+            ic_stmt_match_print(fd, &(stmt->u.match), indent_level);
             break;
 
         case ic_stmt_type_expr:

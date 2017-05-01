@@ -37,7 +37,11 @@ struct ic_stmt *ic_parse_stmt(struct ic_token_list *token_list);
 /**** parse/body.c ****/
 
 /* parse a body
- * a body ends when an unmatched `end` is found, this will be consumed
+ * a body ends with an any unmatched:
+ *  end
+ *  else
+ *  case
+ * this ending token is only consumed if `consume_end` is truthy
  *
  * returns * on success
  * returns 0 on failure

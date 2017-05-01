@@ -145,6 +145,12 @@ char *ic_token_id_get_representation(enum ic_token_id id) {
         case IC_WHILE:
             return "while";
             break;
+        case IC_MATCH:
+            return "match";
+            break;
+        case IC_CASE:
+            return "case";
+            break;
 
         case IC_IMPORT:
             return "import";
@@ -587,6 +593,12 @@ void ic_token_id_print_debug(FILE *fd, enum ic_token_id id) {
             break;
         case IC_WHILE:
             fputs("IC_WHILE", fd);
+            break;
+        case IC_MATCH:
+            fputs("IC_MATCH", fd);
+            break;
+        case IC_CASE:
+            fputs("IC_CASE", fd);
             break;
 
         case IC_IMPORT:

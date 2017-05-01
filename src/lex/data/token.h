@@ -39,6 +39,8 @@ enum ic_token_id {
     IC_FOR,
     IC_IN,
     IC_WHILE,
+    IC_MATCH,
+    IC_CASE,
 
     IC_IMPORT,
     IC_BUILTIN,

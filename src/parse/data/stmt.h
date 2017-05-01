@@ -354,6 +354,125 @@ unsigned int ic_stmt_while_length(struct ic_stmt_while *swhile);
 /* print this if */
 void ic_stmt_while_print(FILE *fd, struct ic_stmt_while *swhile, unsigned int *indent_level);
 
+/* match expr
+ *  case name::Type
+ *    body
+ *  case name::Type
+ *    body
+ *  else
+ *    body
+ *  end
+ * end
+ */
+struct ic_stmt_match {
+    /* expr we are matching on */
+    struct ic_expr *expr;
+    /* optional list of cases */
+    struct ic_pvector cases;
+    /* optional else body */
+    struct ic_body *else_body;
+};
+
+/* allocate and initialise a new ic_stmt_match
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_stmt_match *ic_stmt_match_new(void);
+
+/* initialise an existing new ic_stmt_match
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_match_init(struct ic_stmt_match *match);
+
+/* destroy match
+ *
+ * only frees stmt_match if `free_match` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_match_destroy(struct ic_stmt_match *match, unsigned int free_match);
+
+/* returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_expr *ic_stmt_match_get_expr(struct ic_stmt_match *match);
+
+/* returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_body *ic_stmt_match_get_else_body(struct ic_stmt_match *match);
+
+/* get stmt_case of offset i within cases
+ *
+ * returns pointer to element on success
+ * returns 0 on failure
+ */
+struct ic_stmt_case *ic_stmt_match_cases_get(struct ic_stmt_match *match, unsigned int i);
+
+/* get length of cases
+ *
+ * returns length on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_match_cases_length(struct ic_stmt_match *match);
+
+/* print this if */
+void ic_stmt_match_print(FILE *fd, struct ic_stmt_match *match, unsigned int *indent_level);
+
+struct ic_stmt_case {
+    /* field we are matching on */
+    struct ic_field field;
+    struct ic_body *body;
+};
+
+/* allocate and initialise a new ic_stmt_case
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_stmt_case *ic_stmt_case_new(char *id_ch, unsigned int id_len, char *type_ch, unsigned int type_len, struct ic_body *body);
+
+/* initialise an existing new ic_stmt_case
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_case_init(struct ic_stmt_case *scase, char *id_ch, unsigned int id_len, char *type_ch, unsigned int type_len, struct ic_body *body);
+/* destroy case
+ *
+ * only frees stmt_case if `free_case` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_case_destroy(struct ic_stmt_case *scase, unsigned int free_case);
+
+/* returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_field *ic_stmt_case_get_field(struct ic_stmt_case *scase);
+
+/* get statement of offset i within the body
+ *
+ * returns pointer to element on success
+ * returns 0 on failure
+ */
+struct ic_stmt *ic_stmt_case_get_stmt(struct ic_stmt_case *scase, unsigned int i);
+
+/* get length of body
+ *
+ * returns length on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_case_length(struct ic_stmt_case *scase);
+
+/* print this if */
+void ic_stmt_case_print(FILE *fd, struct ic_stmt_case *scase, unsigned int *indent_level);
+
 enum ic_stmt_tag {
     ic_stmt_type_ret,
     ic_stmt_type_let,
@@ -361,6 +480,7 @@ enum ic_stmt_tag {
     ic_stmt_type_if,
     ic_stmt_type_for,
     ic_stmt_type_while,
+    ic_stmt_type_match,
     ic_stmt_type_expr
 };
 
@@ -373,6 +493,7 @@ struct ic_stmt {
         struct ic_stmt_if sif;
         struct ic_stmt_for sfor;
         struct ic_stmt_while swhile;
+        struct ic_stmt_match match;
         /* a statement can just be an expression in
          * void context
          *  foo(bar)
@@ -456,6 +577,14 @@ struct ic_stmt_for *ic_stmt_get_sfor(struct ic_stmt *stmt);
  * returns 0 on failure
  */
 struct ic_stmt_while *ic_stmt_get_swhile(struct ic_stmt *stmt);
+
+/* get a pointer to the match within
+ * will only succeed if ic_stmt is of the correct type
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_stmt_match *ic_stmt_get_match(struct ic_stmt *stmt);
 
 /* get a pointer to the expr within
  * will only succeed if ic_stmt is of the correct type

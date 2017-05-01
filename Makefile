@@ -78,6 +78,9 @@ test_custom: $(OBJ) icarus
 	@echo running test_parse_simple.pl
 	t/custom/test_parse_simple.pl
 
+	@echo running test_parse_union.pl
+	t/custom/test_parse_union.pl
+
 	@echo -e "\n"
 	@echo running test_arguments_version.pl
 	t/custom/test_arguments_version.pl

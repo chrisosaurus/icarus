@@ -34,6 +34,8 @@ struct ic_table_entry table[] = {
     {"for", 3, IC_FOR},
     {"in", 2, IC_IN},
     {"while", 5, IC_WHILE},
+    {"match", 5, IC_MATCH},
+    {"case", 4, IC_CASE},
 
     {"import", 6, IC_IMPORT},
     {"builtin", 7, IC_BUILTIN},

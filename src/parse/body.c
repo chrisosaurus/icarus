@@ -4,8 +4,14 @@
 #include "parse.h"
 
 /* parse a body
- * a body ends when an unmatched `end` is found, this will be consumed
+ * a body ends with an any unmatched:
+ *  end
+ *  else
+ *  case
+ * this ending token is only consumed if `consume_end` is truthy
  *
+ * returns * on success
+
  * returns * on success
  * returns 0 on failure
  */
@@ -38,6 +44,10 @@ struct ic_body *ic_parse_body(struct ic_token_list *token_list, unsigned int con
             break;
         }
         if (token->id == IC_ELSE) {
+            success = 1;
+            break;
+        }
+        if (token->id == IC_CASE) {
             success = 1;
             break;
         }

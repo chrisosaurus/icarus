@@ -219,6 +219,249 @@ static struct ic_stmt *ic_parse_stmt_let(struct ic_token_list *token_list) {
 }
 
 /* consume token
+ * returns ic_stmt_case * on success
+ * returns 0 on failure
+ */
+static struct ic_stmt_case *ic_parse_stmt_match_case(struct ic_token_list *token_list) {
+    struct ic_token *token = 0;
+    struct ic_body *body = 0;
+    struct ic_stmt_case *scase = 0;
+    char *id_ch = 0;
+    unsigned int id_len = 0;
+    char *type_ch = 0;
+    unsigned int type_len = 0;
+
+    if (!token_list) {
+        puts("ic_parse_stmt_match_case: token_list was null");
+        return 0;
+    }
+
+    token = ic_token_list_expect_important(token_list, IC_CASE);
+    if (!token) {
+        puts("ic_parse_stmt_match_catch: failed to find `case` token");
+        return 0;
+    }
+
+    token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
+    if (!token) {
+        puts("ic_parse_stmt_match_catch: failed to find `identifier` token");
+        return 0;
+    }
+
+    id_ch = ic_token_get_string(token);
+    if (!id_ch) {
+        puts("ic_parse_stmt_match_catch: call to ic_token_get_string failed");
+        return 0;
+    }
+    id_len = ic_token_get_string_length(token);
+
+    token = ic_token_list_expect_important(token_list, IC_DOUBLECOLON);
+    if (!token) {
+        puts("ic_parse_stmt_match_catch: failed to find `::` token");
+        return 0;
+    }
+
+    token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
+    if (!token) {
+        puts("ic_parse_stmt_match_catch: failed to find `Type token");
+        return 0;
+    }
+
+    type_ch = ic_token_get_string(token);
+    if (!type_ch) {
+        puts("ic_parse_stmt_match_catch: call to ic_token_get_string failed");
+        return 0;
+    }
+    type_len = ic_token_get_string_length(token);
+
+    body = ic_parse_body(token_list, 0);
+    if (!body) {
+        puts("ic_parse_stmt_match_catch: call to ic_parse_body failed");
+        return 0;
+    }
+
+    scase = ic_stmt_case_new(id_ch, id_len, type_ch, type_len, body);
+    if (!scase) {
+        puts("ic_parse_stmt_match_case: call to ic_stmt_case_new failed");
+        return 0;
+    }
+
+    return scase;
+}
+
+/* consume token
+ * returns ic_body * on success
+ * returns 0 on failure
+ */
+static struct ic_body *ic_parse_stmt_match_else(struct ic_token_list *token_list) {
+    struct ic_token *token = 0;
+    struct ic_body *body = 0;
+
+    if (!token_list) {
+        puts("ic_parse_stmt_match_else: token_list was null");
+        return 0;
+    }
+
+    token = ic_token_list_expect_important(token_list, IC_ELSE);
+    if (!token) {
+        puts("ic_parse_stmt_match_else: failed to find `else` token");
+        return 0;
+    }
+
+    body = ic_parse_body(token_list, 0);
+    if (!body) {
+        puts("ic_parse_stmt_match_else: call to ic_parse_body failed");
+        return 0;
+    }
+
+    return body;
+}
+
+/* consume token
+ * returns ic_stmt* on success
+ * returns 0 on failure
+ */
+static struct ic_stmt *ic_parse_stmt_match(struct ic_token_list *token_list) {
+    struct ic_stmt *stmt = 0;
+    struct ic_stmt_match *match = 0;
+    struct ic_stmt_case *scase = 0;
+    struct ic_body *else_body = 0;
+    struct ic_token *token = 0;
+    unsigned int found_something = 0;
+
+    if (!token_list) {
+        puts("ic_parse_stmt_match: token_list was null");
+        return 0;
+    }
+
+    stmt = ic_stmt_new(ic_stmt_type_match);
+    if (!stmt) {
+        puts("ic_parse_stmt_match: call to ic_stmt_new failed");
+        goto MATCH_ERROR;
+    }
+
+    match = ic_stmt_get_match(stmt);
+    if (!match) {
+        puts("ic_parse_stmt_match: call to ic_stmt_get_match failed");
+        goto MATCH_ERROR;
+    }
+
+    /* check for `return` */
+    token = ic_token_list_expect_important(token_list, IC_MATCH);
+    if (!token) {
+        puts("ic_parse_stmt_match: failed to find `match` token");
+        goto MATCH_ERROR;
+    }
+
+    /* initialise our match */
+    if (!ic_stmt_match_init(match)) {
+        puts("ic_parse_stmt_match: call to ic_stmt_ret_init failed");
+        goto MATCH_ERROR;
+    }
+
+    /* consume matching expression */
+    match->expr = ic_parse_expr(token_list);
+    if (!match->expr) {
+        puts("ic_parse_stmt_match: call to ic_parse_expr failed");
+        goto MATCH_ERROR;
+    }
+
+    /* match expr
+     *  case name::Type
+     *    body
+     *  case name::Type
+     *    body
+     *  else
+     *    body
+     *  end
+     * end
+     */
+
+    /* match expr
+     *  else
+     *    body
+     *  end
+     * end
+     */
+
+    /* match expr
+     *  case name::Type
+     *    body
+     *  case name::Type
+     *    body
+     *  end
+     * end
+     */
+
+    for (
+        token = ic_token_list_peek_important(token_list);
+        token && token->id == IC_CASE;
+        token = ic_token_list_peek_important(token_list)) {
+        scase = ic_parse_stmt_match_case(token_list);
+        if (!scase) {
+            puts("ic_parse_stmt_match: call to ic_parse_stmt_match_case failed");
+            goto MATCH_ERROR;
+        }
+        if (-1 == ic_pvector_append(&(match->cases), scase)) {
+            puts("ic_parse_stmt_match: call to ic_pvector_append failed");
+            goto MATCH_ERROR;
+        }
+
+        found_something = 1;
+    }
+
+    if (!token) {
+        puts("ic_parse_stmt_match: call to ic_token_list_peek failed");
+        goto MATCH_ERROR;
+    }
+
+    if (token->id == IC_ELSE) {
+        else_body = ic_parse_stmt_match_else(token_list);
+        if (!else_body) {
+            puts("ic_parse_stmt_match: call to ic_parse_stmt_match_else failed");
+            goto MATCH_ERROR;
+        }
+        match->else_body = else_body;
+        found_something = 1;
+    }
+
+    if (!found_something) {
+        puts("ic_parse_stmt_match: failed to find any case/else statements");
+        goto MATCH_ERROR;
+    }
+
+    /* at this point we need 2 ends, one to end the case/else, one to end the match */
+
+    token = ic_token_list_expect_important(token_list, IC_END);
+    if (!token) {
+        puts("ic_parse_stmt_match: failed to find first `end` token");
+        free(stmt);
+        return 0;
+    }
+
+    token = ic_token_list_expect_important(token_list, IC_END);
+    if (!token) {
+        puts("ic_parse_stmt_match: failed to find second `end` token");
+        free(stmt);
+        return 0;
+    }
+
+    /* success */
+    return stmt;
+
+MATCH_ERROR:
+
+    /* FIXME TODO clean up rest */
+
+    if (stmt) {
+        free(stmt);
+    }
+
+    puts("ic_parse_stmt_match: error");
+    return 0;
+}
+
+/* consume token
  * returns ic_stmt* on success
  * returns 0 on failure
  */
@@ -575,6 +818,7 @@ static struct ic_parse_table_entry {
     {IC_FOR, ic_parse_stmt_for},
     {IC_WHILE, ic_parse_stmt_while},
     {IC_LET, ic_parse_stmt_let},
+    {IC_MATCH, ic_parse_stmt_match},
     {IC_RETURN, ic_parse_stmt_ret}
     /* otherwise we default to ic_parse_stmt_expr */
 };
