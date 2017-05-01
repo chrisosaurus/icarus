@@ -430,7 +430,7 @@ unsigned int ic_b2c_compile_stmt_if(struct ic_kludge *input_kludge, struct ic_tr
 
     /* optional else */
     if (tif->else_tbody) {
-        fputs("} else {\n", out);
+        fputs("  } else {\n", out);
         /* else body */
         if (!ic_b2c_compile_body(input_kludge, tif->else_tbody, out)) {
             puts("ic_b2c_compile_stmt_if: call to ic_b2c_compile_body failed for else_tbody");
@@ -438,7 +438,7 @@ unsigned int ic_b2c_compile_stmt_if(struct ic_kludge *input_kludge, struct ic_tr
         }
     }
 
-    fputs("}\n", out);
+    fputs("  }\n", out);
 
     return 1;
 }
