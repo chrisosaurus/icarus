@@ -22,7 +22,18 @@ enum ic_backend_pancake_bytecode_type {
     icp_pushint,
     /* push_str string */
     icp_pushstr,
-    /* copyarg argn::uint */
+    /* copyarg argn::uint
+     * copyarg at offset argn onto stack
+     * Note: arguments to functions are pushed in order
+     *       a function call pushes the arguments, and then records the stack
+     *       position when the function call starts
+     *       `copyarg 0` will refer to the 0th argument before the fcall started
+     *       which is the *last* argument
+     *       if you had 3 arguments then,
+     *       copyarg 0 - 3rd argument
+     *       copyarg 1 - 2nd argument
+     *       copyarg 2 - 1st argument
+     */
     icp_copyarg,
     /* call fname::string argn::uint */
     icp_call,
