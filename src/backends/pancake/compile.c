@@ -16,6 +16,13 @@
  */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
+/* generate all needed constructors
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_generate_constructors(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge);
+
 /* compile an fdecl into bytecode
  *
  * returns 1 on success
@@ -166,6 +173,14 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
     /* sanity check our length */
     if (3 != ic_backend_pancake_instructions_length(instructions)) {
         puts("ic_backend_pancake_compile: instructions length was not 3, something went wrong");
+        return 0;
+    }
+
+    /* FIXME TODO do we want to include type information within bytecode? */
+
+    /* generate constructors */
+    if (!ic_backend_pancake_generate_constructors(instructions, kludge)) {
+        puts("ic_backend_pancake_compile: call to ic_backend_pancake_generate_constructors failed");
         return 0;
     }
 
@@ -1583,5 +1598,36 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
         *is_void = 0;
     }
 
+    return 1;
+}
+
+/* generate all needed constructors
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_generate_constructors(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge) {
+    unsigned int n_types;
+
+    if (!instructions) {
+        puts("ic_backend_pancake_generate_constructors: instructions was null");
+        return 0;
+    }
+
+    if (!kludge) {
+        puts("ic_backend_pancake_generate_constructors: kludge was null");
+        return 0;
+    }
+
+    /* FIXME TODO unimplemented
+   * only error if there is work to do
+   */
+    n_types = ic_pvector_length(&(kludge->default_constructors));
+    if (n_types > 0) {
+        puts("ic_backend_pancake_generate_constructors: not implemented, asked to do work");
+        return 0;
+    }
+
+    /* success */
     return 1;
 }
