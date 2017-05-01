@@ -1635,11 +1635,17 @@ unsigned int ic_backend_pancake_generate_constructors(struct ic_backend_pancake_
      *
      * every access of a field needs to know the field offsets
      * only need field type information at static time
+     *
      * for things such as nested access
      * f.a.b
      * requires knowing the type of `f` and `f.a`
      *
      * although tir will have already simplified this...
+     *
+     * but we still need that time information as pancake values are
+     * typed.
+     *
+     * example:
      *
      *   type Foo
      *    a::Sint
