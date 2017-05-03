@@ -144,8 +144,8 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge) {
         return 0;
     }
 
-    /* pvector default_constructors */
-    if (!ic_pvector_init(&(kludge->default_constructors), 0)) {
+    /* pvector generates */
+    if (!ic_pvector_init(&(kludge->generates), 0)) {
         puts("ic_kludge_init: fdecl: call to ic_pvector_init failed");
         return 0;
     }
@@ -258,13 +258,14 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
         return 0;
     }
 
-    /* cleanup default_constructors
+    /* cleanup generates
      * ic_pvector_destroy(*vec, free_vec, (*destroy_item)());
      * do not free_vec as it is a member of kludge
      * TODO FIXME destroy elements as these were made in analysis
+     * TODO FIXME call ic_generate_destroy(*, 1) on each as they were made in analysis
      */
-    if (!ic_pvector_destroy(&(kludge->default_constructors), 0, 0)) {
-        puts("ic_kludge_destroy: call to ic_pvector_destroy for default_constructors failed");
+    if (!ic_pvector_destroy(&(kludge->generates), 0, 0)) {
+        puts("ic_kludge_destroy: call to ic_pvector_destroy for generates failed");
         return 0;
     }
 
@@ -433,63 +434,6 @@ unsigned int ic_kludge_add_op(struct ic_kludge *kludge, struct ic_decl_op *op) {
     /* insert into dict_op */
     if (!ic_dict_insert(&(kludge->dict_op), from_str, to_sym)) {
         puts("ic_kludge_add_op: ic_dict_insert failed");
-        return 0;
-    }
-
-    return 1;
-}
-
-/* add a new default constructor func decl to this kludge
- * this will insert into dict_fname and default_constructors
- *
- * returns 1 on success
- * returns 0 on failure
- */
-unsigned int ic_kludge_add_default_constructor(struct ic_kludge *kludge, struct ic_decl_type *tdecl, struct ic_decl_func *fdecl) {
-
-    char *str = 0;
-
-    if (!kludge) {
-        puts("ic_kludge_add_default_constructor: kludge was null");
-        return 0;
-    }
-
-    if (!tdecl) {
-        puts("ic_kludge_add_default_constructor: tdecl was null");
-        return 0;
-    }
-
-    if (!fdecl) {
-        puts("ic_kludge_add_default_constructor: fdecl was null");
-        return 0;
-    }
-
-    /* cache str
-     * do not need to free as this char* is stored on the fdecl
-     */
-    str = ic_decl_func_sig_call(fdecl);
-    if (!str) {
-        puts("ic_kludge_add_default_constructor: call to ic_decl_func_sig_call failed");
-        return 0;
-    }
-
-    /* check for exists first to aid diagnostics */
-    if (ic_dict_exists(&(kludge->dict_fsig), str)) {
-        printf("ic_kludge_add_default_constructor: function signature '%s' already exists on this kludge\n", str);
-        return 0;
-    }
-
-    /* insert into dict fsig
-     * returns 0 on failure
-     */
-    if (!ic_dict_insert(&(kludge->dict_fsig), str, fdecl)) {
-        puts("ic_kludge_add_default_constructor: call to ic_dict_insert failed");
-        return 0;
-    }
-
-    /* insert into list of types with default cons */
-    if (-1 == ic_pvector_append(&(kludge->default_constructors), tdecl)) {
-        puts("ic_kludge_add_default_constructor: call to ic_pvector_append failed");
         return 0;
     }
 
@@ -723,6 +667,101 @@ struct ic_symbol *ic_kludge_get_operator_from_symbol(struct ic_kludge *kludge, s
     }
 
     return result;
+}
+
+/* add a new generate representing a function to generate
+ * this will insert into dict_fname and generates
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_kludge_generate_add(struct ic_kludge *kludge, struct ic_generate *gen) {
+    struct ic_decl_func *fdecl = 0;
+    char *str = 0;
+
+    if (!kludge) {
+        puts("ic_kludge_generates_add: kludge was null");
+        return 0;
+    }
+
+    /* cache fdecl */
+    fdecl = ic_generate_get_fdecl(gen);
+    if (!fdecl) {
+        puts("ic_kludge_generates_add: call to ic_generate_get_fdecl failed");
+        return 0;
+    }
+
+    /* cache str
+     * do not need to free as this char* is stored on the fdecl
+     */
+    str = ic_decl_func_sig_call(fdecl);
+    if (!str) {
+        puts("ic_kludge_generates_add: call to ic_decl_func_sig_call failed");
+        return 0;
+    }
+
+    /* check for exists first to aid diagnostics */
+    if (ic_dict_exists(&(kludge->dict_fsig), str)) {
+        printf("ic_kludge_generates_add: function signature '%s' already exists on this kludge\n", str);
+        return 0;
+    }
+
+    /* insert into dict fsig
+     * returns 0 on failure
+     */
+    if (!ic_dict_insert(&(kludge->dict_fsig), str, fdecl)) {
+        puts("ic_kludge_generates_add: call to ic_dict_insert failed");
+        return 0;
+    }
+
+    /* insert into list of ic_generate */
+    if (-1 == ic_pvector_append(&(kludge->generates), gen)) {
+        puts("ic_kludge_generates_add: call to ic_pvector_append failed");
+        return 0;
+    }
+
+    /* success */
+    return 1;
+}
+
+/* get length of generates
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_kludge_generates_length(struct ic_kludge *kludge) {
+    unsigned int len = 0;
+
+    if (!kludge) {
+        puts("ic_kludge_generates_length: kludge was null");
+        return 0;
+    }
+
+    len = ic_pvector_length(&(kludge->generates));
+    return len;
+}
+
+/* get generate at offset
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_generate *ic_kludge_generates_get(struct ic_kludge *kludge, unsigned int i) {
+    struct ic_generate *gen = 0;
+
+    if (!kludge) {
+        puts("ic_kludge_generates_get: kludge was null");
+        return 0;
+    }
+
+    gen = ic_pvector_get(&(kludge->generates), i);
+
+    if (!gen) {
+        puts("ic_kludge_generates_get: call to ic_pvector_get failed");
+        return 0;
+    }
+
+    return gen;
 }
 
 /* check if an existing identifier is taken either within the kludge or the provided scope

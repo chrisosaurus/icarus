@@ -6,30 +6,29 @@
 #include "expr.h"
 #include "tir.h"
 
-unsigned int ic_b2c_generate(struct ic_kludge *kludge, FILE *f);
-unsigned int ic_b2c_generate_builtins(struct ic_kludge *kludge, FILE *f);
+unsigned int ic_b2c_compile_builtins(struct ic_kludge *kludge, FILE *f);
 
-unsigned int ic_b2c_generate_type_struct_header(struct ic_kludge *kludge, struct ic_decl_type_struct *tdecl_struct, FILE *f);
-unsigned int ic_b2c_generate_type_struct(struct ic_kludge *kludge, struct ic_decl_type_struct *tdecl_struct, FILE *f);
+unsigned int ic_b2c_compile_type_struct_header(struct ic_kludge *kludge, struct ic_decl_type_struct *tdecl_struct, FILE *f);
+unsigned int ic_b2c_compile_type_struct(struct ic_kludge *kludge, struct ic_decl_type_struct *tdecl_struct, FILE *f);
 
-unsigned int ic_b2c_generate_type_union_header(struct ic_kludge *kludge, struct ic_decl_type_union *tdecl_union, FILE *f);
-unsigned int ic_b2c_generate_type_union(struct ic_kludge *kludge, struct ic_decl_type_union *tdecl_union, FILE *f);
+unsigned int ic_b2c_compile_type_union_header(struct ic_kludge *kludge, struct ic_decl_type_union *tdecl_union, FILE *f);
+unsigned int ic_b2c_compile_type_union(struct ic_kludge *kludge, struct ic_decl_type_union *tdecl_union, FILE *f);
 
-unsigned int ic_b2c_generate_type_header(struct ic_kludge *kludge, struct ic_decl_type *tdecl, FILE *f);
-unsigned int ic_b2c_generate_types_pre(struct ic_kludge *kludge, FILE *f);
-unsigned int ic_b2c_generate_type_body(struct ic_kludge *kludge, struct ic_decl_type *tdecl, FILE *f);
-unsigned int ic_b2c_generate_type(struct ic_kludge *kludge, struct ic_decl_type *tdecl, FILE *f);
-unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f);
+unsigned int ic_b2c_compile_type_header(struct ic_kludge *kludge, struct ic_decl_type *tdecl, FILE *f);
+unsigned int ic_b2c_compile_types_pre(struct ic_kludge *kludge, FILE *f);
+unsigned int ic_b2c_compile_type_body(struct ic_kludge *kludge, struct ic_decl_type *tdecl, FILE *f);
+unsigned int ic_b2c_compile_type(struct ic_kludge *kludge, struct ic_decl_type *tdecl, FILE *f);
+unsigned int ic_b2c_compile_types(struct ic_kludge *kludge, FILE *f);
 
-unsigned int ic_b2c_generate_constructors_pre(struct ic_kludge *kludge, FILE *f);
-unsigned int ic_b2c_generate_constructors(struct ic_kludge *kludge, FILE *f);
+unsigned int ic_b2c_compile_generates_pre(struct ic_kludge *kludge, FILE *f);
+unsigned int ic_b2c_compile_generates(struct ic_kludge *kludge, FILE *f);
 
-unsigned int ic_b2c_generate_function_header(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f);
-unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f);
-unsigned int ic_b2c_generate_function_body(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f);
-unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f);
+unsigned int ic_b2c_compile_function_header(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f);
+unsigned int ic_b2c_compile_functions_pre(struct ic_kludge *kludge, FILE *f);
+unsigned int ic_b2c_compile_function_body(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f);
+unsigned int ic_b2c_compile_functions(struct ic_kludge *kludge, FILE *f);
 
-unsigned int ic_b2c_generate_entry(struct ic_kludge *kludge, FILE *f);
+unsigned int ic_b2c_compile_entry(struct ic_kludge *kludge, FILE *f);
 
 /* taking a processed ast and a string containing the path to
  * the desired output file
@@ -66,9 +65,46 @@ unsigned int ic_b2c_compile(struct ic_kludge *kludge, char *out_filename) {
         return 0;
     }
 
-    /* perform heavy lifting */
-    if (!ic_b2c_generate(kludge, f)) {
-        puts("ic_b2c_compile: call to ic_b2c_generate failed");
+    if (!ic_b2c_compile_builtins(kludge, f)) {
+        puts("ic_b2c_compile: call to ic_b2c_compile_builtins failed");
+        return 0;
+    }
+
+    /* want to generate pre-decl for all types before we define them */
+    if (!ic_b2c_compile_types_pre(kludge, f)) {
+        puts("ic_b2c_compile: call to ic_b2c_compile_types_pre failed");
+        return 0;
+    }
+
+    /* want to generate pre-decl for all generates before we define them */
+    if (!ic_b2c_compile_generates_pre(kludge, f)) {
+        puts("ic_b2c_compile: call to ic_b2c_compile_generates_pre failed");
+        return 0;
+    }
+
+    /* want to generate pre-decl for all funcs before we define them */
+    if (!ic_b2c_compile_functions_pre(kludge, f)) {
+        puts("ic_b2c_compile: call to ic_b2c_compile_functions failed");
+        return 0;
+    }
+
+    if (!ic_b2c_compile_types(kludge, f)) {
+        puts("ic_b2c_compile: call to ic_b2c_compile_types failed");
+        return 0;
+    }
+
+    if (!ic_b2c_compile_generates(kludge, f)) {
+        puts("ic_b2c_compile: call to ic_b2c_compile_generates failed");
+        return 0;
+    }
+
+    if (!ic_b2c_compile_functions(kludge, f)) {
+        puts("ic_b2c_compile: call to ic_b2c_compile_functions failed");
+        return 0;
+    }
+
+    if (!ic_b2c_compile_entry(kludge, f)) {
+        puts("ic_b2c_compile: call to ic_b2c_compile_entry failed");
         return 0;
     }
 
@@ -76,63 +112,15 @@ unsigned int ic_b2c_compile(struct ic_kludge *kludge, char *out_filename) {
     return 1;
 }
 
-unsigned int ic_b2c_generate(struct ic_kludge *kludge, FILE *f) {
-
-    if (!ic_b2c_generate_builtins(kludge, f)) {
-        puts("ic_b2c_generate: call to ic_b2c_generate_builtins failed");
-        return 0;
-    }
-
-    /* want to generate pre-decl for all types before we define them */
-    if (!ic_b2c_generate_types_pre(kludge, f)) {
-        puts("ic_b2c_generate: call to ic_b2c_generate_types_pre failed");
-        return 0;
-    }
-
-    /* want to generate pre-decl for all constructors before we define them */
-    if (!ic_b2c_generate_constructors_pre(kludge, f)) {
-        puts("ic_b2c_generate: call to ic_b2c_generate_constructors_pre failed");
-        return 0;
-    }
-
-    /* want to generate pre-decl for all funcs before we define them */
-    if (!ic_b2c_generate_functions_pre(kludge, f)) {
-        puts("ic_b2c_generate: call to ic_b2c_generate_functions failed");
-        return 0;
-    }
-
-    if (!ic_b2c_generate_types(kludge, f)) {
-        puts("ic_b2c_generate: call to ic_b2c_generate_types failed");
-        return 0;
-    }
-
-    if (!ic_b2c_generate_constructors(kludge, f)) {
-        puts("ic_b2c_generate: call to ic_b2c_generate_constructors failed");
-        return 0;
-    }
-
-    if (!ic_b2c_generate_functions(kludge, f)) {
-        puts("ic_b2c_generate: call to ic_b2c_generate_functions failed");
-        return 0;
-    }
-
-    if (!ic_b2c_generate_entry(kludge, f)) {
-        puts("ic_b2c_generate: call to ic_b2c_generate_entry failed");
-        return 0;
-    }
-
-    return 1;
-}
-
 /* generate code for builtins */
-unsigned int ic_b2c_generate_builtins(struct ic_kludge *kludge, FILE *f) {
+unsigned int ic_b2c_compile_builtins(struct ic_kludge *kludge, FILE *f) {
     if (!kludge) {
-        puts("ic_b2c_generate_builtins: kludge was null");
+        puts("ic_b2c_compile_builtins: kludge was null");
         return 0;
     }
 
     if (!f) {
-        puts("ic_b2c_generate_builtins: file was null");
+        puts("ic_b2c_compile_builtins: file was null");
         return 0;
     }
 
@@ -140,35 +128,42 @@ unsigned int ic_b2c_generate_builtins(struct ic_kludge *kludge, FILE *f) {
     return 1;
 }
 
-unsigned int ic_b2c_generate_constructors_pre(struct ic_kludge *kludge, FILE *f) {
-    unsigned int n_types = 0;
-    unsigned int i_type = 0;
+unsigned int ic_b2c_compile_generates_pre(struct ic_kludge *kludge, FILE *f) {
+    unsigned int n_gens = 0;
+    unsigned int i_gen = 0;
+    struct ic_generate *gen = 0;
     struct ic_decl_type *tdecl = 0;
 
     char *sig_mangled_full_char = 0;
 
     if (!kludge) {
-        puts("ic_b2c_generate_constructors_pre: kludge was null");
+        puts("ic_b2c_compile_generates_pre: kludge was null");
         return 0;
     }
 
     if (!f) {
-        puts("ic_b2c_generate_constructors_pre: file was null");
+        puts("ic_b2c_compile_generates_pre: file was null");
         return 0;
     }
 
-    n_types = ic_pvector_length(&(kludge->default_constructors));
+    n_gens = ic_kludge_generates_length(kludge);
 
-    for (i_type = 0; i_type < n_types; ++i_type) {
-        tdecl = ic_pvector_get(&(kludge->default_constructors), i_type);
+    for (i_gen = 0; i_gen < n_gens; ++i_gen) {
+        gen = ic_kludge_generates_get(kludge, i_gen);
+        if (!gen) {
+            puts("ic_b2c_compile_generates_pre: call to ic_kludge_generates_gen failed");
+            return 0;
+        }
+
+        tdecl = ic_generate_get_tdecl(gen);
         if (!tdecl) {
-            puts("ic_b2c_generate_constructors_pre: call to ic_pvector_get failed");
+            puts("ic_b2c_compile_generates_pre: call to ic_generate_get_tdecl failed");
             return 0;
         }
 
         sig_mangled_full_char = ic_decl_type_sig_mangled_full(tdecl);
         if (!sig_mangled_full_char) {
-            puts("ic_b2c_generate_constructors_pre: call to ic_decl_type_sig_mangled_full failed");
+            puts("ic_b2c_compile_generates_pre: call to ic_decl_type_sig_mangled_full failed");
             return 0;
         }
 
@@ -178,10 +173,11 @@ unsigned int ic_b2c_generate_constructors_pre(struct ic_kludge *kludge, FILE *f)
     return 1;
 }
 
-unsigned int ic_b2c_generate_constructors(struct ic_kludge *kludge, FILE *f) {
-    unsigned int n_types = 0;
-    unsigned int i_type = 0;
-    struct ic_decl_type *type = 0;
+unsigned int ic_b2c_compile_generates(struct ic_kludge *kludge, FILE *f) {
+    unsigned int n_gens = 0;
+    unsigned int i_gen = 0;
+    struct ic_generate *gen = 0;
+    struct ic_decl_type *tdecl = 0;
     char *type_name_ch = 0;
 
     char *sig_mangled_full_char = 0;
@@ -192,33 +188,39 @@ unsigned int ic_b2c_generate_constructors(struct ic_kludge *kludge, FILE *f) {
     char *field_name_char = 0;
 
     if (!kludge) {
-        puts("ic_b2c_generate_constructors_pre: kludge was null");
+        puts("ic_b2c_compile_generates_pre: kludge was null");
         return 0;
     }
 
     if (!f) {
-        puts("ic_b2c_generate_constructors_pre: file was null");
+        puts("ic_b2c_compile_generates_pre: file was null");
         return 0;
     }
 
-    n_types = ic_pvector_length(&(kludge->default_constructors));
+    n_gens = ic_kludge_generates_length(kludge);
 
-    for (i_type = 0; i_type < n_types; ++i_type) {
-        type = ic_pvector_get(&(kludge->default_constructors), i_type);
-        if (!type) {
-            puts("ic_b2c_generate_constructors_pre: call to ic_pvector_get failed");
+    for (i_gen = 0; i_gen < n_gens; ++i_gen) {
+        gen = ic_kludge_generates_get(kludge, i_gen);
+        if (!gen) {
+            puts("ic_b2c_compile_generates_pre: call to ic_kludge_generates_get failed");
             return 0;
         }
 
-        type_name_ch = ic_decl_type_str(type);
+        tdecl = ic_generate_get_tdecl(gen);
+        if (!tdecl) {
+            puts("ic_b2c_compile_generates_pre: call to ic_generate_get_tdecl failed");
+            return 0;
+        }
+
+        type_name_ch = ic_decl_type_str(tdecl);
         if (!type_name_ch) {
-            puts("ic_b2c_generate_constructors_pre: call to ic_decl_type_str failed");
+            puts("ic_b2c_compile_generates_pre: call to ic_decl_type_str failed");
             return 0;
         }
 
-        sig_mangled_full_char = ic_decl_type_sig_mangled_full(type);
+        sig_mangled_full_char = ic_decl_type_sig_mangled_full(tdecl);
         if (!sig_mangled_full_char) {
-            puts("ic_b2c_generate_constructors_pre: call to ic_decl_type_sig_mangled_full failed");
+            puts("ic_b2c_compile_generates_pre: call to ic_decl_type_sig_mangled_full failed");
             return 0;
         }
 
@@ -228,17 +230,17 @@ unsigned int ic_b2c_generate_constructors(struct ic_kludge *kludge, FILE *f) {
         fprintf(f, "  %s tmp = ic_alloc(sizeof(struct %s));\n", type_name_ch, type_name_ch);
 
         /* assign each argument to field of same name */
-        n_fields = ic_decl_type_field_length(type);
+        n_fields = ic_decl_type_field_length(tdecl);
         for (i_field = 0; i_field < n_fields; ++i_field) {
-            field = ic_decl_type_field_get(type, i_field);
+            field = ic_decl_type_field_get(tdecl, i_field);
             if (!field) {
-                puts("ic_b2c_generate_constructors_pre: call to ic_decl_field_get failed");
+                puts("ic_b2c_compile_generates_pre: call to ic_decl_field_get failed");
                 return 0;
             }
 
             field_name_char = ic_symbol_contents(&(field->name));
             if (!field_name_char) {
-                puts("ic_b2c_generate_constructors_pre: call to ic_symbol_contents failed");
+                puts("ic_b2c_compile_generates_pre: call to ic_symbol_contents failed");
                 return 0;
             }
 
@@ -254,20 +256,20 @@ unsigned int ic_b2c_generate_constructors(struct ic_kludge *kludge, FILE *f) {
     return 1;
 }
 
-unsigned int ic_b2c_generate_type_struct_header(struct ic_kludge *kludge, struct ic_decl_type_struct *tdecl_struct, FILE *f) {
+unsigned int ic_b2c_compile_type_struct_header(struct ic_kludge *kludge, struct ic_decl_type_struct *tdecl_struct, FILE *f) {
     char *type_name = 0;
     if (!kludge) {
-        puts("ic_b2c_generate_type_struct_header: kludge was null");
+        puts("ic_b2c_compile_type_struct_header: kludge was null");
         return 0;
     }
 
     if (!tdecl_struct) {
-        puts("ic_b2c_generate_type_struct_header: tdecl_struct was null");
+        puts("ic_b2c_compile_type_struct_header: tdecl_struct was null");
         return 0;
     }
 
     if (!f) {
-        puts("ic_b2c_generate_type_struct_header: f was null");
+        puts("ic_b2c_compile_type_struct_header: f was null");
         return 0;
     }
 
@@ -279,7 +281,7 @@ unsigned int ic_b2c_generate_type_struct_header(struct ic_kludge *kludge, struct
     return 1;
 }
 
-unsigned int ic_b2c_generate_type_struct(struct ic_kludge *kludge, struct ic_decl_type_struct *tdecl_struct, FILE *f) {
+unsigned int ic_b2c_compile_type_struct(struct ic_kludge *kludge, struct ic_decl_type_struct *tdecl_struct, FILE *f) {
     struct ic_field *field = 0;
     unsigned int n_fields = 0;
     unsigned int i = 0;
@@ -288,17 +290,17 @@ unsigned int ic_b2c_generate_type_struct(struct ic_kludge *kludge, struct ic_dec
     char *type_name = 0;
 
     if (!kludge) {
-        puts("ic_b2c_generate_type_struct: kludge was null");
+        puts("ic_b2c_compile_type_struct: kludge was null");
         return 0;
     }
 
     if (!tdecl_struct) {
-        puts("ic_b2c_generate_type_struct: tdecl_struct was null");
+        puts("ic_b2c_compile_type_struct: tdecl_struct was null");
         return 0;
     }
 
     if (!f) {
-        puts("ic_b2c_generate_type_struct: f was null");
+        puts("ic_b2c_compile_type_struct: f was null");
         return 0;
     }
 
@@ -312,7 +314,7 @@ unsigned int ic_b2c_generate_type_struct(struct ic_kludge *kludge, struct ic_dec
     for (i = 0; i < n_fields; ++i) {
         field = ic_pvector_get(&(tdecl_struct->fields), i);
         if (!field) {
-            puts("ic_b2c_generate_types_body: call to ic_pvector_get failed");
+            puts("ic_b2c_compile_types_body: call to ic_pvector_get failed");
         }
 
         field_name = ic_symbol_contents(&(field->name));
@@ -327,62 +329,62 @@ unsigned int ic_b2c_generate_type_struct(struct ic_kludge *kludge, struct ic_dec
     return 1;
 }
 
-unsigned int ic_b2c_generate_type_union_header(struct ic_kludge *kludge, struct ic_decl_type_union *tdecl_union, FILE *f) {
+unsigned int ic_b2c_compile_type_union_header(struct ic_kludge *kludge, struct ic_decl_type_union *tdecl_union, FILE *f) {
     if (!kludge) {
-        puts("ic_b2c_generate_type_union_header: kludge was null");
+        puts("ic_b2c_compile_type_union_header: kludge was null");
         return 0;
     }
 
     if (!tdecl_union) {
-        puts("ic_b2c_generate_type_union_header: tdecl_union was null");
+        puts("ic_b2c_compile_type_union_header: tdecl_union was null");
         return 0;
     }
 
     if (!f) {
-        puts("ic_b2c_generate_type_union_header: f was null");
+        puts("ic_b2c_compile_type_union_header: f was null");
         return 0;
     }
 
-    puts("ic_b2c_generate_type_union_header: unimplemented");
+    puts("ic_b2c_compile_type_union_header: unimplemented");
     return 0;
 }
-unsigned int ic_b2c_generate_type_union(struct ic_kludge *kludge, struct ic_decl_type_union *tdecl_union, FILE *f) {
+unsigned int ic_b2c_compile_type_union(struct ic_kludge *kludge, struct ic_decl_type_union *tdecl_union, FILE *f) {
     if (!kludge) {
-        puts("ic_b2c_generate_type_union: kludge was null");
+        puts("ic_b2c_compile_type_union: kludge was null");
         return 0;
     }
 
     if (!tdecl_union) {
-        puts("ic_b2c_generate_type_union: tdecl_union was null");
+        puts("ic_b2c_compile_type_union: tdecl_union was null");
         return 0;
     }
 
     if (!f) {
-        puts("ic_b2c_generate_type_union: f was null");
+        puts("ic_b2c_compile_type_union: f was null");
         return 0;
     }
 
-    puts("ic_b2c_generate_type_union: unimplemented");
+    puts("ic_b2c_compile_type_union: unimplemented");
     return 0;
 }
 
 /* generate type header */
-unsigned int ic_b2c_generate_type_header(struct ic_kludge *kludge, struct ic_decl_type *tdecl, FILE *f) {
+unsigned int ic_b2c_compile_type_header(struct ic_kludge *kludge, struct ic_decl_type *tdecl, FILE *f) {
     struct ic_decl_type_struct *tdecl_struct = 0;
     struct ic_decl_type_union *tdecl_union = 0;
 
     if (!kludge) {
-        puts("ic_b2c_generate_type_header: kludge was null");
+        puts("ic_b2c_compile_type_header: kludge was null");
         return 0;
     }
 
     if (!tdecl) {
-        puts("ic_b2c_generate_type_header: tdecl was null");
+        puts("ic_b2c_compile_type_header: tdecl was null");
         return 0;
     }
 
     if (!f) {
-        puts("ic_b2c_generate_type_header: file was null");
+        puts("ic_b2c_compile_type_header: file was null");
         return 0;
     }
 
@@ -390,11 +392,11 @@ unsigned int ic_b2c_generate_type_header(struct ic_kludge *kludge, struct ic_dec
         case ic_decl_type_tag_struct:
             tdecl_struct = ic_decl_type_get_struct(tdecl);
             if (!tdecl_struct) {
-                puts("ic_b2c_generate_type_header: call to ic_decl_type_get_struct failed");
+                puts("ic_b2c_compile_type_header: call to ic_decl_type_get_struct failed");
                 return 0;
             }
-            if (!ic_b2c_generate_type_struct_header(kludge, tdecl_struct, f)) {
-                puts("ic_b2c_generate_type_header: call to ic_b2c_generate_type_struct_header failed");
+            if (!ic_b2c_compile_type_struct_header(kludge, tdecl_struct, f)) {
+                puts("ic_b2c_compile_type_header: call to ic_b2c_compile_type_struct_header failed");
                 return 0;
             }
             return 1;
@@ -403,36 +405,36 @@ unsigned int ic_b2c_generate_type_header(struct ic_kludge *kludge, struct ic_dec
         case ic_decl_type_tag_union:
             tdecl_union = ic_decl_type_get_union(tdecl);
             if (!tdecl_union) {
-                puts("ic_b2c_generate_type_header: call to ic_decl_type_get_union failed");
+                puts("ic_b2c_compile_type_header: call to ic_decl_type_get_union failed");
                 return 0;
             }
-            if (!ic_b2c_generate_type_union_header(kludge, tdecl_union, f)) {
-                puts("ic_b2c_generate_type_header: call to ic_b2c_generate_type_union_header failed");
+            if (!ic_b2c_compile_type_union_header(kludge, tdecl_union, f)) {
+                puts("ic_b2c_compile_type_header: call to ic_b2c_compile_type_union_header failed");
                 return 0;
             }
             return 1;
             break;
 
         default:
-            puts("ic_b2c_generate_type_header: unknown tag");
+            puts("ic_b2c_compile_type_header: unknown tag");
             return 0;
             break;
     }
 }
 
 /* generate type declarations */
-unsigned int ic_b2c_generate_types_pre(struct ic_kludge *kludge, FILE *f) {
+unsigned int ic_b2c_compile_types_pre(struct ic_kludge *kludge, FILE *f) {
     struct ic_decl_type *tdecl = 0;
     unsigned int n_types = 0;
     unsigned int i = 0;
 
     if (!kludge) {
-        puts("ic_b2c_generate_types_pre: kludge was null");
+        puts("ic_b2c_compile_types_pre: kludge was null");
         return 0;
     }
 
     if (!f) {
-        puts("ic_b2c_generate_types_pre: file was null");
+        puts("ic_b2c_compile_types_pre: file was null");
         return 0;
     }
 
@@ -441,7 +443,7 @@ unsigned int ic_b2c_generate_types_pre(struct ic_kludge *kludge, FILE *f) {
     for (i = 0; i < n_types; ++i) {
         tdecl = ic_pvector_get(&(kludge->tdecls), i);
         if (!tdecl) {
-            puts("ic_b2c_generate_types_pre: call to ic_pvector_get failed");
+            puts("ic_b2c_compile_types_pre: call to ic_pvector_get failed");
             return 0;
         }
 
@@ -451,47 +453,47 @@ unsigned int ic_b2c_generate_types_pre(struct ic_kludge *kludge, FILE *f) {
             continue;
         }
 
-        if (!ic_b2c_generate_type_header(kludge, tdecl, f)) {
-            puts("ic_b2c_generate_types_pre: call to ic_b2c_generate_type_header failed");
+        if (!ic_b2c_compile_type_header(kludge, tdecl, f)) {
+            puts("ic_b2c_compile_types_pre: call to ic_b2c_compile_type_header failed");
             return 0;
         }
     }
 
     return 1;
 }
-unsigned int ic_b2c_generate_type(struct ic_kludge *kludge, struct ic_decl_type *tdecl, FILE *f) {
+unsigned int ic_b2c_compile_type(struct ic_kludge *kludge, struct ic_decl_type *tdecl, FILE *f) {
     if (!kludge) {
-        puts("ic_b2c_generate_type: kludge was null");
+        puts("ic_b2c_compile_type: kludge was null");
         return 0;
     }
 
     if (!tdecl) {
-        puts("ic_b2c_generate_type: tdecl was null");
+        puts("ic_b2c_compile_type: tdecl was null");
         return 0;
     }
 
     if (!f) {
-        puts("ic_b2c_generate_type: f was null");
+        puts("ic_b2c_compile_type: f was null");
         return 0;
     }
 
     switch (tdecl->tag) {
         case ic_decl_type_tag_struct:
-            if (!ic_b2c_generate_type_struct(kludge, &(tdecl->u.tstruct), f)) {
-                puts("ic_b2c_generate_type: call to ic_b2c_generate_type_struct failed");
+            if (!ic_b2c_compile_type_struct(kludge, &(tdecl->u.tstruct), f)) {
+                puts("ic_b2c_compile_type: call to ic_b2c_compile_type_struct failed");
                 return 0;
             }
             break;
 
         case ic_decl_type_tag_union:
-            if (!ic_b2c_generate_type_union(kludge, &(tdecl->u.tunion), f)) {
-                puts("ic_b2c_generate_type: call to ic_b2c_generate_type_union failed");
+            if (!ic_b2c_compile_type_union(kludge, &(tdecl->u.tunion), f)) {
+                puts("ic_b2c_compile_type: call to ic_b2c_compile_type_union failed");
                 return 0;
             }
             break;
 
         default:
-            puts("ic_b2c_generate_type: unknown tag");
+            puts("ic_b2c_compile_type: unknown tag");
             return 0;
             break;
     }
@@ -500,18 +502,18 @@ unsigned int ic_b2c_generate_type(struct ic_kludge *kludge, struct ic_decl_type 
 }
 
 /* generate type definitions */
-unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f) {
+unsigned int ic_b2c_compile_types(struct ic_kludge *kludge, FILE *f) {
     struct ic_decl_type *tdecl = 0;
     unsigned int n_types = 0;
     unsigned int i = 0;
 
     if (!kludge) {
-        puts("ic_b2c_generate_types: kludge was null");
+        puts("ic_b2c_compile_types: kludge was null");
         return 0;
     }
 
     if (!f) {
-        puts("ic_b2c_generate_types: file was null");
+        puts("ic_b2c_compile_types: file was null");
         return 0;
     }
 
@@ -520,7 +522,7 @@ unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f) {
     for (i = 0; i < n_types; ++i) {
         tdecl = ic_pvector_get(&(kludge->tdecls), i);
         if (!tdecl) {
-            puts("ic_b2c_generate_types: call to ic_pvector_get failed");
+            puts("ic_b2c_compile_types: call to ic_pvector_get failed");
             return 0;
         }
 
@@ -530,8 +532,8 @@ unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f) {
             continue;
         }
 
-        if (!ic_b2c_generate_type(kludge, tdecl, f)) {
-            puts("ic_b2c_generate_types: call to ic_b2c_generate_type failed");
+        if (!ic_b2c_compile_type(kludge, tdecl, f)) {
+            puts("ic_b2c_compile_types: call to ic_b2c_compile_type failed");
             return 0;
         }
     }
@@ -539,22 +541,22 @@ unsigned int ic_b2c_generate_types(struct ic_kludge *kludge, FILE *f) {
     return 1;
 }
 
-/* called by ic_b2c_generate_types
+/* called by ic_b2c_compile_types
  * handles actual generate of type definition body
  */
-unsigned int ic_b2c_generate_type_body(struct ic_kludge *kludge, struct ic_decl_type *tdecl, FILE *f) {
+unsigned int ic_b2c_compile_type_body(struct ic_kludge *kludge, struct ic_decl_type *tdecl, FILE *f) {
     if (!kludge) {
-        puts("ic_b2c_generate_types_body: kludge was null");
+        puts("ic_b2c_compile_types_body: kludge was null");
         return 0;
     }
 
     if (!tdecl) {
-        puts("ic_b2c_generate_types_body: tdecl was null");
+        puts("ic_b2c_compile_types_body: tdecl was null");
         return 0;
     }
 
     if (!f) {
-        puts("ic_b2c_generate_types_body: file was null");
+        puts("ic_b2c_compile_types_body: file was null");
         return 0;
     }
 
@@ -562,7 +564,7 @@ unsigned int ic_b2c_generate_type_body(struct ic_kludge *kludge, struct ic_decl_
 }
 
 /* generate function header */
-unsigned int ic_b2c_generate_function_header(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f) {
+unsigned int ic_b2c_compile_function_header(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f) {
     char *func_sig_mangled = 0;
     char *func_sig_full = 0;
     char *func_return_type_str = 0;
@@ -574,29 +576,29 @@ unsigned int ic_b2c_generate_function_header(struct ic_kludge *kludge, struct ic
     char *arg_type = 0;
 
     if (!kludge) {
-        puts("ic_b2c_generate_function_header: kludge was null");
+        puts("ic_b2c_compile_function_header: kludge was null");
         return 0;
     }
 
     if (!fdecl) {
-        puts("ic_b2c_generate_function_header: fdecl was null");
+        puts("ic_b2c_compile_function_header: fdecl was null");
         return 0;
     }
 
     if (!f) {
-        puts("ic_b2c_generate_function_header: file was null");
+        puts("ic_b2c_compile_function_header: file was null");
         return 0;
     }
 
     func_sig_mangled = ic_decl_func_sig_mangled(fdecl);
     if (!func_sig_mangled) {
-        puts("ic_b2c_generate_function_headers: call to ic_string_contents failed for sig_mangled");
+        puts("ic_b2c_compile_function_headers: call to ic_string_contents failed for sig_mangled");
         return 0;
     }
 
     func_sig_full = ic_decl_func_sig_full(fdecl);
     if (!func_sig_full) {
-        puts("ic_b2c_generate_function_headers: call to ic_decl_func_sig_full failed");
+        puts("ic_b2c_compile_function_headers: call to ic_decl_func_sig_full failed");
         return 0;
     }
 
@@ -604,14 +606,14 @@ unsigned int ic_b2c_generate_function_header(struct ic_kludge *kludge, struct ic
     fprintf(f, "/* %s */\n", func_sig_full);
 
     if (!fdecl->ret_type) {
-        puts("ic_b2c_generate_function_headers: fdecl lacked return type");
+        puts("ic_b2c_compile_function_headers: fdecl lacked return type");
         return 0;
     }
 
     /* FIXME need to convert to c type */
     func_return_type_str = ic_symbol_contents(fdecl->ret_type);
     if (!func_return_type_str) {
-        puts("ic_b2c_generate_function_headers: call to ic_symbol_contents failed for return type");
+        puts("ic_b2c_compile_function_headers: call to ic_symbol_contents failed for return type");
         return 0;
     }
 
@@ -626,7 +628,7 @@ unsigned int ic_b2c_generate_function_header(struct ic_kludge *kludge, struct ic
 
         arg = ic_pvector_get(&(fdecl->args), i);
         if (!arg) {
-            puts("ic_b2c_generate_function_headers: call to ic_pvector_get failed");
+            puts("ic_b2c_compile_function_headers: call to ic_pvector_get failed");
             return 0;
         }
 
@@ -644,18 +646,18 @@ unsigned int ic_b2c_generate_function_header(struct ic_kludge *kludge, struct ic
 }
 
 /* generate function declarations */
-unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f) {
+unsigned int ic_b2c_compile_functions_pre(struct ic_kludge *kludge, FILE *f) {
     struct ic_decl_func *func = 0;
     unsigned int n_funcs = 0;
     unsigned int i = 0;
 
     if (!kludge) {
-        puts("ic_b2c_generate_functions_pre: kludge was null");
+        puts("ic_b2c_compile_functions_pre: kludge was null");
         return 0;
     }
 
     if (!f) {
-        puts("ic_b2c_generate_functions_pre: file was null");
+        puts("ic_b2c_compile_functions_pre: file was null");
         return 0;
     }
 
@@ -664,7 +666,7 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f) {
     for (i = 0; i < n_funcs; ++i) {
         func = ic_pvector_get(&(kludge->fdecls), i);
         if (!func) {
-            puts("ic_b2c_generate_functions_pre: call to ic_pvector_get failed");
+            puts("ic_b2c_compile_functions_pre: call to ic_pvector_get failed");
             return 0;
         }
 
@@ -674,8 +676,8 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f) {
             continue;
         }
 
-        if (!ic_b2c_generate_function_header(kludge, func, f)) {
-            puts("ic_b2c_generate_functions_pre: call to ic_b2c_generate_function_header failed");
+        if (!ic_b2c_compile_function_header(kludge, func, f)) {
+            puts("ic_b2c_compile_functions_pre: call to ic_b2c_compile_function_header failed");
             return 0;
         }
 
@@ -686,24 +688,24 @@ unsigned int ic_b2c_generate_functions_pre(struct ic_kludge *kludge, FILE *f) {
     return 1;
 }
 
-unsigned int ic_b2c_generate_function_body(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f) {
+unsigned int ic_b2c_compile_function_body(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f) {
     if (!kludge) {
-        puts("ic_b2c_generate_function_body: kludge was null");
+        puts("ic_b2c_compile_function_body: kludge was null");
         return 0;
     }
 
     if (!fdecl) {
-        puts("ic_b2c_generate_function_body: fdecl was null");
+        puts("ic_b2c_compile_function_body: fdecl was null");
         return 0;
     }
 
     if (!f) {
-        puts("ic_b2c_generate_function_body: f was null");
+        puts("ic_b2c_compile_function_body: f was null");
         return 0;
     }
 
     if (!ic_b2c_compile_body(kludge, fdecl->tbody, f)) {
-        puts("ic_b2c_generate_function_body: call to ic_b2c_compile_body failed");
+        puts("ic_b2c_compile_function_body: call to ic_b2c_compile_body failed");
         return 0;
     }
 
@@ -711,19 +713,19 @@ unsigned int ic_b2c_generate_function_body(struct ic_kludge *kludge, struct ic_d
 }
 
 /* generate function definitions */
-unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f) {
+unsigned int ic_b2c_compile_functions(struct ic_kludge *kludge, FILE *f) {
     struct ic_decl_func *func = 0;
     unsigned int n_funcs = 0;
     unsigned int i = 0;
     char *func_sig_call = 0;
 
     if (!kludge) {
-        puts("ic_b2c_generate_functions: kludge was null");
+        puts("ic_b2c_compile_functions: kludge was null");
         return 0;
     }
 
     if (!f) {
-        puts("ic_b2c_generate_functions: file was null");
+        puts("ic_b2c_compile_functions: file was null");
         return 0;
     }
 
@@ -732,13 +734,13 @@ unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f) {
     for (i = 0; i < n_funcs; ++i) {
         func = ic_pvector_get(&(kludge->fdecls), i);
         if (!func) {
-            puts("ic_b2c_generate_functions: call to ic_pvector_get failed");
+            puts("ic_b2c_compile_functions: call to ic_pvector_get failed");
             return 0;
         }
 
         func_sig_call = ic_decl_func_sig_call(func);
         if (!func_sig_call) {
-            puts("ic_b2c_generate_functions: call to ic_decl_func_sig_call failed");
+            puts("ic_b2c_compile_functions: call to ic_decl_func_sig_call failed");
             return 0;
         }
 
@@ -748,8 +750,8 @@ unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f) {
             continue;
         }
 
-        if (!ic_b2c_generate_function_header(kludge, func, f)) {
-            puts("ic_b2c_generate_functions: call to ic_b2c_generate_function_header failed");
+        if (!ic_b2c_compile_function_header(kludge, func, f)) {
+            puts("ic_b2c_compile_functions: call to ic_b2c_compile_function_header failed");
             return 0;
         }
 
@@ -757,8 +759,8 @@ unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f) {
         fputs("{\n", f);
 
         /* generate body */
-        if (!ic_b2c_generate_function_body(kludge, func, f)) {
-            puts("ic_b2c_generate_functions: call to ic_b2c_generate_function_body failed");
+        if (!ic_b2c_compile_function_body(kludge, func, f)) {
+            puts("ic_b2c_compile_functions: call to ic_b2c_compile_function_body failed");
             return 0;
         }
 
@@ -772,14 +774,14 @@ unsigned int ic_b2c_generate_functions(struct ic_kludge *kludge, FILE *f) {
 /* generate code needed to enter into icarus
  * this will generate a c main function
  */
-unsigned int ic_b2c_generate_entry(struct ic_kludge *kludge, FILE *f) {
+unsigned int ic_b2c_compile_entry(struct ic_kludge *kludge, FILE *f) {
     if (!kludge) {
-        puts("ic_b2c_generate_entry: kludge was null");
+        puts("ic_b2c_compile_entry: kludge was null");
         return 0;
     }
 
     if (!f) {
-        puts("ic_b2c_generate_entry: file was null");
+        puts("ic_b2c_compile_entry: file was null");
         return 0;
     }
 

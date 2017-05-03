@@ -16,12 +16,12 @@
  */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
-/* generate all needed constructors
+/* generate all needed functions
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_generate_constructors(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge);
+unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge);
 
 /* compile an fdecl into bytecode
  *
@@ -178,9 +178,9 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
 
     /* FIXME TODO do we want to include type information within bytecode? */
 
-    /* generate constructors */
-    if (!ic_backend_pancake_generate_constructors(instructions, kludge)) {
-        puts("ic_backend_pancake_compile: call to ic_backend_pancake_generate_constructors failed");
+    /* generate functions */
+    if (!ic_backend_pancake_generate_functions(instructions, kludge)) {
+        puts("ic_backend_pancake_compile: call to ic_backend_pancake_generate_functions failed");
         return 0;
     }
 
@@ -1609,21 +1609,21 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
     return 1;
 }
 
-/* generate all needed constructors
+/* generate all needed functions
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_generate_constructors(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge) {
-    unsigned int n_types;
+unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge) {
+    unsigned int n_funcs;
 
     if (!instructions) {
-        puts("ic_backend_pancake_generate_constructors: instructions was null");
+        puts("ic_backend_pancake_generate_functions: instructions was null");
         return 0;
     }
 
     if (!kludge) {
-        puts("ic_backend_pancake_generate_constructors: kludge was null");
+        puts("ic_backend_pancake_generate_functions: kludge was null");
         return 0;
     }
 
@@ -1689,9 +1689,9 @@ unsigned int ic_backend_pancake_generate_constructors(struct ic_backend_pancake_
     /* FIXME TODO unimplemented
      * only error if there is work to do
      */
-    n_types = ic_pvector_length(&(kludge->default_constructors));
-    if (n_types > 0) {
-        puts("ic_backend_pancake_generate_constructors: not implemented, asked to do work");
+    n_funcs = ic_kludge_generates_length(kludge);
+    if (n_funcs > 0) {
+        puts("ic_backend_pancake_generate_functions: not implemented, asked to do work");
         return 0;
     }
 

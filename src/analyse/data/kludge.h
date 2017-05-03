@@ -6,6 +6,7 @@
 #include "../../data/symbol.h"
 #include "../../parse/data/ast.h"
 #include "../../parse/data/type_ref.h"
+#include "generate.h"
 
 /* a Kludge is the output from the analyse stage of icarus
  *
@@ -45,10 +46,8 @@ struct ic_kludge {
     /* list of Func decls */
     struct ic_pvector fdecls;
 
-    /* list of types for which default constructors need to be generated
-     * list of decl_type
-     */
-    struct ic_pvector default_constructors;
+    /* list of ic_generate */
+    struct ic_pvector generates;
 
     /* list of Errors
      * FIXME no error type yet
@@ -115,14 +114,6 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_decl_func *
  */
 unsigned int ic_kludge_add_op(struct ic_kludge *kludge, struct ic_decl_op *op);
 
-/* add a new default constructor func decl to this kludge
- * this will insert into dict_fname and default_constructors
- *
- * returns 1 on success
- * returns 0 on failure
- */
-unsigned int ic_kludge_add_default_constructor(struct ic_kludge *kludge, struct ic_decl_type *tdecl, struct ic_decl_func *fdecl);
-
 /* retrieve ic_decl_type by string
  *
  * returns * on success
@@ -175,6 +166,28 @@ struct ic_symbol *ic_kludge_get_operator(struct ic_kludge *kludge, char *sym_str
  * returns 0 on error
  */
 struct ic_symbol *ic_kludge_get_operator_from_symbol(struct ic_kludge *kludge, struct ic_symbol *symbol);
+
+/* add a new generate representing a function to generate
+ * this will insert into dict_fname and generates
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_kludge_generate_add(struct ic_kludge *kludge, struct ic_generate *gen);
+
+/* get length of generates
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_kludge_generates_length(struct ic_kludge *kludge);
+
+/* get generate at offset
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_generate *ic_kludge_generates_get(struct ic_kludge *kludge, unsigned int i);
 
 /* check if an existing identifier is taken either within the kludge or the provided sope
  *

@@ -34,6 +34,12 @@ unsigned int ic_analyse(struct ic_kludge *kludge) {
         return 0;
     }
 
+    /* note that this analysis happens after kludge population
+     * so all type and function names have been made public
+     * this makes it safe for analyse_decl_type to generate functions
+     * as long as it first checks they don't already exist
+     */
+
     /* for each type call ic_analyse_decl_type */
     len = ic_pvector_length(&(kludge->tdecls));
     for (i = 0; i < len; ++i) {
@@ -144,8 +150,8 @@ unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type 
      * an appropriate default constructor for this type
      */
     if (!ic_decl_type_isbuiltin(tdecl)) {
-        if (!ic_analyse_decl_type_generate_constructor(kludge, tdecl)) {
-            puts("ic_analyse_decl_type: call to ic_analyse_decl_type_generate_constructor failed");
+        if (!ic_analyse_decl_type_generate_functions(kludge, tdecl)) {
+            puts("ic_analyse_decl_type: call to ic_analyse_decl_type_generate_functions failed");
             return 0;
         }
     }
@@ -153,27 +159,27 @@ unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type 
     return 1;
 }
 
-/* generate the constructor(s) for this type
+/* generate the needed function (s) for this type
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_analyse_decl_type_generate_constructor(struct ic_kludge *kludge, struct ic_decl_type *tdecl) {
+unsigned int ic_analyse_decl_type_generate_functions(struct ic_kludge *kludge, struct ic_decl_type *tdecl) {
     struct ic_decl_type_struct *tdecl_struct = 0;
     struct ic_decl_type_union *tdecl_union = 0;
 
     if (!kludge) {
-        puts("ic_analyse_decl_type_generate_constructor: kludge was null");
+        puts("ic_analyse_decl_type_generate_functions: kludge was null");
         return 0;
     }
 
     if (!tdecl) {
-        puts("ic_analyse_decl_type_generate_constructor: tdecl was null");
+        puts("ic_analyse_decl_type_generate_functions: tdecl was null");
         return 0;
     }
 
     if (tdecl->builtin != 0) {
-        puts("ic_analyse_decl_type_generate_constructor: tdecl was builtin");
+        puts("ic_analyse_decl_type_generate_functions: tdecl was builtin");
         return 0;
     }
 
@@ -181,11 +187,11 @@ unsigned int ic_analyse_decl_type_generate_constructor(struct ic_kludge *kludge,
         case ic_decl_type_tag_struct:
             tdecl_struct = ic_decl_type_get_struct(tdecl);
             if (!tdecl_struct) {
-                puts("ic_analyse_decl_type_generate_constructor: call to ic_decl_type_get_struct failed");
+                puts("ic_analyse_decl_type_generate_functions: call to ic_decl_type_get_struct failed");
                 return 0;
             }
-            if (!ic_analyse_decl_type_struct_generate_constructor(kludge, tdecl, tdecl_struct)) {
-                puts("ic_analyse_decl_type_generate_constructor: call to ic_analyse_decl_type_struct_generate_constructor failed");
+            if (!ic_analyse_decl_type_struct_generate_functions(kludge, tdecl, tdecl_struct)) {
+                puts("ic_analyse_decl_type_generate_functions: call to ic_analyse_decl_type_struct_generate_functions failed");
                 return 0;
             }
             return 1;
@@ -194,18 +200,18 @@ unsigned int ic_analyse_decl_type_generate_constructor(struct ic_kludge *kludge,
         case ic_decl_type_tag_union:
             tdecl_union = ic_decl_type_get_union(tdecl);
             if (!tdecl_union) {
-                puts("ic_analyse_decl_type_generate_conunionor: call to ic_decl_type_get_union failed");
+                puts("ic_analyse_decl_type_generate_functions: call to ic_decl_type_get_union failed");
                 return 0;
             }
-            if (!ic_analyse_decl_type_union_generate_constructor(kludge, tdecl, tdecl_union)) {
-                puts("ic_analyse_decl_type_generate_conunionor: call to ic_analyse_decl_type_union_generate_constructor failed");
+            if (!ic_analyse_decl_type_union_generate_functions(kludge, tdecl, tdecl_union)) {
+                puts("ic_analyse_decl_type_generate_functions: call to ic_analyse_decl_type_union_generate_functions failed");
                 return 0;
             }
             return 1;
             break;
 
         default:
-            puts("ic_analyse_decl_type_generate_constructor: unknown tag");
+            puts("ic_analyse_decl_type_generate_functions: unknown tag");
             return 0;
             break;
     }
@@ -315,12 +321,12 @@ ERROR:
     return 0;
 }
 
-/* generate the constructor(s) for this type
+/* generate the needed function(s) for this type
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_analyse_decl_type_struct_generate_constructor(struct ic_kludge *kludge, struct ic_decl_type *tdecl, struct ic_decl_type_struct *tdecl_struct) {
+unsigned int ic_analyse_decl_type_struct_generate_functions(struct ic_kludge *kludge, struct ic_decl_type *tdecl, struct ic_decl_type_struct *tdecl_struct) {
     struct ic_symbol *type_sym = 0;
     char *type_str = 0;
     /* length of type_str used for generating cons */
@@ -336,18 +342,20 @@ unsigned int ic_analyse_decl_type_struct_generate_constructor(struct ic_kludge *
     /* func decl for default type constructor */
     struct ic_decl_func *constructor_decl = 0;
 
+    struct ic_generate *generate = 0;
+
     if (!kludge) {
-        puts("ic_analyse_decl_type_struct_generate_constructor: kludge was null");
+        puts("ic_analyse_decl_type_struct_generate_functions: kludge was null");
         return 0;
     }
 
     if (!tdecl) {
-        puts("ic_analyse_decl_type_struct_generate_constructor: tdecl was null");
+        puts("ic_analyse_decl_type_struct_generate_functions: tdecl was null");
         return 0;
     }
 
     if (!tdecl_struct) {
-        puts("ic_analyse_decl_type_struct_generate_constructor: tdecl_struct was null");
+        puts("ic_analyse_decl_type_struct_generate_functions: tdecl_struct was null");
         return 0;
     }
 
@@ -360,31 +368,31 @@ unsigned int ic_analyse_decl_type_struct_generate_constructor(struct ic_kludge *
 
     type_sym = ic_decl_type_struct_get_name(tdecl_struct);
     if (!type_sym) {
-        puts("ic_analyse_decl_type_struct_generate_constructor: call to ic_decl_type_struct_get_name failed");
+        puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_type_struct_get_name failed");
         goto ERROR;
     }
 
     type_str = ic_symbol_contents(type_sym);
     if (!type_str) {
-        puts("ic_analyse_decl_type_struct_generate_constructor: call to ic_symbol_contents failed");
+        puts("ic_analyse_decl_type_struct_generate_functions: call to ic_symbol_contents failed");
         goto ERROR;
     }
 
     type_str_len = ic_symbol_length(type_sym);
     if (-1 == type_str_len) {
-        puts("ic_analyse_decl_type_struct_generate_constructor: call to ic_symbol_length failed");
+        puts("ic_analyse_decl_type_struct_generate_functions: call to ic_symbol_length failed");
         goto ERROR;
     }
 
     constructor_decl = ic_decl_func_new(type_str, type_str_len);
     if (!constructor_decl) {
-        puts("ic_analyse_decl_type_struct_generate_constructor: call to ic_decl_func_new failed");
+        puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_new failed");
         goto ERROR;
     }
 
     /* associate constructor return value with type */
     if (!ic_decl_func_set_return(constructor_decl, type_str, ic_symbol_length(type_sym))) {
-        puts("ic_analyse_decl_type_struct_generate_constructor: call to ic_decl_func_set_return failed");
+        puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_set_return failed");
         goto ERROR;
     }
 
@@ -397,18 +405,30 @@ unsigned int ic_analyse_decl_type_struct_generate_constructor(struct ic_kludge *
     for (i = 0; i < len; ++i) {
         field = ic_pvector_get(&(tdecl_struct->fields), i);
         if (!field) {
-            puts("ic_analyse_decl_type_struct_generate_constructor: call to ic_pvector_get failed");
+            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_pvector_get failed");
             goto ERROR;
         }
 
         if (!ic_decl_func_add_arg(constructor_decl, field)) {
-            puts("ic_analyse_decl_type_struct_generate_constructor: call to ic_decl_func_add_arg failed");
+            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_add_arg failed");
             goto ERROR;
         }
     }
 
-    if (!ic_kludge_add_default_constructor(kludge, tdecl, constructor_decl)) {
-        puts("ic_analyse_decl_type_struct_generate_constructor: call to ic_kludge_add_default_constructor failed");
+    /* for each constructor we need
+     * check if already exists (user defined)
+     * if not, then add a generate to make it hapen
+     * TODO FIXME check if exists before adding
+     */
+
+    generate = ic_generate_new(ic_generate_tag_cons_struct, constructor_decl, tdecl);
+    if (!generate) {
+        puts("ic_analyse_decl_type_struct_generate_functions: call to ic_generate_new failed");
+        goto ERROR;
+    }
+
+    if (!ic_kludge_generate_add(kludge, generate)) {
+        puts("ic_analyse_decl_type_struct_generate_functions: call to ic_kludge_generate_add failed");
         goto ERROR;
     }
 
@@ -417,7 +437,13 @@ unsigned int ic_analyse_decl_type_struct_generate_constructor(struct ic_kludge *
 
 ERROR:
 
-    puts("ic_analyse_decl_type_struct_generate_constructor: error");
+    if (generate) {
+        if (!ic_generate_destroy(generate, 1)) {
+            puts("ic_analyse_decl_type_struct_generate_functions: error handling: call to ic_generate_destroy failed");
+        }
+    }
+
+    puts("ic_analyse_decl_type_struct_generate_functions: error");
     return 0;
 }
 
@@ -448,23 +474,23 @@ unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_analyse_decl_type_union_generate_constructor(struct ic_kludge *kludge, struct ic_decl_type *tdecl, struct ic_decl_type_union *tdecl_union) {
+unsigned int ic_analyse_decl_type_union_generate_functions(struct ic_kludge *kludge, struct ic_decl_type *tdecl, struct ic_decl_type_union *tdecl_union) {
     if (!kludge) {
-        puts("ic_analyse_decl_type_union_generate_constructor: kludge was null");
+        puts("ic_analyse_decl_type_union_generate_functions: kludge was null");
         return 0;
     }
 
     if (!tdecl) {
-        puts("ic_analyse_decl_type_union_generate_constructor: tdecl was null");
+        puts("ic_analyse_decl_type_union_generate_functions: tdecl was null");
         return 0;
     }
 
     if (!tdecl_union) {
-        puts("ic_analyse_decl_type_union_generate_constructor: tdecl_union was null");
+        puts("ic_analyse_decl_type_union_generate_functions: tdecl_union was null");
         return 0;
     }
 
-    puts("ic_analyse_decl_type_union_generate_constructor: not implemented yet");
+    puts("ic_analyse_decl_type_union_generate_functions: not implemented yet");
     return 0;
 }
 
