@@ -1219,8 +1219,7 @@ unsigned int ic_transform_ir_match_case_print(FILE *fd, struct ic_transform_ir_m
 
     *indent -= 1;
 
-    puts("ic_transform_ir_match_case_print: unimplemented");
-    return 0;
+    return 1;
 }
 
 /* allocate and initialise a new match
@@ -1330,6 +1329,7 @@ unsigned int ic_transform_ir_match_print(FILE *fd, struct ic_transform_ir_match 
 
     /* identifier name */
     ic_symbol_print(fd, match->match_symbol);
+    fputs("\n", fd);
 
     *indent += 1;
 
@@ -1359,11 +1359,11 @@ unsigned int ic_transform_ir_match_print(FILE *fd, struct ic_transform_ir_match 
     }
 
     ic_parse_print_indent(fd, *indent);
-    fputs("end", fd);
+    fputs("end\n", fd);
     *indent -= 1;
 
     ic_parse_print_indent(fd, *indent);
-    fputs("end", fd);
+    fputs("end\n", fd);
 
     return 1;
 }
