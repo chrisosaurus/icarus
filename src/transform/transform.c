@@ -975,7 +975,11 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
 static unsigned int ic_transform_stmt_match(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_match *match) {
     struct ic_transform_ir_stmt *tstmt = 0;
     struct ic_transform_ir_match *tmatch = 0;
+    struct ic_transform_ir_match_case *tcase = 0;
     struct ic_symbol *match_symbol = 0;
+    unsigned int len = 0;
+    unsigned int i = 0;
+    struct ic_stmt_case *scase = 0;
 
     if (!kludge) {
         puts("ic_transform_stmt_match: kludge was null");
@@ -1028,8 +1032,35 @@ static unsigned int ic_transform_stmt_match(struct ic_kludge *kludge, struct ic_
     }
 
     /* append each case ... */
-    /* FIXME TODO */
-    puts("ic_transform_stmt_match: implementation pending: case work unimplemented");
+    len = ic_stmt_match_cases_length(match);
+    for (i = 0; i < len; ++i) {
+        scase = ic_stmt_match_cases_get(match, i);
+        if (!scase) {
+            puts("ic_transform_stmt_match: call to ic_stmt_match_cases_get failed");
+            return 0;
+        }
+
+        tcase = ic_transform_ir_match_case_new(&(scase->field));
+        if (!scase) {
+            puts("ic_transform_stmt_match: call to ic_transform_ir_match_case_new failed");
+            return 0;
+        }
+
+        /* populate tbody */
+        tcase->tbody = ic_transform_body_new();
+        if (!tcase->tbody) {
+            puts("ic_transform_stmt_match: call to ic_transform_body_new failed");
+            return 0;
+        }
+
+        /* FIXME TODO probably need new scope ... */
+
+        /* dispatch to transform_body for work */
+        if (!ic_transform_body(kludge, scope, tcase->tbody, scase->body)) {
+            puts("ic_transform_stmt_match: call to ic_transform_body failed");
+            return 0;
+        }
+    }
 
     /* append else if exists ... */
     if (match->else_body) {
@@ -1054,8 +1085,7 @@ static unsigned int ic_transform_stmt_match(struct ic_kludge *kludge, struct ic_
         return 0;
     }
 
-    puts("ic_transform_stmt_match: implementation pending");
-    return 0;
+    return 1;
 }
 
 /* perform translation of a single `for` stmt within a body
