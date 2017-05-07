@@ -1060,6 +1060,11 @@ static unsigned int ic_transform_stmt_match(struct ic_kludge *kludge, struct ic_
             puts("ic_transform_stmt_match: call to ic_transform_body failed");
             return 0;
         }
+
+        if (-1 == ic_pvector_append(&(tmatch->cases), tcase)) {
+            puts("ic_transform_stmt_match: call to ic_pvector_append failed");
+            return 0;
+        }
     }
 
     /* append else if exists ... */

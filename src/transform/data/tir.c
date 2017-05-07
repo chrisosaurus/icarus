@@ -1486,6 +1486,13 @@ unsigned int ic_transform_ir_stmt_print(FILE *fd, struct ic_transform_ir_stmt *s
             }
             break;
 
+        case ic_transform_ir_stmt_type_match:
+            if (!ic_transform_ir_match_print(fd, &(stmt->u.match), indent)) {
+                puts("ic_transform_ir_stmt_print: call to ic_transform_ir_assign_print failed");
+                return 0;
+            }
+            break;
+
         default:
             puts("ic_transform_ir_stmt_print: impossible stmt->tag");
             return 0;
