@@ -4,6 +4,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+void panic(char *ch) {
+    puts("Panic!");
+    if (ch) {
+        puts(ch);
+    }
+    exit(1);
+}
+
 void *ic_alloc(size_t size) {
     void *v = 0;
 

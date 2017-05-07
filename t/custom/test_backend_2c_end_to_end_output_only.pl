@@ -15,7 +15,7 @@ my $cases = [
         println("Hello world")
       end
       ',
-    expected => '
+    expected_output => '
       Hello world
       '
   },
@@ -40,7 +40,7 @@ my $cases = [
         println(baz(7))
       end
       ',
-    expected => '
+    expected_output => '
       18
       17
       ',
@@ -53,7 +53,7 @@ my $cases = [
         println(6 < 15)
       end
       ',
-    expected => '
+    expected_output => '
       True
       False
       True
@@ -69,7 +69,7 @@ my $cases = [
         end
       end
       ',
-    expected => '
+    expected_output => '
       4 < 5
       ',
   },
@@ -84,7 +84,7 @@ my $cases = [
         end
       end
       ',
-    expected => '
+    expected_output => '
       4 < 5
       ',
   },
@@ -98,7 +98,7 @@ my $cases = [
           println(get_str("Jennifer"))
       end
       ',
-    expected => '
+    expected_output => '
       Hello there Jennifer, very nice to meet you
       ',
   },
@@ -141,7 +141,7 @@ my $cases = [
           fizzbuzz(1, 20)
       end
       ',
-    expected => '
+    expected_output => '
       1
       2
       Fizz
@@ -180,10 +180,29 @@ my $cases = [
         println(f.b.s)
       end
     ',
-    expected => '
+    expected_output => '
       16
       Hello!!!
     '
+  },
+  {
+    input =>'
+      union Foo
+          a::Sint
+          b::String
+      end
+
+      fn main()
+          let a = Foo(5)
+          println(a)
+          let b = Foo("Hello")
+          println(b)
+      end
+    ',
+    expected_output =>'
+      Foo{5}
+      Foo{Hello}
+    ',
   },
 ];
 
@@ -203,7 +222,7 @@ sub cleanup {
 
 sub run {
   my $input = shift // die;
-  my $expected = shift // die;
+  my $expected_output = shift // die;
   die if @_;
 
   my $in_tmp_file = `mktemp TESTING_BACKEND_2C_SIMPLE_XXX.ic`;
@@ -247,9 +266,9 @@ sub run {
 
   `rm a.out`;
 
-  if( $exit_status != 0 || $output ne $expected ){
+  if( $exit_status != 0 || $output ne $expected_output ){
       say "Output was not as expected";
-      say "=======\nExpected:\n$expected";
+      say "=======\nExpected:\n$expected_output";
       say "=======\nGot:\n$output";
       say "=======\n";
       if( $exit_status != 0 ){
@@ -266,8 +285,8 @@ sub run {
 
 for my $case (@$cases) {
   my $input = cleanup $case->{input};
-  my $expected = cleanup $case->{expected};
-  run $input, $expected;
+  my $expected_output = cleanup $case->{expected_output};
+  run $input, $expected_output;
 }
 
 say "test_backend_pancake_end_to_end successs";

@@ -63,6 +63,87 @@ my $cases = [
       Foo{6, Hello}
       '
   },
+  {
+    input =>'
+      union Foo
+          a::Sint
+          b::String
+      end
+
+      fn main()
+          let a = Foo(5)
+          println(a)
+          let b = Foo("Hello")
+          println(b)
+      end
+    ',
+    expected_c =>'
+      #include "backends/2c/builtins.c"
+      enum Foo_tag;
+      typedef struct Foo * Foo;
+      Foo i_Foo_a_Sint(Sint a);
+      Foo i_Foo_a_String(String b);
+      void i_print_a_Foo(Foo f);
+      void i_println_a_Foo(Foo f);
+      /* main() -> Void */
+      Void i_main_a();
+      enum Foo_tag {
+        Foo_tag_Sint_a,
+        Foo_tag_String_b,
+      };
+      struct Foo {
+        enum Foo_tag _tag;
+        union {
+          Sint a;
+          String b;
+        } u;
+      };
+      Foo i_Foo_a_Sint(Sint a){
+        Foo tmp = ic_alloc(sizeof(struct Foo));
+        tmp->_tag = Foo_tag_Sint_a;
+        tmp->u.a = a;
+        return tmp;
+      }
+      Foo i_Foo_a_String(String b){
+        Foo tmp = ic_alloc(sizeof(struct Foo));
+        tmp->_tag = Foo_tag_String_b;
+        tmp->u.b = b;
+        return tmp;
+      }
+      void i_print_a_Foo(Foo f){
+        fputs("Foo{", stdout);
+        switch (f->_tag) {
+          case Foo_tag_Sint_a:
+            i_print_a_Sint(f->u.a);
+            break;
+          case Foo_tag_String_b:
+            i_print_a_String(f->u.b);
+            break;
+          default:
+            panic("impossible tag on Foo");
+        }
+        fputs("}", stdout);
+      }
+      void i_println_a_Foo(Foo f){
+        i_print_a_Foo(f);
+        i_println_a();
+      }
+      /* main() -> Void */
+      Void i_main_a(){
+        Sint _l0 = ic_sint_new(5);
+        Foo a = i_Foo_a_Sint(_l0);
+        i_println_a_Foo(a);
+        String _l1 = ic_string_new("Hello", 5);
+        Foo b = i_Foo_a_String(_l1);
+        i_println_a_Foo(b);
+      }
+      #include "backends/2c/entry.c"
+    ',
+    expected_output =>'
+      Foo{5}
+      Foo{Hello}
+    ',
+  },
 ];
 
 # whitespace sensitivity sucks
