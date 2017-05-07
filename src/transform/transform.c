@@ -980,6 +980,8 @@ static unsigned int ic_transform_stmt_match(struct ic_kludge *kludge, struct ic_
     unsigned int len = 0;
     unsigned int i = 0;
     struct ic_stmt_case *scase = 0;
+    struct ic_slot *slot = 0;
+    struct ic_decl_type *tdecl = 0;
 
     if (!kludge) {
         puts("ic_transform_stmt_match: kludge was null");
@@ -1019,7 +1021,19 @@ static unsigned int ic_transform_stmt_match(struct ic_kludge *kludge, struct ic_
         }
     }
 
-    tstmt = ic_transform_ir_stmt_match_new(match_symbol);
+    slot = ic_scope_get_from_symbol(scope, match_symbol);
+    if (!slot) {
+        puts("ic_transform_stmt_match: call to ic_scope_get_from_symbol failed");
+        return 0;
+    }
+
+    tdecl = slot->type;
+    if (!tdecl) {
+        puts("ic_transform_stmt_match: slot->type was null");
+        return 0;
+    }
+
+    tstmt = ic_transform_ir_stmt_match_new(tdecl, match_symbol);
     if (!tstmt) {
         puts("ic_transform_stmt_match: call to ic_transform_ir_stmt_match_new failed");
         return 0;

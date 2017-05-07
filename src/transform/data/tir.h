@@ -492,6 +492,7 @@ unsigned int ic_transform_ir_match_case_destroy(struct ic_transform_ir_match_cas
 unsigned int ic_transform_ir_match_case_print(FILE *fd, struct ic_transform_ir_match_case *scase, unsigned int *indent);
 
 struct ic_transform_ir_match {
+    struct ic_decl_type *tdecl;
     struct ic_symbol *match_symbol;
     struct ic_pvector cases;
     struct ic_transform_body *else_body;
@@ -502,14 +503,14 @@ struct ic_transform_ir_match {
  * returns * on success
  * returns 0 on failure
  */
-struct ic_transform_ir_match *ic_transform_ir_match_new(struct ic_symbol *match_symbol);
+struct ic_transform_ir_match *ic_transform_ir_match_new(struct ic_decl_type *tdecl, struct ic_symbol *match_symbol);
 
 /* initialise an existing match
  *
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_match_init(struct ic_transform_ir_match *match, struct ic_symbol *match_symbol);
+unsigned int ic_transform_ir_match_init(struct ic_transform_ir_match *match, struct ic_decl_type *tdecl, struct ic_symbol *match_symbol);
 
 /* destroy match
  *
@@ -668,6 +669,6 @@ struct ic_transform_ir_stmt *ic_transform_ir_stmt_if_new(struct ic_symbol *cond_
  * returns * on success
  * returns 0 on failure
  */
-struct ic_transform_ir_stmt *ic_transform_ir_stmt_match_new(struct ic_symbol *match_symbol);
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_match_new(struct ic_decl_type *tdecl, struct ic_symbol *match_symbol);
 
 #endif /* ifndef ICARUS_TRANSFORM_IR_H */

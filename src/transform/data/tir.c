@@ -1227,8 +1227,13 @@ unsigned int ic_transform_ir_match_case_print(FILE *fd, struct ic_transform_ir_m
  * returns * on success
  * returns 0 on failure
  */
-struct ic_transform_ir_match *ic_transform_ir_match_new(struct ic_symbol *match_symbol) {
+struct ic_transform_ir_match *ic_transform_ir_match_new(struct ic_decl_type *tdecl, struct ic_symbol *match_symbol) {
     struct ic_transform_ir_match *match = 0;
+
+    if (!tdecl) {
+        puts("ic_transform_ir_match_new: tdecl was null");
+        return 0;
+    }
 
     if (!match_symbol) {
         puts("ic_transform_ir_match_new: match_symbol was null");
@@ -1241,7 +1246,7 @@ struct ic_transform_ir_match *ic_transform_ir_match_new(struct ic_symbol *match_
         return 0;
     }
 
-    if (!ic_transform_ir_match_init(match, match_symbol)) {
+    if (!ic_transform_ir_match_init(match, tdecl, match_symbol)) {
         puts("ic_transform_ir_match_new: call to ic_transform_ir_match_init failed");
         return 0;
     }
@@ -1254,10 +1259,15 @@ struct ic_transform_ir_match *ic_transform_ir_match_new(struct ic_symbol *match_
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_match_init(struct ic_transform_ir_match *match, struct ic_symbol *match_symbol) {
+unsigned int ic_transform_ir_match_init(struct ic_transform_ir_match *match, struct ic_decl_type *tdecl, struct ic_symbol *match_symbol) {
 
     if (!match) {
         puts("ic_transform_ir_match_init: scase was null");
+        return 0;
+    }
+
+    if (!tdecl) {
+        puts("ic_transform_ir_match_init: match_symbol was null");
         return 0;
     }
 
@@ -1266,6 +1276,7 @@ unsigned int ic_transform_ir_match_init(struct ic_transform_ir_match *match, str
         return 0;
     }
 
+    match->tdecl = tdecl;
     match->match_symbol = match_symbol;
     match->else_body = 0;
 
@@ -1822,7 +1833,7 @@ struct ic_transform_ir_stmt *ic_transform_ir_stmt_if_new(struct ic_symbol *cond_
  * returns * on success
  * returns 0 on failure
  */
-struct ic_transform_ir_stmt *ic_transform_ir_stmt_match_new(struct ic_symbol *match_symbol) {
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_match_new(struct ic_decl_type *tdecl, struct ic_symbol *match_symbol) {
     struct ic_transform_ir_stmt *stmt = 0;
 
     if (!match_symbol) {
@@ -1836,7 +1847,7 @@ struct ic_transform_ir_stmt *ic_transform_ir_stmt_match_new(struct ic_symbol *ma
         return 0;
     }
 
-    if (!ic_transform_ir_match_init(&(stmt->u.match), match_symbol)) {
+    if (!ic_transform_ir_match_init(&(stmt->u.match), tdecl, match_symbol)) {
         puts("ic_transform_ir_stmt_match_expr_new: call to ic_transform_ir_match_init failed");
         free(stmt);
         return 0;
