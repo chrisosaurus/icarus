@@ -109,6 +109,15 @@ static unsigned int ic_transform_stmt_while(struct ic_kludge *kludge, struct ic_
  */
 static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_expr *expr);
 
+/* perform translation of a single `match` stmt within a body
+ *
+ * appends tir stmt to tbody
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_transform_stmt_match(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_match *match);
+
 /* register and append a new temporary expr as a let
  * generates a new symbol name and returns it
  *
@@ -433,6 +442,13 @@ static unsigned int ic_transform_stmt(struct ic_kludge *kludge, struct ic_scope 
         case ic_stmt_type_expr:
             if (!ic_transform_stmt_expr(kludge, scope, tbody, body, stmt->u.expr)) {
                 puts("ic_transform_stmt: call to ic_transform_stmt_expr failed");
+                return 0;
+            }
+            break;
+
+        case ic_stmt_type_match:
+            if (!ic_transform_stmt_match(kludge, scope, tbody, body, &(stmt->u.match))) {
+                puts("ic_transform_stmt: call to ic_transform_stmt_match failed");
                 return 0;
             }
             break;
@@ -913,6 +929,8 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
         return 0;
     }
 
+    /* FIXME TODO probably need new scope ... */
+
     /* dispatch to transform_body for work */
     if (!ic_transform_body(kludge, scope, tif->then_tbody, sif->then_body)) {
         puts("ic_transform_fdecl: call to ic_transform_body failed");
@@ -930,6 +948,8 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
             return 0;
         }
 
+        /* FIXME TODO probably need new scope ... */
+
         /* dispatch to transform_body for work */
         if (!ic_transform_body(kludge, scope, tif->else_tbody, sif->else_body)) {
             puts("ic_transform_fdecl: call to ic_transform_body failed");
@@ -943,6 +963,99 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
     }
 
     return 1;
+}
+
+/* perform translation of a single `match` stmt within a body
+ *
+ * appends tir stmt to tbody
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_transform_stmt_match(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_match *match) {
+    struct ic_transform_ir_stmt *tstmt = 0;
+    struct ic_transform_ir_match *tmatch = 0;
+    struct ic_symbol *match_symbol = 0;
+
+    if (!kludge) {
+        puts("ic_transform_stmt_match: kludge was null");
+        return 0;
+    }
+
+    if (!scope) {
+        puts("ic_transform_stmt_match: scope was null");
+        return 0;
+    }
+
+    if (!tbody) {
+        puts("ic_transform_stmt_match: tbody was null");
+        return 0;
+    }
+
+    if (!body) {
+        puts("ic_transform_stmt_match: body was null");
+        return 0;
+    }
+
+    if (!match) {
+        puts("ic_transform_stmt_match: match was null");
+        return 0;
+    }
+
+    /* get match_symbol ... */
+    /* if our expr is already a symbol, then re-use */
+    if (match->expr->tag == ic_expr_type_identifier) {
+        match_symbol = &match->expr->u.id.identifier;
+    } else {
+        /* otherwise compile down to a symbol */
+        match_symbol = ic_transform_new_temp(kludge, scope, tbody, match->expr);
+        if (!match_symbol) {
+            puts("ic_transform_stmt_match: call to ic_transform_new_temp failed");
+            return 0;
+        }
+    }
+
+    tstmt = ic_transform_ir_stmt_match_new(match_symbol);
+    if (!tstmt) {
+        puts("ic_transform_stmt_match: call to ic_transform_ir_stmt_match_new failed");
+        return 0;
+    }
+
+    tmatch = ic_transform_ir_stmt_get_match(tstmt);
+    if (!tmatch) {
+        puts("ic_transform_stmt_match: call to ic_transform_ir_stmt_get_match failed");
+        return 0;
+    }
+
+    /* append each case ... */
+    /* FIXME TODO */
+    puts("ic_transform_stmt_match: implementation pending: case work unimplemented");
+
+    /* append else if exists ... */
+    if (match->else_body) {
+        /* populate tbody */
+        tmatch->else_body = ic_transform_body_new();
+        if (!tmatch->else_body) {
+            puts("ic_transform_stmt_match: call to ic_transform_body_new failed");
+            return 0;
+        }
+
+        /* FIXME TODO probably need new scope ... */
+
+        /* dispatch to transform_body for work */
+        if (!ic_transform_body(kludge, scope, tmatch->else_body, match->else_body)) {
+            puts("ic_transform_stmt_match: call to ic_transform_body failed");
+            return 0;
+        }
+    }
+
+    if (!ic_transform_body_append(tbody, tstmt)) {
+        puts("ic_transform_stmt_match: call to ic_transform_body_append failed");
+        return 0;
+    }
+
+    puts("ic_transform_stmt_match: implementation pending");
+    return 0;
 }
 
 /* perform translation of a single `for` stmt within a body

@@ -1571,6 +1571,25 @@ struct ic_transform_ir_if *ic_transform_ir_stmt_get_if(struct ic_transform_ir_st
     return &(stmt->u.sif);
 }
 
+/* get pointer to internal match
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_match *ic_transform_ir_stmt_get_match(struct ic_transform_ir_stmt *stmt) {
+    if (!stmt) {
+        puts("ic_transform_ir_stmt_get_match: stmt was null");
+        return 0;
+    }
+
+    if (stmt->tag != ic_transform_ir_stmt_type_match) {
+        puts("ic_transform_ir_stmt_get_match: stmt was not of type match");
+        return 0;
+    }
+
+    return &(stmt->u.match);
+}
+
 /* get pointer to internal assign
  *
  * returns * on success
