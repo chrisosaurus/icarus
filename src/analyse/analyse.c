@@ -161,6 +161,122 @@ unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type 
     return 1;
 }
 
+static unsigned int ic_analyse_decl_type_generate_print_functions(struct ic_kludge *kludge, struct ic_decl_type *tdecl) {
+    /* func decl for print function */
+    struct ic_decl_func *print_decl = 0;
+    /* func decl for println function */
+    struct ic_decl_func *println_decl = 0;
+
+    struct ic_field *field = 0;
+    struct ic_generate *generate = 0;
+    struct ic_symbol *type_sym = 0;
+    char *type_str = 0;
+    int type_str_len = 0;
+
+    if (!kludge) {
+        puts("ic_analyse_decl_type_generate_print_functions: kludge was null");
+        goto ERROR;
+    }
+
+    if (!tdecl) {
+        puts("ic_analyse_decl_type_generate_print_functions: tdecl was null");
+        goto ERROR;
+    }
+
+    type_sym = ic_decl_type_get_name(tdecl);
+    if (!type_sym) {
+        puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl_type_struct_get_name failed");
+        goto ERROR;
+    }
+
+    type_str = ic_symbol_contents(type_sym);
+    if (!type_str) {
+        puts("ic_analyse_decl_type_generate_print_functions: call to ic_symbol_contents failed");
+        goto ERROR;
+    }
+
+    type_str_len = ic_symbol_length(type_sym);
+    if (-1 == type_str_len) {
+        puts("ic_analyse_decl_type_generate_print_functions: call to ic_symbol_length failed");
+        goto ERROR;
+    }
+
+    /* field used by both print and println
+     * TODO FIXME this means that some fdecls share fields and some own :/
+     */
+    field = ic_field_new("f", 1, type_str, type_str_len, ic_parse_perm_default());
+    if (!field) {
+        puts("ic_analyse_decl_type_generate_print_functions: call to ic_field_new failed");
+        goto ERROR;
+    }
+
+    /* print */
+    {
+        print_decl = ic_decl_func_new("print", 5);
+        if (!print_decl) {
+            puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl_func_new failed");
+            goto ERROR;
+        }
+
+        if (!ic_decl_func_args_add(print_decl, field)) {
+            puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl_func_args_add failed");
+            goto ERROR;
+        }
+
+        if (!ic_decl_func_set_return(print_decl, "Void", 4)) {
+            puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl_func_set_return failed");
+            goto ERROR;
+        }
+
+        generate = ic_generate_new(ic_generate_tag_print, print_decl, tdecl);
+        if (!generate) {
+            puts("ic_analyse_decl_type_generate_print_functions: call to ic_generate_new failed");
+            goto ERROR;
+        }
+
+        if (!ic_kludge_generates_add(kludge, generate)) {
+            puts("ic_analyse_decl_type_generate_print_functions: call to ic_kludge_generates_add failed");
+            goto ERROR;
+        }
+    }
+
+    /* println */
+    {
+        println_decl = ic_decl_func_new("println", 7);
+        if (!print_decl) {
+            puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl_func_new failed");
+            goto ERROR;
+        }
+
+        if (!ic_decl_func_args_add(println_decl, field)) {
+            puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl_func_args_add failed");
+            goto ERROR;
+        }
+
+        if (!ic_decl_func_set_return(println_decl, "Void", 4)) {
+            puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl_func_set_return failed");
+            goto ERROR;
+        }
+
+        generate = ic_generate_new(ic_generate_tag_println, println_decl, tdecl);
+        if (!generate) {
+            puts("ic_analyse_decl_type_generate_print_functions: call to ic_generate_new failed");
+            goto ERROR;
+        }
+
+        if (!ic_kludge_generates_add(kludge, generate)) {
+            puts("ic_analyse_decl_type_generate_print_functions: call to ic_kludge_generates_add failed");
+            goto ERROR;
+        }
+    }
+
+    return 1;
+ERROR:
+
+    puts("ic_analyse_decl_type_generate_print_functions: error");
+    return 0;
+}
+
 /* generate the needed function (s) for this type
  *
  * returns 1 on success
@@ -196,7 +312,6 @@ unsigned int ic_analyse_decl_type_generate_functions(struct ic_kludge *kludge, s
                 puts("ic_analyse_decl_type_generate_functions: call to ic_analyse_decl_type_struct_generate_functions failed");
                 return 0;
             }
-            return 1;
             break;
 
         case ic_decl_type_tag_union:
@@ -209,7 +324,6 @@ unsigned int ic_analyse_decl_type_generate_functions(struct ic_kludge *kludge, s
                 puts("ic_analyse_decl_type_generate_functions: call to ic_analyse_decl_type_union_generate_functions failed");
                 return 0;
             }
-            return 1;
             break;
 
         default:
@@ -217,6 +331,13 @@ unsigned int ic_analyse_decl_type_generate_functions(struct ic_kludge *kludge, s
             return 0;
             break;
     }
+
+    if (!ic_analyse_decl_type_generate_print_functions(kludge, tdecl)) {
+        puts("ic_analyse_decl_type_generate_functions: call to ic_decl_type_generate_print_functions failed");
+        return 0;
+    }
+
+    return 1;
 }
 
 /* takes a decl_type_struct and performs analysis
@@ -343,11 +464,6 @@ unsigned int ic_analyse_decl_type_struct_generate_functions(struct ic_kludge *kl
 
     /* func decl for default type constructor */
     struct ic_decl_func *constructor_decl = 0;
-    /* func decl for print function */
-    struct ic_decl_func *print_decl = 0;
-    /* func decl for println function */
-    struct ic_decl_func *println_decl = 0;
-
     struct ic_generate *generate = 0;
 
     if (!kludge) {
@@ -432,75 +548,6 @@ unsigned int ic_analyse_decl_type_struct_generate_functions(struct ic_kludge *kl
          */
 
         generate = ic_generate_new(ic_generate_tag_cons_struct, constructor_decl, tdecl);
-        if (!generate) {
-            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_generate_new failed");
-            goto ERROR;
-        }
-
-        if (!ic_kludge_generates_add(kludge, generate)) {
-            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_kludge_generates_add failed");
-            goto ERROR;
-        }
-    }
-
-    /* field used by both print and println
-     * TODO FIXME this means that some fdecls share fields and some own :/
-     */
-    field = ic_field_new("f", 1, type_str, type_str_len, ic_parse_perm_default());
-    if (!field) {
-        puts("ic_analyse_decl_type_struct_generate_functions: call to ic_field_new failed");
-        goto ERROR;
-    }
-
-    /* print */
-    {
-        print_decl = ic_decl_func_new("print", 5);
-        if (!print_decl) {
-            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_new failed");
-            goto ERROR;
-        }
-
-        if (!ic_decl_func_args_add(print_decl, field)) {
-            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_args_add failed");
-            goto ERROR;
-        }
-
-        if (!ic_decl_func_set_return(print_decl, "Void", 4)) {
-            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_set_return failed");
-            goto ERROR;
-        }
-
-        generate = ic_generate_new(ic_generate_tag_print, print_decl, tdecl);
-        if (!generate) {
-            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_generate_new failed");
-            goto ERROR;
-        }
-
-        if (!ic_kludge_generates_add(kludge, generate)) {
-            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_kludge_generates_add failed");
-            goto ERROR;
-        }
-    }
-
-    /* println */
-    {
-        println_decl = ic_decl_func_new("println", 7);
-        if (!print_decl) {
-            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_new failed");
-            goto ERROR;
-        }
-
-        if (!ic_decl_func_args_add(println_decl, field)) {
-            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_args_add failed");
-            goto ERROR;
-        }
-
-        if (!ic_decl_func_set_return(println_decl, "Void", 4)) {
-            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_set_return failed");
-            goto ERROR;
-        }
-
-        generate = ic_generate_new(ic_generate_tag_println, println_decl, tdecl);
         if (!generate) {
             puts("ic_analyse_decl_type_struct_generate_functions: call to ic_generate_new failed");
             goto ERROR;
