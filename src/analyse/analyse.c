@@ -515,7 +515,7 @@ unsigned int ic_analyse_decl_type_struct_generate_functions(struct ic_kludge *kl
         }
 
         /* associate constructor return value with type */
-        if (!ic_decl_func_set_return(constructor_decl, type_str, ic_symbol_length(type_sym))) {
+        if (!ic_decl_func_set_return(constructor_decl, type_str, type_str_len)) {
             puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_set_return failed");
             goto ERROR;
         }
@@ -721,6 +721,16 @@ ERROR:
  * returns 0 on failure
  */
 unsigned int ic_analyse_decl_type_union_generate_functions(struct ic_kludge *kludge, struct ic_decl_type *tdecl, struct ic_decl_type_union *tdecl_union) {
+    unsigned int i_field = 0;
+    unsigned int n_fields = 0;
+    struct ic_field *field = 0;
+    struct ic_generate *generate = 0;
+
+    struct ic_decl_func *constructor_decl = 0;
+    struct ic_symbol *type_sym = 0;
+    char *type_str = 0;
+    int type_str_len = 0;
+
     if (!kludge) {
         puts("ic_analyse_decl_type_union_generate_functions: kludge was null");
         return 0;
@@ -736,6 +746,72 @@ unsigned int ic_analyse_decl_type_union_generate_functions(struct ic_kludge *klu
         return 0;
     }
 
+    type_sym = ic_decl_type_get_name(tdecl);
+    if (!type_sym) {
+        puts("ic_analyse_decl_type_union_generate_functions: call to ic_decl_type_struct_get_name failed");
+        goto ERROR;
+    }
+
+    type_str = ic_symbol_contents(type_sym);
+    if (!type_str) {
+        puts("ic_analyse_decl_type_union_generate_functions: call to ic_symbol_contents failed");
+        goto ERROR;
+    }
+
+    type_str_len = ic_symbol_length(type_sym);
+    if (-1 == type_str_len) {
+        puts("ic_analyse_decl_type_union_generate_functions: call to ic_symbol_length failed");
+        goto ERROR;
+    }
+
+    /* we must generate one constructor per field */
+
+    n_fields = ic_decl_type_field_length(tdecl);
+
+    for (i_field = 0; i_field < n_fields; ++i_field) {
+        field = ic_decl_type_field_get(tdecl, i_field);
+        if (!field) {
+            puts("ic_analyse_decl_type_union_generate_functions: call to ic_decl_type_field_get failed");
+            goto ERROR;
+        }
+
+        constructor_decl = ic_decl_func_new(type_str, type_str_len);
+        if (!constructor_decl) {
+            puts("ic_analyse_decl_type_union_generate_functions: call to ic_decl_func_new failed");
+            goto ERROR;
+        }
+
+        /* associate constructor return value with type */
+        if (!ic_decl_func_set_return(constructor_decl, type_str, type_str_len)) {
+            puts("ic_analyse_decl_type_union_generate_functions: call to ic_decl_func_set_return failed");
+            goto ERROR;
+        }
+
+        if (!ic_decl_func_args_add(constructor_decl, field)) {
+            puts("ic_analyse_decl_type_union_generate_functions: call to ic_decl_func_args_add failed");
+            goto ERROR;
+        }
+
+        generate = ic_generate_new(ic_generate_tag_cons_union, constructor_decl, tdecl);
+        if (!generate) {
+            puts("ic_analyse_decl_type_union_generate_functions: call to ic_generate_new failed");
+            goto ERROR;
+        }
+
+        if (!ic_generate_set_union_field(generate, field)) {
+            puts("ic_analyse_decl_type_union_generate_functions: call to ic_generate_set_union_field failed");
+            goto ERROR;
+        }
+
+        if (!ic_kludge_generates_add(kludge, generate)) {
+            puts("ic_analyse_decl_type_union_generate_functions: call to ic_kludge_generates_add failed");
+            goto ERROR;
+        }
+    }
+
+    return 1;
+
+ERROR:
     puts("ic_analyse_decl_type_union_generate_functions: not implemented yet");
     return 0;
 }
