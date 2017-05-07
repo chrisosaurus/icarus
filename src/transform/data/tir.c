@@ -694,8 +694,6 @@ unsigned int ic_transform_ir_if_destroy(struct ic_transform_ir_if *tif, unsigned
  * return 0 on failure
  */
 unsigned int ic_transform_ir_if_print(FILE *fd, struct ic_transform_ir_if *tif, unsigned int *indent) {
-    unsigned int fake_indent = 0;
-
     if (!tif) {
         puts("ic_transform_ir_if_print: if was null");
         return 0;
@@ -706,8 +704,6 @@ unsigned int ic_transform_ir_if_print(FILE *fd, struct ic_transform_ir_if *tif, 
         return 0;
     }
 
-    fake_indent = *indent + 1;
-
     ic_parse_print_indent(fd, *indent);
 
     /* if statement */
@@ -717,20 +713,26 @@ unsigned int ic_transform_ir_if_print(FILE *fd, struct ic_transform_ir_if *tif, 
     ic_symbol_print(fd, tif->cond);
     fputs("\n", fd);
 
+    *indent += 1;
+
     /* body */
-    if (!ic_transform_body_print(fd, tif->then_tbody, &fake_indent)) {
+    if (!ic_transform_body_print(fd, tif->then_tbody, indent)) {
         puts("ic_transform_ir_if_print: call to ic_transform_body_print failed");
         return 0;
     }
 
+    *indent -= 1;
+
     /* if we have an else clause */
     if (tif->else_tbody) {
         ic_parse_print_indent(fd, *indent);
+        *indent += 1;
         puts("else");
-        if (!ic_transform_body_print(fd, tif->else_tbody, &fake_indent)) {
+        if (!ic_transform_body_print(fd, tif->else_tbody, indent)) {
             puts("ic_transform_ir_if_print: call to ic_transform_body_print failed");
             return 0;
         }
+        *indent -= 1;
     }
 
     /* trailing end and \n */
@@ -1106,6 +1108,264 @@ struct ic_symbol *ic_transform_ir_fcall_get_arg(struct ic_transform_ir_fcall *fc
     }
 
     return sym;
+}
+
+/* allocate and initialise a new case
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_match_case *ic_transform_ir_match_case_new(struct ic_field *field) {
+    struct ic_transform_ir_match_case *scase = 0;
+
+    if (!field) {
+        puts("ic_transform_ir_match_case_new: field was null");
+        return 0;
+    }
+
+    scase = calloc(1, sizeof(struct ic_transform_ir_match_case));
+    if (!scase) {
+        puts("ic_transform_ir_match_case_new: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_transform_ir_match_case_init(scase, field)) {
+        puts("ic_transform_ir_match_case_new: call to ic_transform_ir_match_case_init failed");
+        return 0;
+    }
+
+    return scase;
+}
+
+/* initialise an existing case
+ *
+ * returns 1 on success
+ * return 0 on failure
+ */
+unsigned int ic_transform_ir_match_case_init(struct ic_transform_ir_match_case *scase, struct ic_field *field) {
+    if (!scase) {
+        puts("ic_transform_ir_match_case_init: scase was null");
+        return 0;
+    }
+
+    if (!field) {
+        puts("ic_transform_ir_match_case_init: field was null");
+        return 0;
+    }
+
+    scase->field = field;
+    scase->tbody = 0;
+
+    return 1;
+}
+
+/* destroy case
+ *
+ * TODO doesn't touch any fields
+ *
+ * will only free case if `free_case` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_match_case_destroy(struct ic_transform_ir_match_case *scase, unsigned int free_case) {
+    if (!scase) {
+        puts("ic_transform_ir_match_case_destroy: scase was null");
+        return 0;
+    }
+
+    if (free_case) {
+        free(scase);
+    }
+
+    return 1;
+}
+
+/* print case
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_match_case_print(FILE *fd, struct ic_transform_ir_match_case *scase, unsigned int *indent) {
+    if (!fd) {
+        puts("ic_transform_ir_match_case_print: fd was null");
+        return 0;
+    }
+
+    if (!scase) {
+        puts("ic_transform_ir_match_case_print: scase was null");
+        return 0;
+    }
+
+    if (!indent) {
+        puts("ic_transform_ir_match_case_print: indent was null");
+        return 0;
+    }
+
+    ic_parse_print_indent(fd, *indent);
+    fputs("case ", fd);
+
+    /* field */
+    ic_field_print(fd, scase->field);
+
+    fputs("\n", fd);
+
+    *indent += 1;
+
+    if (!ic_transform_body_print(fd, scase->tbody, indent)) {
+        puts("ic_transform_ir_match_case_print: call to ic_transform_body_print failed");
+        return 0;
+    }
+
+    *indent -= 1;
+
+    puts("ic_transform_ir_match_case_print: unimplemented");
+    return 0;
+}
+
+/* allocate and initialise a new match
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_match *ic_transform_ir_match_new(struct ic_symbol *match_symbol) {
+    struct ic_transform_ir_match *match = 0;
+
+    if (!match_symbol) {
+        puts("ic_transform_ir_match_new: match_symbol was null");
+        return 0;
+    }
+
+    match = calloc(1, sizeof(struct ic_transform_ir_match));
+    if (!match) {
+        puts("ic_transform_ir_match_new: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_transform_ir_match_init(match, match_symbol)) {
+        puts("ic_transform_ir_match_new: call to ic_transform_ir_match_init failed");
+        return 0;
+    }
+
+    return match;
+}
+
+/* initialise an existing match
+ *
+ * returns 1 on success
+ * return 0 on failure
+ */
+unsigned int ic_transform_ir_match_init(struct ic_transform_ir_match *match, struct ic_symbol *match_symbol) {
+
+    if (!match) {
+        puts("ic_transform_ir_match_init: scase was null");
+        return 0;
+    }
+
+    if (!match_symbol) {
+        puts("ic_transform_ir_match_init: match_symbol was null");
+        return 0;
+    }
+
+    match->match_symbol = match_symbol;
+    match->else_body = 0;
+
+    if (!ic_pvector_init(&(match->cases), 0)) {
+        puts("ic_transform_ir_match_init: call to ic_pvector_init failed");
+        return 0;
+    }
+
+    return 1;
+}
+
+/* destroy match
+ *
+ * TODO doesn't touch any fields
+ *
+ * will only free match if `free_match` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_match_destroy(struct ic_transform_ir_match *match, unsigned int free_match) {
+    if (!match) {
+        puts("ic_transform_ir_match_destroy: scase was null");
+        return 0;
+    }
+
+    if (free_match) {
+        free(match);
+    }
+
+    return 1;
+}
+
+/* print match
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_match_print(FILE *fd, struct ic_transform_ir_match *match, unsigned int *indent) {
+    unsigned int i = 0;
+    unsigned int len = 0;
+    struct ic_transform_ir_match_case *scase = 0;
+
+    if (!fd) {
+        puts("ic_transform_ir_match_print: fd was null");
+        return 0;
+    }
+
+    if (!match) {
+        puts("ic_transform_ir_match_print: match was null");
+        return 0;
+    }
+
+    if (!indent) {
+        puts("ic_transform_ir_match_print: indent was null");
+        return 0;
+    }
+
+    ic_parse_print_indent(fd, *indent);
+    fputs("match ", fd);
+
+    /* identifier name */
+    ic_symbol_print(fd, match->match_symbol);
+
+    *indent += 1;
+
+    len = ic_pvector_length(&(match->cases));
+    for (i = 0; i < len; ++i) {
+        scase = ic_pvector_get(&(match->cases), i);
+        if (!scase) {
+            puts("ic_transform_ir_match_print: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        if (!ic_transform_ir_match_case_print(fd, scase, indent)) {
+            puts("ic_transform_ir_match_print: call to ic_transform_ir_match_case_print failed");
+            return 0;
+        }
+    }
+
+    if (match->else_body) {
+        ic_parse_print_indent(fd, *indent);
+        fputs("else\n", fd);
+        *indent += 1;
+        if (!ic_transform_body_print(fd, match->else_body, indent)) {
+            puts("ic_transform_ir_match_print: call to ic_transform_body_print failed");
+            return 0;
+        }
+        *indent -= 1;
+    }
+
+    ic_parse_print_indent(fd, *indent);
+    fputs("end", fd);
+    *indent -= 1;
+
+    ic_parse_print_indent(fd, *indent);
+    fputs("end", fd);
+
+    return 1;
 }
 
 /* allocate and initialise a new stmt
@@ -1523,7 +1783,35 @@ struct ic_transform_ir_stmt *ic_transform_ir_stmt_if_new(struct ic_symbol *cond_
     }
 
     if (!ic_transform_ir_if_init(&(stmt->u.sif), cond_sym)) {
-        puts("ic_transform_ir_stmt_let_expr_new: call to ic_transform_ir_if_init failed");
+        puts("ic_transform_ir_stmt_let_if_new: call to ic_transform_ir_if_init failed");
+        free(stmt);
+        return 0;
+    }
+
+    return stmt;
+}
+
+/* allocate and initialise a new stmt->match
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_match_new(struct ic_symbol *match_symbol) {
+    struct ic_transform_ir_stmt *stmt = 0;
+
+    if (!match_symbol) {
+        puts("ic_transform_ir)stmt_match_new: match_symbol was null");
+        return 0;
+    }
+
+    stmt = ic_transform_ir_stmt_new(ic_transform_ir_stmt_type_match);
+    if (!stmt) {
+        puts("ic_transform_ir_stmt_match_new: call to ic_transform_ir_stmt_new failed");
+        return 0;
+    }
+
+    if (!ic_transform_ir_match_init(&(stmt->u.match), match_symbol)) {
+        puts("ic_transform_ir_stmt_match_expr_new: call to ic_transform_ir_match_init failed");
         free(stmt);
         return 0;
     }

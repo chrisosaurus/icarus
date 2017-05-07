@@ -454,12 +454,88 @@ unsigned int ic_transform_ir_fcall_length(struct ic_transform_ir_fcall *fcall);
  */
 struct ic_symbol *ic_transform_ir_fcall_get_arg(struct ic_transform_ir_fcall *fcall, unsigned int i);
 
+struct ic_transform_ir_match_case {
+    struct ic_field *field;
+    struct ic_transform_body *tbody;
+};
+
+/* allocate and initialise a new case
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_match_case *ic_transform_ir_match_case_new(struct ic_field *field);
+
+/* initialise an existing case
+ *
+ * returns 1 on success
+ * return 0 on failure
+ */
+unsigned int ic_transform_ir_match_case_init(struct ic_transform_ir_match_case *scase, struct ic_field *field);
+
+/* destroy case
+ *
+ * TODO doesn't touch any fields
+ *
+ * will only free case if `free_case` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_match_case_destroy(struct ic_transform_ir_match_case *scase, unsigned int free_case);
+
+/* print case
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_match_case_print(FILE *fd, struct ic_transform_ir_match_case *scase, unsigned int *indent);
+
+struct ic_transform_ir_match {
+    struct ic_symbol *match_symbol;
+    struct ic_pvector cases;
+    struct ic_transform_body *else_body;
+};
+
+/* allocate and initialise a new match
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_match *ic_transform_ir_match_new(struct ic_symbol *match_symbol);
+
+/* initialise an existing match
+ *
+ * returns 1 on success
+ * return 0 on failure
+ */
+unsigned int ic_transform_ir_match_init(struct ic_transform_ir_match *match, struct ic_symbol *match_symbol);
+
+/* destroy match
+ *
+ * TODO doesn't touch any fields
+ *
+ * will only free match if `free_match` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_match_destroy(struct ic_transform_ir_match *match, unsigned int free_match);
+
+/* print match
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_match_print(FILE *fd, struct ic_transform_ir_match *match, unsigned int *indent);
+
 enum ic_transform_ir_stmt_tag {
     ic_transform_ir_stmt_type_expr,
     ic_transform_ir_stmt_type_let,
     ic_transform_ir_stmt_type_ret,
     ic_transform_ir_stmt_type_assign,
-    ic_transform_ir_stmt_type_if
+    ic_transform_ir_stmt_type_if,
+    ic_transform_ir_stmt_type_match,
 };
 
 struct ic_transform_ir_stmt {
@@ -470,6 +546,7 @@ struct ic_transform_ir_stmt {
         struct ic_transform_ir_ret ret;
         struct ic_transform_ir_assign assign;
         struct ic_transform_ir_if sif;
+        struct ic_transform_ir_match match;
     } u;
 };
 
@@ -537,6 +614,13 @@ struct ic_transform_ir_ret *ic_transform_ir_stmt_get_ret(struct ic_transform_ir_
  */
 struct ic_transform_ir_if *ic_transform_ir_stmt_get_if(struct ic_transform_ir_stmt *stmt);
 
+/* get pointer to internal match
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_match *ic_transform_ir_stmt_get_match(struct ic_transform_ir_stmt *stmt);
+
 /* get pointer to internal assign
  *
  * returns * on success
@@ -571,11 +655,19 @@ struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_faccess_new(struct ic_symb
  * returns 0 on failure
  */
 struct ic_transform_ir_stmt *ic_transform_ir_stmt_ret_new(struct ic_symbol *var);
+
 /* allocate and initialise a new stmt->if
  *
  * returns * on success
  * returns 0 on failure
  */
 struct ic_transform_ir_stmt *ic_transform_ir_stmt_if_new(struct ic_symbol *cond_sym);
+
+/* allocate and initialise a new stmt->match
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_match_new(struct ic_symbol *match_symbol);
 
 #endif /* ifndef ICARUS_TRANSFORM_IR_H */
