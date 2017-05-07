@@ -36,7 +36,7 @@ void test_fdecl(void) {
 
     /* add a single field */
     field = ic_field_new("bar", 3, "Baz", 3, ic_parse_perm_default());
-    assert(1 == ic_decl_func_add_arg(fdecl, field));
+    assert(1 == ic_decl_func_args_add(fdecl, field));
 
     assert(ic_decl_destroy(decl, 1));
 

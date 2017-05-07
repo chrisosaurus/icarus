@@ -221,24 +221,61 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_func_add_arg(struct ic_decl_func *fdecl, struct ic_field *field) {
+unsigned int ic_decl_func_args_add(struct ic_decl_func *fdecl, struct ic_field *field) {
     if (!fdecl) {
-        puts("ic_decl_func_add_arg: fdecl was null");
+        puts("ic_decl_func_args_add: fdecl was null");
         return 0;
     }
 
     if (!field) {
-        puts("ic_decl_func_add_arg: field was null");
+        puts("ic_decl_func_args_add: field was null");
         return 0;
     }
 
     /* append field returns -1 on failure */
     if (-1 == ic_pvector_append(&(fdecl->args), field)) {
-        puts("ic_decl_func_add_arg: call to ic_pvector_append failed");
+        puts("ic_decl_func_args_add: call to ic_pvector_append failed");
         return 0;
     }
 
     return 1;
+}
+
+/* get length of args
+ *
+ * returns len on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_func_args_length(struct ic_decl_func *fdecl) {
+    unsigned int len = 0;
+    if (!fdecl) {
+        puts("ic_decl_func_args_length: fdecl was null");
+        return 0;
+    }
+
+    len = ic_pvector_length(&(fdecl->args));
+    return len;
+}
+
+/* get arg at i
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_field *ic_decl_func_args_get(struct ic_decl_func *fdecl, unsigned int i) {
+    struct ic_field *field = 0;
+    if (!fdecl) {
+        puts("ic_decl_func_args_get: fdecl was null");
+        return 0;
+    }
+
+    field = ic_pvector_get(&(fdecl->args), i);
+    if (!field) {
+        puts("ic_decl_func_args_get: call to ic_pvector_get failed");
+        return 0;
+    }
+
+    return field;
 }
 
 /* set return type

@@ -18,6 +18,13 @@ enum ic_generate_tag {
     ic_generate_tag_cons_struct,
     ic_generate_tag_cons_union,
     ic_generate_tag_print,
+    /* FIXME TODO once we have generics we can replace println with
+     *  fn println[T](t::T)
+     *      print(t)
+     *      println()
+     *  end
+     */
+    ic_generate_tag_println,
 };
 
 struct ic_generate {

@@ -92,7 +92,21 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_func_add_arg(struct ic_decl_func *fdecl, struct ic_field *field);
+unsigned int ic_decl_func_args_add(struct ic_decl_func *fdecl, struct ic_field *field);
+
+/* get length of args
+ *
+ * returns len on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_func_args_length(struct ic_decl_func *fdecl);
+
+/* get arg at i
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_field *ic_decl_func_args_get(struct ic_decl_func *fdecl, unsigned int i);
 
 /* set return type
  *

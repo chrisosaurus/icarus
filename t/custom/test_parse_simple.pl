@@ -18,16 +18,6 @@ type Foo
     b::String
 end
 
-# println(Foo)
-fn println(f::Foo) -> Void
-    print("Foo{")
-    print("a:")
-    print(f.a)
-    print(", b:")
-    print(f.b)
-    println("}")
-end
-
 # maybe_add_one(Bool,Sint)
 fn maybe_add_one(b::Bool, i::Sint) -> Sint
     if b

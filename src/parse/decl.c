@@ -614,7 +614,7 @@ struct ic_decl *ic_parse_decl_func_header(struct ic_token_list *token_list) {
         }
 
         /* save it */
-        if (!ic_decl_func_add_arg(fdecl, arg)) {
+        if (!ic_decl_func_args_add(fdecl, arg)) {
             puts("ic_parse_decl_func_header: call to if_decl_func_add_arg failed");
             free(decl);
             return 0;

@@ -12,20 +12,6 @@ type Foo
     a::Sint
     b::String
 end
-fn println(f::Foo) -> Void
-    let _l0::String = "Foo{"
-    print(_l0)
-    let _l1::String = "a:"
-    print(_l1)
-    let _t0::Sint = f.a
-    print(_t0)
-    let _l2::String = ", b:"
-    print(_l2)
-    let _t1::String = f.b
-    print(_t1)
-    let _l3::String = "}"
-    println(_l3)
-end
 fn maybe_add_one(b::Bool, i::Sint) -> Sint
     if b
         let _l0::Sint = 1

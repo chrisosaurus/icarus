@@ -2,6 +2,7 @@
 #include <stdlib.h> /* FIMXE exit */
 #include <string.h> /* strcmp */
 
+#include "../parse/permissions.h"
 #include "analyse.h"
 #include "data/slot.h"
 #include "helpers.h"
@@ -341,6 +342,10 @@ unsigned int ic_analyse_decl_type_struct_generate_functions(struct ic_kludge *kl
 
     /* func decl for default type constructor */
     struct ic_decl_func *constructor_decl = 0;
+    /* func decl for print function */
+    struct ic_decl_func *print_decl = 0;
+    /* func decl for println function */
+    struct ic_decl_func *println_decl = 0;
 
     struct ic_generate *generate = 0;
 
@@ -384,52 +389,126 @@ unsigned int ic_analyse_decl_type_struct_generate_functions(struct ic_kludge *kl
         goto ERROR;
     }
 
-    constructor_decl = ic_decl_func_new(type_str, type_str_len);
-    if (!constructor_decl) {
-        puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_new failed");
-        goto ERROR;
-    }
-
-    /* associate constructor return value with type */
-    if (!ic_decl_func_set_return(constructor_decl, type_str, ic_symbol_length(type_sym))) {
-        puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_set_return failed");
-        goto ERROR;
-    }
-
-    /* populate func decl arguments....
-     * TODO FIXME this now means that the fields are shared between the fdecl and tdecl
-     * TODO FIXME iterating over the fields... once again (3rd time is the charm)
-     * TODO FIXME backends do not take this into account
-     */
-    len = ic_pvector_length(&(tdecl_struct->fields));
-    for (i = 0; i < len; ++i) {
-        field = ic_pvector_get(&(tdecl_struct->fields), i);
-        if (!field) {
-            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_pvector_get failed");
+    /* constructor */
+    {
+        constructor_decl = ic_decl_func_new(type_str, type_str_len);
+        if (!constructor_decl) {
+            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_new failed");
             goto ERROR;
         }
 
-        if (!ic_decl_func_add_arg(constructor_decl, field)) {
-            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_add_arg failed");
+        /* associate constructor return value with type */
+        if (!ic_decl_func_set_return(constructor_decl, type_str, ic_symbol_length(type_sym))) {
+            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_set_return failed");
+            goto ERROR;
+        }
+
+        /* populate func decl arguments....
+         * TODO FIXME this now means that the fields are shared between the fdecl and tdecl
+         * TODO FIXME iterating over the fields... once again (3rd time is the charm)
+         * TODO FIXME backends do not take this into account
+         */
+        len = ic_pvector_length(&(tdecl_struct->fields));
+        for (i = 0; i < len; ++i) {
+            field = ic_pvector_get(&(tdecl_struct->fields), i);
+            if (!field) {
+                puts("ic_analyse_decl_type_struct_generate_functions: call to ic_pvector_get failed");
+                goto ERROR;
+            }
+
+            /* note here we are sharing the field between the tdcel and the fdecl */
+
+            if (!ic_decl_func_args_add(constructor_decl, field)) {
+                puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_args_add failed");
+                goto ERROR;
+            }
+        }
+
+        /* for each constructor we need
+         * check if already exists (user defined)
+         * if not, then add a generate to make it hapen
+         * TODO FIXME check if exists before adding
+         */
+
+        generate = ic_generate_new(ic_generate_tag_cons_struct, constructor_decl, tdecl);
+        if (!generate) {
+            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_generate_new failed");
+            goto ERROR;
+        }
+
+        if (!ic_kludge_generates_add(kludge, generate)) {
+            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_kludge_generates_add failed");
             goto ERROR;
         }
     }
 
-    /* for each constructor we need
-     * check if already exists (user defined)
-     * if not, then add a generate to make it hapen
-     * TODO FIXME check if exists before adding
+    /* field used by both print and println
+     * TODO FIXME this means that some fdecls share fields and some own :/
      */
-
-    generate = ic_generate_new(ic_generate_tag_cons_struct, constructor_decl, tdecl);
-    if (!generate) {
-        puts("ic_analyse_decl_type_struct_generate_functions: call to ic_generate_new failed");
+    field = ic_field_new("f", 1, type_str, type_str_len, ic_parse_perm_default());
+    if (!field) {
+        puts("ic_analyse_decl_type_struct_generate_functions: call to ic_field_new failed");
         goto ERROR;
     }
 
-    if (!ic_kludge_generates_add(kludge, generate)) {
-        puts("ic_analyse_decl_type_struct_generate_functions: call to ic_kludge_generates_add failed");
-        goto ERROR;
+    /* print */
+    {
+        print_decl = ic_decl_func_new("print", 5);
+        if (!print_decl) {
+            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_new failed");
+            goto ERROR;
+        }
+
+        if (!ic_decl_func_args_add(print_decl, field)) {
+            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_args_add failed");
+            goto ERROR;
+        }
+
+        if (!ic_decl_func_set_return(print_decl, "Void", 4)) {
+            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_set_return failed");
+            goto ERROR;
+        }
+
+        generate = ic_generate_new(ic_generate_tag_print, print_decl, tdecl);
+        if (!generate) {
+            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_generate_new failed");
+            goto ERROR;
+        }
+
+        if (!ic_kludge_generates_add(kludge, generate)) {
+            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_kludge_generates_add failed");
+            goto ERROR;
+        }
+    }
+
+    /* println */
+    {
+        println_decl = ic_decl_func_new("println", 7);
+        if (!print_decl) {
+            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_new failed");
+            goto ERROR;
+        }
+
+        if (!ic_decl_func_args_add(println_decl, field)) {
+            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_args_add failed");
+            goto ERROR;
+        }
+
+        if (!ic_decl_func_set_return(println_decl, "Void", 4)) {
+            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_set_return failed");
+            goto ERROR;
+        }
+
+        generate = ic_generate_new(ic_generate_tag_println, println_decl, tdecl);
+        if (!generate) {
+            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_generate_new failed");
+            goto ERROR;
+        }
+
+        if (!ic_kludge_generates_add(kludge, generate)) {
+            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_kludge_generates_add failed");
+            goto ERROR;
+        }
     }
 
     /* success */

@@ -19,15 +19,6 @@ type Foo
     b::String
 end
 
-fn println(f::Foo)
-    print("Foo{")
-    print("a:")
-    print(f.a)
-    print(", b:")
-    print(f.b)
-    println("}")
-end
-
 # simple function to test return values and branching
 fn maybe_add_one(b::Bool, i::Sint) -> Sint
     if b

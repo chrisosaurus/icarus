@@ -10,15 +10,6 @@ type Foo\n\
     b::String\n\
 end\n\
 \n\
-fn println(f::Foo)\n\
-    print(\"Foo{\")\n\
-    print(\"a:\")\n\
-    print(f.a)\n\
-    print(\", b:\")\n\
-    print(f.b)\n\
-    println(\"}\")\n\
-end\n\
-\n\
 # simple function to test return values and branching\n\
 fn maybe_add_one(b::Bool, i::Sint) -> Sint\n\
     if b\n\

@@ -8,7 +8,7 @@ my $path = "./icarus";
 die "Could not find '$path'\n" unless -e $path;
 
 my $expected = <<EOF;
-Foo{a:2, b:hello}
+Foo{2, hello}
 x <= 14
 EOF
 
