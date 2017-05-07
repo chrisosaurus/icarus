@@ -47,13 +47,18 @@ unsigned int ic_set_init(struct ic_set *set) {
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_set_insert(struct ic_set *set, const char *item) {
+unsigned int ic_set_insert(struct ic_set *set, const char *key) {
     if (!set) {
         puts("ic_set_insert: set was null");
         return 0;
     }
 
-    return ls_insert(&(set->lss), item);
+    if (!key) {
+        puts("ic_set_insert: key was null");
+        return 0;
+    }
+
+    return ls_insert(&(set->lss), key);
 }
 
 /* check if key already exists in set
@@ -64,6 +69,11 @@ unsigned int ic_set_insert(struct ic_set *set, const char *item) {
 unsigned int ic_set_exists(const struct ic_set *set, const char *key) {
     if (!set) {
         puts("ic_set_exists: set was null");
+        return 0;
+    }
+
+    if (!key) {
+        puts("ic_set_exists: key was null");
         return 0;
     }
 
@@ -79,6 +89,11 @@ unsigned int ic_set_exists(const struct ic_set *set, const char *key) {
 unsigned int ic_set_delete(struct ic_set *set, const char *key) {
     if (!set) {
         puts("ic_set_delete: set was null");
+        return 0;
+    }
+
+    if (!key) {
+        puts("ic_set_delete: key was null");
         return 0;
     }
 

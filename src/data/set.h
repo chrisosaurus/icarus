@@ -25,12 +25,12 @@ struct ic_set *ic_set_new(void);
  */
 unsigned int ic_set_init(struct ic_set *set);
 
-/* insert new item
+/* insert new key
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_set_insert(struct ic_set *set, const char *item);
+unsigned int ic_set_insert(struct ic_set *set, const char *key);
 
 /* check if key already exists in set
  *

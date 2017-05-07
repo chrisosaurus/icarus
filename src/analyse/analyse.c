@@ -2,6 +2,7 @@
 #include <stdlib.h> /* FIMXE exit */
 #include <string.h> /* strcmp */
 
+#include "../data/set.h"
 #include "../parse/permissions.h"
 #include "analyse.h"
 #include "data/slot.h"
@@ -534,6 +535,27 @@ ERROR:
  * returns 0 on failure
  */
 unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl_type_union *tdecl_union) {
+    /* name of current type we are trying to declare */
+    char *this_type = 0;
+
+    /* current offset into field */
+    unsigned int i = 0;
+    /* cached len of field */
+    unsigned int len = 0;
+    /* current field */
+    struct ic_field *field = 0;
+
+    struct ic_symbol *type_sym = 0;
+    char *type_str = 0;
+    struct ic_decl_type *field_type = 0;
+
+    /* this is the only part that is different between type_union and
+     * type_struct.
+     *
+     * use this set to check all field types are unique
+     */
+    struct ic_set *set = 0;
+
     if (!kludge) {
         puts("ic_analyse_decl_type_union: kludge was null");
         return 0;
@@ -544,7 +566,105 @@ unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl
         return 0;
     }
 
-    puts("ic_analyse_decl_type_union: not implemented yet");
+    this_type = ic_decl_type_union_str(tdecl_union);
+    if (!this_type) {
+        puts("ic_analyse_decl_type_union: for this_type: call to ic_decl_type_union_str failed");
+        return 0;
+    }
+
+    /* check fields */
+    if (!ic_analyse_field_list("type declaration", this_type, kludge, &(tdecl_union->fields), this_type)) {
+        puts("ic_analyse_decl_type_union: call to ic_analyse_field_list for field validation failed");
+        goto ERROR;
+    }
+
+    set = ic_set_new();
+    if (!set) {
+        puts("ic_analyse_decl_type_union: call to ic_set_new failed");
+        goto ERROR;
+    }
+
+    /* fill in field_dict
+     * FIXME this is iterating through fields twice as we already iterate
+     *       through once in ic_analyse_field_list
+     * FIXME likewise it is also fetching type from string twice
+     *       once here, and once in ic_analyse_field_list
+     */
+    len = ic_pvector_length(&(tdecl_union->fields));
+    for (i = 0; i < len; ++i) {
+        field = ic_pvector_get(&(tdecl_union->fields), i);
+        if (!field) {
+            puts("ic_analyse_decl_type_union: call to ic_pvector_get failed");
+            goto ERROR;
+        }
+
+        /* what we are really doing here is:
+         *
+         *  a) convert type to string representation
+         *  b) checking that this is not a self-recursive type
+         *  c) check that this field's type exists
+         *  d) check that all field's types are unique
+         *
+         *  FIXME check / consider this
+         *  FIXME duplicated code from analyse_field_list
+         *  FIXME do we allow co-recursive types
+         *  FIXME what about N-level-recursive types?
+         *        Foo includes Bar, Bar includes Baz, Bac includes Foo.
+         */
+        type_sym = ic_type_ref_get_symbol(&(field->type));
+        if (!type_sym) {
+            puts("ic_analyse_decl_type_union: call to ic_type_ref_get_symbol_failed");
+            goto ERROR;
+        }
+
+        type_str = ic_symbol_contents(type_sym);
+        if (!type_str) {
+            puts("ic_analyse_decl_type_union: call to ic_symbol_contents failed");
+            goto ERROR;
+        }
+
+        if (ic_set_exists(set, type_str)) {
+            printf("ic_analyse_decl_type_union: field with type '%s' already existed on this union\n", type_str);
+            goto ERROR;
+        }
+
+        if (!ic_set_insert(set, type_str)) {
+            puts("ic_analyse_decl_type_union: call to ic_set_insert failed");
+            goto ERROR;
+        }
+
+        /* check that this field's type exists */
+        field_type = ic_kludge_get_decl_type(kludge, type_str);
+        if (!field_type) {
+            puts("ic_analyse_decl_type_union: call to ic_kludge_get_type failed");
+            goto ERROR;
+        }
+
+        /* insert this type into field_dict */
+        if (!ic_decl_type_union_add_field_type(tdecl_union, ic_symbol_contents(&(field->name)), field_type)) {
+            puts("ic_analyse_decl_type_union: call to ic_decl_type_struct_add_field_type failed");
+            goto ERROR;
+        }
+    }
+
+    if (set) {
+        if (!ic_set_destroy(set, 1)) {
+            puts("ic_analyse_decl_type_union: call to ic_set_destroy failed");
+            goto ERROR;
+        }
+    }
+
+    return 1;
+
+ERROR:
+
+    if (set) {
+        if (!ic_set_destroy(set, 1)) {
+            puts("ic_analyse_decl_type_union: error handler: call to ic_set_destroy failed");
+        }
+    }
+
+    puts("ic_analyse_decl_type_union: error");
     return 0;
 }
 
