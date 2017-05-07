@@ -13,6 +13,8 @@ enum ic_slot_type {
     ic_slot_type_arg,
     /* this slot maps to the field on a struct - unsupported*/
     ic_slot_type_field,
+    /* this slot maps to the field in a match case */
+    ic_slot_type_case,
     /* this slot maps to the value within a map/array - unsupported*/
     ic_slot_type_value
 };
@@ -73,6 +75,7 @@ struct ic_slot {
     union {
         struct ic_field *arg;
         struct ic_stmt_let *let;
+        struct ic_stmt_case *scase;
     } source;
 };
 

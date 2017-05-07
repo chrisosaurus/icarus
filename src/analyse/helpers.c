@@ -281,6 +281,23 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
     struct ic_stmt_assign *assign = 0;
     /* new scope for body of if */
     struct ic_scope *if_scope = 0;
+    /* match from stmt */
+    struct ic_stmt_match *match = 0;
+    /* set used to check match
+     * name's of all the fields we match again
+     */
+    struct ic_set *field_set = 0;
+    /* case from stmt */
+    struct ic_stmt_case *scase = 0;
+    /* field used in match */
+    struct ic_field *field = 0;
+    struct ic_symbol *field_name_sym = 0;
+    char *field_name_char = 0;
+    struct ic_decl_type *field_type = 0;
+    struct ic_decl_type *fetched_field_type = 0;
+    unsigned int match_cases = 0;
+    struct ic_scope *match_scope = 0;
+    struct ic_slot *slot = 0;
 
     if (!unit) {
         puts("ic_analyse_body: unit was null");
@@ -560,6 +577,164 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                      * FIXME make this more useful
                      */
                     puts("Warning: usage of non-void expression in void context");
+                }
+
+                break;
+
+            case ic_stmt_type_match:
+                match = ic_stmt_get_match(stmt);
+                if (!match) {
+                    puts("ic_analyse_body: match: call to ic_stmt_get_match failed");
+                    goto ERROR;
+                }
+
+                expr = ic_stmt_match_get_expr(match);
+                if (!expr) {
+                    puts("ic_analyse_body: match: call to ic_stmt_match_get_expr failed");
+                    goto ERROR;
+                }
+
+                type = ic_analyse_infer(kludge, body->scope, expr);
+                if (!type) {
+                    puts("ic_analyse_body: match: call to ic_analyse_infer failed");
+                    goto ERROR;
+                }
+
+                if (type->tag != ic_decl_type_tag_union) {
+                    puts("ic_analyse_body: match: illegal match on non-union");
+                    goto ERROR;
+                }
+
+                field_set = ic_set_new();
+                if (!field_set) {
+                    puts("ic_analyse_body: match: call to ic_set_new failed");
+                    goto ERROR;
+                }
+
+                /* need to check:
+                 * 1) that every case used exists in the union
+                 * 2) that every case isn't overlapping with another
+                 * 3) that every possible filed of the union is dealt with OR there is an else
+                 */
+
+                len = ic_stmt_match_cases_length(match);
+                for (i = 0; i < len; ++i) {
+                    scase = ic_stmt_match_cases_get(match, i);
+                    if (!scase) {
+                        puts("ic_analyse_body: match: call to ic_stmt_match_cases_get failed");
+                        goto ERROR;
+                    }
+
+                    field = ic_stmt_case_get_field(scase);
+                    if (!field) {
+                        puts("ic_analyse_body: match: call to ic_stmt_case_get_field failed");
+                        goto ERROR;
+                    }
+
+                    field_name_sym = &(field->name);
+                    field_name_char = ic_symbol_contents(field_name_sym);
+                    if (!field_name_char) {
+                        puts("ic_analyse_body: match: call to ic_symbol_contents failed");
+                        goto ERROR;
+                    }
+
+                    if (ic_set_exists(field_set, field_name_char)) {
+                        printf("ic_analyse_body: match: repeat of previously matched field '%s'\n", field_name_char);
+                        puts("ic_analyse_body: match: repeat of previously matched field");
+                        goto ERROR;
+                    }
+
+                    if (!ic_set_insert(field_set, field_name_char)) {
+                        puts("ic_analyse_body: match: call to ic_set_insert failed");
+                        goto ERROR;
+                    }
+
+                    match_cases += 1;
+
+                    field_type = ic_kludge_get_decl_type_from_typeref(kludge, &(field->type));
+                    if (!field_type) {
+                        puts("ic_analyse_body: match: call to ic_kludge_get_decl_type_from_typeref failed");
+                        goto ERROR;
+                    }
+
+                    fetched_field_type = ic_decl_type_get_field_type(type, field_name_char);
+                    if (!fetched_field_type) {
+                        puts("ic_analyse_body: match: call to ic_decl_type_get_field_type failed");
+                        goto ERROR;
+                    }
+
+                    if (!ic_decl_type_equal(field_type, fetched_field_type)) {
+                        puts("ic_analyse_body: match: matched field case type did not match actual field type");
+                        goto ERROR;
+                    }
+
+                    /* start new scope with field in */
+
+                    if (!scase->body) {
+                        puts("ic_analyse_body: match: scase->body was null");
+                        goto ERROR;
+                    }
+
+                    if (scase->body->scope) {
+                        puts("ic_analyse_body: match: scope already set on body");
+                        goto ERROR;
+                    }
+
+                    match_scope = ic_scope_new(body->scope);
+                    if (!match_scope) {
+                        puts("ic_analyse_body: match: call to ic_scope_new failed");
+                        goto ERROR;
+                    }
+
+                    slot = ic_slot_new(&(field->name), field_type, ic_parse_perm_default(), 0, ic_slot_type_case, scase);
+                    if (!slot) {
+                        puts("ic_analyse_body: match: call to ic_slot_new failed");
+                        goto ERROR;
+                    }
+
+                    if (!ic_scope_insert_symbol(match_scope, &(field->name), slot)) {
+                        puts("ic_analyse_body: match: call to ic_scope_insert_symbol failed");
+                        goto ERROR;
+                    }
+
+                    scase->body->scope = match_scope;
+
+                    /* check body */
+                    /* analyse body of if */
+                    if (!ic_analyse_body(unit, unit_name, kludge, scase->body, fdecl)) {
+                        puts("ic_analyse_body: match: ic_analyse_body failed");
+                        goto ERROR;
+                    }
+                }
+
+                /* if an else exists, check it */
+                if (match->else_body) {
+                    match_scope = ic_scope_new(body->scope);
+                    if (!match_scope) {
+                        puts("ic_analyse_body: match: call to ic_scope_new failed");
+                        goto ERROR;
+                    }
+
+                    match->else_body->scope = match_scope;
+                    /* analyse body of if */
+                    if (!ic_analyse_body(unit, unit_name, kludge, match->else_body, fdecl)) {
+                        puts("ic_analyse_body: match: ic_analyse_body failed");
+                        goto ERROR;
+                    }
+                } else {
+                    /* otherwise, check we matched every possible case */
+                    len = ic_decl_type_field_length(type);
+
+                    if (match_cases != len) {
+                        printf("ic_analyse_body: match: insufficient match_cases, expected '%d', found '%d'\n", len, match_cases);
+                        puts("ic_analyse_body: match: insufficient match_cases");
+                        goto ERROR;
+                    }
+                }
+
+                if (!ic_set_destroy(field_set, 1)) {
+                    puts("ic_analyse_body: match: call to ic_set_destroy failed");
+                    goto ERROR;
                 }
 
                 break;

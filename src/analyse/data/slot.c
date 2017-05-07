@@ -67,6 +67,10 @@ unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct i
             slot->source.arg = source;
             break;
 
+        case ic_slot_type_case:
+            slot->source.scase = source;
+            break;
+
         case ic_slot_type_field:
             puts("ic_slot_init: ic_slot_type_field unsupported");
             return 0;
@@ -75,7 +79,6 @@ unsigned int ic_slot_init(struct ic_slot *slot, struct ic_symbol *name, struct i
         case ic_slot_type_value:
             puts("ic_slot_init: ic_slot_type_value unsupported");
             return 0;
-            break;
 
         default:
             puts("ic_slot_init: unknown ic_slot_type_field");
@@ -143,6 +146,11 @@ enum ic_slot_assign_result ic_slot_assign(struct ic_slot *slot) {
             slot->source.arg->assigned_to = 1;
 
             return ic_slot_assign_result_success;
+            break;
+
+        case ic_slot_type_case:
+            puts("ic_slot_assign: ic_slot_type_case not a valid assign target");
+            return ic_slot_assign_result_permission_denied;
             break;
 
         case ic_slot_type_field:
