@@ -1,14 +1,17 @@
-fn is_div(a::Uint, b::Uint) -> Bool
-    # interesting inference case here for literal `0`
-    return (a % b) == 0
+union Foo
+  a::Sint
+  b::String
 end
 
 fn main()
-    if is_div(1, 1)
-      println("is_div(1, 1)")
-    end
+  let f = Foo("Hello")
 
-    if not is_div(1, 2)
-      println("!is_div(1, 2)")
+  match f
+    case a::Sint
+      println(a)
+    case b::String
+      println(b)
     end
+  end
 end
+

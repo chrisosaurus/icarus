@@ -1,5 +1,9 @@
-fn main()
-    for num in range(1, 10)
-        println(num)
-    end
+union Foo[T]
+    t::T
 end
+
+fn main()
+    let f = Foo[Sint](6)
+    println(f)
+end
+
