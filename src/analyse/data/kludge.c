@@ -675,7 +675,7 @@ struct ic_symbol *ic_kludge_get_operator_from_symbol(struct ic_kludge *kludge, s
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_kludge_generate_add(struct ic_kludge *kludge, struct ic_generate *gen) {
+unsigned int ic_kludge_generates_add(struct ic_kludge *kludge, struct ic_generate *gen) {
     struct ic_decl_func *fdecl = 0;
     char *str = 0;
 

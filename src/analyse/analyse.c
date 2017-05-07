@@ -427,8 +427,8 @@ unsigned int ic_analyse_decl_type_struct_generate_functions(struct ic_kludge *kl
         goto ERROR;
     }
 
-    if (!ic_kludge_generate_add(kludge, generate)) {
-        puts("ic_analyse_decl_type_struct_generate_functions: call to ic_kludge_generate_add failed");
+    if (!ic_kludge_generates_add(kludge, generate)) {
+        puts("ic_analyse_decl_type_struct_generate_functions: call to ic_kludge_generates_add failed");
         goto ERROR;
     }
 
