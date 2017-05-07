@@ -184,6 +184,8 @@ sub check_2c {
     my $prog_0 = run_cmd_bool($cmd_0);
     if( not $prog_0 ){
       if( 'fail-compile' eq "$expected_progress" ){
+        run_cmd_die("rm -rf $cout");
+        run_cmd_die("rm -rf $basename");
         return; # success
       }
       die "check_2c:
@@ -199,6 +201,8 @@ sub check_2c {
     my $prog_1 = run_cmd_bool($cmd_1);
     if( not $prog_1 ){
       if( 'fail-ccompiler' eq "$expected_progress" ){
+        run_cmd_die("rm -rf $cout");
+        run_cmd_die("rm -rf $basename");
         return; # success
       }
       die "check_2c:
@@ -214,6 +218,8 @@ sub check_2c {
     my $runtime_output = run_cmd_undef($cmd_2);
     if( not defined $runtime_output ){
       if( 'fail-runtime' eq "$expected_progress" ){
+        run_cmd_die("rm -rf $cout");
+        run_cmd_die("rm -rf $basename");
         return; # success
       }
       die "check_2c:
@@ -226,6 +232,8 @@ sub check_2c {
     my ($res, $exp) = compare($exp, $runtime_output);
     unless( 1 == $res ){
       if( 'fail-output' eq "$expected_progress" ){
+        run_cmd_die("rm -rf $cout");
+        run_cmd_die("rm -rf $basename");
         return;
       }
       say "check_2c:
