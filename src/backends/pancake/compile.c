@@ -1626,10 +1626,13 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
     char *fdecl_sig_call = 0;
     struct ic_backend_pancake_bytecode *instruction = 0;
     struct ic_symbol *type_name_sym = 0;
-    struct ic_string *fcall_target_str = 0;
+    struct ic_string *fcall_label_str = 0;
     unsigned int alloc_size = 0;
     unsigned int i_arg = 0;
     unsigned int n_args = 0;
+    struct ic_field *field = 0;
+    struct ic_decl_type *field_type = 0;
+    unsigned int instructions_offset = 0;
 
     if (!instructions) {
         puts("ic_backend_pancake_generate_functions: instructions was null");
@@ -1717,7 +1720,6 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
 
         /* get type name */
         type_name_sym = ic_decl_type_name(tdecl);
-        ;
         if (!type_name_sym) {
             puts("ic_backend_pancake_generate_functions: call to ic_decl_type_name failed");
             return 0;
@@ -1757,6 +1759,15 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                  * return_value
                  */
 
+                /* get length - which is offset of next instruction */
+                instructions_offset = ic_backend_pancake_instructions_length(instructions);
+
+                /* register function at offset */
+                if (!ic_backend_pancake_instructions_register_label(instructions, fdecl_sig_call, instructions_offset)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_register_label failed for cons_struct");
+                    return 0;
+                }
+
                 /* insert function label instruction */
                 instruction = ic_backend_pancake_instructions_add(instructions, icp_label);
                 if (!instruction) {
@@ -1770,7 +1781,7 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
 
                 n_args = ic_decl_type_field_length(tdecl);
                 if (!n_args) {
-                    puts("ic_backend_pancake_generate_functions: call to ic_decl_type_field_length failed, 0-length objects not supported in pancake");
+                    puts("ic_backend_pancake_generate_functions: call to ic_decl_type_field_length failed, zero-length objects not supported in pancake");
                     return 0;
                 }
 
@@ -1855,8 +1866,227 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                 break;
 
             case ic_generate_tag_print:
-                puts("ic_backend_pancake_generate_functions: gen->tag print unimplemented");
-                return 0;
+                /* type Foo
+                 *  a::Sint
+                 *  b::String
+                 *  c::Bar
+                 * end
+                 *
+                 * ->
+                 *
+                 * label print(Foo)
+                 * pushstr "Foo{"
+                 * call_builtin print(String) 1
+                 * copyarg 0
+                 * load_offset 0
+                 * call_builtin print(Sint) 1
+                 * load_offset 1
+                 * call_builtin print(String) 1
+                 * load_offset 2
+                 * call print(Bar) 1
+                 * pushstr "}"
+                 * call_builtin print(String) 1
+                 * clean_stack
+                 * return_void
+                 *
+                 * FIXME TODO does load_offset consume the object too?
+                 * is it okay for one copyarg to preceed many print calls?
+                 */
+
+                /* this code assumes struct */
+                if (tdecl->tag != ic_decl_type_tag_struct) {
+                    puts("ic_backend_pancake_generate_functions: println generation only supported on structs at this point in time");
+                    return 0;
+                }
+
+                /* get length - which is offset of next instruction */
+                instructions_offset = ic_backend_pancake_instructions_length(instructions);
+
+                /* register function at offset */
+                if (!ic_backend_pancake_instructions_register_label(instructions, fdecl_sig_call, instructions_offset)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_register_label failed for print");
+                    return 0;
+                }
+
+                /* label print(<TYPENAME>) 1 */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_label);
+                if (!instruction) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+
+                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_sig_call)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_char failed");
+                    return 0;
+                }
+
+                /* pushstr "<typename>{ */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
+                if (!instruction) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+
+                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, ic_symbol_contents(type_name_sym))) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_char failed");
+                    return 0;
+                }
+
+                /* call_builtin print(String) 1*/
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_call_builtin);
+                if (!instruction) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+
+                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, "print(String)")) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_char failed");
+                    return 0;
+                }
+
+                if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 1)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
+                    return 0;
+                }
+
+                /* copyarg 0 */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_copyarg);
+                if (!instruction) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+
+                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 0)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+                    return 0;
+                }
+
+                /* for each arg */
+                n_args = ic_decl_type_field_length(tdecl);
+                if (!n_args) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_decl_type_field_length failed, zero-length objects not supported in pancake");
+                    return 0;
+                }
+
+                for (i_arg = 0; i_arg < n_args; ++i_arg) {
+                    field = ic_decl_type_field_get(tdecl, i_arg);
+                    if (!field) {
+                        puts("ic_backend_pancake_generate_functions: call to ic_decl_type_field_get failed");
+                        return 0;
+                    }
+
+                    /* get field_type */
+                    field_type = ic_type_ref_get_type_decl(&(field->type));
+                    if (!field_type) {
+                        puts("ic_backend_pancake_generate_functions: call to ic_type_ref_get_type_decl failed");
+                        return 0;
+                    }
+
+                    type_name_sym = ic_decl_type_name(field_type);
+                    if (!type_name_sym) {
+                        puts("ic_backend_pancake_generate_functions: call to ic_decl_type_name failed");
+                        return 0;
+                    }
+
+                    /* load_offset <i_arg> */
+                    instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset);
+                    if (!instruction) {
+                        puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                        return 0;
+                    }
+
+                    if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, i_arg)) {
+                        puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+                        return 0;
+                    }
+
+                    /* call print(TYPENAME) 1 OR call_println print(TYPENAME) 1*/
+                    if (ic_decl_type_isbuiltin(field_type)) {
+                        /* load_offset <i_arg> */
+                        instruction = ic_backend_pancake_instructions_add(instructions, icp_call_builtin);
+                        if (!instruction) {
+                            puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                            return 0;
+                        }
+                    } else {
+                        instruction = ic_backend_pancake_instructions_add(instructions, icp_call);
+                        if (!instruction) {
+                            puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                            return 0;
+                        }
+                    }
+
+                    /* generate a string of the form "print(<TYPENAME>)" */
+                    /* TODO FIXME leaking this string! */
+                    fcall_label_str = ic_string_new("print(", 6);
+                    if (!fcall_label_str) {
+                        puts("ic_backend_pancake_generate_functions: call to ic_string_new failed");
+                        return 0;
+                    }
+
+                    if (!ic_string_append_symbol(fcall_label_str, type_name_sym)) {
+                        puts("ic_backend_pancake_generate_functions: call to ic_string_append_symbol failed");
+                        return 0;
+                    }
+
+                    if (!ic_string_append_char(fcall_label_str, ")", 1)) {
+                        puts("ic_backend_pancake_generate_functions: call to ic_string_append_char failed");
+                        return 0;
+                    }
+
+                    /* TODO FIXME who will own the string 'print(TYPENAME)' ??? */
+
+                    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, ic_string_contents(fcall_label_str))) {
+                        puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_char failed");
+                        return 0;
+                    }
+
+                    if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 1)) {
+                        puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+                        return 0;
+                    }
+                }
+
+                /* pushstr "}" */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
+                if (!instruction) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+
+                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, "}")) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_char failed");
+                    return 0;
+                }
+
+                /* call_builtin print(String) 1*/
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_call_builtin);
+                if (!instruction) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+
+                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, "print(String)")) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_char failed");
+                    return 0;
+                }
+
+                if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 1)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
+                    return 0;
+                }
+
+                /* insert a cleanup and return_void instruction */
+                if (!ic_backend_pancake_instructions_add(instructions, icp_clean_stack)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+                if (!ic_backend_pancake_instructions_add(instructions, icp_return_void)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+
+                /* success */
                 break;
 
             case ic_generate_tag_println:
@@ -1876,6 +2106,15 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                  * clean_stack
                  * return_void
                  */
+
+                /* get length - which is offset of next instruction */
+                instructions_offset = ic_backend_pancake_instructions_length(instructions);
+
+                /* register function at offset */
+                if (!ic_backend_pancake_instructions_register_label(instructions, fdecl_sig_call, instructions_offset)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_register_label failed for println");
+                    return 0;
+                }
 
                 /* insert function label instruction */
                 instruction = ic_backend_pancake_instructions_add(instructions, icp_label);
@@ -1902,18 +2141,18 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
 
                 /* generate a string of the form "print(<TYPENAME>)" */
                 /* TODO FIXME leaking this string! */
-                fcall_target_str = ic_string_new("print(", 6);
-                if (!fcall_target_str) {
+                fcall_label_str = ic_string_new("print(", 6);
+                if (!fcall_label_str) {
                     puts("ic_backend_pancake_generate_functions: call to ic_string_new failed");
                     return 0;
                 }
 
-                if (!ic_string_append_symbol(fcall_target_str, type_name_sym)) {
+                if (!ic_string_append_symbol(fcall_label_str, type_name_sym)) {
                     puts("ic_backend_pancake_generate_functions: call to ic_string_append_symbol failed");
                     return 0;
                 }
 
-                if (!ic_string_append_char(fcall_target_str, ")", 1)) {
+                if (!ic_string_append_char(fcall_label_str, ")", 1)) {
                     puts("ic_backend_pancake_generate_functions: call to ic_string_append_char failed");
                     return 0;
                 }
@@ -1927,7 +2166,7 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                     return 0;
                 }
 
-                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, ic_string_contents(fcall_target_str))) {
+                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, ic_string_contents(fcall_label_str))) {
                     puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_char failed");
                     return 0;
                 }
