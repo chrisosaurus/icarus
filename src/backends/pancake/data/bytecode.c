@@ -371,11 +371,31 @@ unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_panca
             return 1;
             break;
 
-        case icp_load_offset:
+        case icp_load_offset_bool:
             uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
-            fprintf(fd, "load_offset %u", uint);
+            fprintf(fd, "load_offset_bool %u", uint);
             return 1;
             break;
+
+        case icp_load_offset_str:
+            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            fprintf(fd, "load_offset_str %u", uint);
+            return 1;
+
+        case icp_load_offset_uint:
+            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            fprintf(fd, "load_offset_uint %u", uint);
+            return 1;
+
+        case icp_load_offset_sint:
+            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            fprintf(fd, "load_offset_sint %u", uint);
+            return 1;
+
+        case icp_load_offset_ref:
+            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            fprintf(fd, "load_offset_ref %u", uint);
+            return 1;
 
         default:
             puts("ic_backend_pancake_bytecode_print: impossible case");
@@ -804,8 +824,16 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_uint(struct ic_backend_pancake
         case icp_alloc:
         /* store_offset slot::uint */
         case icp_store_offset:
-        /* load_offset slot::uint */
-        case icp_load_offset:
+        /* load_offset_bool slot::uint */
+        case icp_load_offset_bool:
+        /* load_offset_str slot::uint */
+        case icp_load_offset_str:
+        /* load_offset_uint slot::uint */
+        case icp_load_offset_uint:
+        /* load_offset_sint slot::uint */
+        case icp_load_offset_sint:
+        /* load_offset_ref slot::uint */
+        case icp_load_offset_ref:
             break;
 
         default:

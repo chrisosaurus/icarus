@@ -925,6 +925,9 @@ unsigned int ic_decl_type_struct_init(struct ic_decl_type_struct *tdecl, char *n
 
     tdecl->isvoid = 0;
     tdecl->isbool = 0;
+    tdecl->isstring = 0;
+    tdecl->isuint = 0;
+    tdecl->issint = 0;
 
     return 1;
 }
@@ -1047,6 +1050,54 @@ unsigned int ic_decl_type_struct_mark_bool(struct ic_decl_type_struct *tdecl) {
     return 1;
 }
 
+/* mark supplied tdecl as being the string type
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_struct_mark_string(struct ic_decl_type_struct *tdecl) {
+    if (!tdecl) {
+        puts("ic_decl_type_struct_mark_string: tdecl was null");
+        return 0;
+    }
+
+    tdecl->isstring = 1;
+
+    return 1;
+}
+
+/* mark supplied tdecl as being the uint type
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_struct_mark_uint(struct ic_decl_type_struct *tdecl) {
+    if (!tdecl) {
+        puts("ic_decl_type_struct_mark_uint: tdecl was null");
+        return 0;
+    }
+
+    tdecl->isuint = 1;
+
+    return 1;
+}
+
+/* mark supplied tdecl as being the sint type
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_struct_mark_sint(struct ic_decl_type_struct *tdecl) {
+    if (!tdecl) {
+        puts("ic_decl_type_struct_mark_sint: tdecl was null");
+        return 0;
+    }
+
+    tdecl->issint = 1;
+
+    return 1;
+}
+
 /* add a new field to types list of fields
  *
  * returns 1 on success
@@ -1083,6 +1134,48 @@ unsigned int ic_decl_type_struct_isbool(struct ic_decl_type_struct *tdecl) {
     }
 
     return tdecl->isbool == 1;
+}
+
+/* test if string
+ *
+ * returns 1 if string
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_struct_isstring(struct ic_decl_type_struct *tdecl) {
+    if (!tdecl) {
+        puts("ic_decl_type_struct_isstring: tdecl was null");
+        return 0;
+    }
+
+    return tdecl->isstring == 1;
+}
+
+/* test if uint
+ *
+ * returns 1 if uint
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_struct_isuint(struct ic_decl_type_struct *tdecl) {
+    if (!tdecl) {
+        puts("ic_decl_type_struct_isuint: tdecl was null");
+        return 0;
+    }
+
+    return tdecl->isuint == 1;
+}
+
+/* test if sint
+ *
+ * returns 1 if sint
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_struct_issint(struct ic_decl_type_struct *tdecl) {
+    if (!tdecl) {
+        puts("ic_decl_type_struct_issint: tdecl was null");
+        return 0;
+    }
+
+    return tdecl->issint == 1;
 }
 
 /* test if void
@@ -2491,6 +2584,91 @@ unsigned int ic_decl_type_isbool(struct ic_decl_type *tdecl) {
             break;
     }
 }
+
+/* test if string
+ *
+ * returns 1 if string
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_isstring(struct ic_decl_type *tdecl) {
+    if (!tdecl) {
+        puts("ic_decl_type_isstring: tdecl was null");
+        return 0;
+    }
+
+    switch (tdecl->tag) {
+        case ic_decl_type_tag_struct:
+            return ic_decl_type_struct_isstring(&(tdecl->u.tstruct));
+            break;
+
+        case ic_decl_type_tag_union:
+            /* a union is not string */
+            return 0;
+            break;
+
+        default:
+            puts("ic_decl_type_isstring: unknown tag");
+            return 0;
+            break;
+    }
+}
+
+/* test if uint
+ *
+ * returns 1 if uint
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_isuint(struct ic_decl_type *tdecl) {
+    if (!tdecl) {
+        puts("ic_decl_type_isuint: tdecl was null");
+        return 0;
+    }
+
+    switch (tdecl->tag) {
+        case ic_decl_type_tag_struct:
+            return ic_decl_type_struct_isuint(&(tdecl->u.tstruct));
+            break;
+
+        case ic_decl_type_tag_union:
+            /* a union is not uint */
+            return 0;
+            break;
+
+        default:
+            puts("ic_decl_type_isuint: unknown tag");
+            return 0;
+            break;
+    }
+}
+
+/* test if sint
+ *
+ * returns 1 if sint
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_issint(struct ic_decl_type *tdecl) {
+    if (!tdecl) {
+        puts("ic_decl_type_issint: tdecl was null");
+        return 0;
+    }
+
+    switch (tdecl->tag) {
+        case ic_decl_type_tag_struct:
+            return ic_decl_type_struct_issint(&(tdecl->u.tstruct));
+            break;
+
+        case ic_decl_type_tag_union:
+            /* a union is not sint */
+            return 0;
+            break;
+
+        default:
+            puts("ic_decl_type_issint: unknown tag");
+            return 0;
+            break;
+    }
+}
+
 /* test if void
  *
  * returns 1 if void

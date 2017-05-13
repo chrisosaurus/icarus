@@ -243,6 +243,11 @@ struct ic_decl_type_struct {
      */
     struct ic_string sig_mangled_full;
 
+    /* FIXME TODO these bool fields are gross
+     * should at least be an enum
+     * maybe move up to decl_type level
+     */
+
     /* 1 if this is the void type
      * 0 if this is not the void type
      */
@@ -252,6 +257,21 @@ struct ic_decl_type_struct {
      * 0 if this is not the bool type
      */
     unsigned int isbool;
+
+    /* 1 if this is the string type
+     * 0 if this is not the string type
+     */
+    unsigned int isstring;
+
+    /* 1 if this is the uint type
+     * 0 if this is not the uint type
+     */
+    unsigned int isuint;
+
+    /* 1 if this is the sint type
+     * 0 if this is not the sint type
+     */
+    unsigned int issint;
 };
 
 /* allocate and return a new decl_type
@@ -305,6 +325,27 @@ unsigned int ic_decl_type_struct_mark_void(struct ic_decl_type_struct *tdecl);
  */
 unsigned int ic_decl_type_struct_mark_bool(struct ic_decl_type_struct *tdecl);
 
+/* mark the supplied decl as the string type
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_struct_mark_string(struct ic_decl_type_struct *tdecl);
+
+/* mark the supplied decl as the uint type
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_struct_mark_uint(struct ic_decl_type_struct *tdecl);
+
+/* mark the supplied decl as the sint type
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_struct_mark_sint(struct ic_decl_type_struct *tdecl);
+
 /* add a new field to types list of fields
  *
  * returns 1 on success
@@ -318,6 +359,27 @@ unsigned int ic_decl_type_struct_add_field(struct ic_decl_type_struct *tdecl, st
  * returns 0 otherwise
  */
 unsigned int ic_decl_type_struct_isbool(struct ic_decl_type_struct *tdecl);
+
+/* test if string
+ *
+ * returns 1 if string
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_struct_isstring(struct ic_decl_type_struct *tdecl);
+
+/* test if uint
+ *
+ * returns 1 if uint
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_struct_isuint(struct ic_decl_type_struct *tdecl);
+
+/* test if sint
+ *
+ * returns 1 if sint
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_struct_issint(struct ic_decl_type_struct *tdecl);
 
 /* test if void
  *
@@ -671,6 +733,27 @@ char *ic_decl_type_sig_mangled_full(struct ic_decl_type *tdecl);
  * returns 0 otherwise
  */
 unsigned int ic_decl_type_isbool(struct ic_decl_type *tdecl);
+
+/* test if string
+ *
+ * returns 1 if string
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_isstring(struct ic_decl_type *tdecl);
+
+/* test if uint
+ *
+ * returns 1 if bool
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_isuint(struct ic_decl_type *tdecl);
+
+/* test if sint
+ *
+ * returns 1 if bool
+ * returns 0 otherwise
+ */
+unsigned int ic_decl_type_issint(struct ic_decl_type *tdecl);
 
 /* test if void
  *

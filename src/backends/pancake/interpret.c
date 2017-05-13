@@ -791,12 +791,48 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 return 0;
                 break;
 
-            /* load_offset slot::uint
+            /* load_offset_bool slot::uint
              * let object = peek()
-             * load value at offset `slot` within object and push onto stack
+             * load value at offset `slot` within object and push onto stack as bool
              */
-            case icp_load_offset:
-                puts("ic_backend_pancake_interpret: unimplemented bytecode instruction: icp_load_offset");
+            case icp_load_offset_bool:
+                puts("ic_backend_pancake_interpret: unimplemented bytecode instruction: icp_load_offset_bool");
+                return 0;
+                break;
+
+            /* load_offset_str slot::uint
+             * let object = peek()
+             * load value at offset `slot` within object and push onto stack as str
+             */
+            case icp_load_offset_str:
+                puts("ic_backend_pancake_interpret: unimplemented bytecode instruction: icp_load_offset_str");
+                return 0;
+                break;
+
+            /* load_offset_uint slot::uint
+             * let object = peek()
+             * load value at offset `slot` within object and push onto stack as uint
+             */
+            case icp_load_offset_uint:
+                puts("ic_backend_pancake_interpret: unimplemented bytecode instruction: icp_load_offset_uint");
+                return 0;
+                break;
+
+            /* load_offset_sint slot::uint
+             * let object = peek()
+             * load value at offset `slot` within object and push onto stack as sint
+             */
+            case icp_load_offset_sint:
+                puts("ic_backend_pancake_interpret: unimplemented bytecode instruction: icp_load_offset_sint");
+                return 0;
+                break;
+
+            /* load_offset_ref slot::uint
+             * let object = peek()
+             * load value at offset `slot` within object and push onto stack as ref
+             */
+            case icp_load_offset_ref:
+                puts("ic_backend_pancake_interpret: unimplemented bytecode instruction: icp_load_offset_ref");
                 return 0;
                 break;
 

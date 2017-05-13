@@ -100,11 +100,31 @@ enum ic_backend_pancake_bytecode_type {
      * store value at offset `slot` within object
      */
     icp_store_offset,
-    /* load_offset slot::uint
+    /* load_offset_bool slot::uint
      * let object = peek()
-     * load value at offset `slot` within object and push onto stack
+     * load value at offset `slot` within object and push onto stack as bool
      */
-    icp_load_offset,
+    icp_load_offset_bool,
+    /* load_offset_str slot::uint
+     * let object = peek()
+     * load value at offset `slot` within object and push onto stack as str
+     */
+    icp_load_offset_str,
+    /* load_offset_uint slot::uint
+     * let object = peek()
+     * load value at offset `slot` within object and push onto stack as uint
+     */
+    icp_load_offset_uint,
+    /* load_offset_sint slot::uint
+     * let object = peek()
+     * load value at offset `slot` within object and push onto stack as sint
+     */
+    icp_load_offset_sint,
+    /* load_offset_ref slot::uint
+     * let object = peek()
+     * load value at offset `slot` within object and push onto stack as ref
+     */
+    icp_load_offset_ref,
 };
 
 enum ic_backend_pancake_bytecode_arg_type {

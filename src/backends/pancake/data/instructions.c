@@ -495,8 +495,16 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
             instruction = ic_backend_pancake_instructions_add(instructions, icp_alloc);
         } else if (!strcmp("store_offset", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_store_offset);
-        } else if (!strcmp("load_offset", op)) {
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset);
+        } else if (!strcmp("load_offset_bool", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_bool);
+        } else if (!strcmp("load_offset_str", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_str);
+        } else if (!strcmp("load_offset_uint", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_uint);
+        } else if (!strcmp("load_offset_sint", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_sint);
+        } else if (!strcmp("load_offset_ref", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_ref);
         } else {
             printf("ic_backend_pancake_instructions_load: unsupported instruction '%s'\n", op);
             return 0;
@@ -702,11 +710,15 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                 }
                 break;
 
-            case icp_load_offset:
+            case icp_load_offset_bool:
+            case icp_load_offset_str:
+            case icp_load_offset_uint:
+            case icp_load_offset_sint:
+            case icp_load_offset_ref:
                 /* consume uint */
                 ret = fscanf(file, "%u", &uint_arg1);
                 if (ret == EOF || ret == 0) {
-                    puts("ic_backend_pancake_instructions_load: read failed for load_offset");
+                    puts("ic_backend_pancake_instructions_load: read failed for load_offset_*");
                     return 0;
                 }
                 if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, uint_arg1)) {

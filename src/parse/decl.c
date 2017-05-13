@@ -178,6 +178,24 @@ struct ic_decl *ic_parse_decl_type_header(struct ic_token_list *token_list) {
             puts("ic_parse_decl_type_header: call to ic_decl_type_struct_mark_bool failed");
             goto ERROR;
         }
+    } else if (!strncmp(token_str, "String", 4)) {
+        /* if this is the bool type then mark it as so */
+        if (!ic_decl_type_struct_mark_string(tdecl_struct)) {
+            puts("ic_parse_decl_type_header: call to ic_decl_type_struct_mark_string failed");
+            goto ERROR;
+        }
+    } else if (!strncmp(token_str, "Uint", 4)) {
+        /* if this is the bool type then mark it as so */
+        if (!ic_decl_type_struct_mark_uint(tdecl_struct)) {
+            puts("ic_parse_decl_type_header: call to ic_decl_type_struct_mark_uint failed");
+            goto ERROR;
+        }
+    } else if (!strncmp(token_str, "Sint", 4)) {
+        /* if this is the bool type then mark it as so */
+        if (!ic_decl_type_struct_mark_sint(tdecl_struct)) {
+            puts("ic_parse_decl_type_header: call to ic_decl_type_struct_mark_sint failed");
+            goto ERROR;
+        }
     }
 
     return decl;

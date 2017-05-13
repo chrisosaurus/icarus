@@ -1988,11 +1988,41 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                         return 0;
                     }
 
-                    /* load_offset <i_arg> */
-                    instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset);
-                    if (!instruction) {
-                        puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
-                        return 0;
+                    if (ic_decl_type_isbool(field_type)) {
+                        /* load_offset_bool <i_arg> */
+                        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_bool);
+                        if (!instruction) {
+                            puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                            return 0;
+                        }
+                    } else if (ic_decl_type_isstring(field_type)) {
+                        /* load_offset_str <i_arg> */
+                        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_str);
+                        if (!instruction) {
+                            puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                            return 0;
+                        }
+                    } else if (ic_decl_type_isuint(field_type)) {
+                        /* load_offset_uint <i_arg> */
+                        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_uint);
+                        if (!instruction) {
+                            puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                            return 0;
+                        }
+                    } else if (ic_decl_type_issint(field_type)) {
+                        /* load_offset_sint <i_arg> */
+                        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_sint);
+                        if (!instruction) {
+                            puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                            return 0;
+                        }
+                    } else {
+                        /* load_offset_ref <i_arg> */
+                        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_ref);
+                        if (!instruction) {
+                            puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                            return 0;
+                        }
                     }
 
                     if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, i_arg)) {
