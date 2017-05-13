@@ -155,11 +155,11 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
         return 0;
     }
     if (!ic_backend_pancake_bytecode_arg1_set_char(bc_entry_call, "main()")) {
-        puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+        puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_arg1_set_char failed for entry_jump");
         return 0;
     }
     if (!ic_backend_pancake_bytecode_arg2_set_uint(bc_entry_call, 0)) {
-        puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+        puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_arg2_set_uint failed for entry_jump");
         return 0;
     }
 
@@ -212,7 +212,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
      * this is the position of the first argument
      */
     unsigned int fdecl_stack_offset = 0;
-    /* char * to sig_call for current fdec
+    /* char * to sig_call for current fdecl
      * used for bytecode
      */
     char *fdecl_sig_call = 0;
@@ -280,16 +280,16 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
         return 0;
     }
 
-    labeller = ic_labeller_new(fdecl_sig_call);
-    if (!labeller) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_labeller_new failed");
-        return 0;
-    }
-
     /* skip builtin function */
     if (ic_decl_func_isbuiltin(fdecl)) {
         // printf("warning: ic_backend_pancake_compile_fdecl: skipping builtin fdecl '%s'\n", fdecl_sig_call);
         return 1;
+    }
+
+    labeller = ic_labeller_new(fdecl_sig_call);
+    if (!labeller) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_labeller_new failed");
+        return 0;
     }
 
     /* get length - which is offset of next instruction */
@@ -1615,7 +1615,18 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
  * returns 0 on failure
  */
 unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge) {
-    unsigned int n_funcs;
+    unsigned int i_gen = 0;
+    unsigned int n_gens = 0;
+    struct ic_generate *gen = 0;
+    struct ic_decl_func *fdecl = 0;
+    struct ic_decl_type *tdecl = 0;
+    /* char * to sig_call for current fdecl
+     * used for bytecode
+     */
+    char *fdecl_sig_call = 0;
+    struct ic_backend_pancake_bytecode *instruction = 0;
+    struct ic_symbol *type_name_sym = 0;
+    struct ic_string *fcall_target_str = 0;
 
     if (!instructions) {
         puts("ic_backend_pancake_generate_functions: instructions was null");
@@ -1686,13 +1697,171 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
      *   store_offset 0
      */
 
-    /* FIXME TODO unimplemented
-     * only error if there is work to do
-     */
-    n_funcs = ic_kludge_generates_length(kludge);
-    if (n_funcs > 0) {
-        puts("ic_backend_pancake_generate_functions: not implemented, asked to do work");
-        return 0;
+    n_gens = ic_kludge_generates_length(kludge);
+    for (i_gen = 0; i_gen < n_gens; ++i_gen) {
+
+        gen = ic_kludge_generates_get(kludge, i_gen);
+        if (!gen) {
+            puts("ic_backend_pancake_generate_functions: call to ic_kludge_generates_get failed");
+            return 0;
+        }
+
+        tdecl = ic_generate_get_tdecl(gen);
+        if (!tdecl) {
+            puts("ic_backend_pancake_generate_functions: call to ic_generate_get_tdecl failed");
+            return 0;
+        }
+
+        /* get type name */
+        type_name_sym = ic_decl_type_name(tdecl);
+        ;
+        if (!type_name_sym) {
+            puts("ic_backend_pancake_generate_functions: call to ic_decl_type_name failed");
+            return 0;
+        }
+
+        fdecl = ic_generate_get_fdecl(gen);
+        if (!fdecl) {
+            puts("ic_backend_pancake_generate_functions: call to ic_generate_get_fdecl failed");
+            return 0;
+        }
+
+        fdecl_sig_call = ic_decl_func_sig_call(fdecl);
+        if (!fdecl_sig_call) {
+            puts("ic_backend_pancake_generate_functions: call to ic_decl_func_sig_call failed");
+            return 0;
+        }
+
+        switch (gen->tag) {
+            case ic_generate_tag_cons_struct:
+                puts("ic_backend_pancake_generate_functions: gen->tag cons_struct unimplemented");
+                return 0;
+                break;
+
+            case ic_generate_tag_cons_union:
+                puts("ic_backend_pancake_generate_functions: gen->tag cons_union unimplemented");
+                return 0;
+                break;
+
+            case ic_generate_tag_print:
+                puts("ic_backend_pancake_generate_functions: gen->tag print unimplemented");
+                return 0;
+                break;
+
+            case ic_generate_tag_println:
+                /* println is nice and easy:
+                 *
+                 * type Foo
+                 *   a::Sint
+                 *   b::String
+                 * end
+                 *
+                 * ->
+                 *
+                 * label println(Foo)
+                 * copyarg 0
+                 * call print(Foo) 1
+                 * call_builtin println() 0
+                 * clean_stack
+                 * return_void
+                 */
+
+                /* insert function label instruction */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_label);
+                if (!instruction) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_sig_call)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_char failed");
+                    return 0;
+                }
+
+                /* copyarg */
+                /* insert `copyarg argn` instruction */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_copyarg);
+                if (!instruction) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 0)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                    return 0;
+                }
+
+                /* generate a string of the form "print(<TYPENAME>)" */
+                /* TODO FIXME leaking this string! */
+                fcall_target_str = ic_string_new("print(", 6);
+                if (!fcall_target_str) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_string_new failed");
+                    return 0;
+                }
+
+                if (!ic_string_append_symbol(fcall_target_str, type_name_sym)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_string_append_symbol failed");
+                    return 0;
+                }
+
+                if (!ic_string_append_char(fcall_target_str, ")", 1)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_string_append_char failed");
+                    return 0;
+                }
+
+                /* TODO FIXME who will own the string 'print(TYPENAME)' ??? */
+
+                /* call print(<TYPENAME>) 1 */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_call);
+                if (!instruction) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+
+                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, ic_string_contents(fcall_target_str))) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_char failed");
+                    return 0;
+                }
+                /* set number of args we call with */
+                if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 1)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
+                    return 0;
+                }
+
+                /* call_builtin println() 0 */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_call_builtin);
+                if (!instruction) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+
+                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, "println()")) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_char failed");
+                    return 0;
+                }
+
+                /* set number of args we call with */
+                if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 0)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
+                    return 0;
+                }
+
+                /* insert a cleanup and return_void instruction */
+                if (!ic_backend_pancake_instructions_add(instructions, icp_clean_stack)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+                if (!ic_backend_pancake_instructions_add(instructions, icp_return_void)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+
+                /* success */
+                break;
+
+            default:
+                puts("ic_backend_pancake_generate_functions: impossible gen->tag");
+                return 0;
+                break;
+        }
     }
 
     /* success */
