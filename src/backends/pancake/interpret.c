@@ -24,6 +24,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
     int sint = 0;
     unsigned int uint = 0;
     bool boolean = false;
+    void *ref = 0;
 
     /* new offset */
     unsigned int new_offset = 0;
@@ -750,11 +751,34 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
             /* alloc slots::uint
              * allocate a new object with this many slots
-             * a slot is usually 64 bits
+             *
+             * a slot size is implementation defined, but most be large
+             * enough to hold any value
+             * this is likely 32 or 64 bits
              */
             case icp_alloc:
-                puts("ic_backend_pancake_interpret: unimplemented bytecode instruction: icp_alloc");
-                return 0;
+                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+                if (!uint) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_bytecode_arg1_get_uint failed");
+                    return 0;
+                }
+
+                /* uint from user is specified as 'number of slots'
+                 * convert to units of sizeof(void *)
+                 */
+                uint = uint * sizeof(void *);
+
+                ref = ic_alloc(uint);
+
+                value = ic_backend_pancake_value_stack_push(value_stack);
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_push failed");
+                    return 0;
+                }
+
+                value->tag = ic_backend_pancake_value_type_ref;
+                value->u.ref = ref;
+
                 break;
 
             /* store_offset slot::uint
