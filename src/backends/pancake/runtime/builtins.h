@@ -12,4 +12,11 @@ typedef unsigned int (*ic_backend_function_sig)(struct ic_backend_pancake_value_
  */
 ic_backend_function_sig ic_backend_pancake_builtins_table_get(char *str);
 
+/* alloc size bytes
+ *
+ * returns * on success
+ * panics on failure (doesn't return, exits)
+ */
+void *ic_alloc(size_t size);
+
 #endif /* IC_backend_pancake_BUILTINS_H */
