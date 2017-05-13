@@ -4,6 +4,6 @@ end
 
 fn main()
     let f = Foo[Sint](6)
-    println(f)
+    println(f.t)
 end
 
