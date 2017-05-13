@@ -896,8 +896,36 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
              * load value at offset `slot` within object and push onto stack as str
              */
             case icp_load_offset_str:
-                puts("ic_backend_pancake_interpret: unimplemented bytecode instruction: icp_load_offset_str");
-                return 0;
+                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+
+                /* get value DO NOT POP */
+                value = ic_backend_pancake_value_stack_peek(value_stack);
+
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_peek failed");
+                    return 0;
+                }
+
+                /* create new value from top of value stack to store */
+                to_value = ic_backend_pancake_value_stack_push(value_stack);
+                if (!to_value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_push failed for icp_load");
+                    return 0;
+                }
+
+                if (value->tag != ic_backend_pancake_value_type_ref) {
+                    puts("ic_backend_pancake_interpret: value->tag was not of type ref");
+                    return 0;
+                }
+
+                ref = value->u.ref;
+                ref_array = ref;
+                ref_slot = &(ref_array[uint]);
+
+                to_value->tag = ic_backend_pancake_value_type_string;
+                to_value->u.string = ref_slot->string;
+
+                /* success */
                 break;
 
             /* load_offset_uint slot::uint
