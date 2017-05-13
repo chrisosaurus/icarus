@@ -9,20 +9,17 @@ enum ic_backend_pancake_value_type {
     ic_backend_pancake_value_type_ref,
 };
 
+union ic_backend_pancake_value_cell {
+    unsigned int boolean;
+    unsigned int uint;
+    int sint;
+    char *string;
+    void *ref;
+};
+
 struct ic_backend_pancake_value {
     enum ic_backend_pancake_value_type tag;
-    union {
-        unsigned int boolean;
-
-        unsigned int uint;
-
-        int sint;
-
-        char *string;
-
-        /* FIXME */
-        void *ref;
-    } u;
+    union ic_backend_pancake_value_cell u;
 };
 
 /* allocate a  blank value */

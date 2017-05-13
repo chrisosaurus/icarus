@@ -25,6 +25,8 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
     unsigned int uint = 0;
     bool boolean = false;
     void *ref = 0;
+    union ic_backend_pancake_value_cell *ref_array = 0;
+    union ic_backend_pancake_value_cell *ref_slot = 0;
 
     /* new offset */
     unsigned int new_offset = 0;
@@ -34,8 +36,9 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
     /* offset into value_stack */
     unsigned int value_stack_offset = 0;
 
-    /* current value we are working with */
+    /* current values we are working with */
     struct ic_backend_pancake_value *value = 0;
+    struct ic_backend_pancake_value *value2 = 0;
     /* value for copyarg to copy into */
     struct ic_backend_pancake_value *to_value = 0;
 
@@ -759,14 +762,14 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
             case icp_alloc:
                 uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
                 if (!uint) {
-                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_bytecode_arg1_get_uint failed");
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_bytecode_arg1_get_uint failed, zero-length allocs not supported");
                     return 0;
                 }
 
                 /* uint from user is specified as 'number of slots'
-                 * convert to units of sizeof(void *)
+                 * convert to units of sizeof(union ic_backend_pancake_value_cell)
                  */
-                uint = uint * sizeof(void *);
+                uint = uint * sizeof(union ic_backend_pancake_value_cell);
 
                 ref = ic_alloc(uint);
 
@@ -787,8 +790,68 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
              * store value at offset `slot` within object
              */
             case icp_store_offset:
-                puts("ic_backend_pancake_interpret: unimplemented bytecode instruction: icp_store_offset");
-                return 0;
+                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+
+                /* get value */
+                value = ic_backend_pancake_value_stack_peek(value_stack);
+
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_peek failed");
+                    return 0;
+                }
+
+                /* consume value */
+                if (!ic_backend_pancake_value_stack_pop(value_stack)) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_pop failed");
+                    return 0;
+                }
+
+                /* get value DO NOT POP */
+                value2 = ic_backend_pancake_value_stack_peek(value_stack);
+
+                if (!value2) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_peek failed");
+                    return 0;
+                }
+
+                if (value2->tag != ic_backend_pancake_value_type_ref) {
+                    puts("ic_backend_pancake_interpret: value2->tag was not of type ref");
+                    return 0;
+                }
+
+                /* move to offset within ref */
+                ref = value2->u.ref;
+                ref_array = ref;
+                ref_slot = &(ref_array[uint]);
+
+                /* perform write */
+                switch (value->tag) {
+                    case ic_backend_pancake_value_type_boolean:
+                        ref_slot->boolean = value->u.boolean;
+                        break;
+
+                    case ic_backend_pancake_value_type_uint:
+                        ref_slot->uint = value->u.uint;
+                        break;
+
+                    case ic_backend_pancake_value_type_sint:
+                        ref_slot->sint = value->u.sint;
+                        break;
+
+                    case ic_backend_pancake_value_type_string:
+                        ref_slot->string = value->u.string;
+                        break;
+
+                    case ic_backend_pancake_value_type_ref:
+                        ref_slot->ref = value->u.ref;
+                        break;
+
+                    default:
+                        puts("ic_backend_pancake_interpret: impossible value->tag");
+                        return 0;
+                        break;
+                }
+
                 break;
 
             /* load_offset_bool slot::uint
