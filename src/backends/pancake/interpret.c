@@ -738,9 +738,13 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
             /* tailcall_void fname::string argn::uint */
             case icp_tailcall_void:
+                puts("ic_backend_pancake_interpret: unimplemented bytecode instruction: icp_tailcall_void");
+                return 0;
+                break;
+
             /* tailcall_value fname::string argn::uint */
             case icp_tailcall_value:
-                puts("ic_backend_pancake_interpret: unimplemeneted bytecode instruction");
+                puts("ic_backend_pancake_interpret: unimplemented bytecode instruction: icp_tailcall_value");
                 return 0;
                 break;
 
@@ -749,7 +753,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
              * a slot is usually 64 bits
              */
             case icp_alloc:
-                puts("ic_backend_pancake_interpret: unimplemeneted bytecode instruction");
+                puts("ic_backend_pancake_interpret: unimplemented bytecode instruction: icp_alloc");
                 return 0;
                 break;
 
@@ -759,7 +763,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
              * store value at offset `slot` within object
              */
             case icp_store_offset:
-                puts("ic_backend_pancake_interpret: unimplemeneted bytecode instruction");
+                puts("ic_backend_pancake_interpret: unimplemented bytecode instruction: icp_store_offset");
                 return 0;
                 break;
 
@@ -768,7 +772,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
              * load value at offset `slot` within object and push onto stack
              */
             case icp_load_offset:
-                puts("ic_backend_pancake_interpret: unimplemeneted bytecode instruction");
+                puts("ic_backend_pancake_interpret: unimplemented bytecode instruction: icp_load_offset");
                 return 0;
                 break;
 
