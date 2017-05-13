@@ -4,5 +4,5 @@ end
 
 fn main()
   let f::Foo = Foo(5)
-  println(f.i)
+  println(f)
 end

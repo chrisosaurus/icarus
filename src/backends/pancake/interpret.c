@@ -859,8 +859,36 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
              * load value at offset `slot` within object and push onto stack as bool
              */
             case icp_load_offset_bool:
-                puts("ic_backend_pancake_interpret: unimplemented bytecode instruction: icp_load_offset_bool");
-                return 0;
+                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+
+                /* get value DO NOT POP */
+                value = ic_backend_pancake_value_stack_peek(value_stack);
+
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_peek failed");
+                    return 0;
+                }
+
+                /* create new value from top of value stack to store */
+                to_value = ic_backend_pancake_value_stack_push(value_stack);
+                if (!to_value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_push failed for icp_load");
+                    return 0;
+                }
+
+                if (value->tag != ic_backend_pancake_value_type_ref) {
+                    puts("ic_backend_pancake_interpret: value->tag was not of type ref");
+                    return 0;
+                }
+
+                ref = value->u.ref;
+                ref_array = ref;
+                ref_slot = &(ref_array[uint]);
+
+                to_value->tag = ic_backend_pancake_value_type_boolean;
+                to_value->u.boolean = ref_slot->boolean;
+
+                /* success */
                 break;
 
             /* load_offset_str slot::uint
@@ -877,8 +905,36 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
              * load value at offset `slot` within object and push onto stack as uint
              */
             case icp_load_offset_uint:
-                puts("ic_backend_pancake_interpret: unimplemented bytecode instruction: icp_load_offset_uint");
-                return 0;
+                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+
+                /* get value DO NOT POP */
+                value = ic_backend_pancake_value_stack_peek(value_stack);
+
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_peek failed");
+                    return 0;
+                }
+
+                /* create new value from top of value stack to store */
+                to_value = ic_backend_pancake_value_stack_push(value_stack);
+                if (!to_value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_push failed for icp_load");
+                    return 0;
+                }
+
+                if (value->tag != ic_backend_pancake_value_type_ref) {
+                    puts("ic_backend_pancake_interpret: value->tag was not of type ref");
+                    return 0;
+                }
+
+                ref = value->u.ref;
+                ref_array = ref;
+                ref_slot = &(ref_array[uint]);
+
+                to_value->tag = ic_backend_pancake_value_type_uint;
+                to_value->u.uint = ref_slot->uint;
+
+                /* success */
                 break;
 
             /* load_offset_sint slot::uint
@@ -886,8 +942,36 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
              * load value at offset `slot` within object and push onto stack as sint
              */
             case icp_load_offset_sint:
-                puts("ic_backend_pancake_interpret: unimplemented bytecode instruction: icp_load_offset_sint");
-                return 0;
+                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+
+                /* get value DO NOT POP */
+                value = ic_backend_pancake_value_stack_peek(value_stack);
+
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_peek failed");
+                    return 0;
+                }
+
+                /* create new value from top of value stack to store */
+                to_value = ic_backend_pancake_value_stack_push(value_stack);
+                if (!to_value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_push failed for icp_load");
+                    return 0;
+                }
+
+                if (value->tag != ic_backend_pancake_value_type_ref) {
+                    puts("ic_backend_pancake_interpret: value->tag was not of type ref");
+                    return 0;
+                }
+
+                ref = value->u.ref;
+                ref_array = ref;
+                ref_slot = &(ref_array[uint]);
+
+                to_value->tag = ic_backend_pancake_value_type_sint;
+                to_value->u.sint = ref_slot->sint;
+
+                /* sucess */
                 break;
 
             /* load_offset_ref slot::uint
@@ -895,8 +979,36 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
              * load value at offset `slot` within object and push onto stack as ref
              */
             case icp_load_offset_ref:
-                puts("ic_backend_pancake_interpret: unimplemented bytecode instruction: icp_load_offset_ref");
-                return 0;
+                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+
+                /* get value DO NOT POP */
+                value = ic_backend_pancake_value_stack_peek(value_stack);
+
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_peek failed");
+                    return 0;
+                }
+
+                /* create new value from top of value stack to store */
+                to_value = ic_backend_pancake_value_stack_push(value_stack);
+                if (!to_value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_push failed for icp_load");
+                    return 0;
+                }
+
+                if (value->tag != ic_backend_pancake_value_type_ref) {
+                    puts("ic_backend_pancake_interpret: value->tag was not of type ref");
+                    return 0;
+                }
+
+                ref = value->u.ref;
+                ref_array = ref;
+                ref_slot = &(ref_array[uint]);
+
+                to_value->tag = ic_backend_pancake_value_type_ref;
+                to_value->u.ref = ref_slot->ref;
+
+                /* success */
                 break;
 
             default:
