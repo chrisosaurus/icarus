@@ -5,7 +5,7 @@
 04 pass pass
 05 pass pass
 06 pass pass
-07 pass fail-runtime
+07 pass pass
 08 pass fail-runtime
 09 pass fail-runtime
 10 fail-compile fail-runtime

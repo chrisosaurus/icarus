@@ -1291,6 +1291,8 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
     struct ic_transform_ir_expr *tir_expr = 0;
     /* left symbol for faccess */
     struct ic_symbol *left_sym = 0;
+    /* left type for faccess */
+    struct ic_decl_type *left_type = 0;
     /* right symbol for faccess */
     struct ic_symbol *right_sym = 0;
 
@@ -1485,6 +1487,13 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
                 return 0;
             }
 
+            /* get type of lhs of faccess */
+            left_type = ic_analyse_infer(kludge, scope, expr->u.faccess.left);
+            if (!left_type) {
+                puts("ic_transform_new_temp: call to ic_analyse_infer failed");
+                return 0;
+            }
+
             /* get return type of inner struct field */
             type = ic_analyse_infer(kludge, scope, expr);
             if (!type) {
@@ -1521,7 +1530,7 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
             }
 
             /* generate new statement */
-            tir_stmt = ic_transform_ir_stmt_let_faccess_new(sym, type, left_sym, right_sym);
+            tir_stmt = ic_transform_ir_stmt_let_faccess_new(sym, type, left_sym, left_type, right_sym);
             if (!tir_stmt) {
                 puts("ic_transform_new_temp: call to ic_transform_ir_stmt_let_expr_new failed");
                 return 0;

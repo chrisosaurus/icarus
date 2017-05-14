@@ -106,6 +106,7 @@ struct ic_transform_ir_let_faccess {
     struct ic_symbol *name;
     struct ic_decl_type *type;
     struct ic_symbol *left;
+    struct ic_decl_type *left_type;
     struct ic_symbol *right;
 };
 
@@ -648,7 +649,7 @@ struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_expr_new(struct ic_symbol 
  * returns * on success
  * returns 0 on failure
  */
-struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_faccess_new(struct ic_symbol *name, struct ic_decl_type *type, struct ic_symbol *left, struct ic_symbol *right);
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_faccess_new(struct ic_symbol *name, struct ic_decl_type *type, struct ic_symbol *left, struct ic_decl_type *left_type, struct ic_symbol *right);
 
 /* allocate and initialise a new stmt->ret
  *

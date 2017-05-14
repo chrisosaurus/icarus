@@ -1724,7 +1724,7 @@ struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_expr_new(struct ic_symbol 
  * returns * on success
  * returns 0 on failure
  */
-struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_faccess_new(struct ic_symbol *name, struct ic_decl_type *type, struct ic_symbol *left, struct ic_symbol *right) {
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_faccess_new(struct ic_symbol *name, struct ic_decl_type *type, struct ic_symbol *left, struct ic_decl_type *left_type, struct ic_symbol *right) {
     struct ic_transform_ir_stmt *stmt = 0;
 
     if (!name) {
@@ -1739,6 +1739,11 @@ struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_faccess_new(struct ic_symb
 
     if (!left) {
         puts("ic_transform_ir_stmt_let_faccess_new: left was null");
+        return 0;
+    }
+
+    if (!left_type) {
+        puts("ic_transform_ir_stmt_let_faccess_new: left_type was null");
         return 0;
     }
 
@@ -1766,6 +1771,7 @@ struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_faccess_new(struct ic_symb
     stmt->u.let.u.faccess.name = name;
     stmt->u.let.u.faccess.type = type;
     stmt->u.let.u.faccess.left = left;
+    stmt->u.let.u.faccess.left_type = left_type;
     stmt->u.let.u.faccess.right = right;
 
     return stmt;
