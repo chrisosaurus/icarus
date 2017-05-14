@@ -245,8 +245,6 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     /* local instruction */
     struct ic_backend_pancake_bytecode *instruction = 0;
 
-    unsigned int arg_offset = 0;
-
     if (!instructions) {
         puts("ic_backend_pancake_compile_fdecl: instructions was null");
         return 0;
@@ -372,14 +370,6 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
             return 0;
         }
 
-        /* (a, b, c) len = 3
-         * len - i - 1 ensures that
-         *   a [0] -> 2
-         *   b [1] -> 1
-         *   c [2] -> 0
-         */
-        arg_offset = len - i - 1;
-
         if (arg->assigned_to) {
             /* if an arg is asigned to, then we need to treat this as though
              * it were a local let
@@ -394,7 +384,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
                 puts("ic_backend_pancake_compile_local_push: call to ic_backend_pancake_instructions_add failed");
                 return 0;
             }
-            if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, arg_offset)) {
+            if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, i)) {
                 puts("ic_backend_pancake_compile_local_push: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
                 return 0;
             }
@@ -423,7 +413,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
                 return 0;
             }
 
-            if (!ic_backend_pancake_local_set_offset(local, arg_offset)) {
+            if (!ic_backend_pancake_local_set_offset(local, i)) {
                 puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_local_set_offset failed");
                 return 0;
             }
@@ -1674,11 +1664,11 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
      *
      *   label Foo(Sint,Sint,String)
      *   alloc 3 // allocate a 3 cell object
-     *   copyarg 2
+     *   copyarg 0
      *   store_offset 0
      *   cpyarg 1
      *   store_offset 1
-     *   copyarg 0
+     *   copyarg 2
      *   store_offset 2
      *   save
      *   clean_stack
@@ -1812,11 +1802,7 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                         puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
                         return 0;
                     }
-                    /* NB: have to copyarg in reverse order
-                     * FIXME TODO this interface is silly
-                     * args should be in order
-                     */
-                    if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, n_args - i_arg - 1)) {
+                    if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, i_arg)) {
                         puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
                         return 0;
                     }

@@ -437,7 +437,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 call_frame->return_offset = cur_offset;
                 call_frame->arg_count = uint;
                 call_frame->call_start_offset = new_offset;
-                call_frame->arg_start = value_stack_offset;
+                call_frame->arg_start = value_stack_offset - uint;
 
                 /* FIXME TODO ignoring uint */
 
@@ -502,13 +502,13 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
              * copyarg at offset argn onto stack
              * Note: arguments to functions are pushed in order
              *       a function call pushes the arguments, and then records the stack
-             *       position when the function call starts
-             *       `copyarg 0` will refer to the 0th argument before the fcall started
-             *       which is the *last* argument
+             *       position of the stack before the args were inserted
+             *       `copyarg 0` will refer to the 0th argument
+             *       which is the *first* argument
              *       if you had 3 arguments then,
-             *       copyarg 0 - 3rd argument
+             *       copyarg 0 - 1st argument
              *       copyarg 1 - 2nd argument
-             *       copyarg 2 - 1st argument
+             *       copyarg 2 - 3rd argument
              */
             case icp_copyarg:
                 call_frame = ic_backend_pancake_call_frame_stack_peek(call_frame_stack);
@@ -526,7 +526,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 /* the offset of our arg into the value_stack
                  * need to go one further back due to value_stack offset vs length
                  */
-                value_stack_offset -= uint + 1;
+                value_stack_offset += uint;
 
                 /* value to copy onto head of stack */
                 value = ic_backend_pancake_value_stack_get_offset(value_stack, value_stack_offset);
@@ -640,7 +640,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                     return 0;
                 }
 
-                value_stack_offset = call_frame->arg_start - call_frame->arg_count;
+                value_stack_offset = call_frame->arg_start;
 
                 /* reset value_stack back to this point */
                 if (!ic_backend_pancake_value_stack_reset(value_stack, value_stack_offset)) {

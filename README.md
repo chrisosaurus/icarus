@@ -217,8 +217,8 @@ which shows us
     call main() 0
     exit
     label is_div(Sint,Sint)
-    copyarg 1
     copyarg 0
+    copyarg 1
     call_builtin modulo(Sint,Sint) 2
     store rem
     load rem
@@ -274,10 +274,10 @@ which shows us
     clean_stack
     return_void
     label fizzbuzz(Sint,Sint)
-    copyarg 1
+    copyarg 0
     store from
     load from
-    copyarg 0
+    copyarg 1
     call_builtin lessthan(Sint,Sint) 2
     store _t0
     load _t0
@@ -289,7 +289,7 @@ which shows us
     call_builtin plus(Sint,Sint) 2
     store from
     load from
-    copyarg 0
+    copyarg 1
     call fizzbuzz(Sint,Sint) 2
     label fizzbuzz(Sint,Sint)0
     clean_stack

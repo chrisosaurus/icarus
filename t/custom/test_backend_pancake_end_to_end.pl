@@ -188,11 +188,11 @@ my $cases = [
       return_void
       label Foo(Sint,Bar,String)
       alloc 3
-      copyarg 2
+      copyarg 0
       store_offset 0
       copyarg 1
       store_offset 1
-      copyarg 0
+      copyarg 2
       store_offset 2
       save
       clean_stack

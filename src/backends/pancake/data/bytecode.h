@@ -26,13 +26,13 @@ enum ic_backend_pancake_bytecode_type {
      * copyarg at offset argn onto stack
      * Note: arguments to functions are pushed in order
      *       a function call pushes the arguments, and then records the stack
-     *       position when the function call starts
-     *       `copyarg 0` will refer to the 0th argument before the fcall started
-     *       which is the *last* argument
+     *       position of the stack before the args were inserted
+     *       `copyarg 0` will refer to the 0th argument
+     *       which is the *first* argument
      *       if you had 3 arguments then,
-     *       copyarg 0 - 3rd argument
+     *       copyarg 0 - 1st argument
      *       copyarg 1 - 2nd argument
-     *       copyarg 2 - 1st argument
+     *       copyarg 2 - 3rd argument
      */
     icp_copyarg,
     /* call fname::string argn::uint */
