@@ -22,7 +22,9 @@ struct ic_backend_pancake_call_frame {
      */
     unsigned int call_start_offset;
     /* height of value stack when this call started
-     * this is so we can address arguments
+     * before any arguments were inserted
+     *
+     * this is also the point we reset back to on a call to `clean_stack`
      */
     unsigned int arg_start;
     /* map of char* to ic_backend_pancake_value which are used for the result
