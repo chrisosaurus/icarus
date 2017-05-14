@@ -38,6 +38,31 @@ my $cases = [
       Hello world
     '
   },
+  {
+    input => '
+      type Foo
+        a::Sint
+      end
+
+      type Bar
+        f::Foo
+      end
+
+      type Baz
+        b::Bar
+      end
+
+      fn main()
+        let b = Baz(Bar(Foo(4)))
+        println(b)
+        println(b.b.f.a)
+      end
+    ',
+    expected => '
+      Baz{Bar{Foo{4}}}
+      4
+    ',
+  },
 ];
 
 # whitespace sensitivity sucks
