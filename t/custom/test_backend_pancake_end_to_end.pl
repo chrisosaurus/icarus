@@ -206,8 +206,12 @@ my $cases = [
       copyarg 0
       load_offset_sint 0
       call_builtin print(Sint) 1
+      pushstr ", "
+      call_builtin print(String) 1
       load_offset_ref 1
       call print(Bar) 1
+      pushstr ", "
+      call_builtin print(String) 1
       load_offset_str 2
       call_builtin print(String) 1
       pushstr "}"
@@ -233,7 +237,7 @@ my $cases = [
       call println(Foo) 1
       clean_stack
       return_void
-      Foo{4Bar{Hello}World}
+      Foo{4, Bar{Hello}, World}
     ',
   },
   # testing copyarg ordering

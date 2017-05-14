@@ -1988,6 +1988,38 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                 }
 
                 for (i_arg = 0; i_arg < n_args; ++i_arg) {
+                    /* insert ", " between args */
+                    if (i_arg > 0) {
+                        /* pushstr ", " */
+                        instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
+                        if (!instruction) {
+                            puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                            return 0;
+                        }
+
+                        if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, ", ")) {
+                            puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_char failed");
+                            return 0;
+                        }
+
+                        /* call_builtin print(String) 1*/
+                        instruction = ic_backend_pancake_instructions_add(instructions, icp_call_builtin);
+                        if (!instruction) {
+                            puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                            return 0;
+                        }
+
+                        if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, "print(String)")) {
+                            puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_char failed");
+                            return 0;
+                        }
+
+                        if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 1)) {
+                            puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
+                            return 0;
+                        }
+                    }
+
                     field = ic_decl_type_field_get(tdecl, i_arg);
                     if (!field) {
                         puts("ic_backend_pancake_generate_functions: call to ic_decl_type_field_get failed");
