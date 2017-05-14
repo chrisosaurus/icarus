@@ -36,7 +36,7 @@ unsigned int ic_backend_pancake_value_stack_init(struct ic_backend_pancake_value
         return 0;
     }
 
-    stack->head = -1;
+    stack->next = 0;
 
     return 1;
 }
@@ -74,12 +74,12 @@ struct ic_backend_pancake_value *ic_backend_pancake_value_stack_peek(struct ic_b
         return 0;
     }
 
-    if (stack->head == -1) {
+    if (stack->next == 0) {
         puts("ic_backend_pancake_value_stack_peek: stack was empty");
         return 0;
     }
 
-    ret = &(stack->stack[stack->head]);
+    ret = &(stack->stack[stack->next - 1]);
 
     return ret;
 }
@@ -95,12 +95,12 @@ unsigned int ic_backend_pancake_value_stack_pop(struct ic_backend_pancake_value_
         return 0;
     }
 
-    if (stack->head == -1) {
+    if (stack->next == 0) {
         puts("ic_backend_pancake_value_stack_pop: stack was empty");
         return 0;
     }
 
-    stack->head -= 1;
+    stack->next -= 1;
     return 1;
 }
 
@@ -116,14 +116,14 @@ struct ic_backend_pancake_value *ic_backend_pancake_value_stack_push(struct ic_b
         return 0;
     }
 
-    if (stack->head >= IC_BACKEND_PANCAKE_VALUE_STACK_SIZE) {
+    if (stack->next >= IC_BACKEND_PANCAKE_VALUE_STACK_SIZE) {
         puts("ic_backend_pancake_value_stack_push: stack is full");
         return 0;
     }
 
-    stack->head += 1;
+    ret = &(stack->stack[stack->next]);
 
-    ret = &(stack->stack[stack->head]);
+    stack->next += 1;
 
     return ret;
 }
@@ -139,11 +139,7 @@ unsigned int ic_backend_pancake_value_stack_height(struct ic_backend_pancake_val
         return 0;
     }
 
-    if (stack->head < 0) {
-        return 0;
-    }
-
-    return stack->head;
+    return stack->next;
 }
 
 /* fetch arbitrary offset within value_stack
@@ -171,25 +167,17 @@ struct ic_backend_pancake_value *ic_backend_pancake_value_stack_get_offset(struc
  * returns 0 on failure
  */
 unsigned int ic_backend_pancake_value_stack_reset(struct ic_backend_pancake_value_stack *stack, unsigned int offset) {
-    unsigned int stack_head = 0;
     if (!stack) {
         puts("ic_backend_pancake_value_stack_reset: stack was null");
         return 0;
     }
 
-    if (stack->head < 0) {
-        /* stack is empty, no need to reset */
-        return 1;
-    }
-
-    stack_head = stack->head;
-
-    if (stack_head < offset) {
+    if (stack->next < offset) {
         puts("ic_backend_pancake_value_stack_reset: stack was already above offset");
         return 0;
     }
 
-    stack->head = offset;
+    stack->next = offset;
     return 1;
 }
 
@@ -208,10 +196,10 @@ unsigned int ic_backend_pancake_value_stack_print(FILE *fd, struct ic_backend_pa
         return 0;
     }
 
-    len = value_stack->head;
+    len = value_stack->next;
 
-    /* NB: has to be >= */
-    for (i = len; i >= 0; --i) {
+    /* from 0 to len-1 in reverse */
+    for (i = len - 1; i >= 0; --i) {
         value = ic_backend_pancake_value_stack_get_offset(value_stack, i);
         if (!value) {
             puts("ic_backend_pancake_value_stack_print: call to ic_backend_pancake_value_stack_get_offset failed");

@@ -8,12 +8,11 @@
 struct ic_backend_pancake_value_stack {
     struct ic_backend_pancake_value stack[IC_BACKEND_PANCAKE_VALUE_STACK_SIZE];
 
-    /* current head
-   * -1 = empty
-   *  0 = first
-   *  IC_BACKEND_PANCAKE_VALUE_STACK_SIZE -1 = max
-   */
-    int head;
+    /* next stack object
+     *  0 = empty
+     *  IC_BACKEND_PANCAKE_VALUE_STACK_SIZE = full
+     */
+    unsigned int next;
 };
 
 /* allocate and initialise a new return stack

@@ -92,8 +92,8 @@ unsigned int ic_backend_pancake_value_print(FILE *fd, struct ic_backend_pancake_
             break;
 
         case ic_backend_pancake_value_type_ref:
-            puts("ic_backend_pancake_value_print: unable to print ref");
-            return 0;
+            fprintf(fd, "ref: %p\n", value->u.ref);
+            break;
 
         default:
             puts("ic_backend_pancake_value_print: impossible value->tag");

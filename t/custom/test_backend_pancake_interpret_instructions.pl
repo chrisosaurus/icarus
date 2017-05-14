@@ -100,6 +100,20 @@ my $cases = [
   {
     input => '
       pushuint 3
+      pushuint 5
+      exit
+      ',
+    expected =>'
+      pancake value_stack after execution finished:
+      ----------------
+      uint: 5
+      uint: 3
+      ----------------
+      ',
+  },
+  {
+    input => '
+      pushuint 3
       save
       pushuint 5
       restore
@@ -113,6 +127,29 @@ my $cases = [
       ----------------
       ',
   },
+  # testing clean_stack correctly cleans up all locals and args
+  {
+    input => '
+        label entry
+        pushstr "Not an arg"
+        pushuint 1
+        pushuint 2
+        pushuint 3
+        call baz() 3
+        exit
+        label baz()
+        pushuint 4
+        pushuint 5
+        clean_stack
+        return_void
+    ',
+    expected => '
+      pancake value_stack after execution finished:
+      ----------------
+      string: Not an arg
+      ----------------
+    ',
+  },
   {
     input => '
       label entry
@@ -120,7 +157,6 @@ my $cases = [
       exit
       label foo()
       pushuint 5
-      copyarg 0
       save
       clean_stack
       restore
@@ -135,7 +171,6 @@ my $cases = [
       5
       pancake value_stack after execution finished:
       ----------------
-      uint: 5
       ----------------
       ',
   },

@@ -523,8 +523,10 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 /* our arg numbers */
                 uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
 
-                /* the offset of our arg into the value_stack */
-                value_stack_offset -= uint;
+                /* the offset of our arg into the value_stack
+                 * need to go one further back due to value_stack offset vs length
+                 */
+                value_stack_offset -= uint + 1;
 
                 /* value to copy onto head of stack */
                 value = ic_backend_pancake_value_stack_get_offset(value_stack, value_stack_offset);
@@ -638,7 +640,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                     return 0;
                 }
 
-                value_stack_offset = call_frame->arg_start;
+                value_stack_offset = call_frame->arg_start - call_frame->arg_count;
 
                 /* reset value_stack back to this point */
                 if (!ic_backend_pancake_value_stack_reset(value_stack, value_stack_offset)) {
