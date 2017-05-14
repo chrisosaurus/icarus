@@ -236,6 +236,64 @@ my $cases = [
       Foo{4Bar{Hello}World}
     ',
   },
+  # testing copyarg ordering
+  {
+    input => '
+      fn foo(a::Sint, b::String, c::String, d::Sint)
+        println(a)
+        println(b)
+        println(c)
+        println(d)
+        println(d)
+        println(c)
+        println(b)
+        println(a)
+      end
+      fn main()
+        foo(1, "Hello", "world", 2)
+      end
+    ',
+    expected => '
+      label entry
+      call main() 0
+      exit
+      label foo(Sint,String,String,Sint)
+      copyarg 0
+      call_builtin println(Sint) 1
+      copyarg 1
+      call_builtin println(String) 1
+      copyarg 2
+      call_builtin println(String) 1
+      copyarg 3
+      call_builtin println(Sint) 1
+      copyarg 3
+      call_builtin println(Sint) 1
+      copyarg 2
+      call_builtin println(String) 1
+      copyarg 1
+      call_builtin println(String) 1
+      copyarg 0
+      call_builtin println(Sint) 1
+      clean_stack
+      return_void
+      label main()
+      pushint 1
+      pushstr "Hello"
+      pushstr "world"
+      pushint 2
+      call foo(Sint,String,String,Sint) 4
+      clean_stack
+      return_void
+      1
+      Hello
+      world
+      2
+      2
+      world
+      Hello
+      1
+    ',
+  },
 ];
 
 # whitespace sensitivity sucks
