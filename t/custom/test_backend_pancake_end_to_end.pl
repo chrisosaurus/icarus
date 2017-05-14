@@ -138,6 +138,104 @@ my $cases = [
       True
       ',
   },
+  {
+    input => '
+      type Bar
+        s::String
+      end
+
+      type Foo
+        a::Sint
+        b::Bar
+        c::String
+      end
+
+      fn main()
+        let b = Bar("Hello")
+        let f = Foo(4, b, "World")
+        println(f)
+      end
+    ',
+    expected => '
+      label entry
+      call main() 0
+      exit
+      label Bar(String)
+      alloc 1
+      copyarg 0
+      store_offset 0
+      save
+      clean_stack
+      restore
+      return_value
+      label print(Bar)
+      pushstr "Bar"
+      call_builtin print(String) 1
+      pushstr "{"
+      call_builtin print(String) 1
+      copyarg 0
+      load_offset_str 0
+      call_builtin print(String) 1
+      pushstr "}"
+      call_builtin print(String) 1
+      clean_stack
+      return_void
+      label println(Bar)
+      copyarg 0
+      call print(Bar) 1
+      call_builtin println() 0
+      clean_stack
+      return_void
+      label Foo(Sint,Bar,String)
+      alloc 3
+      copyarg 2
+      store_offset 0
+      copyarg 1
+      store_offset 1
+      copyarg 0
+      store_offset 2
+      save
+      clean_stack
+      restore
+      return_value
+      label print(Foo)
+      pushstr "Foo"
+      call_builtin print(String) 1
+      pushstr "{"
+      call_builtin print(String) 1
+      copyarg 0
+      load_offset_sint 0
+      call_builtin print(Sint) 1
+      load_offset_ref 1
+      call print(Bar) 1
+      load_offset_str 2
+      call_builtin print(String) 1
+      pushstr "}"
+      call_builtin print(String) 1
+      clean_stack
+      return_void
+      label println(Foo)
+      copyarg 0
+      call print(Foo) 1
+      call_builtin println() 0
+      clean_stack
+      return_void
+      label main()
+      pushstr "Hello"
+      call Bar(String) 1
+      store b
+      pushint 4
+      load b
+      pushstr "World"
+      call Foo(Sint,Bar,String) 3
+      store f
+      load f
+      call println(Foo) 1
+      clean_stack
+      return_void
+      Foo{4Bar{Hello}World}
+    ',
+  },
 ];
 
 # whitespace sensitivity sucks
