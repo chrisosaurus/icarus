@@ -225,14 +225,14 @@ sub run {
   my $expected_output = shift // die;
   die if @_;
 
-  my $in_tmp_file = `mktemp TESTING_BACKEND_2C_SIMPLE_XXX.ic`;
+  my $in_tmp_file = `mktemp TESTING_BACKEND_2C_END_TO_END_OUTPUT_ONLY_XXX.ic`;
   chomp($in_tmp_file);
   open( my $fh, ">", "$in_tmp_file" ) or die "failed to open tmp file '$in_tmp_file'";
   print $fh $input;
   close $fh;
 
   # using mktemp here just to get name
-  my $out_tmp_file = `mktemp TESTING_BACKEND_2C_SIMPLE_XXX.c`;
+  my $out_tmp_file = `mktemp TESTING_BACKEND_2C_END_TO_END_OUTPUT_ONLY_XXX.c`;
   # have to remove right away, as icarus 2c wants to create
   `rm $out_tmp_file`;
 
@@ -278,7 +278,7 @@ sub run {
       }
   }
 
-  say "test_backend_2c_simple successs";
+  say "test_backend_2c_end_to_end_output_only successs";
   say "=======\nGot correct output:\n$output";
 
 }
@@ -289,5 +289,5 @@ for my $case (@$cases) {
   run $input, $expected_output;
 }
 
-say "test_backend_pancake_end_to_end successs";
+say "test_backend_pancake_end_to_end_output_only successs";
 
