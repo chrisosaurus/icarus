@@ -33,6 +33,9 @@ int main(void) {
 
     assert(2 == ic_decl_type_field_length(tdecl));
 
+    assert(0 == ic_decl_type_get_field_offset(tdecl, "a"));
+    assert(1 == ic_decl_type_get_field_offset(tdecl, "b"));
+
     printf("Should see:\ntype Foo\n    a::Sint\n    b::String\nend\n");
 
     /* output type */

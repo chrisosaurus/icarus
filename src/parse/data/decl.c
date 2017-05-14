@@ -1530,9 +1530,7 @@ unsigned int ic_decl_type_struct_get_field_offset(struct ic_decl_type_struct *td
     unsigned int i = 0;
     unsigned int len = 0;
     struct ic_field *field = 0;
-
     struct ic_symbol *field_sym = 0;
-    char *field_ch = 0;
 
     if (!tdecl) {
         puts("ic_decl_type_struct_get_field_offset: tdecl was null");
@@ -1555,13 +1553,7 @@ unsigned int ic_decl_type_struct_get_field_offset(struct ic_decl_type_struct *td
 
         field_sym = &(field->name);
 
-        field_ch = ic_symbol_contents(field_sym);
-        if (!field_ch) {
-            puts("ic_decl_type_struct_get_field_offset: call to ic_symbol_contents failed");
-            return 0;
-        }
-
-        if (0 == strcmp(field_ch, field_name)) {
+        if (1 == ic_symbol_equal_char(field_sym, field_name)) {
             offset = i;
             goto FOUND;
         }
@@ -2000,7 +1992,6 @@ unsigned int ic_decl_type_union_get_field_offset(struct ic_decl_type_union *tdec
     struct ic_field *field = 0;
 
     struct ic_symbol *field_sym = 0;
-    char *field_ch = 0;
 
     if (!tdecl) {
         puts("ic_decl_type_union_get_field_offset: tdecl was null");
@@ -2023,13 +2014,7 @@ unsigned int ic_decl_type_union_get_field_offset(struct ic_decl_type_union *tdec
 
         field_sym = &(field->name);
 
-        field_ch = ic_symbol_contents(field_sym);
-        if (!field_ch) {
-            puts("ic_decl_type_union_get_field_offset: call to ic_symbol_contents failed");
-            return 0;
-        }
-
-        if (0 == strcmp(field_ch, field_name)) {
+        if (ic_symbol_equal_char(field_sym, field_name)) {
             offset = i;
             goto FOUND;
         }
