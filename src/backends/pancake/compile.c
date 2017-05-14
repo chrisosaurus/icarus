@@ -1812,7 +1812,11 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                         puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
                         return 0;
                     }
-                    if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, i_arg)) {
+                    /* NB: have to copyarg in reverse order
+                     * FIXME TODO this interface is silly
+                     * args should be in order
+                     */
+                    if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, n_args - i_arg - 1)) {
                         puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
                         return 0;
                     }

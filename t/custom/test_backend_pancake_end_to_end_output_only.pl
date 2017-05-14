@@ -197,6 +197,28 @@ my $cases = [
       19
       '
   },
+  {
+    input => '
+      type Bar
+        s::String
+      end
+
+      type Foo
+        a::Sint
+        b::Bar
+        c::String
+      end
+
+      fn main()
+        let b = Bar("Hello")
+        let f = Foo(4, b, "World")
+        println(f)
+      end
+    ',
+    expected => '
+      Foo{4Bar{Hello}World}
+    ',
+  },
 ];
 
 # whitespace sensitivity sucks
