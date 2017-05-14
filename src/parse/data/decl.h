@@ -452,6 +452,15 @@ struct ic_field *ic_decl_type_struct_field_get(struct ic_decl_type_struct *tdecl
  */
 struct ic_decl_type *ic_decl_type_struct_get_field_type(struct ic_decl_type_struct *tdecl, char *field_name);
 
+/* get the offset of a field by name
+ *
+ * TODO FIXME no way to indicate failure
+ *
+ * returns n on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_struct_get_field_offset(struct ic_decl_type_struct *tdecl, char *field_name);
+
 /* add field to field_dict
  *
  * returns 1 on success
@@ -566,6 +575,15 @@ struct ic_field *ic_decl_type_union_field_get(struct ic_decl_type_union *udecl, 
  * returns 0 on failure
  */
 struct ic_decl_type *ic_decl_type_union_get_field_type(struct ic_decl_type_union *udecl, char *field_name);
+
+/* get the offset of a field by name
+ *
+ * TODO FIXME no way to indicate failure
+ *
+ * returns n on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_union_get_field_offset(struct ic_decl_type_union *tdecl, char *field_name);
 
 /* add field to field_dict
  *
@@ -712,6 +730,15 @@ struct ic_field *ic_decl_type_field_get(struct ic_decl_type *tdecl, unsigned int
  * returns 0 on failure
  */
 struct ic_decl_type *ic_decl_type_get_field_type(struct ic_decl_type *tdecl, char *field_name);
+
+/* get the offset of a field by name
+ *
+ * TODO FIXME no way to indicate failure
+ *
+ * returns n on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_get_field_offset(struct ic_decl_type *tdecl, char *field_name);
 
 /* add field to field_dict
  *

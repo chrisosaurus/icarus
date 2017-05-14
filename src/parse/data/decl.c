@@ -1517,6 +1517,65 @@ struct ic_decl_type *ic_decl_type_struct_get_field_type(struct ic_decl_type_stru
     return type;
 }
 
+/* get the offset of a field by name
+ *
+ * TODO FIXME no way to indicate failure
+ *
+ * returns n on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_struct_get_field_offset(struct ic_decl_type_struct *tdecl, char *field_name) {
+    unsigned int offset = 0;
+
+    unsigned int i = 0;
+    unsigned int len = 0;
+    struct ic_field *field = 0;
+
+    struct ic_symbol *field_sym = 0;
+    char *field_ch = 0;
+
+    if (!tdecl) {
+        puts("ic_decl_type_struct_get_field_offset: tdecl was null");
+        return 0;
+    }
+
+    if (!field_name) {
+        puts("ic_decl_type_struct_get_field_offset: field_name was null");
+        return 0;
+    }
+
+    len = ic_decl_type_struct_field_length(tdecl);
+
+    for (i = 0; i < len; ++i) {
+        field = ic_decl_type_struct_field_get(tdecl, i);
+        if (!field) {
+            puts("ic_decl_type_struct_get_field_offset: call to ic_decl_type_struct_field_get failed");
+            return 0;
+        }
+
+        field_sym = &(field->name);
+
+        field_ch = ic_symbol_contents(field_sym);
+        if (!field_ch) {
+            puts("ic_decl_type_struct_get_field_offset: call to ic_symbol_contents failed");
+            return 0;
+        }
+
+        if (0 == strcmp(field_ch, field_name)) {
+            offset = i;
+            goto FOUND;
+        }
+    }
+
+    puts("ic_decl_type_struct_get_field_offset: ERROR: failed to field field name");
+    printf("Was unable to find field_name '%s' in type '%s'\n", field_name, ic_symbol_contents(&(tdecl->name)));
+    return 0;
+
+FOUND:
+
+    return offset;
+}
+
 /* add field to field_dict
  *
  * returns 1 on success
@@ -1924,6 +1983,65 @@ struct ic_decl_type *ic_decl_type_union_get_field_type(struct ic_decl_type_union
     }
 
     return type;
+}
+
+/* get the offset of a field by name
+ *
+ * TODO FIXME no way to indicate failure
+ *
+ * returns n on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_union_get_field_offset(struct ic_decl_type_union *tdecl, char *field_name) {
+    unsigned int offset = 0;
+
+    unsigned int i = 0;
+    unsigned int len = 0;
+    struct ic_field *field = 0;
+
+    struct ic_symbol *field_sym = 0;
+    char *field_ch = 0;
+
+    if (!tdecl) {
+        puts("ic_decl_type_union_get_field_offset: tdecl was null");
+        return 0;
+    }
+
+    if (!field_name) {
+        puts("ic_decl_type_union_get_field_offset: field_name was null");
+        return 0;
+    }
+
+    len = ic_decl_type_union_field_length(tdecl);
+
+    for (i = 0; i < len; ++i) {
+        field = ic_decl_type_union_field_get(tdecl, i);
+        if (!field) {
+            puts("ic_decl_type_union_get_field_offset: call to ic_decl_type_union_field_get failed");
+            return 0;
+        }
+
+        field_sym = &(field->name);
+
+        field_ch = ic_symbol_contents(field_sym);
+        if (!field_ch) {
+            puts("ic_decl_type_union_get_field_offset: call to ic_symbol_contents failed");
+            return 0;
+        }
+
+        if (0 == strcmp(field_ch, field_name)) {
+            offset = i;
+            goto FOUND;
+        }
+    }
+
+    puts("ic_decl_type_union_get_field_offset: ERROR: failed to field field name");
+    printf("Was unable to find field_name '%s' in type '%s'\n", field_name, ic_symbol_contents(&(tdecl->name)));
+    return 0;
+
+FOUND:
+
+    return offset;
 }
 
 /* add field to field_dict
@@ -2473,6 +2591,44 @@ struct ic_decl_type *ic_decl_type_get_field_type(struct ic_decl_type *tdecl, cha
 
         default:
             puts("ic_decl_type_field_type: unknown tag");
+            return 0;
+            break;
+    }
+}
+
+/* get the offset of a field by name
+ *
+ * TODO FIXME no way to indicate failure
+ *
+ * returns n on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_get_field_offset(struct ic_decl_type *tdecl, char *field_name) {
+    unsigned int offset = 0;
+
+    if (!tdecl) {
+        puts("ic_decl_type_field_offset: tdecl was null");
+        return 0;
+    }
+
+    if (!field_name) {
+        puts("ic_decl_type_field_offset: field_name was null");
+        return 0;
+    }
+
+    switch (tdecl->tag) {
+        case ic_decl_type_tag_struct:
+            offset = ic_decl_type_struct_get_field_offset(&(tdecl->u.tstruct), field_name);
+            return offset;
+            break;
+
+        case ic_decl_type_tag_union:
+            offset = ic_decl_type_union_get_field_offset(&(tdecl->u.tunion), field_name);
+            return offset;
+            break;
+
+        default:
+            puts("ic_decl_type_field_offset: unknown tag");
             return 0;
             break;
     }
