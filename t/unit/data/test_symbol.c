@@ -35,19 +35,46 @@ void normal(void) {
 }
 
 void abnormal(void) {
+    struct ic_symbol *sym = 0;
+
     /* test null symbol cases */
     assert(0 == ic_symbol_init(0, 0, 0));
     assert(0 == ic_symbol_contents(0));
     assert(0 == ic_symbol_get(0, 0));
     assert(-1 == ic_symbol_length(0));
     assert(0 == ic_symbol_destroy(0, 0));
+    assert(0 == ic_symbol_equal(0, 0));
+    assert(0 == ic_symbol_equal(sym, 0));
+    assert(0 == ic_symbol_equal_str(0, 0));
+    assert(0 == ic_symbol_equal_str(sym, 0));
+    assert(0 == ic_symbol_equal_char(0, 0));
+    assert(0 == ic_symbol_equal_char(sym, 0));
 
     /* cannot test output */
     ic_symbol_print(stdout, 0);
 }
 
+void equality(void) {
+    struct ic_symbol *sym1 = 0;
+    struct ic_symbol *sym2 = 0;
+
+    sym1 = ic_symbol_new("Hello world", 11);
+    assert(sym1);
+
+    sym2 = ic_symbol_new("Hello world", 11);
+    assert(sym2);
+
+    assert(1 == ic_symbol_equal(sym1, sym2));
+    assert(1 == ic_symbol_equal_char(sym1, "Hello world"));
+    assert(0 == ic_symbol_equal_char(sym1, "Hello world."));
+
+    assert(1 == ic_symbol_destroy(sym1, 1));
+    assert(1 == ic_symbol_destroy(sym2, 1));
+}
+
 int main(void) {
     normal();
+    equality();
     abnormal();
 
     return 0;

@@ -125,6 +125,76 @@ char ic_symbol_get(struct ic_symbol *symbol, unsigned int offset) {
     return ic_string_get(&(symbol->internal), offset);
 }
 
+/* check for equality on symbol
+ *
+ * returns 1 on equal
+ * returns 0 on failure or non-equal
+ */
+unsigned int ic_symbol_equal(struct ic_symbol *a, struct ic_symbol *b) {
+    char *b_ch = 0;
+    if (!a) {
+        puts("ic_symbol_equal: a was null");
+        return 0;
+    }
+
+    if (!b) {
+        puts("ic_symbol_equal: b was null");
+        return 0;
+    }
+
+    b_ch = ic_symbol_contents(b);
+    if (!b_ch) {
+        puts("ic_symbol_equal: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    return ic_symbol_equal_char(a, b_ch);
+}
+
+/* check for equality on symbol
+ *
+ * returns 1 on equal
+ * returns 0 on failure or non-equal
+ */
+unsigned int ic_symbol_equal_str(struct ic_symbol *a, struct ic_string *b) {
+    struct ic_string *a_str = 0;
+
+    if (!a) {
+        puts("ic_symbol_equal_str: a was null");
+        return 0;
+    }
+
+    if (!b) {
+        puts("ic_symbol_equal_str: b was null");
+        return 0;
+    }
+
+    a_str = &(a->internal);
+    return ic_string_equal(a_str, b);
+}
+
+/* check for equality on symbol
+ *
+ * returns 1 on equal
+ * returns 0 on failure or non-equal
+ */
+unsigned int ic_symbol_equal_char(struct ic_symbol *a, char *b) {
+    struct ic_string *a_str = 0;
+
+    if (!a) {
+        puts("ic_symbol_equal_char: a was null");
+        return 0;
+    }
+
+    if (!b) {
+        puts("ic_symbol_equal_char: b was null");
+        return 0;
+    }
+
+    a_str = &(a->internal);
+    return ic_string_equal_char(a_str, b);
+}
+
 /* print this symbol */
 void ic_symbol_print(FILE *fd, struct ic_symbol *symbol) {
     char *con;

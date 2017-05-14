@@ -1,6 +1,7 @@
 TODO:
 -----
 
+* string/symbol should have equality testing methods that take sym/str/char
 * add automatic print/println implementations for user-defined types
 * refactor out locals handling in pancake/compile.c - should share logic when possible
 * all debug/warning messages should go to stderr to make testing easier

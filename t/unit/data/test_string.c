@@ -17,6 +17,7 @@ void normal(void) {
 
     /* check the contents are what we expect */
     assert(!strncmp("hello", ic_string_contents(str), 6));
+    assert(1 == ic_string_equal_char(str, "hello"));
 
     /* test the get interface */
     assert(ic_string_get(str, 0) == 'h');
@@ -39,6 +40,7 @@ void normal(void) {
     assert(1 == ic_string_append(str, str2));
     assert(ic_string_length(str) == 11);
     assert(!strncmp("hello world", ic_string_contents(str), 12));
+    assert(1 == ic_string_equal_char(str, "hello world"));
 
     /* test every detail */
     assert(ic_string_get(str, 0) == 'h');
@@ -126,13 +128,39 @@ void empty_append(void) {
     assert(1 == ic_string_append(&str, tstr));
     assert(11 == ic_string_length(&str));
 
+    assert(0 == ic_string_equal(0, 0));
+    assert(0 == ic_string_equal(&str, 0));
+    assert(0 == ic_string_equal_char(0, 0));
+    assert(0 == ic_string_equal_char(&str, 0));
+
     assert(1 == ic_string_destroy(tstr, 1));
     assert(1 == ic_string_destroy(&str, 0));
+}
+
+void equality(void) {
+    struct ic_string *str1 = 0;
+    struct ic_string *str2 = 0;
+
+    str1 = ic_string_new("Hello world", 11);
+    assert(str1);
+
+    str2 = ic_string_new_empty();
+    assert(str2);
+    assert(1 == ic_string_append_char(str2, "Hello world", 11));
+
+    assert(1 == ic_string_equal(str1, str2));
+
+    assert(1 == ic_string_append_char(str2, ".", 1));
+    assert(0 == ic_string_equal(str1, str2));
+
+    assert(1 == ic_string_destroy(str1, 1));
+    assert(1 == ic_string_destroy(str2, 1));
 }
 
 int main(void) {
     normal();
     empty_append();
+    equality();
     abnormal();
 
     return 0;

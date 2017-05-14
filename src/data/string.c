@@ -424,3 +424,61 @@ void ic_string_print(FILE *fd, struct ic_string *string) {
 
     fprintf(fd, "%s", con);
 }
+
+/* check for equality on string
+ *
+ * returns 1 on equal
+ * returns 0 on failure or non-equal
+ */
+unsigned int ic_string_equal(struct ic_string *a, struct ic_string *b) {
+    char *b_ch = 0;
+    if (!a) {
+        puts("ic_string_equal: a was null");
+        return 0;
+    }
+
+    if (!b) {
+        puts("ic_string_equal: b was null");
+        return 0;
+    }
+
+    b_ch = ic_string_contents(b);
+    if (!b_ch) {
+        puts("ic_string_equal: call to ic_string_contents failed");
+        return 0;
+    }
+
+    return ic_string_equal_char(a, b_ch);
+}
+
+/* check for equality on string
+ *
+ * returns 1 on equal
+ * returns 0 on failure or non-equal
+ */
+unsigned int ic_string_equal_char(struct ic_string *a, char *b) {
+    char *a_ch = 0;
+    if (!a) {
+        puts("ic_string_equal_char: a was null");
+        return 0;
+    }
+
+    if (!b) {
+        puts("ic_string_equal_char: b was null");
+        return 0;
+    }
+
+    a_ch = ic_string_contents(a);
+    if (!a_ch) {
+        puts("ic_string_equal_char: call to ic_string_contents failed");
+        return 0;
+    }
+
+    if (0 == strcmp(a_ch, b)) {
+        /* equal */
+        return 1;
+    }
+
+    /* non-equal */
+    return 0;
+}

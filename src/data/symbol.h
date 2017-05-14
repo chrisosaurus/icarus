@@ -61,6 +61,27 @@ int ic_symbol_length(struct ic_symbol *symbol);
  */
 char ic_symbol_get(struct ic_symbol *symbol, unsigned int offset);
 
+/* check for equality on symbol
+ *
+ * returns 1 on equal
+ * returns 0 on failure or non-equal
+ */
+unsigned int ic_symbol_equal(struct ic_symbol *a, struct ic_symbol *b);
+
+/* check for equality on symbol
+ *
+ * returns 1 on equal
+ * returns 0 on failure or non-equal
+ */
+unsigned int ic_symbol_equal_str(struct ic_symbol *a, struct ic_string *b);
+
+/* check for equality on symbol
+ *
+ * returns 1 on equal
+ * returns 0 on failure or non-equal
+ */
+unsigned int ic_symbol_equal_char(struct ic_symbol *a, char *b);
+
 /* print this symbol */
 void ic_symbol_print(FILE *fd, struct ic_symbol *symbol);
 

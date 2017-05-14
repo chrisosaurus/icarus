@@ -149,6 +149,20 @@ unsigned int ic_string_append_char(struct ic_string *to, char *from, unsigned in
  */
 unsigned int ic_string_append_cstr(struct ic_string *to, char *from);
 
+/* check for equality on string
+ *
+ * returns 1 on equal
+ * returns 0 on failure or non-equal
+ */
+unsigned int ic_string_equal(struct ic_string *a, struct ic_string *b);
+
+/* check for equality on string
+ *
+ * returns 1 on equal
+ * returns 0 on failure or non-equal
+ */
+unsigned int ic_string_equal_char(struct ic_string *a, char *b);
+
 /* print this string */
 void ic_string_print(FILE *fd, struct ic_string *string);
 
