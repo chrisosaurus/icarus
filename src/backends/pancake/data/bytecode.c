@@ -304,7 +304,7 @@ unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_panca
                 return 0;
             }
 
-            fprintf(fd, "panic %s", ch);
+            fprintf(fd, "panic \"%s\"", ch);
 
             return 1;
             break;

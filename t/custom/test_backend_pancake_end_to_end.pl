@@ -393,7 +393,7 @@ my $cases = [
       pushuint 2
       call_builtin equal(Uint,Uint) 2
       jif_label print(Foo)2
-      panic impossible tag
+      panic "impossible tag"
       label print(Foo)0
       load_offset_sint 1
       call_builtin print(Sint) 1
