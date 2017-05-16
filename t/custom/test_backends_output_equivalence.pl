@@ -63,6 +63,31 @@ my $cases = [
       4
     ',
   },
+  {
+    input => '
+        type Bar
+            a::Sint
+        end
+
+        union Foo
+            a::Sint
+            b::String
+            c::Bar
+        end
+
+        fn main()
+            let f1 = Foo(6)
+            println(f1)
+
+            let f2 = Foo(Bar(4))
+            println(f2)
+        end
+    ',
+    expected => '
+      Foo{6}
+      Foo{Bar{4}}
+    ',
+  },
 ];
 
 # whitespace sensitivity sucks
