@@ -132,6 +132,21 @@ unsigned int ic_pvector_destroy(struct ic_pvector *vec, unsigned int free_vec, u
     return 1;
 }
 
+/* simple default destroyer
+ * calls free on every item
+ *
+ * cannot fail
+ *
+ * returns 1 on success
+ */
+unsigned int ic_pvector_destroyer_free(void *item, unsigned int free_item) {
+    if (free_item) {
+        free(item);
+    }
+
+    return 1;
+}
+
 /* get item at pos
  * bounds checked
  *
