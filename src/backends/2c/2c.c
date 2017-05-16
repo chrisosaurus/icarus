@@ -419,6 +419,7 @@ static unsigned int ic_b2c_compile_generate_print_union(struct ic_kludge *kludge
      * ->
      *
      * void i_print_a_Foo(Foo f){
+     *   i_print_a_String("Foo{");
      *   switch (f->_tag) {
      *     case Foo_tag_Sint_a:
      *       i_print_a_Sint(a->u.a);
@@ -429,6 +430,7 @@ static unsigned int ic_b2c_compile_generate_print_union(struct ic_kludge *kludge
      *     default:
      *       panic("impossibel tag on Foo);
      *   }
+     *   i_print_a_String("}");
      * }
      */
 
