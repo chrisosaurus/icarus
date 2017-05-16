@@ -138,7 +138,9 @@ enum ic_backend_pancake_bytecode_arg_type {
 struct ic_backend_pancake_bytecode_arg {
     enum ic_backend_pancake_bytecode_arg_type tag;
     union {
+        /* TODO FIXME leaking this void * */
         void *v;
+        /* TODO FIXME leaking this char * */
         char *ch;
         uint8_t boolean;
         int32_t sint;
@@ -168,7 +170,7 @@ unsigned int ic_backend_pancake_bytecode_init(struct ic_backend_pancake_bytecode
 
 /* destroy a bytecode
  *
- * will only fre bytecode if `free_bytecode` is truthy
+ * will only free bytecode if `free_bytecode` is truthy
  *
  * returns 1 on success
  * returns 0 on failure

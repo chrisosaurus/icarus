@@ -573,8 +573,8 @@ unsigned int i_equal_uint_uint(struct ic_backend_pancake_value_stack *value_stac
     bool answer = 0;
     INIT();
 
-    READ(uint_two, sint);
-    READ(uint_one, sint);
+    READ(uint_two, uint);
+    READ(uint_one, uint);
 
     answer = uint_one == uint_two;
 
