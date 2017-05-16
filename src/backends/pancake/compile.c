@@ -1749,6 +1749,7 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
     struct ic_field *field = 0;
     struct ic_decl_type *field_type = 0;
     unsigned int instructions_offset = 0;
+    char *field_name_ch = 0;
 
     if (!instructions) {
         puts("ic_backend_pancake_generate_functions: instructions was null");
@@ -1915,7 +1916,7 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                     return 0;
                 }
                 if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, alloc_size)) {
-                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for cons_struct");
                     return 0;
                 }
 
@@ -1929,7 +1930,7 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                         return 0;
                     }
                     if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, i_arg)) {
-                        puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                        puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for cons_struct");
                         return 0;
                     }
 
@@ -1940,7 +1941,7 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                         return 0;
                     }
                     if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, i_arg)) {
-                        puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                        puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for cons_struct");
                         return 0;
                     }
                 }
@@ -1977,8 +1978,173 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                 break;
 
             case ic_generate_tag_cons_union:
-                puts("ic_backend_pancake_generate_functions: gen->tag cons_union unimplemented");
-                return 0;
+                /* union Foo
+                 *  a::Sint
+                 *  b::String
+                 * end
+                 *
+                 *
+                 * first member
+                 * ->
+                 *
+                 * label Foo(Sint)
+                 * alloc 2
+                 * pushuint 0
+                 * store_offset 0
+                 * copyarg 0
+                 * store_offset 1
+                 * save
+                 * clean_stack
+                 * restore
+                 * return_value
+                 *
+                 * second member
+                 * ->
+                 *
+                 * label Foo(String)
+                 * alloc 1
+                 * pushuint 1
+                 * store_offset 0
+                 * copyarg 0
+                 * store_offset 1
+                 * save
+                 * clean_stack
+                 * restore
+                 * return_value
+                 */
+
+                /* get length - which is offset of next instruction */
+                instructions_offset = ic_backend_pancake_instructions_length(instructions);
+
+                /* register function at offset */
+                if (!ic_backend_pancake_instructions_register_label(instructions, fdecl_sig_call, instructions_offset)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_register_label failed for cons_union");
+                    return 0;
+                }
+
+                /* insert function label instruction */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_label);
+                if (!instruction) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_sig_call)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_char failed");
+                    return 0;
+                }
+
+                n_args = ic_decl_type_field_length(tdecl);
+                if (!n_args) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_decl_type_field_length failed, zero-length objects not supported in pancake");
+                    return 0;
+                }
+
+                /* union object size is always 2
+                 * slot 0 for uint tag
+                 * slot 1 for data
+                 */
+                alloc_size = 2;
+
+                /* alloc <size> */
+                /* insert `copyarg argn` instruction */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_alloc);
+                if (!instruction) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, alloc_size)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for cons_union");
+                    return 0;
+                }
+
+                /* we need to insert the field number into slot 0 */
+                field = ic_generate_get_union_field(gen);
+                if (!field) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_generate_get_union_field failed for cons_union");
+                    return 0;
+                }
+                /* pushuint */
+                field_name_ch = ic_symbol_contents(&(field->name));
+                if (!field_name_ch) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_symbol_contents failed for cons_union");
+                    return 0;
+                }
+                i_arg = ic_decl_type_get_field_offset(tdecl, field_name_ch);
+
+                /* pushuint <field offset> */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_pushuint);
+                if (!instruction) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, i_arg)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for cons_union");
+                    return 0;
+                }
+
+                /* store argument */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_store_offset);
+                if (!instruction) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 0)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for cons_union");
+                    return 0;
+                }
+
+                /* for our single arg ... */
+                /* insert `copyarg argn` instruction */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_copyarg);
+                if (!instruction) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 0)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for cons_union");
+                    return 0;
+                }
+
+                /* we always store arg 0 in slot 1 */
+                /* store argument */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_store_offset);
+                if (!instruction) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 1)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for cons_union");
+                    return 0;
+                }
+
+                /* save */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_save);
+                if (!instruction) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+
+                /* clean_stack */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_clean_stack);
+                if (!instruction) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+
+                /* restore */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_restore);
+                if (!instruction) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+
+                /* return_value */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_return_value);
+                if (!instruction) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+
                 break;
 
             case ic_generate_tag_print:
