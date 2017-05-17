@@ -538,12 +538,14 @@ unsigned int ic_b2c_compile_stmt_match(struct ic_kludge *input_kludge, struct ic
 
     fputs("    default:\n", out);
     if (match->else_body) {
+        fputs("      {\n", out);
         /* if else_body provided, use that for default */
         /* else body */
         if (!ic_b2c_compile_body(input_kludge, match->else_body, out)) {
             puts("ic_b2c_compile_stmt_match: call to ic_b2c_compile_body failed for else_body");
             return 0;
         }
+        fputs("      }\n", out);
     } else {
         /* otherwise insert our own default */
         fprintf(out, "    panic(\"unknown case for _tag on type '%s\");\n", type_name_ch);
