@@ -654,6 +654,11 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                         goto ERROR;
                     }
 
+                    if (!ic_type_ref_set_type_decl(&(field->type), field_type)) {
+                        puts("ic_analyse_body: match: call to ic_type_ref_set_type_decl failed");
+                        goto ERROR;
+                    }
+
                     fetched_field_type = ic_decl_type_get_field_type(type, field_name_char);
                     if (!fetched_field_type) {
                         puts("ic_analyse_body: match: call to ic_decl_type_get_field_type failed");
