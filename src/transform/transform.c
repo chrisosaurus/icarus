@@ -1684,6 +1684,13 @@ static struct ic_symbol *ic_transform_fcall_arg(struct ic_kludge *kludge, struct
             /* FIXME ownership */
             sym = &(arg->u.id.identifier);
             /* FIXME ownership */
+
+            /* check sym exists in scope */
+            if (!ic_scope_get_from_symbol(scope, sym)) {
+                puts("ic_transform_fcall_arg: identifier not found in scope (for identifier)");
+                printf("identifier not found: '%s'\n", ic_symbol_contents(sym));
+                return 0;
+            }
             return sym;
             break;
 
