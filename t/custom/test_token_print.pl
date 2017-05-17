@@ -58,10 +58,12 @@ print testing
 42 : /
 43 : (
 44 : )
-45 : <=
-46 : >=
-47 : <
-48 : >
+45 : [
+46 : ]
+47 : <=
+48 : >=
+49 : <
+50 : >
 ---------
 
 print debug testing
@@ -111,10 +113,12 @@ print debug testing
 42 : IC_DIVIDE
 43 : IC_LRBRACKET
 44 : IC_RRBRACKET
-45 : IC_LESSTHAN_EQUAL
-46 : IC_GREATERTHAN_EQUAL
-47 : IC_LESSTHAN
-48 : IC_GREATERTHAN
+45 : IC_LSBRACKET
+46 : IC_RSBRACKET
+47 : IC_LESSTHAN_EQUAL
+48 : IC_GREATERTHAN_EQUAL
+49 : IC_LESSTHAN
+50 : IC_GREATERTHAN
 ---------
 EOF
 

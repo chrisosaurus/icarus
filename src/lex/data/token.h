@@ -62,7 +62,10 @@ enum ic_token_id {
     IC_DIVIDE,
 
     IC_LRBRACKET, /* ( left round bracket */
-    IC_RRBRACKET, /* ) right round backet */
+    IC_RRBRACKET, /* ) right round bracket */
+
+    IC_LSBRACKET, /* [ left square bracket */
+    IC_RSBRACKET, /* ] right square bracket */
 
     IC_LESSTHAN_EQUAL,    /* <= */
     IC_GREATERTHAN_EQUAL, /* >= */

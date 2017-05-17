@@ -235,6 +235,13 @@ char *ic_token_id_get_representation(enum ic_token_id id) {
             return ")";
             break;
 
+        case IC_LSBRACKET:
+            return "[";
+            break;
+        case IC_RSBRACKET:
+            return "]";
+            break;
+
         case IC_LESSTHAN_EQUAL:
             return "<=";
             break;
@@ -682,6 +689,13 @@ void ic_token_id_print_debug(FILE *fd, enum ic_token_id id) {
             break;
         case IC_RRBRACKET:
             fputs("IC_RRBRACKET", fd);
+            break;
+
+        case IC_LSBRACKET:
+            fputs("IC_LSBRACKET", fd);
+            break;
+        case IC_RSBRACKET:
+            fputs("IC_RSBRACKET", fd);
             break;
 
         case IC_LESSTHAN_EQUAL:

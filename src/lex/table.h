@@ -72,6 +72,9 @@ struct ic_table_entry table[] = {
     {"(", 1, IC_LRBRACKET},
     {")", 1, IC_RRBRACKET},
 
+    {"[", 1, IC_LSBRACKET},
+    {"]", 1, IC_RSBRACKET},
+
     {"<=", 2, IC_LESSTHAN_EQUAL},
     {">=", 2, IC_GREATERTHAN_EQUAL},
     {"<", 1, IC_LESSTHAN},
