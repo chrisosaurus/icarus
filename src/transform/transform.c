@@ -841,6 +841,7 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
 
     struct ic_expr_identifier *expr_id = 0;
     struct ic_decl_type *expr_id_type = 0;
+    struct ic_scope *child_scope = 0;
 
     if (!kludge) {
         puts("ic_transform_stmt_if: kludge was null");
@@ -929,11 +930,21 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
         return 0;
     }
 
-    /* FIXME TODO probably need new scope ... */
+    /* need new scope */
+    child_scope = ic_scope_new(scope);
+    if (!child_scope) {
+        puts("ic_transform_stmt_if: call to ic_scope_new failed");
+        return 0;
+    }
 
     /* dispatch to transform_body for work */
-    if (!ic_transform_body(kludge, scope, tif->then_tbody, sif->then_body)) {
+    if (!ic_transform_body(kludge, child_scope, tif->then_tbody, sif->then_body)) {
         puts("ic_transform_fdecl: call to ic_transform_body failed");
+        return 0;
+    }
+
+    if (!ic_scope_destroy(child_scope, 1)) {
+        puts("ic_transform_stmt_if: call to ic_scope_destroy failed");
         return 0;
     }
 
@@ -948,11 +959,21 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
             return 0;
         }
 
-        /* FIXME TODO probably need new scope ... */
+        /* need new scope */
+        child_scope = ic_scope_new(scope);
+        if (!child_scope) {
+            puts("ic_transform_stmt_if: call to ic_scope_new failed");
+            return 0;
+        }
 
         /* dispatch to transform_body for work */
-        if (!ic_transform_body(kludge, scope, tif->else_tbody, sif->else_body)) {
+        if (!ic_transform_body(kludge, child_scope, tif->else_tbody, sif->else_body)) {
             puts("ic_transform_fdecl: call to ic_transform_body failed");
+            return 0;
+        }
+
+        if (!ic_scope_destroy(child_scope, 1)) {
+            puts("ic_transform_stmt_if: call to ic_scope_destroy failed");
             return 0;
         }
     }
@@ -1120,11 +1141,21 @@ static unsigned int ic_transform_stmt_match(struct ic_kludge *kludge, struct ic_
             return 0;
         }
 
-        /* FIXME TODO probably need new scope ... */
+        /* need new scope */
+        child_scope = ic_scope_new(scope);
+        if (!child_scope) {
+            puts("ic_transform_stmt_match: call to ic_scope_new failed");
+            return 0;
+        }
 
         /* dispatch to transform_body for work */
-        if (!ic_transform_body(kludge, scope, tmatch->else_body, match->else_body)) {
+        if (!ic_transform_body(kludge, child_scope, tmatch->else_body, match->else_body)) {
             puts("ic_transform_stmt_match: call to ic_transform_body failed");
+            return 0;
+        }
+
+        if (!ic_scope_destroy(child_scope, 1)) {
+            puts("ic_transform_stmt_match: call to ic_scope_destroy failed");
             return 0;
         }
     }
