@@ -1202,6 +1202,11 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
 
             break;
 
+        case ic_transform_ir_stmt_type_match:
+            puts("ic_backend_pancake_compile_stmt: match not yet supported");
+            return 0;
+            break;
+
         default:
             puts("ic_backend_pancake_compile_stmt: impossible case");
             return 0;
