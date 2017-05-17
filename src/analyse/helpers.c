@@ -259,9 +259,9 @@ ERROR:
  */
 unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_decl_func *fdecl) {
     /* index into body */
-    unsigned int i = 0;
+    unsigned int i_stmt = 0;
     /* len of body */
-    unsigned int len = 0;
+    unsigned int n_stmts = 0;
     /* current statement in body */
     struct ic_stmt *stmt = 0;
     /* expr from stmt */
@@ -295,6 +295,10 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
     unsigned int match_cases = 0;
     struct ic_scope *match_scope = 0;
     struct ic_slot *slot = 0;
+    /* index into cases */
+    unsigned int i_case = 0;
+    /* number of cases */
+    unsigned int n_cases = 0;
 
     if (!unit) {
         puts("ic_analyse_body: unit was null");
@@ -324,12 +328,12 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
     /* step through body checking each statement
      * FIXME
      */
-    len = ic_body_length(body);
-    for (i = 0; i < len; ++i) {
-        stmt = ic_body_get(body, i);
+    n_stmts = ic_body_length(body);
+    for (i_stmt = 0; i_stmt < n_stmts; ++i_stmt) {
+        stmt = ic_body_get(body, i_stmt);
         if (!stmt) {
             printf("ic_analyse_body: call to ic_body_get failed for i '%d' in '%s' for '%s'\n",
-                   i,
+                   i_stmt,
                    unit,
                    unit_name);
             goto ERROR;
@@ -614,9 +618,10 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                  * 3) that every possible filed of the union is dealt with OR there is an else
                  */
 
-                len = ic_stmt_match_cases_length(match);
-                for (i = 0; i < len; ++i) {
-                    scase = ic_stmt_match_cases_get(match, i);
+                n_cases = ic_stmt_match_cases_length(match);
+
+                for (i_case = 0; i_case < n_cases; ++i_case) {
+                    scase = ic_stmt_match_cases_get(match, i_case);
                     if (!scase) {
                         puts("ic_analyse_body: match: call to ic_stmt_match_cases_get failed");
                         goto ERROR;
@@ -725,10 +730,10 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                     }
                 } else {
                     /* otherwise, check we matched every possible case */
-                    len = ic_decl_type_field_length(type);
+                    n_cases = ic_decl_type_field_length(type);
 
-                    if (match_cases != len) {
-                        printf("ic_analyse_body: match: insufficient match_cases, expected '%d', found '%d'\n", len, match_cases);
+                    if (match_cases != n_cases) {
+                        printf("ic_analyse_body: match: insufficient match_cases, expected '%d', found '%d'\n", n_cases, match_cases);
                         puts("ic_analyse_body: match: insufficient match_cases");
                         goto ERROR;
                     }
