@@ -515,6 +515,533 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
 
     return 1;
 }
+static unsigned int ic_backend_pancake_compile_stmt_match(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_stmt *tstmt, struct ic_labeller *labeller) {
+    /* vector of labels used for match cases */
+    struct ic_pvector *labels = 0;
+    char *label = 0;
+    unsigned int label_offset = 0;
+
+    unsigned int i_case = 0;
+    unsigned int n_cases = 0;
+    int pvector_ret = 0;
+
+    struct ic_backend_pancake_bytecode *instruction = 0;
+
+    struct ic_field *field = 0;
+    unsigned int field_offset = 0;
+    struct ic_decl_type *field_type = 0;
+
+    struct ic_transform_ir_match *tmatch = 0;
+    struct ic_decl_type *tdecl = 0;
+    struct ic_transform_ir_match_case *tcase = 0;
+
+    struct ic_scope *child_scope = 0;
+
+    char *name_ch = 0;
+    struct ic_backend_pancake_local *local = 0;
+
+    if (!instructions) {
+        puts("ic_backend_pancake_compile_stmt_match: instructions was null");
+        return 0;
+    }
+
+    if (!kludge) {
+        puts("ic_backend_pancake_compile_stmt_match: kludge was null");
+        return 0;
+    }
+
+    if (!scope) {
+        puts("ic_backend_pancake_compile_stmt_match: scope was null");
+        return 0;
+    }
+
+    if (!tstmt) {
+        puts("ic_backend_pancake_compile_stmt_match: tstmt was null");
+        return 0;
+    }
+
+    if (!labeller) {
+        puts("ic_backend_pancake_compile_stmt_match: labeller was null");
+        return 0;
+    }
+
+    tmatch = ic_transform_ir_stmt_get_match(tstmt);
+    if (!tmatch) {
+        puts("ic_backend_pancake_compile_stmt_match: call to ic_transform_ir_stmt_get_match failed");
+        return 0;
+    }
+
+    tdecl = tmatch->tdecl;
+
+    /* union Foo
+     *  a::Sint
+     *  b::String
+     * end
+     *
+     * fn main()
+     *   let f = Foo(...)
+     *   match f
+     *     case a::Sint
+     *       println(a)
+     *     case b::String
+     *       println(b)
+     *     end
+     *  end
+     * end
+     *
+     * ->
+     *
+     * label main()
+     * ...
+     * <copy f onto stack>
+     * load_offset_uint 0
+     * pushuint 0
+     * call_builtin equal(Uint,Uint) 2
+     * jif_label main()0
+     *
+     * load_offset_uint 0
+     * pushuint 1
+     * call_builtin equal(Uint,Uint) 2
+     * jif_label main()1
+     *
+     * panic "Impossible tag"
+     *
+     * label main()0
+     * <copy f onto stack>
+     * load_offset_sint 1
+     * call_builtin print(Sint) 1
+     * jmp_label main()2
+     *
+     * label main()1
+     * <copy f onto stack>
+     * load_offset_string 1
+     * call_builtin print(String) 1
+     * jmp_label main()2
+     *
+     * jmp_label main()2
+     * label main()2
+     * clean_stack
+     * return_void
+     *
+     */
+
+    labels = ic_pvector_new(0);
+    if (!labels) {
+        puts("ic_backend_pancake_compile_stmt_match: call to ic_pvector_new failed");
+        return 0;
+    }
+
+    /* load struct */
+    name_ch = ic_symbol_contents(tmatch->match_symbol);
+    if (!name_ch) {
+        puts("ic_backend_pancake_compile_stmt_match: let faccess call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    local = ic_scope_get(scope, name_ch);
+    if (!local) {
+        puts("ic_backend_pancake_compile_stmt_match: call to ic_scope_get failed");
+        return 0;
+    }
+
+    /* mark as accessed */
+    local->accessed = true;
+    switch (local->tag) {
+        case icpl_offset:
+            /* insert `copyarg argn` instruction */
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_copyarg);
+            if (!instruction) {
+                puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
+                return 0;
+            }
+            if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, local->u.offset)) {
+                puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                return 0;
+            }
+
+            break;
+
+        case icpl_runtime:
+            /* insert `load key` instruction */
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load);
+            if (!instruction) {
+                puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
+                return 0;
+            }
+            if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, name_ch)) {
+                puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_char");
+                return 0;
+            }
+            break;
+
+        default:
+            puts("ic_backend_pancake_compile_stmt_match: local was not runtime or offset, unsupported");
+            return 0;
+    }
+
+    /* for each case
+     * load_offset_uint 0
+     * check if eq to i_arg
+     * if so jump
+     */
+
+    n_cases = ic_pvector_length(&(tmatch->cases));
+
+    if (n_cases == 0 && tmatch->else_body == 0) {
+        puts("ic_backend_pancake_compile_stmt_match: zero-length matches not supported");
+        return 0;
+    }
+
+    for (i_case = 0; i_case < n_cases; ++i_case) {
+        tcase = ic_pvector_get(&(tmatch->cases), i_case);
+        if (!tcase) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        /* load_offset_uint 0 */
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_uint);
+        if (!instruction) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
+            return 0;
+        }
+
+        if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 0)) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+            return 0;
+        }
+
+        /* pushuint <field_offset> */
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_pushuint);
+        if (!instruction) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
+            return 0;
+        }
+
+        field = tcase->field;
+        field_offset = ic_decl_type_get_field_offset(tdecl, ic_symbol_contents(&(field->name)));
+
+        if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, field_offset)) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+            return 0;
+        }
+
+        /* call_builtin equal(Uint, Uint) 2 */
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_call_builtin);
+        if (!instruction) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
+            return 0;
+        }
+
+        if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, "equal(Uint,Uint)")) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_char failed");
+            return 0;
+        }
+
+        if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 2)) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
+            return 0;
+        }
+
+        /* generate our new label */
+        label = ic_labeller_generate(labeller);
+        if (!label) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_labeller_generate failed");
+            return 0;
+        }
+
+        /* save our label for the next for loop */
+        pvector_ret = ic_pvector_append(labels, label);
+        if (pvector_ret != (int)i_case) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_pvector_append failed");
+            printf("for case '%u' our call to ic_pvector_append returned '%d'\n", i_case, pvector_ret);
+            return 0;
+        }
+
+        /* jif_label <fname><i_arg> */
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_jif_label);
+        if (!instruction) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
+            return 0;
+        }
+
+        if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, label)) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_char failed");
+            return 0;
+        }
+    }
+
+    /* final label */
+    label = ic_labeller_generate(labeller);
+    if (!label) {
+        puts("ic_backend_pancake_compile_stmt_match: call to ic_labeller_generate failed");
+        return 0;
+    }
+
+    pvector_ret = ic_pvector_append(labels, label);
+    if (pvector_ret != (int)n_cases) {
+        puts("ic_backend_pancake_compile_stmt_match: call to ic_pvector_append failed");
+        printf("for n_cases '%u' our call to ic_pvector_append returned '%d'\n", n_cases, pvector_ret);
+        return 0;
+    }
+
+    if (tmatch->else_body) {
+        /* compile body */
+
+        /* make new child scope for else_body */
+        child_scope = ic_scope_new(scope);
+        if (!child_scope) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_scope_new failed");
+            return 0;
+        }
+
+        /* compile else_tbody */
+        if (!ic_backend_pancake_compile_body(instructions, kludge, tmatch->else_body, child_scope, labeller)) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_compile_body failed");
+            return 0;
+        }
+
+        /* tidy up child_scope */
+        if (!ic_scope_destroy(child_scope, 1)) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_scope_destroy failed");
+            return 0;
+        }
+
+        /* jump to final label */
+        /* insert jmp to final place
+         * jmp_label <fname><n_args>
+         */
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_jmp_label);
+        if (!instruction) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
+            return 0;
+        }
+
+        if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, label)) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_char failed");
+            return 0;
+        }
+    } else {
+        /* insert panic in case we matched none of the above conditions */
+        /* panic "impossible tag */
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_panic);
+        if (!instruction) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
+            return 0;
+        }
+
+        if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, "impossible tag")) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_char failed");
+            return 0;
+        }
+    }
+
+    /* for each case
+     * create label
+     * unpack appropriate type
+     * generate call to appropriate print function
+     * jump to final place
+     */
+    for (i_case = 0; i_case < n_cases; ++i_case) {
+        tcase = ic_pvector_get(&(tmatch->cases), i_case);
+        if (!tcase) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        /* get our label from the pvector */
+        label = ic_pvector_get(labels, i_case);
+        if (!label) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        /* register label */
+        /* get length - which is offset of next instruction */
+        label_offset = ic_backend_pancake_instructions_length(instructions);
+
+        /* register function at offset */
+        if (!ic_backend_pancake_instructions_register_label(instructions, label, label_offset)) {
+            puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_register_label failed");
+            return 0;
+        }
+
+        /* label print(<TYPENAME>)<i_arg> */
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_label);
+        if (!instruction) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
+            return 0;
+        }
+
+        if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, label)) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_char failed");
+            return 0;
+        }
+
+        field = tcase->field;
+
+        /* get field_type */
+        field_type = ic_type_ref_get_type_decl(&(field->type));
+        if (!field_type) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_type_ref_get_type_decl failed");
+            return 0;
+        }
+
+        if (ic_decl_type_isbool(field_type)) {
+            /* load_offset_bool <i_arg> */
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_bool);
+            if (!instruction) {
+                puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
+                return 0;
+            }
+        } else if (ic_decl_type_isstring(field_type)) {
+            /* load_offset_str <i_arg> */
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_str);
+            if (!instruction) {
+                puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
+                return 0;
+            }
+        } else if (ic_decl_type_isuint(field_type)) {
+            /* load_offset_uint <i_arg> */
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_uint);
+            if (!instruction) {
+                puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
+                return 0;
+            }
+        } else if (ic_decl_type_issint(field_type)) {
+            /* load_offset_sint <i_arg> */
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_sint);
+            if (!instruction) {
+                puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
+                return 0;
+            }
+        } else {
+            /* load_offset_ref <i_arg> */
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_ref);
+            if (!instruction) {
+                puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
+                return 0;
+            }
+        }
+
+        if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 1)) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+            return 0;
+        }
+
+        /* make new child scope for else_body */
+        child_scope = ic_scope_new(scope);
+        if (!child_scope) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_scope_new failed");
+            return 0;
+        }
+
+        name_ch = ic_symbol_contents(&(field->name));
+        if (!name_ch) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_symbol_contents failed");
+            return 0;
+        }
+
+        /* case field is now on top of stack
+         * store it
+         */
+        /* insert `store name_ch` instruction */
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_store);
+        if (!instruction) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
+            return 0;
+        }
+        if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, name_ch)) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+            return 0;
+        }
+
+        local = ic_backend_pancake_local_new(&(field->name), icpl_runtime);
+        if (!local) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_local_new failed");
+            return 0;
+        }
+
+        if (!ic_scope_insert(scope, name_ch, local)) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_scope_insert failed");
+            return 0;
+        }
+
+        /* compile tcase->*/
+        if (!ic_backend_pancake_compile_body(instructions, kludge, tcase->tbody, child_scope, labeller)) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_compile_body failed");
+            return 0;
+        }
+
+        /* tidy up child_scope */
+        if (!ic_scope_destroy(child_scope, 1)) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_scope_destroy failed");
+            return 0;
+        }
+
+        label = ic_pvector_get(labels, n_cases);
+        if (!label) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        /* insert jmp to final place
+         * jmp_label <fname><n_args>
+         */
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_jmp_label);
+        if (!instruction) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
+            return 0;
+        }
+
+        if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, label)) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_char failed");
+            return 0;
+        }
+    }
+
+    label = ic_pvector_get(labels, n_cases);
+    if (!label) {
+        puts("ic_backend_pancake_compile_stmt_match: call to ic_pvector_get failed");
+        return 0;
+    }
+
+    /* register label */
+    /* get length - which is offset of next instruction */
+    label_offset = ic_backend_pancake_instructions_length(instructions);
+
+    /* register function at offset */
+    if (!ic_backend_pancake_instructions_register_label(instructions, label, label_offset)) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_register_label failed");
+        return 0;
+    }
+
+    /* insert label <fname><nargs> */
+    instruction = ic_backend_pancake_instructions_add(instructions, icp_label);
+    if (!instruction) {
+        puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
+        return 0;
+    }
+
+    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, label)) {
+        puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_char failed");
+        return 0;
+    }
+
+    /* TODO FIXME leaking labels
+     * here we do NOT use ic_pvector_destroyer_free as we need the labels to
+     * still be allocated when we output / interpret our instructions
+     * this means we are leaking them
+     * TODO FIXME we need a way of signalling that the instruction 'owns' this
+     * data and should free it
+     */
+    if (!ic_pvector_destroy(labels, 1, 0)) {
+        puts("ic_backend_pancake_compile_stmt_match: call to ic_pvector_destroy failed");
+        return 0;
+    }
+
+    return 1;
+}
 
 /* compile an stmt into bytecode
  *
@@ -707,7 +1234,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
 
                     /* insert icp_store instruction under name of let */
                     name_ch = ic_symbol_contents(tlet_expr->name);
-                    if (fcall_is_void) {
+                    if (!name_ch) {
                         puts("ic_backend_pancake_compile_stmt: let expr call to ic_symbol_contents failed");
                         return 0;
                     }
@@ -748,7 +1275,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
 
                     /* load struct */
                     name_ch = ic_symbol_contents(tlet_faccess->left);
-                    if (fcall_is_void) {
+                    if (!name_ch) {
                         puts("ic_backend_pancake_compile_stmt: let faccess call to ic_symbol_contents failed");
                         return 0;
                     }
@@ -765,11 +1292,11 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
                             /* insert `copyarg argn` instruction */
                             instruction = ic_backend_pancake_instructions_add(instructions, icp_copyarg);
                             if (!instruction) {
-                                puts("ic_backend_pancake_compile_fcall: call to ic_backend_pancake_instructions_add failed");
+                                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_instructions_add failed");
                                 return 0;
                             }
                             if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, field_local->u.offset)) {
-                                puts("ic_backend_pancake_compile_fcall: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
                                 return 0;
                             }
 
@@ -803,7 +1330,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
                     /* load_offset */
                     /* load struct */
                     name_ch = ic_symbol_contents(tlet_faccess->right);
-                    if (fcall_is_void) {
+                    if (!name_ch) {
                         puts("ic_backend_pancake_compile_stmt: let faccess call to ic_symbol_contents failed");
                         return 0;
                     }
@@ -842,7 +1369,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
 
                     /* insert icp_store instruction under name of let */
                     name_ch = ic_symbol_contents(tlet_faccess->name);
-                    if (fcall_is_void) {
+                    if (!name_ch) {
                         puts("ic_backend_pancake_compile_stmt: let faccess call to ic_symbol_contents failed");
                         return 0;
                     }
@@ -1203,59 +1730,10 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
             break;
 
         case ic_transform_ir_stmt_type_match:
-            /* union Foo
-             *  a::Sint
-             *  b::String
-             * end
-             *
-             * fn main()
-             *   let f = Foo(...)
-             *   match f
-             *     case a::Sint
-             *       println(a)
-             *     case b::String
-             *       println(b)
-             *     end
-             *  end
-             * end
-             *
-             * ->
-             *
-             * label main()
-             * ...
-             * <copy f onto stack>
-             * load_offset_uint 0
-             * pushuint 0
-             * call_builtin equal(Uint,Uint) 2
-             * jif_label main()0
-             *
-             * load_offset_uint 0
-             * pushuint 1
-             * call_builtin equal(Uint,Uint) 2
-             * jif_label main()1
-             *
-             * panic "Impossible tag"
-             *
-             * label main()0
-             * <copy f onto stack>
-             * load_offset_sint 1
-             * call_builtin print(Sint) 1
-             * jmp_label main()2
-             *
-             * label main()1
-             * <copy f onto stack>
-             * load_offset_string 1
-             * call_builtin print(String) 1
-             * jmp_label main()2
-             *
-             * jmp_label main()2
-             * label main()2
-             * clean_stack
-             * return_void
-             *
-             */
-            puts("ic_backend_pancake_compile_stmt: match not yet supported");
-            return 0;
+            if (!ic_backend_pancake_compile_stmt_match(instructions, kludge, scope, tstmt, labeller)) {
+                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_compile_stmt_match failed");
+                return 0;
+            }
             break;
 
         default:
@@ -2050,7 +2528,7 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
             return 0;
         }
 
-        if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, i_arg)) {
+        if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 2)) {
             puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
             return 0;
         }

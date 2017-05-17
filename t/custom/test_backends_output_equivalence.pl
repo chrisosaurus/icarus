@@ -128,7 +128,44 @@ my $cases = [
     expected => '
       Shape{Rectangle{Point{14, 10}, Point{20, 24}}}
     ',
-  }
+  },
+  {
+    input => '
+      union Foo
+        a::Sint
+        b::String
+        c::Bar
+      end
+
+      type Bar
+        b::Sint
+      end
+
+      fn main()
+        let f = Foo(Bar(4))
+
+        match f
+          else
+            println(f)
+          end
+        end
+
+        match f
+          case c::Bar
+            println(c)
+            println(c.b)
+          else
+            println("NOPE")
+          end
+        end
+      end
+    ',
+    expected => '
+      Foo{Bar{4}}
+      Bar{4}
+      4
+    ',
+  },
 ];
 
 # whitespace sensitivity sucks

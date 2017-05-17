@@ -383,11 +383,11 @@ my $cases = [
       copyarg 0
       load_offset_uint 0
       pushuint 0
-      call_builtin equal(Uint,Uint) 0
+      call_builtin equal(Uint,Uint) 2
       jif_label print(Foo)0
       load_offset_uint 0
       pushuint 1
-      call_builtin equal(Uint,Uint) 1
+      call_builtin equal(Uint,Uint) 2
       jif_label print(Foo)1
       load_offset_uint 0
       pushuint 2
