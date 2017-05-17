@@ -88,6 +88,47 @@ my $cases = [
       Foo{Bar{4}}
     ',
   },
+  {
+    input => '
+      type Point
+          x::Sint
+          y::Sint
+      end
+
+      type Square
+          topleft::Point
+          width::Uint
+      end
+
+      type Rectangle
+          topleft::Point
+          bottomright::Point
+      end
+
+      type Circle
+          center::Point
+          radius::Uint
+      end
+
+      union Shape
+          circle::Circle
+          square::Square
+          rectangle::Rectangle
+      end
+
+      fn generate_shape() -> Shape
+          return Shape(Rectangle(Point(14, 10), Point(20, 24)))
+      end
+
+      fn main()
+          let s = generate_shape()
+          println(s)
+      end
+    ',
+    expected => '
+      Shape{Rectangle{Point{14, 10}, Point{20, 24}}}
+    ',
+  }
 ];
 
 # whitespace sensitivity sucks
