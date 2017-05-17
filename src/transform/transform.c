@@ -982,6 +982,7 @@ static unsigned int ic_transform_stmt_match(struct ic_kludge *kludge, struct ic_
     struct ic_stmt_case *scase = 0;
     struct ic_slot *slot = 0;
     struct ic_decl_type *tdecl = 0;
+    struct ic_scope *child_scope = 0;
 
     if (!kludge) {
         puts("ic_transform_stmt_match: kludge was null");
@@ -1067,16 +1068,45 @@ static unsigned int ic_transform_stmt_match(struct ic_kludge *kludge, struct ic_
             return 0;
         }
 
-        /* FIXME TODO probably need new scope ... */
+        /* need new scope */
+        child_scope = ic_scope_new(scope);
+        if (!child_scope) {
+            puts("ic_transform_stmt_match: call to ic_scope_new failed");
+            return 0;
+        }
+
+        /* need to create slot in scope to insert case expr */
+        tdecl = ic_type_ref_get_type_decl(&(scase->field.type));
+        if (!tdecl) {
+            puts("ic_transform_stmt_match: call to ic_type_ref_get_type_dec; failed");
+            return 0;
+        }
+
+        slot = ic_slot_new(&(scase->field.name), tdecl, 0, 0, ic_slot_type_let, scase);
+        if (!slot) {
+            puts("ic_transform_stmt_match: call to ic_slot_new failed");
+            return 0;
+        }
+
+        /* need to store slot in body->scope */
+        if (!ic_scope_insert_symbol(child_scope, &(scase->field.name), slot)) {
+            puts("ic_transform_stmt_match: call to ic_scope_insert_symbol failed");
+            return 0;
+        }
 
         /* dispatch to transform_body for work */
-        if (!ic_transform_body(kludge, scope, tcase->tbody, scase->body)) {
+        if (!ic_transform_body(kludge, child_scope, tcase->tbody, scase->body)) {
             puts("ic_transform_stmt_match: call to ic_transform_body failed");
             return 0;
         }
 
         if (-1 == ic_pvector_append(&(tmatch->cases), tcase)) {
             puts("ic_transform_stmt_match: call to ic_pvector_append failed");
+            return 0;
+        }
+
+        if (!ic_scope_destroy(child_scope, 1)) {
+            puts("ic_transform_stmt_match: call to ic_scope_destroy failed");
             return 0;
         }
     }
