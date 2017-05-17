@@ -926,7 +926,7 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
     /* create new nested body */
     tif->then_tbody = ic_transform_body_new_child(tbody);
     if (!tif->then_tbody) {
-        puts("ic_transform_fdecl: call to ic_transform_body_new_child failed");
+        puts("ic_transform_stmt_if: call to ic_transform_body_new_child failed");
         return 0;
     }
 
@@ -939,7 +939,7 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
 
     /* dispatch to transform_body for work */
     if (!ic_transform_body(kludge, child_scope, tif->then_tbody, sif->then_body)) {
-        puts("ic_transform_fdecl: call to ic_transform_body failed");
+        puts("ic_transform_stmt_if: call to ic_transform_body failed");
         return 0;
     }
 
@@ -955,7 +955,7 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
         /* create new nested body */
         tif->else_tbody = ic_transform_body_new_child(tbody);
         if (!tif->else_tbody) {
-            puts("ic_transform_fdecl: call to ic_transform_body_new failed");
+            puts("ic_transform_stmt_if: call to ic_transform_body_new failed");
             return 0;
         }
 
@@ -968,7 +968,7 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
 
         /* dispatch to transform_body for work */
         if (!ic_transform_body(kludge, child_scope, tif->else_tbody, sif->else_body)) {
-            puts("ic_transform_fdecl: call to ic_transform_body failed");
+            puts("ic_transform_stmt_if: call to ic_transform_body failed");
             return 0;
         }
 
@@ -979,7 +979,7 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_sco
     }
 
     if (!ic_transform_body_append(tbody, tstmt)) {
-        puts("ic_transform_stmt_ret: call to ic_transform_body_append failed");
+        puts("ic_transform_stmt_if: call to ic_transform_body_append failed");
         return 0;
     }
 
