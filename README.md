@@ -373,13 +373,11 @@ If we run this program we can see the output
 Current focus
 =============
 
-The two backends are roughly now on-par with each other,
-so the focus has now shifted to adding some more of the basic language
-features.
+Icarus supports user defined struct and union types across both backends,
+the focus has now shifted to adding some more of the basic language features.
 
 I think the most essentials parts to add are:
 
- * user defined data types - structs, unions, and enums
  * parameterised (generic) data types - such as Vector[T] and Maybe[T]
  * looping constructs - for loops
 
