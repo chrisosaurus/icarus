@@ -1203,6 +1203,57 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
             break;
 
         case ic_transform_ir_stmt_type_match:
+            /* union Foo
+             *  a::Sint
+             *  b::String
+             * end
+             *
+             * fn main()
+             *   let f = Foo(...)
+             *   match f
+             *     case a::Sint
+             *       println(a)
+             *     case b::String
+             *       println(b)
+             *     end
+             *  end
+             * end
+             *
+             * ->
+             *
+             * label main()
+             * ...
+             * <copy f onto stack>
+             * load_offset_uint 0
+             * pushuint 0
+             * call_builtin equal(Uint,Uint) 2
+             * jif_label main()0
+             *
+             * load_offset_uint 0
+             * pushuint 1
+             * call_builtin equal(Uint,Uint) 2
+             * jif_label main()1
+             *
+             * panic "Impossible tag"
+             *
+             * label main()0
+             * <copy f onto stack>
+             * load_offset_sint 1
+             * call_builtin print(Sint) 1
+             * jmp_label main()2
+             *
+             * label main()1
+             * <copy f onto stack>
+             * load_offset_string 1
+             * call_builtin print(String) 1
+             * jmp_label main()2
+             *
+             * jmp_label main()2
+             * label main()2
+             * clean_stack
+             * return_void
+             *
+             */
             puts("ic_backend_pancake_compile_stmt: match not yet supported");
             return 0;
             break;
