@@ -26,7 +26,7 @@ end
 fn fizzbuzz(from::Sint, to::Sint)
   if from < to
     fizzer(from)
-    from = plus(from, 1)
+    from = from + 1
     fizzbuzz(from, to)
   end
 end

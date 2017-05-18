@@ -109,7 +109,7 @@ if we input the following file (which can be found in `example/fizzer.ic`):
     fn fizzbuzz(from::Sint, to::Sint)
       if from < to
         fizzer(from)
-        from = plus(from, 1)
+        from = from + 1
         fizzbuzz(from, to)
       end
     end
