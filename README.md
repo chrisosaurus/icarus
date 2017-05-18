@@ -44,7 +44,7 @@ the below example will not yet run in Icarus
                 &arr.append(num)
             end
 
-            print(join(" ", arr))
+            print(arr.join(" "))
         end
     end
 

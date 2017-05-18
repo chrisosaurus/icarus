@@ -19,7 +19,7 @@ fn fizzbuzz(from::Sint, to::Sint)
             &arr.append(num)
         end
 
-        print(join(" ", arr))
+        print(arr.join(" "))
     end
 end
 
