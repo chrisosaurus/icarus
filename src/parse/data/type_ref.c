@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "decl.h"
+#include "type_param.h"
 #include "type_ref.h"
 
 /* allocate and intialise a new type
@@ -138,6 +139,10 @@ unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_typ
             }
             break;
 
+        case ic_type_ref_param:
+            /* FIXME TODO what to do here ? */
+            break;
+
         case ic_type_ref_resolved:
             /* decl_type is freed elsewhere */
             break;
@@ -186,6 +191,12 @@ unsigned int ic_type_ref_set_symbol(struct ic_type_ref *type, char *type_str, un
         case ic_type_ref_symbol:
             /* error, already a symbol */
             puts("ic_type_ref_set_symbol: type was already a symbol");
+            return 0;
+            break;
+
+        case ic_type_ref_param:
+            /* error, already a symbol */
+            puts("ic_type_ref_set_symbol: type was already param");
             return 0;
             break;
 
@@ -242,6 +253,15 @@ struct ic_symbol *ic_type_ref_get_symbol(struct ic_type_ref *type) {
             return sym;
             break;
 
+        case ic_type_ref_param:
+            sym = ic_type_param_get_name(type->u.tparam);
+            if (!sym) {
+                puts("ic_type_ref_get_symbol: call to ic_type_param_get_name failed");
+                return 0;
+            }
+            return sym;
+            break;
+
         case ic_type_ref_resolved:
             /* the decl_type already has a symbol name */
             sym = ic_decl_type_get_name(type->u.tdecl);
@@ -291,6 +311,11 @@ unsigned int ic_type_ref_set_type_decl(struct ic_type_ref *type, struct ic_decl_
             }
             break;
 
+        case ic_type_ref_param:
+            puts("ic_type_ref_set_symbol: type was already a param");
+            return 0;
+            break;
+
         case ic_type_ref_resolved:
             puts("ic_type_ref_set_symbol: type was already resolved");
             return 0;
@@ -314,6 +339,8 @@ unsigned int ic_type_ref_set_type_decl(struct ic_type_ref *type, struct ic_decl_
  * returns 0 on failure
  */
 struct ic_decl_type *ic_type_ref_get_type_decl(struct ic_type_ref *type) {
+    struct ic_decl_type *tdecl = 0;
+
     if (!type) {
         puts("ic_type_ref_get_type_decl: type was null");
         return 0;
@@ -331,8 +358,18 @@ struct ic_decl_type *ic_type_ref_get_type_decl(struct ic_type_ref *type) {
             return 0;
             break;
 
+        case ic_type_ref_param:
+            tdecl = ic_type_param_get(type->u.tparam);
+            if (!tdecl) {
+                puts("ic_type_ref_get_type_decl: call to ic_type_param_get failed");
+                return 0;
+            }
+            return tdecl;
+            break;
+
         case ic_type_ref_resolved:
-            return type->u.tdecl;
+            tdecl = type->u.tdecl;
+            return tdecl;
             break;
 
         default:
@@ -361,6 +398,10 @@ void ic_type_ref_print(FILE *fd, struct ic_type_ref *type) {
             /* if we are of type symbol then just print that symbol */
             sym = &(type->u.sym);
             ic_symbol_print(fd, sym);
+            break;
+
+        case ic_type_ref_param:
+            ic_type_param_print(fd, type->u.tparam);
             break;
 
         case ic_type_ref_resolved:

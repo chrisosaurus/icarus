@@ -18,6 +18,12 @@ enum ic_type_ref_tag {
      */
     ic_type_ref_symbol,
 
+    /* a type_param set during parse time
+     * this is then resolved at analysis type to a concrete type per template
+     * instantiation
+     */
+    ic_type_ref_param,
+
     /* we have found a concrete type for this
      * this is filled in during the analysis phase
      */
@@ -29,8 +35,9 @@ struct ic_type_ref {
     enum ic_type_ref_tag tag;
     union {
         /* no value for unknown */
-        struct ic_symbol sym;       /* value for ic_type_ref_symbol */
-        struct ic_decl_type *tdecl; /* value for ic_type_ref_resolved */
+        struct ic_symbol sym;         /* value for ic_type_ref_symbol */
+        struct ic_type_param *tparam; /* value for ic_type_ref_param */
+        struct ic_decl_type *tdecl;   /* value for ic_type_ref_resolved */
     } u;
 };
 
