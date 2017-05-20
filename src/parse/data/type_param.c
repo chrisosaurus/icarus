@@ -69,7 +69,7 @@ unsigned int ic_type_param_destroy(struct ic_type_param *tparam, unsigned int fr
         return 0;
     }
 
-    if (!ic_symbol_destroy(&(tparam->name), 1)) {
+    if (!ic_symbol_destroy(&(tparam->name), 0)) {
         puts("ic_type_param_destroy: call to ic_symbol_destry failed");
         return 0;
     }
