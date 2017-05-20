@@ -175,6 +175,15 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
         }
     }
 
+    /* destroy args pvector itself
+     * do not free as member
+     * do not clean up elems as done above
+     */
+    if (!ic_pvector_destroy(&(fdecl->args), 0, 0)) {
+            puts("ic_decl_func_destroy: call to ic_pvector_destroy failed");
+            return 0;
+    }
+
     /* only need to free if we have a ret_type */
     if (fdecl->ret_type) {
         /* free symbol contents and free symbol
