@@ -64,6 +64,12 @@ unsigned int ic_decl_func_init(struct ic_decl_func *fdecl, char *name, unsigned 
         return 0;
     }
 
+    /* initialise empty type_params pvector */
+    if (!ic_pvector_init(&(fdecl->type_params), 0)) {
+        puts("ic_decl_func_init: call to ic_pvector_init failed");
+        return 0;
+    }
+
     /* initialise empty args pvector */
     if (!ic_pvector_init(&(fdecl->args), 0)) {
         puts("ic_decl_func_init: call to ic_pvector_init failed");
@@ -118,6 +124,7 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
     int i = 0;
     int len = 0;
 
+    struct ic_type_param *tparam = 0;
     struct ic_field *field = 0;
 
     if (!fdecl) {
@@ -157,8 +164,33 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
         return 0;
     }
 
-    len = ic_pvector_length(&(fdecl->args));
+    len = ic_pvector_length(&(fdecl->type_params));
+    for (i = 0; i < len; ++i) {
+        tparam = ic_pvector_get(&(fdecl->type_params), i);
+        if (!tparam) {
+            puts("ic_decl_func_destroy: call to ic_pvector_get failed");
+            return 0;
+        }
 
+        /* dispatch to type_param destroy
+         * free_tparam set to 1
+         */
+        if (!ic_type_param_destroy(tparam, 1)) {
+            puts("ic_decl_func_destroy: call to ii_type_param_destroy failed");
+            return 0;
+        }
+    }
+
+    /* destroy args pvector itself
+     * do not free as member
+     * do not clean up elems as done above
+     */
+    if (!ic_pvector_destroy(&(fdecl->type_params), 0, 0)) {
+        puts("ic_decl_func_destroy: call to ic_pvector_destroy failed");
+        return 0;
+    }
+
+    len = ic_pvector_length(&(fdecl->args));
     for (i = 0; i < len; ++i) {
         field = ic_pvector_get(&(fdecl->args), i);
         if (!field) {
@@ -180,8 +212,8 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
      * do not clean up elems as done above
      */
     if (!ic_pvector_destroy(&(fdecl->args), 0, 0)) {
-            puts("ic_decl_func_destroy: call to ic_pvector_destroy failed");
-            return 0;
+        puts("ic_decl_func_destroy: call to ic_pvector_destroy failed");
+        return 0;
     }
 
     /* only need to free if we have a ret_type */
@@ -223,6 +255,69 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
 
     /* success */
     return 1;
+}
+
+/* add new type_param to decl_func
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_func_type_params_add(struct ic_decl_func *fdecl, struct ic_type_param *tparam) {
+    if (!fdecl) {
+        puts("ic_decl_func_type_params_add: fdecl was null");
+        return 0;
+    }
+
+    if (!tparam) {
+        puts("ic_decl_func_type_params_add: tparam was null");
+        return 0;
+    }
+
+    /* append field returns -1 on failure */
+    if (-1 == ic_pvector_append(&(fdecl->type_params), tparam)) {
+        puts("ic_decl_func_type_params_add: call to ic_pvector_append failed");
+        return 0;
+    }
+
+    return 1;
+}
+
+/* get length of type_params
+ *
+ * returns len on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_func_type_params_length(struct ic_decl_func *fdecl) {
+    unsigned int len = 0;
+    if (!fdecl) {
+        puts("ic_decl_func_type_params_length: fdecl was null");
+        return 0;
+    }
+
+    len = ic_pvector_length(&(fdecl->type_params));
+    return len;
+}
+
+/* get type_param at i
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type_param *ic_decl_func_type_params_get(struct ic_decl_func *fdecl, unsigned int i) {
+    struct ic_type_param *tparam = 0;
+
+    if (!fdecl) {
+        puts("ic_decl_func_type_params_get: fdecl null");
+        return 0;
+    }
+
+    tparam = ic_pvector_get(&(fdecl->type_params), i);
+    if (!tparam) {
+        puts("ic_decl_func_type_params_get: call to ic_pvector_get failed");
+        return 0;
+    }
+
+    return tparam;
 }
 
 /* add new arg field to decl_func
@@ -431,20 +526,34 @@ void ic_decl_func_print_header(FILE *fd, struct ic_decl_func *fdecl, unsigned in
     }
 
     /* print `function`, name, and opening bracket */
-    printf("fn %s(", ic_symbol_contents(&(fdecl->name)));
+    fprintf(fd, "fn %s", ic_symbol_contents(&(fdecl->name)));
 
+    /* print type params, if they exist */
+    len = ic_pvector_length(&(fdecl->type_params));
+    if (len > 0) {
+        fputs("[", fd);
+        for (i = 0; i < len; ++i) {
+            /* add comma and space between type_params */
+            if (i > 0) {
+                fputs(", ", fd);
+            }
+
+            ic_type_param_print(fd, ic_pvector_get(&(fdecl->type_params), i));
+        }
+        fputs("]", fd);
+    }
+
+    fputs("(", fd);
     len = ic_pvector_length(&(fdecl->args));
 
     /* print arguments */
     for (i = 0; i < len; ++i) {
-        ic_field_print(fd, ic_pvector_get(&(fdecl->args), i));
-
-        /* print a comma and space between each arg
-         * but only if we are not the last arg
-         */
-        if (i < (len - 1)) {
+        /* print a comma and space between each arg */
+        if (i > 0) {
             fputs(", ", fd);
         }
+
+        ic_field_print(fd, ic_pvector_get(&(fdecl->args), i));
     }
 
     /* closing bracket and return type arrow */

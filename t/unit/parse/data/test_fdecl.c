@@ -7,6 +7,7 @@
 
 int main(void) {
     struct ic_field *field = 0;
+    struct ic_type_param *tparam = 0;
     struct ic_decl_func *fdecl = 0;
     /* fake indent level */
     unsigned int fake_indent = 0;
@@ -18,21 +19,40 @@ int main(void) {
     /* check type name is correct */
     assert(!strncmp(ic_symbol_contents(&(fdecl->name)), "Foo", 3));
 
-    /* check vector is zero used
-     * FIXME expose length methods
-     */
-    assert(fdecl->args.used == 0);
+    /* check vector is zero used */
+    assert(0 == fdecl->args.used);
+    assert(0 == ic_decl_func_args_length(fdecl));
+    assert(0 == fdecl->type_params.used);
+    assert(0 == ic_decl_func_type_params_length(fdecl));
 
     /* add some fields */
     field = ic_field_new("a", 1, "Sint", 3, ic_parse_perm_default());
     assert(field);
     assert(1 == ic_decl_func_args_add(fdecl, field));
+    assert(1 == fdecl->args.used);
+    assert(1 == ic_decl_func_args_length(fdecl));
 
     field = ic_field_new("b", 1, "String", 6, ic_parse_perm_default());
     assert(field);
     assert(1 == ic_decl_func_args_add(fdecl, field));
+    assert(2 == fdecl->args.used);
+    assert(2 == ic_decl_func_args_length(fdecl));
 
-    printf("Should see:\n# Foo(int String)\nfn Foo(a::Sint b::String) -> Void\nend\n");
+    /* add some type params */
+    tparam = ic_type_param_new("A", 1);
+    assert(tparam);
+    assert(1 == ic_decl_func_type_params_add(fdecl, tparam));
+    assert(1 == fdecl->type_params.used);
+    assert(1 == ic_decl_func_type_params_length(fdecl));
+
+    tparam = ic_type_param_new("B", 1);
+    assert(tparam);
+    assert(1 == ic_decl_func_type_params_add(fdecl, tparam));
+    assert(2 == fdecl->type_params.used);
+    assert(2 == ic_decl_func_type_params_length(fdecl));
+
+    /* TODO FIXME decide if the sig_call should also include type_params */
+    printf("Should see:\n# Foo(int String)\nfn Foo[A,B](a::Sint b::String) -> Void\nend\n");
 
     /* output type */
     puts("Output:");

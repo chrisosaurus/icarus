@@ -6,6 +6,7 @@
 #include "../../data/symbol.h"
 #include "body.h"
 #include "field.h"
+#include "type_param.h"
 
 /* predeclare to allow usage of *ic_transform_body
  * within decl_func
@@ -24,7 +25,10 @@ struct ic_decl_func {
      */
     struct ic_symbol name;
 
-    /* a pointer vector of fields */
+    /* a pointer vector of type_param(s) */
+    struct ic_pvector type_params;
+
+    /* a pointer vector of field(s) */
     struct ic_pvector args;
 
     /* return type is optional
@@ -86,6 +90,27 @@ unsigned int ic_decl_func_init(struct ic_decl_func *fdecl, char *name, unsigned 
  * returns 0 on failure
  */
 unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_fdecl);
+
+/* add new type_param to decl_func
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_func_type_params_add(struct ic_decl_func *fdecl, struct ic_type_param *tparam);
+
+/* get length of type_params
+ *
+ * returns len on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_func_type_params_length(struct ic_decl_func *fdecl);
+
+/* get type_param at i
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type_param *ic_decl_func_type_params_get(struct ic_decl_func *fdecl, unsigned int i);
 
 /* add new arg field to decl_func
  *
