@@ -852,6 +852,12 @@ unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func 
         return 0;
     }
 
+    /* check this function is NOT generic as we do not yet support that */
+    if (0 != ic_decl_func_type_params_length(fdecl)) {
+        puts("ic_analyse_decl_func: fdecl with type_params given, generic functions not yet supported");
+        return 0;
+    }
+
     /* name of this func, useful for error printing */
     this_func = ic_decl_func_sig_call(fdecl);
     if (!this_func) {
