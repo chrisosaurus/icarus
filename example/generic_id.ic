@@ -1,0 +1,13 @@
+fn id[T](t::T) -> T
+    return t
+end
+
+type Foo
+    a::Sint
+end
+
+fn main()
+    println(id(10))
+    println(id("Hello"))
+    println(id(Foo(1)))
+end

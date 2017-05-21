@@ -45,5 +45,5 @@ if( $exit_status != 0 || $output ne $expected ){
     }
 }
 
-say "test_parse_example: successs";
+say "test_parse_union successs";
 

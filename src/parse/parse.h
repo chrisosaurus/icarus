@@ -50,6 +50,8 @@ struct ic_body *ic_parse_body(struct ic_token_list *token_list, unsigned int con
 
 /**** parse/decl.c ****/
 
+unsigned int ic_parse_decl_optional_type_params(struct ic_token_list *token_list, struct ic_pvector *type_params);
+
 struct ic_decl *ic_parse_decl_builtin(struct ic_token_list *token_list);
 
 struct ic_decl *ic_parse_decl_func(struct ic_token_list *token_list);

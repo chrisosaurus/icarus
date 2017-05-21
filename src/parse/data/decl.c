@@ -601,6 +601,12 @@ void ic_decl_func_print_body(FILE *fd, struct ic_decl_func *fdecl, unsigned int 
  * this function will return
  *      foo(Sint,Sint)
  *
+ * for a function signature
+ *      fn bar[A,B](a::A, b::B) -> A
+ *
+ * this function will return
+ *      bar[A,B](A,B)
+ *
  * the char* returned is a string stored within fdecl,
  * this means the caller must not free or mutate this string
  *
@@ -616,6 +622,8 @@ char *ic_decl_func_sig_call(struct ic_decl_func *fdecl) {
     struct ic_string *fstr = 0;
     /* each field we consider in args */
     struct ic_field *field = 0;
+    /* each type param we consider in type_params */
+    struct ic_type_param *tparam = 0;
     /* temporary symbol for current field type */
     struct ic_symbol *cur_type = 0;
     /* permission str */
@@ -634,13 +642,48 @@ char *ic_decl_func_sig_call(struct ic_decl_func *fdecl) {
         return ic_string_contents(fstr);
     }
 
-    /* note that we do not check for length as a length of 0 is valid */
-    len = ic_pvector_length(&(fdecl->args));
-
     /* fdecl->name */
     if (!ic_string_append_symbol(fstr, &(fdecl->name))) {
         puts("ic_decl_func_sig_call: name: call to ic_string_append_symbol failed");
         return 0;
+    }
+
+    /* check if we have any type params to do... */
+    len = ic_decl_func_type_params_length(fdecl);
+    /* iterate through, only print [] if type_params was non zero */
+    if (len > 0) {
+        /* opening [ bracket */
+        if (!ic_string_append_char(fstr, "[", 1)) {
+            puts("ic_decl_func_sig_call: opening brace: call to ic_string_append_char failed");
+            return 0;
+        }
+
+        for (i = 0; i < len; ++i) {
+            /* insert a comma if we are not the first argument */
+            if (i > 0) {
+                if (!ic_string_append_char(fstr, ",", 1)) {
+                    puts("ic_decl_func_sig_call: arg: call to ic_string_append_char failed");
+                    return 0;
+                }
+            }
+
+            tparam = ic_decl_func_type_params_get(fdecl, i);
+            if (!tparam) {
+                puts("ic_decl_func_sig_call: call to ic_decl_func_type_params_get failed");
+                return 0;
+            }
+
+            if (!ic_string_append_symbol(fstr, &(tparam->name))) {
+                puts("ic_decl_func_sig_call: arg: call to ic_string_append_symbol failed");
+                return 0;
+            }
+        }
+
+        /* closing ] bracket */
+        if (!ic_string_append_char(fstr, "]", 1)) {
+            puts("ic_decl_func_sig_call: opening brace: call to ic_string_append_char failed");
+            return 0;
+        }
     }
 
     /* opening bracket */
@@ -648,6 +691,9 @@ char *ic_decl_func_sig_call(struct ic_decl_func *fdecl) {
         puts("ic_decl_func_sig_call: opening brace: call to ic_string_append_char failed");
         return 0;
     }
+
+    /* note that we do not check for length as a length of 0 is valid */
+    len = ic_pvector_length(&(fdecl->args));
 
     /* iterate through args appending the type name to our string representation
      */

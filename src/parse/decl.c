@@ -506,6 +506,107 @@ struct ic_decl *ic_parse_decl_union_body(struct ic_token_list *token_list, struc
     return 0;
 }
 
+unsigned int ic_parse_decl_optional_type_params(struct ic_token_list *token_list, struct ic_pvector *type_params) {
+    struct ic_token *token = 0;
+    struct ic_type_param *tparam = 0;
+    char *name = 0;
+    unsigned int name_len = 0;
+
+    if (!token_list) {
+        puts("ic_parse_decl_optional_type_params: token_list was null");
+        return 0;
+    }
+
+    if (!type_params) {
+        puts("ic_parse_decl_optional_type_params: type_params was null");
+        return 0;
+    }
+
+    token = ic_token_list_peek_important(token_list);
+    if (!token) {
+        puts("ic_parse_decl_optional_type_params: call to ic_token_list_peek_important failed");
+        return 0;
+    }
+
+    /* if we find a left square bracket then we are ready */
+    if (token->id != IC_LSBRACKET) {
+        /* no such bracket found, still a success */
+        return 1;
+    }
+
+    /* consume [ */
+    token = ic_token_list_expect_important(token_list, IC_LSBRACKET);
+    if (!token) {
+        puts("ic_parse_decl_optional_type_params: call to ic_token_list_expect_important failed for LSBRACKET");
+        return 0;
+    }
+
+    /* process each type param */
+    while ((token = ic_token_list_peek_important(token_list))) {
+        /* keep going until ] */
+        if (token->id == IC_RSBRACKET) {
+            /* a right bracket `)` is the end of our arg list */
+            break;
+        }
+
+        /* if there is a COMMA, consume it out of the way
+         * this makes commas optional
+         * FIXME TODO consider if this is right
+         */
+        if (token->id == IC_COMMA) {
+            /* consume */
+            token = ic_token_list_expect_important(token_list, IC_COMMA);
+            if (!token) {
+                puts("ic_parse_decl_optional_type_params: call to ic_token_list_expect_important failed for ','");
+                return 0;
+            }
+        }
+
+        /* move token along one */
+        token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
+        if (!token) {
+            puts("ic_parse_decl_optional_type_params: call to ic_token_list_expect_important failed");
+            return 0;
+        }
+
+        /* pull out our name */
+        name = ic_token_get_string(token);
+        name_len = ic_token_get_string_length(token);
+        if (!name || !name_len) {
+            puts("ic_parse_decl_optional_type_params: failed to extract name from token");
+            return 0;
+        }
+
+        /* make a tparam */
+        tparam = ic_type_param_new(name, name_len);
+        if (!tparam) {
+            puts("ic_parse_decl_optional_type_params: call to ic_type_param_new failed");
+            return 0;
+        }
+
+        /* append it */
+        if (-1 == ic_pvector_append(type_params, tparam)) {
+            puts("ic_parse_decl_optional_type_params: call to ic_pvector failed");
+            return 0;
+        }
+    }
+
+    if (!token) {
+        puts("ic_parse_decl_optional_type_params: call to ic_token_list_peek_important failed");
+        return 0;
+    }
+
+    /* consume ] */
+    token = ic_token_list_expect_important(token_list, IC_RSBRACKET);
+    if (!token) {
+        puts("ic_parse_decl_optional_type_params: call to ic_token_list_expect_important failed for RSBRACKET");
+        return 0;
+    }
+
+    /* success */
+    return 1;
+}
+
 struct ic_decl *ic_parse_decl_func(struct ic_token_list *token_list) {
     struct ic_decl *decl = 0;
 
@@ -587,6 +688,13 @@ struct ic_decl *ic_parse_decl_func_header(struct ic_token_list *token_list) {
         return 0;
     }
 
+    /* optionally parse type parameters */
+    if (!ic_parse_decl_optional_type_params(token_list, &(fdecl->type_params))) {
+        puts("ic_parse_decl_func_header: call to ic_parse_decl_optional_type_params failed");
+        free(decl);
+        return 0;
+    }
+
     /* parse arguments */
     /* opening bracket */
     token = ic_token_list_expect_important(token_list, IC_LRBRACKET);
@@ -615,7 +723,7 @@ struct ic_decl *ic_parse_decl_func_header(struct ic_token_list *token_list) {
                 return 0;
             }
 
-            /* move token along one just in case */
+            /* move token along one */
             token = ic_token_list_peek_important(token_list);
             if (!token) {
                 puts("ic_parse_decl_func_header: call to ic_token_list_peek_important failed after ','");

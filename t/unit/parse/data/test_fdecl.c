@@ -51,8 +51,7 @@ int main(void) {
     assert(2 == fdecl->type_params.used);
     assert(2 == ic_decl_func_type_params_length(fdecl));
 
-    /* TODO FIXME decide if the sig_call should also include type_params */
-    printf("Should see:\n# Foo(int String)\nfn Foo[A,B](a::Sint b::String) -> Void\nend\n");
+    printf("Should see:\n# Foo[A,B](Sint,String)\nfn Foo[A, B](a::Sint, b::String) -> Void\nend\n");
 
     /* output type */
     puts("Output:");
