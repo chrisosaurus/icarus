@@ -21,6 +21,45 @@ Type inferring of type params is also harder, so skip for now.
       nothing::Nothing
     end
 
+Type instantiation
+------------------
+
+When the user uses the type `Maybe[Sint]` via:
+
+    let q = Maybe[Sint](6)
+
+or
+
+    let q::Maybe[Sint] = ...
+
+or
+
+    fn foo(m::Maybe[Sint]) -> Sint
+      ...
+    end
+
+or
+
+    fn bar() -> Maybe[Sint]
+      ...
+    end
+
+or
+
+    type Foo
+      m::Maybe[Sint]
+    end
+
+or
+
+    union Baz
+      m::Maybe[Sint]
+    end
+
+We have to check if `Maybe[Sint]` has already been instantiated,
+if so we use that,
+if not we trigger an instantiation.
+
 Functions
 =========
 
