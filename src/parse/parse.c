@@ -27,9 +27,9 @@ static struct ic_parse_table_entry {
     /* token          function    */
     {IC_BUILTIN, ic_parse_decl_builtin},
     {IC_FUNC, ic_parse_decl_func},
-    {IC_TYPE, ic_parse_decl_type},
+    {IC_TYPE, ic_parse_decl_type_struct},
     {IC_ENUM, ic_parse_decl_enum},
-    {IC_UNION, ic_parse_decl_union},
+    {IC_UNION, ic_parse_decl_type_union},
 };
 
 struct ic_ast *ic_parse(struct ic_token_list *token_list) {

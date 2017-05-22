@@ -60,19 +60,19 @@ struct ic_decl *ic_parse_decl_func_header(struct ic_token_list *token_list);
 
 struct ic_decl *ic_parse_decl_func_body(struct ic_token_list *token_list, struct ic_decl *decl);
 
-struct ic_decl *ic_parse_decl_type(struct ic_token_list *token_list);
+struct ic_decl *ic_parse_decl_type_struct(struct ic_token_list *token_list);
 
-struct ic_decl *ic_parse_decl_type_header(struct ic_token_list *token_list);
+struct ic_decl *ic_parse_decl_type_struct_header(struct ic_token_list *token_list);
 
-struct ic_decl *ic_parse_decl_type_body(struct ic_token_list *token_list, struct ic_decl *decl);
+struct ic_decl *ic_parse_decl_type_struct_body(struct ic_token_list *token_list, struct ic_decl *decl);
 
 struct ic_decl *ic_parse_decl_enum(struct ic_token_list *token_list);
 
-struct ic_decl *ic_parse_decl_union(struct ic_token_list *token_list);
+struct ic_decl *ic_parse_decl_type_union(struct ic_token_list *token_list);
 
-struct ic_decl *ic_parse_decl_union_header(struct ic_token_list *token_list);
+struct ic_decl *ic_parse_decl_type_union_header(struct ic_token_list *token_list);
 
-struct ic_decl *ic_parse_decl_union_body(struct ic_token_list *token_list, struct ic_decl *decl);
+struct ic_decl *ic_parse_decl_type_union_body(struct ic_token_list *token_list, struct ic_decl *decl);
 
 struct ic_decl *ic_parse_decl_op(struct ic_token_list *token_list);
 
