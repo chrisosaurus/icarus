@@ -243,6 +243,9 @@ unsigned int ic_decl_func_is_void(struct ic_decl_func *fdecl);
 struct ic_decl_type_struct {
     struct ic_symbol name;
 
+    /* a pointer vector of type_param(s) */
+    struct ic_pvector type_params;
+
     /* a pointer vector of field(s) */
     struct ic_pvector fields;
 
@@ -456,6 +459,27 @@ char *ic_decl_type_struct_str(struct ic_decl_type_struct *tdecl);
  */
 char *ic_decl_type_struct_sig_mangled_full(struct ic_decl_type_struct *tdecl);
 
+/* add new type_param to decl_struct
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_struct_type_params_add(struct ic_decl_type_struct *tdecl, struct ic_type_param *tparam);
+
+/* get length of type_params
+ *
+ * returns len on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_struct_type_params_length(struct ic_decl_type_struct *tdecl);
+
+/* get type_param at i
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type_param *ic_decl_type_struct_type_params_get(struct ic_decl_type_struct *tdecl, unsigned int i);
+
 /* get number of fields
  *
  * returns number on success
@@ -502,6 +526,9 @@ unsigned int ic_decl_type_struct_equal(struct ic_decl_type_struct *a, struct ic_
 
 struct ic_decl_type_union {
     struct ic_symbol name;
+
+    /* a pointer vector of type_param(s) */
+    struct ic_pvector type_params;
 
     /* a pointer vector of field(s) */
     struct ic_pvector fields;
@@ -579,6 +606,27 @@ struct ic_symbol *ic_decl_type_union_name(struct ic_decl_type_union *tdecl);
  * returns 0 on failure
  */
 char *ic_decl_type_union_str(struct ic_decl_type_union *tdecl);
+
+/* add new type_param to decl_union
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_union_type_params_add(struct ic_decl_type_union *udecl, struct ic_type_param *tparam);
+
+/* get length of type_params
+ *
+ * returns len on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_union_type_params_length(struct ic_decl_type_union *udecl);
+
+/* get type_param at i
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type_param *ic_decl_type_union_type_params_get(struct ic_decl_type_union *udecl, unsigned int i);
 
 /* get number of fields
  *
@@ -727,6 +775,27 @@ struct ic_symbol *ic_decl_type_name(struct ic_decl_type *tdecl);
  * returns 0 on failure
  */
 char *ic_decl_type_str(struct ic_decl_type *tdecl);
+
+/* add new type_param to decl
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_type_params_add(struct ic_decl_type *tdecl, struct ic_type_param *tparam);
+
+/* get length of type_params
+ *
+ * returns len on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_type_params_length(struct ic_decl_type *tdecl);
+
+/* get type_param at i
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type_param *ic_decl_type_type_params_get(struct ic_decl_type *tdecl, unsigned int i);
 
 /* add a new field to types list of fields
  *

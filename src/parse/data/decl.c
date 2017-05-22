@@ -1069,7 +1069,13 @@ unsigned int ic_decl_type_struct_init(struct ic_decl_type_struct *tdecl, char *n
         return 0;
     }
 
-    /* init fields pvector */
+    /* init fields pvector type_params */
+    if (!ic_pvector_init(&(tdecl->type_params), 0)) {
+        puts("ic_decl_type_struct_init: call to ic_pvector_init for type_params failed");
+        return 0;
+    }
+
+    /* init fields pvector fields */
     if (!ic_pvector_init(&(tdecl->fields), 0)) {
         puts("ic_decl_type_struct_init: call to ic_pvector_init for fields failed");
         return 0;
@@ -1107,8 +1113,9 @@ unsigned int ic_decl_type_struct_init(struct ic_decl_type_struct *tdecl, char *n
  * returns 0 on failure
  */
 unsigned int ic_decl_type_struct_destroy(struct ic_decl_type_struct *tdecl, unsigned int free_tdecl) {
-    int i = 0;
-    int len = 0;
+    unsigned int i = 0;
+    unsigned int len = 0;
+    struct ic_type_param *tparam = 0;
     struct ic_field *field = 0;
 
     if (!tdecl) {
@@ -1124,17 +1131,37 @@ unsigned int ic_decl_type_struct_destroy(struct ic_decl_type_struct *tdecl, unsi
         return 0;
     }
 
-    len = ic_pvector_length(&(tdecl->fields));
-    if (len == -1) {
-        puts("ic_decl_type_struct_destroy: call to ic_body_length failed");
-        return 0;
-    }
+    len = ic_decl_type_struct_type_params_length(tdecl);
 
     /* loop through each item destroying */
     for (i = 0; i < len; ++i) {
-        field = ic_pvector_get(&(tdecl->fields), i);
+        tparam = ic_decl_type_struct_type_params_get(tdecl, i);
+        if (!tparam) {
+            puts("ic_decl_type_struct_destroy: call to ic_decl_type_struct_type_params_get failed");
+            return 0;
+        }
+
+        /* dispatch to field destroy
+         * free_field set to 1
+         */
+        if (!ic_type_param_destroy(tparam, 1)) {
+            puts("ic_decl_type_struct_destroy: call to ic_type_param_destroy failed");
+            return 0;
+        }
+    }
+
+    if (!ic_pvector_destroy(&(tdecl->type_params), 0, 0)) {
+        puts("ic_decl_type_struct_destroy: call to ic_pvector_destroy failed");
+        return 0;
+    }
+
+    len = ic_decl_type_struct_field_length(tdecl);
+
+    /* loop through each item destroying */
+    for (i = 0; i < len; ++i) {
+        field = ic_decl_type_struct_field_get(tdecl, i);
         if (!field) {
-            puts("ic_decl_type_struct_destroy: call to ic_pvector_get failed");
+            puts("ic_decl_type_struct_destroy: call to ic_decl_type_struct_field_get failed");
             return 0;
         }
 
@@ -1145,6 +1172,11 @@ unsigned int ic_decl_type_struct_destroy(struct ic_decl_type_struct *tdecl, unsi
             puts("ic_decl_type_struct_destroy: call to ic_field_destroy failed");
             return 0;
         }
+    }
+
+    if (!ic_pvector_destroy(&(tdecl->fields), 0, 0)) {
+        puts("ic_decl_type_struct_destroy: call to ic_pvector_destroy failed");
+        return 0;
     }
 
     /* destroy field_dict */
@@ -1372,6 +1404,9 @@ void ic_decl_type_struct_print(FILE *fd, struct ic_decl_type_struct *tdecl, unsi
 }
 
 void ic_decl_type_struct_print_header(FILE *fd, struct ic_decl_type_struct *tdecl, unsigned int *indent_level) {
+    unsigned int i = 0;
+    unsigned int len = 0;
+
     if (!tdecl) {
         puts("ic_decl_type_struct_print_header: tdecl was null");
         return;
@@ -1382,7 +1417,24 @@ void ic_decl_type_struct_print_header(FILE *fd, struct ic_decl_type_struct *tdec
     }
 
     /* print type and name */
-    fprintf(fd, "type %s\n", ic_symbol_contents(&(tdecl->name)));
+    fprintf(fd, "type %s", ic_symbol_contents(&(tdecl->name)));
+
+    /* print type params, if they exist */
+    len = ic_pvector_length(&(tdecl->type_params));
+    if (len > 0) {
+        fputs("[", fd);
+        for (i = 0; i < len; ++i) {
+            /* add comma and space between type_params */
+            if (i > 0) {
+                fputs(", ", fd);
+            }
+
+            ic_type_param_print(fd, ic_pvector_get(&(tdecl->type_params), i));
+        }
+        fputs("]", fd);
+    }
+
+    fputs("\n", fd);
 }
 
 void ic_decl_type_struct_print_body(FILE *fd, struct ic_decl_type_struct *tdecl, unsigned int *indent_level) {
@@ -1614,6 +1666,66 @@ char *ic_decl_type_struct_sig_mangled_full(struct ic_decl_type_struct *tdecl) {
     return ch;
 }
 
+/* add new type_param to decl_struct
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_struct_type_params_add(struct ic_decl_type_struct *tdecl, struct ic_type_param *tparam) {
+    if (!tdecl) {
+        puts("ic_decl_type_struct_type_params_add: tdecl was null");
+        return 0;
+    }
+
+    if (!tparam) {
+        puts("ic_decl_type_struct_type_params_add: tparam was null");
+        return 0;
+    }
+
+    if (-1 == ic_pvector_append(&(tdecl->type_params), tparam)) {
+        puts("ic_decl_type_struct_type_params_add: call to ic_pvector_append failed");
+        return 0;
+    }
+
+    return 1;
+}
+
+/* get length of type_params
+ *
+ * returns len on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_struct_type_params_length(struct ic_decl_type_struct *tdecl) {
+    if (!tdecl) {
+        puts("ic_decl_type_struct_type_params_length: tdecl was null");
+        return 0;
+    }
+
+    return ic_pvector_length(&(tdecl->type_params));
+}
+
+/* get type_param at i
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type_param *ic_decl_type_struct_type_params_get(struct ic_decl_type_struct *tdecl, unsigned int i) {
+    struct ic_type_param *tparam = 0;
+
+    if (!tdecl) {
+        puts("ic_decl_type_struct_type_params_get: tdecl was null");
+        return 0;
+    }
+
+    tparam = ic_pvector_get(&(tdecl->type_params), i);
+    if (!tparam) {
+        puts("ic_decl_type_struct_type_params_get: call to ic_pvector_get failed");
+        return 0;
+    }
+
+    return tparam;
+}
+
 /* returns number of fields
  *
  * returns number on success
@@ -1843,7 +1955,13 @@ unsigned int ic_decl_type_union_init(struct ic_decl_type_union *udecl, char *nam
         return 0;
     }
 
-    /* init fields pvector */
+    /* init fields pvector type_params */
+    if (!ic_pvector_init(&(udecl->type_params), 0)) {
+        puts("ic_decl_type_union_init: call to ic_pvector_init for type_params failed");
+        return 0;
+    }
+
+    /* init fields pvector fields */
     if (!ic_pvector_init(&(udecl->fields), 0)) {
         puts("ic_decl_type_union_init: call to ic_pvector_init for fields failed");
         return 0;
@@ -1869,9 +1987,10 @@ unsigned int ic_decl_type_union_init(struct ic_decl_type_union *udecl, char *nam
  * returns 0 on failure
  */
 unsigned int ic_decl_type_union_destroy(struct ic_decl_type_union *udecl, unsigned int free_udecl) {
+    struct ic_type_param *tparam = 0;
     struct ic_field *field = 0;
-    int i = 0;
-    int len = 0;
+    unsigned int i = 0;
+    unsigned int len = 0;
 
     if (!udecl) {
         puts("ic_decl_type_union_destroy: udecl was null");
@@ -1886,17 +2005,37 @@ unsigned int ic_decl_type_union_destroy(struct ic_decl_type_union *udecl, unsign
         return 0;
     }
 
-    len = ic_pvector_length(&(udecl->fields));
-    if (len == -1) {
-        puts("ic_decl_type_union_destroy: call to ic_body_length failed");
-        return 0;
-    }
+    len = ic_decl_type_union_type_params_length(udecl);
 
     /* loop through each item destroying */
     for (i = 0; i < len; ++i) {
-        field = ic_pvector_get(&(udecl->fields), i);
+        tparam = ic_decl_type_union_type_params_get(udecl, i);
+        if (!tparam) {
+            puts("ic_decl_type_union_destroy: call to ic_decl_type_union_type_params_get failed");
+            return 0;
+        }
+
+        /* dispatch to field destroy
+         * free_field set to 1
+         */
+        if (!ic_type_param_destroy(tparam, 1)) {
+            puts("ic_union_type_destroy: call to ic_type_param_destroy failed");
+            return 0;
+        }
+    }
+
+    if (!ic_pvector_destroy(&(udecl->type_params), 0, 0)) {
+        puts("ic_union_type_destroy: call to ic_pvector_destroy failed");
+        return 0;
+    }
+
+    len = ic_decl_type_union_field_length(udecl);
+
+    /* loop through each item destroying */
+    for (i = 0; i < len; ++i) {
+        field = ic_decl_type_union_field_get(udecl, i);
         if (!field) {
-            puts("ic_decl_type_union_destroy: call to ic_pvector_get failed");
+            puts("ic_decl_type_union_destroy: call to ic_decl_type_union_field_get failed");
             return 0;
         }
 
@@ -1907,6 +2046,11 @@ unsigned int ic_decl_type_union_destroy(struct ic_decl_type_union *udecl, unsign
             puts("ic_union_type_destroy: call to ic_field_destroy failed");
             return 0;
         }
+    }
+
+    if (!ic_pvector_destroy(&(udecl->fields), 0, 0)) {
+        puts("ic_union_type_destroy: call to ic_pvector_destroy failed");
+        return 0;
     }
 
     /* destroy field_dict */
@@ -1977,6 +2121,9 @@ void ic_decl_type_union_print(FILE *fd, struct ic_decl_type_union *udecl, unsign
 }
 
 void ic_decl_type_union_print_header(FILE *fd, struct ic_decl_type_union *udecl, unsigned int *indent_level) {
+    unsigned int i = 0;
+    unsigned int len = 0;
+
     if (!udecl) {
         puts("ic_decl_type_union_print_header: udecl was null");
         return;
@@ -1987,7 +2134,24 @@ void ic_decl_type_union_print_header(FILE *fd, struct ic_decl_type_union *udecl,
     }
 
     /* print type and name */
-    fprintf(fd, "union %s\n", ic_symbol_contents(&(udecl->name)));
+    fprintf(fd, "union %s", ic_symbol_contents(&(udecl->name)));
+
+    /* print type params, if they exist */
+    len = ic_pvector_length(&(udecl->type_params));
+    if (len > 0) {
+        fputs("[", fd);
+        for (i = 0; i < len; ++i) {
+            /* add comma and space between type_params */
+            if (i > 0) {
+                fputs(", ", fd);
+            }
+
+            ic_type_param_print(fd, ic_pvector_get(&(udecl->type_params), i));
+        }
+        fputs("]", fd);
+    }
+
+    fputs("\n", fd);
 }
 
 void ic_decl_type_union_print_body(FILE *fd, struct ic_decl_type_union *udecl, unsigned int *indent_level) {
@@ -2072,6 +2236,68 @@ char *ic_decl_type_union_str(struct ic_decl_type_union *tdecl) {
     }
 
     return ch;
+}
+
+/* add new type_param to decl_union
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_union_type_params_add(struct ic_decl_type_union *udecl, struct ic_type_param *tparam) {
+
+    if (!udecl) {
+        puts("ic_decl_type_union_type_params_add: udecl was null");
+        return 0;
+    }
+
+    if (!tparam) {
+        puts("ic_decl_type_union_type_params_add: tparam was null");
+        return 0;
+    }
+
+    if (-1 == ic_pvector_append(&(udecl->type_params), tparam)) {
+        puts("ic_decl_type_union_type_params_add: call to ic_pvector_append failed");
+        return 0;
+    }
+
+    return 1;
+}
+
+/* get length of type_params
+ *
+ * returns len on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_union_type_params_length(struct ic_decl_type_union *udecl) {
+
+    if (!udecl) {
+        puts("ic_decl_type_union_type_params_length: udecl was null");
+        return 0;
+    }
+
+    return ic_pvector_length(&(udecl->type_params));
+}
+
+/* get type_param at i
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type_param *ic_decl_type_union_type_params_get(struct ic_decl_type_union *udecl, unsigned int i) {
+    struct ic_type_param *tparam = 0;
+
+    if (!udecl) {
+        puts("ic_decl_type_union_type_params_get: udecl was null");
+        return 0;
+    }
+
+    tparam = ic_pvector_get(&(udecl->type_params), i);
+    if (!tparam) {
+        puts("ic_decl_type_union_type_params_get: call to ic_pvector_get failed");
+        return 0;
+    }
+
+    return tparam;
 }
 
 /* get number of fields
@@ -2596,6 +2822,116 @@ char *ic_decl_type_str(struct ic_decl_type *tdecl) {
 
         default:
             puts("ic_decl_type_str: unknown tag");
+            return 0;
+            break;
+    }
+}
+
+/* add new type_param to decl
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_type_params_add(struct ic_decl_type *tdecl, struct ic_type_param *tparam) {
+    if (!tdecl) {
+        puts("ic_decl_type_type_params_add: tdecl was null");
+        return 0;
+    }
+
+    if (!tparam) {
+        puts("ic_decl_type_type_params_add: tparam was null");
+        return 0;
+    }
+
+    switch (tdecl->tag) {
+        case ic_decl_type_tag_struct:
+            if (!ic_decl_type_struct_type_params_add(&(tdecl->u.tstruct), tparam)) {
+                puts("ic_decl_type_type_params_add: call to ic_decl_type_struct_type_params_add failed");
+                return 0;
+            }
+
+            return 1;
+            break;
+
+        case ic_decl_type_tag_union:
+            if (!ic_decl_type_union_type_params_add(&(tdecl->u.tunion), tparam)) {
+                puts("ic_decl_type_type_params_add: call to ic_decl_type_union_type_params_add failed");
+                return 0;
+            }
+
+            return 1;
+            break;
+
+        default:
+            puts("ic_decl_type_type_params_add: impossible tag");
+            return 0;
+            break;
+    }
+}
+
+/* get length of type_params
+ *
+ * returns len on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_type_params_length(struct ic_decl_type *tdecl) {
+    if (!tdecl) {
+        puts("ic_decl_type_type_params_length: tdecl was null");
+        return 0;
+    }
+
+    switch (tdecl->tag) {
+        case ic_decl_type_tag_struct:
+            return ic_decl_type_struct_type_params_length(&(tdecl->u.tstruct));
+            break;
+
+        case ic_decl_type_tag_union:
+            return ic_decl_type_union_type_params_length(&(tdecl->u.tunion));
+            break;
+
+        default:
+            puts("ic_decl_type_type_params_length: impossible tag");
+            return 0;
+            break;
+    }
+}
+
+/* get type_param at i
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type_param *ic_decl_type_type_params_get(struct ic_decl_type *tdecl, unsigned int i) {
+    struct ic_type_param *tparam = 0;
+
+    if (!tdecl) {
+        puts("ic_decl_type_type_params_get: tdecl was null");
+        return 0;
+    }
+
+    switch (tdecl->tag) {
+        case ic_decl_type_tag_struct:
+            tparam = ic_decl_type_struct_type_params_get(&(tdecl->u.tstruct), i);
+            if (!tparam) {
+                puts("ic_decl_type_type_params_get: call to ic_decl_type_struct_type_params_get failed");
+                return 0;
+            }
+
+            return tparam;
+            break;
+
+        case ic_decl_type_tag_union:
+            tparam = ic_decl_type_union_type_params_get(&(tdecl->u.tunion), i);
+            if (!tparam) {
+                puts("ic_decl_type_type_params_get: call to ic_decl_type_union_type_params_get failed");
+                return 0;
+            }
+
+            return tparam;
+            break;
+
+        default:
+            puts("ic_decl_type_type_params_get: impossible tag");
             return 0;
             break;
     }
