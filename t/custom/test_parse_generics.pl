@@ -7,7 +7,7 @@ my $path = "./icarus";
 
 die "Could not find '$path'\n" unless -e $path;
 
-my $output = `$path parse example/generic_id.ic`;
+my $output = `$path parse example/generics.ic`;
 my $exit_status = $?;
 my $expected = <<EOF;
 
@@ -18,8 +18,12 @@ fn id[T](t::T) -> T
     return t
 end
 
-type Foo
-    a::Sint
+type Foo[T]
+    t::T
+end
+
+union Bar[T]
+    t::T
 end
 
 # main()
@@ -27,6 +31,7 @@ fn main() -> Void
     println(id(10))
     println(id("Hello"))
     println(id(Foo(1)))
+    println(id(Bar(1)))
 end
 ----------------
 
@@ -44,5 +49,5 @@ if( $exit_status != 0 || $output ne $expected ){
     }
 }
 
-say "test_parse_generic_id successs";
+say "test_parse_generics successs";
 

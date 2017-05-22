@@ -2,12 +2,17 @@ fn id[T](t::T) -> T
     return t
 end
 
-type Foo
-    a::Sint
+type Foo[T]
+    t::T
+end
+
+union Bar[T]
+    t::T
 end
 
 fn main()
     println(id(10))
     println(id("Hello"))
     println(id(Foo(1)))
+    println(id(Bar(1)))
 end

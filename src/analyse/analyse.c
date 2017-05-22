@@ -372,6 +372,12 @@ unsigned int ic_analyse_decl_type_struct(struct ic_kludge *kludge, struct ic_dec
         return 0;
     }
 
+    /* check this type is NOT generic as we do not yet support that */
+    if (0 != ic_decl_type_struct_type_params_length(tdecl_struct)) {
+        puts("ic_analyse_decl_type_struct: tdecl_struct with type_params given, generic type_structs not yet supported");
+        return 0;
+    }
+
     this_type = ic_decl_type_struct_str(tdecl_struct);
     if (!this_type) {
         puts("ic_analyse_decl_type_struct: for this_type: call to ic_decl_type_struct_str failed");
@@ -610,6 +616,12 @@ unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl
 
     if (!tdecl_union) {
         puts("ic_analyse_decl_type_union: tdecl_union was null");
+        return 0;
+    }
+
+    /* check this type is NOT generic as we do not yet support that */
+    if (0 != ic_decl_type_union_type_params_length(tdecl_union)) {
+        puts("ic_analyse_decl_type_union: tdecl_union with type_params given, generic type_unions not yet supported");
         return 0;
     }
 

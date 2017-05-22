@@ -198,6 +198,13 @@ struct ic_decl *ic_parse_decl_type_header(struct ic_token_list *token_list) {
         }
     }
 
+    /* optionally parse type parameters */
+    if (!ic_parse_decl_optional_type_params(token_list, &(tdecl->u.tstruct.type_params))) {
+        puts("ic_parse_decl_struct_header: call to ic_parse_decl_optional_type_params failed");
+        free(decl);
+        return 0;
+    }
+
     return decl;
 
 ERROR:
@@ -396,6 +403,13 @@ struct ic_decl *ic_parse_decl_union_header(struct ic_token_list *token_list) {
     /* initialise our tdecl */
     if (!ic_decl_type_init_union(tdecl, ic_token_get_string(token), ic_token_get_string_length(token))) {
         puts("ic_parse_decl_union_header: call to ic_decl_type_init_union failed");
+        free(decl);
+        return 0;
+    }
+
+    /* optionally parse type parameters */
+    if (!ic_parse_decl_optional_type_params(token_list, &(tdecl->u.tunion.type_params))) {
+        puts("ic_parse_decl_union_header: call to ic_parse_decl_optional_type_params failed");
         free(decl);
         return 0;
     }
