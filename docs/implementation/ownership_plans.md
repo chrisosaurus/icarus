@@ -32,4 +32,9 @@ Another option is to have every object allocated into a region based on the phas
 at the boundaries between two phases an explicit copy will occur for all the objects still needed,
 then the 'from' region will be deallocated as one.
 
+See:
+
+ * [Samba talloc](https://talloc.samba.org/talloc/doc/html/index.html)
+ * [mesa ralloc](https://github.com/anholt/mesa/blob/master/src/util/ralloc.h)
+
 
