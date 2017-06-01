@@ -59,7 +59,7 @@ builtin fn length(a::String) -> Uint
 
 builtin op + plus
 builtin op - minus
-builtin op * times
+builtin op * multiply
 builtin op / divide
 builtin op % modulo
 builtin op == equal
