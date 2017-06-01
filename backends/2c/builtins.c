@@ -200,6 +200,13 @@ Uint ic_uint_new(uint32_t integer) {
     Uint i = integer;
     return i;
 }
+/* builtin fn Uint(a::Sint) */
+Uint i_Uint_a_Sint(Sint a) {
+    if (a < 0) {
+        panic("i_Uint_a_Sint panic! Sint was <0");
+    }
+    return ic_uint_new(a);
+}
 /* builtin fn print(a::Sint) */
 void i_print_a_Uint(Uint i) {
     printf("%" PRId32, i);

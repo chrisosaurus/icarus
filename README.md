@@ -330,8 +330,8 @@ Example showing user-defined types
 The file `example/shapes.ic` contains a simple example showing types and unions
 
     type Point
-        x::Sint
-        y::Sint
+        x::Uint
+        y::Uint
     end
 
     type Square
@@ -356,7 +356,7 @@ The file `example/shapes.ic` contains a simple example showing types and unions
     end
 
     fn generate_shape() -> Shape
-        return Shape(Rectangle(Point(14, 10), Point(20, 24)))
+        return Shape(Rectangle(Point(Uint(14), Uint(10)), Point(Uint(20), Uint(24))))
     end
 
     fn main()

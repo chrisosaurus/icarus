@@ -91,8 +91,8 @@ my $cases = [
   {
     input => '
       type Point
-          x::Sint
-          y::Sint
+          x::Uint
+          y::Uint
       end
 
       type Square
@@ -117,7 +117,7 @@ my $cases = [
       end
 
       fn generate_shape() -> Shape
-          return Shape(Rectangle(Point(14, 10), Point(20, 24)))
+          return Shape(Rectangle(Point(Uint(14), Uint(10)), Point(Uint(20), Uint(24))))
       end
 
       fn main()

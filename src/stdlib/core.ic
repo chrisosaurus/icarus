@@ -26,6 +26,7 @@ builtin fn greaterthan(a::Sint, b::Sint) -> Bool
 builtin fn lessthan(a::Sint, b::Sint) -> Bool
 
 builtin type Uint
+builtin fn Uint(a::Sint) -> Uint
 builtin fn print(a::Uint)
 builtin fn println(a::Uint)
 builtin fn equal(a::Uint, b::Uint) -> Bool
