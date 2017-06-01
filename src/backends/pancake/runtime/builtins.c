@@ -56,6 +56,8 @@ unsigned int i_plus_uint_uint(struct ic_backend_pancake_value_stack *value_stack
 unsigned int i_plus_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int i_minus_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int i_minus_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int i_multiply_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int i_multiply_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int i_lessthan_equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int i_lessthan_equal_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int i_greaterthan_equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
@@ -74,7 +76,7 @@ unsigned int i_concat_string_string(struct ic_backend_pancake_value_stack *value
 unsigned int i_modulo_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int i_Uint_sint(struct ic_backend_pancake_value_stack *value_stack);
 
-#define ic_backend_pancake_builtins_table_len 30
+#define ic_backend_pancake_builtins_table_len 32
 
 /* table mapping user-land names to internal names */
 struct ic_backend_pancake_builtins_table_type {
@@ -94,6 +96,8 @@ struct ic_backend_pancake_builtins_table_type {
     {"plus(Sint,Sint)", i_plus_sint_sint},
     {"minus(Uint,Uint)", i_minus_uint_uint},
     {"minus(Sint,Sint)", i_minus_sint_sint},
+    {"multiply(Uint,Uint)", i_multiply_uint_uint},
+    {"multiply(Sint,Sint)", i_multiply_sint_sint},
     {"lessthan(Uint,Uint)", i_lessthan_uint_uint},
     {"lessthan(Sint,Sint)", i_lessthan_sint_sint},
     {"greaterthan(Uint,Uint)", i_greaterthan_uint_uint},
@@ -399,6 +403,54 @@ unsigned int i_minus_sint_sint(struct ic_backend_pancake_value_stack *value_stac
     READ(sint_one, sint);
 
     answer = sint_one - sint_two;
+
+    RESULT(answer, sint);
+
+    return 1;
+}
+
+/* multiply two uints
+ *
+ * pops 2 uints from stack
+ * pushes return back on
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int i_multiply_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
+    unsigned int uint_one = 0;
+    unsigned int uint_two = 0;
+    unsigned int answer = 0;
+    INIT();
+
+    READ(uint_two, uint);
+    READ(uint_one, uint);
+
+    answer = uint_one * uint_two;
+
+    RESULT(answer, uint);
+
+    return 1;
+}
+
+/* multiply two sints
+ *
+ * pops 2 sints from stack
+ * pushes return back on
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int i_multiply_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
+    int sint_one = 0;
+    int sint_two = 0;
+    int answer = 0;
+    INIT();
+
+    READ(sint_two, sint);
+    READ(sint_one, sint);
+
+    answer = sint_one * sint_two;
 
     RESULT(answer, sint);
 
