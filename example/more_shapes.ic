@@ -1,0 +1,92 @@
+fn max(a::Uint, b::Uint) -> Uint
+    if a < b
+        return b
+    else
+        return a
+    end
+end
+
+fn min(a::Uint, b::Uint) -> Uint
+    if a > b
+        return b
+    else
+        return a
+    end
+end
+
+type Point
+    x::Uint
+    y::Uint
+end
+
+type Square
+    topleft::Point
+    width::Uint
+end
+
+fn area(s::Square) -> Uint
+    return s.width * s.width
+end
+
+type Rectangle
+    topleft::Point
+    bottomright::Point
+end
+
+fn area(r::Rectangle) -> Uint
+    let dy = max(r.topleft.y, r.bottomright.y) - min(r.topleft.y, r.bottomright.y)
+    let dx = max(r.topleft.x, r.bottomright.x) - min(r.topleft.x, r.bottomright.x)
+    return dy * dx
+end
+
+type Circle
+    center::Point
+    radius::Uint
+end
+
+fn area(c::Circle) -> Uint
+    let not_quite_pi = Uint(3)
+    return not_quite_pi * c.radius * c.radius
+end
+
+union Shape
+    circle::Circle
+    square::Square
+    rectangle::Rectangle
+end
+
+fn area(s::Shape) -> Uint
+    match s
+        case circle::Circle
+            return area(circle)
+        case square::Square
+            return area(square)
+        case rectangle::Rectangle
+            return area(rectangle)
+        end
+    end
+end
+
+fn generate_shape() -> Shape
+    return Shape(Rectangle(Point(Uint(14), Uint(10)), Point(Uint(20), Uint(24))))
+end
+
+fn main()
+    let s = generate_shape()
+    println(s)
+
+    let a = area(s)
+    let expected = multiply(minus(20,14), minus(24,10))
+
+    if a == expected
+        println("PASS")
+    else
+        println("FAIL:")
+    end
+
+    print("  Expected: ")
+    println(expected)
+    print("  Got: ")
+    println(a)
+end
+
