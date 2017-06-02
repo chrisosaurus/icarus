@@ -38,7 +38,7 @@ ic_analyse: call to ic_analyse_decl_func failed
 analysis failed
 ",
 
-'fn main() let a::String = 1 + 2 end'
+'fn main() let a::String = 1s + 2s end'
 =>
 "ic_analyse_let: let init type did not match declared type
 ic_analyse_body: call to ic_analyse_let failed
@@ -78,7 +78,7 @@ ic_analyse: call to ic_analyse_decl_func failed
 analysis failed
 ',
 
-'fn foo() let a::Sint = 5 a = "hello" end'
+'fn foo() let a::Sint = 5s a = "hello" end'
 =>
 'ic_analyse_body: assign: assignment between invalid types
 ic_analyse_body: unimplemented in error case
@@ -88,7 +88,7 @@ ic_analyse: call to ic_analyse_decl_func failed
 analysis failed
 ',
 
-'fn foo() let a::Sint = 5 a = 6 end'
+'fn foo() let a::Sint = 5s a = 6s end'
 =>
 'ic_analyse: failed to find a main function
 analysis failed

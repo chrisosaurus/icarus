@@ -7,7 +7,7 @@ union Maybe[T]
 end
 
 fn main()
-    let m = Maybe[Sint](6)
+    let m = Maybe[Sint](6s)
 
     println(m)
 

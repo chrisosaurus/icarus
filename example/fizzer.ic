@@ -2,21 +2,21 @@
 # pancake supports
 fn is_div(a::Sint, b::Sint) -> Bool
     let rem = a % b
-    return rem == 0
+    return rem == 0s
 end
 
 fn fizzer(num::Sint)
     let str = ""
 
-    if is_div(num, 3)
+    if is_div(num, 3s)
         str = concat(str, "Fizz")
     end
 
-    if is_div(num, 5)
+    if is_div(num, 5s)
         str = concat(str, "Buzz")
     end
 
-    if length(str) == 0
+    if length(str) == 0s
         println(num)
     else
         println(str)
@@ -26,7 +26,7 @@ end
 fn fizzbuzz(from::Sint, to::Sint)
   if from < to
     fizzer(from)
-    from = from + 1
+    from = from + 1s
     fizzbuzz(from, to)
   end
 end
@@ -34,6 +34,6 @@ end
 fn main()
     # icarus currently lacks for loops and ranges
     # so this is a poor-mans fizzbuzz-derived demo
-    fizzbuzz(1, 20)
+    fizzbuzz(1s, 20s)
 end
 

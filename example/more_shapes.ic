@@ -45,7 +45,7 @@ type Circle
 end
 
 fn area(c::Circle) -> Uint
-    let not_quite_pi = Uint(3)
+    let not_quite_pi = 3u
     return not_quite_pi * c.radius * c.radius
 end
 
@@ -68,7 +68,7 @@ fn area(s::Shape) -> Uint
 end
 
 fn generate_shape() -> Shape
-    return Shape(Rectangle(Point(Uint(14), Uint(10)), Point(Uint(20), Uint(24))))
+    return Shape(Rectangle(Point(14u, 10u), Point(20u, 24u)))
 end
 
 fn main()
@@ -76,7 +76,7 @@ fn main()
     println(s)
 
     let a = area(s)
-    let expected = multiply(minus(20,14), minus(24,10))
+    let expected = multiply(minus(20u,14u), minus(24u,10u))
 
     if a == expected
         println("PASS")

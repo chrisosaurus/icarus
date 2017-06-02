@@ -1,6 +1,6 @@
 fn main()
-  let x::Sint = 5
-  if x > 4
+  let x::Sint = 5s
+  if x > 4s
     println("5 is bigger than 4")
   end
 end

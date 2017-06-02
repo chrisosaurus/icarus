@@ -238,12 +238,76 @@ static struct ic_expr *ic_parse_expr_constant_string(struct ic_token_list *token
     return expr;
 }
 
-/* consume token and make an int
+/* consume token and make an unsigned int
  *
  * returns ic_expr* on success
  * returns 0 on failure
  */
-static struct ic_expr *ic_parse_expr_constant_integer(struct ic_token_list *token_list) {
+static struct ic_expr *ic_parse_expr_constant_unsigned_integer(struct ic_token_list *token_list) {
+    /* our eventual return value */
+    struct ic_expr *expr = 0;
+    /* our constant */
+    struct ic_expr_constant *cons = 0;
+    /* pointer to our integer value */
+    unsigned long int *integer = 0;
+
+    /* current token */
+    struct ic_token *token = 0;
+
+    if (!token_list) {
+        puts("ic_parse_expr_constant_unsigned_integer: token_list was null");
+        return 0;
+    }
+
+    token = ic_token_list_expect_important(token_list, IC_LITERAL_UNSIGNED_INTEGER);
+    if (!token) {
+        puts("ic_parse_expr_constant_unsigned_integer: unable to find integer");
+        return 0;
+    }
+
+    /* build our return expr */
+    expr = ic_expr_new(ic_expr_type_constant);
+    if (!expr) {
+        puts("ic_parse_expr_constant_unsigned_integer: call to ic_expr_new failed");
+        return 0;
+    }
+
+    /* unpack our constant */
+    cons = ic_expr_get_constant(expr);
+    if (!cons) {
+        puts("ic_parse_expr_constant_unsigned_integer: call to ic_expr_get_constant failed");
+        free(expr);
+        return 0;
+    }
+
+    /* initialise our constant */
+    if (!ic_expr_constant_init(cons, ic_expr_constant_type_unsigned_integer)) {
+        puts("ic_parse_expr_constant_unsigned_integer: call to ic_expr_constant_init failed");
+        free(expr);
+        return 0;
+    }
+
+    /* get out our ic_integer */
+    integer = ic_expr_constant_get_unsigned_integer(cons);
+    if (!integer) {
+        puts("ic_parse_expr_constant_unsigned_integer: call to ic_expr_constant_get_unsigned_integer failed");
+        free(expr);
+        return 0;
+    }
+
+    /* strtol */
+    *integer = ic_token_get_unsigned_integer(token);
+
+    /* victory */
+    return expr;
+}
+
+/* consume token and make a signed int
+ *
+ * returns ic_expr* on success
+ * returns 0 on failure
+ */
+static struct ic_expr *ic_parse_expr_constant_signed_integer(struct ic_token_list *token_list) {
     /* our eventual return value */
     struct ic_expr *expr = 0;
     /* our constant */
@@ -255,48 +319,48 @@ static struct ic_expr *ic_parse_expr_constant_integer(struct ic_token_list *toke
     struct ic_token *token = 0;
 
     if (!token_list) {
-        puts("ic_parse_expr_constant_integer: token_list was null");
+        puts("ic_parse_expr_constant_signed_integer: token_list was null");
         return 0;
     }
 
-    token = ic_token_list_expect_important(token_list, IC_LITERAL_INTEGER);
+    token = ic_token_list_expect_important(token_list, IC_LITERAL_SIGNED_INTEGER);
     if (!token) {
-        puts("ic_parse_expr_constant_integer: unable to find integer");
+        puts("ic_parse_expr_constant_signed_integer: unable to find integer");
         return 0;
     }
 
     /* build our return expr */
     expr = ic_expr_new(ic_expr_type_constant);
     if (!expr) {
-        puts("ic_parse_expr_constant_integer: call to ic_expr_new failed");
+        puts("ic_parse_expr_constant_signed_integer: call to ic_expr_new failed");
         return 0;
     }
 
     /* unpack our constant */
     cons = ic_expr_get_constant(expr);
     if (!cons) {
-        puts("ic_parse_expr_constant_integer: call to ic_expr_get_constant failed");
+        puts("ic_parse_expr_constant_signed_integer: call to ic_expr_get_constant failed");
         free(expr);
         return 0;
     }
 
     /* initialise our constant */
-    if (!ic_expr_constant_init(cons, ic_expr_constant_type_integer)) {
-        puts("ic_parse_expr_constant_integer: call to ic_expr_constant_init failed");
+    if (!ic_expr_constant_init(cons, ic_expr_constant_type_signed_integer)) {
+        puts("ic_parse_expr_constant_signed_integer: call to ic_expr_constant_init failed");
         free(expr);
         return 0;
     }
 
     /* get out our ic_integer */
-    integer = ic_expr_constant_get_integer(cons);
+    integer = ic_expr_constant_get_signed_integer(cons);
     if (!integer) {
-        puts("ic_parse_expr_constant_integer: call to ic_expr_constant_get_integer failed");
+        puts("ic_parse_expr_constant_signed_integer: call to ic_expr_constant_get_signed_integer failed");
         free(expr);
         return 0;
     }
 
     /* strtol */
-    *integer = ic_token_get_integer(token);
+    *integer = ic_token_get_signed_integer(token);
 
     /* victory */
     return expr;
@@ -418,10 +482,19 @@ static struct ic_expr *ic_parse_expr_single_token(struct ic_token_list *token_li
         return expr;
     }
 
-    if (token->id == IC_LITERAL_INTEGER) {
-        expr = ic_parse_expr_constant_integer(token_list);
+    if (token->id == IC_LITERAL_UNSIGNED_INTEGER) {
+        expr = ic_parse_expr_constant_unsigned_integer(token_list);
         if (!expr) {
-            puts("ic_parse_expr_single_token: call to ic_parse_expr_constant_integer failed");
+            puts("ic_parse_expr_single_token: call to ic_parse_expr_constant_unsigned_integer failed");
+            return 0;
+        }
+        return expr;
+    }
+
+    if (token->id == IC_LITERAL_SIGNED_INTEGER) {
+        expr = ic_parse_expr_constant_signed_integer(token_list);
+        if (!expr) {
+            puts("ic_parse_expr_single_token: call to ic_parse_expr_constant_signed_integer failed");
             return 0;
         }
         return expr;

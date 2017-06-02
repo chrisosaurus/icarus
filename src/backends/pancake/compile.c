@@ -2017,20 +2017,33 @@ unsigned int ic_backend_pancake_compile_push_constant(struct ic_backend_pancake_
 
     /* push appropriate literal
      * pushbool bool
-     * pushuint uint FIXME TODO
+     * pushuint uint
      * pushint  int
      * pushstr  str
      */
 
     switch (constant->tag) {
-        case ic_expr_constant_type_integer:
+        case ic_expr_constant_type_unsigned_integer:
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_pushuint);
+            if (!instruction) {
+                puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_instructions_add failed");
+                return 0;
+            }
+            if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, constant->u.unsigned_integer)) {
+                puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+                return 0;
+            }
+
+            break;
+
+        case ic_expr_constant_type_signed_integer:
             instruction = ic_backend_pancake_instructions_add(instructions, icp_pushint);
             if (!instruction) {
                 puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_instructions_add failed");
                 return 0;
             }
-            if (!ic_backend_pancake_bytecode_arg1_set_sint(instruction, constant->u.integer)) {
-                puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+            if (!ic_backend_pancake_bytecode_arg1_set_sint(instruction, constant->u.signed_integer)) {
+                puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_bytecode_arg1_set_sint failed");
                 return 0;
             }
 

@@ -17,7 +17,7 @@ my $cases = [
       end
 
       fn main()
-        let f = Foo(6, "Hello")
+        let f = Foo(6s, "Hello")
         println(f)
       end
       ',
@@ -71,7 +71,7 @@ my $cases = [
       end
 
       fn main()
-          let a = Foo(5)
+          let a = Foo(5s)
           println(a)
           let b = Foo("Hello")
           println(b)

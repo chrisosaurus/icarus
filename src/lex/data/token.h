@@ -18,10 +18,11 @@ enum ic_token_id {
     IC_PLUS = 6,
     IC_MINUS = 7,
 
-    IC_IDENTIFIER,      /* no entry in table[], payload */
-    IC_LITERAL_INTEGER, /* no entry in table[], payload */
-    IC_LITERAL_STRING,  /* no entry in table[], payload */
-    IC_COMMENT,         /* no entry in table[], payload */
+    IC_IDENTIFIER,               /* no entry in table[], payload */
+    IC_LITERAL_SIGNED_INTEGER,   /* no entry in table[], payload */
+    IC_LITERAL_UNSIGNED_INTEGER, /* no entry in table[], payload */
+    IC_LITERAL_STRING,           /* no entry in table[], payload */
+    IC_COMMENT,                  /* no entry in table[], payload */
 
     IC_TRUE,
     IC_FALSE,
@@ -95,7 +96,8 @@ struct ic_token {
             char *string;
             unsigned int len;
         } str;
-        long int integer;
+        long int signed_integer;
+        unsigned long int unsigned_integer;
     } u;
 };
 
@@ -148,19 +150,33 @@ char *ic_token_get_string(struct ic_token *token);
  */
 unsigned int ic_token_get_string_length(struct ic_token *token);
 
-/* set integer data on token
+/* set unsigned integer data on token
  *
  * returns 1 on success
  * returns 0 on failure
  */
-int ic_token_set_integer(struct ic_token *token, int integer);
+int ic_token_set_unsigned_integer(struct ic_token *token, unsigned long int unsigned_integer);
 
-/* get integer data on token
+/* get unsigned integer data on token
  *
  * returns integer on success
  * returns 0 on failure
  */
-int ic_token_get_integer(struct ic_token *token);
+unsigned long int ic_token_get_unsigned_integer(struct ic_token *token);
+
+/* set signed integer data on token
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+int ic_token_set_signed_integer(struct ic_token *token, long int signed_integer);
+
+/* get signed integer data on token
+ *
+ * returns integer on success
+ * returns 0 on failure
+ */
+long int ic_token_get_signed_integer(struct ic_token *token);
 
 /* destroy
  *

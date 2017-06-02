@@ -486,7 +486,8 @@ unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, unsigne
     }
 
     switch (constant->tag) {
-        case ic_expr_constant_type_integer:
+        case ic_expr_constant_type_unsigned_integer:
+        case ic_expr_constant_type_signed_integer:
             /* nothing to do */
             break;
 
@@ -515,26 +516,48 @@ unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, unsigne
     return 1;
 }
 
-/* return pointer to integer within,
+/* return pointer to unsigned integer within,
  * will only succeed if constant is of the correct type
  *
  * returns pointers on success
  * returns 0 on failure
  */
-long int *ic_expr_constant_get_integer(struct ic_expr_constant *constant) {
+unsigned long int *ic_expr_constant_get_unsigned_integer(struct ic_expr_constant *constant) {
     if (!constant) {
-        puts("ic_expr_constant_get_integer: constant was null");
+        puts("ic_expr_constant_get_unsigned_integer: constant was null");
         return 0;
     }
 
     /* check type before handing out pointer */
-    if (constant->tag != ic_expr_constant_type_integer) {
-        puts("ic_expr_constant_get_integer: not an integer");
+    if (constant->tag != ic_expr_constant_type_unsigned_integer) {
+        puts("ic_expr_constant_get_unsigned_integer: not an integer");
         return 0;
     }
 
     /* give them what they want */
-    return &(constant->u.integer);
+    return &(constant->u.unsigned_integer);
+}
+
+/* return pointer to signed integer within,
+ * will only succeed if constant is of the correct type
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+long int *ic_expr_constant_get_signed_integer(struct ic_expr_constant *constant) {
+    if (!constant) {
+        puts("ic_expr_constant_get_signed_integer: constant was null");
+        return 0;
+    }
+
+    /* check type before handing out pointer */
+    if (constant->tag != ic_expr_constant_type_signed_integer) {
+        puts("ic_expr_constant_get_signed_integer: not an integer");
+        return 0;
+    }
+
+    /* give them what they want */
+    return &(constant->u.signed_integer);
 }
 
 /* return pointer to ic_string within,
@@ -586,7 +609,8 @@ void ic_expr_constant_print(FILE *fd, struct ic_expr_constant *constant, unsigne
     /* pointer to string if we need it */
     struct ic_string *string = 0;
     /* pointer to long int if we need it */
-    long int *integer = 0;
+    long int *signed_integer = 0;
+    unsigned long int *unsigned_integer = 0;
     /* boolean */
     unsigned int *boolean = 0;
     /* output */
@@ -617,19 +641,34 @@ void ic_expr_constant_print(FILE *fd, struct ic_expr_constant *constant, unsigne
             fprintf(fd, "\"%s\"", ic_string_contents(string));
             break;
 
-        case ic_expr_constant_type_integer:
+        case ic_expr_constant_type_unsigned_integer:
             /* print indent */
             ic_parse_print_indent(fd, *indent_level);
 
             /* pull out our integer */
-            integer = ic_expr_constant_get_integer(constant);
-            if (!integer) {
-                puts("ic_expr_constant_print: call to ic_expr_constant_get_integer failed");
+            unsigned_integer = ic_expr_constant_get_unsigned_integer(constant);
+            if (!unsigned_integer) {
+                puts("ic_expr_constant_print: call to ic_expr_constant_get_unsigned_integer failed");
                 return;
             }
 
             /* print out long integer */
-            fprintf(fd, "%ld", *integer);
+            fprintf(fd, "%ldu", *unsigned_integer);
+            break;
+
+        case ic_expr_constant_type_signed_integer:
+            /* print indent */
+            ic_parse_print_indent(fd, *indent_level);
+
+            /* pull out our integer */
+            signed_integer = ic_expr_constant_get_signed_integer(constant);
+            if (!signed_integer) {
+                puts("ic_expr_constant_print: call to ic_expr_constant_get_signed_integer failed");
+                return;
+            }
+
+            /* print out long integer */
+            fprintf(fd, "%lds", *signed_integer);
             break;
 
         case ic_expr_constant_type_boolean:

@@ -39,8 +39,14 @@ int main(void) {
                     exit(1);
                 }
                 break;
-            case IC_LITERAL_INTEGER:
-                if (!ic_token_set_integer(token, 14)) {
+            case IC_LITERAL_UNSIGNED_INTEGER:
+                if (!ic_token_set_unsigned_integer(token, 14)) {
+                    puts("test_token_print: failed to set integer");
+                    exit(1);
+                }
+                break;
+            case IC_LITERAL_SIGNED_INTEGER:
+                if (!ic_token_set_signed_integer(token, 14)) {
                     puts("test_token_print: failed to set integer");
                     exit(1);
                 }

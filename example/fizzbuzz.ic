@@ -1,21 +1,21 @@
 
 fn is_div(a::Sint, b::Sint) -> Bool
-    return (a % b) == 0
+    return (a % b) == 0s
 end
 
 fn fizzbuzz(from::Sint, to::Sint)
     for num in range(from, to)
         let &arr::Vector[String]
 
-        if is_div(num, 3)
+        if is_div(num, 3s)
             &arr.append("Fizz")
         end
 
-        if is_div(num, 5)
+        if is_div(num, 5s)
             &arr.append("Buzz")
         end
 
-        if length(arr) == 0
+        if length(arr) == 0s
             &arr.append(num)
         end
 
@@ -24,6 +24,6 @@ fn fizzbuzz(from::Sint, to::Sint)
 end
 
 fn main()
-    fizzbuzz(1, 100)
+    fizzbuzz(1s, 100s)
 end
 

@@ -14,7 +14,7 @@ type Foo
 end
 fn maybe_add_one(b::Bool, i::Sint) -> Sint
     if b
-        let _l0::Sint = 1
+        let _l0::Sint = 1s
         let _t0::Sint = plus(i, _l0)
         return _t0
     else
@@ -23,13 +23,13 @@ fn maybe_add_one(b::Bool, i::Sint) -> Sint
 end
 fn main() -> Void
     let _l0::Bool = True
-    let _l1::Sint = 1
+    let _l1::Sint = 1s
     let _t0::Sint = maybe_add_one(_l0, _l1)
     let _l2::String = "hello"
     let f::Foo = Foo(_t0, _l2)
     println(f)
-    let x::Sint = 6
-    let _l3::Sint = 14
+    let x::Sint = 6s
+    let _l3::Sint = 14s
     let _t1::Bool = greaterthan(x, _l3)
     if _t1
         let _l4::String = "x > 14"

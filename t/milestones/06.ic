@@ -3,6 +3,6 @@ type Foo
 end
 
 fn main()
-  let f::Foo = Foo(5)
+  let f::Foo = Foo(5s)
   println(f)
 end

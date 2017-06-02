@@ -1006,13 +1006,30 @@ struct ic_decl_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct 
     switch (cons->tag) {
 
         /*
+         *  infer 1 -> Uint
+         *  expr->tag == constant
+         *  cons = expr->u.cons
+         *  cons->type == integer
+         *  return integer
+         */
+        case ic_expr_constant_type_unsigned_integer:
+            /* FIXME decide on type case sensitivity */
+            type = ic_kludge_get_decl_type(kludge, "Uint");
+            if (!type) {
+                puts("ic_analyse_infer_constant: Sint: call to ic_kludge_get_type failed");
+                return 0;
+            }
+            return type;
+            break;
+
+        /*
          *  infer 1 -> Sint
          *  expr->tag == constant
          *  cons = expr->u.cons
          *  cons->type == integer
          *  return integer
          */
-        case ic_expr_constant_type_integer:
+        case ic_expr_constant_type_signed_integer:
             /* FIXME decide on type case sensitivity */
             type = ic_kludge_get_decl_type(kludge, "Sint");
             if (!type) {

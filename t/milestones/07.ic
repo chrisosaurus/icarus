@@ -7,7 +7,7 @@ fn unpack(f::Foo) -> Sint
 end
 
 fn main()
-  let f::Foo = Foo(3)
+  let f::Foo = Foo(3s)
   println(unpack(f))
 end
 

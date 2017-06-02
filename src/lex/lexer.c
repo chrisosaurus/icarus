@@ -380,6 +380,9 @@ static unsigned int ic_lex_literal_integer(struct ic_lex_data *lex_data) {
     /* endptr used by strtol */
     char *endptr = 0;
 
+    /* will be set to either signed or unsigned */
+    enum ic_token_id literal_type = 0;
+
     if (!lex_data) {
         puts("ic_lex_literal_integer: lex_data was null");
         return 0;
@@ -405,6 +408,20 @@ static unsigned int ic_lex_literal_integer(struct ic_lex_data *lex_data) {
             case '9':
                 break;
 
+            case 'u':
+                literal_type = IC_LITERAL_UNSIGNED_INTEGER;
+                /* consume */
+                ++integer_len;
+                goto SUCCESS;
+                break;
+
+            case 's':
+                literal_type = IC_LITERAL_SIGNED_INTEGER;
+                /* consume */
+                ++integer_len;
+                goto SUCCESS;
+                break;
+
             case 'x':
             case 'b':
                 puts("ic_lex_literal_integer: hex and binary are not yet supported");
@@ -412,18 +429,30 @@ static unsigned int ic_lex_literal_integer(struct ic_lex_data *lex_data) {
                 break;
 
             default:
-                /* final character, stop
-                 * NB: this could be \0
-                 */
-                goto SUCCESS;
+                /* error, didnt' encounter expected final character */
+                goto END;
                 break;
         };
     }
 
+END:
+
+    /* error, didn't find a signed specifier
+     * all integers must end in `u` for unsigned or `s` for signed
+     */
+
+    printf("ic_lex_literal_integer: ERROR encountered '%c', expected signed specified 'u' or 'i' at end of integer literal '%.*s'\n", lex_data->source[lex_data->s_i + integer_len], integer_len, integer_start);
+    return 0;
+
 SUCCESS:
 
+    if (literal_type != IC_LITERAL_SIGNED_INTEGER && literal_type != IC_LITERAL_UNSIGNED_INTEGER) {
+        puts("ic_lex_literal_integer: literal_type not set");
+        return 0;
+    }
+
     /* build a new token */
-    token = ic_token_new(IC_LITERAL_INTEGER, lex_data->start_of_line, lex_data->offset_into_line, lex_data->filename, lex_data->line_num);
+    token = ic_token_new(literal_type, lex_data->start_of_line, lex_data->offset_into_line, lex_data->filename, lex_data->line_num);
     if (!token) {
         puts("ic_lex_literal_integer: call to ic_token_new failed");
         return 0;
@@ -454,15 +483,29 @@ SUCCESS:
         return 0;
     }
 
-    /* check we gobbled up as many characters as we expected */
-    if (integer_len != (endptr - integer_start)) {
+    /* check we gobbled up as many characters as we expected
+     * should always consume integer_len - 1
+     * -1 is to account for signed specifier ('u' or 's')
+     */
+    if ((integer_len - 1) != (endptr - integer_start)) {
         puts("ic_lex_literal_integer: strtol parsed length was not as expected");
         return 0;
     }
 
-    /* add payload */
-    if (!ic_token_set_integer(token, integer_value)) {
-        puts("ic_lex_literal_integer: call to ic_token_set_integer failed");
+    if (literal_type == IC_LITERAL_SIGNED_INTEGER) {
+        /* add payload */
+        if (!ic_token_set_signed_integer(token, integer_value)) {
+            puts("ic_lex_literal_integer: call to ic_token_set_signed_integer failed");
+            return 0;
+        }
+    } else if (literal_type == IC_LITERAL_UNSIGNED_INTEGER) {
+        /* add payload */
+        if (!ic_token_set_unsigned_integer(token, integer_value)) {
+            puts("ic_lex_literal_integer: call to ic_token_set_unsigned_integer failed");
+            return 0;
+        }
+    } else {
+        puts("ic_lex_literal_integer: impossible literal_type");
         return 0;
     }
 

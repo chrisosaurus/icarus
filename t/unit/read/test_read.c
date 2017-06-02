@@ -13,7 +13,7 @@ end\n\
 # simple function to test return values and branching\n\
 fn maybe_add_one(b::Bool, i::Sint) -> Sint\n\
     if b\n\
-        return i+1\n\
+        return i+1s\n\
     else\n\
         return i\n\
     end\n\
@@ -21,11 +21,11 @@ end\n\
 \n\
 # entry point for program\n\
 fn main()\n\
-    let f::Foo = Foo(maybe_add_one(True, 1), \"hello\")\n\
+    let f::Foo = Foo(maybe_add_one(True, 1s), \"hello\")\n\
     println(f)\n\
 \n\
-    let x = 6\n\
-    if x > 14\n\
+    let x = 6s\n\
+    if x > 14s\n\
         println(\"x > 14\")\n\
     else\n\
         println(\"x <= 14\")\n\

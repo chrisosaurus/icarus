@@ -3,8 +3,8 @@ type Foo
 end
 
 fn main()
-    let &f = Foo(4)
+    let &f = Foo(4s)
     println(f.a)
-    &f.a = 5
+    &f.a = 5s
     println(f.a)
 end

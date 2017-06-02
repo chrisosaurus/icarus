@@ -28,10 +28,10 @@ end
 
 # main()
 fn main() -> Void
-    println(id(10))
+    println(id(10s))
     println(id("Hello"))
-    println(id(Foo(1)))
-    println(id(Bar(1)))
+    println(id(Foo(1s)))
+    println(id(Bar(1u)))
 end
 ----------------
 

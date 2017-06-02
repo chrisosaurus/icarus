@@ -96,7 +96,8 @@ unsigned int ic_token_set_string(struct ic_token *token, char *string, unsigned 
 char *ic_token_id_get_representation(enum ic_token_id id) {
     switch (id) {
         case IC_IDENTIFIER:
-        case IC_LITERAL_INTEGER:
+        case IC_LITERAL_UNSIGNED_INTEGER:
+        case IC_LITERAL_SIGNED_INTEGER:
         case IC_LITERAL_STRING:
         case IC_COMMENT:
             puts("ic_token_id_get_representation: payload types are not supported");
@@ -335,62 +336,116 @@ unsigned int ic_token_get_string_length(struct ic_token *token) {
     return token->u.str.len;
 }
 
-/* set integer data on token
+/* set unsigned integer data on token
  *
  * returns 1 on success
  * returns 0 on failure
  */
-int ic_token_set_integer(struct ic_token *token, int integer) {
+int ic_token_set_unsigned_integer(struct ic_token *token, unsigned long int unsigned_integer) {
     if (!token) {
-        puts("ic_token_set_integer: token was null");
+        puts("ic_token_set_unsigned_integer: token was null");
         return 0;
     }
 
     /* check if token->id allows for an integer */
     switch (token->id) {
-        case IC_LITERAL_INTEGER:
-            /* string allowed */
+        case IC_LITERAL_UNSIGNED_INTEGER:
             break;
 
         default:
-            fputs("ic_token_set_integer: called on token not allowing a payload, token->id:", stdout);
+            fputs("ic_token_set_unsigned_integer: called on token not allowing a payload, token->id:", stdout);
             ic_token_id_print_debug(stdout, token->id);
             puts("");
             return 0;
             break;
     }
 
-    token->u.integer = integer;
+    token->u.unsigned_integer = unsigned_integer;
 
     return 1;
 }
 
-/* get integer data on token
+/* get unsigned integer data on token
  *
  * returns * on success
  * returns 0 on failure
  */
-int ic_token_get_integer(struct ic_token *token) {
+unsigned long int ic_token_get_unsigned_integer(struct ic_token *token) {
     if (!token) {
-        puts("ic_token_get_integer: token was null");
+        puts("ic_token_get_unsigned_integer: token was null");
         return 0;
     }
 
     /* check if token->id allows for an integer */
     switch (token->id) {
-        case IC_LITERAL_INTEGER:
-            /* string allowed */
+        case IC_LITERAL_UNSIGNED_INTEGER:
             break;
 
         default:
-            fputs("ic_token_get_integer: called on token not allowing a payload, token->id:", stdout);
+            fputs("ic_token_get_unsigned_integer: called on token not allowing a payload, token->id:", stdout);
             ic_token_id_print_debug(stdout, token->id);
             puts("");
             return 0;
             break;
     }
 
-    return token->u.integer;
+    return token->u.unsigned_integer;
+}
+
+/* set signed integer data on token
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+int ic_token_set_signed_integer(struct ic_token *token, long int signed_integer) {
+    if (!token) {
+        puts("ic_token_set_signed_integer: token was null");
+        return 0;
+    }
+
+    /* check if token->id allows for an integer */
+    switch (token->id) {
+        case IC_LITERAL_SIGNED_INTEGER:
+            break;
+
+        default:
+            fputs("ic_token_set_signed_integer: called on token not allowing a payload, token->id:", stdout);
+            ic_token_id_print_debug(stdout, token->id);
+            puts("");
+            return 0;
+            break;
+    }
+
+    token->u.signed_integer = signed_integer;
+
+    return 1;
+}
+
+/* get signed integer data on token
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+long int ic_token_get_signed_integer(struct ic_token *token) {
+    if (!token) {
+        puts("ic_token_get_signed_integer: token was null");
+        return 0;
+    }
+
+    /* check if token->id allows for an integer */
+    switch (token->id) {
+        case IC_LITERAL_SIGNED_INTEGER:
+            break;
+
+        default:
+            fputs("ic_token_get_signed_integer: called on token not allowing a payload, token->id:", stdout);
+            ic_token_id_print_debug(stdout, token->id);
+            puts("");
+            return 0;
+            break;
+    }
+
+    return token->u.signed_integer;
 }
 
 /* destroy
@@ -518,8 +573,11 @@ void ic_token_print(FILE *fd, struct ic_token *token) {
         case IC_IDENTIFIER:
             fprintf(fd, "%.*s", token->u.str.len, token->u.str.string);
             break;
-        case IC_LITERAL_INTEGER:
-            fprintf(fd, "%ld", token->u.integer);
+        case IC_LITERAL_UNSIGNED_INTEGER:
+            fprintf(fd, "%ldu", token->u.unsigned_integer);
+            break;
+        case IC_LITERAL_SIGNED_INTEGER:
+            fprintf(fd, "%lds", token->u.unsigned_integer);
             break;
         case IC_LITERAL_STRING:
             fprintf(fd, "\"%.*s\"", token->u.str.len, token->u.str.string);
@@ -546,9 +604,13 @@ void ic_token_id_print_debug(FILE *fd, enum ic_token_id id) {
             /* FIXME add payload */
             fputs("IC_IDENTIFIER", fd);
             break;
-        case IC_LITERAL_INTEGER:
+        case IC_LITERAL_UNSIGNED_INTEGER:
             /* FIXME add payload */
-            fputs("IC_LITERAL_INTEGER", fd);
+            fputs("IC_LITERAL_UNSIGNED_INTEGER", fd);
+            break;
+        case IC_LITERAL_SIGNED_INTEGER:
+            /* FIXME add payload */
+            fputs("IC_LITERAL_SIGNED_INTEGER", fd);
             break;
         case IC_LITERAL_STRING:
             /* FIXME add payload */

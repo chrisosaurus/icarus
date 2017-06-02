@@ -31,21 +31,21 @@ my $cases = [
   {
     input => '
       fn bar(a::Sint) -> Sint
-        return 7 + a
+        return 7s + a
       end
 
       fn foo(a::Sint) -> Sint
-        return bar(a + 4)
+        return bar(a + 4s)
       end
 
       fn baz(a::Sint) -> Sint
-        let b = a + 3
+        let b = a + 3s
         return bar(b)
       end
 
       fn main()
-        println(foo(7))
-        println(baz(7))
+        println(foo(7s))
+        println(baz(7s))
       end
       ',
     expected => '
@@ -113,7 +113,7 @@ my $cases = [
         let b2 = False
         println(b2)
 
-        println(6 < 15)
+        println(6s < 15s)
       end
       ',
     expected => '
@@ -152,7 +152,7 @@ my $cases = [
 
       fn main()
         let b = Bar("Hello")
-        let f = Foo(4, b, "World")
+        let f = Foo(4s, b, "World")
         println(f)
       end
     ',
@@ -254,7 +254,7 @@ my $cases = [
         println(a)
       end
       fn main()
-        foo(1, "Hello", "world", 2)
+        foo(1s, "Hello", "world", 2s)
       end
     ',
     expected => '
@@ -311,7 +311,7 @@ my $cases = [
         end
 
         fn main()
-            let f = Foo(6)
+            let f = Foo(6s)
             println(f)
         end
     ',

@@ -147,7 +147,8 @@ struct ic_symbol *ic_expr_identifier_symbol(struct ic_expr_identifier *identifie
 void ic_expr_identifier_print(FILE *fd, struct ic_expr_identifier *identifier, unsigned int *indent_level);
 
 enum ic_expr_constant_tag {
-    ic_expr_constant_type_integer,
+    ic_expr_constant_type_unsigned_integer,
+    ic_expr_constant_type_signed_integer,
     ic_expr_constant_type_string,
     ic_expr_constant_type_boolean
 };
@@ -158,7 +159,8 @@ enum ic_expr_constant_tag {
 struct ic_expr_constant {
     enum ic_expr_constant_tag tag;
     union {
-        long int integer;
+        long int signed_integer;
+        unsigned long int unsigned_integer;
         struct ic_string string;
         unsigned int boolean;
     } u;
@@ -186,13 +188,21 @@ unsigned int ic_expr_constant_init(struct ic_expr_constant *constant, enum ic_ex
  */
 unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, unsigned int free_const);
 
-/* return pointer to integer within,
+/* return pointer to unsigned integer within,
  * will only succeed if constant is of the correct type
  *
  * returns pointers on success
  * returns 0 on failure
  */
-long int *ic_expr_constant_get_integer(struct ic_expr_constant *constant);
+unsigned long int *ic_expr_constant_get_unsigned_integer(struct ic_expr_constant *constant);
+
+/* return pointer to singed integer within,
+ * will only succeed if constant is of the correct type
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+long int *ic_expr_constant_get_signed_integer(struct ic_expr_constant *constant);
 
 /* return pointer to ic_string within,
  * will only succeed if constant is of the correct type

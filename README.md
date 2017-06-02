@@ -25,22 +25,22 @@ An example showing fizzbuzz and some elements of Icarus' permissions system,
 the below example will not yet run in Icarus
 
     fn is_div(a::Sint, b::Sint) -> Bool
-        return (a % b) == 0
+        return (a % b) == 0s
     end
 
     fn fizzbuzz(from::Sint, to::Sint)
         for num in range(from, to)
             let &arr::Vector[String]
 
-            if is_div(num, 3)
+            if is_div(num, 3s)
                 &arr.append("Fizz")
             end
 
-            if is_div(num, 5)
+            if is_div(num, 5s)
                 &arr.append("Buzz")
             end
 
-            if length(arr) == 0
+            if length(arr) == 0s
                 &arr.append(num)
             end
 
@@ -49,7 +49,7 @@ the below example will not yet run in Icarus
     end
 
     fn main()
-        fizzbuzz(1, 100)
+        fizzbuzz(1s, 100s)
     end
 
 A simpler version is shown below which will run in Icarus
@@ -84,41 +84,33 @@ The life of a simple icarus program
 if we input the following file (which can be found in `example/fizzer.ic`):
 
     fn is_div(a::Sint, b::Sint) -> Bool
-        let rem = a % b
-        return rem == 0
-    end
-
-    fn fizzer(num::Sint)
-        let str = ""
-
-        if is_div(num, 3)
-            str = concat(str, "Fizz")
-        end
-
-        if is_div(num, 5)
-            str = concat(str, "Buzz")
-        end
-
-        if length(str) == 0
-            println(num)
-        else
-            println(str)
-        end
+        return (a % b) == 0
     end
 
     fn fizzbuzz(from::Sint, to::Sint)
-      if from < to
-        fizzer(from)
-        from = from + 1
-        fizzbuzz(from, to)
-      end
+        for num in range(from, to)
+            let &arr::Vector[String]
+
+            if is_div(num, 3)
+                &arr.append("Fizz")
+            end
+
+            if is_div(num, 5)
+                &arr.append("Buzz")
+            end
+
+            if length(arr) == 0
+                &arr.append(num)
+            end
+
+            println(arr.join())
+        end
     end
 
     fn main()
-        # icarus currently lacks for loops and ranges
-        # so this is a poor-mans fizzbuzz-derived demo
-        fizzbuzz(1, 20)
+        fizzbuzz(1, 100)
     end
+
 
 we can then compile to C this via:
 
@@ -128,26 +120,26 @@ which will show us the transformed IR version of this:
 
     fn is_div(a::Sint, b::Sint) -> Bool
         let rem::Sint = modulo(a, b)
-        let _l0::Sint = 0
+        let _l0::Sint = 0s
         let _t0::Bool = equal(rem, _l0)
         return _t0
     end
     fn fizzer(num::Sint) -> Void
         let str::String = ""
-        let _l0::Sint = 3
+        let _l0::Sint = 3s
         let _t0::Bool = is_div(num, _l0)
         if _t0
             let _l1::String = "Fizz"
             str = concat(str, _l1)
         end
-        let _l2::Sint = 5
+        let _l2::Sint = 5s
         let _t1::Bool = is_div(num, _l2)
         if _t1
             let _l3::String = "Buzz"
             str = concat(str, _l3)
         end
         let _t3::Uint = length(str)
-        let _l4::Sint = 0
+        let _l4::Sint = 0s
         let _t2::Bool = equal(_t3, _l4)
         if _t2
             println(num)
@@ -159,14 +151,14 @@ which will show us the transformed IR version of this:
         let _t0::Bool = lessthan(from, to)
         if _t0
             fizzer(from)
-            let _l0::Sint = 1
+            let _l0::Sint = 1s
             from = plus(from, _l0)
             fizzbuzz(from, to)
         end
     end
     fn main() -> Void
-        let _l0::Sint = 1
-        let _l1::Sint = 20
+        let _l0::Sint = 1s
+        let _l1::Sint = 20s
         fizzbuzz(_l0, _l1)
     end
 
@@ -356,7 +348,7 @@ The file `example/shapes.ic` contains a simple example showing types and unions
     end
 
     fn generate_shape() -> Shape
-        return Shape(Rectangle(Point(Uint(14), Uint(10)), Point(Uint(20), Uint(24))))
+        return Shape(Rectangle(Point(14u, 10u), Point(20u, 24u)))
     end
 
     fn main()

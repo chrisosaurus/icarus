@@ -23,21 +23,21 @@ my $cases = [
   {
     input => '
       fn bar(a::Sint) -> Sint
-        return 7 + a
+        return 7s + a
       end
 
       fn foo(a::Sint) -> Sint
-        return bar(a + 4)
+        return bar(a + 4s)
       end
 
       fn baz(a::Sint) -> Sint
-        let b = a + 3
+        let b = a + 3s
         return bar(b)
       end
 
       fn main()
-        println(foo(7))
-        println(baz(7))
+        println(foo(7s))
+        println(baz(7s))
       end
       ',
     expected => '
@@ -50,7 +50,7 @@ my $cases = [
       fn main()
         println(True)
         println(False)
-        println(6 < 15)
+        println(6s < 15s)
       end
       ',
     expected => '
@@ -62,7 +62,7 @@ my $cases = [
   {
     input => '
       fn main()
-        if 4 < 5
+        if 4s < 5s
           println("4 < 5")
         else
           println("4 >= 5")
@@ -76,10 +76,10 @@ my $cases = [
   {
     input => '
       fn main()
-        if 4 < 5
+        if 4s < 5s
           println("4 < 5")
         end
-        if 4 >= 5
+        if 4s >= 5s
           println("4 >= 5")
         end
       end
@@ -105,11 +105,11 @@ my $cases = [
   {
     input => '
       fn foo(i::Sint) -> Sint
-        return i + 1
+        return i + 1s
       end
 
       fn main()
-        let a = 5
+        let a = 5s
         a = foo(a)
         println(a)
       end
@@ -127,7 +127,7 @@ my $cases = [
       end
 
       fn main()
-        foo(4, 5, 6)
+        foo(4s, 5s, 6s)
       end
       ',
     expected => '
@@ -140,21 +140,21 @@ my $cases = [
     input => '
       fn is_div(a::Sint, b::Sint) -> Bool
           let rem = a % b
-          return rem == 0
+          return rem == 0s
       end
 
       fn fizzer(num::Sint)
           let str = ""
 
-          if is_div(num, 3)
+          if is_div(num, 3s)
               str = concat(str, "Fizz")
           end
 
-          if is_div(num, 5)
+          if is_div(num, 5s)
               str = concat(str, "Buzz")
           end
 
-          if length(str) == 0
+          if length(str) == 0s
               println(num)
           else
               println(str)
@@ -164,7 +164,7 @@ my $cases = [
       fn fizzbuzz(from::Sint, to::Sint)
         if from < to
           fizzer(from)
-          from = plus(from, 1)
+          from = plus(from, 1s)
           fizzbuzz(from, to)
         end
       end
@@ -172,7 +172,7 @@ my $cases = [
       fn main()
           # icarus currently lacks for loops and ranges
           # so this is a poor-mans fizzbuzz-derived demo
-          fizzbuzz(1, 20)
+          fizzbuzz(1s, 20s)
       end
       ',
     expected => '
@@ -211,7 +211,7 @@ my $cases = [
 
       fn main()
         let b = Bar("Hello")
-        let f = Foo(4, b, "World")
+        let f = Foo(4s, b, "World")
         println(f)
       end
     ',

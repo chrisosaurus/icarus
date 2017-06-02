@@ -27,8 +27,8 @@ my $cases = [
       end
 
       fn main()
-        let b = Bar(1)
-        let f = Foo(2, "Hello", b, 3)
+        let b = Bar(1s)
+        let f = Foo(2s, "Hello", b, 3s)
         println(f)
         work()
       end
@@ -53,7 +53,7 @@ my $cases = [
       end
 
       fn main()
-        let b = Baz(Bar(Foo(4)))
+        let b = Baz(Bar(Foo(4s)))
         println(b)
         println(b.b.f.a)
       end
@@ -76,10 +76,10 @@ my $cases = [
         end
 
         fn main()
-            let f1 = Foo(6)
+            let f1 = Foo(6s)
             println(f1)
 
-            let f2 = Foo(Bar(4))
+            let f2 = Foo(Bar(4s))
             println(f2)
         end
     ',
@@ -117,7 +117,7 @@ my $cases = [
       end
 
       fn generate_shape() -> Shape
-          return Shape(Rectangle(Point(Uint(14), Uint(10)), Point(Uint(20), Uint(24))))
+          return Shape(Rectangle(Point(14u, 10u), Point(20u, 24u)))
       end
 
       fn main()
@@ -142,7 +142,7 @@ my $cases = [
       end
 
       fn main()
-        let f = Foo(Bar(4))
+        let f = Foo(Bar(4s))
 
         match f
           else
