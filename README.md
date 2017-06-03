@@ -59,22 +59,30 @@ Progress
 ========
 
 Icarus is very early in development and so is currently working towards a
-minimal proof of concept.
+minimal proof of concept, the surface syntax is purposefully minimal.
+
+
+Icarus currently supports 2 backends: `2c` which compiles to C and
+`pancake` which is a stack-based bytecode interpreter.
+
+Pancake can be invoked directly as an interpreter, or it can be used to compile
+icarus to pancake bytecode which can then be later interpreted.
+
 
 Icarus currently lacks many of the basics you need would need in order to
 write interesting programs.
 
-Complete to a basic level (good enough for minimal proof of concept):
+Obvious glaring omissions which should prevent you from using Icarus:
 
-* lexer
-* parser
-* analyser (semantic analysis phase)
+ * Lack of generics (coming soon)
+ * Lack of standard containers (coming soon)
+ * Lack of garbage collection or memory management
+ * Lack of mutation
+ * Lack of iteration
 
-In progress (currently lacking for minimal proof of concept):
 
-* transform (convert to IR)
-* backends (compiler, interpreter)
-
+The next milestone for Icarus is adding support for type polymorphic functions
+and data types.
 
 Work so far - 2c backend
 ========================
@@ -362,39 +370,29 @@ If we run this program we can see the output
     $ ./icarus example/shapes.ic
     Shape{Rectangle{Point{14, 10}, Point{20, 24}}}
 
-Current focus
-=============
-
-Icarus supports user defined struct and union types across both backends,
-the focus has now shifted to adding some more of the basic language features.
-
-I think the most essentials parts to add are:
-
- * parameterised (generic) data types - such as Vector[T] and Maybe[T]
- * looping constructs - for loops
-
-
 Usage
 =====
 
-You can build icarus by cloning this repository and running make,
+Icarus is written in C99 and only requires a C99 compiler and C99 standard
+library, no other dependences are needed or used.
+
+You can build Icarus by cloning this repository and running make,
 any issues with this process should be reported here.
 
     make
 
-You can run your first icarus program through the interpreter `pancake`:
+You can run your first Icarus program through the interpreter `pancake`:
 
     ./icarus example/fizzer.ic
 
-You can run your first icarus program through the 2c compiler,
-compile the c,
-and then execute the output:
+Or you can use the 2c compiler, compile the c, and then execute the generated
+executable:
 
     ./icarus 2c example/fizzer.ic -o fizzer.c
     gcc fizzer.c -o fizzer
     ./fizzer
 
-Icarus has both a help option and a man page,
+Icarus help is available directly via `--help` or via the man page,
 you can view them like so:
 
     # view icarus builtin help
