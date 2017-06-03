@@ -1,25 +1,25 @@
 
 fn main()
-    let x::Sint = 5
-    let y::Sint = 5
+    let x::Sint = 5s
+    let y::Sint = 5s
 
     # the following currently fails to parse
-    if x == 5 && y == 4
+    if x == 5s && y == 4s
         print("hello world")
     end
 
     # however this parses fine
-    if and(x == 5, y == 4)
+    if and(x == 5s, y == 4s)
         print("hello world")
     end
 
     # as does this
-    if equal(x, 5) && equal(y, 4)
+    if equal(x, 5s) && equal(y, 4s)
         print("hello world")
     end
 
     # we also want to be able to parse this
-    if x == 5 and y == 4
+    if x == 5s and y == 4s
         print("hello world")
     end
 

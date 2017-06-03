@@ -5,7 +5,7 @@ import Math::random
 # into https://github.com/mkfifo/icarus
 
 
-const N_GAS = 2
+const N_GAS = 2u
 
 
 type Cell
@@ -15,21 +15,21 @@ type Cell
 end
 
 fn init( &cells :: Array[Cell, xd, yd, zd] ) -> Uint
-    const xm, ym, zm = xd/2, yd/2, zd/2
+    const xm, ym, zm = xd/2u, yd/2u, zd/2u
 
-    let quan :: Uint = 0
-    let quan_tot :: Uint = 0
+    let quan :: Uint = 0u
+    let quan_tot :: Uint = 0u
 
-    for z in 0..zd
-        for y in 0..yd
-            for x in 0..xd
+    for z in 0u..zd
+        for y in 0u..yd
+            for x in 0u..xd
                 let &c = cells[x, y, z]
 
                 quan = Math::abs(xm - x) + Math::abs(ym - y) + Math::abs(zm - z)
                 quan_tot += quan
 
-                &c.gas_counts[0] = quan
-                &c.gas_counts[1] = quan
+                &c.gas_counts[0u] = quan
+                &c.gas_counts[1u] = quan
             end # for x
         end # for y
     end # for z
@@ -47,8 +47,8 @@ fn tick( &cells :: Array[Cell, xd, yd, zd] )
                 let &ca = cells[x, y, z]
 
                 # consider swap with x pos neigh
-                if cells.contains(x+1, y, z)
-                    let &cb = cells[x+1, y, z]
+                if cells.contains(x+1u, y, z)
+                    let &cb = cells[x+1u, y, z]
                     let ra, rb = Math::random(N_GAS), Math::random(N_GAS)
 
                     if ca.gas_counts[ra]
@@ -63,8 +63,8 @@ fn tick( &cells :: Array[Cell, xd, yd, zd] )
                 end
 
                 # consider swap with y pos neigh
-                if cells.contains(x, y+1, z)
-                    let &cb = cells[x, y+1, z]
+                if cells.contains(x, y+1u, z)
+                    let &cb = cells[x, y+1u, z]
                     let ra, rb = Math::random(N_GAS), Math::random(N_GAS)
 
                     if ca.gas_counts[ra]
@@ -79,8 +79,8 @@ fn tick( &cells :: Array[Cell, xd, yd, zd] )
                 end
 
                 # consider swap with z pos neigh
-                if cells.contains(x, y, z+1)
-                    let &cb = cells[x, y, z+1]
+                if cells.contains(x, y, z+1u)
+                    let &cb = cells[x, y, z+1u]
                     let ra, rb = Math::random(N_GAS), Math::random(N_GAS)
 
                     if ca.gas_counts[ra]
@@ -102,14 +102,14 @@ end # fn tick
 
 
 fn main()
-    const xd, yd, zd = 128, 128, 128
-    const nticks = 1000
+    const xd, yd, zd = 128u, 128u, 128u
+    const nticks = 1000u
 
     let &cells = Array[Cell, xd, yd, zd]
 
     const quan_tot = init(&cells)
 
-    for 0 .. nticks
+    for 0u .. nticks
         tick(&cells)
     end
 

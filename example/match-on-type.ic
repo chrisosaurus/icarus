@@ -6,11 +6,11 @@
 let m::Maybe[Sint]
 
 if ...
-    m = 32
+    m = 32s
 end
 
 if ...
-    m = 16
+    m = 16s
 end
 
 match m
@@ -33,7 +33,7 @@ fn bar(&c::Container)
     match &c
         case &i::Sint
             # can only unwrap c.i as we know we must be an Sint
-            &i += 14
+            &i += 14s
         case s::String
             # can only unwrap c.s as we know we must be a String
             print(s)

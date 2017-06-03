@@ -15,12 +15,12 @@ end
 
 # function bar takes a mutable reference to a Foo
 fn bar(&f::Foo)
-  &f.a = 14
+  &f.a = 14s
 end
 
 # function bar takes a mutable reference to an Sint
 fn bar(&a::Sint)
-  &a = 14
+  &a = 14s
 end
 
 # function bar takes an immutable string reference
@@ -31,7 +31,7 @@ fn bar(s::String)
 end
 
 fn main()
-  let &x::Foo = Foo(0)
+  let &x::Foo = Foo(0s)
 
   # one - function can mutate x
   bar(&x)
@@ -40,13 +40,13 @@ fn main()
   bar(&x.a)
 
   # three - ERROR cannot pass constant as mutable ref
-  bar(14)
+  bar(14s)
 
   # ERROR passing an immutable reference, function wants mutable
   bar(x.a)
 
 
-  let &i::Sint = 0
+  let &i::Sint = 0s
 
   # four - function can mutate i
   bar(&i)

@@ -5,5 +5,5 @@ import Math::random
 fn main()
     shell("...")
     pcd("...")
-    Math::random(14)
+    Math::random(14u)
 end

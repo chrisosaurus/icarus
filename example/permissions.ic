@@ -18,7 +18,7 @@ fn foo(*a::Sint)
 end
 
 fn main()
-    let @a::Sint = 5
+    let @a::Sint = 5s
     foo(@a)
     foo(&a)
     foo(%a)

@@ -4,7 +4,7 @@ fn split(str::String, c::Char) -> [String]
     let idx = index_of(s, c)
     match idx
         case something::Sint
-            let before = s[0,   something]
+            let before = s[0s,   something]
             let after  = s[something, len(s)]
             return [before, after]
         else

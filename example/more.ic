@@ -1,7 +1,7 @@
 # entry point for program
 fn main()
     let b::Bar = Bar("hello")
-    let f::Foo = Foo(add_one(1), b)
+    let f::Foo = Foo(add_one(1s), b)
 
     d(f)
 end
@@ -16,7 +16,7 @@ type Bar
 end
 
 fn baz(f::Foo)
-    if f.a == 0
+    if f.a == 0s
         display(f)
     else
         display(f.b.c)

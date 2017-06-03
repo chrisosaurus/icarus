@@ -1,7 +1,7 @@
 
 fn add_one(&list::List[Sint])
     for &item in &list
-        &item += 1
+        &item += 1s
     end
 end
 
