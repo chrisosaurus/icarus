@@ -92,33 +92,41 @@ The life of a simple icarus program
 if we input the following file (which can be found in `example/fizzer.ic`):
 
     fn is_div(a::Sint, b::Sint) -> Bool
-        return (a % b) == 0
+        let rem = a % b
+        return rem == 0s
     end
 
-    fn fizzbuzz(from::Sint, to::Sint)
-        for num in range(from, to)
-            let &arr::Vector[String]
+    fn fizzer(num::Sint)
+        let str = ""
 
-            if is_div(num, 3)
-                &arr.append("Fizz")
-            end
+        if is_div(num, 3s)
+            str = concat(str, "Fizz")
+        end
 
-            if is_div(num, 5)
-                &arr.append("Buzz")
-            end
+        if is_div(num, 5s)
+            str = concat(str, "Buzz")
+        end
 
-            if length(arr) == 0
-                &arr.append(num)
-            end
-
-            println(arr.join())
+        if length(str) == 0s
+            println(num)
+        else
+            println(str)
         end
     end
 
-    fn main()
-        fizzbuzz(1, 100)
+    fn fizzbuzz(from::Sint, to::Sint)
+      if from < to
+        fizzer(from)
+        from = from + 1s
+        fizzbuzz(from, to)
+      end
     end
 
+    fn main()
+        # icarus currently lacks for loops and ranges
+        # so this is a poor-mans fizzbuzz-derived demo
+        fizz
+    end
 
 we can then compile to C this via:
 
@@ -170,7 +178,7 @@ which will show us the transformed IR version of this:
         fizzbuzz(_l0, _l1)
     end
 
-and it will produce a c program `fizzer.c`.
+and produce a c program `fizzer.c`.
 
 if we compile and run this:
 
