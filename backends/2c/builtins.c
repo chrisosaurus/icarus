@@ -15,6 +15,17 @@ void panic(char *ch) {
 void *ic_alloc(size_t size) {
     void *v = 0;
 
+    /* malloc/calloc allow a size of 0 but state
+     * "if size is 0, then malloc() returns either NULL, or a unique pointer
+     * value that can later be successfully passed to free()."
+     *
+     * we want to guarantee the second behavior
+     * so we default to a minimum size of 1
+     */
+    if (size == 0) {
+        size = 1;
+    }
+
     v = calloc(1, size);
     if (!v) {
         puts("ic_alloc: call to calloc failed");

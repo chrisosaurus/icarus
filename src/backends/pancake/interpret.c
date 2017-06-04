@@ -757,16 +757,14 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
             /* alloc slots::uint
              * allocate a new object with this many slots
              *
+             * an object may have zero slots
+             *
              * a slot size is implementation defined, but most be large
              * enough to hold any value
              * this is likely 32 or 64 bits
              */
             case icp_alloc:
                 uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
-                if (!uint) {
-                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_bytecode_arg1_get_uint failed, zero-length allocs not supported");
-                    return 0;
-                }
 
                 /* uint from user is specified as 'number of slots'
                  * convert to units of sizeof(union ic_backend_pancake_value_cell)

@@ -2499,10 +2499,6 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
      * if so jump
      */
     n_args = ic_decl_type_field_length(tdecl);
-    if (!n_args) {
-        puts("ic_backend_pancake_generate_function_print_union: call to ic_decl_type_field_length failed, zero-length objects not supported in pancake");
-        return 0;
-    }
 
     for (i_arg = 0; i_arg < n_args; ++i_arg) {
         /* load_offset_uint 0 */
@@ -3028,10 +3024,6 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
 
     /* for each arg */
     n_args = ic_decl_type_field_length(tdecl);
-    if (!n_args) {
-        puts("ic_backend_pancake_generate_function_print_struct: call to ic_decl_type_field_length failed, zero-length objects not supported in pancake");
-        return 0;
-    }
 
     for (i_arg = 0; i_arg < n_args; ++i_arg) {
         /* insert ", " between args */
@@ -3434,10 +3426,6 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                 }
 
                 n_args = ic_decl_type_field_length(tdecl);
-                if (!n_args) {
-                    puts("ic_backend_pancake_generate_functions: call to ic_decl_type_field_length failed, zero-length objects not supported in pancake");
-                    return 0;
-                }
 
                 /* calculate object size
                  * for now we express this as number of cells
