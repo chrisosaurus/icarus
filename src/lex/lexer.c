@@ -64,6 +64,14 @@ struct ic_token_list *ic_lex(char *filename, char *source) {
         token = 0;
         success = 0;
 
+        /* TODO FIXME this is shortest first match
+         * rather than longest match
+         *
+         * identifier 'iffoo' gets match as 'if'
+         * identifier 'inner' gets matched as 'in'
+         *
+         * this is a bug
+         */
         /* check if this exists within the table */
         for (t_i = 0; t_i < t_len; ++t_i) {
             table_str = table[t_i].str;
