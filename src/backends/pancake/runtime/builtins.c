@@ -10,6 +10,15 @@
  */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
+void panic(char *ch);
+void panic(char *ch) {
+    puts("Panic!");
+    if (ch) {
+        puts(ch);
+    }
+    exit(1);
+}
+
 #define INIT(type)                              \
     struct ic_backend_pancake_value *value = 0; \
     if (!value_stack) {                         \
@@ -74,6 +83,7 @@ unsigned int i_equal_sint_uint(struct ic_backend_pancake_value_stack *value_stac
 unsigned int i_equal_uint_sint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int i_concat_string_string(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int i_modulo_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int i_assert_bool(struct ic_backend_pancake_value_stack *value_stack);
 
 #define ic_backend_pancake_builtins_table_len 32
 
@@ -113,6 +123,7 @@ struct ic_backend_pancake_builtins_table_type {
     {"equal(Sint,Uint)", i_equal_sint_uint},
     {"concat(String,String)", i_concat_string_string},
     {"modulo(Sint,Sint)", i_modulo_sint_sint},
+    {"assert(Bool)", i_assert_bool},
 };
 
 /* alloc size bytes
@@ -138,7 +149,7 @@ void *ic_alloc(size_t size) {
 
     v = calloc(1, size);
     if (!v) {
-        puts("ic_alloc: call to calloc failed");
+        panic("ic_alloc: call to calloc failed");
         exit(1);
     }
 
@@ -732,5 +743,16 @@ unsigned int i_modulo_sint_sint(struct ic_backend_pancake_value_stack *value_sta
     answer = sint_one % sint_two;
 
     RESULT(answer, sint);
+    return 1;
+}
+
+unsigned int i_assert_bool(struct ic_backend_pancake_value_stack *value_stack) {
+    bool boolean = 0;
+    INIT();
+
+    READ(boolean, boolean);
+    if (!boolean) {
+        panic("assertion failed");
+    }
     return 1;
 }

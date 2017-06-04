@@ -129,6 +129,12 @@ String i_to_str_a_Bool(Bool a) {
         return ic_string_new("False", 6);
     }
 }
+/* builtin fn assert(a::Bool) -> Void */
+Void i_assert_a_Bool(Bool a) {
+    if (!a) {
+        panic("assertion failed");
+    }
+}
 
 Sint ic_sint_new(int32_t integer) {
     Sint i = integer;

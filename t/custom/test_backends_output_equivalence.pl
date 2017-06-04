@@ -273,6 +273,18 @@ my $cases = [
       5
     ',
   },
+  {
+    input => '
+        fn main()
+            assert(False)
+        end
+    ',
+    expected => '
+      Panic!
+      assertion failed
+    ',
+    failure => 1,
+  },
 ];
 
 # whitespace sensitivity sucks
@@ -292,6 +304,7 @@ sub cleanup {
 sub run {
   my $input = shift // die;
   my $expected = shift // die;
+  my $expect_failure = shift // die;
   die if @_;
 
   my $in_tmp_file = `mktemp TESTING_BACKENDS_OUTPUT_EQUIVALENCE_XXX.ic`;
@@ -335,32 +348,44 @@ sub run {
 
   `rm a.out`;
 
-  if( $exit_status != 0 || $output_2c ne $expected ){
+  if( $output_2c ne $expected ){
       say "2c output was not as expected";
       say "=======\nExpected:\n$expected";
       say "=======\nGot:\n$output_2c";
       say "=======\n";
-      if( $exit_status != 0 ){
-          die "exit_status was '$exit_status', expected 0";
-      } else {
-          die "Output not as expected";
-      }
+      say "got exit code '$exit_status'";
+      die "Output not as expected";
+  }
+
+  if( $expect_failure == 1 && $exit_status == 0 ){
+    say "2c expected failure but was success";
+    die "2c expected failure but was success";
+  }
+
+  if( $expect_failure == 0 && $exit_status != 0 ){
+      die "2c exit_status was '$exit_status', expected 0";
   }
 
   # run program through pancake and capture output
   my $output_pancake = `$path pancake -i $in_tmp_file`;
   $exit_status = $?;
 
-  if( $exit_status != 0 || $output_pancake ne $expected ){
+  if( $output_pancake ne $expected ){
       say "Pancake output was not as expected";
       say "=======\nExpected:\n$expected";
       say "=======\nGot:\n$output_pancake";
       say "=======\n";
-      if( $exit_status != 0 ){
-          die "exit_status was '$exit_status', expected 0";
-      } else {
-          die "Output not as expected";
-      }
+      say "got exit code '$exit_status'";
+      die "Output not as expected";
+  }
+
+  if( $expect_failure == 1 && $exit_status == 0 ){
+      say "pancake expected failure but was success";
+      die "pancake expected failure but was success";
+  }
+
+  if( $expect_failure == 0 && $exit_status != 0 ){
+      die "pancake exit_status was '$exit_status', expected 0";
   }
 
   `rm $in_tmp_file`;
@@ -371,9 +396,10 @@ sub run {
 }
 
 for my $case (@$cases) {
-  my $input = cleanup $case->{input};
-  my $expected = cleanup $case->{expected};
-  run $input, $expected;
+  my $input = cleanup $case->{input} // die;
+  my $expected = cleanup $case->{expected} // die;
+  my $expect_failure = $case->{failure} // 0;
+  run $input, $expected, $expect_failure;
 }
 
 say "test_backends_output_equivalence successs";

@@ -10,6 +10,7 @@ builtin fn not(a::Bool) -> Bool
 builtin fn and(a::Bool, b::Bool) -> Bool
 builtin fn or(a::Bool, b::Bool) -> Bool
 builtin fn to_str(a::Bool) -> String
+builtin fn assert(a::Bool) -> Void
 
 builtin type Sint
 builtin fn print(a::Sint)
