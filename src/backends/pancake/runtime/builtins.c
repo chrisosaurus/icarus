@@ -721,4 +721,3 @@ unsigned int i_modulo_sint_sint(struct ic_backend_pancake_value_stack *value_sta
     RESULT(answer, sint);
     return 1;
 }
-
