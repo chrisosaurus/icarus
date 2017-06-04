@@ -540,6 +540,9 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_sc
     struct ic_transform_ir_stmt *stmt = 0;
     struct ic_transform_ir_fcall *tir_fcall = 0;
     struct ic_transform_ir_let *tlet = 0;
+    struct ic_symbol *left_sym = 0;
+    struct ic_symbol *right_sym = 0;
+    struct ic_decl_type *left_tdecl = 0;
 
     unsigned int fake_indent = 1;
 
@@ -646,6 +649,61 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_sc
             }
 
             stmt = ic_transform_ir_stmt_let_literal_new(&(let->identifier), tdecl, cons);
+            if (!stmt) {
+                puts("ic_transform_stmt_let: call to ic_transform_ir_stmt_let_literal_new failed");
+                return 0;
+            }
+            if (!ic_transform_body_append(tbody, stmt)) {
+                puts("ic_transform_stmt_let: call to ic_transform_body_append failed");
+                return 0;
+            }
+
+            tlet = ic_transform_ir_stmt_get_let(stmt);
+            if (!tlet) {
+                puts("ic_transform_stmt_let: call to ic_transform_ir_stmt_get_let failed");
+                return 0;
+            }
+
+            break;
+
+        case ic_expr_type_field_access:
+            /* left can either be an id or a compound expression */
+            if (let->init->u.faccess.left->tag == ic_expr_type_identifier) {
+                left_sym = &(let->init->u.faccess.left->u.id.identifier);
+            } else {
+                left_sym = ic_transform_new_temp(kludge, scope, tbody, let->init->u.faccess.left);
+                if (!left_sym) {
+                    puts("ic_transform_stmt_let: call to ic_transform_new_temp failed");
+                    return 0;
+                }
+            }
+
+            left_tdecl = ic_analyse_infer(kludge, scope, let->init->u.faccess.left);
+            if (!left_tdecl) {
+                puts("ic_transform_stmt_let: call to ic_analyse_infer failed for let->init->u.faccess.left");
+                return 0;
+            }
+
+            /* get return type of inner struct field */
+            tdecl = ic_analyse_infer(kludge, scope, let->init);
+            if (!tdecl) {
+                puts("ic_transform_new_temp: call to ic_analyse_infer failed");
+                return 0;
+            }
+
+            if (!let->init->u.faccess.right) {
+                puts("ic_transform_stmt_let: faccess right was null");
+                return 0;
+            }
+
+            /* right must always be an id */
+            if (let->init->u.faccess.right->tag != ic_expr_type_identifier) {
+                puts("ic_transform_stmt_let: faccess right was not id");
+                return 0;
+            }
+            right_sym = &(let->init->u.faccess.right->u.id.identifier);
+
+            stmt = ic_transform_ir_stmt_let_faccess_new(&(let->identifier), tdecl, left_sym, left_tdecl, right_sym);
             if (!stmt) {
                 puts("ic_transform_stmt_let: call to ic_transform_ir_stmt_let_literal_new failed");
                 return 0;

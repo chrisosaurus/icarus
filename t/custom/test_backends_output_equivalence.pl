@@ -166,6 +166,30 @@ my $cases = [
       4
     ',
   },
+  {
+    input => '
+      type Foo
+          i::Sint
+      end
+
+      type Bar
+          f::Foo
+      end
+
+      type Baz
+          b::Bar
+      end
+
+      fn main()
+          let b = Baz(Bar(Foo(4s)))
+          let t = b.b.f.i
+          println(t)
+      end
+    ',
+    expected => '
+      4
+    ',
+  },
 ];
 
 # whitespace sensitivity sucks
