@@ -204,49 +204,6 @@ my $cases = [
       Foo{Hello}
     ',
   },
-  {
-    input => '
-      type Zero
-      end
-
-      union Succ
-          zero::Zero
-          succ::Succ
-      end
-
-      fn value(z::Zero) -> Uint
-          return 0u
-      end
-
-      fn value(s::Succ) -> Uint
-          match s
-              case zero::Zero
-                  return 1u + 0u
-              case succ::Succ
-                  return 1u + value(succ)
-              end
-          end
-      end
-
-      fn print(s::Succ)
-          let v = value(s)
-          print(v)
-      end
-
-      fn print(z::Zero)
-          let v = value(z)
-          print(v)
-      end
-
-      fn main()
-          let three = Succ(Succ(Succ(Zero())))
-          println(three)
-      end
-    ',
-    expected => '
-      3
-    ',
-  },
 ];
 
 # whitespace sensitivity sucks

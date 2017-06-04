@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../../analyse/data/kludge.h"
 #include "../../data/labeller.h"
@@ -463,8 +464,18 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
             return 0;
         }
 
-        /* print warning if local variable was never accessed */
-        if (!local->accessed) {
+        /* print warning if local variable was never accessed
+         * unless that local's name is _
+         *
+         * TODO FIXME move this logic into analyse as well
+         * both frontends should warn for all unused variables
+         * but ignore all _ names
+         * we should also prevent reads from _ names
+         *
+         * TODO FIXME for an _ variable we shouldn't even pass it
+         * this is just wasting runtime time and space
+         */
+        if (!local->accessed && (0 != strcmp("_", local_name_ch))) {
             printf("Pancake: Warning: unused local variable '%s'\n", local_name_ch);
         }
     }

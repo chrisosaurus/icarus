@@ -7,7 +7,7 @@ union Succ
     succ::Succ
 end
 
-fn value(z::Zero) -> Uint
+fn value(_::Zero) -> Uint
     return 0u
 end
 
