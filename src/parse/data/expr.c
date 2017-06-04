@@ -54,6 +54,11 @@ unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, struct ic_e
 
     /* call init on components */
 
+    if (!ic_pvector_init(&(fcall->type_symbols), 0)) {
+        puts("ic_expr_func_call_init: call to ic_pvector_init failed");
+        return 0;
+    }
+
     if (!ic_pvector_init(&(fcall->args), 0)) {
         puts("ic_expr_func_call_init: call to ic_pvector_init failed");
         return 0;
@@ -79,6 +84,7 @@ unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, struct ic_e
 unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned int free_fcall) {
     int i = 0;
     int len = 0;
+    struct ic_symbol *sym = 0;
     struct ic_expr *expr = 0;
 
     if (!fcall) {
@@ -92,11 +98,26 @@ unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned
         return 0;
     }
 
+    len = ic_expr_func_call_type_symbols_length(fcall);
+    for (i = 0; i < len; ++i) {
+        sym = ic_expr_func_call_get_type_symbol(fcall, i);
+        if (!sym) {
+            puts("ic_expr_func_call_destroy: call to ic_expr_func_call_get_type_symbol failed");
+            return 0;
+        }
+
+        /* free = 1 as pointer element */
+        if (!ic_symbol_destroy(sym, 1)) {
+            puts("ic_expr_func_call_destroy: call to ic_symbol_destroy failed");
+            return 0;
+        }
+    }
+
     len = ic_expr_func_call_length(fcall);
     for (i = 0; i < len; ++i) {
         expr = ic_expr_func_call_get_arg(fcall, i);
         if (!expr) {
-            puts("ic_expr_func_call_destroy: call to ic_expr_func-call_get_arg failed");
+            puts("ic_expr_func_call_destroy: call to ic_expr_func_call_get_arg failed");
             return 0;
         }
 
@@ -202,7 +223,7 @@ int ic_expr_func_call_add_arg(struct ic_expr_func_call *fcall, struct ic_expr *e
         return 0;
     }
     if (!expr) {
-        puts("ic_expr_func_call_add_arg: field was null");
+        puts("ic_expr_func_call_add_arg: expr was null");
         return 0;
     }
 
@@ -241,6 +262,58 @@ unsigned int ic_expr_func_call_length(struct ic_expr_func_call *fcall) {
 
     /* let pvector do al the work */
     return ic_pvector_length(&(fcall->args));
+}
+
+/* add a new type symbol to this function call
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+int ic_expr_func_call_add_type_symbol(struct ic_expr_func_call *fcall, struct ic_symbol *type_symbol) {
+    if (!fcall) {
+        puts("ic_expr_func_call_add_type_symbol: fcall was null");
+        return 0;
+    }
+    if (!type_symbol) {
+        puts("ic_expr_func_call_add_type_symbol: type_symbol was null");
+        return 0;
+    }
+
+    /* let pvector do al the work */
+    if (-1 == ic_pvector_append(&(fcall->type_symbols), type_symbol)) {
+        puts("ic_expr_func_call_add_type_symbol: call to ic_pvector_append failed");
+        return 0;
+    }
+
+    return 1;
+}
+
+/* get type symbol
+ *
+ * returns field at offset on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_expr_func_call_get_type_symbol(struct ic_expr_func_call *fcall, unsigned int i) {
+    if (!fcall) {
+        puts("ic_expr_func_call_get_type_symbols: fcall was null");
+        return 0;
+    }
+
+    /* let pvector do al the work */
+    return ic_pvector_get(&(fcall->type_symbols), i);
+}
+
+/* returns number of type_symbols on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_func_call_type_symbols_length(struct ic_expr_func_call *fcall) {
+    if (!fcall) {
+        puts("ic_expr_func_call_type_symbols_length: fcall was null");
+        return 0;
+    }
+
+    /* let pvector do al the work */
+    return ic_pvector_length(&(fcall->type_symbols));
 }
 
 /* get internal symbol for function name
