@@ -235,8 +235,8 @@ sub run {
 
 for my $case (@$cases) {
   my $input = cleanup $case->{input};
-  my $expected_c = cleanup $case->{expected_c};
-  my $expected_output = cleanup $case->{expected_output};
+  my $expected_c = cleanup $case->{expected_c} // die;
+  my $expected_output = cleanup $case->{expected_output} // die;
   run $input, $expected_c, $expected_output;
 }
 

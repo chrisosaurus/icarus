@@ -15,7 +15,7 @@ my $cases = [
         println("Hello world")
       end
       ',
-    expected_output => '
+    expected => '
       Hello world
       '
   },
@@ -40,7 +40,7 @@ my $cases = [
         println(baz(7s))
       end
       ',
-    expected_output => '
+    expected => '
       18
       17
       ',
@@ -53,7 +53,7 @@ my $cases = [
         println(6s < 15s)
       end
       ',
-    expected_output => '
+    expected => '
       True
       False
       True
@@ -69,7 +69,7 @@ my $cases = [
         end
       end
       ',
-    expected_output => '
+    expected => '
       4 < 5
       ',
   },
@@ -84,7 +84,7 @@ my $cases = [
         end
       end
       ',
-    expected_output => '
+    expected => '
       4 < 5
       ',
   },
@@ -98,7 +98,7 @@ my $cases = [
           println(get_str("Jennifer"))
       end
       ',
-    expected_output => '
+    expected => '
       Hello there Jennifer, very nice to meet you
       ',
   },
@@ -141,7 +141,7 @@ my $cases = [
           fizzbuzz(1s, 20s)
       end
       ',
-    expected_output => '
+    expected => '
       1
       2
       Fizz
@@ -180,7 +180,7 @@ my $cases = [
         println(f.b.s)
       end
     ',
-    expected_output => '
+    expected => '
       16
       Hello!!!
     '
@@ -199,9 +199,52 @@ my $cases = [
           println(b)
       end
     ',
-    expected_output =>'
+    expected =>'
       Foo{5}
       Foo{Hello}
+    ',
+  },
+  {
+    input => '
+      type Zero
+      end
+
+      union Succ
+          zero::Zero
+          succ::Succ
+      end
+
+      fn value(z::Zero) -> Uint
+          return 0u
+      end
+
+      fn value(s::Succ) -> Uint
+          match s
+              case zero::Zero
+                  return 1u + 0u
+              case succ::Succ
+                  return 1u + value(succ)
+              end
+          end
+      end
+
+      fn print(s::Succ)
+          let v = value(s)
+          print(v)
+      end
+
+      fn print(z::Zero)
+          let v = value(z)
+          print(v)
+      end
+
+      fn main()
+          let three = Succ(Succ(Succ(Zero())))
+          println(three)
+      end
+    ',
+    expected => '
+      3
     ',
   },
 ];
@@ -222,7 +265,7 @@ sub cleanup {
 
 sub run {
   my $input = shift // die;
-  my $expected_output = shift // die;
+  my $expected = shift // die;
   die if @_;
 
   my $in_tmp_file = `mktemp TESTING_BACKEND_2C_END_TO_END_OUTPUT_ONLY_XXX.ic`;
@@ -266,9 +309,9 @@ sub run {
 
   `rm a.out`;
 
-  if( $exit_status != 0 || $output ne $expected_output ){
+  if( $exit_status != 0 || $output ne $expected ){
       say "Output was not as expected";
-      say "=======\nExpected:\n$expected_output";
+      say "=======\nExpected:\n$expected";
       say "=======\nGot:\n$output";
       say "=======\n";
       if( $exit_status != 0 ){
@@ -284,9 +327,9 @@ sub run {
 }
 
 for my $case (@$cases) {
-  my $input = cleanup $case->{input};
-  my $expected_output = cleanup $case->{expected_output};
-  run $input, $expected_output;
+  my $input = cleanup $case->{input} // die;
+  my $expected = cleanup $case->{expected} // die;
+  run $input, $expected;
 }
 
 say "test_backend_pancake_end_to_end_output_only successs";

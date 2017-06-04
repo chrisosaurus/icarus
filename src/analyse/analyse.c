@@ -173,6 +173,8 @@ static unsigned int ic_analyse_decl_type_generate_print_functions(struct ic_klud
     char *type_str = 0;
     int type_str_len = 0;
 
+    char *sig_call = 0;
+
     if (!kludge) {
         puts("ic_analyse_decl_type_generate_print_functions: kludge was null");
         goto ERROR;
@@ -228,15 +230,28 @@ static unsigned int ic_analyse_decl_type_generate_print_functions(struct ic_klud
             goto ERROR;
         }
 
-        generate = ic_generate_new(ic_generate_tag_print, print_decl, tdecl);
-        if (!generate) {
-            puts("ic_analyse_decl_type_generate_print_functions: call to ic_generate_new failed");
+        sig_call = ic_decl_func_sig_call(print_decl);
+        if (!sig_call) {
+            puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl_func_sig_call failed");
             goto ERROR;
         }
 
-        if (!ic_kludge_generates_add(kludge, generate)) {
-            puts("ic_analyse_decl_type_generate_print_functions: call to ic_kludge_generates_add failed");
-            goto ERROR;
+        /* check if print already exists, if so do not generate */
+        if (ic_kludge_get_fdecl(kludge, sig_call)) {
+            /* skip generation since it already exists
+             * printf("Skipping generation of function '%s' as was defined by the user\n", sig_call);
+             */
+        } else {
+            generate = ic_generate_new(ic_generate_tag_print, print_decl, tdecl);
+            if (!generate) {
+                puts("ic_analyse_decl_type_generate_print_functions: call to ic_generate_new failed");
+                goto ERROR;
+            }
+
+            if (!ic_kludge_generates_add(kludge, generate)) {
+                puts("ic_analyse_decl_type_generate_print_functions: call to ic_kludge_generates_add failed");
+                goto ERROR;
+            }
         }
     }
 
@@ -258,15 +273,28 @@ static unsigned int ic_analyse_decl_type_generate_print_functions(struct ic_klud
             goto ERROR;
         }
 
-        generate = ic_generate_new(ic_generate_tag_println, println_decl, tdecl);
-        if (!generate) {
-            puts("ic_analyse_decl_type_generate_print_functions: call to ic_generate_new failed");
+        sig_call = ic_decl_func_sig_call(println_decl);
+        if (!sig_call) {
+            puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl_func_sig_call failed");
             goto ERROR;
         }
 
-        if (!ic_kludge_generates_add(kludge, generate)) {
-            puts("ic_analyse_decl_type_generate_print_functions: call to ic_kludge_generates_add failed");
-            goto ERROR;
+        /* check if print already exists, if so do not generate */
+        if (ic_kludge_get_fdecl(kludge, sig_call)) {
+            /* skip generation since it already exists
+             * printf("Skipping generation of function '%s' as was defined by the user\n", sig_call);
+             */
+        } else {
+            generate = ic_generate_new(ic_generate_tag_println, println_decl, tdecl);
+            if (!generate) {
+                puts("ic_analyse_decl_type_generate_print_functions: call to ic_generate_new failed");
+                goto ERROR;
+            }
+
+            if (!ic_kludge_generates_add(kludge, generate)) {
+                puts("ic_analyse_decl_type_generate_print_functions: call to ic_kludge_generates_add failed");
+                goto ERROR;
+            }
         }
     }
 

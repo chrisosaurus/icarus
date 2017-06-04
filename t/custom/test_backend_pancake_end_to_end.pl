@@ -482,8 +482,8 @@ sub run {
 }
 
 for my $case (@$cases) {
-  my $input = cleanup $case->{input};
-  my $expected = cleanup $case->{expected};
+  my $input = cleanup $case->{input} // die;
+  my $expected = cleanup $case->{expected} // die;
   run $input, $expected;
 }
 

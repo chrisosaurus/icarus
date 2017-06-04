@@ -219,6 +219,50 @@ my $cases = [
       Foo{4, Bar{Hello}, World}
     ',
   },
+  {
+    input => '
+      type Zero
+      end
+
+      union Succ
+          zero::Zero
+          succ::Succ
+      end
+
+      fn value(z::Zero) -> Uint
+          return 0u
+      end
+
+      fn value(s::Succ) -> Uint
+          match s
+              case zero::Zero
+                  return 1u + 0u
+              case succ::Succ
+                  return 1u + value(succ)
+              end
+          end
+      end
+
+      fn print(s::Succ)
+          let v = value(s)
+          print(v)
+      end
+
+      fn print(z::Zero)
+          let v = value(z)
+          print(v)
+      end
+
+      fn main()
+          let three = Succ(Succ(Succ(Zero())))
+          println(three)
+      end
+    ',
+    expected => '
+      Pancake: Warning: unused local variable \'z\'
+      3
+    ',
+  },
 ];
 
 # whitespace sensitivity sucks
@@ -268,8 +312,8 @@ sub run {
 }
 
 for my $case (@$cases) {
-  my $input = cleanup $case->{input};
-  my $expected = cleanup $case->{expected};
+  my $input = cleanup $case->{input} // die;
+  my $expected = cleanup $case->{expected} // die;
   run $input, $expected;
 }
 
