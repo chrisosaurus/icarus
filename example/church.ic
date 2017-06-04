@@ -31,8 +31,32 @@ fn print(z::Zero)
     print(v)
 end
 
+fn plus(a::Zero, _::Zero) -> Zero
+    return a
+end
+
+fn plus(_::Zero, b::Succ) -> Succ
+    return b
+end
+
+fn plus(a::Succ, _::Zero) -> Succ
+    return a
+end
+
+fn plus(a::Succ, b::Succ) -> Succ
+    match a
+        case succ::Succ
+            return Succ(succ + b)
+        case zero::Zero
+            return Succ(b)
+        end
+    end
+end
+
 fn main()
     let three = Succ(Succ(Succ(Zero())))
-    println(three)
+    let two = Succ(Succ(Zero()))
+    let five = three + two
+    println(five)
 end
 
