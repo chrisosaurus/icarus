@@ -14,7 +14,48 @@
 
 /* consume token
  * returns ic_expr* on success
- * renurns 0 on failure
+ * returns 0 on failure
+ */
+static struct ic_expr *ic_parse_expr_template_instantiation(struct ic_token_list *token_list, struct ic_expr *template_name) {
+    /* our eventual return value */
+    struct ic_expr *expr = 0;
+    /* current token */
+    struct ic_token *token = 0;
+
+    if (!token_list) {
+        puts("ic_parse_expr_template_instantiation: token_list was null");
+        return 0;
+    }
+
+    if (!template_name) {
+        puts("ic_parse_expr_template_instantiation: token_list was null");
+        return 0;
+    }
+
+    /* skip over opening [ */
+    token = ic_token_list_expect_important(token_list, IC_LRBRACKET);
+    if (!token) {
+        puts("ic_parse_expr_template_instantiation: failed to find opening bracket '['");
+        free(expr);
+        return 0;
+    }
+
+    /* TODO FIXME */
+
+    token = ic_token_list_expect_important(token_list, IC_RSBRACKET);
+    if (!token) {
+        puts("ic_parse_expr_template_instantiation: failed to get closing bracket");
+        free(expr);
+        return 0;
+    }
+
+    /* victory */
+    return expr;
+}
+
+/* consume token
+ * returns ic_expr* on success
+ * returns 0 on failure
  */
 static struct ic_expr *ic_parse_expr_fcall(struct ic_token_list *token_list, struct ic_expr *func_name) {
     /* our eventual return value */
@@ -870,6 +911,21 @@ struct ic_expr *ic_parse_expr(struct ic_token_list *token_list) {
             current = ic_parse_expr_fcall(token_list, current);
             if (!current) {
                 puts("ic_parse_expr: call to ic_parse_expr_fcall failed");
+                return 0;
+            }
+
+            continue;
+        } else if (token->id == IC_LSBRACKET) {
+            /* this is a template instantiation */
+
+            if (!current) {
+                puts("ic_parse_expr: encountered template instantiation with no left expr");
+                return 0;
+            }
+
+            current = ic_parse_expr_template_instantiation(token_list, current);
+            if (!current) {
+                puts("ic_parse_expr: call to ic_parse_expr_template_instantiation failed");
                 return 0;
             }
 
