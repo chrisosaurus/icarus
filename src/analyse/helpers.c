@@ -74,7 +74,6 @@ static unsigned int ic_analyse_mark_assigned(struct ic_scope *scope, struct ic_e
 /* iterate through the field list checking:
  *  a) all field's names are unique within this list
  *  b) all field's types exist in this kludge
- *  c) (if provided) that no field's types eq forbidden_type
  *
  * `unit` and `unit_name` are used for error printing
  * it is always printed as '%s for %s error goes here'
@@ -83,7 +82,7 @@ static unsigned int ic_analyse_mark_assigned(struct ic_scope *scope, struct ic_e
  * returns 1 on success (all fields are valid as per the 3 rules)
  * returns 0 on failure
  */
-unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_pvector *fields, char *forbidden_type) {
+unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_pvector *fields) {
 
     /* index into fields */
     unsigned int i = 0;
@@ -180,19 +179,6 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
                    unit,
                    unit_name);
             goto ERROR;
-        }
-
-        if (forbidden_type) {
-            /* check that the type used is not the same as the 'forbidden_type'
-             * this is used to prevent recursive types during tdecl analyse
-             */
-            if (!strcmp(type_str, forbidden_type)) {
-                printf("ic_analyse_field_list: recursive type detected; '%s' used within '%s' for '%s'\n",
-                       type_str,
-                       unit,
-                       unit_name);
-                goto ERROR;
-            }
         }
 
         /* check that this field's type exists */

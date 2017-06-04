@@ -190,6 +190,22 @@ my $cases = [
       4
     ',
   },
+  {
+    input => '
+      union Cons
+        u::Uint
+        cons::Cons
+      end
+
+      fn main()
+        let c = Cons(Cons(Cons(4u)))
+        println(c)
+      end
+    ',
+    expected => '
+      Cons{Cons{Cons{4}}}
+    ',
+  },
 ];
 
 # whitespace sensitivity sucks
