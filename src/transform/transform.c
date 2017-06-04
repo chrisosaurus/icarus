@@ -1034,6 +1034,22 @@ static unsigned int ic_transform_stmt_match(struct ic_kludge *kludge, struct ic_
     /* if our expr is already a symbol, then re-use */
     if (match->expr->tag == ic_expr_type_identifier) {
         match_symbol = &match->expr->u.id.identifier;
+
+        /* fetch existing slot */
+        slot = ic_scope_get_from_symbol(scope, match_symbol);
+        if (!slot) {
+            printf("ic_transform_stmt_match: lookup of '%s' failed\n", ic_symbol_contents(match_symbol));
+            puts("ic_transform_stmt_match: call to ic_scope_get_from_symbol failed");
+            return 0;
+        }
+
+        /* and get the type out */
+        tdecl = slot->type;
+        if (!tdecl) {
+            puts("ic_transform_stmt_match: slot->type was null");
+            return 0;
+        }
+
     } else {
         /* otherwise compile down to a symbol */
         match_symbol = ic_transform_new_temp(kludge, scope, tbody, match->expr);
@@ -1041,18 +1057,13 @@ static unsigned int ic_transform_stmt_match(struct ic_kludge *kludge, struct ic_
             puts("ic_transform_stmt_match: call to ic_transform_new_temp failed");
             return 0;
         }
-    }
 
-    slot = ic_scope_get_from_symbol(scope, match_symbol);
-    if (!slot) {
-        puts("ic_transform_stmt_match: call to ic_scope_get_from_symbol failed");
-        return 0;
-    }
-
-    tdecl = slot->type;
-    if (!tdecl) {
-        puts("ic_transform_stmt_match: slot->type was null");
-        return 0;
+        /* and work out type */
+        tdecl = ic_analyse_infer(kludge, scope, match->expr);
+        if (!tdecl) {
+            puts("ic_transform_stmt_match: call to ic_analyse_infer failed");
+            return 0;
+        }
     }
 
     tstmt = ic_transform_ir_stmt_match_new(tdecl, match_symbol);
