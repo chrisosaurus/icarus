@@ -14,8 +14,8 @@ struct ic_expr_func_call {
     /* ic_expr for function name */
     struct ic_expr *fname;
 
-    /* a pointer vector of symbol(s) */
-    struct ic_pvector type_symbols;
+    /* a pointer vector of type_ref(s) */
+    struct ic_pvector type_refs;
 
     /* this is a pvector of ic_expr *
      */
@@ -100,24 +100,24 @@ struct ic_expr *ic_expr_func_call_get_arg(struct ic_expr_func_call *fcall, unsig
  */
 unsigned int ic_expr_func_call_length(struct ic_expr_func_call *fcall);
 
-/* add a new type symbol to this function call
+/* add a new type ref to this function call
  *
  * returns 1 on success
  * returns 0 on failure
  */
-int ic_expr_func_call_add_type_symbol(struct ic_expr_func_call *fcall, struct ic_symbol *type_symbol);
+int ic_expr_func_call_add_type_ref(struct ic_expr_func_call *fcall, struct ic_type_ref *type_ref);
 
-/* get type symbol
+/* get type ref
  *
  * returns field at offset on success
  * returns 0 on failure
  */
-struct ic_symbol *ic_expr_func_call_get_type_symbol(struct ic_expr_func_call *fcall, unsigned int i);
+struct ic_type_ref *ic_expr_func_call_get_type_ref(struct ic_expr_func_call *fcall, unsigned int i);
 
-/* returns number of type_symbols on success
+/* returns number of type_refs on success
  * returns 0 on failure
  */
-unsigned int ic_expr_func_call_type_symbols_length(struct ic_expr_func_call *fcall);
+unsigned int ic_expr_func_call_type_refs_length(struct ic_expr_func_call *fcall);
 
 /* get internal symbol for function name
  *
