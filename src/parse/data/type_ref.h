@@ -1,6 +1,7 @@
 #ifndef ICARUS_TYPE_H
 #define ICARUS_TYPE_H
 
+#include "../../data/pvector.h"
 #include "../../data/symbol.h"
 
 enum ic_type_ref_tag {
@@ -39,6 +40,12 @@ struct ic_type_ref {
         struct ic_type_param *tparam; /* value for ic_type_ref_param */
         struct ic_decl_type *tdecl;   /* value for ic_type_ref_resolved */
     } u;
+
+    /* vector of type_refs which are type params given to this type
+     * Maybe[Sint]
+     * have a type_ref for Sint set here
+     */
+    struct ic_pvector type_params;
 };
 
 /* allocate and intialise a new type
@@ -117,6 +124,27 @@ unsigned int ic_type_ref_set_type_decl(struct ic_type_ref *type, struct ic_decl_
  * returns 0 on failure
  */
 struct ic_decl_type *ic_type_ref_get_type_decl(struct ic_type_ref *type);
+
+/* add a type_param
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_type_ref_add_type_param(struct ic_type_ref *type, struct ic_type_ref *type_param);
+
+/* get a type_param
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type_ref *ic_type_ref_get_type_param(struct ic_type_ref *type, unsigned int i);
+
+/* get length of type_params
+ *
+ * returns num on success
+ * returns 0 on failure
+ */
+unsigned int ic_type_ref_type_params_length(struct ic_type_ref *type);
 
 /* print this this type */
 void ic_type_ref_print(FILE *fd, struct ic_type_ref *type);

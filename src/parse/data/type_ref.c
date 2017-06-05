@@ -45,6 +45,11 @@ unsigned int ic_type_ref_init(struct ic_type_ref *type) {
      */
     type->tag = ic_type_ref_unknown;
 
+    if (!ic_pvector_init(&(type->type_params), 0)) {
+        puts("ic_type_ref_init: call to ic_pvector_init failed");
+        return 0;
+    }
+
     return 1;
 }
 
@@ -120,9 +125,27 @@ unsigned int ic_type_ref_symbol_init(struct ic_type_ref *type, char *type_str, u
  * returns 0 on failure
  */
 unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_type) {
+    unsigned int len = 0;
+    unsigned int i = 0;
+    struct ic_type_ref *type_param = 0;
+
     if (!type) {
         puts("ic_type_ref_destroy: type was null");
         return 0;
+    }
+
+    len = ic_type_ref_type_params_length(type);
+    for (i = 0; i < len; ++i) {
+        type_param = ic_type_ref_get_type_param(type, i);
+        if (!type_param) {
+            puts("ic_type_ref_destroy: call to ic_type_ref_get_type_param failed");
+            return 0;
+        }
+
+        if (!ic_type_ref_destroy(type_param, 1)) {
+            puts("ic_type_ref_destroy: call to ic_type_ref_destroy failed");
+            return 0;
+        }
     }
 
     /* cleanup depends on type_tag */
@@ -381,9 +404,70 @@ struct ic_decl_type *ic_type_ref_get_type_decl(struct ic_type_ref *type) {
     return 0;
 }
 
+/* add a type_param
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_type_ref_add_type_param(struct ic_type_ref *type, struct ic_type_ref *type_param) {
+    if (!type) {
+        puts("ic_type_ref_add_type_param: type was null");
+        return 0;
+    }
+
+    if (-1 == ic_pvector_append(&(type->type_params), type_param)) {
+        puts("ic_type_ref_add_type_param: call to ic_pvector_append failed");
+        return 0;
+    }
+
+    return 1;
+}
+
+/* get a type_param
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type_ref *ic_type_ref_get_type_param(struct ic_type_ref *type, unsigned int i) {
+    struct ic_type_ref *type_param = 0;
+
+    if (!type) {
+        puts("ic_type_ref_get_type_param: type was null");
+        return 0;
+    }
+
+    type_param = ic_pvector_get(&(type->type_params), i);
+    if (!type_param) {
+        puts("ic_type_ref_get_type_param: call to ic_pvector_get failed");
+        return 0;
+    }
+
+    return type_param;
+}
+
+/* get length of type_params
+ *
+ * returns num on success
+ * returns 0 on failure
+ */
+unsigned int ic_type_ref_type_params_length(struct ic_type_ref *type) {
+    unsigned int len = 0;
+
+    if (!type) {
+        puts("ic_type_ref_type_params_length: type was null");
+        return 0;
+    }
+
+    len = ic_pvector_length(&(type->type_params));
+    return len;
+}
+
 /* print this this type */
 void ic_type_ref_print(FILE *fd, struct ic_type_ref *type) {
     struct ic_symbol *sym = 0;
+    unsigned int len = 0;
+    unsigned int i = 0;
+    struct ic_type_ref *type_param = 0;
 
     if (!type) {
         puts("ic_type_ref_print: type was null");
@@ -417,6 +501,20 @@ void ic_type_ref_print(FILE *fd, struct ic_type_ref *type) {
             puts("ic_type_ref_print: type->type was impossible type_tag");
             return;
             break;
+    }
+
+    len = ic_type_ref_type_params_length(type);
+    if (len) {
+        fputs("[", fd);
+        for (i = 0; i < len; ++i) {
+            type_param = ic_type_ref_get_type_param(type, i);
+            if (!type_param) {
+                puts("ic_type_ref_print: call to ic_type_ref_get_type_param failed");
+                return;
+            }
+            ic_type_ref_print(fd, type_param);
+        }
+        fputs("]", fd);
     }
 
     return;
