@@ -1747,7 +1747,7 @@ char *ic_decl_type_struct_sig_mangled_full(struct ic_decl_type_struct *tdecl) {
             }
         }
 
-        if (!ic_string_append_char(sig_str, "(", 3)) {
+        if (!ic_string_append_char(sig_str, "(", 1)) {
             puts("ic_decl_type_struct_sig_mangled_full: call to ic_string_append_char failed");
             return 0;
         }
