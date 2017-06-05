@@ -609,7 +609,7 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_sc
             /* FIXME TODO ownership ... */
             expr->fcall = tir_fcall;
 
-            tdecl = ic_type_ref_get_type_decl(&(let->tref));
+            tdecl = ic_type_ref_get_type_decl(let->tref);
             if (!tdecl) {
                 puts("ic_transform_stmt_let: call to ic_type_ref_get_type_decl failed");
                 return 0;
@@ -642,7 +642,7 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_sc
         case ic_expr_type_constant:
             cons = &(let->init->u.cons);
 
-            tdecl = ic_type_ref_get_type_decl(&(let->tref));
+            tdecl = ic_type_ref_get_type_decl(let->tref);
             if (!tdecl) {
                 puts("ic_transform_stmt_let: call to ic_type_ref_get_type_decl failed");
                 return 0;

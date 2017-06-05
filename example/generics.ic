@@ -10,8 +10,13 @@ union Bar[T]
     t::T
 end
 
+fn print[T](f::Foo[T])
+    print(f.t)
+end
+
 fn main()
     let f = Foo[Sint](6s)
+    let f2::Foo[Sint] = f
     println(id(10s))
     println(id("Hello"))
     println(id(Foo(1s)))

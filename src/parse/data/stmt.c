@@ -174,8 +174,9 @@ unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned in
         return 0;
     }
 
-    if (!ic_type_ref_init(&(let->tref))) {
-        puts("ic_smtm_let_init: call to ic_type_ref_init failed");
+    let->tref = ic_type_ref_new();
+    if (!let->tref) {
+        puts("ic_smtm_let_init: call to ic_type_ref_new for id failed");
         return 0;
     }
 
@@ -206,7 +207,7 @@ unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let)
         return 0;
     }
 
-    if (!ic_type_ref_destroy(&(let->tref), 0)) {
+    if (!ic_type_ref_destroy(let->tref, 1)) {
         puts("ic_stmt_let_destroy: type called to ic_type_ref_destroy failed");
         return 0;
     }
@@ -234,26 +235,29 @@ unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let)
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_stmt_let_set_declared_type(struct ic_stmt_let *let, char *type_src, unsigned int type_len) {
+unsigned int ic_stmt_let_set_declared_type(struct ic_stmt_let *let, struct ic_type_ref *type_ref) {
     if (!let) {
         puts("ic_stmt_let_set_declared_type: let was null");
         return 0;
     }
 
-    if (!type_src) {
-        puts("ic_stmt_let_set_declared_type: type_src was null");
+    if (!type_ref) {
+        puts("ic_stmt_let_set_declared_type: type_ref was null");
         return 0;
     }
 
-    if (!type_len) {
-        puts("ic_stmt_let_set_declared_type: type_len was 0");
+    if (let->tref->tag != ic_type_ref_unknown) {
+        puts("ic_stmt_let_set_declared_type: let tref as already set");
         return 0;
     }
 
-    if (!ic_type_ref_set_symbol(&(let->tref), type_src, type_len)) {
-        puts("ic_stmt_let_set_declared_type: call to ic_type_ref_set_symbol failed");
+    if (!ic_type_ref_destroy(let->tref, 1)) {
+        /* TODO FIXME this seems wasteful */
+        puts("ic_stmt_let_set_declared_type: call to ic_type_ref_destroy failed");
         return 0;
     }
+
+    let->tref = type_ref;
 
     return 1;
 }
@@ -276,7 +280,15 @@ unsigned int ic_stmt_let_set_inferred_type(struct ic_stmt_let *let, struct ic_de
         return 0;
     }
 
-    if (!ic_type_ref_set_type_decl(&(let->tref), type)) {
+    if (!let->tref) {
+        let->tref = ic_type_ref_new();
+        if (!let->tref) {
+            puts("ic_stmt_let_set_inferred_type: call to ic_type_ref_new failed");
+            return 0;
+        }
+    }
+
+    if (!ic_type_ref_set_type_decl(let->tref, type)) {
         puts("ic_stmt_let_set_declared_type: call to ic_type_ref_set_type_decl failed");
         return 0;
     }
@@ -325,9 +337,9 @@ void ic_stmt_let_print(FILE *fd, struct ic_stmt_let *let, unsigned int *indent_l
     ic_symbol_print(fd, &(let->identifier));
 
     /* declared type on let is optional */
-    if (let->tref.tag != ic_type_ref_unknown) {
+    if (let->tref->tag != ic_type_ref_unknown) {
         fputs("::", fd);
-        ic_type_ref_print(fd, &(let->tref));
+        ic_type_ref_print(fd, let->tref);
     }
 
     fputs(" = ", fd);

@@ -1435,7 +1435,7 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
     }
 
     /* if let->type is set we must compare it to the init expr */
-    switch (let->tref.tag) {
+    switch (let->tref->tag) {
         case ic_type_ref_unknown:
             /* no declared let type, just use inferred type */
             type = init_type;
@@ -1443,10 +1443,10 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
 
         case ic_type_ref_symbol:
             /* type declared, compare */
-            type = ic_kludge_get_decl_type_from_typeref(kludge, &(let->tref));
+            type = ic_kludge_get_decl_type_from_typeref(kludge, let->tref);
             if (!type) {
                 puts("ic_analyse_let: failed to find type from typeref");
-                printf("failed to find declared type '%s'\n", ic_symbol_contents(ic_type_ref_get_symbol(&(let->tref))));
+                printf("failed to find declared type '%s'\n", ic_symbol_contents(ic_type_ref_get_symbol(let->tref)));
                 return 0;
             }
 
@@ -1459,13 +1459,13 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
 
         case ic_type_ref_resolved:
             /* error, type shouldn't already be resolved */
-            puts("ic_analyse_let: internal error: tref.tag was ic_type_ref_resolved");
+            puts("ic_analyse_let: internal error: tref->tag was ic_type_ref_resolved");
             return 0;
             break;
 
         default:
             /* error, impossible tref.tag */
-            puts("ic_analyse_let: impossible tref.tag");
+            puts("ic_analyse_let: impossible tref->tag");
             return 0;
             break;
     }

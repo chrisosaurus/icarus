@@ -507,6 +507,9 @@ void ic_type_ref_print(FILE *fd, struct ic_type_ref *type) {
     if (len) {
         fputs("[", fd);
         for (i = 0; i < len; ++i) {
+            if (i > 0) {
+                fputs(", ", fd);
+            }
             type_param = ic_type_ref_get_type_param(type, i);
             if (!type_param) {
                 puts("ic_type_ref_print: call to ic_type_ref_get_type_param failed");

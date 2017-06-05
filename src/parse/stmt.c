@@ -98,9 +98,7 @@ static struct ic_stmt *ic_parse_stmt_let(struct ic_token_list *token_list) {
     char *id_start = 0;
     unsigned int id_len = 0;
 
-    /* pointer and length for our type */
-    char *type_start = 0;
-    unsigned int type_len = 0;
+    struct ic_type_ref *type_ref = 0;
 
     /* our permissions */
     unsigned int permissions = 0;
@@ -174,24 +172,15 @@ static struct ic_stmt *ic_parse_stmt_let(struct ic_token_list *token_list) {
             return 0;
         }
 
-        /* consume type */
-        token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
-        if (!token) {
-            puts("ic_parse_stmt_let: Failed to find let identifier token");
-            free(stmt);
-            return 0;
-        }
-
-        type_start = ic_token_get_string(token);
-        type_len = ic_token_get_string_length(token);
-        if (!type_start || !type_len) {
-            puts("ic_parse_stmt_let: Failed to extract type identifier");
+        type_ref = ic_parse_type_ref(token_list);
+        if (!type_ref) {
+            puts("ic_parse_stmt_let: call to ic_parse_type_ref failed");
             free(stmt);
             return 0;
         }
 
         /* set type */
-        if (!ic_stmt_let_set_declared_type(let, type_start, type_len)) {
+        if (!ic_stmt_let_set_declared_type(let, type_ref)) {
             puts("ic_parse_stmt_let: call to ic_stmt_let_set_declared_type failed");
             free(stmt);
             return 0;

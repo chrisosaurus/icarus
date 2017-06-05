@@ -62,7 +62,7 @@ struct ic_stmt_let {
      *  a) elevating the user-declared type
      *  b) inferring type from expr
      */
-    struct ic_type_ref tref;
+    struct ic_type_ref *tref;
 
     /* FIXME making this an ic_expr *
      * to simplify interface between
@@ -110,7 +110,7 @@ unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let)
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_stmt_let_set_declared_type(struct ic_stmt_let *let, char *type_src, unsigned int type_len);
+unsigned int ic_stmt_let_set_declared_type(struct ic_stmt_let *let, struct ic_type_ref *tref);
 
 /* set inferred type on this let
  *
