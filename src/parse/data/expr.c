@@ -66,8 +66,8 @@ unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, struct ic_e
 
     /* fstr is set later by ic_analyse_fcall_str */
     fcall->string = 0;
-    /* set by expr_func_call_string_param */
-    fcall->string_param = 0;
+    /* set by expr_func_call_sig_param */
+    fcall->sig_param = 0;
     /* fdecl is used in the analyse phase */
     fcall->fdecl = 0;
     /* set our func_name */
@@ -138,12 +138,12 @@ unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned
         fcall->string = 0;
     }
 
-    if (fcall->string_param) {
-        if (!ic_string_destroy(fcall->string_param, 1)) {
+    if (fcall->sig_param) {
+        if (!ic_string_destroy(fcall->sig_param, 1)) {
             puts("ic_expr_func_call_destroy: call to ic_string_destroy failed");
             return 0;
         }
-        fcall->string_param = 0;
+        fcall->sig_param = 0;
     }
 
     fcall->fdecl = 0;
@@ -326,14 +326,14 @@ unsigned int ic_expr_func_call_type_refs_length(struct ic_expr_func_call *fcall)
     return ic_pvector_length(&(fcall->type_refs));
 }
 
-/* get internal string_param
+/* get internal sig_param
  *
  * will generate is not already generated
  *
  * returns * on success
  * returns 0 on failure
  */
-char *ic_expr_func_call_string_param(struct ic_expr_func_call *fcall) {
+char *ic_expr_func_call_sig_param(struct ic_expr_func_call *fcall) {
     struct ic_string *str = 0;
     struct ic_symbol *sym = 0;
     unsigned int i = 0;
@@ -341,14 +341,14 @@ char *ic_expr_func_call_string_param(struct ic_expr_func_call *fcall) {
     char *ch = 0;
 
     if (!fcall) {
-        puts("ic_expr_func_call_string_param: fcall was null");
+        puts("ic_expr_func_call_sig_param: fcall was null");
         return 0;
     }
 
-    if (fcall->string_param) {
-        ch = ic_string_contents(fcall->string_param);
+    if (fcall->sig_param) {
+        ch = ic_string_contents(fcall->sig_param);
         if (!ch) {
-            puts("ic_expr_func_call_string_param: call to ic_string_contents failed");
+            puts("ic_expr_func_call_sig_param: call to ic_string_contents failed");
             return 0;
         }
         return ch;
@@ -356,76 +356,76 @@ char *ic_expr_func_call_string_param(struct ic_expr_func_call *fcall) {
 
     str = ic_string_new_empty();
     if (!str) {
-        puts("ic_expr_func_call_string_param: call to ic_string_new_empty failed");
+        puts("ic_expr_func_call_sig_param: call to ic_string_new_empty failed");
         return 0;
     }
 
     sym = ic_expr_func_call_get_symbol(fcall);
     if (!sym) {
-        puts("ic_expr_func_call_string_param: call to ic_expr_func_call_get_symbol failed");
+        puts("ic_expr_func_call_sig_param: call to ic_expr_func_call_get_symbol failed");
         return 0;
     }
 
     if (!ic_string_append_symbol(str, sym)) {
-        puts("ic_expr_func_call_string_param: call to ic_string_append_symbol failed");
+        puts("ic_expr_func_call_sig_param: call to ic_string_append_symbol failed");
         return 0;
     }
 
     len = ic_expr_func_call_type_refs_length(fcall);
     if (len) {
         if (!ic_string_append_char(str, "[", 1)) {
-            puts("ic_expr_func_call_string_param: call to ic_string_append_symbol failed");
+            puts("ic_expr_func_call_sig_param: call to ic_string_append_symbol failed");
             return 0;
         }
 
         for (i = 0; i < len; ++i) {
             if (i == 0) {
                 if (!ic_string_append_char(str, "_", 1)) {
-                    puts("ic_expr_func_call_string_param: call to ic_string_append_symbol failed");
+                    puts("ic_expr_func_call_sig_param: call to ic_string_append_symbol failed");
                     return 0;
                 }
             } else {
                 if (!ic_string_append_char(str, ",_", 2)) {
-                    puts("ic_expr_func_call_string_param: call to ic_string_append_symbol failed");
+                    puts("ic_expr_func_call_sig_param: call to ic_string_append_symbol failed");
                     return 0;
                 }
             }
         }
 
         if (!ic_string_append_char(str, "]", 1)) {
-            puts("ic_expr_func_call_string_param: call to ic_string_append_symbol failed");
+            puts("ic_expr_func_call_sig_param: call to ic_string_append_symbol failed");
             return 0;
         }
     }
 
     if (!ic_string_append_char(str, "(", 1)) {
-        puts("ic_expr_func_call_string_param: call to ic_string_append_symbol failed");
+        puts("ic_expr_func_call_sig_param: call to ic_string_append_symbol failed");
         return 0;
     }
     len = ic_expr_func_call_length(fcall);
     for (i = 0; i < len; ++i) {
         if (i == 0) {
             if (!ic_string_append_char(str, "_", 1)) {
-                puts("ic_expr_func_call_string_param: call to ic_string_append_symbol failed");
+                puts("ic_expr_func_call_sig_param: call to ic_string_append_symbol failed");
                 return 0;
             }
         } else {
             if (!ic_string_append_char(str, ",_", 2)) {
-                puts("ic_expr_func_call_string_param: call to ic_string_append_symbol failed");
+                puts("ic_expr_func_call_sig_param: call to ic_string_append_symbol failed");
                 return 0;
             }
         }
     }
     if (!ic_string_append_char(str, ")", 1)) {
-        puts("ic_expr_func_call_string_param: call to ic_string_append_symbol failed");
+        puts("ic_expr_func_call_sig_param: call to ic_string_append_symbol failed");
         return 0;
     }
 
-    fcall->string_param = str;
+    fcall->sig_param = str;
 
-    ch = ic_string_contents(fcall->string_param);
+    ch = ic_string_contents(fcall->sig_param);
     if (!ch) {
-        puts("ic_expr_func_call_string_param: call to ic_string_contents failed");
+        puts("ic_expr_func_call_sig_param: call to ic_string_contents failed");
         return 0;
     }
 
