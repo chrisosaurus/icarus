@@ -10,7 +10,7 @@
  * returns new ic_field * on success
  * returns 0 on failure
  */
-struct ic_field *ic_field_new(char *name_src, unsigned int name_len, char *type_src, unsigned int type_len, unsigned int permissions) {
+struct ic_field *ic_field_new(char *name_src, unsigned int name_len, struct ic_type_ref *type, unsigned int permissions) {
     struct ic_field *field = 0;
 
     /* allocate space for our field */
@@ -20,7 +20,7 @@ struct ic_field *ic_field_new(char *name_src, unsigned int name_len, char *type_
         return 0;
     }
 
-    if (!ic_field_init(field, name_src, name_len, type_src, type_len, permissions)) {
+    if (!ic_field_init(field, name_src, name_len, type, permissions)) {
         puts("ic_field_new: call to ic_field_init failed");
         free(field);
         return 0;
@@ -35,7 +35,7 @@ struct ic_field *ic_field_new(char *name_src, unsigned int name_len, char *type_
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int name_len, char *type_src, unsigned int type_len, unsigned int permissions) {
+unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int name_len, struct ic_type_ref *type, unsigned int permissions) {
     if (!field) {
         puts("ic_field_init: field was null");
         return 0;
@@ -46,8 +46,8 @@ unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int 
         return 0;
     }
 
-    if (!type_src) {
-        puts("ic_field_init: type_src was null");
+    if (!type) {
+        puts("ic_field_init: type was null");
         return 0;
     }
 
@@ -57,11 +57,7 @@ unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int 
         return 0;
     }
 
-    /* init type symbol */
-    if (!ic_type_ref_symbol_init(&(field->type), type_src, type_len)) {
-        puts("ic_field_init: call to ic_type_symbol_init for type failed");
-        return 0;
-    }
+    field->type = type;
 
     field->permissions = permissions;
     field->assigned_to = 0;
@@ -91,11 +87,8 @@ unsigned int ic_field_destroy(struct ic_field *field, unsigned int free_field) {
         return 0;
     }
 
-    /* dispatch to symbol destroy for type
-     * note we do not ask it to destroy_symbol
-     * as it is a member
-     */
-    if (!ic_type_ref_destroy(&(field->type), 0)) {
+    /* destroy type as given ownership during parse time */
+    if (!ic_type_ref_destroy(field->type, 1)) {
         puts("ic_field_destroy: type: call to ic_type_destroy failed");
         return 0;
     }
@@ -124,5 +117,5 @@ void ic_field_print(FILE *fd, struct ic_field *field) {
     }
 
     fprintf(fd, "%s%s::", perm_str, ic_symbol_contents(&(field->name)));
-    ic_type_ref_print(fd, &(field->type));
+    ic_type_ref_print(fd, field->type);
 }

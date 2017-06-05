@@ -163,7 +163,7 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
          *
          *  FIXME check / consider this
          */
-        type = ic_type_ref_get_symbol(&(field->type));
+        type = ic_type_ref_get_symbol(field->type);
         if (!type) {
             printf("ic_analyse_field_list: call to ic_type_ref_get_symbol failed for field '%s' in '%s' for '%s'\n",
                    name,
@@ -200,7 +200,7 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
         /* store that type decl on the field (to save lookup costs again later)
          * if field->type is already a tdecl this will blow up
          */
-        if (!ic_type_ref_set_type_decl(&(field->type), field_type)) {
+        if (!ic_type_ref_set_type_decl(field->type, field_type)) {
             printf("ic_analyse_field_list: trying to store tdecl for '%s' on field '%s' during '%s' for '%s' failed\n",
                    type_str,
                    name,
@@ -639,13 +639,13 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
 
                     match_cases += 1;
 
-                    field_type = ic_kludge_get_decl_type_from_typeref(kludge, &(field->type));
+                    field_type = ic_kludge_get_decl_type_from_typeref(kludge, field->type);
                     if (!field_type) {
                         puts("ic_analyse_body: match: call to ic_kludge_get_decl_type_from_typeref failed");
                         goto ERROR;
                     }
 
-                    if (!ic_type_ref_set_type_decl(&(field->type), field_type)) {
+                    if (!ic_type_ref_set_type_decl(field->type, field_type)) {
                         puts("ic_analyse_body: match: call to ic_type_ref_set_type_decl failed");
                         goto ERROR;
                     }

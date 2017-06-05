@@ -1166,7 +1166,7 @@ static unsigned int ic_transform_stmt_match(struct ic_kludge *kludge, struct ic_
         }
 
         /* need to create slot in scope to insert case expr */
-        tdecl = ic_type_ref_get_type_decl(&(scase->field.type));
+        tdecl = ic_type_ref_get_type_decl(scase->field.type);
         if (!tdecl) {
             puts("ic_transform_stmt_match: call to ic_type_ref_get_type_dec; failed");
             return 0;

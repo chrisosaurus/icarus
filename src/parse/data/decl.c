@@ -731,7 +731,7 @@ char *ic_decl_func_sig_call(struct ic_decl_func *fdecl) {
         }
 
         /* add type */
-        cur_type = ic_type_ref_get_symbol(&(field->type));
+        cur_type = ic_type_ref_get_symbol(field->type);
         if (!cur_type) {
             puts("ic_decl_func_sig_call: arg: call to ic_type_get_symbol failed");
             return 0;
@@ -845,7 +845,7 @@ char *ic_decl_func_sig_full(struct ic_decl_func *fdecl) {
         }
 
         /* add type */
-        cur_type = ic_type_ref_get_symbol(&(field->type));
+        cur_type = ic_type_ref_get_symbol(field->type);
         if (!cur_type) {
             puts("ic_decl_func_sig_full: arg: call to ic_type_get_symbol failed");
             return 0;
@@ -962,7 +962,7 @@ char *ic_decl_func_sig_mangled(struct ic_decl_func *fdecl) {
          */
 
         /* get argument type */
-        cur_type = ic_type_ref_get_symbol(&(field->type));
+        cur_type = ic_type_ref_get_symbol(field->type);
         if (!cur_type) {
             puts("ic_decl_func_sig_mangled: arg: call to ic_type_get_symbol failed");
             return 0;
@@ -1609,7 +1609,7 @@ char *ic_decl_type_struct_sig_mangled_full(struct ic_decl_type_struct *tdecl) {
 
             field_name_sym = &(field->name);
 
-            field_type_sym = ic_type_ref_get_symbol(&(field->type));
+            field_type_sym = ic_type_ref_get_symbol(field->type);
             if (!field_type_sym) {
                 puts("ic_decl_type_struct_sig_mangled_full: call to ic_type_ref_get_symbol failed");
                 return 0;

@@ -22,7 +22,7 @@
  */
 struct ic_field {
     struct ic_symbol name;
-    struct ic_type_ref type;
+    struct ic_type_ref *type;
     unsigned int permissions;
     bool assigned_to;
 };
@@ -33,7 +33,7 @@ struct ic_field {
  * returns new ic_field * on success
  * returns 0 on failure
  */
-struct ic_field *ic_field_new(char *name_src, unsigned int name_len, char *type_src, unsigned int type_len, unsigned int permissions);
+struct ic_field *ic_field_new(char *name_src, unsigned int name_len, struct ic_type_ref *type, unsigned int permissions);
 
 /* initialise an existing field
  * takes 2 tokens as char * and len pairs
@@ -41,7 +41,7 @@ struct ic_field *ic_field_new(char *name_src, unsigned int name_len, char *type_
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int name_len, char *type_src, unsigned int type_len, unsigned int permissions);
+unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int name_len, struct ic_type_ref *type, unsigned int permissions);
 
 /* destroy field
  *

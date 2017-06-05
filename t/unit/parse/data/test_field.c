@@ -3,14 +3,19 @@
 #include <string.h> /* strncmp */
 
 #include "../../../../src/parse/data/field.h"
+#include "../../../../src/parse/data/type_ref.h"
 #include "../../../../src/parse/permissions.h"
 
 int main(void) {
     struct ic_field *field = 0;
     struct ic_field init_me;
+    struct ic_type_ref *type = 0;
+
+    type = ic_type_ref_symbol_new("String", 6);
+    assert(type);
 
     /* test new */
-    field = ic_field_new("b", 1, "String", 6, ic_parse_perm_default());
+    field = ic_field_new("b", 1, type, ic_parse_perm_default());
     assert(field);
 
     assert(!strncmp("b",
@@ -18,21 +23,24 @@ int main(void) {
                     1));
 
     assert(!strncmp("String",
-                    ic_symbol_contents(ic_type_ref_get_symbol(&(field->type))),
+                    ic_symbol_contents(ic_type_ref_get_symbol(field->type)),
                     6));
 
     assert(field->permissions == ic_parse_perm_default());
 
     /* test init */
-    assert(ic_field_init(&init_me, "hello", 5, "Sint", 3, 2));
+    type = ic_type_ref_symbol_new("Sint", 4);
+    assert(type);
+
+    assert(ic_field_init(&init_me, "hello", 5, type, 2));
 
     assert(!strncmp("hello",
                     ic_symbol_contents(&(init_me.name)),
                     5));
 
     assert(!strncmp("Sint",
-                    ic_symbol_contents(ic_type_ref_get_symbol(&(init_me.type))),
-                    3));
+                    ic_symbol_contents(ic_type_ref_get_symbol(init_me.type)),
+                    4));
 
     /* NB: okay to use int here, as we only set so we can later on assert
      * that it hasn't silently changed under us

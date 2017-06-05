@@ -170,6 +170,7 @@ static unsigned int ic_analyse_decl_type_generate_print_functions(struct ic_klud
     struct ic_field *field = 0;
     struct ic_generate *generate = 0;
     struct ic_symbol *type_sym = 0;
+    struct ic_type_ref *type_ref = 0;
     char *type_str = 0;
     int type_str_len = 0;
 
@@ -203,10 +204,16 @@ static unsigned int ic_analyse_decl_type_generate_print_functions(struct ic_klud
         goto ERROR;
     }
 
+    type_ref = ic_type_ref_symbol_new(type_str, type_str_len);
+    if (!type_ref) {
+        puts("ic_analyse_decl_type_generate_print_functions: call to ic_type_ref_symbol_new failed");
+        return 0;
+    }
+
     /* field used by both print and println
      * TODO FIXME this means that some fdecls share fields and some own :/
      */
-    field = ic_field_new("f", 1, type_str, type_str_len, ic_parse_perm_default());
+    field = ic_field_new("f", 1, type_ref, ic_parse_perm_default());
     if (!field) {
         puts("ic_analyse_decl_type_generate_print_functions: call to ic_field_new failed");
         goto ERROR;
@@ -444,7 +451,7 @@ unsigned int ic_analyse_decl_type_struct(struct ic_kludge *kludge, struct ic_dec
          *  FIXME what about N-level-recursive types?
          *        Foo includes Bar, Bar includes Baz, Bac includes Foo.
          */
-        type_sym = ic_type_ref_get_symbol(&(field->type));
+        type_sym = ic_type_ref_get_symbol(field->type);
         if (!type_sym) {
             puts("ic_analyse_decl_type_struct: call to ic_type_ref_get_symbol_failed");
             goto ERROR;
@@ -698,7 +705,7 @@ unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl
          *  FIXME what about N-level-recursive types?
          *        Foo includes Bar, Bar includes Baz, Bac includes Foo.
          */
-        type_sym = ic_type_ref_get_symbol(&(field->type));
+        type_sym = ic_type_ref_get_symbol(field->type);
         if (!type_sym) {
             puts("ic_analyse_decl_type_union: call to ic_type_ref_get_symbol_failed");
             goto ERROR;
@@ -956,7 +963,7 @@ unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func 
         }
 
         /* get arg type */
-        arg_type = ic_kludge_get_decl_type_from_typeref(kludge, &(arg->type));
+        arg_type = ic_kludge_get_decl_type_from_typeref(kludge, arg->type);
         if (!arg_type) {
             puts("ic_analyse_decl_func: call to ic_kludge_get_decl_type_from_typeref failed");
             goto ERROR;

@@ -513,7 +513,7 @@ unsigned int ic_b2c_compile_stmt_match(struct ic_kludge *input_kludge, struct ic
 
         field_name_ch = ic_symbol_contents(&(tcase->field->name));
 
-        field_type_sym = ic_type_ref_get_symbol(&(tcase->field->type));
+        field_type_sym = ic_type_ref_get_symbol(tcase->field->type);
         if (!field_type_sym) {
             puts("ic_b2c_compile_stmt_match: call to ic_type_ref_get_symbol failed");
             return 0;

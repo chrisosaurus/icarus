@@ -9,9 +9,7 @@ struct ic_field *ic_parse_field(struct ic_token_list *token_list) {
     /* name component char* and len*/
     char *name = 0;
     unsigned int name_len = 0;
-    /* type component char* and len */
-    char *type = 0;
-    unsigned int type_len = 0;
+    struct ic_type_ref *type = 0;
 
     /* our eventual field permissions */
     unsigned int permissions = 0;
@@ -54,20 +52,13 @@ struct ic_field *ic_parse_field(struct ic_token_list *token_list) {
      * a::Sint
      * `Sint` is the type
      */
-    token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
-    if (!token) {
+    type = ic_parse_type_ref(token_list);
+    if (!type) {
         puts("ic_parse_field: no type found");
         return 0;
     }
 
-    type = ic_token_get_string(token);
-    type_len = ic_token_get_string_length(token);
-    if (!type || !type_len) {
-        puts("ic_parse_field: failed to extract type from token");
-        return 0;
-    }
-
-    field = ic_field_new(name, name_len, type, type_len, permissions);
+    field = ic_field_new(name, name_len, type, permissions);
     if (!field) {
         puts("ic_parse_field: call to ic_field_new failed");
         return 0;

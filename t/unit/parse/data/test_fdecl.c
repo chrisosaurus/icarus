@@ -9,6 +9,8 @@ int main(void) {
     struct ic_field *field = 0;
     struct ic_type_param *tparam = 0;
     struct ic_decl_func *fdecl = 0;
+    struct ic_type_ref *type_ref1 = 0;
+    struct ic_type_ref *type_ref2 = 0;
     /* fake indent level */
     unsigned int fake_indent = 0;
 
@@ -26,13 +28,17 @@ int main(void) {
     assert(0 == ic_decl_func_type_params_length(fdecl));
 
     /* add some fields */
-    field = ic_field_new("a", 1, "Sint", 3, ic_parse_perm_default());
+    type_ref1 = ic_type_ref_symbol_new("Sint", 4);
+    assert(type_ref1);
+    field = ic_field_new("a", 1, type_ref1, ic_parse_perm_default());
     assert(field);
     assert(1 == ic_decl_func_args_add(fdecl, field));
     assert(1 == fdecl->args.used);
     assert(1 == ic_decl_func_args_length(fdecl));
 
-    field = ic_field_new("b", 1, "String", 6, ic_parse_perm_default());
+    type_ref2 = ic_type_ref_symbol_new("String", 6);
+    assert(type_ref2);
+    field = ic_field_new("b", 1, type_ref2, ic_parse_perm_default());
     assert(field);
     assert(1 == ic_decl_func_args_add(fdecl, field));
     assert(2 == fdecl->args.used);

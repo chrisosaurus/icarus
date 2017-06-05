@@ -205,7 +205,7 @@ unsigned int ic_b2c_compile_generates_pre(struct ic_kludge *kludge, FILE *f) {
                     return 0;
                 }
 
-                field_type_sym = ic_type_ref_get_symbol(&(field->type));
+                field_type_sym = ic_type_ref_get_symbol(field->type);
                 if (!field_type_sym) {
                     puts("ic_b2c_compile_generates_pre: call to ic_type_ref_get_symbol failed");
                     return 0;
@@ -257,7 +257,7 @@ unsigned int ic_b2c_compile_generates_pre(struct ic_kludge *kludge, FILE *f) {
                     return 0;
                 }
 
-                field_type_sym = ic_type_ref_get_symbol(&(field->type));
+                field_type_sym = ic_type_ref_get_symbol(field->type);
                 if (!field_type_sym) {
                     puts("ic_b2c_compile_generates_pre: call to ic_type_ref_get_symbol failed");
                     return 0;
@@ -350,7 +350,7 @@ static unsigned int ic_b2c_compile_generate_print_struct(struct ic_kludge *kludg
             return 0;
         }
 
-        field_type_sym = ic_type_ref_get_symbol(&(field->type));
+        field_type_sym = ic_type_ref_get_symbol(field->type);
         if (!field_type_sym) {
             puts("ic_b2c_compile_generate_print_struct: call to ic_type_ref_get_symbol failed");
             return 0;
@@ -451,7 +451,7 @@ static unsigned int ic_b2c_compile_generate_print_union(struct ic_kludge *kludge
             return 0;
         }
 
-        field_type_sym = ic_type_ref_get_symbol(&(field->type));
+        field_type_sym = ic_type_ref_get_symbol(field->type);
         if (!field_type_sym) {
             puts("ic_b2c_compile_generate_print_struct: call to ic_type_ref_get_symbol failed");
             return 0;
@@ -705,7 +705,7 @@ unsigned int ic_b2c_compile_generates(struct ic_kludge *kludge, FILE *f) {
                     return 0;
                 }
 
-                field_type_sym = ic_type_ref_get_symbol(&(field->type));
+                field_type_sym = ic_type_ref_get_symbol(field->type);
                 if (!field_type_sym) {
                     puts("ic_b2c_compile_generates: call to ic_type_ref_get_symbol failed");
                     return 0;
@@ -886,7 +886,7 @@ unsigned int ic_b2c_compile_type_struct(struct ic_kludge *kludge, struct ic_decl
         }
 
         field_name = ic_symbol_contents(&(field->name));
-        field_type = ic_symbol_contents(ic_type_ref_get_symbol(&(field->type)));
+        field_type = ic_symbol_contents(ic_type_ref_get_symbol(field->type));
 
         /* generate */
         fprintf(f, "  %s %s;\n", field_type, field_name);
@@ -994,7 +994,7 @@ unsigned int ic_b2c_compile_type_union(struct ic_kludge *kludge, struct ic_decl_
         }
 
         field_name = ic_symbol_contents(&(field->name));
-        field_type = ic_symbol_contents(ic_type_ref_get_symbol(&(field->type)));
+        field_type = ic_symbol_contents(ic_type_ref_get_symbol(field->type));
 
         /* generate tag */
         fprintf(f, "  %s_tag_%s_%s,\n", type_name, field_type, field_name);
@@ -1022,7 +1022,7 @@ unsigned int ic_b2c_compile_type_union(struct ic_kludge *kludge, struct ic_decl_
         }
 
         field_name = ic_symbol_contents(&(field->name));
-        field_type = ic_symbol_contents(ic_type_ref_get_symbol(&(field->type)));
+        field_type = ic_symbol_contents(ic_type_ref_get_symbol(field->type));
 
         /* generate */
         fprintf(f, "    %s %s;\n", field_type, field_name);
@@ -1301,7 +1301,7 @@ unsigned int ic_b2c_compile_function_header(struct ic_kludge *kludge, struct ic_
         }
 
         arg_name = ic_symbol_contents(&(arg->name));
-        arg_type = ic_symbol_contents(ic_type_ref_get_symbol(&(arg->type)));
+        arg_type = ic_symbol_contents(ic_type_ref_get_symbol(arg->type));
 
         /* generate */
         fprintf(f, "%s %s", arg_type, arg_name);

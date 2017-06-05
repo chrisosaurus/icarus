@@ -9,6 +9,7 @@ void test_fdecl(void) {
     struct ic_field *field = 0;
     struct ic_decl *decl = 0;
     struct ic_decl_func *fdecl = 0;
+    struct ic_type_ref *type_ref = 0;
     /* fake indent level */
     unsigned int fake_indent = 0;
     char *ch = 0;
@@ -35,7 +36,10 @@ void test_fdecl(void) {
     assert(0 == strcmp(ch, "Foo"));
 
     /* add a single field */
-    field = ic_field_new("bar", 3, "Baz", 3, ic_parse_perm_default());
+    type_ref = ic_type_ref_symbol_new("Baz", 3);
+    assert(type_ref);
+    field = ic_field_new("bar", 3, type_ref, ic_parse_perm_default());
+    assert(field);
     assert(1 == ic_decl_func_args_add(fdecl, field));
 
     assert(ic_decl_destroy(decl, 1));
@@ -47,6 +51,7 @@ void test_tdecl_struct(void) {
     struct ic_field *field = 0;
     struct ic_decl *decl = 0;
     struct ic_decl_type *tdecl = 0;
+    struct ic_type_ref *type_ref = 0;
     /* fake indent level */
     unsigned int fake_indent = 0;
     char *ch = 0;
@@ -74,7 +79,10 @@ void test_tdecl_struct(void) {
 
     assert(0 == ic_decl_type_field_length(tdecl));
     /* add a single field */
-    field = ic_field_new("bar", 3, "Baz", 3, ic_parse_perm_default());
+    type_ref = ic_type_ref_symbol_new("Baz", 3);
+    assert(type_ref);
+    field = ic_field_new("bar", 3, type_ref, ic_parse_perm_default());
+    assert(field);
     assert(1 == ic_decl_type_add_field(tdecl, field));
     assert(1 == ic_decl_type_field_length(tdecl));
 
@@ -94,6 +102,7 @@ void test_tdecl_union(void) {
     struct ic_field *field = 0;
     struct ic_decl *decl = 0;
     struct ic_decl_type *tdecl = 0;
+    struct ic_type_ref *type_ref = 0;
     /* fake indent level */
     unsigned int fake_indent = 0;
     char *ch = 0;
@@ -121,7 +130,10 @@ void test_tdecl_union(void) {
 
     assert(0 == ic_decl_type_field_length(tdecl));
     /* add a single field */
-    field = ic_field_new("bar", 3, "Baz", 3, ic_parse_perm_default());
+    type_ref = ic_type_ref_symbol_new("Baz", 3);
+    assert(type_ref);
+    field = ic_field_new("bar", 3, type_ref, ic_parse_perm_default());
+    assert(field);
     assert(1 == ic_decl_type_add_field(tdecl, field));
     assert(1 == ic_decl_type_field_length(tdecl));
 

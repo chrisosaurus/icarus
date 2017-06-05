@@ -892,7 +892,7 @@ static unsigned int ic_backend_pancake_compile_stmt_match(struct ic_backend_panc
         field = tcase->field;
 
         /* get field_type */
-        field_type = ic_type_ref_get_type_decl(&(field->type));
+        field_type = ic_type_ref_get_type_decl(field->type);
         if (!field_type) {
             puts("ic_backend_pancake_compile_stmt_match: call to ic_type_ref_get_type_decl failed");
             return 0;
@@ -2651,7 +2651,7 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
         }
 
         /* get field_type */
-        field_type = ic_type_ref_get_type_decl(&(field->type));
+        field_type = ic_type_ref_get_type_decl(field->type);
         if (!field_type) {
             puts("ic_backend_pancake_generate_function_print_union: call to ic_type_ref_get_type_decl failed");
             return 0;
@@ -3076,7 +3076,7 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
         }
 
         /* get field_type */
-        field_type = ic_type_ref_get_type_decl(&(field->type));
+        field_type = ic_type_ref_get_type_decl(field->type);
         if (!field_type) {
             puts("ic_backend_pancake_generate_function_print_struct: call to ic_type_ref_get_type_decl failed");
             return 0;
