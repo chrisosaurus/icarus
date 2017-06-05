@@ -28,6 +28,7 @@ end
 
 # main()
 fn main() -> Void
+    let f = Foo[Sint](6s)
     println(id(10s))
     println(id("Hello"))
     println(id(Foo(1s)))

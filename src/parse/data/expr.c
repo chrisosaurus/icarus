@@ -357,6 +357,7 @@ void ic_expr_func_call_print(FILE *fd, struct ic_expr_func_call *fcall, unsigned
      * as args do not need to be indented
      */
     unsigned int fake_indent = 0;
+    struct ic_type_ref *type_ref = 0;
 
     if (!fcall) {
         puts("ic_expr_func_call_print: fcall was null");
@@ -367,22 +368,39 @@ void ic_expr_func_call_print(FILE *fd, struct ic_expr_func_call *fcall, unsigned
         return;
     }
 
-    len = ic_pvector_length(&(fcall->args));
-
     /* print indent */
     ic_parse_print_indent(fd, *indent_level);
 
     /* print function name */
     ic_expr_print(fd, fcall->fname, &fake_indent);
 
+    len = ic_expr_func_call_type_refs_length(fcall);
+    if (len) {
+        fputs("[", fd);
+        for (i = 0; i < len; ++i) {
+            if (i > 0) {
+                fputs(", ", fd);
+            }
+            type_ref = ic_expr_func_call_get_type_ref(fcall, i);
+            if (!type_ref) {
+                puts("ic_expr_func_call_print: call to ic_expr_func_call_get_type_ref failed");
+                return;
+            }
+            ic_type_ref_print(fd, type_ref);
+        }
+        fputs("]", fd);
+    }
+
     /* print bracket */
     fputs("(", fd);
 
+    len = ic_expr_func_call_length(fcall);
+
     /* print args */
     for (i = 0; i < len; ++i) {
-        arg = ic_pvector_get(&(fcall->args), i);
+        arg = ic_expr_func_call_get_arg(fcall, i);
         if (!arg) {
-            puts("ic_expr_func_call_print: call to ic_pvector_get failed");
+            puts("ic_expr_func_call_print: call to ic_expr_func_call_get_arg failed");
             continue;
         }
 
