@@ -136,7 +136,7 @@ unsigned int ic_expr_func_call_type_refs_length(struct ic_expr_func_call *fcall)
  * returns * on success
  * returns 0 on failure
  */
-struct ic_string *ic_expr_func_call_string_param(struct ic_expr_func_call *fcall);
+char *ic_expr_func_call_string_param(struct ic_expr_func_call *fcall);
 
 /* get internal symbol for function name
  *

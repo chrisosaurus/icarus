@@ -333,11 +333,12 @@ unsigned int ic_expr_func_call_type_refs_length(struct ic_expr_func_call *fcall)
  * returns * on success
  * returns 0 on failure
  */
-struct ic_string *ic_expr_func_call_string_param(struct ic_expr_func_call *fcall) {
+char *ic_expr_func_call_string_param(struct ic_expr_func_call *fcall) {
     struct ic_string *str = 0;
     struct ic_symbol *sym = 0;
     unsigned int i = 0;
     unsigned int len = 0;
+    char *ch = 0;
 
     if (!fcall) {
         puts("ic_expr_func_call_string_param: fcall was null");
@@ -345,7 +346,12 @@ struct ic_string *ic_expr_func_call_string_param(struct ic_expr_func_call *fcall
     }
 
     if (fcall->string_param) {
-        return fcall->string_param;
+        ch = ic_string_contents(fcall->string_param);
+        if (!ch) {
+            puts("ic_expr_func_call_string_param: call to ic_string_contents failed");
+            return 0;
+        }
+        return ch;
     }
 
     str = ic_string_new_empty();
@@ -417,7 +423,13 @@ struct ic_string *ic_expr_func_call_string_param(struct ic_expr_func_call *fcall
 
     fcall->string_param = str;
 
-    return fcall->string_param;
+    ch = ic_string_contents(fcall->string_param);
+    if (!ch) {
+        puts("ic_expr_func_call_string_param: call to ic_string_contents failed");
+        return 0;
+    }
+
+    return ch;
 }
 
 /* get internal symbol for function name
