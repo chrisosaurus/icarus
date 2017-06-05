@@ -340,27 +340,55 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *
         return 0;
     }
 
-    /* cache str
-     * do not need to free as this char* is stored on the tdecl
-     */
-    str = ic_decl_type_str(tdecl);
-    if (!str) {
-        puts("ic_kludge_add_tdecl: call to ic_decl_type_str failed");
-        return 0;
-    }
+    /* if tdecl is type polymorphic */
+    if (ic_decl_type_type_params_length(tdecl) > 0) {
+        /* cache str
+         * do not need to free as this char* is stored on the tdecl
+         *
+         * TODO FIXME need string with type params present
+         */
+        str = ic_decl_type_str(tdecl);
+        if (!str) {
+            puts("ic_kludge_add_tdecl: call to ic_decl_type_str failed");
+            return 0;
+        }
 
-    /* check for exists first to aid diagnostics */
-    if (ic_dict_exists(&(kludge->dict_tname), str)) {
-        printf("ic_kludge_add_tdecl: type '%s' already exists on this kludge\n", str);
-        return 0;
-    }
+        /* check for exists first to aid diagnostics */
+        if (ic_dict_exists(&(kludge->dict_tname_param), str)) {
+            printf("ic_kludge_add_tdecl: type '%s' already exists on this kludge\n", str);
+            return 0;
+        }
 
-    /* insert into dict tname
-     * returns 0 on failure
-     */
-    if (!ic_dict_insert(&(kludge->dict_tname), str, tdecl)) {
-        puts("ic_kludge_add_tdecl: call to ic_dict_insert failed");
-        return 0;
+        /* insert into dict tname param
+         * returns 0 on failure
+         */
+        if (!ic_dict_insert(&(kludge->dict_tname_param), str, tdecl)) {
+            puts("ic_kludge_add_tdecl: call to ic_dict_insert failed");
+            return 0;
+        }
+    } else {
+        /* cache str
+         * do not need to free as this char* is stored on the tdecl
+         */
+        str = ic_decl_type_str(tdecl);
+        if (!str) {
+            puts("ic_kludge_add_tdecl: call to ic_decl_type_str failed");
+            return 0;
+        }
+
+        /* check for exists first to aid diagnostics */
+        if (ic_dict_exists(&(kludge->dict_tname), str)) {
+            printf("ic_kludge_add_tdecl: type '%s' already exists on this kludge\n", str);
+            return 0;
+        }
+
+        /* insert into dict tname
+         * returns 0 on failure
+         */
+        if (!ic_dict_insert(&(kludge->dict_tname), str, tdecl)) {
+            puts("ic_kludge_add_tdecl: call to ic_dict_insert failed");
+            return 0;
+        }
     }
 
     /* insert into list of tdecls */
