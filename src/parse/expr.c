@@ -23,6 +23,8 @@ static struct ic_expr *ic_parse_expr_fcall(struct ic_token_list *token_list, str
     struct ic_expr *arg = 0;
     /* current token */
     struct ic_token *token = 0;
+    /* type_ref for type params */
+    struct ic_type_ref *type_ref = 0;
 
     if (!token_list) {
         puts("ic_parse_expr_fcall: token_list was null");
@@ -61,7 +63,9 @@ static struct ic_expr *ic_parse_expr_fcall(struct ic_token_list *token_list, str
         return 0;
     }
 
+    /* optionally parse template params */
     if (token->id == IC_LSBRACKET) {
+        /* skip over opening '[' */
         token = ic_token_list_expect_important(token_list, IC_LSBRACKET);
         if (!token) {
             puts("ic_parse_expr_fcall: failed to find opening bracket '['");
@@ -69,18 +73,46 @@ static struct ic_expr *ic_parse_expr_fcall(struct ic_token_list *token_list, str
             return 0;
         }
 
-        /* TODO FIXME */
-        puts("ic_parse_expr_fcall: template instantiation not yet supported");
-        return 0;
+        while ((token = ic_token_list_peek_important(token_list))) {
+            /* if closing right square bracket then stop */
+            if (token->id == IC_RSBRACKET) {
+                break;
+            }
 
-        token = ic_token_list_expect_important(token_list, IC_LSBRACKET);
+            /* if comma then skip
+           * FIXME: this makes commas optional
+           */
+            if (token->id == IC_COMMA) {
+                token = ic_token_list_next_important(token_list);
+                if (!token) {
+                    puts("ic_parse_expr_fcall: parsing arg error, call to ic_token_list_next_important failed when trying to consume comma");
+                    free(expr);
+                    return 0;
+                }
+                /* skip */
+                continue;
+            }
+
+            type_ref = ic_parse_type_ref(token_list);
+            if (!type_ref) {
+                puts("ic_parse_expr_fcall: call to ic_parse_type_ref failed");
+                return 0;
+            }
+
+            /* store it inside our function */
+            if (!ic_expr_func_call_add_type_ref(&(expr->u.fcall), type_ref)) {
+                puts("ic_parse_expr_fcall: call to ic_expr_func_call_add_type_ref failed");
+                free(expr);
+                return 0;
+            }
+        }
+
+        token = ic_token_list_expect_important(token_list, IC_RSBRACKET);
         if (!token) {
             puts("ic_parse_expr_fcall: failed to find opening bracket ']'");
             free(expr);
             return 0;
         }
-
-        /* TODO FIXME */
     }
 
     /* skip over opening ( */
