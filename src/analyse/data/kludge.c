@@ -120,6 +120,18 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge) {
         return 0;
     }
 
+    /* dict_tname_param hash */
+    if (!ic_dict_init(&(kludge->dict_tname_param))) {
+        puts("ic_kludge_init: dict_tname: call to ic_dict_init failed");
+        return 0;
+    }
+
+    /* dict_fsig_param hash */
+    if (!ic_dict_init(&(kludge->dict_fsig_param))) {
+        puts("ic_kludge_init: dict_fsig: call to ic_dict_init failed");
+        return 0;
+    }
+
     /* dict_op hash */
     if (!ic_dict_init(&(kludge->dict_op))) {
         puts("ic_kludge_init: dict_op: call to ic_dict_init failed");
@@ -211,6 +223,26 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
      */
     if (!ic_dict_destroy(&(kludge->dict_fsig), 0, 0)) {
         puts("ic_kludge_destroy: call to ic_dict_destroy for dict_fsig failed");
+        return 0;
+    }
+
+    /* cleanup dict_tname_param
+     * ic_dict_destroy(*dict, free_dict, free_data);
+     * do not free_dict as it is a member of kludge
+     * do not free_data as it is freed when ast is freed
+     */
+    if (!ic_dict_destroy(&(kludge->dict_tname_param), 0, 0)) {
+        puts("ic_kludge_destroy: call to ic_dict_destroy for dict_tname_param failed");
+        return 0;
+    }
+
+    /* cleanup dict_fsig_param
+     * ic_dict_destroy(*dict, free_dict, free_data);
+     * do not free_dict as it is a member of kludge
+     * do not free_data as it is freed when ast is freed
+     */
+    if (!ic_dict_destroy(&(kludge->dict_fsig_param), 0, 0)) {
+        puts("ic_kludge_destroy: call to ic_dict_destroy for dict_fsig_param failed");
         return 0;
     }
 
