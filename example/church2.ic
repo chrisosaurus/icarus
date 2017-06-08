@@ -1,0 +1,45 @@
+type Zero
+end
+
+type Succ
+    nat::Nat
+end
+
+union Nat
+    zero::Zero
+    succ::Succ
+end
+
+fn value(n::Nat) -> Uint
+    match n
+        case zero::Zero
+            return 0u
+        case succ::Succ
+            return 1u + value(succ.nat)
+        end
+    end
+end
+
+fn print(n::Nat)
+    print(value(n))
+end
+
+fn plus(n1::Nat, n2::Nat) -> Nat
+    match n1
+        case zero::Zero
+            return n2
+        case succ::Succ
+            return Nat(Succ(succ.nat + n2))
+        end
+    end
+end
+
+fn main()
+    let three = Nat(Succ(Nat(Succ(Nat(Succ(Nat(Zero())))))))
+    let two = Nat(Succ(Nat(Succ(Nat(Zero())))))
+    let five = three + two
+    println(three)
+    println(two)
+    println(five)
+end
+
