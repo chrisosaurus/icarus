@@ -641,6 +641,9 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
 
                     field_type = ic_kludge_get_decl_type_from_typeref(kludge, field->type);
                     if (!field_type) {
+                        printf("ERROR: match case: unable to find type for field '%s' with declared type '", ic_symbol_contents(&(field->name)));
+                        ic_type_ref_print(stdout, field->type);
+                        puts("'");
                         puts("ic_analyse_body: match: call to ic_kludge_get_decl_type_from_typeref failed");
                         goto ERROR;
                     }
