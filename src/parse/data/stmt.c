@@ -500,6 +500,89 @@ void ic_stmt_assign_print(FILE *fd, struct ic_stmt_assign *assign, unsigned int 
     fputs("\n", fd);
 }
 
+/* allocate and initialise a new ic_stmt_begin
+ * this will initialise the body
+ * but will NOT initialise the expression
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_stmt_begin *ic_stmt_begin_new(void) {
+    struct ic_stmt_begin *begin = 0;
+
+    begin = calloc(1, sizeof(struct ic_stmt_begin));
+    if (!begin) {
+        puts("ic_stmt_begin_new: call to calloc failed");
+        return 0;
+    }
+
+    return begin;
+}
+
+/* initialise an existing new ic_stmt_begin
+ * this will initialise the body
+ * but will NOT initialise the expression
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_begin_init(struct ic_stmt_begin *begin) {
+    if (!begin) {
+        puts("ic_stmt_begin_init: begin was null");
+        return 0;
+    }
+
+    begin->body = 0;
+
+    return 1;
+}
+
+/* destroy begin
+ *
+ * only frees begin if `free_begin` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_begin_destroy(struct ic_stmt_begin *begin, unsigned int free_begin) {
+    if (!begin) {
+        puts("ic_stmt_begin_destroy:begin was null");
+        return 0;
+    }
+
+    if (begin->body) {
+        if (!ic_body_destroy(begin->body, 1)) {
+            puts("ic_stmt_begin_destroy:call to ic_body_destroy failed");
+            return 0;
+        }
+    }
+
+    if (free_begin) {
+        free(begin);
+    }
+
+    return 1;
+}
+
+/* print this begin */
+void ic_stmt_begin_print(FILE *fd, struct ic_stmt_begin *begin, unsigned int *indent_level) {
+    if (!begin) {
+        puts("ic_stmt_begin_print: begin was null");
+        return;
+    }
+
+    ic_parse_print_indent(fd, *indent_level);
+    fputs("begin\n ", fd);
+
+    /* print body
+     * body will handle incr and decr of the indent level
+     */
+    ic_body_print(fd, begin->body, indent_level);
+
+    ic_parse_print_indent(fd, *indent_level);
+    fputs("end\n ", fd);
+}
+
 /* allocate and initialise a new ic_stmtm_if
  * this will initialise the body
  * but will NOT initialise the expression
@@ -570,15 +653,17 @@ unsigned int ic_stmt_if_destroy(struct ic_stmt_if *sif, unsigned int free_if) {
         }
     }
 
-    /* free_body = 0 as member */
-    if (!ic_body_destroy(sif->then_body, 0)) {
-        puts("ic_stmt_if_destroy: call to ic_body_destroy failed");
-        return 0;
+    if (sif->then_body) {
+      /* free_body = 1 as pointer member */
+      if (!ic_body_destroy(sif->then_body, 1)) {
+          puts("ic_stmt_if_destroy: call to ic_body_destroy failed");
+          return 0;
+      }
     }
 
     if (sif->else_body) {
-        /* free_body = 0 as member */
-        if (!ic_body_destroy(sif->else_body, 0)) {
+        /* free_body = 1 as pointer member */
+        if (!ic_body_destroy(sif->else_body, 1)) {
             puts("ic_stmt_if_destroy: call to ic_body_destroy failed");
             return 0;
         }
@@ -1534,6 +1619,14 @@ unsigned int ic_stmt_destroy(struct ic_stmt *stmt, unsigned int free_stmt) {
             }
             break;
 
+        case ic_stmt_type_begin:
+            /* do not free as member */
+            if (!ic_stmt_begin_destroy(&(stmt->u.begin), 0)) {
+                puts("ic_stmt_destroy: call to ic_stmt_begin_destroy failed");
+                return 0;
+            }
+            break;
+
         case ic_stmt_type_if:
             /* do not free as member */
             if (!ic_stmt_if_destroy(&(stmt->u.sif), 0)) {
@@ -1664,6 +1757,26 @@ struct ic_stmt_assign *ic_stmt_get_assign(struct ic_stmt *stmt) {
 
     /* otherwise give them what they asked for */
     return &(stmt->u.assign);
+}
+
+/* get a pointer to the begin within
+ * will only succeed if ic_stmt is of the correct type
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_stmt_begin *ic_stmt_get_begin(struct ic_stmt *stmt) {
+    if (!stmt) {
+        puts("ic_stmt_get_begin: stmt was null");
+        return 0;
+    }
+
+    if (stmt->tag != ic_stmt_type_begin) {
+        puts("ic_stmt_get_begin: not of correct type");
+        return 0;
+    }
+
+    return &(stmt->u.begin);
 }
 
 /* get a pointer to the sif within
@@ -1798,6 +1911,10 @@ void ic_stmt_print(FILE *fd, struct ic_stmt *stmt, unsigned int *indent_level) {
 
         case ic_stmt_type_assign:
             ic_stmt_assign_print(fd, &(stmt->u.assign), indent_level);
+            break;
+
+        case ic_stmt_type_begin:
+            ic_stmt_begin_print(fd, &(stmt->u.begin), indent_level);
             break;
 
         case ic_stmt_type_if:

@@ -122,6 +122,9 @@ char *ic_token_id_get_representation(enum ic_token_id id) {
             return "end";
             break;
 
+        case IC_BEGIN:
+            return "begin";
+            break;
         case IC_IF:
             return "if";
             break;
@@ -639,6 +642,9 @@ void ic_token_id_print_debug(FILE *fd, enum ic_token_id id) {
             fputs("IC_END", fd);
             break;
 
+        case IC_BEGIN:
+            fputs("IC_BEGIN", fd);
+            break;
         case IC_IF:
             fputs("IC_IF", fd);
             break;

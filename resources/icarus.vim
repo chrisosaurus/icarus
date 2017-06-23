@@ -27,7 +27,7 @@ syntax region icarusString start="'" end="'"
 
 syntax keyword icarusOperator and or not
 
-syntax keyword icarusKeyword if then else for while end
+syntax keyword icarusKeyword begin if then else for while end
 syntax keyword icarusKeyword let const
 syntax keyword icarusKeyword in
 syntax keyword icarusKeyword builtin

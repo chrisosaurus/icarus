@@ -184,6 +184,45 @@ struct ic_expr *ic_stmt_assign_get_right(struct ic_stmt_assign *assign);
 /* print this assign */
 void ic_stmt_assign_print(FILE *fd, struct ic_stmt_assign *assign, unsigned int *indent_level);
 
+/* a begin stmt
+ *  begin
+ *    body
+ *  end
+ */
+struct ic_stmt_begin {
+    struct ic_body *body;
+};
+
+/* allocate and initialise a new ic_stmt_begin
+ * this will initialise the body
+ * but will NOT initialise the expression
+ *
+ * returns pointers on success
+ * returns 0 on failure
+ */
+struct ic_stmt_begin *ic_stmt_begin_new(void);
+
+/* initialise an existing new ic_stmt_begin
+ * this will initialise the body
+ * but will NOT initialise the expression
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_begin_init(struct ic_stmt_begin *begin);
+
+/* destroy begin
+ *
+ * only frees begin if `free_begin` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_begin_destroy(struct ic_stmt_begin *begin, unsigned int free_begin);
+
+/* print this begin */
+void ic_stmt_begin_print(FILE *fd, struct ic_stmt_begin *begin, unsigned int *indent_level);
+
 /* an if statement
  *  if expr
  *      body
@@ -477,6 +516,7 @@ enum ic_stmt_tag {
     ic_stmt_type_ret,
     ic_stmt_type_let,
     ic_stmt_type_assign,
+    ic_stmt_type_begin,
     ic_stmt_type_if,
     ic_stmt_type_for,
     ic_stmt_type_while,
@@ -490,6 +530,7 @@ struct ic_stmt {
         struct ic_stmt_ret ret;
         struct ic_stmt_let let;
         struct ic_stmt_assign assign;
+        struct ic_stmt_begin begin;
         struct ic_stmt_if sif;
         struct ic_stmt_for sfor;
         struct ic_stmt_while swhile;
@@ -553,6 +594,14 @@ struct ic_stmt_let *ic_stmt_get_let(struct ic_stmt *stmt);
  * returns 0 on failure
  */
 struct ic_stmt_assign *ic_stmt_get_assign(struct ic_stmt *stmt);
+
+/* get a pointer to the begin within
+ * will only succeed if ic_stmt is of the correct type
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_stmt_begin *ic_stmt_get_begin(struct ic_stmt *stmt);
 
 /* get a pointer to the sif within
  * will only succeed if ic_stmt is of the correct type

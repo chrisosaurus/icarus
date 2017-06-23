@@ -449,13 +449,65 @@ MATCH_ERROR:
     puts("ic_parse_stmt_match: error");
     return 0;
 }
+/* consume token
+ * returns ic_stmt* on success
+ * returns 0 on failure
+ */
+static struct ic_stmt *ic_parse_stmt_begin(struct ic_token_list *token_list) {
+    /* our eventual return value */
+    struct ic_stmt *stmt = 0;
+    struct ic_stmt_begin *begin = 0;
+    struct ic_body *body = 0;
+
+    /* current token */
+    struct ic_token *token = 0;
+
+    if (!token_list) {
+        puts("ic_parse_stmt_begin: token_list was null");
+        return 0;
+    }
+
+    stmt = ic_stmt_new(ic_stmt_type_begin);
+    if (!stmt) {
+        puts("ic_parse_stmt_begin: call to ic_stmt_new failed");
+        return 0;
+    }
+
+    begin = ic_stmt_get_begin(stmt);
+    if (!begin) {
+        puts("ic_parse_stmt_begin: call to ic_stmt_get_begin failed");
+        return 0;
+    }
+
+    /* consume begin */
+    token = ic_token_list_expect_important(token_list, IC_BEGIN);
+    if (!token) {
+        puts("ic_parse_stmt_begin: Failed to find `begin` token");
+        free(stmt);
+        return 0;
+    }
+
+    /* parse our body
+     * consume 'end' for us
+     */
+    body = ic_parse_body(token_list, 1);
+    if (!body) {
+        puts("ic_parse_stmt_begin: call to ic_parse_body failed");
+        return 0;
+    }
+
+    /* store our body */
+    begin->body = body;
+
+    return stmt;
+}
 
 /* consume token
  * returns ic_stmt* on success
  * returns 0 on failure
  */
 static struct ic_stmt *ic_parse_stmt_if(struct ic_token_list *token_list) {
-    /* out eventual return value */
+    /* our eventual return value */
     struct ic_stmt *stmt = 0;
     /* our condition expression */
     struct ic_expr *expr = 0;
@@ -803,6 +855,7 @@ static struct ic_parse_table_entry {
     struct ic_stmt *(*func)(struct ic_token_list *token_list);
 } ic_parse_table[] = {
     /* id          function    */
+    {IC_BEGIN, ic_parse_stmt_begin},
     {IC_IF, ic_parse_stmt_if},
     {IC_FOR, ic_parse_stmt_for},
     {IC_WHILE, ic_parse_stmt_while},

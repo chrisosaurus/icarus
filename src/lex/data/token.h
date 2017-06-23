@@ -32,6 +32,7 @@ enum ic_token_id {
 
     IC_END,
 
+    IC_BEGIN,
     IC_IF,
     IC_ELSIF,
     IC_ELSE,
