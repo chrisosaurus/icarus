@@ -611,6 +611,108 @@ unsigned int ic_transform_ir_assign_print(FILE *fd, struct ic_transform_ir_assig
     return 1;
 }
 
+/* allocate and initialise a new begin
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_begin *ic_transform_ir_begin_new(void) {
+    struct ic_transform_ir_begin *begin = 0;
+
+    begin = calloc(1, sizeof(struct ic_transform_ir_begin));
+    if (!begin) {
+        puts("ir_transform_ir_begin_new: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_transform_ir_begin_init(begin)) {
+        puts("ir_transform_ir_begin_new: call to ic_transform_begin_init failed");
+        free(begin);
+        return 0;
+    }
+
+    return begin;
+}
+
+/* initialise an existing begin
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_begin_init(struct ic_transform_ir_begin *begin) {
+  if (!begin) {
+      puts("ic_transform_ir_begin_init: begin was null");
+      return 0;
+  }
+
+  begin->tbody = 0;
+
+  return 1;
+}
+
+/* destroy begin
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * will only free assign begin `free_begin` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_begin_destroy(struct ic_transform_ir_begin *begin, unsigned int free_begin) {
+    if (!begin) {
+        puts("ic_transform_ir_let_begin_destroy: begin was null");
+        return 0;
+    }
+
+    if (free_begin) {
+        free(begin);
+    }
+
+    return 1;
+}
+
+/* print begin
+ *
+ * returns 1 on success
+ * return 0 on failure
+ */
+unsigned int ic_transform_ir_begin_print(FILE *fd, struct ic_transform_ir_begin *begin, unsigned int *indent) {
+    if (!begin) {
+        puts("ic_transform_ir_begin_print: begin was null");
+        return 0;
+    }
+
+    if (!indent) {
+        puts("ic_transform_ir_begin_print: indent was null");
+        return 0;
+    }
+
+    ic_parse_print_indent(fd, *indent);
+
+    fputs("begin\n", fd);
+
+    *indent += 1;
+
+    /* body */
+    if (!ic_transform_body_print(fd, begin->tbody, indent)) {
+        puts("ic_transform_ir_begin_print: call to ic_transform_body_print failed");
+        return 0;
+    }
+
+    *indent -= 1;
+
+    /* trailing end and \n */
+    ic_parse_print_indent(fd, *indent);
+    fputs("end\n", fd);
+
+    return 1;
+}
+
 /* allocate and initialise a new if
  *
  * TODO doesn't touch any of the contained elements
@@ -1483,6 +1585,13 @@ unsigned int ic_transform_ir_stmt_print(FILE *fd, struct ic_transform_ir_stmt *s
             }
             break;
 
+        case ic_transform_ir_stmt_type_begin:
+            if (!ic_transform_ir_begin_print(fd, &(stmt->u.begin), indent)) {
+                puts("ic_transform_ir_stmt_print: call to ic_transform_ir_begin_print failed");
+                return 0;
+            }
+            break;
+
         case ic_transform_ir_stmt_type_if:
             if (!ic_transform_ir_if_print(fd, &(stmt->u.sif), indent)) {
                 puts("ic_transform_ir_stmt_print: call to ic_transform_ir_if_print failed");
@@ -1568,6 +1677,25 @@ struct ic_transform_ir_ret *ic_transform_ir_stmt_get_ret(struct ic_transform_ir_
     }
 
     return &(stmt->u.ret);
+}
+
+/* get pointer to internal begin
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_begin *ic_transform_ir_stmt_get_begin(struct ic_transform_ir_stmt *stmt) {
+    if (!stmt) {
+        puts("ic_transform_ir_stmt_get_begin: stmt was null");
+        return 0;
+    }
+
+    if (stmt->tag != ic_transform_ir_stmt_type_begin) {
+        puts("ic_transform_ir_stmt_get_begin: stmt was not of type begin");
+        return 0;
+    }
+
+    return &(stmt->u.begin);
 }
 
 /* get pointer to internal if
@@ -1806,7 +1934,30 @@ struct ic_transform_ir_stmt *ic_transform_ir_stmt_ret_new(struct ic_symbol *var)
     return stmt;
 }
 
-/* allocate and initialise a new stmt->ret
+/* allocate and initialise a new stmt->begin
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_begin_new(void) {
+    struct ic_transform_ir_stmt *stmt = 0;
+
+    stmt = ic_transform_ir_stmt_new(ic_transform_ir_stmt_type_begin);
+    if (!stmt) {
+        puts("ic_transform_ir_stmt_begin_new: call to ic_transform_ir_stmt_new failed");
+        return 0;
+    }
+
+    if (!ic_transform_ir_begin_init(&(stmt->u.begin))) {
+        puts("ic_transform_ir_stmt_let_begin_new: call to ic_transform_ir_begin_init failed");
+        free(stmt);
+        return 0;
+    }
+
+    return stmt;
+}
+
+/* allocate and initialise a new stmt->if
  *
  * returns * on success
  * returns 0 on failure

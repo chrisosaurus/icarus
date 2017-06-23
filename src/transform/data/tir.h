@@ -270,6 +270,46 @@ unsigned int ic_transform_ir_assign_destroy(struct ic_transform_ir_assign *assig
  */
 unsigned int ic_transform_ir_assign_print(FILE *fd, struct ic_transform_ir_assign *assign, unsigned int *indent);
 
+struct ic_transform_ir_begin {
+    struct ic_transform_body *tbody;
+};
+
+/* allocate and initialise a new begin
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_begin *ic_transform_ir_begin_new(void);
+
+/* initialise an existing begin
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_begin_init(struct ic_transform_ir_begin *begin);
+
+/* destroy begin
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * will only free assign begin `free_begin` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_begin_destroy(struct ic_transform_ir_begin *begin, unsigned int free_begin);
+
+/* print begin
+ *
+ * returns 1 on success
+ * return 0 on failure
+ */
+unsigned int ic_transform_ir_begin_print(FILE *fd, struct ic_transform_ir_begin *begin, unsigned int *indent);
+
 struct ic_transform_ir_if {
     /* symbol pointing to let variables holding if-condition value */
     struct ic_symbol *cond;
@@ -536,6 +576,7 @@ enum ic_transform_ir_stmt_tag {
     ic_transform_ir_stmt_type_let,
     ic_transform_ir_stmt_type_ret,
     ic_transform_ir_stmt_type_assign,
+    ic_transform_ir_stmt_type_begin,
     ic_transform_ir_stmt_type_if,
     ic_transform_ir_stmt_type_match,
 };
@@ -547,6 +588,7 @@ struct ic_transform_ir_stmt {
         struct ic_transform_ir_let let;
         struct ic_transform_ir_ret ret;
         struct ic_transform_ir_assign assign;
+        struct ic_transform_ir_begin begin;
         struct ic_transform_ir_if sif;
         struct ic_transform_ir_match match;
     } u;
@@ -609,6 +651,13 @@ struct ic_transform_ir_let *ic_transform_ir_stmt_get_let(struct ic_transform_ir_
  */
 struct ic_transform_ir_ret *ic_transform_ir_stmt_get_ret(struct ic_transform_ir_stmt *stmt);
 
+/* get pointer to internal begin
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_begin *ic_transform_ir_stmt_get_begin(struct ic_transform_ir_stmt *stmt);
+
 /* get pointer to internal if
  *
  * returns * on success
@@ -657,6 +706,13 @@ struct ic_transform_ir_stmt *ic_transform_ir_stmt_let_faccess_new(struct ic_symb
  * returns 0 on failure
  */
 struct ic_transform_ir_stmt *ic_transform_ir_stmt_ret_new(struct ic_symbol *var);
+
+/* allocate and initialise a new stmt->begin
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_stmt *ic_transform_ir_stmt_begin_new(void);
 
 /* allocate and initialise a new stmt->if
  *

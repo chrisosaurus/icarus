@@ -73,6 +73,15 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_tr
  */
 static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_assign *assign);
 
+/* perform translation of a single `begin` stmt within a body
+ *
+ * appends tir stmt to tbody
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_transform_stmt_begin(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_begin *begin);
+
 /* perform translation of a single `if` stmt within a body
  *
  * appends tir stmt to tbody
@@ -404,6 +413,13 @@ static unsigned int ic_transform_stmt(struct ic_kludge *kludge, struct ic_transf
         case ic_stmt_type_assign:
             if (!ic_transform_stmt_assign(kludge, tbody, body, &(stmt->u.assign))) {
                 puts("ic_transform_stmt: call to ic_transform_stmt_assign failed");
+                return 0;
+            }
+            break;
+
+        case ic_stmt_type_begin:
+            if (!ic_transform_stmt_begin(kludge, tbody, body, &(stmt->u.begin))) {
+                puts("ic_transform_stmt: call to ic_transform_stmt_begin failed");
                 return 0;
             }
             break;
@@ -854,6 +870,72 @@ static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic
 
     if (!ic_transform_body_append(tbody, tstmt)) {
         puts("ic_transform_stmt_assign: call to ic_transform_body_append failed");
+        return 0;
+    }
+
+    return 1;
+}
+
+/* perform translation of a single `begin` stmt within a body
+ *
+ * appends tir stmt to tbody
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+static unsigned int ic_transform_stmt_begin(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_begin *begin) {
+    struct ic_transform_ir_stmt *tstmt = 0;
+    struct ic_transform_ir_begin *tbegin = 0;
+
+    if (!kludge) {
+        puts("ic_transform_stmt_begin: kludge was null");
+        return 0;
+    }
+
+    if (!tbody) {
+        puts("ic_transform_stmt_begin: tbody was null");
+        return 0;
+    }
+
+    if (!body) {
+        puts("ic_transform_stmt_begin: body was null");
+        return 0;
+    }
+
+    if (!begin) {
+        puts("ic_transform_stmt_begin: begin was null");
+        return 0;
+    }
+
+    /* make our new begin */
+    tstmt = ic_transform_ir_stmt_begin_new();
+    if (!tstmt) {
+        puts("ic_transform_stmt_begin: call to ic_transform_ir_stmt_begin_new failed");
+        return 0;
+    }
+
+    /* get our begin out */
+    tbegin = ic_transform_ir_stmt_get_begin(tstmt);
+    if (!tbegin) {
+        puts("ic_transform_stmt_begin: call to ic_transform_ir_stmt_get_begin failed");
+        return 0;
+    }
+
+    /* create new nested body */
+    tbegin->tbody = ic_transform_body_new_child(tbody);
+    if (!tbegin->tbody) {
+        puts("ic_transform_stmt_begin: call to ic_transform_body_new_child failed");
+        return 0;
+    }
+
+    /* dispatch to transform_body for work */
+    if (!ic_transform_body(kludge, tbegin->tbody, begin->body)) {
+        puts("ic_transform_stmt_begin: call to ic_transform_body failed");
+        return 0;
+    }
+
+    if (!ic_transform_body_append(tbody, tstmt)) {
+        puts("ic_transform_stmt_begin: call to ic_transform_body_append failed");
         return 0;
     }
 
