@@ -276,7 +276,7 @@ my $cases = [
   {
     input => '
       fn main()
-        assert(False)
+          assert(False)
       end
     ',
     expected => '
@@ -288,18 +288,18 @@ my $cases = [
   {
     input => '
       fn main()
-        if True
-            if True
-                let a = 10u
-                println(a)
-            end
-            let a = 20u
-            println(a)
-        end
-        if True
-            let a = 30u
-            println(a)
-        end
+          if True
+              if True
+                  let a = 10u
+                  println(a)
+              end
+              let a = 20u
+              println(a)
+          end
+          if True
+              let a = 30u
+              println(a)
+          end
       end
     ',
     expected => '
@@ -307,6 +307,21 @@ my $cases = [
       20
       30
     '
+  },
+  {
+    input => '
+      fn main()
+          let a = 4u
+          begin
+              println(a)
+          end
+          println(a)
+      end
+    ',
+    expected => '
+      4
+      4
+    ',
   },
 ];
 
