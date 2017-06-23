@@ -1068,6 +1068,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
     struct ic_transform_ir_let_literal *tlet_lit = 0;
     struct ic_transform_ir_let_expr *tlet_expr = 0;
     struct ic_transform_ir_let_faccess *tlet_faccess = 0;
+    struct ic_transform_ir_begin *begin = 0;
     struct ic_transform_ir_if *tif = 0;
     struct ic_transform_ir_assign *tassign = 0;
 
@@ -1518,6 +1519,30 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
              * we need transform to mark the `let a = 4` as *needing* a runtime
              * due to the later assignment
              */
+
+            break;
+
+        case ic_transform_ir_stmt_type_begin:
+            begin = &(tstmt->u.begin);
+
+            /* make new child scope for body */
+            child_scope = ic_scope_new(scope);
+            if (!child_scope) {
+                puts("ic_backend_pancake_compile_stmt: call to ic_scope_new failed");
+                return 0;
+            }
+
+            /* compile tbody */
+            if (!ic_backend_pancake_compile_body(instructions, kludge, begin->tbody, child_scope, labeller)) {
+                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_compile_body failed");
+                return 0;
+            }
+
+            /* tidy up child_scope */
+            if (!ic_scope_destroy(child_scope, 1)) {
+                puts("ic_backend_pancake_compile_stmt: call to ic_scope_destroy failed");
+                return 0;
+            }
 
             break;
 
