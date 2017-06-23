@@ -258,12 +258,16 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
     struct ic_decl_type *other_type = 0;
     /* ret from stmt */
     struct ic_stmt_ret *ret = 0;
+    /* begin from stmt */
+    struct ic_stmt_begin *begin = 0;
     /* if from stmt */
     struct ic_stmt_if *sif = 0;
     /* assign from stmt */
     struct ic_stmt_assign *assign = 0;
     /* new scope for body of if */
     struct ic_scope *if_scope = 0;
+    /* new scope for body of begin */
+    struct ic_scope *begin_scope = 0;
     /* match from stmt */
     struct ic_stmt_match *match = 0;
     /* set used to check match
@@ -379,6 +383,45 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                  */
                 if (!ic_analyse_let(unit, unit_name, kludge, body, ic_stmt_get_let(stmt))) {
                     puts("ic_analyse_body: call to ic_analyse_let failed");
+                    goto ERROR;
+                }
+
+                break;
+
+            case ic_stmt_type_begin:
+                /* need to introduce new scope
+                 * then analyse body
+                 */
+
+                /* pull out begin stmt */
+                begin = ic_stmt_get_begin(stmt);
+                if (!begin) {
+                    puts("ic_analyse_body: begin: call to ic_stmt_get_begin failed");
+                    return 0;
+                }
+
+                /* check begin body
+                 * and if produces a new scope, so we must construct one and attach it
+                 * FIXME this scope is leaked
+                 */
+                begin_scope = ic_scope_new(body->scope);
+                if (!begin_scope) {
+                    puts("ic_analyse_body: begin: call to ic_scope_new failed");
+                    goto ERROR;
+                }
+
+                if (!begin->body) {
+                    puts("ic_analyse_body: begin: begin statement had no body");
+                    goto ERROR;
+                }
+
+                /* attach new scope to if body
+                 * FIXME this scope is leaked */
+                begin->body->scope = begin_scope;
+
+                /* analyse body of if */
+                if (!ic_analyse_body(unit, unit_name, kludge, begin->body, fdecl)) {
+                    puts("ic_analyse_body: begin: ic_analyse_body failed");
                     goto ERROR;
                 }
 
