@@ -8,6 +8,7 @@
 unsigned int ic_b2c_compile_stmt_ret(struct ic_kludge *input_kludge, struct ic_transform_ir_ret *ret, FILE *out);
 unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_transform_ir_let *let, FILE *out);
 unsigned int ic_b2c_compile_stmt_assign(struct ic_kludge *input_kludge, struct ic_transform_ir_assign *assign, FILE *out);
+unsigned int ic_b2c_compile_stmt_begin(struct ic_kludge *input_kludge, struct ic_transform_ir_begin *begin, FILE *out);
 unsigned int ic_b2c_compile_stmt_if(struct ic_kludge *input_kludge, struct ic_transform_ir_if *tif, FILE *out);
 unsigned int ic_b2c_compile_stmt_match(struct ic_kludge *input_kludge, struct ic_transform_ir_match *match, FILE *out);
 unsigned int ic_b2c_compile_stmt_expr(struct ic_kludge *input_kludge, struct ic_transform_ir_expr *expr, FILE *out);
@@ -105,6 +106,10 @@ unsigned int ic_b2c_compile_stmt(struct ic_kludge *input_kludge, struct ic_trans
 
         case ic_transform_ir_stmt_type_assign:
             return ic_b2c_compile_stmt_assign(input_kludge, &(tstmt->u.assign), out);
+            break;
+
+        case ic_transform_ir_stmt_type_begin:
+            return ic_b2c_compile_stmt_begin(input_kludge, &(tstmt->u.begin), out);
             break;
 
         case ic_transform_ir_stmt_type_if:
@@ -382,6 +387,35 @@ unsigned int ic_b2c_compile_stmt_assign(struct ic_kludge *input_kludge, struct i
 
     /* closing semicolon and trailing \n */
     fputs(";\n", out);
+
+    return 1;
+}
+
+unsigned int ic_b2c_compile_stmt_begin(struct ic_kludge *input_kludge, struct ic_transform_ir_begin *begin, FILE *out) {
+    if (!input_kludge) {
+        puts("ic_b2c_compile_stmt_begin: input_kludge was null");
+        return 0;
+    }
+
+    if (!begin) {
+        puts("ic_b2c_compile_stmt_begin: begin was null");
+        return 0;
+    }
+
+    if (!out) {
+        puts("ic_b2c_compile_stmt_begin: out was null");
+        return 0;
+    }
+
+    fputs("  {\n", out);
+
+    /* body */
+    if (!ic_b2c_compile_body(input_kludge, begin->tbody, out)) {
+        puts("ic_b2c_compile_stmt_begin: call to ic_b2c_compile_body failed for tbody");
+        return 0;
+    }
+
+    fputs("  }\n", out);
 
     return 1;
 }
