@@ -427,3 +427,17 @@ unsigned int ic_scope_delete(struct ic_scope *scope, char *key) {
 
     return 1;
 }
+
+/* pretty print scope contents */
+void ic_scope_dump(struct ic_scope *scope) {
+    if (!scope) {
+        puts("ic_scope_dump: scope was null");
+        return;
+    }
+
+    puts("------");
+    ic_dict_dump(&(scope->contents));
+    if (scope->parent) {
+        ic_scope_dump(scope->parent);
+    }
+}

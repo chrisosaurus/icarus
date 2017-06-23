@@ -5,6 +5,8 @@
 
 #define IC_DICT_DEFAULT_SIZE 32
 
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 /* allocate and init a new ic_dict
  *
  * returns pointer on success
@@ -163,4 +165,20 @@ unsigned int ic_dict_destroy(struct ic_dict *dict, unsigned int free_dict, unsig
     }
 
     return 1;
+}
+
+static unsigned int ic_dict_dump_each(void *state, const char *key, void **data) {
+    printf("%s -> %p\n", key, *data);
+
+    return 1;
+}
+
+/* pretty print dict contents */
+void ic_dict_dump(struct ic_dict *dict) {
+    if (!dict) {
+        puts("ic_dict_dump: dict was null");
+        return;
+    }
+
+    lh_iterate(&(dict->lht), 0, ic_dict_dump_each);
 }

@@ -157,4 +157,7 @@ unsigned int ic_scope_exists_nofollow(struct ic_scope *scope, char *key);
  */
 unsigned int ic_scope_delete(struct ic_scope *scope, char *key);
 
+/* pretty print scope contents */
+void ic_scope_dump(struct ic_scope *scope);
+
 #endif

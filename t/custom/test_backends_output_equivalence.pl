@@ -275,15 +275,38 @@ my $cases = [
   },
   {
     input => '
-        fn main()
-            assert(False)
-        end
+      fn main()
+        assert(False)
+      end
     ',
     expected => '
       Panic!
       assertion failed
     ',
     failure => 1,
+  },
+  {
+    input => '
+      fn main()
+        if True
+            if True
+                let a = 10u
+                println(a)
+            end
+            let a = 20u
+            println(a)
+        end
+        if True
+            let a = 30u
+            println(a)
+        end
+      end
+    ',
+    expected => '
+      10
+      20
+      30
+    '
   },
 ];
 

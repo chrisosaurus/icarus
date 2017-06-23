@@ -84,4 +84,7 @@ void *ic_dict_delete(struct ic_dict *dict, char *key);
  */
 unsigned int ic_dict_destroy(struct ic_dict *dict, unsigned int free_dict, unsigned int free_data);
 
+/* pretty print dict contents */
+void ic_dict_dump(struct ic_dict *dict);
+
 #endif

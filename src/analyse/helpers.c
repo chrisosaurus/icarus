@@ -454,8 +454,15 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
 
                 /* else is optional */
                 if (sif->else_body) {
-                    /* attach new scope to if body
-                   * FIXME this scope is leaked */
+                    /* attach new scope to if else body
+                     * FIXME this scope is leaked
+                     **/
+                    if_scope = ic_scope_new(body->scope);
+                    if (!if_scope) {
+                        puts("ic_analyse_body: if: call to ic_scope_new failed");
+                        goto ERROR;
+                    }
+
                     sif->else_body->scope = if_scope;
 
                     /* analyse body of if */
