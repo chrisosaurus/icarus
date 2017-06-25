@@ -125,7 +125,7 @@ if we input the following file (which can be found in `example/fizzer.ic`):
     fn main()
         # icarus currently lacks for loops and ranges
         # so this is a poor-mans fizzbuzz-derived demo
-        fizz
+        fizzbuzz(1s, 20s)
     end
 
 we can then compile to C this via:
