@@ -32,6 +32,10 @@ icarus: ${OBJ}
 	@echo more compiling CC -o $@ with extra flags \"${EXTRAFLAGS}\"
 	@${CC} src/main.c -o $@ ${LDFLAGS} ${EXTRAFLAGS} ${OBJ}
 
+display-cc-version:
+	@echo using compiler:
+	${CC} -v
+
 # build icarus with debug output
 debug:
 	@make -s EXTRAFLAGS="${DEBUGFLAGS}" icarus
@@ -62,7 +66,7 @@ example: icarus
 # run all TESTO
 # cleanobj
 #   this ensures that we do a fresh build every time
-test: clean $(OBJ) $(TESTO) test_custom test_success test_milestones cleanobj
+test: display-cc-version clean $(OBJ) $(TESTO) test_custom test_success test_milestones cleanobj
 
 
 test_custom: $(OBJ) icarus
@@ -182,5 +186,5 @@ analyze: clean
 update-libs: clean
 	./scripts/update_libs.pl
 
-.PHONY: all clean cleanobj test test_custom example compile format man analyze update-libs
+.PHONY: all clean cleanobj test test_custom example compile format man analyze update-libs display-cc-version
 
