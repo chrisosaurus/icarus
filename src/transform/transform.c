@@ -13,7 +13,6 @@
 
 /* FIXME TODO ic_transform_stmt_for scope unused as unimplemented */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 
 /* perform translation of all fdecls on kludge
  *

@@ -6,9 +6,11 @@ MANPREFIX = ${PREFIX}/share/man
 INCS =
 LIBS =
 
+DISABLED_WARNINGS = -Wno-implicit-fallthrough
+
 # NB: including  -fprofile-arcs -ftest-coverage for gcov
 # travis wasn't happy with -Wmaybe-uninitialized  so removed for now
-CFLAGS = -std=c99 -pedantic -Werror -Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wshadow -Wdeclaration-after-statement -Wunused-function -fprofile-arcs -ftest-coverage ${INCS}
+CFLAGS = -std=c99 -pedantic -Werror -Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wshadow -Wdeclaration-after-statement -Wunused-function ${DISABLED_WARNINGS} -fprofile-arcs -ftest-coverage ${INCS}
 
 # gcov free version
 #CFLAGS = -std=c99 -pedantic -Werror -Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wshadow -Wdeclaration-after-statement -Wunused-function -Wmaybe-uninitialized ${INCS}
