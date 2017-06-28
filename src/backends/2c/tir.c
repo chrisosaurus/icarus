@@ -477,7 +477,6 @@ unsigned int ic_b2c_compile_stmt_match(struct ic_kludge *input_kludge, struct ic
     return 1;
 }
 
-
 unsigned int ic_b2c_compile_stmt_fcall(struct ic_kludge *input_kludge, struct ic_transform_ir_expr_fcall *fcall, FILE *out) {
     if (!input_kludge) {
         puts("ic_b2c_compile_stmt_fcall: input_kludge was null");

@@ -39,54 +39,54 @@ unsigned int ic_b2c_compile_expr(struct ic_kludge *input_kludge, struct ic_trans
     }
 
     switch (texpr->tag) {
-      case ic_transform_ir_expr_type_literal:
-        literal = texpr->u.literal;
+        case ic_transform_ir_expr_type_literal:
+            literal = texpr->u.literal;
 
-        if (!ic_b2c_compile_expr_literal(input_kludge, literal, out)) {
-            puts("ic_b2c_compile_expr: call to ic_b2d_compile_expr_literal failed");
+            if (!ic_b2c_compile_expr_literal(input_kludge, literal, out)) {
+                puts("ic_b2c_compile_expr: call to ic_b2d_compile_expr_literal failed");
+                return 0;
+            }
+
+            return 1;
+            break;
+
+        case ic_transform_ir_expr_type_var:
+            var = texpr->u.var;
+
+            if (!ic_b2c_compile_expr_var(input_kludge, var, out)) {
+                puts("ic_b2c_compile_expr: call to ic_b2d_compile_expr_var failed");
+                return 0;
+            }
+
+            return 1;
+            break;
+
+        case ic_transform_ir_expr_type_faccess:
+            faccess = texpr->u.faccess;
+
+            if (!ic_b2c_compile_expr_faccess(input_kludge, faccess, out)) {
+                puts("ic_b2c_compile_expr: call to ic_b2d_compile_expr_faccess failed");
+                return 0;
+            }
+
+            return 1;
+            break;
+
+        case ic_transform_ir_expr_type_fcall:
+            fcall = texpr->u.fcall;
+
+            if (!ic_b2c_compile_expr_fcall(input_kludge, fcall, out)) {
+                puts("ic_b2c_compile_expr: call to ic_b2d_compile_expr_fcall failed");
+                return 0;
+            }
+
+            return 1;
+            break;
+
+        default:
+            puts("ic_b2c_compile_expr: unkown tag");
             return 0;
-        }
-
-        return 1;
-        break;
-
-      case ic_transform_ir_expr_type_var:
-        var = texpr->u.var;
-
-        if (!ic_b2c_compile_expr_var(input_kludge, var, out)) {
-            puts("ic_b2c_compile_expr: call to ic_b2d_compile_expr_var failed");
-            return 0;
-        }
-
-        return 1;
-        break;
-
-      case ic_transform_ir_expr_type_faccess:
-        faccess = texpr->u.faccess;
-
-        if (!ic_b2c_compile_expr_faccess(input_kludge, faccess, out)) {
-            puts("ic_b2c_compile_expr: call to ic_b2d_compile_expr_faccess failed");
-            return 0;
-        }
-
-        return 1;
-        break;
-
-      case ic_transform_ir_expr_type_fcall:
-        fcall = texpr->u.fcall;
-
-        if (!ic_b2c_compile_expr_fcall(input_kludge, fcall, out)) {
-            puts("ic_b2c_compile_expr: call to ic_b2d_compile_expr_fcall failed");
-            return 0;
-        }
-
-        return 1;
-        break;
-
-      default:
-        puts("ic_b2c_compile_expr: unkown tag");
-        return 0;
-        break;
+            break;
     }
 
     puts("ic_b2c_compile_expr: impossible");
@@ -347,4 +347,3 @@ unsigned int ic_b2c_compile_expr_faccess(struct ic_kludge *input_kludge, struct 
 
     return 1;
 }
-
