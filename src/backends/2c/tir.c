@@ -11,7 +11,7 @@ unsigned int ic_b2c_compile_stmt_assign(struct ic_kludge *input_kludge, struct i
 unsigned int ic_b2c_compile_stmt_begin(struct ic_kludge *input_kludge, struct ic_transform_ir_begin *begin, FILE *out);
 unsigned int ic_b2c_compile_stmt_if(struct ic_kludge *input_kludge, struct ic_transform_ir_if *tif, FILE *out);
 unsigned int ic_b2c_compile_stmt_match(struct ic_kludge *input_kludge, struct ic_transform_ir_match *match, FILE *out);
-unsigned int ic_b2c_compile_stmt_expr(struct ic_kludge *input_kludge, struct ic_transform_ir_expr *expr, FILE *out);
+unsigned int ic_b2c_compile_stmt_fcall(struct ic_kludge *input_kludge, struct ic_transform_ir_expr_fcall *fcal, FILE *out);
 
 /* compile a given body to specified file
  *
@@ -88,9 +88,9 @@ unsigned int ic_b2c_compile_stmt(struct ic_kludge *input_kludge, struct ic_trans
 
     /* dispatch to appropriate sub handler based on tstmt type */
     switch (tstmt->tag) {
-        case ic_transform_ir_stmt_type_expr:
-            if (!ic_b2c_compile_stmt_expr(input_kludge, &(tstmt->u.expr), out)) {
-                puts("ic_b2c_compile_stmt: call to ic_b2c_compile_stmt_expr failed");
+        case ic_transform_ir_stmt_type_fcall:
+            if (!ic_b2c_compile_stmt_fcall(input_kludge, tstmt->u.fcall, out)) {
+                puts("ic_b2c_compile_stmt: call to ic_b2c_compile_stmt_fcall failed");
                 return 0;
             }
             return 1;
@@ -174,10 +174,6 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_t
     struct ic_symbol *let_sym = 0;
     char *let_str = 0;
 
-    struct ic_expr_constant *literal = 0;
-
-    struct ic_transform_ir_let_expr *let_expr = 0;
-    struct ic_transform_ir_let_faccess *let_faccess = 0;
     struct ic_transform_ir_expr *expr = 0;
 
     if (!input_kludge) {
@@ -195,151 +191,41 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_t
         return 0;
     }
 
-    switch (let->tag) {
-        case ic_transform_ir_let_type_literal:
-            /* let name::type = literal */
-            /* goes to */
-            /* c_type_str name = cons(literal) */
+    let_type = let->type;
 
-            let_type = let->u.lit.type;
-
-            let_sym = ic_decl_type_name(let_type);
-            if (!let_sym) {
-                puts("ic_b2c_compile_stmt_let: call to ic_decl_type_name failed");
-                return 0;
-            }
-
-            let_str = ic_symbol_contents(let_sym);
-            if (!let_str) {
-                puts("ic_b2c_compile_stmt_let: call to ic_symbol_contents failed for let type");
-                return 0;
-            }
-
-            let_name = ic_symbol_contents(let->u.lit.name);
-            if (!let_name) {
-                puts("ic_b2c_compile_stmt_let: call to ic_symbol_contents failed for let name");
-                return 0;
-            }
-
-            /* print "type name = " */
-            fprintf(out, "  %s %s = ", let_str, let_name);
-
-            /* literal */
-            literal = let->u.lit.literal;
-
-            if (!ic_b2c_compile_expr_constant(input_kludge, literal, out)) {
-                puts("ic_b2c_compile_stmt_let: call to ic_b2c_compile_expr_constant failed");
-                return 0;
-            }
-
-            /* closing semicolon and trailing \n */
-            fputs(";\n", out);
-
-            return 1;
-            break;
-
-        case ic_transform_ir_let_type_expr:
-            /* let name::type = fcall(args...) */
-            /* goes to */
-            /* c_type_str name = fcall(args...) */
-
-            let_expr = &(let->u.expr);
-
-            let_type = let_expr->type;
-
-            let_sym = ic_decl_type_name(let_type);
-            if (!let_sym) {
-                puts("ic_b2c_compile_stmt_let: call to ic_decl_type_name failed");
-                return 0;
-            }
-
-            let_str = ic_symbol_contents(let_sym);
-            if (!let_str) {
-                puts("ic_b2c_compile_stmt_let: call to ic_symbol_contents failed for let type");
-                return 0;
-            }
-
-            let_name = ic_symbol_contents(let_expr->name);
-            if (!let_name) {
-                puts("ic_b2c_compile_stmt_let: call to ic_symbol_contents failed for let name");
-                return 0;
-            }
-
-            /* print "type name = " */
-            fprintf(out, "  %s %s = ", let_str, let_name);
-
-            /* expression */
-            expr = let_expr->expr;
-
-            if (!ic_b2c_compile_expr(input_kludge, expr, out)) {
-                puts("ic_b2c_compile_stmt_let: call to ic_b2c_compile_expr failed");
-                return 0;
-            }
-
-            /* closing semicolon and trailing \n */
-            fputs(";\n", out);
-
-            return 1;
-            break;
-
-        case ic_transform_ir_let_type_faccess:
-            /* let name::type = foo.bar */
-            /* goes to */
-            /* c_type_str name = foo->bar */
-
-            let_faccess = &(let->u.faccess);
-
-            let_type = let_faccess->type;
-
-            let_sym = ic_decl_type_name(let_type);
-            if (!let_sym) {
-                puts("ic_b2c_compile_stmt_let: call to ic_decl_type_name failed");
-                return 0;
-            }
-
-            let_str = ic_symbol_contents(let_sym);
-            if (!let_str) {
-                puts("ic_b2c_compile_stmt_let: call to ic_symbol_contents failed for let type");
-                return 0;
-            }
-
-            let_name = ic_symbol_contents(let_faccess->name);
-            if (!let_name) {
-                puts("ic_b2c_compile_stmt_let: call to ic_symbol_contents failed for let name");
-                return 0;
-            }
-
-            /* print "type name = " */
-            fprintf(out, "  %s %s = ", let_str, let_name);
-
-            let_sym = let_faccess->left;
-            let_str = ic_symbol_contents(let_sym);
-            if (!let_str) {
-                puts("ic_b2c_compile_stmt_let: call to ic_symbol_contents failed for let type");
-                return 0;
-            }
-
-            fprintf(out, "%s->", let_str);
-
-            let_sym = let_faccess->right;
-            let_str = ic_symbol_contents(let_sym);
-            if (!let_str) {
-                puts("ic_b2c_compile_stmt_let: call to ic_symbol_contents failed for let type");
-                return 0;
-            }
-
-            fprintf(out, "%s;\n", let_str);
-
-            return 1;
-            break;
-
-        default:
-            puts("ic_b2c_compile_stmt_let: impossible let_type");
-            return 0;
-            break;
+    let_sym = ic_decl_type_name(let_type);
+    if (!let_sym) {
+        puts("ic_b2c_compile_stmt_let: call to ic_decl_type_name failed");
+        return 0;
     }
 
-    return 0;
+    let_str = ic_symbol_contents(let_sym);
+    if (!let_str) {
+        puts("ic_b2c_compile_stmt_let: call to ic_symbol_contents failed for let type");
+        return 0;
+    }
+
+    let_name = ic_symbol_contents(let->name);
+    if (!let_name) {
+        puts("ic_b2c_compile_stmt_let: call to ic_symbol_contents failed for let name");
+        return 0;
+    }
+
+    /* print "type name = " */
+    fprintf(out, "  %s %s = ", let_str, let_name);
+
+    /* expression */
+    expr = let->expr;
+
+    if (!ic_b2c_compile_expr(input_kludge, expr, out)) {
+        puts("ic_b2c_compile_stmt_let: call to ic_b2c_compile_expr failed");
+        return 0;
+    }
+
+    /* closing semicolon and trailing \n */
+    fputs(";\n", out);
+
+    return 1;
 }
 
 unsigned int ic_b2c_compile_stmt_assign(struct ic_kludge *input_kludge, struct ic_transform_ir_assign *assign, FILE *out) {
@@ -591,26 +477,27 @@ unsigned int ic_b2c_compile_stmt_match(struct ic_kludge *input_kludge, struct ic
     return 1;
 }
 
-unsigned int ic_b2c_compile_stmt_expr(struct ic_kludge *input_kludge, struct ic_transform_ir_expr *expr, FILE *out) {
+
+unsigned int ic_b2c_compile_stmt_fcall(struct ic_kludge *input_kludge, struct ic_transform_ir_expr_fcall *fcall, FILE *out) {
     if (!input_kludge) {
-        puts("ic_b2c_compile_stmt_expr: input_kludge was null");
+        puts("ic_b2c_compile_stmt_fcall: input_kludge was null");
         return 0;
     }
 
-    if (!expr) {
-        puts("ic_b2c_compile_stmt_expr: expr was null");
+    if (!fcall) {
+        puts("ic_b2c_compile_stmt_fcall: fcall was null");
         return 0;
     }
 
     if (!out) {
-        puts("ic_b2c_compile_stmt_expr: out was null");
+        puts("ic_b2c_compile_stmt_fcall: out was null");
         return 0;
     }
 
     fputs("  ", out);
 
-    if (!ic_b2c_compile_expr(input_kludge, expr, out)) {
-        puts("ic_b2c_compile_stmt_expr: call to ic_b2c_compile_expr failed");
+    if (!ic_b2c_compile_expr_fcall(input_kludge, fcall, out)) {
+        puts("ic_b2c_compile_stmt_fcall: call to ic_b2c_compile_expr failed");
         return 0;
     }
 

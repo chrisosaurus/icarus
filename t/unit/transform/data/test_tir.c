@@ -7,58 +7,16 @@
  * at this point this is just the cons/init/decons
  */
 
-void basic_let_literal(void) {
-    struct ic_transform_ir_let_literal *let_p = 0;
-    struct ic_transform_ir_let_literal let_l;
-
-    puts("basic tir let_literal testing");
-
-    let_p = ic_transform_ir_let_literal_new();
-    assert(let_p);
-
-    assert(ic_transform_ir_let_literal_init(&let_l));
-
-    assert(ic_transform_ir_let_literal_destroy(&let_l, 0));
-    assert(ic_transform_ir_let_literal_destroy(let_p, 1));
-
-    puts("success");
-}
-
-void basic_let_expr(void) {
-    struct ic_transform_ir_let_expr *let_p = 0;
-    struct ic_transform_ir_let_expr let_l;
-
-    puts("basic tir let_expr testing");
-
-    let_p = ic_transform_ir_let_expr_new();
-    assert(let_p);
-
-    assert(ic_transform_ir_let_expr_init(&let_l));
-
-    assert(ic_transform_ir_let_expr_destroy(&let_l, 0));
-    assert(ic_transform_ir_let_expr_destroy(let_p, 1));
-
-    puts("success");
-}
-
 void basic_let(void) {
     struct ic_transform_ir_let let;
     struct ic_transform_ir_let *let_p = 0;
-    struct ic_transform_ir_let_literal *let_lit = 0;
-    struct ic_transform_ir_let_expr *let_expr = 0;
 
     puts("basic tir let testing");
 
-    let_p = ic_transform_ir_let_new(ic_transform_ir_let_type_literal);
+    assert(ic_transform_ir_let_init(&let));
+
+    let_p = ic_transform_ir_let_new();
     assert(let_p);
-
-    let_lit = ic_transform_ir_let_get_literal(let_p);
-    assert(let_lit);
-
-    assert(ic_transform_ir_let_init(&let, ic_transform_ir_let_type_expr));
-
-    let_expr = ic_transform_ir_let_get_expr(&let);
-    assert(let_expr);
 
     assert(ic_transform_ir_let_destroy(&let, 0));
     assert(ic_transform_ir_let_destroy(let_p, 1));
@@ -89,10 +47,10 @@ void basic_expr(void) {
 
     puts("basic tir expr testing");
 
-    expr_p = ic_transform_ir_expr_new();
+    expr_p = ic_transform_ir_expr_new(ic_transform_ir_expr_type_literal);
     assert(expr_p);
 
-    assert(ic_transform_ir_expr_init(&expr_l));
+    assert(ic_transform_ir_expr_init(&expr_l, ic_transform_ir_expr_type_var));
 
     assert(ic_transform_ir_expr_destroy(&expr_l, 0));
     assert(ic_transform_ir_expr_destroy(expr_p, 1));
@@ -117,43 +75,20 @@ void basic_ret(void) {
     puts("success");
 }
 
-void basic_fcall(void) {
-    struct ic_transform_ir_fcall *fcall_p = 0;
-    struct ic_transform_ir_fcall fcall_l;
-
-    puts("basic tir fcall testing");
-
-    /* FIXME TODO */
-
-    puts("no basic_tir_fcall testing implemented...");
-
-    /*
-    fcall_p = ic_transform_ir_fcall_new();
-    assert(fcall_p);
-
-    assert(ic_transform_ir_fcall_init(&fcall_l));
-
-    assert(ic_transform_ir_fcall_destroy(&fcall_l, 0));
-    assert(ic_transform_ir_fcall_destroy(fcall_p, 1));
-    */
-
-    puts("success");
-}
-
 void basic_stmt(void) {
-    struct ic_transform_ir_stmt stmt_expr;
+    struct ic_transform_ir_stmt stmt_fcall;
     struct ic_transform_ir_stmt *stmt_let = 0;
     struct ic_transform_ir_stmt *stmt_ret = 0;
 
-    struct ic_transform_ir_expr *expr = 0;
+    struct ic_transform_ir_expr_fcall *fcall = 0;
     struct ic_transform_ir_let *let = 0;
     struct ic_transform_ir_ret *ret = 0;
 
     puts("basic tir stmt testing");
 
-    assert(ic_transform_ir_stmt_init(&stmt_expr, ic_transform_ir_stmt_type_expr));
-    expr = ic_transform_ir_stmt_get_expr(&stmt_expr);
-    assert(expr);
+    assert(ic_transform_ir_stmt_init(&stmt_fcall, ic_transform_ir_stmt_type_fcall));
+    fcall = ic_transform_ir_stmt_get_fcall(&stmt_fcall);
+    assert(fcall);
 
     stmt_let = ic_transform_ir_stmt_new(ic_transform_ir_stmt_type_let);
     assert(stmt_let);
@@ -165,7 +100,7 @@ void basic_stmt(void) {
     ret = ic_transform_ir_stmt_get_ret(stmt_ret);
     assert(ret);
 
-    assert(ic_transform_ir_stmt_destroy(&stmt_expr, 0));
+    assert(ic_transform_ir_stmt_destroy(&stmt_fcall, 0));
     assert(ic_transform_ir_stmt_destroy(stmt_let, 1));
     assert(ic_transform_ir_stmt_destroy(stmt_ret, 1));
 
@@ -173,15 +108,11 @@ void basic_stmt(void) {
 }
 
 int main(void) {
-    basic_let_literal();
-    basic_let_expr();
-
     basic_let();
 
     basic_assign();
     basic_expr();
     basic_ret();
-    basic_fcall();
 
     basic_stmt();
 

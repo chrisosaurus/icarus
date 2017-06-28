@@ -4,8 +4,11 @@
 #include "../../parse/data/expr.h"
 #include "../../transform/data/tir.h"
 
-unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic_transform_ir_fcall *fcall, FILE *out);
 unsigned int ic_b2c_compile_expr_constant(struct ic_kludge *input_kludge, struct ic_expr_constant *constant, FILE *out);
+
+unsigned int ic_b2c_compile_expr_literal(struct ic_kludge *input_kludge, struct ic_transform_ir_expr_literal *literal, FILE *out);
+unsigned int ic_b2c_compile_expr_var(struct ic_kludge *input_kludge, struct ic_transform_ir_expr_var *var, FILE *out);
+unsigned int ic_b2c_compile_expr_faccess(struct ic_kludge *input_kludge, struct ic_transform_ir_expr_faccess *faccess, FILE *out);
 
 /* compile a given expr to specified file
  *
@@ -15,6 +18,11 @@ unsigned int ic_b2c_compile_expr_constant(struct ic_kludge *input_kludge, struct
  * returns 0 on failure
  */
 unsigned int ic_b2c_compile_expr(struct ic_kludge *input_kludge, struct ic_transform_ir_expr *texpr, FILE *out) {
+    struct ic_transform_ir_expr_literal *literal;
+    struct ic_transform_ir_expr_var *var;
+    struct ic_transform_ir_expr_faccess *faccess;
+    struct ic_transform_ir_expr_fcall *fcall;
+
     if (!input_kludge) {
         puts("ic_b2c_compile_expr: input_kludge was null");
         return 0;
@@ -30,15 +38,62 @@ unsigned int ic_b2c_compile_expr(struct ic_kludge *input_kludge, struct ic_trans
         return 0;
     }
 
-    if (!ic_b2c_compile_expr_fcall(input_kludge, texpr->fcall, out)) {
-        puts("ic_b2c_compile_expr: call to ic_b2d_compile_expr_fcall failed");
+    switch (texpr->tag) {
+      case ic_transform_ir_expr_type_literal:
+        literal = texpr->u.literal;
+
+        if (!ic_b2c_compile_expr_literal(input_kludge, literal, out)) {
+            puts("ic_b2c_compile_expr: call to ic_b2d_compile_expr_literal failed");
+            return 0;
+        }
+
+        return 1;
+        break;
+
+      case ic_transform_ir_expr_type_var:
+        var = texpr->u.var;
+
+        if (!ic_b2c_compile_expr_var(input_kludge, var, out)) {
+            puts("ic_b2c_compile_expr: call to ic_b2d_compile_expr_var failed");
+            return 0;
+        }
+
+        return 1;
+        break;
+
+      case ic_transform_ir_expr_type_faccess:
+        faccess = texpr->u.faccess;
+
+        if (!ic_b2c_compile_expr_faccess(input_kludge, faccess, out)) {
+            puts("ic_b2c_compile_expr: call to ic_b2d_compile_expr_faccess failed");
+            return 0;
+        }
+
+        return 1;
+        break;
+
+      case ic_transform_ir_expr_type_fcall:
+        fcall = texpr->u.fcall;
+
+        if (!ic_b2c_compile_expr_fcall(input_kludge, fcall, out)) {
+            puts("ic_b2c_compile_expr: call to ic_b2d_compile_expr_fcall failed");
+            return 0;
+        }
+
+        return 1;
+        break;
+
+      default:
+        puts("ic_b2c_compile_expr: unkown tag");
         return 0;
+        break;
     }
 
-    return 1;
+    puts("ic_b2c_compile_expr: impossible");
+    return 0;
 }
 
-unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic_transform_ir_fcall *fcall, FILE *out) {
+unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic_transform_ir_expr_fcall *fcall, FILE *out) {
     /* function decl */
     struct ic_decl_func *fdecl = 0;
     /* mangled function signature, suitable for output */
@@ -85,7 +140,7 @@ unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic
     fputs("(", out);
 
     /* omit arguments */
-    length = ic_transform_ir_fcall_length(fcall);
+    length = ic_transform_ir_expr_fcall_length(fcall);
 
     for (i = 0; i < length; ++i) {
         /* add commas between args */
@@ -93,9 +148,9 @@ unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic
             fputs(", ", out);
         }
 
-        sym = ic_transform_ir_fcall_get_arg(fcall, i);
+        sym = ic_transform_ir_expr_fcall_get_arg(fcall, i);
         if (!sym) {
-            puts("ic_b2c_compile_expr_fcall: call to ic_transform_ir_fcall_get_arg");
+            puts("ic_b2c_compile_expr_fcall: call to ic_transform_ir_expr_fcall_get_arg");
             return 0;
         }
 
@@ -197,3 +252,99 @@ unsigned int ic_b2c_compile_expr_constant(struct ic_kludge *input_kludge, struct
     puts("ic_b2c_compile_expr_constant: impossible");
     return 0;
 }
+
+unsigned int ic_b2c_compile_expr_literal(struct ic_kludge *input_kludge, struct ic_transform_ir_expr_literal *literal, FILE *out) {
+    if (!input_kludge) {
+        puts("ic_b2c_compile_expr_literal: input_kludge was null");
+        return 0;
+    }
+
+    if (!literal) {
+        puts("ic_b2c_compile_expr_literal: literal was null");
+        return 0;
+    }
+
+    if (!out) {
+        puts("ic_b2c_compile_expr_literal: out was null");
+        return 0;
+    }
+
+    if (!ic_b2c_compile_expr_constant(input_kludge, literal->literal, out)) {
+        puts("ic_b2c_compile_expr_literal: call to ic_b2c_compile_expr_constant failed");
+        return 0;
+    }
+
+    return 1;
+}
+
+unsigned int ic_b2c_compile_expr_var(struct ic_kludge *input_kludge, struct ic_transform_ir_expr_var *var, FILE *out) {
+    struct ic_symbol *sym = 0;
+    char *ch = 0;
+
+    if (!input_kludge) {
+        puts("ic_b2c_compile_expr_var: input_kludge was null");
+        return 0;
+    }
+
+    if (!var) {
+        puts("ic_b2c_compile_expr_var: var was null");
+        return 0;
+    }
+
+    if (!out) {
+        puts("ic_b2c_compile_expr_var: out was null");
+        return 0;
+    }
+
+    sym = var->sym;
+    ch = ic_symbol_contents(sym);
+    if (!ch) {
+        puts("ic_b2c_compile_expr_var: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    fputs(ch, out);
+    return 1;
+}
+
+unsigned int ic_b2c_compile_expr_faccess(struct ic_kludge *input_kludge, struct ic_transform_ir_expr_faccess *faccess, FILE *out) {
+    struct ic_symbol *left_sym = 0;
+    char *left_str = 0;
+
+    struct ic_symbol *right_sym = 0;
+    char *right_str = 0;
+
+    if (!input_kludge) {
+        puts("ic_b2c_compile_expr_faccess: input_kludge was null");
+        return 0;
+    }
+
+    if (!faccess) {
+        puts("ic_b2c_compile_expr_faccess: faccess was null");
+        return 0;
+    }
+
+    if (!out) {
+        puts("ic_b2c_compile_expr_faccess: out was null");
+        return 0;
+    }
+
+    left_sym = faccess->left;
+    left_str = ic_symbol_contents(left_sym);
+    if (!left_str) {
+        puts("ic_b2c_compile_stmt_let: call to ic_symbol_contents failed for faccess left");
+        return 0;
+    }
+
+    right_sym = faccess->right;
+    right_str = ic_symbol_contents(right_sym);
+    if (!left_str) {
+        puts("ic_b2c_compile_stmt_let: call to ic_symbol_contents failed for faccess right");
+        return 0;
+    }
+
+    fprintf(out, "%s->%s", left_str, right_str);
+
+    return 1;
+}
+

@@ -654,11 +654,11 @@ unsigned int ic_stmt_if_destroy(struct ic_stmt_if *sif, unsigned int free_if) {
     }
 
     if (sif->then_body) {
-      /* free_body = 1 as pointer member */
-      if (!ic_body_destroy(sif->then_body, 1)) {
-          puts("ic_stmt_if_destroy: call to ic_body_destroy failed");
-          return 0;
-      }
+        /* free_body = 1 as pointer member */
+        if (!ic_body_destroy(sif->then_body, 1)) {
+            puts("ic_stmt_if_destroy: call to ic_body_destroy failed");
+            return 0;
+        }
     }
 
     if (sif->else_body) {

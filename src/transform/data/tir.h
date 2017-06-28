@@ -1,5 +1,5 @@
 #ifndef ICARUS_TRANSFORM_IR_H
-#define ICARUS_TRANSFOMR_IR_H
+#define ICARUS_TRANSFORM_IR_H
 
 #include <stdbool.h>
 
@@ -7,42 +7,109 @@
 #include "../../data/symbol.h"
 #include "../../parse/data/decl.h"
 
-/* IR:
- *  let name type literal
- *  let name type expr
- *  expr
- *  return name
- *  assign name name
- *
- * expr:
- *  fcall name...
+/* this IR is in administrative normal form
+ * all arguments to functions are already bound via lets
+ * all let/assignment rhs are one of
+ *  literals
+ *  fcall
+ *  faccess
+ *  var
  */
 
-struct ic_transform_ir_let_literal {
-    struct ic_symbol *name;
-    struct ic_decl_type *type;
+/* IR:
+ *  let name type expr
+ *  fcall name (names...)
+ *  return name
+ *  assign name expr
+ *
+ * expr:
+ *  fcall name (names...)
+ *  literal value
+ *  var name
+ *  faccess left . right
+ */
+
+enum ic_transform_ir_expr_tag {
+    ic_transform_ir_expr_type_literal,
+    ic_transform_ir_expr_type_var,
+    ic_transform_ir_expr_type_faccess,
+    ic_transform_ir_expr_type_fcall
+};
+
+/* an expr is only ever a function call
+ * in void context we only call a function for it's side effects
+ * all other things that yield a value are dealt with as let expressions
+ */
+struct ic_transform_ir_expr {
+    enum ic_transform_ir_expr_tag tag;
+
+    union {
+        struct ic_transform_ir_expr_literal *literal;
+        struct ic_transform_ir_expr_var *var;
+        struct ic_transform_ir_expr_faccess *faccess;
+        struct ic_transform_ir_expr_fcall *fcall;
+    } u;
+};
+
+/* allocate and initialise a new expr
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * returns pointer on success
+ * returns 0 on failure
+ */
+struct ic_transform_ir_expr *ic_transform_ir_expr_new(enum ic_transform_ir_expr_tag tag);
+
+/* initialise an existing expr
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_expr_init(struct ic_transform_ir_expr *expr, enum ic_transform_ir_expr_tag tag);
+
+/* destroy expr
+ *
+ * TODO doesn't touch any of the contained elements
+ *
+ * will only free expr if `free_expr` is truthy
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_transform_ir_expr_destroy(struct ic_transform_ir_expr *expr, unsigned int free_expr);
+
+/* print expr
+ *
+ * returns 1 on success
+ * return 0 on failure
+ */
+unsigned int ic_transform_ir_expr_print(FILE *fd, struct ic_transform_ir_expr *expr, unsigned int *indent);
+
+struct ic_transform_ir_expr_literal {
     struct ic_expr_constant *literal;
 };
 
-/* allocate and initialise a new let_literal
+/* allocate and initialise a new expr_literal
  *
  * TODO doesn't touch any of the contained elements
  *
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_transform_ir_let_literal *ic_transform_ir_let_literal_new(void);
+struct ic_transform_ir_expr_literal *ic_transform_ir_expr_literal_new(void);
 
-/* initialise an existing let_literal
+/* initialise an existing expr_literal
  *
  * TODO doesn't touch any of the contained elements
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_let_literal_init(struct ic_transform_ir_let_literal *let);
+unsigned int ic_transform_ir_expr_literal_init(struct ic_transform_ir_expr_literal *literal);
 
-/* destroy let_literal
+/* destroy expr_literal
  *
  * TODO doesn't touch any of the contained elements
  *
@@ -51,40 +118,38 @@ unsigned int ic_transform_ir_let_literal_init(struct ic_transform_ir_let_literal
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_let_literal_destroy(struct ic_transform_ir_let_literal *let, unsigned int free_let);
+unsigned int ic_transform_ir_expr_literal_destroy(struct ic_transform_ir_expr_literal *literal, unsigned int free_let);
 
-/* print let_literal
+/* print expr_literal
  *
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_let_literal_print(FILE *fd, struct ic_transform_ir_let_literal *let, unsigned int *indent);
+unsigned int ic_transform_ir_expr_literal_print(FILE *fd, struct ic_transform_ir_expr_literal *literal, unsigned int *indent);
 
-struct ic_transform_ir_let_expr {
-    struct ic_symbol *name;
-    struct ic_decl_type *type;
-    struct ic_transform_ir_expr *expr;
+struct ic_transform_ir_expr_var {
+    struct ic_symbol *sym;
 };
 
-/* allocate and initialise a new let_expr
+/* allocate and initialise a new expr_var
  *
  * TODO doesn't touch any of the contained elements
  *
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_transform_ir_let_expr *ic_transform_ir_let_expr_new(void);
+struct ic_transform_ir_expr_var *ic_transform_ir_expr_var_new(void);
 
-/* initialise an existing let_expr
+/* initialise an existing expr_var
  *
  * TODO doesn't touch any of the contained elements
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_let_expr_init(struct ic_transform_ir_let_expr *let);
+unsigned int ic_transform_ir_expr_var_init(struct ic_transform_ir_expr_var *var);
 
-/* destroy let_expr
+/* destroy expr_var
  *
  * TODO doesn't touch any of the contained elements
  *
@@ -93,42 +158,40 @@ unsigned int ic_transform_ir_let_expr_init(struct ic_transform_ir_let_expr *let)
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_let_expr_destroy(struct ic_transform_ir_let_expr *let, unsigned int free_let);
+unsigned int ic_transform_ir_expr_var_destroy(struct ic_transform_ir_expr_var *var, unsigned int free_var);
 
-/* print let_expr
+/* print expr_var
  *
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_let_expr_print(FILE *fd, struct ic_transform_ir_let_expr *let, unsigned int *indent);
+unsigned int ic_transform_ir_expr_var_print(FILE *fd, struct ic_transform_ir_expr_var *var, unsigned int *indent);
 
-struct ic_transform_ir_let_faccess {
-    struct ic_symbol *name;
-    struct ic_decl_type *type;
+struct ic_transform_ir_expr_faccess {
     struct ic_symbol *left;
     struct ic_decl_type *left_type;
     struct ic_symbol *right;
 };
 
-/* allocate and initialise a new let_faccess
+/* allocate and initialise a new expr_faccess
  *
  * TODO doesn't touch any of the contained elements
  *
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_transform_ir_let_faccess *ic_transform_ir_let_faccess_new(void);
+struct ic_transform_ir_expr_faccess *ic_transform_ir_expr_faccess_new(void);
 
-/* initialise an existing let_faccess
+/* initialise an existing expr_faccess
  *
  * TODO doesn't touch any of the contained elements
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_let_faccess_init(struct ic_transform_ir_let_faccess *let);
+unsigned int ic_transform_ir_expr_faccess_init(struct ic_transform_ir_expr_faccess *faccess);
 
-/* destroy let_faccess
+/* destroy expr_faccess
  *
  * TODO doesn't touch any of the contained elements
  *
@@ -137,29 +200,19 @@ unsigned int ic_transform_ir_let_faccess_init(struct ic_transform_ir_let_faccess
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_let_faccess_destroy(struct ic_transform_ir_let_faccess *let, unsigned int free_faccess);
+unsigned int ic_transform_ir_expr_faccess_destroy(struct ic_transform_ir_expr_faccess *faccess, unsigned int free_faccess);
 
-/* print let_faccess
+/* print expr_faccess
  *
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_let_faccess_print(FILE *fd, struct ic_transform_ir_let_faccess *let, unsigned int *indent);
-
-enum ic_transform_ir_let_tag {
-    ic_transform_ir_let_type_literal,
-    ic_transform_ir_let_type_expr,
-    ic_transform_ir_let_type_faccess
-};
+unsigned int ic_transform_ir_expr_faccess_print(FILE *fd, struct ic_transform_ir_expr_faccess *faccess, unsigned int *indent);
 
 struct ic_transform_ir_let {
-    enum ic_transform_ir_let_tag tag;
-    union {
-        struct ic_transform_ir_let_literal lit;
-        struct ic_transform_ir_let_expr expr;
-        struct ic_transform_ir_let_faccess faccess;
-    } u;
-
+    struct ic_symbol *name;
+    struct ic_decl_type *type;
+    struct ic_transform_ir_expr *expr;
     /* if this tlet is ever assigned to
      *
      * set during transform phase from ic_stmt_let->assigned_to
@@ -176,7 +229,7 @@ struct ic_transform_ir_let {
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_transform_ir_let *ic_transform_ir_let_new(enum ic_transform_ir_let_tag tag);
+struct ic_transform_ir_let *ic_transform_ir_let_new(void);
 
 /* initialise an existing let
  *
@@ -185,7 +238,7 @@ struct ic_transform_ir_let *ic_transform_ir_let_new(enum ic_transform_ir_let_tag
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_let_init(struct ic_transform_ir_let *let, enum ic_transform_ir_let_tag tag);
+unsigned int ic_transform_ir_let_init(struct ic_transform_ir_let *let);
 
 /* destroy let
  *
@@ -205,19 +258,12 @@ unsigned int ic_transform_ir_let_destroy(struct ic_transform_ir_let *let, unsign
  */
 unsigned int ic_transform_ir_let_print(FILE *fd, struct ic_transform_ir_let *let, unsigned int *indent);
 
-/* get pointer to internal let_literal
+/* get pointer to internal expr
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_transform_ir_let_literal *ic_transform_ir_let_get_literal(struct ic_transform_ir_let *let);
-
-/* get pointer to internal let_expr
- *
- * returns * on success
- * returns 0 on failure
- */
-struct ic_transform_ir_let_expr *ic_transform_ir_let_get_expr(struct ic_transform_ir_let *let);
+struct ic_transform_ir_expr *ic_transform_ir_let_get_expr(struct ic_transform_ir_let *let);
 
 /* the left hand-size here is fine
  * as we only need to support
@@ -355,50 +401,6 @@ unsigned int ic_transform_ir_if_destroy(struct ic_transform_ir_if *tif, unsigned
  */
 unsigned int ic_transform_ir_if_print(FILE *fd, struct ic_transform_ir_if *tif, unsigned int *indent);
 
-/* an expr is only ever a function call
- * in void context we only call a function for it's side effects
- * all other things that yield a value are dealt with as let expressions
- */
-struct ic_transform_ir_expr {
-    struct ic_transform_ir_fcall *fcall;
-};
-
-/* allocate and initialise a new expr
- *
- * TODO doesn't touch any of the contained elements
- *
- * returns pointer on success
- * returns 0 on failure
- */
-struct ic_transform_ir_expr *ic_transform_ir_expr_new(void);
-
-/* initialise an existing expr
- *
- * TODO doesn't touch any of the contained elements
- *
- * returns 1 on success
- * returns 0 on failure
- */
-unsigned int ic_transform_ir_expr_init(struct ic_transform_ir_expr *expr);
-
-/* destroy expr
- *
- * TODO doesn't touch any of the contained elements
- *
- * will only free expr if `free_expr` is truthy
- *
- * returns 1 on success
- * returns 0 on failure
- */
-unsigned int ic_transform_ir_expr_destroy(struct ic_transform_ir_expr *expr, unsigned int free_expr);
-
-/* print expr
- *
- * returns 1 on success
- * return 0 on failure
- */
-unsigned int ic_transform_ir_expr_print(FILE *fd, struct ic_transform_ir_expr *expr, unsigned int *indent);
-
 struct ic_transform_ir_ret {
     struct ic_symbol *var;
 };
@@ -439,7 +441,7 @@ unsigned int ic_transform_ir_ret_destroy(struct ic_transform_ir_ret *ret, unsign
  */
 unsigned int ic_transform_ir_ret_print(FILE *fd, struct ic_transform_ir_ret *ret, unsigned int *indent);
 
-struct ic_transform_ir_fcall {
+struct ic_transform_ir_expr_fcall {
     struct ic_expr_func_call *fcall;
     /* pvector of symbols */
     struct ic_pvector *args;
@@ -452,7 +454,7 @@ struct ic_transform_ir_fcall {
  * returns pointer on success
  * returns 0 on failure
  */
-struct ic_transform_ir_fcall *ic_transform_ir_fcall_new(struct ic_expr_func_call *fcall, struct ic_pvector *args);
+struct ic_transform_ir_expr_fcall *ic_transform_ir_expr_fcall_new(struct ic_expr_func_call *fcall, struct ic_pvector *args);
 
 /* initialise an existing fcall
  *
@@ -461,7 +463,7 @@ struct ic_transform_ir_fcall *ic_transform_ir_fcall_new(struct ic_expr_func_call
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_fcall_init(struct ic_transform_ir_fcall *tir_fcall, struct ic_expr_func_call *fcall, struct ic_pvector *args);
+unsigned int ic_transform_ir_expr_fcall_init(struct ic_transform_ir_expr_fcall *tir_expr_fcall, struct ic_expr_func_call *fcall, struct ic_pvector *args);
 
 /* destroy fcall
  *
@@ -472,28 +474,28 @@ unsigned int ic_transform_ir_fcall_init(struct ic_transform_ir_fcall *tir_fcall,
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_fcall_destroy(struct ic_transform_ir_fcall *fcall, unsigned int free_fcall);
+unsigned int ic_transform_ir_expr_fcall_destroy(struct ic_transform_ir_expr_fcall *fcall, unsigned int free_fcall);
 
 /* print fcall
  *
  * returns 1 on success
  * return 0 on failure
  */
-unsigned int ic_transform_ir_fcall_print(FILE *fd, struct ic_transform_ir_fcall *fcall, unsigned int *indent);
+unsigned int ic_transform_ir_expr_fcall_print(FILE *fd, struct ic_transform_ir_expr_fcall *fcall, unsigned int *indent);
 
 /* get number of args
  *
  * returns number on success
  * returns 0 on failure
  */
-unsigned int ic_transform_ir_fcall_length(struct ic_transform_ir_fcall *fcall);
+unsigned int ic_transform_ir_expr_fcall_length(struct ic_transform_ir_expr_fcall *fcall);
 
 /* get arg at offset i
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_symbol *ic_transform_ir_fcall_get_arg(struct ic_transform_ir_fcall *fcall, unsigned int i);
+struct ic_symbol *ic_transform_ir_expr_fcall_get_arg(struct ic_transform_ir_expr_fcall *fcall, unsigned int i);
 
 struct ic_transform_ir_match_case {
     struct ic_field *field;
@@ -572,7 +574,7 @@ unsigned int ic_transform_ir_match_destroy(struct ic_transform_ir_match *match, 
 unsigned int ic_transform_ir_match_print(FILE *fd, struct ic_transform_ir_match *match, unsigned int *indent);
 
 enum ic_transform_ir_stmt_tag {
-    ic_transform_ir_stmt_type_expr,
+    ic_transform_ir_stmt_type_fcall,
     ic_transform_ir_stmt_type_let,
     ic_transform_ir_stmt_type_ret,
     ic_transform_ir_stmt_type_assign,
@@ -584,7 +586,7 @@ enum ic_transform_ir_stmt_tag {
 struct ic_transform_ir_stmt {
     enum ic_transform_ir_stmt_tag tag;
     union {
-        struct ic_transform_ir_expr expr;
+        struct ic_transform_ir_expr_fcall *fcall;
         struct ic_transform_ir_let let;
         struct ic_transform_ir_ret ret;
         struct ic_transform_ir_assign assign;
@@ -630,12 +632,12 @@ unsigned int ic_transform_ir_stmt_destroy(struct ic_transform_ir_stmt *stmt, uns
  */
 unsigned int ic_transform_ir_stmt_print(FILE *fd, struct ic_transform_ir_stmt *stmt, unsigned int *indent);
 
-/* get pointer to internal expr
+/* get pointer to internal expr_fcall
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_transform_ir_expr *ic_transform_ir_stmt_get_expr(struct ic_transform_ir_stmt *stmt);
+struct ic_transform_ir_expr_fcall *ic_transform_ir_stmt_get_fcall(struct ic_transform_ir_stmt *stmt);
 
 /* get pointer to internal let
  *

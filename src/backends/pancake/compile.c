@@ -46,19 +46,40 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
  */
 unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_scope *scope, struct ic_labeller *labeller);
 
-/* compile an expr (function call) into pancake bytecode
+/* compile an expr into pancake bytecode
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_expr *texpr, unsigned int *is_void, struct ic_labeller *labeller);
+unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_expr *texpr, struct ic_labeller *labeller);
 
-/* compile an function call into pancake bytecode
+/* compile a literal into pancake bytecode
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_fcall *tfcall, unsigned int *is_void, struct ic_labeller *labeller);
+unsigned int ic_backend_pancake_compile_expr_literal(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_expr_literal *literal, struct ic_labeller *labeller);
+
+/* compile a var into pancake bytecode
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_compile_expr_var(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_expr_var *var, struct ic_labeller *labeller);
+
+/* compile an faccess into pancake bytecode
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_compile_expr_faccess(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_expr_faccess *faccess, struct ic_labeller *labeller);
+
+/* compile a function call into pancake bytecode
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_compile_expr_fcall(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_expr_fcall *tfcall, unsigned int *is_void, struct ic_labeller *labeller);
 
 /* ensure a named local is top of the stack
  *
@@ -1064,10 +1085,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
      * used to decompose let
      */
     struct ic_transform_ir_let *tlet = 0;
-    struct ic_transform_ir_expr *texpr = 0;
-    struct ic_transform_ir_let_literal *tlet_lit = 0;
-    struct ic_transform_ir_let_expr *tlet_expr = 0;
-    struct ic_transform_ir_let_faccess *tlet_faccess = 0;
+    struct ic_transform_ir_expr_fcall *tfcall = 0;
     struct ic_transform_ir_begin *begin = 0;
     struct ic_transform_ir_if *tif = 0;
     struct ic_transform_ir_assign *tassign = 0;
@@ -1081,7 +1099,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
     /* instruction we generate */
     struct ic_backend_pancake_bytecode *instruction = 0;
 
-    /* out-of-band return value from ic_backend_pancake_compile_fcall */
+    /* out-of-band return value from ic_backend_pancake_compile_expr_fcall */
     unsigned int fcall_is_void = 0;
 
     /* labels used for if/else/end branching */
@@ -1093,11 +1111,6 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
 
     /* current offset */
     unsigned int offset = 0;
-
-    /* offset of field into type */
-    struct ic_decl_type *faccess_tdecl = 0;
-    unsigned int field_offset = 0;
-    struct ic_backend_pancake_local *field_local = 0;
 
     if (!instructions) {
         puts("ic_backend_pancake_compile_stmt: instructions was null");
@@ -1142,10 +1155,10 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
      */
 
     switch (tstmt->tag) {
-        case ic_transform_ir_stmt_type_expr:
-            texpr = &(tstmt->u.expr);
-            if (!ic_backend_pancake_compile_expr(instructions, kludge, scope, texpr, &fcall_is_void, labeller)) {
-                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_compile_expr failed");
+        case ic_transform_ir_stmt_type_fcall:
+            tfcall = tstmt->u.fcall;
+            if (!ic_backend_pancake_compile_expr_fcall(instructions, kludge, scope, tfcall, &fcall_is_void, labeller)) {
+                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_compile_expr_fcall failed");
                 return 0;
             }
 
@@ -1158,264 +1171,72 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
             break;
 
         case ic_transform_ir_stmt_type_let:
+
             tlet = ic_transform_ir_stmt_get_let(tstmt);
             if (!tlet) {
                 puts("ic_backend_pancake_compile_stmt: call to ic_transform_ir_stmt_get_let failed");
                 return 0;
             }
 
-            switch (tlet->tag) {
-                case ic_transform_ir_let_type_literal:
-                    /* FIXME TODO consider adding some error handling */
-                    tlet_lit = &(tlet->u.lit);
-                    name_ch = ic_symbol_contents(tlet_lit->name);
-                    if (!name_ch) {
-                        puts("ic_backend_pancake_compile_stmt: call to ic_symbol_contents failed");
-                        return 0;
-                    }
-
-                    if (tlet->assigned_to) {
-                        /* if this tlet is assigned_to, then cannot use literal trick below */
-
-                        /* compile literal */
-                        if (!ic_backend_pancake_compile_push_constant(instructions, tlet_lit->literal)) {
-                            puts("ic_backend_pancake_compile_stmt: let expr call to ic_backend_pancake_compile_expr failed");
-                            return 0;
-                        }
-
-                        /* insert `store name_ch` instruction */
-                        instruction = ic_backend_pancake_instructions_add(instructions, icp_store);
-                        if (!instruction) {
-                            puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_instructions_add failed");
-                            return 0;
-                        }
-                        if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, name_ch)) {
-                            puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
-                            return 0;
-                        }
-
-                        /* create local */
-                        local = ic_backend_pancake_local_new(tlet_lit->name, icpl_runtime);
-                        if (!local) {
-                            puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_local failed");
-                            return 0;
-                        }
-                        if (!ic_scope_insert(scope, name_ch, local)) {
-                            puts("ic_backend_pancake_compile_stmt: call to ic_scope_insert failed");
-                            return 0;
-                        }
-                    } else {
-                        local = ic_backend_pancake_local_new(tlet_lit->name, icpl_literal);
-                        if (!local) {
-                            puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_local failed");
-                            return 0;
-                        }
-                        if (!ic_backend_pancake_local_set_literal(local, tlet_lit->literal)) {
-                            puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_set_literal failed");
-                            return 0;
-                        }
-                        if (!name_ch) {
-                            puts("ic_backend_pancake_compile_stmt: call to ic_symbol_contents failed");
-                            return 0;
-                        }
-                        if (!ic_scope_insert(scope, name_ch, local)) {
-                            puts("ic_backend_pancake_compile_stmt: call to ic_scope_insert failed");
-                            return 0;
-                        }
-                    }
-                    break;
-
-                case ic_transform_ir_let_type_expr:
-                    /*
-                     *  let name::type = fcall(args...)
-                     *    push all args onto stack (using dict)
-                     *    call fcall
-                     *    register return value to name (along with access count)
-                     *    if void:
-                     *      compile-time error
-                     */
-
-                    /* FIXME TODO consider adding some error handling */
-                    /* compile fcall */
-                    tlet_expr = &(tlet->u.expr);
-                    texpr = tlet_expr->expr;
-                    if (!ic_backend_pancake_compile_expr(instructions, kludge, scope, texpr, &fcall_is_void, labeller)) {
-                        puts("ic_backend_pancake_compile_stmt: let expr call to ic_backend_pancake_compile_expr failed");
-                        return 0;
-                    }
-
-                    /* insert icp_store instruction under name of let */
-                    name_ch = ic_symbol_contents(tlet_expr->name);
-                    if (!name_ch) {
-                        puts("ic_backend_pancake_compile_stmt: let expr call to ic_symbol_contents failed");
-                        return 0;
-                    }
-
-                    if (fcall_is_void) {
-                        puts("ic_backend_pancake_compile_stmt: function used in let was void");
-                        printf("function called and assigned to let '%s', but function is void\n", name_ch);
-                        return 0;
-                    }
-
-                    /* insert `store name_ch` instruction */
-                    instruction = ic_backend_pancake_instructions_add(instructions, icp_store);
-                    if (!instruction) {
-                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_instructions_add failed");
-                        return 0;
-                    }
-                    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, name_ch)) {
-                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
-                        return 0;
-                    }
-
-                    /* create local */
-                    local = ic_backend_pancake_local_new(tlet_expr->name, icpl_runtime);
-                    if (!local) {
-                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_local failed");
-                        return 0;
-                    }
-                    if (!ic_scope_insert(scope, name_ch, local)) {
-                        puts("ic_backend_pancake_compile_stmt: call to ic_scope_insert failed");
-                        return 0;
-                    }
-
-                    break;
-
-                case ic_transform_ir_let_type_faccess:
-                    /* let name::type = f.i */
-                    tlet_faccess = &(tlet->u.faccess);
-
-                    /* load struct */
-                    name_ch = ic_symbol_contents(tlet_faccess->left);
-                    if (!name_ch) {
-                        puts("ic_backend_pancake_compile_stmt: let faccess call to ic_symbol_contents failed");
-                        return 0;
-                    }
-                    field_local = ic_scope_get(scope, name_ch);
-                    if (!field_local) {
-                        puts("ic_backend_pancake_compile_stmt: call to ic_scope_get failed");
-                        return 0;
-                    }
-
-                    /* mark as accessed */
-                    field_local->accessed = true;
-                    switch (field_local->tag) {
-                        case icpl_offset:
-                            /* insert `copyarg argn` instruction */
-                            instruction = ic_backend_pancake_instructions_add(instructions, icp_copyarg);
-                            if (!instruction) {
-                                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_instructions_add failed");
-                                return 0;
-                            }
-                            if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, field_local->u.offset)) {
-                                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
-                                return 0;
-                            }
-
-                            break;
-
-                        case icpl_runtime:
-                            /* insert `load key` instruction */
-                            instruction = ic_backend_pancake_instructions_add(instructions, icp_load);
-                            if (!instruction) {
-                                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_instructions_add failed");
-                                return 0;
-                            }
-                            if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, name_ch)) {
-                                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_bytecode_arg1_set_char");
-                                return 0;
-                            }
-                            break;
-
-                        default:
-                            puts("ic_backend_pancake_compile_stmt: field_local was not runtime or offset, unsupported");
-                            return 0;
-                    }
-
-                    /* set faccess_tdecl */
-                    faccess_tdecl = tlet_faccess->left_type;
-                    if (!faccess_tdecl) {
-                        puts("ic_backend_pancake_compile_stmt: faccess->left_type was null");
-                        return 0;
-                    }
-
-                    /* load_offset */
-                    /* load struct */
-                    name_ch = ic_symbol_contents(tlet_faccess->right);
-                    if (!name_ch) {
-                        puts("ic_backend_pancake_compile_stmt: let faccess call to ic_symbol_contents failed");
-                        return 0;
-                    }
-
-                    /* need to look up field (right) on type (found via left)
-                     * need to then find offset of field into type
-                     */
-
-                    field_offset = ic_decl_type_get_field_offset(faccess_tdecl, name_ch);
-
-                    /* insert `load_offset offset` instruction */
-                    if (ic_decl_type_isvoid(tlet_faccess->type)) {
-                        /* error! */
-                        puts("ic_backend_pancake_compile_stmt: void type as result of faccess");
-                        return 0;
-                    } else if (ic_decl_type_isbool(tlet_faccess->type)) {
-                        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_bool);
-                    } else if (ic_decl_type_isstring(tlet_faccess->type)) {
-                        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_str);
-                    } else if (ic_decl_type_isuint(tlet_faccess->type)) {
-                        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_uint);
-                    } else if (ic_decl_type_issint(tlet_faccess->type)) {
-                        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_sint);
-                    } else {
-                        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_ref);
-                    }
-
-                    if (!instruction) {
-                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_instructions_add failed");
-                        return 0;
-                    }
-                    if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, field_offset)) {
-                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
-                        return 0;
-                    }
-
-                    /* insert icp_store instruction under name of let */
-                    name_ch = ic_symbol_contents(tlet_faccess->name);
-                    if (!name_ch) {
-                        puts("ic_backend_pancake_compile_stmt: let faccess call to ic_symbol_contents failed");
-                        return 0;
-                    }
-
-                    /* insert `store name_ch` instruction */
-                    instruction = ic_backend_pancake_instructions_add(instructions, icp_store);
-                    if (!instruction) {
-                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_instructions_add failed");
-                        return 0;
-                    }
-                    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, name_ch)) {
-                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
-                        return 0;
-                    }
-
-                    /* create local */
-                    local = ic_backend_pancake_local_new(tlet_faccess->name, icpl_runtime);
-                    if (!local) {
-                        puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_local failed");
-                        return 0;
-                    }
-                    if (!ic_scope_insert(scope, name_ch, local)) {
-                        puts("ic_backend_pancake_compile_stmt: call to ic_scope_insert failed");
-                        return 0;
-                    }
-
-                    break;
-
-                default:
-                    puts("ic_backend_pancake_compile_stmt: let impossible case");
-                    return 0;
-                    break;
+            name_ch = ic_symbol_contents(tlet->name);
+            if (!name_ch) {
+                puts("ic_backend_pancake_compile_stmt: call to ic_symbol_contents failed");
+                return 0;
             }
 
+            /* if let is a constant and we never assign to it
+             * then we can optimise this out to a compile-time constant to avoid
+             * runtime stores and loads
+             */
+            if (tlet->expr->tag == ic_transform_ir_expr_type_literal && !tlet->assigned_to) {
+                local = ic_backend_pancake_local_new(tlet->name, icpl_literal);
+                if (!local) {
+                    puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_local failed");
+                    return 0;
+                }
+                if (!ic_backend_pancake_local_set_literal(local, tlet->expr->u.literal->literal)) {
+                    puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_set_literal failed");
+                    return 0;
+                }
+                if (!name_ch) {
+                    puts("ic_backend_pancake_compile_stmt: call to ic_symbol_contents failed");
+                    return 0;
+                }
+                if (!ic_scope_insert(scope, name_ch, local)) {
+                    puts("ic_backend_pancake_compile_stmt: call to ic_scope_insert failed");
+                    return 0;
+                }
+
+            } else {
+                if (!ic_backend_pancake_compile_expr(instructions, kludge, scope, tlet->expr, labeller)) {
+                    puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_compile_expr failed");
+                    return 0;
+                }
+
+                /* insert `store name_ch` instruction */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_store);
+                if (!instruction) {
+                    puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
+                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, name_ch)) {
+                    puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                    return 0;
+                }
+
+                /* create local */
+                local = ic_backend_pancake_local_new(tlet->name, icpl_runtime);
+                if (!local) {
+                    puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_local failed");
+                    return 0;
+                }
+                if (!ic_scope_insert(scope, name_ch, local)) {
+                    puts("ic_backend_pancake_compile_stmt: call to ic_scope_insert failed");
+                    return 0;
+                }
+            }
+
+            return 1;
             break;
 
         case ic_transform_ir_stmt_type_ret:
@@ -1486,14 +1307,8 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
 
             /* FIXME TODO consider adding some error handling */
             /* compile fcall */
-            if (!ic_backend_pancake_compile_expr(instructions, kludge, scope, tassign->right, &fcall_is_void, labeller)) {
+            if (!ic_backend_pancake_compile_expr(instructions, kludge, scope, tassign->right, labeller)) {
                 puts("ic_backend_pancake_compile_stmt: assign expr call to ic_backend_pancake_compile_expr failed");
-                return 0;
-            }
-
-            if (fcall_is_void) {
-                puts("ic_backend_pancake_compile_stmt: function used in assingment was void");
-                printf("function called and assigned to local '%s', but function is void\n", name_ch);
                 return 0;
             }
 
@@ -1832,13 +1647,15 @@ unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructi
     return 1;
 }
 
-/* compile an expr (function call) into pancake bytecode
+/* compile an expr into pancake bytecode
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_expr *texpr, unsigned int *is_void, struct ic_labeller *labeller) {
-    struct ic_transform_ir_fcall *tfcall = 0;
+unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_expr *texpr, struct ic_labeller *labeller) {
+    struct ic_transform_ir_expr_fcall *tfcall = 0;
+    unsigned int is_void = 0;
+
     if (!instructions) {
         puts("ic_backend_pancake_compile_expr: instructions was null");
         return 0;
@@ -1859,24 +1676,66 @@ unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructi
         return 0;
     }
 
-    if (!is_void) {
-        puts("ic_backend_pancake_compile_expr: is_void was null");
+    if (!labeller) {
+        puts("ic_backend_pancake_compile_expr: labeller was null");
         return 0;
     }
 
-    tfcall = texpr->fcall;
+    switch (texpr->tag) {
+        case ic_transform_ir_expr_type_literal:
+            if (!ic_backend_pancake_compile_expr_literal(instructions, kludge, scope, texpr->u.literal, labeller)) {
+                puts("ic_backend_pancake_compile_expr: call to ic_backend_pancake_compile_expr_literal failed");
+                return 0;
+            }
+            return 1;
+            break;
 
-    if (!tfcall) {
-        puts("ic_backend_pancake_compile_expr: tfcall was null");
-        return 0;
+        case ic_transform_ir_expr_type_var:
+            if (!ic_backend_pancake_compile_expr_var(instructions, kludge, scope, texpr->u.var, labeller)) {
+                puts("ic_backend_pancake_compile_expr: call to ic_backend_pancake_compile_expr_var failed");
+                return 0;
+            }
+            return 1;
+            break;
+
+        case ic_transform_ir_expr_type_faccess:
+            if (!ic_backend_pancake_compile_expr_faccess(instructions, kludge, scope, texpr->u.faccess, labeller)) {
+                puts("ic_backend_pancake_compile_expr: call to ic_backend_pancake_compile_expr_faccess failed");
+                return 0;
+            }
+            return 1;
+            break;
+
+        case ic_transform_ir_expr_type_fcall:
+            tfcall = texpr->u.fcall;
+
+            if (!tfcall) {
+                puts("ic_backend_pancake_compile_expr: tfcall was null");
+                return 0;
+            }
+
+            if (!ic_backend_pancake_compile_expr_fcall(instructions, kludge, scope, tfcall, &is_void, labeller)) {
+                puts("ic_backend_pancake_compile_expr: let expr call to ic_backend_pancake_compile_expr_fcall failed");
+                return 0;
+            }
+
+            if (is_void) {
+                puts("ic_backend_pancake_compile_expr: void function used in non-void context");
+                printf("void function called in non-void context\n");
+                return 0;
+            }
+
+            return 1;
+            break;
+
+        default:
+            puts("ic_backend_pancake_compile_expr: unknown tag");
+            return 0;
+            break;
     }
 
-    if (!ic_backend_pancake_compile_fcall(instructions, kludge, scope, tfcall, is_void, labeller)) {
-        puts("ic_backend_pancake_compile_body: let expr call to ic_backend_pancake_compile_fcall failed");
-        return 0;
-    }
-
-    return 1;
+    puts("ic_backend_pancake_compile_expr: impossible");
+    return 0;
 }
 
 /* ensure a named local is top of the stack
@@ -2156,12 +2015,236 @@ unsigned int ic_backend_pancake_compile_push_constant_from_local(struct ic_backe
     return 1;
 }
 
-/* compile an function call into pancake bytecode
+/* compile a literal into pancake bytecode
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_fcall *tfcall, unsigned int *is_void, struct ic_labeller *labeller) {
+unsigned int ic_backend_pancake_compile_expr_literal(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_expr_literal *literal, struct ic_labeller *labeller) {
+    if (!instructions) {
+        puts("ic_backend_pancake_compile_expr_literal: instructions was null");
+        return 0;
+    }
+
+    if (!kludge) {
+        puts("ic_backend_pancake_compile_expr_literal: kludge was null");
+        return 0;
+    }
+
+    if (!scope) {
+        puts("ic_backend_pancake_compile_expr_literal: scope was null");
+        return 0;
+    }
+
+    if (!literal) {
+        puts("ic_backend_pancake_compile_expr_literal: literal was null");
+        return 0;
+    }
+
+    if (!labeller) {
+        puts("ic_backend_pancake_compile_expr_literal: labller was null");
+        return 0;
+    }
+
+    /* compile literal */
+    if (!ic_backend_pancake_compile_push_constant(instructions, literal->literal)) {
+        puts("ic_backend_pancake_compile_expr_literal: call to ic_backend_pancake_compile_push_constant");
+        return 0;
+    }
+
+    return 1;
+}
+
+/* compile a var into pancake bytecode
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_compile_expr_var(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_expr_var *var, struct ic_labeller *labeller) {
+    if (!instructions) {
+        puts("ic_backend_pancake_compile_expr_var: instructions was null");
+        return 0;
+    }
+
+    if (!kludge) {
+        puts("ic_backend_pancake_compile_expr_var: kludge was null");
+        return 0;
+    }
+
+    if (!scope) {
+        puts("ic_backend_pancake_compile_expr_var: scope was null");
+        return 0;
+    }
+
+    if (!var) {
+        puts("ic_backend_pancake_compile_expr_var: var was null");
+        return 0;
+    }
+
+    if (!labeller) {
+        puts("ic_backend_pancake_compile_expr_var: labller was null");
+        return 0;
+    }
+
+    puts("ic_backend_pancake_compile_expr_var: unimplemented");
+    return 0;
+}
+
+/* compile an faccess into pancake bytecode
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_compile_expr_faccess(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_expr_faccess *faccess, struct ic_labeller *labeller) {
+    char *left_str = 0;
+    char *field_str = 0;
+    struct ic_backend_pancake_local *field_local = 0;
+    struct ic_backend_pancake_bytecode *instruction = 0;
+    /* offset of field into type */
+    struct ic_decl_type *faccess_tdecl = 0;
+    unsigned int field_offset = 0;
+    struct ic_decl_type *faccess_overall_type = 0;
+
+    if (!instructions) {
+        puts("ic_backend_pancake_compile_expr_faccess: instructions was null");
+        return 0;
+    }
+
+    if (!kludge) {
+        puts("ic_backend_pancake_compile_expr_faccess: kludge was null");
+        return 0;
+    }
+
+    if (!scope) {
+        puts("ic_backend_pancake_compile_expr_faccess: scope was null");
+        return 0;
+    }
+
+    if (!faccess) {
+        puts("ic_backend_pancake_compile_expr_faccess: faccess was null");
+        return 0;
+    }
+
+    if (!labeller) {
+        puts("ic_backend_pancake_compile_expr_faccess: labller was null");
+        return 0;
+    }
+
+    left_str = ic_symbol_contents(faccess->left);
+    if (!left_str) {
+        puts("ic_backend_pancake_compile_expr_faccess: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    field_local = ic_scope_get(scope, left_str);
+    if (!field_local) {
+        puts("ic_backend_pancake_compile_expr_faccess: call to ic_scope_get failed");
+        return 0;
+    }
+
+    /* mark as accessed */
+    field_local->accessed = true;
+
+    switch (field_local->tag) {
+        case icpl_offset:
+            /* insert `copyarg argn` instruction */
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_copyarg);
+            if (!instruction) {
+                puts("ic_backend_pancake_compile_expr_faccess: call to ic_backend_pancake_instructions_add failed");
+                return 0;
+            }
+            if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, field_local->u.offset)) {
+                puts("ic_backend_pancake_compile_expr_faccess: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                return 0;
+            }
+
+            break;
+
+        case icpl_runtime:
+            /* insert `load key` instruction */
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load);
+            if (!instruction) {
+                puts("ic_backend_pancake_compile_expr_faccess: call to ic_backend_pancake_instructions_add failed");
+                return 0;
+            }
+            if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, left_str)) {
+                puts("ic_backend_pancake_compile_expr_faccess: call to ic_backend_pancake_bytecode_arg1_set_char");
+                return 0;
+            }
+            break;
+
+        default:
+            puts("ic_backend_pancake_compile_expr_faccess: field_local was not runtime or offset, unsupported");
+            return 0;
+    }
+
+    /* set faccess_tdecl */
+    faccess_tdecl = faccess->left_type;
+    if (!faccess_tdecl) {
+        puts("ic_backend_pancake_compile_expr_faccess: faccess->left_type was null");
+        return 0;
+    }
+
+    /* load_offset */
+    /* load struct */
+    field_str = ic_symbol_contents(faccess->right);
+    if (!field_str) {
+        puts("ic_backend_pancake_compile_expr_faccess: let faccess call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    /* need to look up field (right) on type (found via left)
+     * need to then find offset of field into type
+     */
+
+    field_offset = ic_decl_type_get_field_offset(faccess_tdecl, field_str);
+
+    /* TODO FIXME this is non-ideal since we already found the offset above
+     * tidy this code up
+     * this layout is still based on previous let_faccess model where let_faccess
+     * already knew the type
+     */
+    faccess_overall_type = ic_decl_type_get_field_type(faccess_tdecl, field_str);
+    if (!faccess_overall_type) {
+        puts("ic_backend_pancake_compile_expr_faccess: failed to find type");
+        return 0;
+    }
+
+    /* insert `load_offset offset` instruction */
+    if (ic_decl_type_isvoid(faccess_overall_type)) {
+        /* error! */
+        puts("ic_backend_pancake_compile_expr_fcall: void type as result of faccess");
+        return 0;
+    } else if (ic_decl_type_isbool(faccess_overall_type)) {
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_bool);
+    } else if (ic_decl_type_isstring(faccess_overall_type)) {
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_str);
+    } else if (ic_decl_type_isuint(faccess_overall_type)) {
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_uint);
+    } else if (ic_decl_type_issint(faccess_overall_type)) {
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_sint);
+    } else {
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_ref);
+    }
+
+    if (!instruction) {
+        puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_instructions_add failed");
+        return 0;
+    }
+    if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, field_offset)) {
+        puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+        return 0;
+    }
+
+    return 1;
+}
+
+/* compile a function call into pancake bytecode
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_backend_pancake_compile_expr_fcall(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_expr_fcall *tfcall, unsigned int *is_void, struct ic_labeller *labeller) {
     /* length of fcall args */
     unsigned int len = 0;
     /* current offset into fcall args */
@@ -2182,46 +2265,51 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
     struct ic_backend_pancake_local *arg_local = 0;
 
     if (!instructions) {
-        puts("ic_backend_pancake_compile_fcall: instructions was null");
+        puts("ic_backend_pancake_compile_expr_fcall: instructions was null");
         return 0;
     }
 
     if (!kludge) {
-        puts("ic_backend_pancake_compile_fcall: kludge was null");
+        puts("ic_backend_pancake_compile_expr_fcall: kludge was null");
         return 0;
     }
 
     if (!scope) {
-        puts("ic_backend_pancake_compile_fcall: scope was null");
+        puts("ic_backend_pancake_compile_expr_fcall: scope was null");
         return 0;
     }
 
     if (!tfcall) {
-        puts("ic_backend_pancake_compile_fcall: tfcall was null");
+        puts("ic_backend_pancake_compile_expr_fcall: tfcall was null");
         return 0;
     }
 
     if (!is_void) {
-        puts("ic_backend_pancake_compile_fcall: is_void was null");
+        puts("ic_backend_pancake_compile_expr_fcall: is_void was null");
+        return 0;
+    }
+
+    if (!labeller) {
+        puts("ic_backend_pancake_compile_expr_fcall: labller was null");
         return 0;
     }
 
     /* for each arg, push onto stack */
-    len = ic_transform_ir_fcall_length(tfcall);
+    len = ic_transform_ir_expr_fcall_length(tfcall);
     for (i = 0; i < len; ++i) {
-        fcall_arg = ic_transform_ir_fcall_get_arg(tfcall, i);
+        fcall_arg = ic_transform_ir_expr_fcall_get_arg(tfcall, i);
         if (!fcall_arg) {
-            puts("ic_backend_pancake_compile_fcall: call to ic_transform_ir_fcall_get_arg failed");
+            puts("ic_backend_pancake_compile_expr_fcall: call to ic_transform_ir_expr_fcall_get_arg failed");
             return 0;
         }
         arg_name = ic_symbol_contents(fcall_arg);
         if (!arg_name) {
-            puts("ic_backend_pancake_compile_fcall: call to ic_symbol_contents failed");
+            puts("ic_backend_pancake_compile_expr_fcall: call to ic_symbol_contents failed");
             return 0;
         }
         arg_local = ic_scope_get(scope, arg_name);
         if (!arg_local) {
-            puts("ic_backend_pancake_compile_fcall: call to ic_scope_get failed");
+            puts("ic_backend_pancake_compile_expr_fcall: call to ic_scope_get failed");
             return 0;
         }
         /* mark as accessed */
@@ -2230,7 +2318,7 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
         switch (arg_local->tag) {
             case icpl_literal:
                 if (!ic_backend_pancake_compile_push_constant_from_local(instructions, arg_local)) {
-                    puts("ic_backend_pancake_compile_fcall: call to ic_backend_pancake_compile_push_constant failed");
+                    puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_compile_push_constant failed");
                     return 0;
                 }
                 break;
@@ -2239,11 +2327,11 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
                 /* insert `copyarg argn` instruction */
                 instruction = ic_backend_pancake_instructions_add(instructions, icp_copyarg);
                 if (!instruction) {
-                    puts("ic_backend_pancake_compile_fcall: call to ic_backend_pancake_instructions_add failed");
+                    puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_instructions_add failed");
                     return 0;
                 }
                 if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, arg_local->u.offset)) {
-                    puts("ic_backend_pancake_compile_fcall: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                    puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
                     return 0;
                 }
 
@@ -2253,18 +2341,18 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
                 /* insert `load key` instruction */
                 instruction = ic_backend_pancake_instructions_add(instructions, icp_load);
                 if (!instruction) {
-                    puts("ic_backend_pancake_compile_fcall: call to ic_backend_pancake_instructions_add failed");
+                    puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_instructions_add failed");
                     return 0;
                 }
                 if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, arg_name)) {
-                    puts("ic_backend_pancake_compile_fcall: call to ic_backend_pancake_bytecode_arg1_set_char");
+                    puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_bytecode_arg1_set_char");
                     return 0;
                 }
 
                 break;
 
             default:
-                puts("ic_backend_pancake_compile_fcall: impossible arg_local->arg");
+                puts("ic_backend_pancake_compile_expr_fcall: impossible arg_local->arg");
                 return 0;
                 break;
         }
@@ -2275,7 +2363,7 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
     decl_func = fcall->fdecl;
     fdecl_sig_call = ic_decl_func_sig_call(decl_func);
     if (!fdecl_sig_call) {
-        puts("ic_backend_pancake_compile_fcall: call to ic_decl_func_sig_call failed");
+        puts("ic_backend_pancake_compile_expr_fcall: call to ic_decl_func_sig_call failed");
         return 0;
     }
 
@@ -2286,16 +2374,16 @@ unsigned int ic_backend_pancake_compile_fcall(struct ic_backend_pancake_instruct
     }
 
     if (!instruction) {
-        puts("ic_backend_pancake_compile_fcall: call to ic_backend_pancake_instructions_add failed");
+        puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_instructions_add failed");
         return 0;
     }
     if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_sig_call)) {
-        puts("ic_backend_pancake_compile_fcall: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+        puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
         return 0;
     }
     /* set number of args we call with */
     if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, len)) {
-        puts("ic_backend_pancake_compile_fcall: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+        puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
         return 0;
     }
 

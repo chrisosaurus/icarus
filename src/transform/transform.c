@@ -13,6 +13,7 @@
 
 /* FIXME TODO ic_transform_stmt_for scope unused as unimplemented */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 
 /* perform translation of all fdecls on kludge
  *
@@ -135,12 +136,12 @@ static unsigned int ic_transform_stmt_match(struct ic_kludge *kludge, struct ic_
  */
 static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_expr *expr);
 
-/* transform an fcall to tir_fcall
+/* transform an fcall to tir_expr_fcall
  *
  * returns * on success
  * returns 0 on failure
  */
-static struct ic_transform_ir_fcall *ic_transform_fcall(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_expr_func_call *fcall);
+static struct ic_transform_ir_expr_fcall *ic_transform_fcall(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_expr_func_call *fcall);
 
 /* transform an fcall argument to an symbol
  * if the arg is already a symbol, just return it
@@ -539,7 +540,7 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_tr
     struct ic_expr_func_call *fcall = 0;
     struct ic_transform_ir_expr *expr = 0;
     struct ic_transform_ir_stmt *stmt = 0;
-    struct ic_transform_ir_fcall *tir_fcall = 0;
+    struct ic_transform_ir_expr_fcall *tir_expr_fcall = 0;
     struct ic_transform_ir_let *tlet = 0;
     struct ic_symbol *left_sym = 0;
     struct ic_symbol *right_sym = 0;
@@ -590,20 +591,20 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_tr
                 fcall = &(let->init->u.fcall);
             }
 
-            tir_fcall = ic_transform_fcall(kludge, tbody, body, fcall);
-            if (!tir_fcall) {
-                puts("ic_transform_stmt_let: call to ic_transform_ir_fcall failed");
+            tir_expr_fcall = ic_transform_fcall(kludge, tbody, body, fcall);
+            if (!tir_expr_fcall) {
+                puts("ic_transform_stmt_let: call to ic_transform_ir_expr_fcall failed");
                 return 0;
             }
 
-            expr = ic_transform_ir_expr_new();
+            expr = ic_transform_ir_expr_new(ic_transform_ir_expr_type_fcall);
             if (!expr) {
                 puts("ic_transform_stmt_let: call to ic_transform_ir_expr_new failed");
                 return 0;
             }
 
             /* FIXME TODO ownership ... */
-            expr->fcall = tir_fcall;
+            expr->u.fcall = tir_expr_fcall;
 
             tdecl = ic_type_ref_get_type_decl(let->tref);
             if (!tdecl) {
@@ -856,14 +857,14 @@ static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic
         return 0;
     }
 
-    tassign->right = ic_transform_ir_expr_new();
+    tassign->right = ic_transform_ir_expr_new(ic_transform_ir_expr_type_fcall);
     if (!tassign->right) {
         puts("ic_transform_stmt_assign: call to ic_transform_ir_expr_new failed");
         return 0;
     }
 
-    tassign->right->fcall = ic_transform_fcall(kludge, tbody, body, fcall);
-    if (!tassign->right->fcall) {
+    tassign->right->u.fcall = ic_transform_fcall(kludge, tbody, body, fcall);
+    if (!tassign->right->u.fcall) {
         puts("ic_transform_stmt_assign: call to ic_transform_fcall failed");
         return 0;
     }
@@ -1302,7 +1303,6 @@ static unsigned int ic_transform_stmt_while(struct ic_kludge *kludge, struct ic_
  */
 static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_expr *expr) {
     struct ic_transform_ir_stmt *tir_stmt = 0;
-    struct ic_transform_ir_expr *tir_expr = 0;
     struct ic_expr_func_call *fcall = 0;
 
     if (!kludge) {
@@ -1327,15 +1327,14 @@ static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_t
 
     switch (expr->tag) {
         case ic_expr_type_func_call:
-            tir_stmt = ic_transform_ir_stmt_new(ic_transform_ir_stmt_type_expr);
+            fcall = &(expr->u.fcall);
+            tir_stmt = ic_transform_ir_stmt_new(ic_transform_ir_stmt_type_fcall);
             if (!tir_stmt) {
                 puts("ic_transform_stmt_expr: call to ic_transform_ir_stmt_new failed");
                 return 0;
             }
-            fcall = &(expr->u.fcall);
-            tir_expr = &(tir_stmt->u.expr);
-            tir_expr->fcall = ic_transform_fcall(kludge, tbody, body, fcall);
-            if (!tir_expr->fcall) {
+            tir_stmt->u.fcall = ic_transform_fcall(kludge, tbody, body, fcall);
+            if (!tir_stmt->u.fcall) {
                 puts("ic_transform_stmt_expr: call to ic_transform_fcall failed");
                 return 0;
             }
@@ -1397,7 +1396,7 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
     /* fcall used in func call case */
     struct ic_expr_func_call *fcall = 0;
     /* tir fcall used in func_call case */
-    struct ic_transform_ir_fcall *tir_fcall = 0;
+    struct ic_transform_ir_expr_fcall *tir_expr_fcall = 0;
     /* tir expr wrapping fcall used in func_call case */
     struct ic_transform_ir_expr *tir_expr = 0;
     /* left symbol for faccess */
@@ -1458,20 +1457,20 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
             }
 
             /* transform fcall */
-            tir_fcall = ic_transform_fcall(kludge, tbody, body, fcall);
-            if (!tir_fcall) {
+            tir_expr_fcall = ic_transform_fcall(kludge, tbody, body, fcall);
+            if (!tir_expr_fcall) {
                 puts("ic_transform_new_temp: call to ic_transform_fcall failed");
                 return 0;
             }
 
             /* wrap in tir_expr */
-            tir_expr = ic_transform_ir_expr_new();
+            tir_expr = ic_transform_ir_expr_new(ic_transform_ir_expr_type_fcall);
             if (!tir_expr) {
                 puts("ic_transform_new_temp: call to ic_transform_ir_expr_new failed");
                 return 0;
             }
-            /* wrap tir_fcall in tir_expr */
-            tir_expr->fcall = tir_fcall;
+            /* wrap tir_expr_fcall in tir_expr */
+            tir_expr->u.fcall = tir_expr_fcall;
 
             /* generate new statement */
             tir_stmt = ic_transform_ir_stmt_let_expr_new(sym, type, tir_expr);
@@ -1559,20 +1558,20 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
             }
 
             /* transform fcall */
-            tir_fcall = ic_transform_fcall(kludge, tbody, body, fcall);
-            if (!tir_fcall) {
+            tir_expr_fcall = ic_transform_fcall(kludge, tbody, body, fcall);
+            if (!tir_expr_fcall) {
                 puts("ic_transform_new_temp: call to ic_transform_fcall failed");
                 return 0;
             }
 
             /* wrap in tir_expr */
-            tir_expr = ic_transform_ir_expr_new();
+            tir_expr = ic_transform_ir_expr_new(ic_transform_ir_expr_type_fcall);
             if (!tir_expr) {
                 puts("ic_transform_new_temp: call to ic_transform_ir_expr_new failed");
                 return 0;
             }
-            /* wrap tir_fcall in tir_expr */
-            tir_expr->fcall = tir_fcall;
+            /* wrap tir_expr_fcall in tir_expr */
+            tir_expr->u.fcall = tir_expr_fcall;
 
             /* generate new statement */
             tir_stmt = ic_transform_ir_stmt_let_expr_new(sym, type, tir_expr);
@@ -1666,12 +1665,12 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
     return 0;
 }
 
-/* transform an fcall to tir_fcall
+/* transform an fcall to tir_expr_fcall
  *
  * returns 1 on success
  * returns 0 on failure
  */
-static struct ic_transform_ir_fcall *ic_transform_fcall(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_expr_func_call *fcall) {
+static struct ic_transform_ir_expr_fcall *ic_transform_fcall(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_expr_func_call *fcall) {
 
     /* offset into fcall->args */
     unsigned int i = 0;
@@ -1685,12 +1684,12 @@ static struct ic_transform_ir_fcall *ic_transform_fcall(struct ic_kludge *kludge
     /* our new pvector of symbols
      * each representing the name for a let expr
      * holding an argument for this fcall
-     * this is owned by the tir_fcall
+     * this is owned by the tir_expr_fcall
      */
     struct ic_pvector *new_args = 0;
 
-    /* our eventual output tir_fcall */
-    struct ic_transform_ir_fcall *tir_fcall = 0;
+    /* our eventual output tir_expr_fcall */
+    struct ic_transform_ir_expr_fcall *tir_expr_fcall = 0;
 
     if (!kludge) {
         puts("ic_transform_fcall: kludge was null");
@@ -1741,13 +1740,13 @@ static struct ic_transform_ir_fcall *ic_transform_fcall(struct ic_kludge *kludge
     }
 
     /* FIXME TODO ownership ... */
-    tir_fcall = ic_transform_ir_fcall_new(fcall, new_args);
-    if (!tir_fcall) {
-        puts("ic_transform_fcall: call to ic_transform_ir_fcall_new failed");
+    tir_expr_fcall = ic_transform_ir_expr_fcall_new(fcall, new_args);
+    if (!tir_expr_fcall) {
+        puts("ic_transform_fcall: call to ic_transform_ir_expr_fcall_new failed");
         return 0;
     }
 
-    return tir_fcall;
+    return tir_expr_fcall;
 }
 
 /* transform an fcall argument to an symbol
