@@ -135,6 +135,13 @@ static unsigned int ic_transform_stmt_match(struct ic_kludge *kludge, struct ic_
  */
 static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_expr *expr);
 
+/* transform an expr to tir_expr
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+static struct ic_transform_ir_expr *ic_transform_expr(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_expr *expr);
+
 /* transform an fcall to tir_expr_fcall
  *
  * returns * on success
@@ -569,6 +576,44 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_tr
         return 0;
     }
 
+    expr = ic_transform_expr(kludge, tbody, body, let->init);
+    if (!expr) {
+        puts("ic_transform_stmt_let: call to ic_transform_expr failed");
+        return 0;
+    }
+
+    tdecl = ic_type_ref_get_type_decl(let->tref);
+    if (!tdecl) {
+        puts("ic_transform_stmt_let: call to ic_type_ref_get_type_decl failed");
+        return 0;
+    }
+
+    stmt = ic_transform_ir_stmt_let_expr_new(&(let->identifier), tdecl, expr);
+    if (!stmt) {
+        puts("ic_transform_stmt_let: call to ic_transform_ir_stmt_let_literal_new failed");
+        return 0;
+    }
+    if (!ic_transform_body_append(tbody, stmt)) {
+        puts("ic_transform_stmt_let: call to ic_transform_body_append failed");
+        return 0;
+    }
+
+    tlet = ic_transform_ir_stmt_get_let(stmt);
+    if (!tlet) {
+        puts("ic_transform_stmt_let: call to ic_transform_ir_stmt_get_let failed");
+        return 0;
+    }
+
+    if (!tlet) {
+        puts("ic_transform_stmt_let: tlet was null");
+        return 0;
+    }
+
+    /* copy over assigned_to field */
+    tlet->assigned_to = let->assigned_to;
+
+    return 1;
+
     fcall = 0;
 
     switch (let->init->tag) {
@@ -728,7 +773,7 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_tr
         return 0;
     }
 
-    /* copy over assigned_t0 field */
+    /* copy over assigned_to field */
     tlet->assigned_to = let->assigned_to;
 
     return 1;
@@ -743,11 +788,11 @@ static unsigned int ic_transform_stmt_let(struct ic_kludge *kludge, struct ic_tr
  */
 static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_stmt_assign *assign) {
     struct ic_expr_identifier *id = 0;
-    struct ic_expr_func_call *fcall = 0;
     struct ic_transform_ir_assign *tassign = 0;
     struct ic_transform_ir_stmt *tstmt = 0;
     char *ch = 0;
     struct ic_slot *slot = 0;
+    enum ic_slot_assign_result assign_result = 0;
 
     if (!kludge) {
         puts("ic_transform_stmt_assign: kludge was null");
@@ -790,42 +835,11 @@ static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic
             break;
     }
 
-    switch (assign->right->tag) {
-        case ic_expr_type_identifier:
-            puts("ic_transform_stmt_assign: assign->right identifier unsupported");
-            return 0;
-            break;
-
-        case ic_expr_type_constant:
-            puts("ic_transform_stmt_assign: assign->right constant unsupported");
-            return 0;
-            break;
-
-        case ic_expr_type_func_call:
-            fcall = &(assign->right->u.fcall);
-            break;
-
-        case ic_expr_type_operator:
-            if (!assign->right->u.op.fcall) {
-                puts("ic_transform_stmt_assign: operator didn't have fcall set");
-                return 0;
-            }
-            fcall = assign->right->u.op.fcall;
-            break;
-
-        default:
-            puts("ic_transform_stmt_assign: unsupported case");
-            return 0;
-            break;
-    }
-
     tstmt = ic_transform_ir_stmt_new(ic_transform_ir_stmt_type_assign);
     if (!tstmt) {
         puts("ic_transform_stmt_assign: call to ic_transform_ir_stmt_new failed");
         return 0;
     }
-
-    tassign = &(tstmt->u.assign);
 
     /* from
      *  struct ic_stmt_assign {
@@ -840,6 +854,8 @@ static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic
      *      struct ic_transform_ir_expr *right;
      *  };
      */
+
+    tassign = &(tstmt->u.assign);
 
     tassign->left = &(id->identifier);
 
@@ -856,15 +872,23 @@ static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic
         return 0;
     }
 
-    tassign->right = ic_transform_ir_expr_new(ic_transform_ir_expr_type_fcall);
-    if (!tassign->right) {
-        puts("ic_transform_stmt_assign: call to ic_transform_ir_expr_new failed");
-        return 0;
+    assign_result = ic_slot_assign(slot);
+    switch (assign_result) {
+        case ic_slot_assign_result_success:
+            /* success */
+            break;
+
+        default:
+            /* ERROR */
+            puts("ic_trasnform_stmt_assign: call to ic_slot_assign failed");
+            printf("failed to assign to `%s`\n", ch);
+            return 0;
+            break;
     }
 
-    tassign->right->u.fcall = ic_transform_fcall(kludge, tbody, body, fcall);
-    if (!tassign->right->u.fcall) {
-        puts("ic_transform_stmt_assign: call to ic_transform_fcall failed");
+    tassign->right = ic_transform_expr(kludge, tbody, body, assign->right);
+    if (!tassign->right) {
+        puts("ic_transform_stmt_assign: call to ic_transform_expr failed");
         return 0;
     }
 
@@ -874,6 +898,7 @@ static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic
     }
 
     return 1;
+
 }
 
 /* perform translation of a single `begin` stmt within a body
@@ -1662,6 +1687,136 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
 
     puts("ic_transform_new_temp: impossible! fell off end of switch");
     return 0;
+}
+
+/* transform an expr to tir_expr
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+static struct ic_transform_ir_expr *ic_transform_expr(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_expr *expr) {
+    struct ic_transform_ir_expr *texpr = 0;
+    struct ic_expr_func_call *fcall = 0;
+
+    /* left_* and right_* are used for recursive field access */
+    struct ic_symbol *left_sym = 0;
+    struct ic_symbol *right_sym = 0;
+    struct ic_decl_type *left_tdecl = 0;
+
+    switch (expr->tag) {
+        case ic_expr_type_identifier:
+            texpr = ic_transform_ir_expr_new(ic_transform_ir_expr_type_var);
+            if (!expr) {
+                puts("ic_transform_expr: call to ic_transform_ir_expr_new failed");
+                return 0;
+            }
+
+            texpr->u.var = ic_transform_ir_expr_var_new();
+            if (!texpr->u.literal) {
+                puts("ic_transform_expr: call to ic_transform_ir_expr_var_new failed");
+                return 0;
+            }
+
+            texpr->u.var->sym = &(expr->u.id.identifier);
+            return texpr;
+            break;
+
+        case ic_expr_type_constant:
+            texpr = ic_transform_ir_expr_new(ic_transform_ir_expr_type_literal);
+            if (!expr) {
+                puts("ic_transform_expr: call to ic_transform_ir_expr_new failed");
+                return 0;
+            }
+
+            texpr->u.literal = ic_transform_ir_expr_literal_new();
+            if (!texpr->u.literal) {
+                puts("ic_transform_expr: call to ic_transform_ir_expr_literal_new failed");
+                return 0;
+            }
+
+            texpr->u.literal->literal = &(expr->u.cons);
+            return texpr;
+            break;
+
+        case ic_expr_type_func_call:
+            fcall = &(expr->u.fcall);
+            goto TRANSFORM_EXPR_FCALL;
+            break;
+
+        case ic_expr_type_operator:
+            if (!expr->u.op.fcall) {
+                puts("ic_transform_expr: operator didn't have fcall set");
+                return 0;
+            }
+            fcall = expr->u.op.fcall;
+            goto TRANSFORM_EXPR_FCALL;
+            break;
+
+        case ic_expr_type_field_access:
+            /* left can either be an id or a compound expression */
+            if (expr->u.faccess.left->tag == ic_expr_type_identifier) {
+                left_sym = &(expr->u.faccess.left->u.id.identifier);
+            } else {
+                left_sym = ic_transform_new_temp(kludge, tbody, body, expr->u.faccess.left);
+                if (!left_sym) {
+                    puts("ic_transform_expr: call to ic_transform_new_temp failed");
+                    return 0;
+                }
+            }
+
+            texpr = ic_transform_ir_expr_new(ic_transform_ir_expr_type_faccess);
+            if (!texpr) {
+                puts("ic_transform_expr: call to ic_transform_ir_expr_new failed");
+                return 0;
+            }
+
+            texpr->u.faccess = ic_transform_ir_expr_faccess_new();
+            if (!texpr->u.faccess) {
+                puts("ic_transform_expr: call to ic_transform_ir_expr_faccess_new failed");
+                return 0;
+            }
+
+            left_tdecl = ic_analyse_infer(kludge, body->scope, expr->u.faccess.left);
+            if (!left_tdecl) {
+                puts("ic_transform_expr: call to ic_analyse_infer failed for let->init->u.faccess.left");
+                return 0;
+            }
+
+            /* right must always be an id */
+            if (expr->u.faccess.right->tag != ic_expr_type_identifier) {
+                puts("ic_transform_stmt_let: faccess right was not id");
+                return 0;
+            }
+            right_sym = &(expr->u.faccess.right->u.id.identifier);
+
+            texpr->u.faccess->left = left_sym;
+            texpr->u.faccess->left_type = left_tdecl;
+            texpr->u.faccess->right = right_sym;
+
+            return texpr;
+            break;
+
+        default:
+            puts("ic_transform_expr: unsupported case");
+            return 0;
+            break;
+    }
+
+TRANSFORM_EXPR_FCALL:
+
+    texpr = ic_transform_ir_expr_new(ic_transform_ir_expr_type_fcall);
+    if (!texpr) {
+        puts("ic_transform_expr: call to ic_transform_ir_expr_new failed");
+        return 0;
+    }
+
+    texpr->u.fcall = ic_transform_fcall(kludge, tbody, body, fcall);
+    if (!texpr->u.fcall) {
+        puts("ic_transform_expr: call to ic_transform_fcall failed");
+        return 0;
+    }
+
+    return texpr;
 }
 
 /* transform an fcall to tir_expr_fcall
