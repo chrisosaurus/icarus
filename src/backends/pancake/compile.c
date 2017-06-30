@@ -2086,8 +2086,12 @@ unsigned int ic_backend_pancake_compile_expr_var(struct ic_backend_pancake_instr
         return 0;
     }
 
-    puts("ic_backend_pancake_compile_expr_var: unimplemented");
-    return 0;
+    if (!ic_backend_pancake_compile_local_push_from_symbol(instructions, scope, var->sym)) {
+        puts("ic_backend_pancake_compile_expr_var: call to ic_backend_pancake_compile_local_push_from_symbol failed");
+        return 0;
+    }
+
+    return 1;
 }
 
 /* compile an faccess into pancake bytecode
