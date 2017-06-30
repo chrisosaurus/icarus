@@ -66,11 +66,11 @@ my $cases = [
       copyarg 0
       pushint 4
       call_builtin plus(Sint,Sint) 2
-      store _t1
-      load _t1
-      call bar(Sint) 1
       store _t0
       load _t0
+      call bar(Sint) 1
+      store _t1
+      load _t1
       save
       clean_stack
       restore

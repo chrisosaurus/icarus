@@ -1448,20 +1448,6 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
         return 0;
     }
 
-    /* generate new name
-     * for literals we have a special naming convention of _l<n>
-     * for all other temporaries we use _t<n>
-     */
-    if (expr->tag == ic_expr_type_constant) {
-        sym = ic_transform_body_register_literal(tbody);
-    } else {
-        sym = ic_transform_body_register_temporary(tbody);
-    }
-    if (!sym) {
-        puts("ic_transform_new_temp: call to ic_transform_body_register_temporary failed");
-        return 0;
-    }
-
     /* transform expr */
     tir_expr = ic_transform_expr(kludge, tbody, body, expr);
     if (!tir_expr) {
@@ -1473,6 +1459,22 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
     type = ic_analyse_infer(kludge, body->scope, expr);
     if (!type) {
         puts("ic_transform_new_temp: call to ic_analyse_infer failed");
+        return 0;
+    }
+
+    /* generate new name after expanding expr
+     * this gives a nice ordering to numbers
+     *
+     * for literals we have a special naming convention of _l<n>
+     * for all other temporaries we use _t<n>
+     */
+    if (expr->tag == ic_expr_type_constant) {
+        sym = ic_transform_body_register_literal(tbody);
+    } else {
+        sym = ic_transform_body_register_temporary(tbody);
+    }
+    if (!sym) {
+        puts("ic_transform_new_temp: call to ic_transform_body_register_temporary failed");
         return 0;
     }
 
