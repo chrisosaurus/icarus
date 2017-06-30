@@ -323,6 +323,21 @@ my $cases = [
       4
     ',
   },
+  {
+    input => '
+      fn main()
+        let a = "..."
+        a = "hello "
+        let b = a
+        a = "world"
+        print(b)
+        println(a)
+      end
+    ',
+    expected => '
+      hello world
+    ',
+  },
 ];
 
 # whitespace sensitivity sucks
