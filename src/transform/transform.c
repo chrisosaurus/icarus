@@ -1408,27 +1408,13 @@ static unsigned int ic_transform_stmt_expr(struct ic_kludge *kludge, struct ic_t
 static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct ic_transform_body *tbody, struct ic_body *body, struct ic_expr *expr) {
     /* the tir stmt we generate */
     struct ic_transform_ir_stmt *tir_stmt = 0;
+    /* generated expr */
+    struct ic_transform_ir_expr *tir_expr = 0;
 
     /* symbol */
     struct ic_symbol *sym = 0;
     /* type */
     struct ic_decl_type *type = 0;
-
-    /* constant used in literal case */
-    struct ic_expr_constant *constant = 0;
-
-    /* fcall used in func call case */
-    struct ic_expr_func_call *fcall = 0;
-    /* tir fcall used in func_call case */
-    struct ic_transform_ir_expr_fcall *tir_expr_fcall = 0;
-    /* tir expr wrapping fcall used in func_call case */
-    struct ic_transform_ir_expr *tir_expr = 0;
-    /* left symbol for faccess */
-    struct ic_symbol *left_sym = 0;
-    /* left type for faccess */
-    struct ic_decl_type *left_type = 0;
-    /* right symbol for faccess */
-    struct ic_symbol *right_sym = 0;
 
     if (!kludge) {
         puts("ic_transform_new_temp: kludge was null");
@@ -1450,243 +1436,59 @@ static struct ic_symbol *ic_transform_new_temp(struct ic_kludge *kludge, struct 
         return 0;
     }
 
-    /* FIXME TODO */
-    /* register on tbody */
-    /* generate new unique temporary symbol */
-    /* create a new let for this expr */
-    /* append new let to tbody */
-    /* return sym name*/
-
-    switch (expr->tag) {
-        case ic_expr_type_func_call:
-            /* generate name */
-            sym = ic_transform_body_register_temporary(tbody);
-            if (!sym) {
-                puts("ic_transform_new_temp: call to ic_transform_body_register_temporary failed");
-                return 0;
-            }
-
-            /* get return type of function call */
-            type = ic_analyse_infer(kludge, body->scope, expr);
-            if (!type) {
-                puts("ic_transform_new_temp: call to ic_analyse_infer failed");
-                return 0;
-            }
-
-            /* unwrap fcall */
-            fcall = ic_expr_get_fcall(expr);
-            if (!fcall) {
-                puts("ic_transform_new_temp: call to ic_expr_get_fcall failed");
-                return 0;
-            }
-
-            /* transform fcall */
-            tir_expr_fcall = ic_transform_fcall(kludge, tbody, body, fcall);
-            if (!tir_expr_fcall) {
-                puts("ic_transform_new_temp: call to ic_transform_fcall failed");
-                return 0;
-            }
-
-            /* wrap in tir_expr */
-            tir_expr = ic_transform_ir_expr_new(ic_transform_ir_expr_type_fcall);
-            if (!tir_expr) {
-                puts("ic_transform_new_temp: call to ic_transform_ir_expr_new failed");
-                return 0;
-            }
-            /* wrap tir_expr_fcall in tir_expr */
-            tir_expr->u.fcall = tir_expr_fcall;
-
-            /* generate new statement */
-            tir_stmt = ic_transform_ir_stmt_let_expr_new(sym, type, tir_expr);
-            if (!tir_stmt) {
-                puts("ic_transform_new_temp: call to ic_transform_ir_stmt_let_expr_new failed");
-                return 0;
-            }
-
-            if (!ic_transform_body_append(tbody, tir_stmt)) {
-                puts("ic_transform_new_temp: call to ic_transform_body_append failed");
-                return 0;
-            }
-
-            /* success */
-            return sym;
-            break;
-
-        case ic_expr_type_identifier:
-            /* should never try to do this */
-            puts("ic_transform_new_temp: caller passed in expr->tag identifier - doesn't make sense");
-            return 0;
-            break;
-
-        case ic_expr_type_constant:
-            /* generate name */
-            sym = ic_transform_body_register_literal(tbody);
-            if (!sym) {
-                puts("ic_transform_new_temp: call to ic_transform_body_register_literal failed");
-                return 0;
-            }
-
-            /* unpack literal */
-            constant = ic_expr_get_constant(expr);
-            if (!constant) {
-                puts("ic_transform_new_temp: call to ic_expr_get_constant failed");
-                return 0;
-            }
-
-            type = ic_analyse_infer_constant(kludge, constant);
-            if (!type) {
-                puts("ic_transform_new_temp: call to ic_anlyse_infer_constant failed");
-                return 0;
-            }
-
-            /* generate new statement */
-            tir_stmt = ic_transform_ir_stmt_let_literal_new(sym, type, constant);
-            if (!tir_stmt) {
-                puts("ic_transform_new_temp: call to ic_transform_ir_stmt_let_literal_new failed");
-                return 0;
-            }
-
-            if (!ic_transform_body_append(tbody, tir_stmt)) {
-                puts("ic_transform_new_temp: call to ic_transform_body_append failed");
-                return 0;
-            }
-
-            /* success */
-            return sym;
-            break;
-
-        case ic_expr_type_operator:
-            if (!expr->u.op.fcall) {
-                /* all operators should have had their fcall set
-                 * during analysis
-                 */
-                puts("ic_transform_new_temp: caller passed in expr->tag operator without fcall set");
-                return 0;
-            }
-
-            /* generate name */
-            sym = ic_transform_body_register_temporary(tbody);
-            if (!sym) {
-                puts("ic_transform_new_temp: call to ic_transform_body_register_temporary failed");
-                return 0;
-            }
-
-            /* unwrap fcall */
-            fcall = expr->u.op.fcall;
-
-            /* get return type of function call */
-            type = ic_analyse_infer_fcall(kludge, body->scope, fcall);
-            if (!type) {
-                puts("ic_transform_new_temp: call to ic_analyse_infer_fcall failed");
-                return 0;
-            }
-
-            /* transform fcall */
-            tir_expr_fcall = ic_transform_fcall(kludge, tbody, body, fcall);
-            if (!tir_expr_fcall) {
-                puts("ic_transform_new_temp: call to ic_transform_fcall failed");
-                return 0;
-            }
-
-            /* wrap in tir_expr */
-            tir_expr = ic_transform_ir_expr_new(ic_transform_ir_expr_type_fcall);
-            if (!tir_expr) {
-                puts("ic_transform_new_temp: call to ic_transform_ir_expr_new failed");
-                return 0;
-            }
-            /* wrap tir_expr_fcall in tir_expr */
-            tir_expr->u.fcall = tir_expr_fcall;
-
-            /* generate new statement */
-            tir_stmt = ic_transform_ir_stmt_let_expr_new(sym, type, tir_expr);
-            if (!tir_stmt) {
-                puts("ic_transform_new_temp: call to ic_transform_ir_stmt_let_expr_new failed");
-                return 0;
-            }
-
-            if (!ic_transform_body_append(tbody, tir_stmt)) {
-                puts("ic_transform_new_temp: call to ic_transform_body_append failed");
-                return 0;
-            }
-
-            /* success */
-            return sym;
-            break;
-
-        case ic_expr_type_field_access:
-            /* generate name */
-            sym = ic_transform_body_register_temporary(tbody);
-            if (!sym) {
-                puts("ic_transform_new_temp: call to ic_transform_body_register_temporary failed");
-                return 0;
-            }
-
-            /* get type of lhs of faccess */
-            left_type = ic_analyse_infer(kludge, body->scope, expr->u.faccess.left);
-            if (!left_type) {
-                puts("ic_transform_new_temp: call to ic_analyse_infer failed");
-                return 0;
-            }
-
-            /* get return type of inner struct field */
-            type = ic_analyse_infer(kludge, body->scope, expr);
-            if (!type) {
-                puts("ic_transform_new_temp: call to ic_analyse_infer failed");
-                return 0;
-            }
-
-            if (!expr->u.faccess.right) {
-                puts("ic_transform_new_temp: faccess right was null");
-                return 0;
-            }
-
-            /* right must always be an id */
-            if (expr->u.faccess.right->tag != ic_expr_type_identifier) {
-                puts("ic_transform_new_temp: faccess right was not id");
-                return 0;
-            }
-            right_sym = &(expr->u.faccess.right->u.id.identifier);
-
-            if (!expr->u.faccess.left) {
-                puts("ic_transform_new_temp: faccess left was null");
-                return 0;
-            }
-
-            /* left can either be an id or a compound expression */
-            if (expr->u.faccess.left->tag == ic_expr_type_identifier) {
-                left_sym = &(expr->u.faccess.left->u.id.identifier);
-            } else {
-                left_sym = ic_transform_new_temp(kludge, tbody, body, expr->u.faccess.left);
-                if (!left_sym) {
-                    puts("ic_transform_new_temp: call to ic_transform_new_temp failed");
-                    return 0;
-                }
-            }
-
-            /* generate new statement */
-            tir_stmt = ic_transform_ir_stmt_let_faccess_new(sym, type, left_sym, left_type, right_sym);
-            if (!tir_stmt) {
-                puts("ic_transform_new_temp: call to ic_transform_ir_stmt_let_expr_new failed");
-                return 0;
-            }
-
-            if (!ic_transform_body_append(tbody, tir_stmt)) {
-                puts("ic_transform_new_temp: call to ic_transform_body_append failed");
-                return 0;
-            }
-
-            /* success */
-            return sym;
-            break;
-
-        default:
-            puts("ic_transform_new_temp: caller passed in imposible/unknown expr->tag");
-            return 0;
-            break;
+    /* generating a new name for an identifier doesn't make sense
+     * since that identifier is already a valid name
+     *
+     * we could instead just return the inner symbol
+     * but this error reporting makes catching bugs easier
+     */
+    if (expr->tag == ic_expr_type_identifier) {
+        /* should never try to do this */
+        puts("ic_transform_new_temp: caller passed in expr->tag identifier - doesn't make sense");
+        return 0;
     }
 
-    puts("ic_transform_new_temp: impossible! fell off end of switch");
-    return 0;
+    /* generate new name
+     * for literals we have a special naming convention of _l<n>
+     * for all other temporaries we use _t<n>
+     */
+    if (expr->tag == ic_expr_type_constant) {
+        sym = ic_transform_body_register_literal(tbody);
+    } else {
+        sym = ic_transform_body_register_temporary(tbody);
+    }
+    if (!sym) {
+        puts("ic_transform_new_temp: call to ic_transform_body_register_temporary failed");
+        return 0;
+    }
+
+    /* transform expr */
+    tir_expr = ic_transform_expr(kludge, tbody, body, expr);
+    if (!tir_expr) {
+        puts("ic_transform_new_temp: call to ic_transform_expr failed");
+        return 0;
+    }
+
+    /* get type */
+    type = ic_analyse_infer(kludge, body->scope, expr);
+    if (!type) {
+        puts("ic_transform_new_temp: call to ic_analyse_infer failed");
+        return 0;
+    }
+
+    /* generate new statement */
+    tir_stmt = ic_transform_ir_stmt_let_expr_new(sym, type, tir_expr);
+    if (!tir_stmt) {
+        puts("ic_transform_new_temp: call to ic_transform_ir_stmt_let_expr_new failed");
+        return 0;
+    }
+
+    if (!ic_transform_body_append(tbody, tir_stmt)) {
+        puts("ic_transform_new_temp: call to ic_transform_body_append failed");
+        return 0;
+    }
+
+    return sym;
 }
 
 /* transform an expr to tir_expr

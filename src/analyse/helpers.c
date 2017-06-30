@@ -1142,78 +1142,75 @@ static struct ic_decl_type *ic_analyse_infer_operator(struct ic_kludge *kludge, 
         return 0;
     }
 
-    if (op->fcall) {
-        puts("ic_analyse_infer_operator: this operator already had an fcall set");
-        return 0;
-    }
-
-    /* infer operator
-     * get operator str (e.g. '+')
-     * get operator mapped symbol (e.g. 'plus')
-     * build an identifier from this to satisfy the fcall constrctor
-     * construct an fcall of this operator
-     *      operator(1 + 2) => fcall(plus 1 2)
-     * save this fcall on the op
-     * call infer_fcall on this fcall
-     * return that value
-     */
-
-    op_str = ic_token_get_representation(op->token);
-    if (!op_str) {
-        puts("ic_analyse_infer_operator: call to ic_token_get_representation failed");
-        return 0;
-    }
-
-    mapped_op_sym = ic_kludge_get_operator(kludge, op_str);
-    if (!mapped_op_sym) {
-        puts("ic_analyse_infer_operator: call to ic_kludge_get_operator failed");
-        return 0;
-    }
-
-    mapped_op_str = ic_symbol_contents(mapped_op_sym);
-    if (!mapped_op_str) {
-        puts("ic_analyse_infer_operator: call to ic_symbol_contents failed");
-        return 0;
-    }
-
-    mapped_op_len = ic_symbol_length(mapped_op_sym);
-    if (!mapped_op_len) {
-        puts("ic_analyse_infer_operator: call to ic_symbol_length failed");
-        return 0;
-    }
-
-    expr = ic_expr_new(ic_expr_type_identifier);
-    if (!expr) {
-        puts("ic_analyse_infer_operator: call to ic_expr_new failed");
-        return 0;
-    }
-
-    id = ic_expr_get_identifier(expr);
-    if (!id) {
-        puts("ic_analyse_infer_operator: call to ic_expr_get_identifier failed");
-        return 0;
-    }
-
-    /* relying on identifier_init to set sane default permissions */
-    if (!ic_expr_identifier_init(id, mapped_op_str, mapped_op_len, 0)) {
-        puts("ic_analyse_infer_operator: call to ic_expr_identifier_init failed");
-        return 0;
-    }
-
-    op->fcall = ic_expr_func_call_new(expr);
     if (!op->fcall) {
-        puts("ic_analyse_infer_operator: call to ic_expr_func_call_new failed");
-        return 0;
-    }
+      /* infer operator
+       * get operator str (e.g. '+')
+       * get operator mapped symbol (e.g. 'plus')
+       * build an identifier from this to satisfy the fcall constrctor
+       * construct an fcall of this operator
+       *      operator(1 + 2) => fcall(plus 1 2)
+       * save this fcall on the op
+       * call infer_fcall on this fcall
+       * return that value
+       */
 
-    if (!ic_expr_func_call_add_arg(op->fcall, op->first)) {
-        puts("ic_analyse_infer_operator: call to ic_expr_func_call_add_arg failed for first");
-        return 0;
-    }
+      op_str = ic_token_get_representation(op->token);
+      if (!op_str) {
+          puts("ic_analyse_infer_operator: call to ic_token_get_representation failed");
+          return 0;
+      }
 
-    if (!ic_expr_func_call_add_arg(op->fcall, op->second)) {
-        puts("ic_analyse_infer_operator: call to ic_expr_func_call_add_arg failed for second");
-        return 0;
+      mapped_op_sym = ic_kludge_get_operator(kludge, op_str);
+      if (!mapped_op_sym) {
+          puts("ic_analyse_infer_operator: call to ic_kludge_get_operator failed");
+          return 0;
+      }
+
+      mapped_op_str = ic_symbol_contents(mapped_op_sym);
+      if (!mapped_op_str) {
+          puts("ic_analyse_infer_operator: call to ic_symbol_contents failed");
+          return 0;
+      }
+
+      mapped_op_len = ic_symbol_length(mapped_op_sym);
+      if (!mapped_op_len) {
+          puts("ic_analyse_infer_operator: call to ic_symbol_length failed");
+          return 0;
+      }
+
+      expr = ic_expr_new(ic_expr_type_identifier);
+      if (!expr) {
+          puts("ic_analyse_infer_operator: call to ic_expr_new failed");
+          return 0;
+      }
+
+      id = ic_expr_get_identifier(expr);
+      if (!id) {
+          puts("ic_analyse_infer_operator: call to ic_expr_get_identifier failed");
+          return 0;
+      }
+
+      /* relying on identifier_init to set sane default permissions */
+      if (!ic_expr_identifier_init(id, mapped_op_str, mapped_op_len, 0)) {
+          puts("ic_analyse_infer_operator: call to ic_expr_identifier_init failed");
+          return 0;
+      }
+
+      op->fcall = ic_expr_func_call_new(expr);
+      if (!op->fcall) {
+          puts("ic_analyse_infer_operator: call to ic_expr_func_call_new failed");
+          return 0;
+      }
+
+      if (!ic_expr_func_call_add_arg(op->fcall, op->first)) {
+          puts("ic_analyse_infer_operator: call to ic_expr_func_call_add_arg failed for first");
+          return 0;
+      }
+
+      if (!ic_expr_func_call_add_arg(op->fcall, op->second)) {
+          puts("ic_analyse_infer_operator: call to ic_expr_func_call_add_arg failed for second");
+          return 0;
+      }
     }
 
     type = ic_analyse_infer_fcall(kludge, scope, op->fcall);
