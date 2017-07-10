@@ -5,11 +5,9 @@ TODO:
 * add automatic print/println implementations for user-defined types
 * refactor out locals handling in pancake/compile.c - should share logic when possible
 * all debug/warning messages should go to stderr to make testing easier
-* default integer type for literal, Sint or Uint? 'fn foo() -> Uint return 14 end' currently is an error
 * 'everything' within tir (except pointers to fdecl/kludge) should be owned - copy any shared symbols
 * sort out transform ownership - it is a mess
 * complete tir print implementations
-* automate running of `make format` - either as part of compile and/or test
 * remove FIXME and commented out error handling in 2c once functions_body is implemented : /* FIXME TODO silencing error for now */
 * uncommented `plus` alias for `concat` in stdlib/core.ic
 * output generation includes a semi-builtin from src/core.ic: fn plus(a::String, b::String) -> String return concat(a, b) end appearing as String plus();
@@ -21,12 +19,12 @@ TODO:
 * `while` analysis case unimplemented
 * the analysis system currently has no idea about permissions
 * remove ic_type, as builtin and user defined types now both use ic_decl_type
-* analyse needs to check for failing to return from a non-void function
+* analyse needs to check for failing to return from a non-void function - need branch analysis (all branches result in return)
 * finish population of decl_type.field_dict
 * think through type_ref interface, and storing ic_type when found on fields/type_refs during ic_analyse_decl_type/ic_analyse_field_list
 * remove parse/expr.c next_token usage, see IC_PERIOD handling comments in parse/expr.c
 * tokens should be used throughout parsing; passing around strings is lame, tokens should also be recorded against every ast node for traceability
-* tokens should be used on any externally triggerable errors (users in a program's source that a user can fix)
+* tokens should be used on any externally triggerable errors (errors in a program's source that a user can fix)
 * allow 'return' from void functions, this needs support at both parse and analyse levels
 * decide on void type handling
 * tidy up type_ref / symbol -> type handling, we now have kludge_get_type_from_type_ref and kludge_get_type_from_symbol
