@@ -407,12 +407,6 @@ unsigned int ic_analyse_decl_type_struct(struct ic_kludge *kludge, struct ic_dec
         return 0;
     }
 
-    /* check this type is NOT generic as we do not yet support that */
-    if (0 != ic_decl_type_struct_type_params_length(tdecl_struct)) {
-        puts("ic_analyse_decl_type_struct: tdecl_struct with type_params given, generic type_structs not yet supported");
-        return 0;
-    }
-
     this_type = ic_decl_type_struct_str(tdecl_struct);
     if (!this_type) {
         puts("ic_analyse_decl_type_struct: for this_type: call to ic_decl_type_struct_str failed");
@@ -420,7 +414,7 @@ unsigned int ic_analyse_decl_type_struct(struct ic_kludge *kludge, struct ic_dec
     }
 
     /* check fields */
-    if (!ic_analyse_field_list("type declaration", this_type, kludge, &(tdecl_struct->fields))) {
+    if (!ic_analyse_field_list("type declaration", this_type, kludge, &(tdecl_struct->type_params), &(tdecl_struct->fields))) {
         puts("ic_analyse_decl_type_struct: call to ic_analyse_field_list for field validation failed");
         goto ERROR;
     }
@@ -437,6 +431,13 @@ unsigned int ic_analyse_decl_type_struct(struct ic_kludge *kludge, struct ic_dec
         if (!field) {
             puts("ic_analyse_decl_type_struct: call to ic_pvector_get failed");
             goto ERROR;
+        }
+
+        /* if field type is a type param then we cannot proceed with work here
+         * until it is instantiated
+         */
+        if (ic_type_ref_is_type_param(field->type)) {
+            continue;
         }
 
         /* what we are really doing here is:
@@ -654,12 +655,6 @@ unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl
         return 0;
     }
 
-    /* check this type is NOT generic as we do not yet support that */
-    if (0 != ic_decl_type_union_type_params_length(tdecl_union)) {
-        puts("ic_analyse_decl_type_union: tdecl_union with type_params given, generic type_unions not yet supported");
-        return 0;
-    }
-
     this_type = ic_decl_type_union_str(tdecl_union);
     if (!this_type) {
         puts("ic_analyse_decl_type_union: for this_type: call to ic_decl_type_union_str failed");
@@ -667,7 +662,7 @@ unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl
     }
 
     /* check fields */
-    if (!ic_analyse_field_list("type declaration", this_type, kludge, &(tdecl_union->fields))) {
+    if (!ic_analyse_field_list("type declaration", this_type, kludge, &(tdecl_union->type_params), &(tdecl_union->fields))) {
         puts("ic_analyse_decl_type_union: call to ic_analyse_field_list for field validation failed");
         goto ERROR;
     }
@@ -690,6 +685,13 @@ unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl
         if (!field) {
             puts("ic_analyse_decl_type_union: call to ic_pvector_get failed");
             goto ERROR;
+        }
+
+        /* if field type is a type param then we cannot proceed with work here
+         * until it is instantiated
+         */
+        if (ic_type_ref_is_type_param(field->type)) {
+            continue;
         }
 
         /* what we are really doing here is:
@@ -727,7 +729,9 @@ unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl
             goto ERROR;
         }
 
-        /* check that this field's type exists */
+        /* if this field is not generic then we need to check that the field's
+         * type exists
+         */
         field_type = ic_kludge_get_decl_type(kludge, type_str);
         if (!field_type) {
             puts("ic_analyse_decl_type_union: call to ic_kludge_get_type failed");
@@ -899,12 +903,6 @@ unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func 
         return 0;
     }
 
-    /* check this function is NOT generic as we do not yet support that */
-    if (0 != ic_decl_func_type_params_length(fdecl)) {
-        puts("ic_analyse_decl_func: fdecl with type_params given, generic functions not yet supported");
-        return 0;
-    }
-
     /* name of this func, useful for error printing */
     this_func = ic_decl_func_sig_call(fdecl);
     if (!this_func) {
@@ -912,8 +910,10 @@ unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func 
         return 0;
     }
 
+    /* TODO FIXME do we need to check that all generic parameters are used ??? */
+
     /* check arg list */
-    if (!ic_analyse_field_list("func declaration", this_func, kludge, &(fdecl->args))) {
+    if (!ic_analyse_field_list("func declaration", this_func, kludge, &(fdecl->type_params), &(fdecl->args))) {
         puts("ic_analyse_decl_func: call to ic_analyse_field_list for validating argument list failed");
         goto ERROR;
     }

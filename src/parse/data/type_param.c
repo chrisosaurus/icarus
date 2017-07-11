@@ -187,3 +187,44 @@ void ic_type_param_print(FILE *fd, struct ic_type_param *tparam) {
         fprintf(fd, "::%s", ic_symbol_contents(tdecl_name));
     }
 }
+
+/* find a type_param by string
+ *
+ * this could probably go somewhere else better.
+ *
+ * returns * on successful find
+ * returns 0 on failure to find
+ * returns 0 an failure
+ */
+struct ic_type_param * ic_type_param_search(struct ic_pvector *type_params, char *tname) {
+    unsigned int i = 0;
+    unsigned int len = 0;
+    struct ic_type_param *type_param = 0;
+
+    if (!type_params) {
+        puts("ic_type_param_search: type_params was null");
+        return 0;
+    }
+
+    if (!tname) {
+        puts("ic_type_param_search: tname was null");
+        return 0;
+    }
+
+    len = ic_pvector_length(type_params);
+    for (i=0; i<len; ++i) {
+        type_param = ic_pvector_get(type_params, i);
+        if (!type_param) {
+            puts("ic_type_param_search: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        if (ic_symbol_equal_char(&(type_param->name), tname)) {
+            /* found */
+            return type_param;
+        }
+    }
+
+    /* could not find */
+    return 0;
+}

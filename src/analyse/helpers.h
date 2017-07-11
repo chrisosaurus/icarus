@@ -18,7 +18,7 @@
  * returns 1 on success (all fields are valid as per the 3 rules)
  * returns 0 on failure
  */
-unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_pvector *fields);
+unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_pvector *type_params, struct ic_pvector *fields);
 
 /* perform analysis on body
  * this will iterate through each statement and perform analysis
@@ -65,7 +65,22 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
  *
  * this function must be compatible with the one produced
  * by `ic_decl_func_sig_call`
- *      foo(Int Int)
+ *      foo(Sint,Sint)
+ *
+ * and
+ *      bar(&Sint,String)
+ *
+ * for a generic function this code has a special case, if we have a function
+ *     fn id[T](t::T) -> return t end
+ *
+ * and an fcall of the form
+ *     id[Sint](6s)
+ *
+ * we need to check first for this function as
+ *     id[Sint](Sint)
+ * if that is not found, then we must check for
+ *     id[_](_)
+ * and proceed with instantiation
  *
  * returns char * on success
  * returns 0 on failure

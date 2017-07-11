@@ -41,11 +41,11 @@ struct ic_type_ref {
         struct ic_decl_type *tdecl;   /* value for ic_type_ref_resolved */
     } u;
 
-    /* vector of type_refs which are type params given to this type
+    /* vector of type_refs which are type arguments given to this type
      * Maybe[Sint]
      * have a type_ref for Sint set here
      */
-    struct ic_pvector type_params;
+    struct ic_pvector type_args;
 };
 
 /* allocate and intialise a new type
@@ -125,26 +125,50 @@ unsigned int ic_type_ref_set_type_decl(struct ic_type_ref *type, struct ic_decl_
  */
 struct ic_decl_type *ic_type_ref_get_type_decl(struct ic_type_ref *type);
 
-/* add a type_param
+/* set the decl_param on this type_ref
+ * this will change type.tag to param
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_type_ref_add_type_param(struct ic_type_ref *type, struct ic_type_ref *type_param);
+unsigned int ic_type_ref_set_type_param(struct ic_type_ref *type, struct ic_type_param *tparam);
 
-/* get a type_param
+/* return the underlying decl_param
+ *
+ * if type_ref.tag is not param then this is an error
+ *
+ * return * on success
+ * returns 0 on failure
+ */
+struct ic_type_param *ic_type_ref_get_type_param(struct ic_type_ref *type);
+
+/* check if this type_ref refers to a currently generic param
+ *
+ * returns 1 for yes
+ * returns 0 for no
+ */
+unsigned int ic_type_ref_is_type_param(struct ic_type_ref *type);
+
+/* add a type_arg
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_type_ref_type_args_add(struct ic_type_ref *type, struct ic_type_ref *type_arg);
+
+/* get a type_arg
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_type_ref *ic_type_ref_get_type_param(struct ic_type_ref *type, unsigned int i);
+struct ic_type_ref *ic_type_ref_type_args_get(struct ic_type_ref *type, unsigned int i);
 
-/* get length of type_params
+/* get length of type_args
  *
  * returns num on success
  * returns 0 on failure
  */
-unsigned int ic_type_ref_type_params_length(struct ic_type_ref *type);
+unsigned int ic_type_ref_type_args_length(struct ic_type_ref *type);
 
 /* print this this type */
 void ic_type_ref_print(FILE *fd, struct ic_type_ref *type);

@@ -10,7 +10,7 @@ struct ic_type_ref *ic_parse_type_ref(struct ic_token_list *token_list) {
     struct ic_token *token = 0;
     char *token_str = 0;
     unsigned int token_len = 0;
-    struct ic_type_ref *type_param = 0;
+    struct ic_type_ref *type_arg = 0;
 
     if (!token_list) {
         puts("ic_parse_type_ref: token_list was null");
@@ -71,14 +71,14 @@ struct ic_type_ref *ic_parse_type_ref(struct ic_token_list *token_list) {
                 continue;
             }
 
-            type_param = ic_parse_type_ref(token_list);
-            if (!type_param) {
+            type_arg = ic_parse_type_ref(token_list);
+            if (!type_arg) {
                 puts("ic_parse_type_ref: call to ic_parse_type_ref failed");
                 return 0;
             }
 
-            if (!ic_type_ref_add_type_param(tref, type_param)) {
-                puts("ic_parse_type_ref: call to ic_type_ref_add_type_param failed");
+            if (!ic_type_ref_type_args_add(tref, type_arg)) {
+                puts("ic_parse_type_ref: call to ic_type_ref_type_params_add failed");
                 return 0;
             }
         }

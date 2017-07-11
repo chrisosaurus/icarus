@@ -82,7 +82,7 @@ static unsigned int ic_analyse_mark_assigned(struct ic_scope *scope, struct ic_e
  * returns 1 on success (all fields are valid as per the 3 rules)
  * returns 0 on failure
  */
-unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_pvector *fields) {
+unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_pvector *type_params, struct ic_pvector *fields) {
 
     /* index into fields */
     unsigned int i = 0;
@@ -100,6 +100,8 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
     struct ic_set *set = 0;
     /* for each field this captures the type we resolve it to */
     struct ic_decl_type *field_type = 0;
+    /* type param we found when looking up generic argument */
+    struct ic_type_param *type_param = 0;
 
     if (!unit) {
         puts("ic_analyse_field_list: unit was null");
@@ -115,6 +117,8 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
         puts("ic_analyse_field_list: kludge was null");
         return 0;
     }
+
+    /* type_params can be null */
 
     if (!fields) {
         puts("ic_analyse_field_list: field was null");
@@ -182,31 +186,47 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
         }
 
         /* check that this field's type exists */
-        field_type = ic_kludge_get_decl_type(kludge, type_str);
-        if (!field_type) {
-            printf("ic_analyse_field_list: type '%s' mentioned in '%s' for '%s' does not exist within this kludge\n",
-                   type_str,
-                   unit,
-                   unit_name);
-            goto ERROR;
-        }
+        /* if we have type_params then check there first */
+        if (type_params && (type_param = ic_type_param_search(type_params, type_str)) ) {
+            /* store that type param on the field (to save lookup costs again later)
+             * if field->type is already a tdecl this will blow up
+             */
+            if (!ic_type_ref_set_type_param(field->type, type_param)) {
+                printf("ic_analyse_field_list: trying to store param for '%s' on field '%s' during '%s' for '%s' failed\n",
+                       type_str,
+                       name,
+                       unit,
+                       unit_name);
+                goto ERROR;
+            }
+        } else {
+            /* otherwise check in kludge */
+            field_type = ic_kludge_get_decl_type(kludge, type_str);
+            if (!field_type) {
+                printf("ic_analyse_field_list: type '%s' mentioned in '%s' for '%s' does not exist within this kludge\n",
+                       type_str,
+                       unit,
+                       unit_name);
+                goto ERROR;
+            }
 
-        /* check this is not the void type */
-        if (ic_decl_type_isvoid(field_type)) {
-            puts("ic_analyse_field_list: void type used in field list");
-            goto ERROR;
-        }
+            /* check this is not the void type */
+            if (ic_decl_type_isvoid(field_type)) {
+                puts("ic_analyse_field_list: void type used in field list");
+                goto ERROR;
+            }
 
-        /* store that type decl on the field (to save lookup costs again later)
-         * if field->type is already a tdecl this will blow up
-         */
-        if (!ic_type_ref_set_type_decl(field->type, field_type)) {
-            printf("ic_analyse_field_list: trying to store tdecl for '%s' on field '%s' during '%s' for '%s' failed\n",
-                   type_str,
-                   name,
-                   unit,
-                   unit_name);
-            goto ERROR;
+            /* store that type decl on the field (to save lookup costs again later)
+             * if field->type is already a tdecl this will blow up
+             */
+            if (!ic_type_ref_set_type_decl(field->type, field_type)) {
+                printf("ic_analyse_field_list: trying to store tdecl for '%s' on field '%s' during '%s' for '%s' failed\n",
+                       type_str,
+                       name,
+                       unit,
+                       unit_name);
+                goto ERROR;
+            }
         }
     }
 
@@ -1555,6 +1575,18 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
  *
  * and
  *      bar(&Sint,String)
+ *
+ * for a generic function this code has a special case, if we have a function
+ *     fn id[T](t::T) -> return t end
+ *
+ * and an fcall of the form
+ *     id[Sint](6s)
+ *
+ * we need to check first for this function as
+ *     id[Sint](Sint)
+ * if that is not found, then we must check for
+ *     id[_](_)
+ * and proceed with instantiation
  *
  * returns char * on success
  * returns 0 on failure
