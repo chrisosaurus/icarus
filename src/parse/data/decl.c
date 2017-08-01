@@ -1038,7 +1038,7 @@ char *ic_decl_func_sig_param(struct ic_decl_func *fdecl) {
         }
 
         for (i = 0; i < len; ++i) {
-            if (len == 0) {
+            if (i == 0) {
                 if (!ic_string_append_char(str, "_", 1)) {
                     puts("ic_decl_func_sig_param: call to ic_string_append_char failed");
                     return 0;
@@ -1051,7 +1051,7 @@ char *ic_decl_func_sig_param(struct ic_decl_func *fdecl) {
             }
         }
 
-        if (!ic_string_append_char(str, "[", 1)) {
+        if (!ic_string_append_char(str, "]", 1)) {
             puts("ic_decl_func_sig_param: call to ic_string_append_char failed");
             return 0;
         }
@@ -1063,7 +1063,7 @@ char *ic_decl_func_sig_param(struct ic_decl_func *fdecl) {
     }
     len = ic_decl_func_args_length(fdecl);
     for (i = 0; i < len; ++i) {
-        if (len == 0) {
+        if (i == 0) {
             if (!ic_string_append_char(str, "_", 1)) {
                 puts("ic_decl_func_sig_param: call to ic_string_append_char failed");
                 return 0;
@@ -1075,7 +1075,7 @@ char *ic_decl_func_sig_param(struct ic_decl_func *fdecl) {
             }
         }
     }
-    if (!ic_string_append_char(str, "(", 1)) {
+    if (!ic_string_append_char(str, ")", 1)) {
         puts("ic_decl_func_sig_param: call to ic_string_append_char failed");
         return 0;
     }
