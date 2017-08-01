@@ -956,7 +956,7 @@ struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_
             puts("ic_analyse_infer_fcall: error finding function declaration for function call:");
             fake_indent_level = 2;
             ic_expr_func_call_print(stdout, fcall, &fake_indent_level);
-            printf("\n    I tried to lookup :\n        ");
+            printf("\n    I tried to lookup:\n        ");
             ic_string_print(stdout, str);
             puts("\n    and failed");
             return 0;

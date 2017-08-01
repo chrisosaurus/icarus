@@ -18,7 +18,7 @@ my %invalid_programs = (
 =>
 "ic_analyse_infer_fcall: error finding function declaration for function call:
         foo()
-    I tried to lookup :
+    I tried to lookup:
         foo()
     and failed
 ic_analyse_infer: call to ic_analyse_infer_fcall failed
@@ -97,6 +97,23 @@ analysis failed
 'ic_analyse: failed to find a main function
 analysis failed
 ',
+
+'fn main() foo[Sint](6s, 7s) end'
+=>
+"ic_analyse_infer_fcall: error finding function declaration for function call:
+        foo[Sint](6s, 7s)
+    I tried to lookup both:
+        foo[Sint](Sint,Sint)
+        foo[_](_,_)
+    and failed to find either
+ic_analyse_infer: call to ic_analyse_infer_fcall failed
+ic_analyse_body: expr: call to ic_analyse_infer failed
+ic_analyse_body: unimplemented in error case
+ic_analyse_decl_func: call to ic_analyse_body for validating body failed
+ic_analyse_decl_func: error
+ic_analyse: call to ic_analyse_decl_func failed
+analysis failed
+",
 
 );
 
