@@ -898,7 +898,6 @@ static unsigned int ic_transform_stmt_assign(struct ic_kludge *kludge, struct ic
     }
 
     return 1;
-
 }
 
 /* perform translation of a single `begin` stmt within a body

@@ -187,7 +187,7 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
 
         /* check that this field's type exists */
         /* if we have type_params then check there first */
-        if (type_params && (type_param = ic_type_param_search(type_params, type_str)) ) {
+        if (type_params && (type_param = ic_type_param_search(type_params, type_str))) {
             /* store that type param on the field (to save lookup costs again later)
              * if field->type is already a tdecl this will blow up
              */
@@ -829,7 +829,11 @@ struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_
     /* temporaries */
     struct ic_symbol *sym = 0;
     char *ch = 0;
+    struct ic_string *str = 0;
+    struct ic_string *str_generic = 0;
     struct ic_decl_func *fdecl = 0;
+
+    unsigned int fake_indent_level = 0;
 
     if (!kludge) {
         puts("ic_analyse_infer_fcall: kludge was null");
@@ -885,20 +889,76 @@ struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_
             puts("ic_analyse_infer_fcall: call to ic_expr_func_call_get_fdecl failed");
             return 0;
         }
-    } else {
+        /* if fcall has generic arguments */
+    } else if (ic_expr_func_call_type_refs_length(fcall) > 0) {
         /* otherwise work out the fdecl */
-        ch = ic_analyse_fcall_str(kludge, scope, fcall);
-        if (!ch) {
+        str = ic_analyse_fcall_str(kludge, scope, fcall);
+        if (!str) {
             puts("ic_analyse_infer_fcall: call to ic_analyse_fcall_str failed");
             return 0;
         }
 
-        fdecl = ic_kludge_get_fdecl(kludge, ch);
+        fdecl = ic_kludge_get_fdecl_from_string(kludge, str);
         if (!fdecl) {
-            /* FIXME return type not found
-           * need helpful error message
-           */
-            printf("ic_analyse_infer_fcall: error finding fdecl for fcall '%s'\n", ch);
+            /* failed to find concrete type,
+             * attempt to lookup generic
+             */
+            str_generic = ic_analyse_fcall_str_generic(kludge, scope, fcall);
+            if (!str_generic) {
+                puts("ic_analyse_infer_fcall: call to ic_analyse_fcall_str_generic failed");
+                return 0;
+            }
+
+            fdecl = ic_kludge_get_fdecl_from_string(kludge, str_generic);
+            if (!fdecl) {
+                puts("ic_analyse_infer_fcall: error finding function declaration for function call:");
+                fake_indent_level = 2;
+                ic_expr_func_call_print(stdout, fcall, &fake_indent_level);
+                printf("\n    I tried to lookup both:\n        ");
+                ic_string_print(stdout, str);
+                printf("\n        ");
+                ic_string_print(stdout, str_generic);
+                puts("\n    and failed to find either");
+
+                /* need to destroy str_generic */
+                if (!ic_string_destroy(str_generic, 1)) {
+                    puts("ic_analyse_infer_fcall: call to ic_string_destroy for str_generic failed");
+                    return 0;
+                }
+                return 0;
+            }
+
+            /* need to destroy str_generic */
+            if (!ic_string_destroy(str_generic, 1)) {
+                puts("ic_analyse_infer_fcall: call to ic_string_destroy for str_generic failed");
+                return 0;
+            }
+        }
+
+        /* record this found fdecl on the fcall */
+        if (!ic_expr_func_call_set_fdecl(fcall, fdecl)) {
+            puts("ic_analyse_infer_fcall: call to ic_expr_func_call_set_fdecl failed");
+            return 0;
+        }
+    } else {
+        /* otherwise work out the fdecl */
+        str = ic_analyse_fcall_str(kludge, scope, fcall);
+        if (!str) {
+            puts("ic_analyse_infer_fcall: call to ic_analyse_fcall_str failed");
+            return 0;
+        }
+
+        fdecl = ic_kludge_get_fdecl_from_string(kludge, str);
+        if (!fdecl) {
+            /* return type not found
+             * need helpful error message
+             */
+            puts("ic_analyse_infer_fcall: error finding function declaration for function call:");
+            fake_indent_level = 2;
+            ic_expr_func_call_print(stdout, fcall, &fake_indent_level);
+            printf("\n    I tried to lookup :\n        ");
+            ic_string_print(stdout, str);
+            puts("\n    and failed");
             return 0;
         }
 
@@ -1163,7 +1223,7 @@ static struct ic_decl_type *ic_analyse_infer_operator(struct ic_kludge *kludge, 
     }
 
     if (!op->fcall) {
-      /* infer operator
+        /* infer operator
        * get operator str (e.g. '+')
        * get operator mapped symbol (e.g. 'plus')
        * build an identifier from this to satisfy the fcall constrctor
@@ -1174,63 +1234,63 @@ static struct ic_decl_type *ic_analyse_infer_operator(struct ic_kludge *kludge, 
        * return that value
        */
 
-      op_str = ic_token_get_representation(op->token);
-      if (!op_str) {
-          puts("ic_analyse_infer_operator: call to ic_token_get_representation failed");
-          return 0;
-      }
+        op_str = ic_token_get_representation(op->token);
+        if (!op_str) {
+            puts("ic_analyse_infer_operator: call to ic_token_get_representation failed");
+            return 0;
+        }
 
-      mapped_op_sym = ic_kludge_get_operator(kludge, op_str);
-      if (!mapped_op_sym) {
-          puts("ic_analyse_infer_operator: call to ic_kludge_get_operator failed");
-          return 0;
-      }
+        mapped_op_sym = ic_kludge_get_operator(kludge, op_str);
+        if (!mapped_op_sym) {
+            puts("ic_analyse_infer_operator: call to ic_kludge_get_operator failed");
+            return 0;
+        }
 
-      mapped_op_str = ic_symbol_contents(mapped_op_sym);
-      if (!mapped_op_str) {
-          puts("ic_analyse_infer_operator: call to ic_symbol_contents failed");
-          return 0;
-      }
+        mapped_op_str = ic_symbol_contents(mapped_op_sym);
+        if (!mapped_op_str) {
+            puts("ic_analyse_infer_operator: call to ic_symbol_contents failed");
+            return 0;
+        }
 
-      mapped_op_len = ic_symbol_length(mapped_op_sym);
-      if (!mapped_op_len) {
-          puts("ic_analyse_infer_operator: call to ic_symbol_length failed");
-          return 0;
-      }
+        mapped_op_len = ic_symbol_length(mapped_op_sym);
+        if (!mapped_op_len) {
+            puts("ic_analyse_infer_operator: call to ic_symbol_length failed");
+            return 0;
+        }
 
-      expr = ic_expr_new(ic_expr_type_identifier);
-      if (!expr) {
-          puts("ic_analyse_infer_operator: call to ic_expr_new failed");
-          return 0;
-      }
+        expr = ic_expr_new(ic_expr_type_identifier);
+        if (!expr) {
+            puts("ic_analyse_infer_operator: call to ic_expr_new failed");
+            return 0;
+        }
 
-      id = ic_expr_get_identifier(expr);
-      if (!id) {
-          puts("ic_analyse_infer_operator: call to ic_expr_get_identifier failed");
-          return 0;
-      }
+        id = ic_expr_get_identifier(expr);
+        if (!id) {
+            puts("ic_analyse_infer_operator: call to ic_expr_get_identifier failed");
+            return 0;
+        }
 
-      /* relying on identifier_init to set sane default permissions */
-      if (!ic_expr_identifier_init(id, mapped_op_str, mapped_op_len, 0)) {
-          puts("ic_analyse_infer_operator: call to ic_expr_identifier_init failed");
-          return 0;
-      }
+        /* relying on identifier_init to set sane default permissions */
+        if (!ic_expr_identifier_init(id, mapped_op_str, mapped_op_len, 0)) {
+            puts("ic_analyse_infer_operator: call to ic_expr_identifier_init failed");
+            return 0;
+        }
 
-      op->fcall = ic_expr_func_call_new(expr);
-      if (!op->fcall) {
-          puts("ic_analyse_infer_operator: call to ic_expr_func_call_new failed");
-          return 0;
-      }
+        op->fcall = ic_expr_func_call_new(expr);
+        if (!op->fcall) {
+            puts("ic_analyse_infer_operator: call to ic_expr_func_call_new failed");
+            return 0;
+        }
 
-      if (!ic_expr_func_call_add_arg(op->fcall, op->first)) {
-          puts("ic_analyse_infer_operator: call to ic_expr_func_call_add_arg failed for first");
-          return 0;
-      }
+        if (!ic_expr_func_call_add_arg(op->fcall, op->first)) {
+            puts("ic_analyse_infer_operator: call to ic_expr_func_call_add_arg failed for first");
+            return 0;
+        }
 
-      if (!ic_expr_func_call_add_arg(op->fcall, op->second)) {
-          puts("ic_analyse_infer_operator: call to ic_expr_func_call_add_arg failed for second");
-          return 0;
-      }
+        if (!ic_expr_func_call_add_arg(op->fcall, op->second)) {
+            puts("ic_analyse_infer_operator: call to ic_expr_func_call_add_arg failed for second");
+            return 0;
+        }
     }
 
     type = ic_analyse_infer_fcall(kludge, scope, op->fcall);
@@ -1576,22 +1636,20 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
  * and
  *      bar(&Sint,String)
  *
- * for a generic function this code has a special case, if we have a function
- *     fn id[T](t::T) -> return t end
- *
- * and an fcall of the form
+ * for an fcall of the form
  *     id[Sint](6s)
  *
- * we need to check first for this function as
+ * this will generate
  *     id[Sint](Sint)
- * if that is not found, then we must check for
- *     id[_](_)
- * and proceed with instantiation
  *
- * returns char * on success
+ * in order to generate
+ *     id[_](_)
+ * please see ic_analyse_fcall_str_generic
+ *
+ * returns ic_string * on success
  * returns 0 on failure
  */
-char *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall) {
+struct ic_string *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall) {
     /* resulting string, stored as fcall->string */
     struct ic_string *str = 0;
     /* offset into args pvector */
@@ -1604,6 +1662,10 @@ char *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, str
     struct ic_decl_type *expr_type = 0;
     /* current arg type's name */
     struct ic_symbol *type_name = 0;
+    /* type ref for generic function */
+    struct ic_type_ref *type_ref = 0;
+    /* symbol within a type-ref for generic function */
+    struct ic_symbol *type_ref_sym = 0;
     /* current arg's permissions */
     unsigned int arg_perms = 0;
     /* permission string for arg */
@@ -1640,6 +1702,50 @@ char *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, str
     if (!ic_string_append_symbol(str, ic_expr_func_call_get_symbol(fcall))) {
         puts("ic_analyse_fcall_str: call to ic_string_append_symbol for 'fname' failed");
         goto ERROR;
+    }
+
+    /* if generic, then insert our type_refs */
+    len = ic_expr_func_call_type_refs_length(fcall);
+    if (len > 0) {
+        /* opening square bracket */
+        if (!ic_string_append_char(str, "[", 1)) {
+            puts("ic_analyse_fcall_str: call to ic_string_append_char for '[' failed");
+            goto ERROR;
+        }
+
+        for (i = 0; i < len; ++i) {
+            /* insert a comma between all type_refs */
+            if (i != 0) {
+                if (!ic_string_append_char(str, ",", 1)) {
+                    puts("ic_analyse_fcall_str: call to ic_string_append_char for ',' failed");
+                    goto ERROR;
+                }
+            }
+
+            type_ref = ic_expr_func_call_get_type_ref(fcall, i);
+            if (!type_ref) {
+                puts("ic_analyse_fcall_str: call to ic_expr_func_call_get_type_ref failed");
+                goto ERROR;
+            }
+
+            type_ref_sym = ic_type_ref_get_symbol(type_ref);
+            if (!type_ref_sym) {
+                puts("ic_analyse_fcall_str: call to ic_type_ref_get_symbol failed");
+                goto ERROR;
+            }
+
+            /* append our type ref */
+            if (!ic_string_append_symbol(str, type_ref_sym)) {
+                puts("ic_analyse_fcall_str: call to ic_string_append_symbol faild");
+                goto ERROR;
+            }
+        }
+
+        /* closing square bracket */
+        if (!ic_string_append_char(str, "]", 1)) {
+            puts("ic_analyse_fcall_str: call to ic_string_append_char for ']' failed");
+            goto ERROR;
+        }
     }
 
     /* opening bracket */
@@ -1732,9 +1838,138 @@ ERROR:
     return 0;
 
 EXIT:
-    /* we rely on fcall->string holding onto the ic_string
-     * otherwise we would have to clean up
-     * this is freed as part of ic_expr_func_call_destroy
-     */
-    return ic_string_contents(fcall->string);
+    return fcall->string;
+}
+
+/* create a generic function signature string from a function call
+ *
+ * for an fcall of the form
+ *     id[Sint](6s)
+ *
+ * we will generate
+ *     id[_](_)
+ *
+ * returns ic_string * on success
+ * returns 0 on failure
+ */
+struct ic_string *ic_analyse_fcall_str_generic(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall) {
+    /* resulting string, stored as fcall->string */
+    struct ic_string *str = 0;
+    /* offset into args pvector */
+    unsigned int i = 0;
+    /* len of args pvector */
+    unsigned int len = 0;
+
+    if (!kludge) {
+        puts("ic_analyse_fcall_str_generic: kludge was null");
+        return 0;
+    }
+
+    if (!scope) {
+        puts("ic_analyse_fcall_str_generic: scope was null");
+        return 0;
+    }
+
+    if (!fcall) {
+        puts("ic_analyse_fcall_str_generic: fcall was null");
+        return 0;
+    }
+
+    /* construct a new string */
+    str = ic_string_new_empty();
+    if (!str) {
+        puts("ic_analyse_fcall_str_generic: call to ic_string_new_empty failed");
+        goto ERROR;
+    }
+
+    /* append function name */
+    if (!ic_string_append_symbol(str, ic_expr_func_call_get_symbol(fcall))) {
+        puts("ic_analyse_fcall_str_generic: call to ic_string_append_symbol for 'fname' failed");
+        goto ERROR;
+    }
+
+    /* if generic, then insert our _ for each type_refs */
+    len = ic_expr_func_call_type_refs_length(fcall);
+    if (len > 0) {
+        /* opening square bracket */
+        if (!ic_string_append_char(str, "[", 1)) {
+            puts("ic_analyse_fcall_str: call to ic_string_append_char for '[' failed");
+            goto ERROR;
+        }
+
+        for (i = 0; i < len; ++i) {
+            /* insert a comma between all type_refs */
+            if (i != 0) {
+                if (!ic_string_append_char(str, ",", 1)) {
+                    puts("ic_analyse_fcall_str_generic: call to ic_string_append_char for ',' failed");
+                    goto ERROR;
+                }
+            }
+
+            if (!ic_string_append_char(str, "_", 1)) {
+                puts("ic_analyse_fcall_str_generic: call to ic_string_append_char for '_' failed");
+                goto ERROR;
+            }
+        }
+
+        /* closing square bracket */
+        if (!ic_string_append_char(str, "]", 1)) {
+            puts("ic_analyse_fcall_str_generic: call to ic_string_append_char for ']' failed");
+            goto ERROR;
+        }
+    }
+
+    /* opening bracket */
+    if (!ic_string_append_char(str, "(", 1)) {
+        puts("ic_analyse_fcall_str_generic: call to ic_string_append_char for '(' failed");
+        goto ERROR;
+    }
+
+    /* insert list of _ for each argument types */
+    len = ic_pvector_length(&(fcall->args));
+    for (i = 0; i < len; ++i) {
+        /* insert a comma if this isn't the first arg */
+        if (i != 0) {
+            if (!ic_string_append_char(str, ",", 1)) {
+                puts("ic_analyse_fcall_str_generic: call to ic_string_append_char for ' ' failed");
+                goto ERROR;
+            }
+        }
+
+        /* append our argument type */
+        if (!ic_string_append_char(str, "_", 1)) {
+            puts("ic_analyse_fcall_str_generic: call to ic_string_append_char for '_' failed");
+            goto ERROR;
+        }
+    }
+
+    /* closing bracket */
+    if (!ic_string_append_char(str, ")", 1)) {
+        puts("ic_analyse_fcall_str_generic: call to ic_string_append_char for ')' failed");
+        goto ERROR;
+    }
+
+    /* TODO FIXME where can we store this string ? */
+    /* store string on fcall */
+    fcall->string = str;
+
+    goto EXIT;
+
+ERROR:
+
+    /* cleanup */
+    puts("ic_analyse_fcall_str_generic: error occurred, destroying string");
+
+    if (str) {
+        if (!ic_string_destroy(str, 1)) {
+            puts("ic_analyse_fcall_str_generic: in ERROR cleanup: call to ic_string_destroy failed");
+        }
+    }
+
+    return 0;
+
+EXIT:
+
+    /* TODO FIXME note, caller HAS to free */
+    return str;
 }

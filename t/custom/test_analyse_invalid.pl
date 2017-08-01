@@ -16,7 +16,11 @@ die "Could not find '$path'\n" unless -e $path;
 my %invalid_programs = (
 'fn main() foo() end'
 =>
-"ic_analyse_infer_fcall: error finding fdecl for fcall 'foo()'
+"ic_analyse_infer_fcall: error finding function declaration for function call:
+        foo()
+    I tried to lookup :
+        foo()
+    and failed
 ic_analyse_infer: call to ic_analyse_infer_fcall failed
 ic_analyse_body: expr: call to ic_analyse_infer failed
 ic_analyse_body: unimplemented in error case

@@ -83,6 +83,6 @@ void ic_type_param_print(FILE *fd, struct ic_type_param *tparam);
  * returns 0 on failure to find
  * returns 0 an failure
  */
-struct ic_type_param * ic_type_param_search(struct ic_pvector *type_params, char *tname);
+struct ic_type_param *ic_type_param_search(struct ic_pvector *type_params, char *tname);
 
 #endif

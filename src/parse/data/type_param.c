@@ -196,7 +196,7 @@ void ic_type_param_print(FILE *fd, struct ic_type_param *tparam) {
  * returns 0 on failure to find
  * returns 0 an failure
  */
-struct ic_type_param * ic_type_param_search(struct ic_pvector *type_params, char *tname) {
+struct ic_type_param *ic_type_param_search(struct ic_pvector *type_params, char *tname) {
     unsigned int i = 0;
     unsigned int len = 0;
     struct ic_type_param *type_param = 0;
@@ -212,7 +212,7 @@ struct ic_type_param * ic_type_param_search(struct ic_pvector *type_params, char
     }
 
     len = ic_pvector_length(type_params);
-    for (i=0; i<len; ++i) {
+    for (i = 0; i < len; ++i) {
         type_param = ic_pvector_get(type_params, i);
         if (!type_param) {
             puts("ic_type_param_search: call to ic_pvector_get failed");

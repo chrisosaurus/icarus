@@ -140,6 +140,13 @@ struct ic_decl_type *ic_kludge_get_decl_type(struct ic_kludge *kludge, char *tde
  */
 struct ic_decl_type *ic_kludge_get_decl_type_from_symbol(struct ic_kludge *kludge, struct ic_symbol *type);
 
+/* retrieve ic_decl_type by string
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type *ic_kludge_get_decl_type_from_string(struct ic_kludge *kludge, struct ic_string *type);
+
 /* retrieve ic_decl_type by type_ref
  *
  * returns * on success
@@ -160,6 +167,13 @@ struct ic_decl_func *ic_kludge_get_fdecl(struct ic_kludge *kludge, char *fdecl_s
  * returns 0 on failure
  */
 struct ic_decl_func *ic_kludge_get_fdecl_from_symbol(struct ic_kludge *kludge, struct ic_symbol *fdecl);
+
+/* retrieve ic_decl_func by string
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_func *ic_kludge_get_fdecl_from_string(struct ic_kludge *kludge, struct ic_string *fdecl);
 
 /* retrieve the function name that this operator maps to
  *

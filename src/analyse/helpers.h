@@ -70,21 +70,32 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
  * and
  *      bar(&Sint,String)
  *
- * for a generic function this code has a special case, if we have a function
- *     fn id[T](t::T) -> return t end
- *
- * and an fcall of the form
+ * for an fcall of the form
  *     id[Sint](6s)
  *
- * we need to check first for this function as
+ * this will generate
  *     id[Sint](Sint)
- * if that is not found, then we must check for
- *     id[_](_)
- * and proceed with instantiation
  *
- * returns char * on success
+ * in order to generate
+ *     id[_](_)
+ * please see ic_analyse_fcall_str_generic
+ *
+ * returns ic_string * on success
  * returns 0 on failure
  */
-char *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall);
+struct ic_string *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall);
+
+/* create a generic function signature string from a function call
+ *
+ * for an fcall of the form
+ *     id[Sint](6s)
+ *
+ * we will generate
+ *     id[_](_)
+ *
+ * returns ic_string * on success
+ * returns 0 on failure
+ */
+struct ic_string *ic_analyse_fcall_str_generic(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall);
 
 #endif /* ifndef ICARUS_ANALYSE_HELPERS_H */

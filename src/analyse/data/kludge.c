@@ -584,6 +584,40 @@ struct ic_decl_type *ic_kludge_get_decl_type_from_symbol(struct ic_kludge *kludg
     return tdecl;
 }
 
+/* retrieve ic_decl_type by string
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type *ic_kludge_get_decl_type_from_string(struct ic_kludge *kludge, struct ic_string *type) {
+    char *type_str = 0;
+    struct ic_decl_type *tdecl = 0;
+
+    if (!kludge) {
+        puts("ic_kludge_get_decl_type_from_string: kludge was null");
+        return 0;
+    }
+
+    if (!type) {
+        puts("ic_kludge_get_decl_type_from_string: type was null");
+        return 0;
+    }
+
+    type_str = ic_string_contents(type);
+    if (!type_str) {
+        puts("ic_kludge_get_decl_type_from_string: call to ic_string_contents failed");
+        return 0;
+    }
+
+    tdecl = ic_kludge_get_decl_type(kludge, type_str);
+    if (!tdecl) {
+        /* remain silent as we want to be able to check for the non-existance of types */
+        return 0;
+    }
+
+    return tdecl;
+}
+
 /* retrieve ic_decl_type by type_ref
  *
  * returns * on success
@@ -681,6 +715,33 @@ struct ic_decl_func *ic_kludge_get_fdecl_from_symbol(struct ic_kludge *kludge, s
     fdecl_str = ic_symbol_contents(fdecl);
     if (!fdecl_str) {
         puts("ic_kludge_get_fdecl_from_symbol: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    return ic_kludge_get_fdecl(kludge, fdecl_str);
+}
+
+/* retrieve ic_decl_func by string
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_func *ic_kludge_get_fdecl_from_string(struct ic_kludge *kludge, struct ic_string *fdecl) {
+    char *fdecl_str = 0;
+
+    if (!kludge) {
+        puts("ic_kludge_get_fdecl_from_string: kludge was null");
+        return 0;
+    }
+
+    if (!fdecl) {
+        puts("ic_kludge_get_fdecl_from_string: fdecl was null");
+        return 0;
+    }
+
+    fdecl_str = ic_string_contents(fdecl);
+    if (!fdecl_str) {
+        puts("ic_kludge_get_fdecl_from_string: call to ic_string_contents failed");
         return 0;
     }
 
