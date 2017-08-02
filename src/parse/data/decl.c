@@ -102,6 +102,9 @@ unsigned int ic_decl_func_init(struct ic_decl_func *fdecl, char *name, unsigned 
     /* make sure to init tbody */
     fdecl->tbody = 0;
 
+    /* we haven't seen any generic params yet, so we are non-generic */
+    fdecl->is_instantiated = 1;
+
     /* initialise our empty body */
     if (!ic_body_init(&(fdecl->body))) {
         puts("ic_decl_func_init: call to ic_body_init failed");
@@ -265,6 +268,21 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
     return 1;
 }
 
+/* get is_instantiated
+ *
+ * for a non-generic function this will be true (1)
+ * for a generic instantiated function this will be true (1)
+ * otherwise this will be false (0)
+ */
+unsigned int ic_decl_func_is_instantiated(struct ic_decl_func *fdecl) {
+    if (!fdecl) {
+        puts("ic_decl_func_is_instantiated: fdecl was null");
+        return 0;
+    }
+
+    return fdecl->is_instantiated;
+}
+
 /* add new type_param to decl_func
  *
  * returns 1 on success
@@ -280,6 +298,9 @@ unsigned int ic_decl_func_type_params_add(struct ic_decl_func *fdecl, struct ic_
         puts("ic_decl_func_type_params_add: tparam was null");
         return 0;
     }
+
+    /* adding a type param makes us generic */
+    fdecl->is_instantiated = 0;
 
     /* append field returns -1 on failure */
     if (-1 == ic_pvector_append(&(fdecl->type_params), tparam)) {
@@ -1210,6 +1231,9 @@ unsigned int ic_decl_type_struct_init(struct ic_decl_type_struct *tdecl, char *n
     tdecl->isuint = 0;
     tdecl->issint = 0;
 
+    /* we haven't seen any generic params yet, so we are non-generic */
+    tdecl->is_instantiated = 1;
+
     return 1;
 }
 
@@ -1309,6 +1333,21 @@ unsigned int ic_decl_type_struct_destroy(struct ic_decl_type_struct *tdecl, unsi
 
     /* success */
     return 1;
+}
+
+/* get is_instantiated
+ *
+ * for a non-generic type this will be true (1)
+ * for a generic instantiated type this will be true (1)
+ * otherwise this will be false (0)
+ */
+unsigned int ic_decl_type_struct_is_instantiated(struct ic_decl_type_struct *tdecl) {
+    if (!tdecl) {
+        puts("ic_decl_type_struct_is_instantiated: tdecl was null");
+        return 0;
+    }
+
+    return tdecl->is_instantiated;
 }
 
 /* get symbol of name for this type
@@ -1793,6 +1832,8 @@ unsigned int ic_decl_type_struct_type_params_add(struct ic_decl_type_struct *tde
         return 0;
     }
 
+    tdecl->is_instantiated = 0;
+
     if (-1 == ic_pvector_append(&(tdecl->type_params), tparam)) {
         puts("ic_decl_type_struct_type_params_add: call to ic_pvector_append failed");
         return 0;
@@ -2084,6 +2125,9 @@ unsigned int ic_decl_type_union_init(struct ic_decl_type_union *udecl, char *nam
         return 0;
     }
 
+    /* we haven't seen any generic params yet, so we are non-generic */
+    udecl->is_instantiated = 1;
+
     return 1;
 }
 
@@ -2175,6 +2219,21 @@ unsigned int ic_decl_type_union_destroy(struct ic_decl_type_union *udecl, unsign
     }
 
     return 1;
+}
+
+/* get is_instantiated
+ *
+ * for a non-generic type this will be true (1)
+ * for a generic instantiated type this will be true (1)
+ * otherwise this will be false (0)
+ */
+unsigned int ic_decl_type_union_is_instantiated(struct ic_decl_type_union *udecl) {
+    if (!udecl) {
+        puts("ic_decl_type_union_is_instantiated: tdecl was null");
+        return 0;
+    }
+
+    return udecl->is_instantiated;
 }
 
 /* get symbol of name for this type
@@ -2365,6 +2424,8 @@ unsigned int ic_decl_type_union_type_params_add(struct ic_decl_type_union *udecl
         puts("ic_decl_type_union_type_params_add: tparam was null");
         return 0;
     }
+
+    udecl->is_instantiated = 0;
 
     if (-1 == ic_pvector_append(&(udecl->type_params), tparam)) {
         puts("ic_decl_type_union_type_params_add: call to ic_pvector_append failed");
@@ -2744,6 +2805,34 @@ unsigned int ic_decl_type_destroy(struct ic_decl_type *tdecl, unsigned int free_
     }
 
     return 1;
+}
+
+/* get is_instantiated
+ *
+ * for a non-generic type this will be true (1)
+ * for a generic instantiated type this will be true (1)
+ * otherwise this will be false (0)
+ */
+unsigned int ic_decl_type_is_instantiated(struct ic_decl_type *tdecl) {
+    if (!tdecl) {
+        puts("ic_decl_type_is_instantiated: tdecl was null");
+        return 0;
+    }
+
+    switch (tdecl->tag) {
+        case ic_decl_type_tag_struct:
+            return ic_decl_type_struct_is_instantiated(&(tdecl->u.tstruct));
+            break;
+
+        case ic_decl_type_tag_union:
+            return ic_decl_type_union_is_instantiated(&(tdecl->u.tunion));
+            break;
+
+        default:
+            puts("ic_decl_type_is_instantiated: unknown tag");
+            return 0;
+            break;
+    }
 }
 
 /* mark this tdecl as being a builtin
@@ -3830,6 +3919,33 @@ unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl) {
 
     /* success */
     return 1;
+}
+
+/* get is_instantiated
+ *
+ * for a non-generic function/type this will be true (1)
+ * for a generic instantiated function/type this will be true (1)
+ * otherwise this will be false (0)
+ */
+unsigned int ic_decl_is_instantiated(struct ic_decl *decl) {
+    if (!decl) {
+        puts("ic_decl_is_instantiated: decl was null");
+        return 0;
+    }
+
+    switch (decl->tag) {
+        case ic_decl_tag_func:
+            return ic_decl_func_is_instantiated(&(decl->u.fdecl));
+            break;
+
+        case ic_decl_tag_type:
+            return ic_decl_type_is_instantiated(&(decl->u.tdecl));
+            break;
+
+        default:
+            puts("ic_decl_is_instantiated: unknown tag");
+            return 0;
+    }
 }
 
 /* returns pointer to ic_decl_func element

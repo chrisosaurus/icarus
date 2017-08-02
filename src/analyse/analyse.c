@@ -910,6 +910,11 @@ unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func 
         return 0;
     }
 
+    /* skip analysis if this function is a non-instantiated generic */
+    if (! ic_decl_func_is_instantiated(fdecl)) {
+        return 1;
+    }
+
     /* TODO FIXME do we need to check that all generic parameters are used ??? */
 
     /* check arg list */

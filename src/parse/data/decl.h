@@ -28,6 +28,18 @@ struct ic_decl_func {
     /* a pointer vector of type_param(s) */
     struct ic_pvector type_params;
 
+    /* boolean representing if this func_decl is a non-instantiated generic function
+     * fn id[T](t::T) -> T return t end
+     * is a non-instantiated generic function
+     *
+     * if we then call this `id[Sint](6s)` we will trigger instantiation
+     *
+     * for a non-generic function this will be true (1)
+     * for a generic instantiated function this will be true (1)
+     * otherwise this will be false (0)
+     */
+    unsigned int is_instantiated;
+
     /* a pointer vector of field(s) */
     struct ic_pvector args;
 
@@ -98,6 +110,14 @@ unsigned int ic_decl_func_init(struct ic_decl_func *fdecl, char *name, unsigned 
  * returns 0 on failure
  */
 unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_fdecl);
+
+/* get is_instantiated
+ *
+ * for a non-generic function this will be true (1)
+ * for a generic instantiated function this will be true (1)
+ * otherwise this will be false (0)
+ */
+unsigned int ic_decl_func_is_instantiated(struct ic_decl_func *fdecl);
 
 /* add new type_param to decl_func
  *
@@ -268,6 +288,14 @@ struct ic_decl_type_struct {
     /* a pointer vector of type_param(s) */
     struct ic_pvector type_params;
 
+    /* boolean representing if this func_decl is a non-instantiated generic type
+     *
+     * for a non-generic type this will be true (1)
+     * for a generic instantiated type this will be true (1)
+     * otherwise this will be false (0)
+     */
+    unsigned int is_instantiated;
+
     /* a pointer vector of field(s) */
     struct ic_pvector fields;
 
@@ -353,6 +381,14 @@ unsigned int ic_decl_type_struct_init(struct ic_decl_type_struct *tdecl, char *n
  * returns 0 on failure
  */
 unsigned int ic_decl_type_struct_destroy(struct ic_decl_type_struct *tdecl, unsigned int free_tdecl);
+
+/* get is_instantiated
+ *
+ * for a non-generic type this will be true (1)
+ * for a generic instantiated type this will be true (1)
+ * otherwise this will be false (0)
+ */
+unsigned int ic_decl_type_struct_is_instantiated(struct ic_decl_type_struct *tdecl);
 
 /* get symbol of name for this type
  *
@@ -552,6 +588,14 @@ struct ic_decl_type_union {
     /* a pointer vector of type_param(s) */
     struct ic_pvector type_params;
 
+    /* boolean representing if this func_decl is a non-instantiated generic type
+     *
+     * for a non-generic type this will be true (1)
+     * for a generic instantiated type this will be true (1)
+     * otherwise this will be false (0)
+     */
+    unsigned int is_instantiated;
+
     /* a pointer vector of field(s) */
     struct ic_pvector fields;
 
@@ -592,6 +636,14 @@ unsigned int ic_decl_type_union_init(struct ic_decl_type_union *udecl, char *nam
  * returns 0 on failure
  */
 unsigned int ic_decl_type_union_destroy(struct ic_decl_type_union *udecl, unsigned int free_udecl);
+
+/* get is_instantiated
+ *
+ * for a non-generic type this will be true (1)
+ * for a generic instantiated type this will be true (1)
+ * otherwise this will be false (0)
+ */
+unsigned int ic_decl_type_union_is_instantiated(struct ic_decl_type_union *udecl);
 
 /* get symbol of name for this type
  *
@@ -748,6 +800,14 @@ unsigned int ic_decl_type_init_union(struct ic_decl_type *tdecl, char *name_src,
  * returns 0 on failure
  */
 unsigned int ic_decl_type_destroy(struct ic_decl_type *tdecl, unsigned int free_tdecl);
+
+/* get is_instantiated
+ *
+ * for a non-generic type this will be true (1)
+ * for a generic instantiated type this will be true (1)
+ * otherwise this will be false (0)
+ */
+unsigned int ic_decl_type_is_instantiated(struct ic_decl_type *tdecl);
 
 /* mark this tdecl as being a builtin
  *
@@ -1006,6 +1066,14 @@ unsigned int ic_decl_init(struct ic_decl *decl, enum ic_decl_tag tag);
  * returns 0 on failure
  */
 unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl);
+
+/* get is_instantiated
+ *
+ * for a non-generic function/type this will be true (1)
+ * for a generic instantiated function/type this will be true (1)
+ * otherwise this will be false (0)
+ */
+unsigned int ic_decl_is_instantiated(struct ic_decl *decl);
 
 /* returns pointer to ic_decl_func element
  * this function will only success if the decl is of type decl_func

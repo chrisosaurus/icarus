@@ -199,7 +199,7 @@ struct ic_decl *ic_parse_decl_type_struct_header(struct ic_token_list *token_lis
     }
 
     /* optionally parse type parameters */
-    if (!ic_parse_decl_optional_type_params(token_list, &(tdecl->u.tstruct.type_params))) {
+    if (!ic_parse_decl_optional_type_params(token_list, &(tdecl->u.tstruct.is_instantiated), &(tdecl->u.tstruct.type_params))) {
         puts("ic_parse_decl_struct_header: call to ic_parse_decl_optional_type_params failed");
         free(decl);
         return 0;
@@ -408,7 +408,7 @@ struct ic_decl *ic_parse_decl_type_union_header(struct ic_token_list *token_list
     }
 
     /* optionally parse type parameters */
-    if (!ic_parse_decl_optional_type_params(token_list, &(tdecl->u.tunion.type_params))) {
+    if (!ic_parse_decl_optional_type_params(token_list, &(tdecl->u.tunion.is_instantiated), &(tdecl->u.tunion.type_params))) {
         puts("ic_parse_decl_type_union_header: call to ic_parse_decl_optional_type_params failed");
         free(decl);
         return 0;
@@ -520,7 +520,7 @@ struct ic_decl *ic_parse_decl_type_union_body(struct ic_token_list *token_list, 
     return 0;
 }
 
-unsigned int ic_parse_decl_optional_type_params(struct ic_token_list *token_list, struct ic_pvector *type_params) {
+unsigned int ic_parse_decl_optional_type_params(struct ic_token_list *token_list, unsigned int *is_instantiated, struct ic_pvector *type_params) {
     struct ic_token *token = 0;
     struct ic_type_param *tparam = 0;
     char *name = 0;
@@ -528,6 +528,11 @@ unsigned int ic_parse_decl_optional_type_params(struct ic_token_list *token_list
 
     if (!token_list) {
         puts("ic_parse_decl_optional_type_params: token_list was null");
+        return 0;
+    }
+
+    if (!is_instantiated) {
+        puts("ic_parse_decl_optional_type_params: is_instantiated was null");
         return 0;
     }
 
@@ -554,6 +559,11 @@ unsigned int ic_parse_decl_optional_type_params(struct ic_token_list *token_list
         puts("ic_parse_decl_optional_type_params: call to ic_token_list_expect_important failed for LSBRACKET");
         return 0;
     }
+
+    /* we are processing type_params now
+     * so set is_instantiated to false (0)
+     */
+    *is_instantiated = 0;
 
     /* process each type param */
     while ((token = ic_token_list_peek_important(token_list))) {
@@ -703,7 +713,7 @@ struct ic_decl *ic_parse_decl_func_header(struct ic_token_list *token_list) {
     }
 
     /* optionally parse type parameters */
-    if (!ic_parse_decl_optional_type_params(token_list, &(fdecl->type_params))) {
+    if (!ic_parse_decl_optional_type_params(token_list, &(fdecl->is_instantiated), &(fdecl->type_params))) {
         puts("ic_parse_decl_func_header: call to ic_parse_decl_optional_type_params failed");
         free(decl);
         return 0;
