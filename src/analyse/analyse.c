@@ -336,6 +336,11 @@ unsigned int ic_analyse_decl_type_generate_functions(struct ic_kludge *kludge, s
         return 0;
     }
 
+    /* if this type is non-instnatiated then do not generate functions for it */
+    if (! ic_decl_type_is_instantiated(tdecl)) {
+        return 1;
+    }
+
     switch (tdecl->tag) {
         case ic_decl_type_tag_struct:
             tdecl_struct = ic_decl_type_get_struct(tdecl);
