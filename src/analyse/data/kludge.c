@@ -659,6 +659,17 @@ struct ic_decl_type *ic_kludge_get_decl_type_from_typeref(struct ic_kludge *klud
             return tdecl;
             break;
 
+       /* a type_param set during parse time
+        * this is then resolved at analysis type to a concrete type per template
+        * instantiation
+        */
+        case ic_type_ref_param:
+            puts("ic_kludge_get_decl_type_from_typeref: type_param encountered");
+            puts("  this likely means analysis was attempted on a non-instantiated generic function");
+            puts("  and that is likely a compiler bug");
+            return 0;
+            break;
+
         case ic_type_ref_resolved:
             tdecl = ic_type_ref_get_type_decl(type_ref);
             if (!tdecl) {
