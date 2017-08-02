@@ -120,18 +120,6 @@ unsigned int ic_kludge_init(struct ic_kludge *kludge) {
         return 0;
     }
 
-    /* dict_tname_param hash */
-    if (!ic_dict_init(&(kludge->dict_tname_param))) {
-        puts("ic_kludge_init: dict_tname: call to ic_dict_init failed");
-        return 0;
-    }
-
-    /* dict_fsig_param hash */
-    if (!ic_dict_init(&(kludge->dict_fsig_param))) {
-        puts("ic_kludge_init: dict_fsig: call to ic_dict_init failed");
-        return 0;
-    }
-
     /* dict_op hash */
     if (!ic_dict_init(&(kludge->dict_op))) {
         puts("ic_kludge_init: dict_op: call to ic_dict_init failed");
@@ -223,26 +211,6 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
      */
     if (!ic_dict_destroy(&(kludge->dict_fsig), 0, 0)) {
         puts("ic_kludge_destroy: call to ic_dict_destroy for dict_fsig failed");
-        return 0;
-    }
-
-    /* cleanup dict_tname_param
-     * ic_dict_destroy(*dict, free_dict, free_data);
-     * do not free_dict as it is a member of kludge
-     * do not free_data as it is freed when ast is freed
-     */
-    if (!ic_dict_destroy(&(kludge->dict_tname_param), 0, 0)) {
-        puts("ic_kludge_destroy: call to ic_dict_destroy for dict_tname_param failed");
-        return 0;
-    }
-
-    /* cleanup dict_fsig_param
-     * ic_dict_destroy(*dict, free_dict, free_data);
-     * do not free_dict as it is a member of kludge
-     * do not free_data as it is freed when ast is freed
-     */
-    if (!ic_dict_destroy(&(kludge->dict_fsig_param), 0, 0)) {
-        puts("ic_kludge_destroy: call to ic_dict_destroy for dict_fsig_param failed");
         return 0;
     }
 
@@ -354,15 +322,15 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *
         }
 
         /* check for exists first to aid diagnostics */
-        if (ic_dict_exists(&(kludge->dict_tname_param), str)) {
+        if (ic_dict_exists(&(kludge->dict_tname), str)) {
             printf("ic_kludge_add_tdecl: type '%s' already exists on this kludge\n", str);
             return 0;
         }
 
-        /* insert into dict tname param
+        /* insert into dict tname
          * returns 0 on failure
          */
-        if (!ic_dict_insert(&(kludge->dict_tname_param), str, tdecl)) {
+        if (!ic_dict_insert(&(kludge->dict_tname), str, tdecl)) {
             puts("ic_kludge_add_tdecl: call to ic_dict_insert failed");
             return 0;
         }
@@ -426,15 +394,15 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_decl_func *
         }
 
         /* check for exists first to aid diagnostics */
-        if (ic_dict_exists(&(kludge->dict_fsig_param), str)) {
+        if (ic_dict_exists(&(kludge->dict_fsig), str)) {
             printf("ic_kludge_add_fdecl: function signature '%s' already exists on this kludge\n", str);
             return 0;
         }
 
-        /* insert into dict fsig param
+        /* insert into dict fsig
          * returns 0 on failure
          */
-        if (!ic_dict_insert(&(kludge->dict_fsig_param), str, fdecl)) {
+        if (!ic_dict_insert(&(kludge->dict_fsig), str, fdecl)) {
             puts("ic_kludge_add_fdecl: call to ic_dict_insert failed");
             return 0;
         }

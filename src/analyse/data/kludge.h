@@ -27,18 +27,6 @@ struct ic_kludge {
     /* dict Func sig (char *)  -> ic_decl_func */
     struct ic_dict dict_fsig;
 
-    /* dict for types with type params
-     * name + param names -> decl type
-     * Maybe[T] => Maybe[_]
-     */
-    struct ic_dict dict_tname_param;
-
-    /* dict for functions with type params
-     * name + param slots -> decl func
-     * foo[A,B](A,B) => foo[_,_](_,_)
-     */
-    struct ic_dict dict_fsig_param;
-
     /* dict Op name (char*) -> Op name (symbol *)
      * e.g.
      * + -> symbol(Plus)

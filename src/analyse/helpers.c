@@ -928,6 +928,10 @@ struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_
                 return 0;
             }
 
+            /* TODO FIXME generic instantiation not yet supported */
+            printf("WIP: ic_analyse_infer_fcall: found non-instantiated generic '%s', not yet able to instantiate\n", ic_string_contents(str_generic));
+            return 0;
+
             /* need to destroy str_generic */
             if (!ic_string_destroy(str_generic, 1)) {
                 puts("ic_analyse_infer_fcall: call to ic_string_destroy for str_generic failed");
