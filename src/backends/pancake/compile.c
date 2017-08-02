@@ -283,6 +283,11 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
         return 0;
     }
 
+    /* do not compile non-instantiated generic functions */
+    if (!ic_decl_func_is_instantiated(fdecl)) {
+        return 1;
+    }
+
     /* FIXME TODO compile kludge into bytecode instructions */
 
     /* for each fdecl

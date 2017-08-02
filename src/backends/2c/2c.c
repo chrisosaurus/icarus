@@ -1121,6 +1121,11 @@ unsigned int ic_b2c_compile_types_pre(struct ic_kludge *kludge, FILE *f) {
             continue;
         }
 
+        /* do not compile is non-instantiated generic */
+        if (!ic_decl_type_is_instantiated(tdecl)) {
+            return 1;
+        }
+
         if (!ic_b2c_compile_type_header(kludge, tdecl, f)) {
             puts("ic_b2c_compile_types_pre: call to ic_b2c_compile_type_header failed");
             return 0;
@@ -1143,6 +1148,11 @@ unsigned int ic_b2c_compile_type(struct ic_kludge *kludge, struct ic_decl_type *
     if (!f) {
         puts("ic_b2c_compile_type: f was null");
         return 0;
+    }
+
+    /* do not compile is non-instantiated generic */
+    if (!ic_decl_type_is_instantiated(tdecl)) {
+        return 1;
     }
 
     switch (tdecl->tag) {
@@ -1198,6 +1208,11 @@ unsigned int ic_b2c_compile_types(struct ic_kludge *kludge, FILE *f) {
         if (ic_decl_type_isbuiltin(tdecl)) {
             /* printf("Skipping type '%s' as builtin\n", type_name); */
             continue;
+        }
+
+        /* do not compile is non-instantiated generic */
+        if (!ic_decl_type_is_instantiated(tdecl)) {
+              return 1;
         }
 
         if (!ic_b2c_compile_type(kludge, tdecl, f)) {
@@ -1344,6 +1359,11 @@ unsigned int ic_b2c_compile_functions_pre(struct ic_kludge *kludge, FILE *f) {
             continue;
         }
 
+        /* do not compile is non-instantiated generic */
+        if (!ic_decl_func_is_instantiated(func)) {
+            return 1;
+        }
+
         if (!ic_b2c_compile_function_header(kludge, func, f)) {
             puts("ic_b2c_compile_functions_pre: call to ic_b2c_compile_function_header failed");
             return 0;
@@ -1406,16 +1426,21 @@ unsigned int ic_b2c_compile_functions(struct ic_kludge *kludge, FILE *f) {
             return 0;
         }
 
-        func_sig_call = ic_decl_func_sig_call(func);
-        if (!func_sig_call) {
-            puts("ic_b2c_compile_functions: call to ic_decl_func_sig_call failed");
-            return 0;
-        }
-
         /* skip builtins */
         if (ic_decl_func_isbuiltin(func)) {
             /* printf("Skipping func '%s' as builtin\n", func_name); */
             continue;
+        }
+
+        /* do not compile is non-instantiated generic */
+        if (!ic_decl_func_is_instantiated(func)) {
+            return 1;
+        }
+
+        func_sig_call = ic_decl_func_sig_call(func);
+        if (!func_sig_call) {
+            puts("ic_b2c_compile_functions: call to ic_decl_func_sig_call failed");
+            return 0;
         }
 
         if (!ic_b2c_compile_function_header(kludge, func, f)) {
