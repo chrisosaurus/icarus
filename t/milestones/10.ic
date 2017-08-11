@@ -3,7 +3,7 @@ fn id[T](t::T) -> T
 end
 
 fn main()
-    println(id(1s))
-    println(id(2u))
-    println(id("Hello"))
+    println(id[Sint](1s))
+    println(id[Uint](2u))
+    println(id[String]("Hello"))
 end
