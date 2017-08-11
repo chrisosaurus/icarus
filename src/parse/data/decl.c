@@ -1409,6 +1409,13 @@ struct ic_decl_type_struct *ic_decl_type_struct_deep_copy(struct ic_decl_type_st
  * returns 0 on failure
  */
 unsigned int ic_decl_type_struct_deep_copy_embedded(struct ic_decl_type_struct *from, struct ic_decl_type_struct *to) {
+    unsigned int i = 0;
+    unsigned int len = 0;
+    struct ic_type_param *tparam = 0;
+    struct ic_type_param *new_tparam = 0;
+    struct ic_field *field = 0;
+    struct ic_field *new_field = 0;
+
     if (!from) {
         puts("ic_decl_type_struct_deep_copy_embedded: from was null");
         return 0;
@@ -1419,9 +1426,71 @@ unsigned int ic_decl_type_struct_deep_copy_embedded(struct ic_decl_type_struct *
         return 0;
     }
 
-    /* TODO FIXME implement */
-    puts("ic_decl_type_struct_deep_copy_embedded: not implemented");
-    return 0;
+    if (!ic_symbol_deep_copy_embedded(&(from->name), &(to->name))) {
+        puts("ic_decl_type_struct_deep_copy_embedded: call to ic_symbol_deep_copy_embedded");
+        return 0;
+    }
+
+    to->is_instantiated = from->is_instantiated;
+    to->issint = from->issint;
+    to->isuint = from->isuint;
+    to->isbool = from->isbool;
+    to->isvoid = from->isvoid;
+    to->isstring = from->isstring;
+
+    if (!ic_string_deep_copy_embedded(&(from->sig_mangled_full), &(to->sig_mangled_full))) {
+        puts("ic_decl_type_struct_deep_copy_embedded: call to ic_string_deep_copy_embedded failed");
+        return 0;
+    }
+
+    /* don't try copy dict */
+    if (!ic_dict_init(&(to->field_dict))) {
+        puts("ic_decl_type_struct_deep_copy_embedded: call to ic_dict_init failed");
+        return 0;
+    }
+
+    len = ic_decl_type_struct_type_params_length(from);
+    for (i=0; i<len; ++i) {
+        tparam = ic_decl_type_struct_type_params_get(from, i);
+        if (!tparam) {
+            puts("ic_decl_type_struct_deep_copy_embedded: call to ic_decl_type_struct_type_params_get failed");
+            return 0;
+        }
+
+        new_tparam = ic_type_param_deep_copy(tparam);
+        if (!new_tparam) {
+            puts("ic_decl_type_struct_deep_copy_embedded: call to ic_type_param_deep_copy failed");
+            return 0;
+        }
+
+        if (!ic_decl_type_struct_type_params_add(to, new_tparam)) {
+            puts("ic_decl_type_struct_deep_copy_embedded: call to ic_decl_type_struct_type_params_add failed");
+            return 0;
+        }
+    }
+
+    len = ic_pvector_length(&(from->fields));
+    for (i=0; i<len; ++i) {
+        field = ic_pvector_get(&(from->fields), i);
+        if (!field) {
+            puts("ic_decl_type_struct_deep_copy_embedded: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        new_field = ic_field_deep_copy(field);
+        if (!new_field) {
+            puts("ic_decl_type_struct_deep_copy_embedded: call to ic_field_deep_copy failed");
+            return 0;
+        }
+
+        if (!ic_pvector_append(&(to->fields), new_field)) {
+            puts("ic_decl_type_struct_deep_copy_embedded: call to ic_pvector_append failed");
+            return 0;
+        }
+    }
+
+
+    return 1;
 }
 
 /* get is_instantiated
@@ -2345,6 +2414,13 @@ struct ic_decl_type_union *ic_decl_type_union_deep_copy(struct ic_decl_type_unio
  * returns 0 on failure
  */
 unsigned int ic_decl_type_union_deep_copy_embedded(struct ic_decl_type_union *from, struct ic_decl_type_union *to) {
+    unsigned int i = 0;
+    unsigned int len = 0;
+    struct ic_type_param *tparam = 0;
+    struct ic_type_param *new_tparam = 0;
+    struct ic_field *field = 0;
+    struct ic_field *new_field = 0;
+
     if (!from) {
         puts("ic_decl_type_union_deep_copy_embedded: from was null");
         return 0;
@@ -2355,9 +2431,60 @@ unsigned int ic_decl_type_union_deep_copy_embedded(struct ic_decl_type_union *fr
         return 0;
     }
 
-    /* TODO FIXME implement */
-    puts("ic_decl_type_union_deep_copy_embedded: not implemented");
-    return 0;
+    if (!ic_symbol_deep_copy_embedded(&(from->name), &(to->name))) {
+        puts("ic_decl_type_union_deep_copy_embedded: call to ic_symbol_deep_copy_embedded");
+        return 0;
+    }
+
+    to->is_instantiated = from->is_instantiated;
+
+    /* don't try copy dict */
+    if (!ic_dict_init(&(to->field_dict))) {
+        puts("ic_decl_type_union_deep_copy_embedded: call to ic_dict_init failed");
+        return 0;
+    }
+
+    len = ic_decl_type_union_type_params_length(from);
+    for (i=0; i<len; ++i) {
+        tparam = ic_decl_type_union_type_params_get(from, i);
+        if (!tparam) {
+            puts("ic_decl_type_union_deep_copy_embedded: call to ic_decl_type_union_type_params_get failed");
+            return 0;
+        }
+
+        new_tparam = ic_type_param_deep_copy(tparam);
+        if (!new_tparam) {
+            puts("ic_decl_type_union_deep_copy_embedded: call to ic_type_param_deep_copy failed");
+            return 0;
+        }
+
+        if (!ic_decl_type_union_type_params_add(to, new_tparam)) {
+            puts("ic_decl_type_union_deep_copy_embedded: call to ic_decl_type_union_type_params_add failed");
+            return 0;
+        }
+    }
+
+    len = ic_pvector_length(&(from->fields));
+    for (i=0; i<len; ++i) {
+        field = ic_pvector_get(&(from->fields), i);
+        if (!field) {
+            puts("ic_decl_type_union_deep_copy_embedded: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        new_field = ic_field_deep_copy(field);
+        if (!new_field) {
+            puts("ic_decl_type_union_deep_copy_embedded: call to ic_field_deep_copy failed");
+            return 0;
+        }
+
+        if (!ic_pvector_append(&(to->fields), new_field)) {
+            puts("ic_decl_type_union_deep_copy_embedded: call to ic_pvector_append failed");
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
 /* get is_instantiated
