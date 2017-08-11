@@ -111,6 +111,15 @@ unsigned int ic_decl_func_init(struct ic_decl_func *fdecl, char *name, unsigned 
  */
 unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_fdecl);
 
+/* deep-copy this fdecl
+ *
+ * returns pointer to new copy
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_func *ic_decl_func_deep_copy(struct ic_decl_func *fdecl);
+
 /* get is_instantiated
  *
  * for a non-generic function this will be true (1)
