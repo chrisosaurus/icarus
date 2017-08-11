@@ -1693,6 +1693,109 @@ unsigned int ic_stmt_destroy(struct ic_stmt *stmt, unsigned int free_stmt) {
     return 1;
 }
 
+/* perform a deep copy of a stmt
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_stmt *ic_stmt_deep_copy(struct ic_stmt *stmt) {
+    struct ic_stmt *new_stmt = 0;
+
+    if (!stmt) {
+        puts("ic_stmt_deep_copy: stmt was null");
+        return 0;
+    }
+
+    new_stmt = calloc(1, sizeof(struct ic_stmt));
+    if (!new_stmt) {
+        puts("ic_stmt_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_stmt_deep_copy_embedded(stmt, new_stmt)) {
+        puts("ic_stmt_deep_copy: call to ic_stmt_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_stmt;
+}
+
+/* perform a deep copy of a stmt embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_deep_copy_embedded(struct ic_stmt *from, struct ic_stmt *to) {
+    if (!from) {
+        puts("ic_stmt_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_stmt_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    to->tag = from->tag;
+
+    switch (from->tag) {
+        case ic_stmt_type_ret:
+            puts("ic_stmt_deep_copy_embedded: ret: unimplemented");
+            return 0;
+            break;
+
+        case ic_stmt_type_let:
+            puts("ic_stmt_deep_copy_embedded: let: unimplemented");
+            return 0;
+            break;
+
+        case ic_stmt_type_begin:
+            puts("ic_stmt_deep_copy_embedded: begin: unimplemented");
+            return 0;
+            break;
+
+        case ic_stmt_type_if:
+            puts("ic_stmt_deep_copy_embedded: if: unimplemented");
+            return 0;
+            break;
+
+        case ic_stmt_type_for:
+            puts("ic_stmt_deep_copy_embedded: for: unimplemented");
+            return 0;
+            break;
+
+        case ic_stmt_type_while:
+            puts("ic_stmt_deep_copy_embedded: for: unimplemented");
+            return 0;
+            break;
+
+        case ic_stmt_type_match:
+            puts("ic_stmt_deep_copy_embedded: match: unimplemented");
+            return 0;
+            break;
+
+        case ic_stmt_type_expr:
+            to->u.expr = ic_expr_deep_copy(from->u.expr);
+            if (!to->u.expr) {
+                puts("ic_stmt_deep_copy_embedded: expr: call to ic_expr_deep_copy failed");
+                return 0;
+            }
+            break;
+
+        case ic_stmt_type_assign:
+            puts("ic_stmt_deep_copy_embedded: assign: unimplemented");
+            return 0;
+            break;
+
+        default:
+            puts("ic_stmt_deep_copy_embedded: impossible stmt type");
+            return 0;
+            break;
+    }
+
+    return 1;
+}
+
 /* get a pointer to the return within
  * will only succeed if ic_stmt is of the correct type
  *

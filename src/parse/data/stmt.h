@@ -571,6 +571,20 @@ int ic_stmt_init(struct ic_stmt *stmt, enum ic_stmt_tag tag);
  */
 unsigned int ic_stmt_destroy(struct ic_stmt *stmt, unsigned int free_stmt);
 
+/* perform a deep copy of a stmt
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_stmt *ic_stmt_deep_copy(struct ic_stmt *stmt);
+
+/* perform a deep copy of a stmt embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_deep_copy_embedded(struct ic_stmt *from, struct ic_stmt *to);
+
 /* get a pointer to the return within
  * will only succeed if ic_stmt is of the correct type
  *
