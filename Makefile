@@ -155,6 +155,10 @@ test_custom: $(OBJ) icarus
 	@echo running test_backends_output_equivalence.pl
 	t/custom/test_backends_output_equivalence.pl
 
+	@echo -e "\n"
+	@echo running test_generics_progress.pl
+	t/custom/test_generics_progress.pl
+
 # compile and run each test
 $(TESTO) : $(TESTOUT)/% : %.c
 	@echo -e "\n\ncompiling $< to $@"

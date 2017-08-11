@@ -469,7 +469,8 @@ sub run {
   `rm $in_tmp_file`;
 
   say "test_backends_output_equivalence successs";
-  say "=======\nGot correct output:\n$expected";
+  say "=======\nGot correct output" . ($expect_failure && " (expected failure)" || '') . ":\n$expected";
+
 }
 
 for my $case (@$cases) {
