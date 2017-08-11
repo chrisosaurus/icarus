@@ -1123,7 +1123,7 @@ unsigned int ic_b2c_compile_types_pre(struct ic_kludge *kludge, FILE *f) {
 
         /* do not compile is non-instantiated generic */
         if (!ic_decl_type_is_instantiated(tdecl)) {
-            return 1;
+            continue;
         }
 
         if (!ic_b2c_compile_type_header(kludge, tdecl, f)) {
@@ -1212,7 +1212,7 @@ unsigned int ic_b2c_compile_types(struct ic_kludge *kludge, FILE *f) {
 
         /* do not compile is non-instantiated generic */
         if (!ic_decl_type_is_instantiated(tdecl)) {
-              return 1;
+            continue;
         }
 
         if (!ic_b2c_compile_type(kludge, tdecl, f)) {
@@ -1361,7 +1361,7 @@ unsigned int ic_b2c_compile_functions_pre(struct ic_kludge *kludge, FILE *f) {
 
         /* do not compile is non-instantiated generic */
         if (!ic_decl_func_is_instantiated(func)) {
-            return 1;
+            continue;
         }
 
         if (!ic_b2c_compile_function_header(kludge, func, f)) {
@@ -1434,7 +1434,7 @@ unsigned int ic_b2c_compile_functions(struct ic_kludge *kludge, FILE *f) {
 
         /* do not compile is non-instantiated generic */
         if (!ic_decl_func_is_instantiated(func)) {
-            return 1;
+            continue;
         }
 
         func_sig_call = ic_decl_func_sig_call(func);
