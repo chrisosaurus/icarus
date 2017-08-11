@@ -88,6 +88,20 @@ unsigned int ic_type_ref_symbol_init(struct ic_type_ref *type, char *type_str, u
  */
 unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_type);
 
+/* perform a deep copy of a type_ref
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type_ref *ic_type_ref_deep_copy(struct ic_type_ref *type);
+
+/* perform a deep copy of a type_ref embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_type_ref_deep_copy_embedded(struct ic_type_ref *from, struct ic_type_ref *to);
+
 /* set the sym on this type from the provided string
  * this will change type_ref.tag to sym
  *

@@ -184,6 +184,112 @@ unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_typ
     return 1;
 }
 
+/* perform a deep copy of a type_ref
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type_ref *ic_type_ref_deep_copy(struct ic_type_ref *type) {
+    struct ic_type_ref *new_type = 0;
+
+    if (!type) {
+        puts("ic_type_ref_deep_copy: type was null");
+        return 0;
+    }
+
+    new_type = calloc(1, sizeof(struct ic_type_ref));
+    if (!new_type) {
+        puts("ic_type_ref_deep_copy: call to calloc");
+        return 0;
+    }
+
+    if (!ic_type_ref_deep_copy_embedded(type, new_type)) {
+        puts("ic_type_ref_deep_copy: call to ic_type_ref_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_type;
+}
+
+/* perform a deep copy of a type_ref embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_type_ref_deep_copy_embedded(struct ic_type_ref *from, struct ic_type_ref *to) {
+    unsigned int i = 0;
+    unsigned int len = 0;
+    struct ic_type_ref *type_arg = 0;
+    struct ic_type_ref *new_type_arg = 0;
+
+    if (!from) {
+        puts("ic_type_ref_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_type_ref_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    to->tag = from->tag;
+
+    switch (to->tag) {
+        case ic_type_ref_unknown:
+            /* nothing to do */
+            break;
+
+        case ic_type_ref_symbol:
+            if (!ic_symbol_deep_copy_embedded(&(from->u.sym), &(to->u.sym))) {
+                puts("ic_type_ref_deep_copy_embedded: call to ic_symbol_deep_copy_embedded failed");
+                return 0;
+            }
+            break;
+
+        case ic_type_ref_param:
+            to->u.tparam = from->u.tparam;
+            break;
+
+        case ic_type_ref_resolved:
+            to->u.tdecl = from->u.tdecl;
+            break;
+
+        default:
+            /* oops */
+            puts("ic_type_ref_deep_copy_embedded: impossible tag");
+            return 0;
+            break;
+    }
+
+    if (!ic_pvector_init(&(to->type_args), 0)) {
+        puts("ic_type_ref_deep_copy_embedded: call to ic_pvector_init failed");
+        return 0;
+    }
+
+    /* copy over type args */
+    len = ic_type_ref_type_args_length(from);
+    for (i=0; i<len; ++i) {
+        type_arg = ic_type_ref_type_args_get(from, i);
+        if (!type_arg) {
+            puts("ic_type_ref_deep_copy_embedded: call to ic_type_ref_type_args_get failed");
+            return 0;
+        }
+
+        new_type_arg = ic_type_ref_deep_copy(type_arg);
+        if (!new_type_arg) {
+            puts("ic_type_ref_deep_copy_embedded: call to ic_type_ref_deep_copy failed");
+            return 0;
+        }
+
+        if (!ic_type_ref_type_args_add(to, new_type_arg)) {
+            puts("ic_type_ref_deep_copy_embedded: call to ic_type_ref_type_args_add failed");
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
 /* set the sym on this type from the provided string
  * this will change type_ref.tag to sym
  *
