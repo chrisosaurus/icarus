@@ -43,7 +43,9 @@ my $cases = [
       end
     ',
     expected => "
-      WIP: ic_analyse_infer_fcall: found non-instantiated generic 'id[_](_)', not yet able to instantiate
+      ic_analyse_func_decl_instantiate_generic: not yet implemented
+      ic_analyse_infer_fcall: call to ic_analyse_func_decl_instantiate_generic failed
+      ic_analyse_infer_fcall: failed to instantiate for generic call 'id[_](_)'
       ic_analyse_infer: call to ic_analyse_infer_fcall failed
       ic_analyse_fcall_str: call to ic_analyse_infer failed for argument '0'
       ic_analyse_fcall_str: error occurred, destroying string

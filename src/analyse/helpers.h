@@ -98,4 +98,13 @@ struct ic_string *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope
  */
 struct ic_string *ic_analyse_fcall_str_generic(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall);
 
+/* trigger instantiate of this generic function decl to a concrete function decl
+ *
+ * creates new fdecl, inserts into kludge, returns * to new fdecl
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_func *ic_analyse_func_decl_instantiate_generic(struct ic_kludge *kludge, struct ic_decl_func *fdecl, struct ic_expr_func_call *fcall);
+
 #endif /* ifndef ICARUS_ANALYSE_HELPERS_H */

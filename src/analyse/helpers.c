@@ -928,9 +928,12 @@ struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_
                 return 0;
             }
 
-            /* TODO FIXME generic instantiation not yet supported */
-            printf("WIP: ic_analyse_infer_fcall: found non-instantiated generic '%s', not yet able to instantiate\n", ic_string_contents(str_generic));
-            return 0;
+            fdecl = ic_analyse_func_decl_instantiate_generic(kludge, fdecl, fcall);
+            if (!fdecl) {
+                puts("ic_analyse_infer_fcall: call to ic_analyse_func_decl_instantiate_generic failed");
+                printf("ic_analyse_infer_fcall: failed to instantiate for generic call '%s'\n", ic_string_contents(str_generic));
+                return 0;
+            }
 
             /* need to destroy str_generic */
             if (!ic_string_destroy(str_generic, 1)) {
@@ -1976,4 +1979,32 @@ EXIT:
 
     /* TODO FIXME note, caller HAS to free */
     return str;
+}
+
+/* trigger instantiate of this generic function decl to a concrete function decl
+ *
+ * creates new fdecl, inserts into kludge, returns * to new fdecl
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_func *ic_analyse_func_decl_instantiate_generic(struct ic_kludge *kludge, struct ic_decl_func *fdecl, struct ic_expr_func_call *fcall) {
+    if (!kludge) {
+        puts("ic_analyse_func_decl_instantiate_generic: kludge was null");
+        return 0;
+    }
+
+    if (!fdecl) {
+        puts("ic_analyse_func_decl_instantiate_generic: fdecl was null");
+        return 0;
+    }
+
+    if (!fcall) {
+        puts("ic_analyse_func_decl_instantiate_generic: fcall was null");
+        return 0;
+    }
+
+    /* TODO FIXME implement func decl instantiation */
+    puts("ic_analyse_func_decl_instantiate_generic: not yet implemented");
+    return 0;
 }
