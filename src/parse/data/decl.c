@@ -276,14 +276,25 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
  * returns 0 on failure
  */
 struct ic_decl_func *ic_decl_func_deep_copy(struct ic_decl_func *fdecl) {
+    struct ic_decl_func *new_fdecl = 0;
+
     if (!fdecl) {
         puts("ic_decl_func_deep_copy: fdecl was null");
         return 0;
     }
 
-    /* TODO FIXME implement */
-    puts("ic_decl_func_deep_copy: unimplemented");
-    return 0;
+    new_fdecl = calloc(1, sizeof(struct ic_decl_func));
+    if (!new_fdecl) {
+        puts("ic_decl_func_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_decl_func_deep_copy_embedded(fdecl, new_fdecl)) {
+        puts("ic_decl_func_deep_copy: call to ic_decl_func_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_fdecl;
 }
 
 /* deep-copy this fdecl embedded within an object
@@ -292,6 +303,13 @@ struct ic_decl_func *ic_decl_func_deep_copy(struct ic_decl_func *fdecl) {
  * returns 0 on failure
  */
 unsigned int ic_decl_func_deep_copy_embedded(struct ic_decl_func *from, struct ic_decl_func *to) {
+    unsigned int i = 0;
+    unsigned int len = 0;
+    struct ic_type_param *tparam = 0;
+    struct ic_type_param *new_tparam = 0;
+    struct ic_field *arg = 0;
+    struct ic_field *new_arg = 0;
+
     if (!from) {
         puts("ic_decl_func_deep_copy_embedded: from was null");
         return 0;
@@ -302,9 +320,94 @@ unsigned int ic_decl_func_deep_copy_embedded(struct ic_decl_func *from, struct i
         return 0;
     }
 
-    /* TODO FIXME implement */
-    puts("ic_decl_func_deep_copy:_embedded unimplemented");
-    return 0;
+    if (!ic_symbol_deep_copy_embedded(&(from->name), &(to->name))) {
+        puts("ic_decl_func_deep_copy_embedded: call to ic_symbol_deep_copy_embedded failed");
+        return 0;
+    }
+
+    len = ic_decl_func_type_params_length(from);
+    for (i=0; i<len; ++i) {
+        tparam = ic_decl_func_type_params_get(from, i);
+        if (!tparam) {
+            puts("ic_decl_func_deep_copy_embedded: call to ic_decl_func_type_params_get failed");
+            return 0;
+        }
+
+        new_tparam = ic_type_param_deep_copy(tparam);
+        if (!new_tparam) {
+            puts("ic_decl_func_deep_copy_embedded: call to ic_type_param_deep_copy failed");
+            return 0;
+        }
+
+        if (!ic_decl_func_type_params_add(to, new_tparam)){
+            puts("ic_decl_func_deep_copy_embedded: call to ic_decl_func_type_params_add failed");
+            return 0;
+        }
+    }
+
+    to->is_instantiated = from->is_instantiated;
+
+    len = ic_decl_func_args_length(from);
+    for (i=0; i<len; ++i) {
+        arg = ic_decl_func_args_get(from, i);
+        if (!arg) {
+            puts("ic_decl_func_deep_copy_embedded: call to ic_decl_func_args_get failed");
+            return 0;
+        }
+
+        new_arg = ic_field_deep_copy(arg);
+        if (!new_arg) {
+            puts("ic_decl_func_deep_copy_embedded: call to ic_field_deep_copy failed");
+            return 0;
+        }
+
+        if (!ic_decl_func_args_add(to, new_arg)) {
+            puts("ic_decl_func_deep_copy_embedded: call to ic_decl_func_args_add failed");
+            return 0;
+        }
+    }
+
+    if (from->ret_type) {
+        to->ret_type = ic_symbol_deep_copy(from->ret_type);
+        if (!to->ret_type) {
+            puts("ic_decl_func_deep_copy_embedded: call to ic_symbol_deep_copy_embedded failed");
+            return 0;
+        }
+    }
+
+    if (!ic_body_deep_copy_embedded(&(from->body), &(to->body))) {
+        puts("ic_decl_func_deep_copy_embedded: call to ic_body_deep_copy_embedded failed");
+        return 0;
+    }
+
+    to->tbody = 0;
+
+    if (!ic_string_deep_copy_embedded(&(from->sig_call), &(to->sig_call))) {
+        puts("ic_decl_func_deep_copy_embedded: call to ic_string_deep_copy_embedded failed");
+        return 0;
+    }
+
+    if (!ic_string_deep_copy_embedded(&(from->sig_full), &(to->sig_full))) {
+        puts("ic_decl_func_deep_copy_embedded: call to ic_string_deep_copy_embedded failed");
+        return 0;
+    }
+
+    if (!ic_string_deep_copy_embedded(&(from->sig_mangled), &(to->sig_mangled))) {
+        puts("ic_decl_func_deep_copy_embedded: call to ic_string_deep_copy_embedded failed");
+        return 0;
+    }
+
+    if (from->sig_param) {
+        to->sig_param = ic_string_deep_copy(from->sig_param);
+        if (!to->sig_param) {
+            puts("ic_decl_func_deep_copy_embedded: call to ic_string_deep_copy failed");
+            return 0;
+        }
+    }
+
+    to->builtin = from->builtin;
+
+    return 1;
 }
 
 /* get is_instantiated
