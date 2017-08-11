@@ -6,7 +6,7 @@
 #include "../../../../src/parse/data/type_ref.h"
 #include "../../../../src/parse/permissions.h"
 
-int main(void) {
+void basic(void) {
     struct ic_field *field = 0;
     struct ic_field init_me;
     struct ic_type_ref *type = 0;
@@ -54,6 +54,10 @@ int main(void) {
     puts("Output:");
     ic_field_print(stdout, field);
     puts("");
+}
+
+int main(void) {
+    basic();
 
     return 0;
 }
