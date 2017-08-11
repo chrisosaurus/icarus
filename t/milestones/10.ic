@@ -1,4 +1,4 @@
-fn id[T](t:T) -> T
+fn id[T](t::T) -> T
     return t
 end
 
