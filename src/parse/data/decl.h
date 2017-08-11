@@ -398,6 +398,22 @@ unsigned int ic_decl_type_struct_init(struct ic_decl_type_struct *tdecl, char *n
  */
 unsigned int ic_decl_type_struct_destroy(struct ic_decl_type_struct *tdecl, unsigned int free_tdecl);
 
+/* deep-copy this tdecl
+ *
+ * returns pointer to new copy
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type_struct *ic_decl_type_struct_deep_copy(struct ic_decl_type_struct *tdecl);
+
+/* deep-copy this tdecl embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_struct_deep_copy_embedded(struct ic_decl_type_struct *from, struct ic_decl_type_struct *to);
+
 /* get is_instantiated
  *
  * for a non-generic type this will be true (1)
@@ -653,6 +669,22 @@ unsigned int ic_decl_type_union_init(struct ic_decl_type_union *udecl, char *nam
  */
 unsigned int ic_decl_type_union_destroy(struct ic_decl_type_union *udecl, unsigned int free_udecl);
 
+/* deep-copy this tdecl
+ *
+ * returns pointer to new copy
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type_union *ic_decl_type_union_deep_copy(struct ic_decl_type_union *tdecl);
+
+/* deep-copy this tdecl embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_union_deep_copy_embedded(struct ic_decl_type_union *from, struct ic_decl_type_union *to);
+
 /* get is_instantiated
  *
  * for a non-generic type this will be true (1)
@@ -816,6 +848,22 @@ unsigned int ic_decl_type_init_union(struct ic_decl_type *tdecl, char *name_src,
  * returns 0 on failure
  */
 unsigned int ic_decl_type_destroy(struct ic_decl_type *tdecl, unsigned int free_tdecl);
+
+/* deep-copy this tdecl
+ *
+ * returns pointer to new copy
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type *ic_decl_type_deep_copy(struct ic_decl_type *tdecl);
+
+/* deep-copy this tdecl embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_deep_copy_embedded(struct ic_decl_type *from, struct ic_decl_type *to);
 
 /* get is_instantiated
  *
@@ -1030,6 +1078,22 @@ unsigned int ic_decl_op_init(struct ic_decl_op *op, char *from_src, unsigned int
  */
 unsigned int ic_decl_op_destroy(struct ic_decl_op *op, unsigned int free_op);
 
+/* deep-copy this op
+ *
+ * returns pointer to new copy
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_op *ic_decl_op_deep_copy(struct ic_decl_op *op);
+
+/* deep-copy this op embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_op_deep_copy_embedded(struct ic_decl_op *from, struct ic_decl_op *to);
+
 /* print the decl_op to provided fd */
 void ic_decl_op_print(FILE *fd, struct ic_decl_op *op, unsigned int *indent_level);
 
@@ -1082,6 +1146,22 @@ unsigned int ic_decl_init(struct ic_decl *decl, enum ic_decl_tag tag);
  * returns 0 on failure
  */
 unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl);
+
+/* deep-copy this decl
+ *
+ * returns pointer to new copy
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl *ic_decl_deep_copy(struct ic_decl *decl);
+
+/* deep-copy this tdecl embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_deep_copy_embedded(struct ic_decl *from, struct ic_decl *to);
 
 /* get is_instantiated
  *

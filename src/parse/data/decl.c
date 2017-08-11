@@ -1374,6 +1374,56 @@ unsigned int ic_decl_type_struct_destroy(struct ic_decl_type_struct *tdecl, unsi
     return 1;
 }
 
+/* deep-copy this tdecl
+ *
+ * returns pointer to new copy
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type_struct *ic_decl_type_struct_deep_copy(struct ic_decl_type_struct *tdecl) {
+    struct ic_decl_type_struct *new_tdecl = 0;
+
+    if (!tdecl) {
+        puts("ic_decl_type_struct_deep_copy: tdecl was null");
+        return 0;
+    }
+
+    tdecl = calloc(1, sizeof(struct ic_decl_type_struct));
+    if (!tdecl) {
+        puts("ic_decl_type_struct_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (ic_decl_type_struct_deep_copy_embedded(tdecl, new_tdecl)) {
+        puts("ic_decl_type_struct_deep_copy: call to ic_decl_type_struct_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_tdecl;
+}
+
+/* deep-copy this tdecl embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_struct_deep_copy_embedded(struct ic_decl_type_struct *from, struct ic_decl_type_struct *to) {
+    if (!from) {
+        puts("ic_decl_type_struct_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_decl_type_struct_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    /* TODO FIXME implement */
+    puts("ic_decl_type_struct_deep_copy_embedded: not implemented");
+    return 0;
+}
+
 /* get is_instantiated
  *
  * for a non-generic type this will be true (1)
@@ -2260,6 +2310,56 @@ unsigned int ic_decl_type_union_destroy(struct ic_decl_type_union *udecl, unsign
     return 1;
 }
 
+/* deep-copy this tdecl
+ *
+ * returns pointer to new copy
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type_union *ic_decl_type_union_deep_copy(struct ic_decl_type_union *tdecl) {
+    struct ic_decl_type_union *new_tdecl = 0;
+
+    if (!tdecl) {
+        puts("ic_decl_type_union_deep_copy: tdecl was null");
+        return 0;
+    }
+
+    tdecl = calloc(1, sizeof(struct ic_decl_type_union));
+    if (!tdecl) {
+        puts("ic_decl_type_union_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (ic_decl_type_union_deep_copy_embedded(tdecl, new_tdecl)) {
+        puts("ic_decl_type_union_deep_copy: call to ic_decl_type_union_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_tdecl;
+}
+
+/* deep-copy this tdecl embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_union_deep_copy_embedded(struct ic_decl_type_union *from, struct ic_decl_type_union *to) {
+    if (!from) {
+        puts("ic_decl_type_union_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_decl_type_union_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    /* TODO FIXME implement */
+    puts("ic_decl_type_union_deep_copy_embedded: not implemented");
+    return 0;
+}
+
 /* get is_instantiated
  *
  * for a non-generic type this will be true (1)
@@ -2841,6 +2941,78 @@ unsigned int ic_decl_type_destroy(struct ic_decl_type *tdecl, unsigned int free_
 
     if (free_tdecl) {
         free(tdecl);
+    }
+
+    return 1;
+}
+
+/* deep-copy this tdecl
+ *
+ * returns pointer to new copy
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type *ic_decl_type_deep_copy(struct ic_decl_type *tdecl) {
+    struct ic_decl_type *new_tdecl = 0;
+
+    if (!tdecl) {
+        puts("ic_decl_type_deep_copy: tdecl was null");
+        return 0;
+    }
+
+    new_tdecl = calloc(1, sizeof(struct ic_decl_type));
+    if (!new_tdecl) {
+        puts("ic_decl_type_deep_copy: call to calloc");
+        return 0;
+    }
+
+    if (!ic_decl_type_deep_copy_embedded(tdecl, new_tdecl)) {
+        puts("ic_decl_type_deep_copy: call to ic_decl_type_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_tdecl;
+}
+
+/* deep-copy this tdecl embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_deep_copy_embedded(struct ic_decl_type *from, struct ic_decl_type *to) {
+    if (!from) {
+        puts("ic_decl_type_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_decl_type_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    to->tag = from->tag;
+    to->builtin = from->builtin;
+
+    switch (from->tag) {
+        case ic_decl_type_tag_struct:
+            if (!ic_decl_type_struct_deep_copy_embedded(&(from->u.tstruct), &(to->u.tstruct))) {
+                puts("ic_decl_type_deep_copy_embedded: call to ic_decl_struct_deep_copy_embedded failed");
+                return 0;
+            }
+            break;
+
+        case ic_decl_type_tag_union:
+            if (!ic_decl_type_union_deep_copy_embedded(&(from->u.tunion), &(to->u.tunion))) {
+                puts("ic_decl_type_deep_copy_embedded: call to ic_decl_union_deep_copy_embedded failed");
+                return 0;
+            }
+            break;
+
+        default:
+            puts("ic_decl_type_deep_copy_embedded: impossible tag");
+            return 0;
+            break;
     }
 
     return 1;
@@ -3821,6 +3993,64 @@ unsigned int ic_decl_op_destroy(struct ic_decl_op *op, unsigned int free_op) {
     return 1;
 }
 
+/* deep-copy this op
+ *
+ * returns pointer to new copy
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_op *ic_decl_op_deep_copy(struct ic_decl_op *op) {
+    struct ic_decl_op *new_op = 0;
+
+    if (!op) {
+        puts("ic_decl_op_deep_copy: op was null");
+        return 0;
+    }
+
+    new_op = calloc(1, sizeof(struct ic_decl_op));
+    if (!new_op) {
+        puts("ic_decl_op_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_decl_op_deep_copy_embedded(op, new_op)) {
+        puts("ic_decl_op_deep_copy: call to ic_decl_op_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_op;
+}
+
+/* deep-copy this op embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_op_deep_copy_embedded(struct ic_decl_op *from, struct ic_decl_op *to) {
+    if (!from) {
+        puts("ic_decl_op_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_decl_op_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    if (!ic_symbol_deep_copy_embedded(&(from->from), &(to->from))) {
+        puts("ic_decl_op_deep_copy_embedded: call to ic_symbol_deep_copy_embedded failed");
+        return 0;
+    }
+
+    if (!ic_symbol_deep_copy_embedded(&(from->to), &(to->to))) {
+        puts("ic_decl_op_deep_copy_embedded: call to ic_symbol_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return 1;
+}
+
 /* print the decl_op to stdout */
 void ic_decl_op_print(FILE *fd, struct ic_decl_op *op, unsigned int *indent_level) {
     if (!op) {
@@ -3957,6 +4187,86 @@ unsigned int ic_decl_destroy(struct ic_decl *decl, unsigned int free_decl) {
     }
 
     /* success */
+    return 1;
+}
+
+/* deep-copy this decl
+ *
+ * returns pointer to new copy
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl *ic_decl_deep_copy(struct ic_decl *decl) {
+    struct ic_decl *new_decl = 0;
+
+    if (!decl) {
+        puts("ic_decl_deep_copy: decl was null");
+        return 0;
+    }
+
+    new_decl = calloc(1, sizeof(struct ic_decl));
+    if (!new_decl) {
+        puts("ic_decl_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_decl_deep_copy_embedded(decl, new_decl)) {
+        puts("ic_decl_deep_copy: call to ic_decl_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_decl;
+}
+
+/* deep-copy this tdecl embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_deep_copy_embedded(struct ic_decl *from, struct ic_decl *to) {
+    if (!from) {
+        puts("ic_decl_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_decl_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    to->tag = from->tag;
+
+    switch (from->tag) {
+        case ic_decl_tag_func:
+        case ic_decl_tag_builtin_func:
+            if (!ic_decl_func_deep_copy_embedded(&(from->u.fdecl), &(to->u.fdecl))) {
+                puts("ic_decl_deep_copy_embedded: call to ic_decl_func_deep_copy_embedded failed");
+                return 0;
+            }
+            break;
+
+        case ic_decl_tag_type:
+        case ic_decl_tag_builtin_type:
+            if (!ic_decl_type_deep_copy_embedded(&(from->u.tdecl), &(to->u.tdecl))) {
+                puts("ic_decl_deep_copy_embedded: call to ic_decl_type_deep_copy_embedded failed");
+                return 0;
+            }
+            break;
+
+        case ic_decl_tag_builtin_op:
+            if (!ic_decl_op_deep_copy_embedded(&(from->u.op), &(to->u.op))) {
+                puts("ic_decl_deep_copy_embedded: call to ic_decl_op_deep_copy_embedded failed");
+                return 0;
+            }
+            break;
+
+        default:
+            puts("ic_decl_deep_copy_embedded: impossible decl type, aborting");
+            return 0;
+            break;
+    }
+
     return 1;
 }
 
