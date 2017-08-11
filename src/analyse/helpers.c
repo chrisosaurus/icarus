@@ -1989,6 +1989,8 @@ EXIT:
  * returns 0 on failure
  */
 struct ic_decl_func *ic_analyse_func_decl_instantiate_generic(struct ic_kludge *kludge, struct ic_decl_func *fdecl, struct ic_expr_func_call *fcall) {
+    struct ic_decl_func *new_fdecl = 0;
+
     if (!kludge) {
         puts("ic_analyse_func_decl_instantiate_generic: kludge was null");
         return 0;
@@ -2004,18 +2006,36 @@ struct ic_decl_func *ic_analyse_func_decl_instantiate_generic(struct ic_kludge *
         return 0;
     }
 
-    /* TODO FIXME
-     * 1) deep copy fdecl
-     * 2) mark instantiated
-     * 3) bind each type_arg to matching type_param
-     * 4) resolve argument types (resolving type_arg through type_param)
-     * 5) infer return type if needed
-     * 6) store in kludge
-     * 7) perform analysis on copy (resolving type_arg through type_params)
-     * 8) return *
-     */
+    /* 1) deep copy fdecl */
+    new_fdecl = ic_decl_func_deep_copy(fdecl);
+    if (!new_fdecl) {
+        puts("ic_analyse_func_decl_instantiate_generic: call to ic_decl_func_deep_copy failed");
+        return 0;
+    }
 
     /* TODO FIXME implement func decl instantiation */
     puts("ic_analyse_func_decl_instantiate_generic: not yet implemented");
     return 0;
+
+    /* 2) mark instantiated */
+    /* TODO FIXME */
+
+    /* 3) bind each type_arg to matching type_param */
+    /* TODO FIXME */
+
+    /* 4) resolve argument types (resolving type_arg through type_param) */
+    /* TODO FIXME */
+
+    /* 5) infer return type if needed */
+    /* TODO FIXME */
+
+    /* 6) store in kludge */
+    /* TODO FIXME */
+
+    /* 7) perform analysis on copy (resolving type_arg through type_params) */
+    /* TODO FIXME */
+
+    /* 8) return * */
+    return new_fdecl;
+
 }
