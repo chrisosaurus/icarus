@@ -10,6 +10,28 @@ die "Could not find '$path'\n" unless -e $path;
 
 my $cases = [
   {
+    # test that we are able to parse generics
+    # not an error as we do not instantiate them
+    input => '
+      fn id[A](a::A) -> A
+          return a
+      end
+
+      type Nothing
+      end
+
+      union Maybe[T]
+          something::T
+          nothing::Nothing
+      end
+
+      fn main()
+      end
+    ',
+    expected => '
+    ',
+  },
+  {
     # milestone 10
     input => '
       fn id[T](t::T) -> T
