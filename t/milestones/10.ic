@@ -1,23 +1,9 @@
-type Nothing
-end
-
-union Maybe[T]
-    something::T
-    nothing::Nothing
+fn id[T](t:T) -> T
+    return t
 end
 
 fn main()
-    let m = Maybe[Sint](6s)
-
-    println(m)
-
-    match m
-        case something::Sint
-            print("Found a Sint: ")
-            println(something)
-        case nothing::Nothing
-            println("Nothing to see here")
-        end
-    end
+    println(id(1s))
+    println(id(2u))
+    println(id("Hello"))
 end
-

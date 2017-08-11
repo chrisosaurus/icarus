@@ -1,0 +1,5 @@
+fn main()
+    for num in range(1u, 10u)
+        println(num)
+    end
+end

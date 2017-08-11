@@ -1,10 +1,23 @@
-type Foo
-    a::Sint
+type Nothing
+end
+
+union Maybe[T]
+    something::T
+    nothing::Nothing
 end
 
 fn main()
-    let &f = Foo(4s)
-    println(f.a)
-    &f.a = 5s
-    println(f.a)
+    let m = Maybe[Sint](6s)
+
+    println(m)
+
+    match m
+        case something::Sint
+            print("Found a Sint: ")
+            println(something)
+        case nothing::Nothing
+            println("Nothing to see here")
+        end
+    end
 end
+
