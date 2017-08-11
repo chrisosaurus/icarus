@@ -3,6 +3,7 @@
 
 #include "string.h"
 #include "symbol.h"
+#include "strdup.h"
 
 /* build a new symbol from a char* and a length
  * this will allocate a new buffer and strncpy n
@@ -82,6 +83,37 @@ unsigned int ic_symbol_destroy(struct ic_symbol *sym, unsigned int free_sym) {
 
     /* success */
     return 1;
+}
+
+/* perform deep copy of symbol
+ *
+ * returns * on success
+ * returns 0 on error
+ */
+struct ic_symbol *ic_symbol_deep_copy(struct ic_symbol *sym) {
+    struct ic_symbol *new_sym = 0;
+
+    if (!sym) {
+        puts("ic_symbol_deep_copy: sym was null");
+        return 0;
+    }
+
+    new_sym = calloc(1, sizeof(struct ic_symbol));
+    if (!new_sym) {
+        puts("ic_symbol_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    new_sym->internal.backing.contents = ic_strdup(sym->internal.backing.contents);
+    if (!new_sym->internal.backing.contents) {
+        puts("ic_symbol_deep_copy: call to ic_strdup failed");
+        return 0;
+    }
+
+    new_sym->internal.used = sym->internal.used;
+    new_sym->internal.backing.len = sym->internal.backing.len;
+
+    return new_sym;
 }
 
 /* returns backing character array

@@ -72,9 +72,34 @@ void equality(void) {
     assert(1 == ic_symbol_destroy(sym2, 1));
 }
 
+void deep_copy(void) {
+    struct ic_symbol *sym1 = 0;
+    struct ic_symbol *sym2 = 0;
+
+    sym1 = ic_symbol_new("Hello world", 11);
+    assert(sym1);
+
+    sym2 = ic_symbol_deep_copy(sym1);
+    assert(sym1);
+
+    assert(sym1 != sym2);
+    assert(sym1->internal.used == sym2->internal.used);
+    assert(sym1->internal.backing.len == sym2->internal.backing.len);
+    assert(sym1->internal.backing.contents != sym2->internal.backing.contents);
+    assert(0 == strcmp(sym1->internal.backing.contents, sym2->internal.backing.contents));
+
+    sym1->internal.backing.contents[0] = 'Q';
+    assert(sym1->internal.backing.contents[0] == 'Q');
+    assert(sym2->internal.backing.contents[0] == 'H');
+
+    assert(1 == ic_symbol_destroy(sym1, 1));
+    assert(1 == ic_symbol_destroy(sym2, 1));
+}
+
 int main(void) {
     normal();
     equality();
+    deep_copy();
     abnormal();
 
     return 0;

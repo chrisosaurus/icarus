@@ -38,6 +38,13 @@ unsigned int ic_symbol_init(struct ic_symbol *sym, char *source, unsigned int le
  */
 unsigned int ic_symbol_destroy(struct ic_symbol *sym, unsigned int free_sym);
 
+/* perform deep copy of symbol
+ *
+ * returns * on success
+ * returns 0 on error
+ */
+struct ic_symbol *ic_symbol_deep_copy(struct ic_symbol *sym);
+
 /* returns backing character array
  * the caller is NOT allowed to mutate this character array directly
  *

@@ -66,6 +66,13 @@ unsigned int ic_string_init_empty(struct ic_string *string);
  */
 unsigned int ic_string_destroy(struct ic_string *str, unsigned int free_str);
 
+/* perform deep copy of string
+ *
+ * returns * on success
+ * returns 0 on error
+ */
+struct ic_string *ic_string_deep_copy(struct ic_string *str);
+
 /* returns backing character array
  * the caller is NOT allowed to mutate this character array directly
  *

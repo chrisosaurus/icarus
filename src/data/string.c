@@ -4,6 +4,7 @@
 
 #include "string.h"
 #include "symbol.h"
+#include "strdup.h"
 
 /* build a new string from a char* and a length
  * this will allocate a new buffer and strncpy n
@@ -117,6 +118,37 @@ unsigned int ic_string_destroy(struct ic_string *str, unsigned int free_str) {
     }
 
     return 1;
+}
+
+/* perform deep copy of string
+ *
+ * returns * on success
+ * returns 0 on error
+ */
+struct ic_string *ic_string_deep_copy(struct ic_string *str) {
+    struct ic_string *new_str = 0;
+
+    if (!str) {
+        puts("ic_string_deep_copy: str was null");
+        return 0;
+    }
+
+    new_str = calloc(1, sizeof(struct ic_string));
+    if (!new_str) {
+        puts("ic_string_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    new_str->backing.contents = ic_strdup(str->backing.contents);
+    if (!new_str->backing.contents) {
+        puts("ic_string_deep_copy: call to ic_strdup failed");
+        return 0;
+    }
+
+    new_str->used = str->used;
+    new_str->backing.len = str->backing.len;
+
+    return new_str;
 }
 
 /* returns backing character array

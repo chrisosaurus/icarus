@@ -157,10 +157,35 @@ void equality(void) {
     assert(1 == ic_string_destroy(str2, 1));
 }
 
+void deep_copy(void) {
+    struct ic_string *str1 = 0;
+    struct ic_string *str2 = 0;
+
+    str1 = ic_string_new("Hello world", 11);
+    assert(str1);
+
+    str2 = ic_string_deep_copy(str1);
+    assert(str1);
+
+    assert(str1 != str2);
+    assert(str1->used == str2->used);
+    assert(str1->backing.len == str2->backing.len);
+    assert(str1->backing.contents != str2->backing.contents);
+    assert(0 == strcmp(str1->backing.contents, str2->backing.contents));
+
+    str1->backing.contents[0] = 'Q';
+    assert(str1->backing.contents[0] == 'Q');
+    assert(str2->backing.contents[0] == 'H');
+
+    assert(1 == ic_string_destroy(str1, 1));
+    assert(1 == ic_string_destroy(str2, 1));
+}
+
 int main(void) {
     normal();
     empty_append();
     equality();
+    deep_copy();
     abnormal();
 
     return 0;
