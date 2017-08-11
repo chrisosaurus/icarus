@@ -2024,11 +2024,11 @@ struct ic_decl_func *ic_analyse_func_decl_instantiate_generic(struct ic_kludge *
     /* 3) resolve argument types (resolving type_arg through type_param) */
     /* TODO FIXME */
 
-    /* 4) mark instantiated */
-    new_fdecl->is_instantiated = 1;
-
-    /* 5) infer return type if needed */
+    /* 4) infer return type if needed */
     /* TODO FIXME */
+
+    /* 5) mark instantiated */
+    new_fdecl->is_instantiated = 1;
 
     /* 6) store in kludge */
     if (!ic_kludge_add_fdecl(kludge, new_fdecl)) {
