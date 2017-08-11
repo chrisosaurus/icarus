@@ -2057,12 +2057,15 @@ struct ic_decl_func *ic_analyse_func_decl_instantiate_generic(struct ic_kludge *
         }
     }
 
+    /* 3) resolve argument types (resolving type_arg through type_param) */
+    if (!ic_analyse_field_list("generic function instantiation", ic_symbol_contents(&(fdecl->name)), kludge, &(new_fdecl->type_params), &(new_fdecl->args))) {
+        puts("ic_analyse_func_decl_instantiate_generic: call to ic_analyse_field_list failed");
+        return 0;
+    }
+
     /* TODO FIXME implement func decl instantiation */
     puts("ic_analyse_func_decl_instantiate_generic: not yet implemented");
     return 0;
-
-    /* 3) resolve argument types (resolving type_arg through type_param) */
-    /* TODO FIXME */
 
     /* 4) infer return type if needed */
     /* TODO FIXME */
