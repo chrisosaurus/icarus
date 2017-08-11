@@ -177,6 +177,20 @@ unsigned int ic_expr_identifier_init(struct ic_expr_identifier *identifier, char
  */
 unsigned int ic_expr_identifier_destroy(struct ic_expr_identifier *identifier, unsigned int free_id);
 
+/* perform a deep copy of identifier
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_expr_identifier *ic_expr_identifier_deep_copy(struct ic_expr_identifier *id);
+
+/* perform a deep copy of identifier embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_identifier_deep_copy_embedded(struct ic_expr_identifier *from, struct ic_expr_identifier *to);
+
 /* get idenifier symbol
  *
  * returns ic_symbol * on success

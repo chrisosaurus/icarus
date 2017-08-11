@@ -623,6 +623,59 @@ unsigned int ic_expr_identifier_destroy(struct ic_expr_identifier *identifier, u
     return 1;
 }
 
+/* perform a deep copy of identifier
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_expr_identifier *ic_expr_identifier_deep_copy(struct ic_expr_identifier *id) {
+    struct ic_expr_identifier *new_id = 0;
+
+    if (!id) {
+        puts("ic_expr_identifier_deep_copy: id was null");
+        return 0;
+    }
+
+    new_id = calloc(1, sizeof(struct ic_expr_identifier));
+    if (!new_id) {
+        puts("ic_expr_identifier_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_expr_identifier_deep_copy_embedded(id, new_id)) {
+        puts("ic_expr_identifier_deep_copy: call to ic_expr_identifier_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_id;
+}
+
+/* perform a deep copy of identifier embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_identifier_deep_copy_embedded(struct ic_expr_identifier *from, struct ic_expr_identifier *to) {
+    if (!from) {
+        puts("ic_expr_identifier_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_expr_identifier_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    if (!ic_symbol_deep_copy_embedded(&(from->identifier), &(to->identifier))) {
+        puts("ic_expr_identifier_deep_copy_embedded: call to ic_symbol_deep_copy_embedded failed");
+        return 0;
+    }
+
+    to->permissions = from->permissions;
+
+    return 1;
+}
+
 /* get idenifier symbol
  *
  * returns ic_symbol * on success
@@ -1470,8 +1523,10 @@ unsigned int ic_expr_deep_copy_embedded(struct ic_expr *from, struct ic_expr *to
             break;
 
         case ic_expr_type_identifier:
-            puts("ic_expr_deep_copy_embedded: identifier: unimplemented");
-            return 0;
+            if (!ic_expr_identifier_deep_copy_embedded(&(from->u.id), &(to->u.id))) {
+                puts("ic_expr_deep_copy_embedded: identifier: call to ic_expr_identifier_deep_copy_embedded failed");
+                return 0;
+            }
             break;
 
         case ic_expr_type_constant:
