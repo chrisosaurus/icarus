@@ -385,8 +385,8 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_decl_func *
         return 0;
     }
 
-    /* if fdecl is type polymorphic */
-    if (ic_decl_func_type_params_length(fdecl) > 0) {
+    /* if fdecl is type polymorphic and not instantiated */
+    if (!ic_decl_func_is_instantiated(fdecl)) {
         str = ic_decl_func_sig_param(fdecl);
         if (!str) {
             puts("ic_kludge_add_fdecl: call to ic_decl_func_sig_param failed");

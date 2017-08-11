@@ -7,6 +7,7 @@
 #include "../parse/permissions.h"
 #include "data/slot.h"
 #include "helpers.h"
+#include "analyse.h"
 
 /* mark this expr as being on the left-hand side of an assignment
  *
@@ -2024,16 +2025,22 @@ struct ic_decl_func *ic_analyse_func_decl_instantiate_generic(struct ic_kludge *
     /* TODO FIXME */
 
     /* 4) mark instantiated */
-    /* TODO FIXME */
+    new_fdecl->is_instantiated = 1;
 
     /* 5) infer return type if needed */
     /* TODO FIXME */
 
     /* 6) store in kludge */
-    /* TODO FIXME */
+    if (!ic_kludge_add_fdecl(kludge, new_fdecl)) {
+        puts("ic_analyse_func_decl_instantiate_generic: call to ic_kludge_add_fdecl failed");
+        return 0;
+    }
 
     /* 7) perform analysis on copy (resolving type_arg through type_params) */
-    /* TODO FIXME */
+    if (!ic_analyse_decl_func(kludge, new_fdecl)) {
+        puts("ic_analyse_func_decl_instantiate_generic: call to ic_analyse_decl_func failed");
+        return 0;
+    }
 
     /* 8) return * */
     return new_fdecl;
