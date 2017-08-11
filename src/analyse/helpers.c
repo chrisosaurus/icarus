@@ -2017,13 +2017,13 @@ struct ic_decl_func *ic_analyse_func_decl_instantiate_generic(struct ic_kludge *
     puts("ic_analyse_func_decl_instantiate_generic: not yet implemented");
     return 0;
 
-    /* 2) mark instantiated */
+    /* 2) bind each type_arg to matching type_param */
     /* TODO FIXME */
 
-    /* 3) bind each type_arg to matching type_param */
+    /* 3) resolve argument types (resolving type_arg through type_param) */
     /* TODO FIXME */
 
-    /* 4) resolve argument types (resolving type_arg through type_param) */
+    /* 4) mark instantiated */
     /* TODO FIXME */
 
     /* 5) infer return type if needed */
