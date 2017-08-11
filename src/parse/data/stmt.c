@@ -83,6 +83,58 @@ unsigned int ic_stmt_ret_destroy(struct ic_stmt_ret *ret, unsigned int free_ret)
     return 1;
 }
 
+/* perform a deep copy of ret
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_stmt_ret *ic_stmt_ret_deep_copy(struct ic_stmt_ret *ret) {
+    struct ic_stmt_ret *new_ret = 0;
+
+    if (!ret) {
+        puts("ic_stmt_ret_deep_copy: ret was null");
+        return 0;
+    }
+
+    new_ret = calloc(1, sizeof(struct ic_stmt_ret));
+    if (!new_ret) {
+        puts("ic_stmt_ret_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_stmt_ret_deep_copy_embedded(ret, new_ret)) {
+        puts("ic_stmt_ret_deep_copy: call to ic_stmt_ret_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_ret;
+}
+
+/* perform a deep copy of ret embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_ret_deep_copy_embedded(struct ic_stmt_ret *from, struct ic_stmt_ret *to) {
+    if (!from) {
+        puts("ic_stmt_ret_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_stmt_ret_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    to->ret = ic_expr_deep_copy(from->ret);
+    if (!to->ret) {
+        puts("ic_stmt_ret_deep_copy_embedded: call to ic_expr_deep_copy failed");
+        return 0;
+    }
+
+    return 1;
+}
+
 /* get the ic_expr * contained within
  *
  * returns pointer on success
@@ -1740,8 +1792,10 @@ unsigned int ic_stmt_deep_copy_embedded(struct ic_stmt *from, struct ic_stmt *to
 
     switch (from->tag) {
         case ic_stmt_type_ret:
-            puts("ic_stmt_deep_copy_embedded: ret: unimplemented");
-            return 0;
+            if (!ic_stmt_ret_deep_copy_embedded(&(from->u.ret), &(to->u.ret))) {
+                puts("ic_stmt_deep_copy_embedded: ret: call to ic_stmt_ret_deep_copy_embedded failed");
+                return 0;
+            }
             break;
 
         case ic_stmt_type_let:

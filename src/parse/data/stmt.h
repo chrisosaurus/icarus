@@ -39,6 +39,20 @@ unsigned int ic_stmt_ret_init(struct ic_stmt_ret *ret);
  */
 unsigned int ic_stmt_ret_destroy(struct ic_stmt_ret *ret, unsigned int free_ret);
 
+/* perform a deep copy of ret
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_stmt_ret *ic_stmt_ret_deep_copy(struct ic_stmt_ret *ret);
+
+/* perform a deep copy of ret embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_ret_deep_copy_embedded(struct ic_stmt_ret *from, struct ic_stmt_ret *to);
+
 /* get the ic_expr * contained within
  *
  * returns pointer on success
