@@ -104,16 +104,36 @@ struct ic_symbol *ic_symbol_deep_copy(struct ic_symbol *sym) {
         return 0;
     }
 
-    new_sym->internal.backing.contents = ic_strdup(sym->internal.backing.contents);
-    if (!new_sym->internal.backing.contents) {
-        puts("ic_symbol_deep_copy: call to ic_strdup failed");
+    if (!ic_symbol_deep_copy_embedded(sym, new_sym)) {
+        puts("ic_symbol_deep_copy: call to ic_symbol_deep_copy_embedded failed");
         return 0;
     }
 
-    new_sym->internal.used = sym->internal.used;
-    new_sym->internal.backing.len = sym->internal.backing.len;
-
     return new_sym;
+}
+
+/* perform deep copy of symbol embedded within object
+ *
+ * returns 1 on success
+ * returns 0 on error
+ */
+unsigned int ic_symbol_deep_copy_embedded(struct ic_symbol *from, struct ic_symbol *to) {
+    if (!from) {
+        puts("ic_symbol_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_symbol_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    if (!ic_string_deep_copy_embedded(&(from->internal), &(to->internal))) {
+        puts("ic_symbol_deep_copy_embedded: call to ic_string_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return 1;
 }
 
 /* returns backing character array

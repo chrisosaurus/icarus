@@ -45,6 +45,13 @@ unsigned int ic_symbol_destroy(struct ic_symbol *sym, unsigned int free_sym);
  */
 struct ic_symbol *ic_symbol_deep_copy(struct ic_symbol *sym);
 
+/* perform deep copy of symbol embedded within object
+ *
+ * returns 1 on success
+ * returns 0 on error
+ */
+unsigned int ic_symbol_deep_copy_embedded(struct ic_symbol *from, struct ic_symbol *to);
+
 /* returns backing character array
  * the caller is NOT allowed to mutate this character array directly
  *

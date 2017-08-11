@@ -73,6 +73,13 @@ unsigned int ic_string_destroy(struct ic_string *str, unsigned int free_str);
  */
 struct ic_string *ic_string_deep_copy(struct ic_string *str);
 
+/* perform deep copy of string embedded within object
+ *
+ * returns 1 on success
+ * returns 0 on error
+ */
+unsigned int ic_string_deep_copy_embedded(struct ic_string *from, struct ic_string *to);
+
 /* returns backing character array
  * the caller is NOT allowed to mutate this character array directly
  *

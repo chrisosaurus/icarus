@@ -139,16 +139,41 @@ struct ic_string *ic_string_deep_copy(struct ic_string *str) {
         return 0;
     }
 
-    new_str->backing.contents = ic_strdup(str->backing.contents);
-    if (!new_str->backing.contents) {
-        puts("ic_string_deep_copy: call to ic_strdup failed");
+    if (!ic_string_deep_copy_embedded(str, new_str)) {
+        puts("ic_string_deep_copy: call to ic_string_deep_copy_embedded failed");
         return 0;
     }
 
-    new_str->used = str->used;
-    new_str->backing.len = str->backing.len;
-
     return new_str;
+
+}
+
+/* perform deep copy of string embedded within object
+ *
+ * returns 1 on success
+ * returns 0 on error
+ */
+unsigned int ic_string_deep_copy_embedded(struct ic_string *from, struct ic_string *to) {
+    if (!from) {
+        puts("ic_string_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_string_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    to->backing.contents = ic_strdup(from->backing.contents);
+    if (!to->backing.contents) {
+        puts("ic_string_deep_copy_embedded: call to ic_strdup failed");
+        return 0;
+    }
+
+    to->used = from->used;
+    to->backing.len = from->backing.len;
+
+    return 1;
 }
 
 /* returns backing character array
