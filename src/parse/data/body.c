@@ -109,6 +109,54 @@ unsigned int ic_body_destroy(struct ic_body *body, unsigned int free_body) {
     return 1;
 }
 
+/* perform a deep copy of a body
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_body *ic_body_deep_copy(struct ic_body *body) {
+    struct ic_body *new_body = 0;
+
+    if (!body) {
+        puts("ic_body_deep_copy: body was null");
+        return 0;
+    }
+
+    new_body = calloc(1, sizeof(struct ic_body));
+    if (!new_body) {
+        puts("ic_body_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_body_deep_copy_embedded(body, new_body)) {
+        puts("ic_body_deep_copy: call to ic_body_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_body;
+}
+
+/* perform a deep copy of a body embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_body_deep_copy_embedded(struct ic_body *from, struct ic_body *to) {
+    if (!from) {
+        puts("ic_body_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_body_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    /* TODO FIXME implement */
+    puts("ic_body_deep_copy_embedded: unimplemented");
+    return 0;
+}
+
 /* returns item at offset i on success
  * returns 0 on failure
  */

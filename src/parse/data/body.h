@@ -47,6 +47,20 @@ unsigned int ic_body_init(struct ic_body *body);
  */
 unsigned int ic_body_destroy(struct ic_body *body, unsigned int free_body);
 
+/* perform a deep copy of a body
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_body *ic_body_deep_copy(struct ic_body *body);
+
+/* perform a deep copy of a body embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_body_deep_copy_embedded(struct ic_body *from, struct ic_body *to);
+
 /* returns item at offset i on success
  * returns 0 on failure
  */
