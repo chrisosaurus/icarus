@@ -52,6 +52,20 @@ unsigned int ic_field_init(struct ic_field *field, char *name_src, unsigned int 
  */
 unsigned int ic_field_destroy(struct ic_field *field, unsigned int free_field);
 
+/* perform deep copy of field
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_field *ic_field_deep_copy(struct ic_field *field);
+
+/* perform deep copy of field embedded within object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_field_deep_copy_embedded(struct ic_field *from, struct ic_field *to);
+
 /* print the field to stdout */
 void ic_field_print(FILE *fd, struct ic_field *field);
 

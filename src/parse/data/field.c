@@ -101,6 +101,66 @@ unsigned int ic_field_destroy(struct ic_field *field, unsigned int free_field) {
     return 1;
 }
 
+/* perform deep copy of field
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_field *ic_field_deep_copy(struct ic_field *field) {
+    struct ic_field *new_field = 0;
+
+    if (!field) {
+        puts("ic_field_deep_copy: field was null");
+        return 0;
+    }
+
+    new_field = calloc(1, sizeof(struct ic_field));
+    if (!new_field) {
+        puts("ic_field_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_field_deep_copy_embedded(field, new_field)) {
+        puts("ic_field_deep_copy: call to ic_field_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_field;
+}
+
+/* perform deep copy of field embedded within object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_field_deep_copy_embedded(struct ic_field *from, struct ic_field *to) {
+    if (!from) {
+        puts("ic_field_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_field_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    if (!ic_symbol_deep_copy_embedded(&(from->name), &(to->name))) {
+        puts("ic_field_deep_copy_embedded: call to ic_symbol_deep_copy_embedded failed");
+        return 0;
+    }
+
+    to->type = ic_type_ref_deep_copy(from->type);
+    if (!to->type) {
+        puts("ic_field_deep_copy_embedded: call to ic_type_ref_deep_copy failed");
+        return 0;
+    }
+
+    to->permissions = from->permissions;
+    to->assigned_to = from->assigned_to;
+
+    return 1;
+}
+
 /* print the field to stdout */
 void ic_field_print(FILE *fd, struct ic_field *field) {
     char *perm_str;
