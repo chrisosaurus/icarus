@@ -177,7 +177,7 @@ unsigned int ic_body_deep_copy_embedded(struct ic_body *from, struct ic_body *to
             return 0;
         }
 
-        if (!ic_body_append(to, new_stmt)) {
+        if (-1 == ic_body_append(to, new_stmt)) {
             puts("ic_body_deep_copy_embedded: call to ic_body_append failed");
             return 0;
         }
