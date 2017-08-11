@@ -142,6 +142,11 @@ struct ic_body *ic_body_deep_copy(struct ic_body *body) {
  * returns 0 on failure
  */
 unsigned int ic_body_deep_copy_embedded(struct ic_body *from, struct ic_body *to) {
+    unsigned int i = 0;
+    unsigned int len = 0;
+    struct ic_stmt *stmt = 0;
+    struct ic_stmt *new_stmt = 0;
+
     if (!from) {
         puts("ic_body_deep_copy_embedded: from was null");
         return 0;
@@ -152,9 +157,33 @@ unsigned int ic_body_deep_copy_embedded(struct ic_body *from, struct ic_body *to
         return 0;
     }
 
-    /* TODO FIXME implement */
-    puts("ic_body_deep_copy_embedded: unimplemented");
-    return 0;
+    to->scope = 0;
+    if (from->scope) {
+        puts("ic_body_deep_copy_embedded: from->scope was set, implementation error");
+        return 0;
+    }
+
+    len = ic_body_length(from);
+    for (i=0; i<len; ++i) {
+        stmt = ic_body_get(from, i);
+        if (!stmt) {
+            puts("ic_body_deep_copy_embedded: call to ic_body_get failed");
+            return 0;
+        }
+
+        new_stmt = ic_stmt_deep_copy(stmt);
+        if (!new_stmt) {
+            puts("ic_body_deep_copy_embedded: call to ic_stmt_deep_copy failed");
+            return 0;
+        }
+
+        if (!ic_body_append(to, new_stmt)) {
+            puts("ic_body_deep_copy_embedded: call to ic_body_append failed");
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
 /* returns item at offset i on success
