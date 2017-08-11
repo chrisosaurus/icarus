@@ -20,6 +20,13 @@
  */
 unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_pvector *type_params, struct ic_pvector *fields);
 
+/* iterate through a type_ref list resolving each type_ref to a decl_type
+ *
+ * returns 1 on success
+ * returns 0 on error
+ */
+unsigned int ic_analyse_type_ref_list(struct ic_kludge *kludge, struct ic_pvector *type_refs);
+
 /* perform analysis on body
  * this will iterate through each statement and perform analysis
  *

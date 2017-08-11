@@ -887,6 +887,12 @@ struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_
         }
         /* if fcall has generic arguments */
     } else if (ic_expr_func_call_type_refs_length(fcall) > 0) {
+        /* first resolve all provided type args */
+        if (!ic_analyse_type_ref_list(kludge, &(fcall->type_refs))) {
+            puts("ic_analyse_infer_fcall: call to ic_analyse_type_ref_list failed");
+            return 0;
+        }
+
         /* otherwise work out the fdecl */
         str = ic_analyse_fcall_str(kludge, scope, fcall);
         if (!str) {
@@ -1990,6 +1996,11 @@ EXIT:
  */
 struct ic_decl_func *ic_analyse_func_decl_instantiate_generic(struct ic_kludge *kludge, struct ic_decl_func *fdecl, struct ic_expr_func_call *fcall) {
     struct ic_decl_func *new_fdecl = 0;
+    unsigned int i = 0;
+    unsigned int len = 0;
+    struct ic_type_param *type_param = 0;
+    struct ic_type_ref *type_arg = 0;
+    struct ic_decl_type *type_arg_decl = 0;
 
     if (!kludge) {
         puts("ic_analyse_func_decl_instantiate_generic: kludge was null");
@@ -2013,12 +2024,42 @@ struct ic_decl_func *ic_analyse_func_decl_instantiate_generic(struct ic_kludge *
         return 0;
     }
 
+    /* 2) bind each type_arg to matching type_param */
+    len = ic_decl_func_type_params_length(new_fdecl);
+    if (len != ic_expr_func_call_type_refs_length(fcall)) {
+        puts("ic_analyse_func_decl_instantiate_generic: error: number of provided type arguments does not match number of expected type params");
+        printf("ic_analyse_func_decl_instantiate_generic: I was given '%d' type arguments, I expected '%d' type parameters\n", ic_expr_func_call_type_refs_length(fcall), len);
+        return 0;
+    }
+
+    for (i=0; i<len; ++i) {
+        type_param = ic_decl_func_type_params_get(new_fdecl, i);
+        if (!type_param) {
+            puts("ic_analyse_func_decl_instantiate_generic: call to ic_decl_func_type_params_get failed");
+            return 0;
+        }
+
+        type_arg = ic_expr_func_call_get_type_ref(fcall, i);
+        if (!type_arg) {
+            puts("ic_analyse_func_decl_instantiate_generic: call to ic_expr_func_call_get_type_ref failed");
+            return 0;
+        }
+
+        type_arg_decl = ic_type_ref_get_type_decl(type_arg);
+        if (!type_arg_decl) {
+            puts("ic_analyse_func_decl_instantiate_generic: call to ic_type_ref_get_type_decl failed");
+            return 0;
+        }
+
+        if (!ic_type_param_set(type_param, type_arg_decl)) {
+            puts("ic_analyse_func_decl_instantiate_generic: call to ic_type_param_set failed");
+            return 0;
+        }
+    }
+
     /* TODO FIXME implement func decl instantiation */
     puts("ic_analyse_func_decl_instantiate_generic: not yet implemented");
     return 0;
-
-    /* 2) bind each type_arg to matching type_param */
-    /* TODO FIXME */
 
     /* 3) resolve argument types (resolving type_arg through type_param) */
     /* TODO FIXME */
@@ -2043,5 +2084,52 @@ struct ic_decl_func *ic_analyse_func_decl_instantiate_generic(struct ic_kludge *
 
     /* 8) return * */
     return new_fdecl;
+}
 
+/* iterate through a type_ref list resolving each type_ref to a decl_type
+ *
+ * returns 1 on success
+ * returns 0 on error
+ */
+unsigned int ic_analyse_type_ref_list(struct ic_kludge *kludge, struct ic_pvector *type_refs) {
+    unsigned int i = 0;
+    unsigned int len = 0;
+    struct ic_type_ref *tref = 0;
+    struct ic_decl_type *tdecl = 0;
+
+    if (!kludge) {
+        puts("ic_anlyse_type_ref_list: kludge was null");
+        return 0;
+    }
+
+    if (!type_refs) {
+        puts("ic_anlyse_type_ref_list: type_refs was null");
+        return 0;
+    }
+
+    /* FIXME TODO below we use kludge_get_decl_type
+     * this will resolve every type_ref globally, rather than locally
+     * this prevents our type_ref from referencing a local type_param
+     * this will need to be fixed
+     */
+
+    len = ic_pvector_length(type_refs);
+    for (i=0; i<len; ++i) {
+        tref = ic_pvector_get(type_refs, i);
+        if (!tref) {
+            puts("ic_anlyse_type_ref_list: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        /* get tdecl
+         * this will set tdecl on tref
+         */
+        tdecl = ic_kludge_get_decl_type_from_typeref(kludge, tref);
+        if (!tdecl) {
+            puts("ic_anlyse_type_ref_list: call to ic_kludge_get_decl_type_from_typeref failed");
+            return 0;
+        }
+    }
+
+    return 1;
 }
