@@ -2004,6 +2004,17 @@ struct ic_decl_func *ic_analyse_func_decl_instantiate_generic(struct ic_kludge *
         return 0;
     }
 
+    /* TODO FIXME
+     * 1) deep copy fdecl
+     * 2) mark instantiated
+     * 3) bind each type_arg to matching type_param
+     * 4) resolve argument types (resolving type_arg through type_param)
+     * 5) infer return type if needed
+     * 6) store in kludge
+     * 7) perform analysis on copy (resolving type_arg through type_params)
+     * 8) return *
+     */
+
     /* TODO FIXME implement func decl instantiation */
     puts("ic_analyse_func_decl_instantiate_generic: not yet implemented");
     return 0;
