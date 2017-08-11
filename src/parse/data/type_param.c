@@ -81,6 +81,59 @@ unsigned int ic_type_param_destroy(struct ic_type_param *tparam, unsigned int fr
     return 1;
 }
 
+/* perform a deep copy of a type_param
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type_param *ic_type_param_deep_copy(struct ic_type_param *tparam) {
+    struct ic_type_param *new_tparam = 0;
+
+    if (!tparam) {
+        puts("ic_type_param_deep_copy: tparam was null");
+        return 0;
+    }
+
+    new_tparam = calloc(1, sizeof(struct ic_type_param));
+    if (!new_tparam) {
+        puts("ic_type_param_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_type_param_deep_copy_embedded(tparam, new_tparam)) {
+        puts("ic_type_param_deep_copy: call to ic_type_param_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_tparam;
+}
+
+/* perform a deep copy of a type_param embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_type_param_deep_copy_embedded(struct ic_type_param *from, struct ic_type_param *to) {
+    if (!from) {
+        puts("ic_type_param_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_type_param_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    if (!ic_symbol_deep_copy_embedded(&(from->name), &(to->name))) {
+        puts("ic_type_param_deep_copy_embedded: call to ic_symbol_deep_copy_embedded failed");
+        return 0;
+    }
+
+    to->tdecl = from->tdecl;
+
+    return 1;
+}
+
 /* get pointer to internal name
  *
  * returns * on success

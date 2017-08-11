@@ -39,6 +39,20 @@ unsigned int ic_type_param_init(struct ic_type_param *tparam, char *name_src, un
  */
 unsigned int ic_type_param_destroy(struct ic_type_param *tparam, unsigned int free_tparam);
 
+/* perform a deep copy of a type_param
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type_param *ic_type_param_deep_copy(struct ic_type_param *tparam);
+
+/* perform a deep copy of a type_param embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_type_param_deep_copy_embedded(struct ic_type_param *from, struct ic_type_param *to);
+
 /* get pointer to internal name
  *
  * returns * on success
