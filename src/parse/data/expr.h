@@ -443,6 +443,20 @@ unsigned int ic_expr_faccessify(struct ic_expr *expr, struct ic_expr *left, stru
  */
 unsigned int ic_expr_destroy(struct ic_expr *expr, unsigned int free_expr);
 
+/* perform a deep copy of an expr
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_expr *ic_expr_deep_copy(struct ic_expr *expr);
+
+/* perform a deep copy of an expr embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_deep_copy_embedded(struct ic_expr *from, struct ic_expr *to);
+
 /* return pointer to fcall within,
  * will only succeed if expr is of the correct type
  *

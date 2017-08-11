@@ -1414,12 +1414,85 @@ unsigned int ic_expr_destroy(struct ic_expr *expr, unsigned int free_expr) {
             break;
 
         default:
+            puts("ic_expr_destroy: impossible tag");
+            return 0;
             break;
     }
 
     /* if asked */
     if (free_expr) {
         free(expr);
+    }
+
+    return 1;
+}
+
+/* perform a deep copy of an expr
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_expr *ic_expr_deep_copy(struct ic_expr *expr) {
+    struct ic_expr *new_expr = 0;
+
+    if (!expr) {
+        puts("ic_expr_deep_copy: expr was null");
+        return 0;
+    }
+
+    new_expr = calloc(1, sizeof(struct ic_expr));
+    if (!new_expr) {
+        puts("ic_expr_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_expr_deep_copy_embedded(expr, new_expr)) {
+        puts("ic_expr_deep_copy: call to ic_expr_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_expr;
+}
+
+/* perform a deep copy of an expr embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_deep_copy_embedded(struct ic_expr *from, struct ic_expr *to) {
+    to->tag = from->tag;
+
+    /* dispatch on type */
+    switch (from->tag) {
+        case ic_expr_type_func_call:
+            puts("ic_expr_deep_copy_embedded: func_call: unimplemented");
+            return 0;
+            break;
+
+        case ic_expr_type_identifier:
+            puts("ic_expr_deep_copy_embedded: identifier: unimplemented");
+            return 0;
+            break;
+
+        case ic_expr_type_constant:
+            puts("ic_expr_deep_copy_embedded: constant: unimplemented");
+            return 0;
+            break;
+
+        case ic_expr_type_operator:
+            puts("ic_expr_deep_copy_embedded: operator: unimplemented");
+            return 0;
+            break;
+
+        case ic_expr_type_field_access:
+            puts("ic_expr_deep_copy_embedded: field_access: unimplemented");
+            return 0;
+            break;
+
+        default:
+            puts("ic_expr_deep_copy_embedded: impossible tag");
+            return 0;
+            break;
     }
 
     return 1;
