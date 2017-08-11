@@ -354,17 +354,12 @@ sub cleanup {
   return $str;
 }
 
-sub run {
+sub run_2c {
   my $input = shift // die;
   my $expected = shift // die;
   my $expect_failure = shift // die;
+  my $in_tmp_file = shift // die;
   die if @_;
-
-  my $in_tmp_file = `mktemp TESTING_BACKENDS_OUTPUT_EQUIVALENCE_XXX.ic`;
-  chomp($in_tmp_file);
-  open( my $fh, ">", "$in_tmp_file" ) or die "failed to open tmp file '$in_tmp_file'";
-  print $fh $input;
-  close $fh;
 
   # using mktemp here just to get name
   my $out_tmp_file = `mktemp TESTING_BACKENDS_OUTPUT_EQUIVALENCE_XXX.c`;
@@ -375,6 +370,11 @@ sub run {
   my $output = `$path 2c -i $in_tmp_file -o $out_tmp_file`;
   my $exit_status = $?;
 
+  if( $expect_failure == 1 && $exit_status != 0 ){
+    # failed as expected, okay
+    `rm -f $out_tmp_file`;
+    return;
+  }
 
   if( $exit_status != 0 ){
     `rm $out_tmp_file`;
@@ -387,6 +387,7 @@ sub run {
   $output = `cc $out_tmp_file`;
   $exit_status = $?;
 
+  # compiling the C should never fail, regardless of expectation
   if( $exit_status != 0 ){
     say "cc exit status was not as expected";
     say "=======\nGot:\n$output";
@@ -418,10 +419,18 @@ sub run {
   if( $expect_failure == 0 && $exit_status != 0 ){
       die "2c exit_status was '$exit_status', expected 0";
   }
+}
+
+sub run_pancake {
+  my $input = shift // die;
+  my $expected = shift // die;
+  my $expect_failure = shift // die;
+  my $in_tmp_file = shift // die;
+  die if @_;
 
   # run program through pancake and capture output
   my $output_pancake = `$path pancake -i $in_tmp_file`;
-  $exit_status = $?;
+  my $exit_status = $?;
 
   if( $output_pancake ne $expected ){
       say "Pancake output was not as expected";
@@ -440,12 +449,27 @@ sub run {
   if( $expect_failure == 0 && $exit_status != 0 ){
       die "pancake exit_status was '$exit_status', expected 0";
   }
+}
+
+sub run {
+  my $input = shift // die;
+  my $expected = shift // die;
+  my $expect_failure = shift // die;
+  die if @_;
+
+  my $in_tmp_file = `mktemp TESTING_BACKENDS_OUTPUT_EQUIVALENCE_XXX.ic`;
+  chomp($in_tmp_file);
+  open( my $fh, ">", "$in_tmp_file" ) or die "failed to open tmp file '$in_tmp_file'";
+  print $fh $input;
+  close $fh;
+
+  run_2c $input, $expected, $expect_failure, $in_tmp_file;
+  run_pancake $input, $expected, $expect_failure, $in_tmp_file;
 
   `rm $in_tmp_file`;
 
   say "test_backends_output_equivalence successs";
   say "=======\nGot correct output:\n$expected";
-
 }
 
 for my $case (@$cases) {
