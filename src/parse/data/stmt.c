@@ -341,7 +341,7 @@ unsigned int ic_stmt_let_set_inferred_type(struct ic_stmt_let *let, struct ic_de
     }
 
     if (!ic_type_ref_set_type_decl(let->tref, type)) {
-        puts("ic_stmt_let_set_declared_type: call to ic_type_ref_set_type_decl failed");
+        puts("ic_stmt_let_set_inferred_type: call to ic_type_ref_set_type_decl failed");
         return 0;
     }
 

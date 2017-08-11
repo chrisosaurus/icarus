@@ -624,6 +624,12 @@ struct ic_decl_type *ic_kludge_get_decl_type_from_typeref(struct ic_kludge *klud
                 return 0;
             }
 
+            /* set our found decl on the provided type_ref */
+            if (!ic_type_ref_set_type_decl(type_ref, tdecl)) {
+                puts("ic_kludge_get_decl_type_from_typeref: call to ic_type_ref_set_type_decl failed");
+                return 0;
+            }
+
             return tdecl;
             break;
 

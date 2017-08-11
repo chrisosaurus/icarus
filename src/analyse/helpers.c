@@ -719,11 +719,6 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                         goto ERROR;
                     }
 
-                    if (!ic_type_ref_set_type_decl(field->type, field_type)) {
-                        puts("ic_analyse_body: match: call to ic_type_ref_set_type_decl failed");
-                        goto ERROR;
-                    }
-
                     fetched_field_type = ic_decl_type_get_field_type(type, field_name_char);
                     if (!fetched_field_type) {
                         puts("ic_analyse_body: match: call to ic_decl_type_get_field_type failed");
@@ -1577,10 +1572,20 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
         case ic_type_ref_unknown:
             /* no declared let type, just use inferred type */
             type = init_type;
+
+            /* set our tref */
+            if (!ic_stmt_let_set_inferred_type(let, type)) {
+                puts("ic_analyse_let: call to ic_stmt_let_inferred_type failed");
+                return 0;
+            }
             break;
 
         case ic_type_ref_symbol:
             /* type declared, compare */
+
+            /* resolve symbol to tdecl
+             * this will set let->tref for us
+             */
             type = ic_kludge_get_decl_type_from_typeref(kludge, let->tref);
             if (!type) {
                 puts("ic_analyse_let: failed to find type from typeref");
@@ -1606,12 +1611,6 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
             puts("ic_analyse_let: impossible tref->tag");
             return 0;
             break;
-    }
-
-    /* either way we set the type we now have for this let */
-    if (!ic_stmt_let_set_inferred_type(let, type)) {
-        puts("ic_analyse_let: call to ic_stmt_let_inferred_type failed");
-        return 0;
     }
 
     /*
