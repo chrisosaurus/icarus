@@ -120,6 +120,13 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
  */
 struct ic_decl_func *ic_decl_func_deep_copy(struct ic_decl_func *fdecl);
 
+/* deep-copy this fdecl embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_func_deep_copy_embedded(struct ic_decl_func *from, struct ic_decl_func *to);
+
 /* get is_instantiated
  *
  * for a non-generic function this will be true (1)

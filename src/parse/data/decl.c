@@ -286,6 +286,27 @@ struct ic_decl_func *ic_decl_func_deep_copy(struct ic_decl_func *fdecl) {
     return 0;
 }
 
+/* deep-copy this fdecl embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_func_deep_copy_embedded(struct ic_decl_func *from, struct ic_decl_func *to) {
+    if (!from) {
+        puts("ic_decl_func_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_decl_func_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    /* TODO FIXME implement */
+    puts("ic_decl_func_deep_copy:_embedded unimplemented");
+    return 0;
+}
+
 /* get is_instantiated
  *
  * for a non-generic function this will be true (1)
