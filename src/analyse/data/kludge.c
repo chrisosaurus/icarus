@@ -327,7 +327,7 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *
             return 0;
         }
 
-        /* insert into dict tname
+        /* insert generic name into dict tname linking to this decl
          * returns 0 on failure
          */
         if (!ic_dict_insert(&(kludge->dict_tname), str, tdecl)) {
@@ -402,7 +402,7 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_decl_func *
             return 0;
         }
 
-        /* insert into dict fsig
+        /* insert generic name into dict fsig
          * returns 0 on failure
          */
         if (!ic_dict_insert(&(kludge->dict_fsig), str, fdecl)) {
