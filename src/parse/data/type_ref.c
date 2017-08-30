@@ -163,10 +163,11 @@ unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_typ
             break;
 
         case ic_type_ref_param:
-            /* FIXME TODO what to do here ? */
+            /* type param is owned by enclosing function/type */
             break;
 
         case ic_type_ref_resolved:
+            /* type decl is owned by enclosing function/type */
             /* decl_type is freed elsewhere */
             break;
 
@@ -441,12 +442,11 @@ unsigned int ic_type_ref_set_type_decl(struct ic_type_ref *type, struct ic_decl_
             break;
 
         case ic_type_ref_param:
-            puts("ic_type_ref_set_symbol: type was already a param");
-            return 0;
+            /* type_param can be overwritten with tdecl */
             break;
 
         case ic_type_ref_resolved:
-            puts("ic_type_ref_set_symbol: type was already resolved");
+            puts("ic_type_ref_set_type_decl: type was already resolved");
             return 0;
             break;
 
@@ -541,12 +541,12 @@ unsigned int ic_type_ref_set_type_param(struct ic_type_ref *type, struct ic_type
             break;
 
         case ic_type_ref_param:
-            puts("ic_type_ref_set_symbol: type was already a param");
+            puts("ic_type_ref_set_type_param: type was already a param");
             return 0;
             break;
 
         case ic_type_ref_resolved:
-            puts("ic_type_ref_set_symbol: type was already resolved");
+            puts("ic_type_ref_set_type_param: type was already resolved");
             return 0;
             break;
 
@@ -684,6 +684,86 @@ unsigned int ic_type_ref_type_args_length(struct ic_type_ref *type) {
 
     len = ic_pvector_length(&(type->type_args));
     return len;
+}
+
+/* return the name of this type as char*
+ * this char* is still owned by this type_ref or the underlying type_decl
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+char * ic_type_ref_get_type_name_ch(struct ic_type_ref *type) {
+    char *str = 0;
+    struct ic_symbol *sym = 0;
+
+    if (!type) {
+        puts("ic_type_ref_get_type_name_ch: type was null");
+        return 0;
+    }
+
+    sym = ic_type_ref_get_type_name(type);
+    if (!sym) {
+        puts("ic_type_ref_get_type_name_ch: call to ic_type_ref_get_type_name failed");
+        return 0;
+    }
+
+    str = ic_symbol_contents(sym);
+    if (!str) {
+        puts("ic_type_ref_get_type_name_ch: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    return str;
+}
+
+/* return the name of this type as symbol*
+ * this symbol* is still owned by this type_ref or the underlying type_decl
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol * ic_type_ref_get_type_name(struct ic_type_ref *type) {
+    struct ic_symbol *sym = 0;
+    struct ic_decl_type *tdecl = 0;
+
+    if (!type) {
+        puts("ic_type_ref_get_type_name: type was null");
+        return 0;
+    }
+
+
+    switch (type->tag) {
+        case ic_type_ref_unknown:
+            puts("ic_type_ref_get_type_name: ic_type_ref_unknown not supported");
+            return 0;
+            break;
+
+        case ic_type_ref_symbol:
+            sym = &(type->u.sym);
+            return sym;
+            break;
+
+        case ic_type_ref_param:
+            puts("ic_type_ref_get_type_name: ic_type_ref_param not supported");
+            return 0;
+            break;
+
+        case ic_type_ref_resolved:
+            tdecl = type->u.tdecl;
+            sym = ic_decl_type_get_name(tdecl);
+            if (!sym) {
+                puts("ic_type_ref_get_type_name: call to ic_decl_type_get_name failed");
+                return 0;
+            }
+
+            return sym;
+            break;
+
+        default:
+            puts("ic_type_ref_get_type_name: impossible type ref tag");
+            return 0;
+            break;
+    }
 }
 
 /* print this this type */

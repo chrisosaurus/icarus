@@ -184,6 +184,22 @@ struct ic_type_ref *ic_type_ref_type_args_get(struct ic_type_ref *type, unsigned
  */
 unsigned int ic_type_ref_type_args_length(struct ic_type_ref *type);
 
+/* return the name of this type as char*
+ * this char* is still owned by this type_ref or the underlying type_decl
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+char * ic_type_ref_get_type_name_ch(struct ic_type_ref *type);
+
+/* return the name of this type as symbol*
+ * this symbol* is still owned by this type_ref or the underlying type_decl
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol * ic_type_ref_get_type_name(struct ic_type_ref *type);
+
 /* print this this type */
 void ic_type_ref_print(FILE *fd, struct ic_type_ref *type);
 

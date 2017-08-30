@@ -375,6 +375,7 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *
  */
 unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_decl_func *fdecl) {
     char *str = 0;
+    unsigned int fake_indent = 1;
 
     if (!kludge) {
         puts("ic_kludge_add_fdecl: kludge was null");
@@ -396,6 +397,8 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_decl_func *
         /* check for exists first to aid diagnostics */
         if (ic_dict_exists(&(kludge->dict_fsig), str)) {
             printf("ic_kludge_add_fdecl: function signature '%s' already exists on this kludge\n", str);
+            puts("ic_kludge_add_fdecl: was trying to insert:");
+            ic_decl_func_print(stdout, fdecl, &fake_indent);
             return 0;
         }
 
@@ -419,6 +422,8 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_decl_func *
         /* check for exists first to aid diagnostics */
         if (ic_dict_exists(&(kludge->dict_fsig), str)) {
             printf("ic_kludge_add_fdecl: function signature '%s' already exists on this kludge\n", str);
+            puts("ic_kludge_add_fdecl: was trying to insert:");
+            ic_decl_func_print(stdout, fdecl, &fake_indent);
             return 0;
         }
 

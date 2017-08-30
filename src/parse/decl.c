@@ -663,6 +663,8 @@ struct ic_decl *ic_parse_decl_func_header(struct ic_token_list *token_list) {
     struct ic_decl_func *fdecl = 0;
     /* current token */
     struct ic_token *token = 0;
+    /* type_ref for our return type */
+    struct ic_type_ref *ret_type_ref = 0;
 
     if (!token_list) {
         puts("ic_parse_decl_func_header: token_list was null");
@@ -787,14 +789,21 @@ struct ic_decl *ic_parse_decl_func_header(struct ic_token_list *token_list) {
      */
     token = ic_token_list_peek_important(token_list);
 
+    ret_type_ref = ic_decl_func_get_return(fdecl);
+    if (!ret_type_ref) {
+        puts("ic_parse_decl_func_header: call to ic_decl_func_get_return failed");
+        free(decl);
+        return 0;
+    }
+
     /* note token being null *is* allowed
      * as this could mean we have the following as the last decl. in our file
      *  builtin foo(a::Sint)
      */
     if ((!token) || (token->id != IC_ARROW)) {
         /* add Void type to our fdecl */
-        if (!ic_decl_func_set_return(fdecl, "Void", 4)) {
-            puts("ic_parse_decl_func_header: call to ic_decl_func_set_return failed for 'Void'");
+        if (!ic_type_ref_set_symbol(ret_type_ref, "Void", 4)) {
+            puts("ic_parse_decl_func_header: call to ic_type_ref_set_symbol failed for 'Void'");
             free(decl);
             return 0;
         }
@@ -816,8 +825,8 @@ struct ic_decl *ic_parse_decl_func_header(struct ic_token_list *token_list) {
         }
 
         /* add to our fdecl */
-        if (!ic_decl_func_set_return(fdecl, ic_token_get_string(token), ic_token_get_string_length(token))) {
-            puts("ic_parse_decl_func_header: call to ic_decl_func_set_return failed");
+        if (!ic_type_ref_set_symbol(ret_type_ref, ic_token_get_string(token), ic_token_get_string_length(token))) {
+            puts("ic_parse_decl_func_header: call to ic_type_ref_set_symbol failed");
             free(decl);
             return 0;
         }

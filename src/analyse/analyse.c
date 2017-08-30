@@ -232,8 +232,13 @@ static unsigned int ic_analyse_decl_type_generate_print_functions(struct ic_klud
             goto ERROR;
         }
 
-        if (!ic_decl_func_set_return(print_decl, "Void", 4)) {
-            puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl_func_set_return failed");
+        type_ref = ic_decl_func_get_return(print_decl);
+        if (!type_ref) {
+            puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl-func_get_return failed");
+            goto ERROR;
+        }
+        if (!ic_type_ref_set_symbol(type_ref, "Void", 4)) {
+            puts("ic_analyse_decl_type_generate_print_functions: call to ic_type_ref_set_symbol failed");
             goto ERROR;
         }
 
@@ -275,8 +280,13 @@ static unsigned int ic_analyse_decl_type_generate_print_functions(struct ic_klud
             goto ERROR;
         }
 
-        if (!ic_decl_func_set_return(println_decl, "Void", 4)) {
-            puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl_func_set_return failed");
+        type_ref = ic_decl_func_get_return(println_decl);
+        if (!type_ref) {
+            puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl-func_get_return failed");
+            goto ERROR;
+        }
+        if (!ic_type_ref_set_symbol(type_ref, "Void", 4)) {
+            puts("ic_analyse_decl_type_generate_print_functions: call to ic_type_ref_set_symbol failed");
             goto ERROR;
         }
 
@@ -336,7 +346,7 @@ unsigned int ic_analyse_decl_type_generate_functions(struct ic_kludge *kludge, s
         return 0;
     }
 
-    /* if this type is non-instnatiated then do not generate functions for it */
+    /* if this type is non-instantiated then do not generate functions for it */
     if (! ic_decl_type_is_instantiated(tdecl)) {
         return 1;
     }
@@ -512,6 +522,8 @@ unsigned int ic_analyse_decl_type_struct_generate_functions(struct ic_kludge *kl
     /* func decl for default type constructor */
     struct ic_decl_func *constructor_decl = 0;
     struct ic_generate *generate = 0;
+    /* type_ref for function return */
+    struct ic_type_ref *type_ref = 0;
 
     if (!kludge) {
         puts("ic_analyse_decl_type_struct_generate_functions: kludge was null");
@@ -562,8 +574,13 @@ unsigned int ic_analyse_decl_type_struct_generate_functions(struct ic_kludge *kl
         }
 
         /* associate constructor return value with type */
-        if (!ic_decl_func_set_return(constructor_decl, type_str, type_str_len)) {
-            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_set_return failed");
+        type_ref = ic_decl_func_get_return(constructor_decl);
+        if (!type_ref) {
+            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_get_return failed");
+            goto ERROR;
+        }
+        if (!ic_type_ref_set_symbol(type_ref, type_str, type_str_len)) {
+            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_type_ref_set_symbol failed");
             goto ERROR;
         }
 
@@ -786,6 +803,7 @@ unsigned int ic_analyse_decl_type_union_generate_functions(struct ic_kludge *klu
     struct ic_symbol *type_sym = 0;
     char *type_str = 0;
     int type_str_len = 0;
+    struct ic_type_ref *type_ref = 0;
 
     if (!kludge) {
         puts("ic_analyse_decl_type_union_generate_functions: kludge was null");
@@ -838,8 +856,13 @@ unsigned int ic_analyse_decl_type_union_generate_functions(struct ic_kludge *klu
         }
 
         /* associate constructor return value with type */
-        if (!ic_decl_func_set_return(constructor_decl, type_str, type_str_len)) {
-            puts("ic_analyse_decl_type_union_generate_functions: call to ic_decl_func_set_return failed");
+        type_ref = ic_decl_func_get_return(constructor_decl);
+        if (!type_ref) {
+            puts("ic_analyse_decl_type_union_generate_functions: call to ic_decl_func_get_return failed");
+            goto ERROR;
+        }
+        if (!ic_type_ref_set_symbol(type_ref, type_str, type_str_len)) {
+            puts("ic_analyse_decl_type_union_generate_functions: call to ic_type_ref_set_symbol failed");
             goto ERROR;
         }
 

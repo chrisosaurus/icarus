@@ -1288,15 +1288,10 @@ unsigned int ic_b2c_compile_function_header(struct ic_kludge *kludge, struct ic_
     /* print comment */
     fprintf(f, "/* %s */\n", func_sig_full);
 
-    if (!fdecl->ret_type) {
-        puts("ic_b2c_compile_function_headers: fdecl lacked return type");
-        return 0;
-    }
-
     /* FIXME need to convert to c type */
-    func_return_type_str = ic_symbol_contents(fdecl->ret_type);
+    func_return_type_str = ic_type_ref_get_type_name_ch(&(fdecl->ret_type));
     if (!func_return_type_str) {
-        puts("ic_b2c_compile_function_headers: call to ic_symbol_contents failed for return type");
+        puts("ic_b2c_compile_function_headers: call to ic_type_ref_get_type_name failed for return type");
         return 0;
     }
 

@@ -43,11 +43,8 @@ struct ic_decl_func {
     /* a pointer vector of field(s) */
     struct ic_pvector args;
 
-    /* return type is optional
-     *  0    -> void
-     *  else -> symbol for type
-     */
-    struct ic_symbol *ret_type;
+    /* return type */
+    struct ic_type_ref ret_type;
 
     /* body of parse time stmt */
     struct ic_body body;
@@ -177,14 +174,12 @@ unsigned int ic_decl_func_args_length(struct ic_decl_func *fdecl);
  */
 struct ic_field *ic_decl_func_args_get(struct ic_decl_func *fdecl, unsigned int i);
 
-/* set return type
- *
- * this function will fail if the return type is already set
+/* get return type_ref
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_func_set_return(struct ic_decl_func *fdecl, char *type, unsigned int type_len);
+struct ic_type_ref * ic_decl_func_get_return(struct ic_decl_func *fdecl);
 
 /* add new stmt to the body
  *
@@ -227,6 +222,18 @@ void ic_decl_func_print_body(FILE *fd, struct ic_decl_func *fdecl, unsigned int 
  *
  * this function will return
  *      foo(Int,Int)
+ *
+ * for a function signature (non-instantiated generic)
+ *      fn bar[A,B](a::A, b::B) -> A
+ *
+ * this function will return
+ *      bar[A,B](A,B)
+ *
+  * for a function signature (instantiated generic)
+ *      fn bar[A::Foo,B::bar](a::A, b::B) -> A
+ *
+ * this function will return
+ *      bar[Foo,Bar](Foo,Bar)
  *
  * the char* returned is a string stored within fdecl,
  * this means the caller must not free or mutate this string

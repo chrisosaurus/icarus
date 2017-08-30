@@ -94,8 +94,12 @@ unsigned int ic_decl_func_init(struct ic_decl_func *fdecl, char *name, unsigned 
         return 0;
     }
 
-    /* initialise return type to 0 (void) */
-    fdecl->ret_type = 0;
+    /* initialise return type to uknown */
+    if (!ic_type_ref_init(&(fdecl->ret_type))) {
+        puts("ic_decl_func_init: call to ic_type_ref_init for ret_type failed");
+        return 0;
+    }
+
     fdecl->builtin = 0;
     fdecl->sig_param = 0;
 
@@ -220,18 +224,9 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
         return 0;
     }
 
-    /* only need to free if we have a ret_type */
-    if (fdecl->ret_type) {
-        /* free symbol contents and free symbol
-         * as our ret type is always allocated
-         *
-         *    // ic_decl_func_set_return :
-         *    fdecl->ret_type = ic_symbol_new(type, type_len);
-         */
-        if (!ic_symbol_destroy(fdecl->ret_type, 1)) {
-            puts("ic_decl_func_destroy: for ret_type call to ic_symbol_destroy failed");
-            return 0;
-        }
+    if (!ic_type_ref_destroy(&(fdecl->ret_type), 0)) {
+        puts("ic_decl_func_destroy: call to ic_type_ref_destroy failed");
+        return 0;
     }
 
     /* free body contents but do not free body itself
@@ -367,12 +362,9 @@ unsigned int ic_decl_func_deep_copy_embedded(struct ic_decl_func *from, struct i
         }
     }
 
-    if (from->ret_type) {
-        to->ret_type = ic_symbol_deep_copy(from->ret_type);
-        if (!to->ret_type) {
-            puts("ic_decl_func_deep_copy_embedded: call to ic_symbol_deep_copy_embedded failed");
-            return 0;
-        }
+    if (!ic_type_ref_deep_copy_embedded(&(from->ret_type), &(to->ret_type))) {
+        puts("ic_decl_func_deep_copy_embedded: call to ic_type_ref_deep_copy_embedded failed");
+        return 0;
     }
 
     if (!ic_body_deep_copy_embedded(&(from->body), &(to->body))) {
@@ -382,28 +374,29 @@ unsigned int ic_decl_func_deep_copy_embedded(struct ic_decl_func *from, struct i
 
     to->tbody = 0;
 
-    if (!ic_string_deep_copy_embedded(&(from->sig_call), &(to->sig_call))) {
-        puts("ic_decl_func_deep_copy_embedded: call to ic_string_deep_copy_embedded failed");
+    /* do NOT copy over cached strings
+     * as we use this deep copy *before* we instantiate generics
+     */
+
+    /* initialise empty string fdecl->sig_call */
+    if (!ic_string_init_empty(&(to->sig_call))) {
+        puts("ic_decl_func_deep_copy_embedded: call to ic_string_init_empty for sig_call failed");
         return 0;
     }
 
-    if (!ic_string_deep_copy_embedded(&(from->sig_full), &(to->sig_full))) {
-        puts("ic_decl_func_deep_copy_embedded: call to ic_string_deep_copy_embedded failed");
+    /* initialise empty string fdecl->sig_full */
+    if (!ic_string_init_empty(&(to->sig_full))) {
+        puts("ic_decl_func_deep_copy_embedded: call to ic_string_init_empty for sig_full failed");
         return 0;
     }
 
-    if (!ic_string_deep_copy_embedded(&(from->sig_mangled), &(to->sig_mangled))) {
-        puts("ic_decl_func_deep_copy_embedded: call to ic_string_deep_copy_embedded failed");
+    /* initialise empty string fdecl->sig_mangled */
+    if (!ic_string_init_empty(&(to->sig_mangled))) {
+        puts("ic_decl_func_deep_copy_embedded: call to ic_string_init_empty for sig_mangled failed");
         return 0;
     }
 
-    if (from->sig_param) {
-        to->sig_param = ic_string_deep_copy(from->sig_param);
-        if (!to->sig_param) {
-            puts("ic_decl_func_deep_copy_embedded: call to ic_string_deep_copy failed");
-            return 0;
-        }
-    }
+    to->sig_param = 0;
 
     to->builtin = from->builtin;
 
@@ -553,43 +546,21 @@ struct ic_field *ic_decl_func_args_get(struct ic_decl_func *fdecl, unsigned int 
     return field;
 }
 
-/* set return type
- *
- * this function will fail if the return type is already set
+/* get return type_ref
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_func_set_return(struct ic_decl_func *fdecl, char *type, unsigned int type_len) {
+struct ic_type_ref * ic_decl_func_get_return(struct ic_decl_func *fdecl) {
+    struct ic_type_ref *type_ref = 0;
+
     if (!fdecl) {
-        puts("ic_decl_func_set_return: fdecl was null");
-        return 0;
-    }
-    if (!type) {
-        puts("ic_decl_func_set_return: type was null");
-        return 0;
-    }
-    if (!type_len) {
-        puts("ic_decl_func_set_return: type_len was 0");
+        puts("ic_decl_func_get_return: fdecl was null");
         return 0;
     }
 
-    /* check we haven't already set */
-    if (fdecl->ret_type) {
-        /* it is an error to re-set the return type */
-        puts("ic_decl_func_set_return: attempt to re-set return type");
-        return 0;
-    }
-
-    /* create our return type */
-    fdecl->ret_type = ic_symbol_new(type, type_len);
-    if (!fdecl->ret_type) {
-        puts("ic_decl_func_set_return: call to ic_symbol_new failed");
-        return 0;
-    }
-
-    /* success */
-    return 1;
+    type_ref = &(fdecl->ret_type);
+    return type_ref;
 }
 
 /* add new stmt to the body
@@ -670,9 +641,11 @@ void ic_decl_func_print(FILE *fd, struct ic_decl_func *fdecl, unsigned int *inde
         return;
     }
 
+    ic_parse_print_indent(fd, *indent_level);
     /* print comment and then function decl string */
     fprintf(fd, "# %s\n", fstr);
 
+    ic_parse_print_indent(fd, *indent_level);
     ic_decl_func_print_header(fd, fdecl, indent_level);
     ic_decl_func_print_body(fd, fdecl, indent_level);
 }
@@ -731,13 +704,12 @@ void ic_decl_func_print_header(FILE *fd, struct ic_decl_func *fdecl, unsigned in
     fputs(") -> ", fd);
 
     /* print return type if we have one */
-    if (fdecl->ret_type) {
-        ic_symbol_print(fd, fdecl->ret_type);
+    if (fdecl->ret_type.tag == ic_type_ref_unknown) {
+        fputs("Void\n", fd);
+    } else {
+        ic_type_ref_print(fd, &(fdecl->ret_type));
         /* trailing \n */
         fputs("\n", fd);
-    } else {
-        /* otherwise print Void */
-        fputs("Void\n", fd);
     }
 }
 
@@ -761,6 +733,7 @@ void ic_decl_func_print_body(FILE *fd, struct ic_decl_func *fdecl, unsigned int 
     ic_body_print(fd, &(fdecl->body), indent_level);
 
     /* print end\n */
+    ic_parse_print_indent(fd, *indent_level);
     fputs("end\n", fd);
 }
 
@@ -772,11 +745,17 @@ void ic_decl_func_print_body(FILE *fd, struct ic_decl_func *fdecl, unsigned int 
  * this function will return
  *      foo(Sint,Sint)
  *
- * for a function signature
+ * for a function signature (non-instantiated generic)
  *      fn bar[A,B](a::A, b::B) -> A
  *
  * this function will return
  *      bar[A,B](A,B)
+ *
+  * for a function signature (instantiated generic)
+ *      fn bar[A::Foo,B::bar](a::A, b::B) -> A
+ *
+ * this function will return
+ *      bar[Foo,Bar](Foo,Bar)
  *
  * the char* returned is a string stored within fdecl,
  * this means the caller must not free or mutate this string
@@ -844,10 +823,20 @@ char *ic_decl_func_sig_call(struct ic_decl_func *fdecl) {
                 return 0;
             }
 
-            if (!ic_string_append_symbol(fstr, &(tparam->name))) {
-                puts("ic_decl_func_sig_call: arg: call to ic_string_append_symbol failed");
-                return 0;
+            /* if we already have a tdecl, use that instead */
+            if (tparam->tdecl) {
+                if (!ic_string_append_symbol(fstr, ic_decl_type_get_name(tparam->tdecl))) {
+                    puts("ic_decl_func_sig_call: arg: call to ic_string_append_symbol failed");
+                    return 0;
+                }
+            } else {
+                /* otherwise this is non-instantiated so use tparam name */
+                if (!ic_string_append_symbol(fstr, &(tparam->name))) {
+                    puts("ic_decl_func_sig_call: arg: call to ic_string_append_symbol failed");
+                    return 0;
+                }
             }
+
         }
 
         /* closing ] bracket */
@@ -1035,15 +1024,20 @@ char *ic_decl_func_sig_full(struct ic_decl_func *fdecl) {
     }
 
     /* print return type if we have one */
-    if (fdecl->ret_type) {
-        if (!ic_string_append_symbol(fstr, fdecl->ret_type)) {
-            puts("ic_decl_func_sig_full: return type (nonvoid): call to ic_string_append_symbol failed");
+    if (fdecl->ret_type.tag == ic_type_ref_unknown) {
+        if (!ic_string_append_char(fstr, "Void", 4)) {
+            puts("ic_decl_func_sig_full: return type (void): call to ic_string_append_char failed");
             return 0;
         }
     } else {
-        /* otherwise print Void */
-        if (!ic_string_append_char(fstr, "Void", 4)) {
-            puts("ic_decl_func_sig_full: return type (void): call to ic_string_append_char failed");
+        cur_type = ic_type_ref_get_type_name(&(fdecl->ret_type));
+        if (!cur_type) {
+            puts("ic_decl_func_sig_full: return type (nonvoid): call to ic_type_ref_get_type_name failed");
+            return 0;
+        }
+
+        if (!ic_string_append_symbol(fstr, cur_type)) {
+            puts("ic_decl_func_sig_full: return type (nonvoid): call to ic_string_append_symbl failed");
             return 0;
         }
     }
@@ -1259,7 +1253,6 @@ char *ic_decl_func_sig_param(struct ic_decl_func *fdecl) {
  * returns 0 on failure
  */
 unsigned int ic_decl_func_is_void(struct ic_decl_func *fdecl) {
-    struct ic_symbol *ret = 0;
     char *ret_ch = 0;
 
     if (!fdecl) {
@@ -1268,16 +1261,13 @@ unsigned int ic_decl_func_is_void(struct ic_decl_func *fdecl) {
     }
 
     /* ret_type is 0 for void */
-    if (fdecl->ret_type == 0) {
+    if (fdecl->ret_type.tag == ic_type_ref_unknown) {
         return 1;
     }
 
-    /* also capturing an explicit "void" type */
-    ret = fdecl->ret_type;
-
-    ret_ch = ic_symbol_contents(ret);
+    ret_ch = ic_type_ref_get_type_name_ch(&(fdecl->ret_type));
     if (!ret_ch) {
-        puts("ic_decl_func_is_void: call to ic_symbol_contents failed");
+        puts("ic_decl_func_is_void: call to ic_type_ref_get_type_name_ch failed");
         return 0;
     }
 

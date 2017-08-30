@@ -20,6 +20,28 @@
  */
 unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_pvector *type_params, struct ic_pvector *fields);
 
+/* resolve a type_refs to type_decls
+ *
+ * if type_ref to a type_param then this link is used
+ * if type_ref of a symbol, then it will be looked up in type_params
+ * if both fail, it is an error
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_resolve_type_ref(char *unit, char *unit_name, struct ic_pvector *type_params, struct ic_type_ref *type_ref);
+
+/* iterate through the field list resolving any type_refs to type_decls
+ *
+ * if a field is a type_ref to a type_param then this link is used
+ * if a field is a type_ref of a symbol, then it will be looked up in type_params
+ * if both fail, it is an error
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_resolve_field_list(char *unit, char *unit_name, struct ic_pvector *type_params, struct ic_pvector *fields);
+
 /* iterate through a type_ref list resolving each type_ref to a decl_type
  *
  * returns 1 on success

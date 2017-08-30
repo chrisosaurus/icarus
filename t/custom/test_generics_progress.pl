@@ -43,22 +43,9 @@ my $cases = [
       end
     ',
     expected => "
-      ic_analyse_func_decl_instantiate_generic: not yet implemented
-      ic_analyse_infer_fcall: call to ic_analyse_func_decl_instantiate_generic failed
-      ic_analyse_infer_fcall: failed to instantiate for generic call 'id[_](_)'
-      ic_analyse_infer: call to ic_analyse_infer_fcall failed
-      ic_analyse_fcall_str: call to ic_analyse_infer failed for argument '0'
-      ic_analyse_fcall_str: error occurred, destroying string
-      ic_analyse_infer_fcall: call to ic_analyse_fcall_str failed
-      ic_analyse_infer: call to ic_analyse_infer_fcall failed
-      ic_analyse_body: expr: call to ic_analyse_infer failed
-      ic_analyse_body: unimplemented in error case
-      ic_analyse_decl_func: call to ic_analyse_body for validating body failed
-      ic_analyse_decl_func: error
-      ic_analyse: call to ic_analyse_decl_func failed
-      analysis failed
+      10
     ",
-    failure => 1, # TODO FIXME this should only fail until this implementation is complete
+    failure => 0,
   },
   {
     # milestone 11

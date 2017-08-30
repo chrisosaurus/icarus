@@ -8,7 +8,7 @@
 07 pass pass
 08 pass pass
 09 pass pass
-10 fail-compile fail-runtime
+10 pass pass
 11 fail-compile fail-runtime
 12 fail-compile fail-runtime
 13 fail-compile fail-runtime
