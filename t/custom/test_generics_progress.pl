@@ -76,10 +76,17 @@ my $cases = [
     expected => "
       ic_analyse_infer_fcall: error finding function declaration for function call:
               Maybe[Sint](6s)
+
           I tried to lookup both:
               Maybe[Sint](Sint)
               Maybe[_](_)
           and failed to find either
+
+          I also tried to consider this as a constructor for the type:
+              Maybe[Sint]
+          but after attempting to instantiate this type, I still found no function matching the call:
+              Maybe[Sint](Sint)
+
       ic_analyse_infer: call to ic_analyse_infer_fcall failed
       ic_analyse_let: call to ic_analyse_infer on init_expr failed
       ic_analyse_body: call to ic_analyse_let failed

@@ -1110,37 +1110,74 @@ struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_
         }
 
         fdecl = ic_kludge_get_fdecl_from_string(kludge, str);
-        if (!fdecl) {
-            /* failed to find concrete type,
-             * attempt to lookup generic
-             */
-            str_generic = ic_analyse_fcall_str_generic(kludge, scope, fcall);
-            if (!str_generic) {
-                puts("ic_analyse_infer_fcall: call to ic_analyse_fcall_str_generic failed");
-                return 0;
-            }
-
-            fdecl = ic_kludge_get_fdecl_from_string(kludge, str_generic);
-            if (!fdecl) {
-                puts("ic_analyse_infer_fcall: error finding function declaration for function call:");
-                fake_indent_level = 2;
-                ic_expr_func_call_print(stdout, fcall, &fake_indent_level);
-                printf("\n    I tried to lookup both:\n        ");
-                ic_string_print(stdout, str);
-                printf("\n        ");
-                ic_string_print(stdout, str_generic);
-                puts("\n    and failed to find either");
-
-                return 0;
-            }
-
-            fdecl = ic_analyse_func_decl_instantiate_generic(kludge, fdecl, fcall);
-            if (!fdecl) {
-                puts("ic_analyse_infer_fcall: call to ic_analyse_func_decl_instantiate_generic failed");
-                printf("ic_analyse_infer_fcall: failed to instantiate for generic call '%s'\n", ic_string_contents(str_generic));
-                return 0;
-            }
+        if (fdecl) {
+            goto INFER_FCALL_FOUND;
         }
+
+        /* failed to find concrete type,
+         * attempt to lookup generic
+         */
+        str_generic = ic_analyse_fcall_str_generic(kludge, scope, fcall);
+        if (!str_generic) {
+            puts("ic_analyse_infer_fcall: call to ic_analyse_fcall_str_generic failed");
+            return 0;
+        }
+
+        fdecl = ic_kludge_get_fdecl_from_string(kludge, str_generic);
+        if (fdecl) {
+            goto INFER_FCALL_FOUND_GENERIC;
+        }
+
+        /* failed to find generic type
+         * this is an error for a generic function
+         * but if this is a constructor call to a generic type there is
+         * still hope
+         */
+
+        /* TODO FIXME
+         * 1) lookup fcall_sig_no_args -> tdecl
+         * 2) if no tdecl, error
+         * 3) if tdecl, trigger instantiation
+         * 4) try concrete (str) lookup again
+         * 5) if not found, error
+         * 6) otherwise success
+         */
+
+        /* TODO FIXME actually implement... */
+
+        /* now that our type has been instantiated we try again */
+        fdecl = ic_kludge_get_fdecl_from_string(kludge, str);
+        if (fdecl) {
+            goto INFER_FCALL_FOUND;
+        }
+
+        /* failed 3 times, error */
+
+        puts("ic_analyse_infer_fcall: error finding function declaration for function call:");
+        fake_indent_level = 2;
+        ic_expr_func_call_print(stdout, fcall, &fake_indent_level);
+        printf("\n\n    I tried to lookup both:\n        ");
+        ic_string_print(stdout, str);
+        printf("\n        ");
+        ic_string_print(stdout, str_generic);
+        puts("\n    and failed to find either");
+        printf("\n    I also tried to consider this as a constructor for the type:\n        %s\n", fcall_sig_no_args);
+        printf("    but after attempting to instantiate this type, I still found no function matching the call:\n        ");
+        ic_string_print(stdout, str);
+        puts("\n");
+
+        return 0;
+
+INFER_FCALL_FOUND_GENERIC:
+
+        fdecl = ic_analyse_func_decl_instantiate_generic(kludge, fdecl, fcall);
+        if (!fdecl) {
+            puts("ic_analyse_infer_fcall: call to ic_analyse_func_decl_instantiate_generic failed");
+            printf("ic_analyse_infer_fcall: failed to instantiate for generic call '%s'\n", ic_string_contents(str_generic));
+            return 0;
+        }
+
+INFER_FCALL_FOUND:
 
         /* record this found fdecl on the fcall */
         if (!ic_expr_func_call_set_fdecl(fcall, fdecl)) {
@@ -1933,9 +1970,9 @@ struct ic_string *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope
                 goto ERROR;
             }
 
-            type_ref_sym = ic_type_ref_get_symbol(type_ref);
+            type_ref_sym = ic_type_ref_get_type_name(type_ref);
             if (!type_ref_sym) {
-                puts("ic_analyse_fcall_str: call to ic_type_ref_get_symbol failed");
+                puts("ic_analyse_fcall_str: call to ic_type_ref_get_type_name failed");
                 goto ERROR;
             }
 

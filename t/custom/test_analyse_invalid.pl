@@ -102,10 +102,17 @@ analysis failed
 =>
 "ic_analyse_infer_fcall: error finding function declaration for function call:
         foo[Sint](6s, 7s)
+
     I tried to lookup both:
         foo[Sint](Sint,Sint)
         foo[_](_,_)
     and failed to find either
+
+    I also tried to consider this as a constructor for the type:
+        foo[Sint]
+    but after attempting to instantiate this type, I still found no function matching the call:
+        foo[Sint](Sint,Sint)
+
 ic_analyse_infer: call to ic_analyse_infer_fcall failed
 ic_analyse_body: expr: call to ic_analyse_infer failed
 ic_analyse_body: unimplemented in error case
