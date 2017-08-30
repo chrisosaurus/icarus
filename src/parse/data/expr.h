@@ -145,6 +145,13 @@ char *ic_expr_func_call_sig_param(struct ic_expr_func_call *fcall);
  */
 struct ic_symbol *ic_expr_func_call_get_symbol(struct ic_expr_func_call *fcall);
 
+/* get name
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+char *ic_expr_func_call_get_name(struct ic_expr_func_call *fcall);
+
 /* print this func call */
 void ic_expr_func_call_print(FILE *fd, struct ic_expr_func_call *fcall, unsigned int *indent_level);
 

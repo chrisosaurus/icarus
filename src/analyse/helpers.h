@@ -127,7 +127,7 @@ struct ic_string *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope
  */
 struct ic_string *ic_analyse_fcall_str_generic(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall);
 
-/* trigger instantiate of this generic function decl to a concrete function decl
+/* trigger instantiation of this generic function decl to a concrete function decl
  *
  * creates new fdecl, inserts into kludge, returns * to new fdecl
  *
@@ -135,5 +135,14 @@ struct ic_string *ic_analyse_fcall_str_generic(struct ic_kludge *kludge, struct 
  * returns 0 on failure
  */
 struct ic_decl_func *ic_analyse_func_decl_instantiate_generic(struct ic_kludge *kludge, struct ic_decl_func *fdecl, struct ic_expr_func_call *fcall);
+
+/* trigger instantiation of this generic type decl to a concrete type decl
+ *
+ * creates new tdecl, inserts into kludge, returns * to new tdecl
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type *ic_analyse_type_decl_instantiate_generic(struct ic_kludge *kludge, char *type_name, struct ic_pvector *type_refs);
 
 #endif /* ifndef ICARUS_ANALYSE_HELPERS_H */

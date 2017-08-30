@@ -461,6 +461,35 @@ struct ic_symbol *ic_expr_func_call_get_symbol(struct ic_expr_func_call *fcall) 
     return symbol;
 }
 
+/* get name
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+char *ic_expr_func_call_get_name(struct ic_expr_func_call *fcall) {
+    struct ic_symbol *sym = 0;
+    char *ch = 0;
+
+    if (!fcall) {
+        puts("ic_expr_func_call_get_name: fcall was null");
+        return 0;
+    }
+
+    sym = ic_expr_func_call_get_symbol(fcall);
+    if (!sym) {
+        puts("ic_expr_func_call_get_name: call to ic_expr_func_call_get_symbol failed");
+        return 0;
+    }
+
+    ch = ic_symbol_contents(sym);
+    if (!ch) {
+        puts("ic_expr_func_call_get_name: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    return ch;
+}
+
 /* print this func call */
 void ic_expr_func_call_print(FILE *fd, struct ic_expr_func_call *fcall, unsigned int *indent_level) {
     /* our eventual return value */

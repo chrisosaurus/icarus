@@ -1040,6 +1040,8 @@ struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_
 
     unsigned int fake_indent_level = 0;
 
+    struct ic_pvector *type_refs = 0;
+
     if (!kludge) {
         puts("ic_analyse_infer_fcall: kludge was null");
         return 0;
@@ -1134,22 +1136,35 @@ struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_
          * still hope
          */
 
-        /* TODO FIXME
-         * 1) lookup fcall_sig_no_args -> tdecl
-         * 2) if no tdecl, error
-         * 3) if tdecl, trigger instantiation
-         * 4) try concrete (str) lookup again
-         * 5) if not found, error
-         * 6) otherwise success
+        /* 1) lookup fcall as type
+         * this may trigger instantiation
+         *
+         * TODO FIXME need to trigger instantiation here
+         * want a function we can also call from elsewhere with a type_ref
          */
+        ch = ic_expr_func_call_get_name(fcall);
+        if (!ch) {
+            puts("ic_analyse_infer_fcall: call to ic_expr_func_call_get_name failed");
+            return 0;
+        }
 
-        /* TODO FIXME actually implement... */
+        type_refs = &(fcall->type_refs);
+        type = ic_analyse_type_decl_instantiate_generic(kludge, ch, type_refs);
 
+        /* 2) if no tdecl, error */
+        if (!type) {
+            /* do not print error here */
+            goto INFER_FCALL_NOT_FOUND;
+        }
+
+        /* 3) try concrete (str) lookup again */
         /* now that our type has been instantiated we try again */
         fdecl = ic_kludge_get_fdecl_from_string(kludge, str);
         if (fdecl) {
             goto INFER_FCALL_FOUND;
         }
+
+INFER_FCALL_NOT_FOUND:
 
         /* failed 3 times, error */
 
@@ -1161,7 +1176,7 @@ struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_
         printf("\n        ");
         ic_string_print(stdout, str_generic);
         puts("\n    and failed to find either");
-        printf("\n    I also tried to consider this as a constructor for the type:\n        %s\n", fcall_sig_no_args);
+        printf("\n    I also tried to consider this as a constructor\n");
         printf("    but after attempting to instantiate this type, I still found no function matching the call:\n        ");
         ic_string_print(stdout, str);
         puts("\n");
@@ -2323,6 +2338,75 @@ struct ic_decl_func *ic_analyse_func_decl_instantiate_generic(struct ic_kludge *
 
     /* 8) return * */
     return new_fdecl;
+}
+
+/* trigger instantiation of this generic type decl to a concrete type decl
+ *
+ * creates new tdecl, inserts into kludge, returns * to new tdecl
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type *ic_analyse_type_decl_instantiate_generic(struct ic_kludge *kludge, char *type_name, struct ic_pvector *type_refs) {
+    struct ic_decl_type *decl_type = 0;
+
+    unsigned int i = 0;
+    unsigned int len = 0;
+
+    if (!kludge) {
+        puts("ic_analyse_type_decl_instantiate_generic: kludge was null");
+        return 0;
+    }
+
+    if (!type_name) {
+        puts("ic_analyse_type_decl_instantiate_generic: type_name was null");
+        return 0;
+    }
+
+    if (!type_refs) {
+        puts("ic_analyse_type_decl_instantiate_generic: type_refs was null");
+        return 0;
+    }
+
+    len = ic_pvector_length(type_refs);
+
+    if (len == 0) {
+        /* not generic
+         * could trigger error
+         * instead fail silently so that our caller can decide if this is an error or not
+         */
+        return 0;
+    }
+
+    /* TODO FIXME instantiate tdecl */
+
+    /* 1) generate signature of the form Maybe[Sint] */
+    /* TODO FIXME */
+
+    /* 2) check if this exists
+     *    if it does, look it up, and return it
+     */
+    /* TODO FIXME */
+
+    /* 3) generate signature of the form Maybe[_] */
+    /* TODO FIXME */
+
+    /* 4) check if this exists
+     *    if it does not, fail, return
+     */
+    /* TODO FIXME */
+
+    /* 5) instantiate found Maybe[_] with provided type Sint */
+    /* TODO FIXME */
+
+    /* 6) trigger normal decl_type things (like kludge insertion, function creation, etc.) */
+    /* TODO FIXME */
+
+    /* 7) return our new type */
+    /* TODO FIXME */
+
+    puts("ic_analyse_type_decl_instantiate_generic: unimplemented");
+    return 0;
 }
 
 /* iterate through a type_ref list resolving each type_ref to a decl_type
