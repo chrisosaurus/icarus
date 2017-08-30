@@ -191,6 +191,63 @@ char *ic_string_contents(struct ic_string *string) {
     return string->backing.contents;
 }
 
+/* returns the backing character array AND remove from this ic_string
+ *
+ * the caller is now the owner of the underlying char*
+ * this ic_string is now nulled and empty
+ *
+ * returns a char * on success
+ * returns a 0 on failure
+ */
+char *ic_string_contents_steal(struct ic_string *string) {
+    char *ch = 0;
+
+    if (!string) {
+        puts("ic_string_contents_steal: null string passed in");
+        return 0;
+    }
+
+    /* take contents out */
+    ch = string->backing.contents;
+
+    /* null to prevent carray destroy freeing our char* */
+    string->backing.contents = 0;
+    string->backing.len = 0;
+
+    /* and give our caller what they asked for */
+    return ch;
+
+}
+
+/* returns the backing character array AND DESTROYS THIS IC_STRING
+ * the caller is now the owner of the underlying char*
+ *
+ * returns a char * on success
+ * returns a 0 on failure
+ */
+char *ic_string_contents_steal_and_destroy(struct ic_string *string) {
+    char *ch = 0;
+
+    if (!string) {
+        puts("ic_string_contents_steal_and_destroy: null string passed in");
+        return 0;
+    }
+
+    ch = ic_string_contents_steal(string);
+    if (!ch) {
+        puts("ic_string_contents_steal_and_destroy: call to ic_string_contents_steal failed");
+        return 0;
+    }
+
+    /* finally destroy */
+    if (!ic_string_destroy(string, 1)) {
+        puts("ic_string_contents_steal: call to ic_string_destroy failed");
+        return 0;
+    }
+
+    return ch;
+}
+
 /* get the strlen of the stores string
  * this length does NOT include the null terminator
  *

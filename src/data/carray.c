@@ -66,7 +66,9 @@ unsigned int ic_carray_destroy(struct ic_carray *arr, unsigned int free_arr) {
     }
 
     /* free our contents */
-    free(arr->contents);
+    if (arr->contents) {
+        free(arr->contents);
+    }
 
     /* free is asked */
     if (free_arr) {
@@ -89,6 +91,11 @@ char ic_carray_get(struct ic_carray *arr, unsigned int pos) {
         return 0;
     }
 
+    if (!arr->contents) {
+        puts("ic_carray_get: arr->contents was null");
+        return 0;
+    }
+
     if (pos >= arr->len) {
         /* out of bounds */
         puts("ic_carray_get: requested pos is out of bounds");
@@ -108,6 +115,11 @@ char ic_carray_get(struct ic_carray *arr, unsigned int pos) {
 unsigned int ic_carray_set(struct ic_carray *arr, unsigned int pos, char val) {
     if (!arr) {
         puts("ic_carray_set: arr was null");
+        return 0;
+    }
+
+    if (!arr->contents) {
+        puts("ic_carray_set: arr->contents was null");
         return 0;
     }
 

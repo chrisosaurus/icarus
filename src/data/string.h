@@ -88,6 +88,24 @@ unsigned int ic_string_deep_copy_embedded(struct ic_string *from, struct ic_stri
  */
 char *ic_string_contents(struct ic_string *string);
 
+/* returns the backing character array AND remove from this ic_string
+ *
+ * the caller is now the owner of the underlying char*
+ * this ic_string is now nulled and empty
+ *
+ * returns a char * on success
+ * returns a 0 on failure
+ */
+char *ic_string_contents_steal(struct ic_string *string);
+
+/* returns the backing character array AND DESTROYS THIS IC_STRING
+ * the caller is now the owner of the underlying char*
+ *
+ * returns a char * on success
+ * returns a 0 on failure
+ */
+char *ic_string_contents_steal_and_destroy(struct ic_string *string);
+
 /* get the strlen of the used slots in the string
  * this length does NOT include the null terminator
  *
