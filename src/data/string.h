@@ -54,6 +54,16 @@ unsigned int ic_string_init(struct ic_string *string, char *source, unsigned int
  */
 unsigned int ic_string_init_empty(struct ic_string *string);
 
+/* clear our string
+ * this resets length back to 0 and inserts a null terminator at [0]
+ *
+ * does not free underlying storage, allowing this string to be re-used
+ *
+ * returns 1 on success
+ * returns 0 on error
+ */
+unsigned int ic_string_clear(struct ic_string *string);
+
 /* destroy string
  *
  * this will only free this string is `free_str` is true

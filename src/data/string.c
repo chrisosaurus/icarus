@@ -87,6 +87,29 @@ unsigned int ic_string_init_empty(struct ic_string *string) {
     return ic_string_init(string, "", 0);
 }
 
+/* clear our string
+ * this resets length back to 0 and inserts a null terminator at [0]
+ *
+ * does not free underlying storage, allowing this string to be re-used
+ *
+ * returns 1 on success
+ * returns 0 on error
+ */
+unsigned int ic_string_clear(struct ic_string *string) {
+    if (!string) {
+        puts("ic_string_clear: string was null");
+        return 0;
+    }
+
+    if (!ic_carray_set(&(string->backing), 0, '\0')) {
+        puts("ic_string_clear: call to ic_carray_set failed");
+        return 0;
+    }
+
+    string->used = 0;
+    return 1;
+}
+
 /* destroy string
  *
  * this will only free this string is `free_str` is true
