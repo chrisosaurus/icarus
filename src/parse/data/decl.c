@@ -1591,7 +1591,7 @@ unsigned int ic_decl_type_struct_deep_copy_embedded(struct ic_decl_type_struct *
             return 0;
         }
 
-        if (!ic_pvector_append(&(to->fields), new_field)) {
+        if (-1 == ic_pvector_append(&(to->fields), new_field)) {
             puts("ic_decl_type_struct_deep_copy_embedded: call to ic_pvector_append failed");
             return 0;
         }
@@ -1989,12 +1989,6 @@ char *ic_decl_type_struct_str_param(struct ic_decl_type_struct *tdecl) {
         return 0;
     }
 
-    /* append [ */
-    if (!ic_string_append_char(str, "[", 1)) {
-        puts("ic_decl_type_struct_str_param: call to ic_string_append_char failed");
-        return 0;
-    }
-
     /* TODO FIMXE
      *   iterate through params
      *   if instantiated, then type name
@@ -2002,6 +1996,14 @@ char *ic_decl_type_struct_str_param(struct ic_decl_type_struct *tdecl) {
      *   insert ,s to sep
      */
     len = ic_decl_type_struct_type_params_length(tdecl);
+
+    if (len) {
+        /* append [ */
+        if (!ic_string_append_char(str, "[", 1)) {
+            puts("ic_decl_type_struct_str_param: call to ic_string_append_char failed");
+            return 0;
+        }
+    }
 
     if (ic_decl_type_struct_is_instantiated(tdecl)) {
         for (i=0; i<len; ++i) {
@@ -2038,10 +2040,12 @@ char *ic_decl_type_struct_str_param(struct ic_decl_type_struct *tdecl) {
         }
     }
 
-    /* append ] */
-    if (!ic_string_append_char(str, "]", 1)) {
-        puts("ic_decl_type_struct_str_param: call to ic_string_append_char failed");
-        return 0;
+    if (len) {
+        /* append ] */
+        if (!ic_string_append_char(str, "]", 1)) {
+            puts("ic_decl_type_struct_str_param: call to ic_string_append_char failed");
+            return 0;
+        }
     }
 
     ch = ic_string_contents_steal_and_destroy(str);
@@ -2710,7 +2714,7 @@ unsigned int ic_decl_type_union_deep_copy_embedded(struct ic_decl_type_union *fr
             return 0;
         }
 
-        if (!ic_pvector_append(&(to->fields), new_field)) {
+        if (-1 == ic_pvector_append(&(to->fields), new_field)) {
             puts("ic_decl_type_union_deep_copy_embedded: call to ic_pvector_append failed");
             return 0;
         }
@@ -2941,7 +2945,7 @@ char *ic_decl_type_union_str_param(struct ic_decl_type_union *udecl) {
     unsigned int len = 0;
 
     struct ic_type_param *type_param = 0;
-    struct ic_symbol *type_param_name = 0;
+    char *type_decl_name = 0;
 
     if (!udecl) {
         puts("ic_decl_type_union_str_param: udecl was null");
@@ -2966,12 +2970,6 @@ char *ic_decl_type_union_str_param(struct ic_decl_type_union *udecl) {
         return 0;
     }
 
-    /* append [ */
-    if (!ic_string_append_char(str, "[", 1)) {
-        puts("ic_decl_type_union_str_param: call to ic_string_append_char failed");
-        return 0;
-    }
-
     /* TODO FIMXE
      *   iterate through params
      *   if instantiated, then type name
@@ -2979,6 +2977,14 @@ char *ic_decl_type_union_str_param(struct ic_decl_type_union *udecl) {
      *   insert ,s to sep
      */
     len = ic_decl_type_union_type_params_length(udecl);
+
+    if (len) {
+        /* append [ */
+        if (!ic_string_append_char(str, "[", 1)) {
+            puts("ic_decl_type_union_str_param: call to ic_string_append_char failed");
+            return 0;
+        }
+    }
 
     if (ic_decl_type_union_is_instantiated(udecl)) {
         for (i=0; i<len; ++i) {
@@ -2988,13 +2994,18 @@ char *ic_decl_type_union_str_param(struct ic_decl_type_union *udecl) {
                 return 0;
             }
 
-            type_param_name = ic_type_param_get_name(type_param);
-            if (!type_param_name) {
+            if (!type_param->tdecl) {
+                puts("ic_decl_type_union_str_param: type_param->tdecl was null");
+                return 0;
+            }
+
+            type_decl_name = ic_decl_type_str_param(type_param->tdecl);
+            if (!type_decl_name) {
                 puts("ic_decl_type_union_str_param: call to ic_type_param_get_name failed");
                 return 0;
             }
 
-            if (!ic_string_append_symbol(str, type_param_name)) {
+            if (!ic_string_append_cstr(str, type_decl_name)) {
                 puts("ic_decl_type_union_str_param: call to ic_string_append_symbol failed");
                 return 0;
             }
@@ -3015,10 +3026,12 @@ char *ic_decl_type_union_str_param(struct ic_decl_type_union *udecl) {
         }
     }
 
-    /* append ] */
-    if (!ic_string_append_char(str, "]", 1)) {
-        puts("ic_decl_type_union_str_param: call to ic_string_append_char failed");
-        return 0;
+    if (len) {
+        /* append ] */
+        if (!ic_string_append_char(str, "]", 1)) {
+            puts("ic_decl_type_union_str_param: call to ic_string_append_char failed");
+            return 0;
+        }
     }
 
     ch = ic_string_contents_steal_and_destroy(str);

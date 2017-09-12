@@ -695,7 +695,7 @@ unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl
         goto ERROR;
     }
 
-    /* fill in field_dict
+    /* check all field types are unique and (for concrete types) fill in field_dict
      * FIXME this is iterating through fields twice as we already iterate
      *       through once in ic_analyse_field_list
      * FIXME likewise it is also fetching type from string twice
@@ -707,13 +707,6 @@ unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl
         if (!field) {
             puts("ic_analyse_decl_type_union: call to ic_pvector_get failed");
             goto ERROR;
-        }
-
-        /* if field type is a type param then we cannot proceed with work here
-         * until it is instantiated
-         */
-        if (ic_type_ref_is_type_param(field->type)) {
-            continue;
         }
 
         /* what we are really doing here is:
@@ -754,16 +747,18 @@ unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl
         /* if this field is not generic then we need to check that the field's
          * type exists
          */
-        field_type = ic_kludge_get_decl_type(kludge, type_str);
-        if (!field_type) {
-            puts("ic_analyse_decl_type_union: call to ic_kludge_get_type failed");
-            goto ERROR;
-        }
+        if (ic_type_ref_is_resolved(field->type)) {
+            field_type = ic_kludge_get_decl_type(kludge, type_str);
+            if (!field_type) {
+                puts("ic_analyse_decl_type_union: call to ic_kludge_get_type failed");
+                goto ERROR;
+            }
 
-        /* insert this type into field_dict */
-        if (!ic_decl_type_union_add_field_type(tdecl_union, ic_symbol_contents(&(field->name)), field_type)) {
-            puts("ic_analyse_decl_type_union: call to ic_decl_type_struct_add_field_type failed");
-            goto ERROR;
+            /* insert this type into field_dict only for concrete type */
+            if (!ic_decl_type_union_add_field_type(tdecl_union, ic_symbol_contents(&(field->name)), field_type)) {
+                puts("ic_analyse_decl_type_union: call to ic_decl_type_struct_add_field_type failed");
+                goto ERROR;
+            }
         }
     }
 
@@ -861,13 +856,19 @@ unsigned int ic_analyse_decl_type_union_generate_functions(struct ic_kludge *klu
             puts("ic_analyse_decl_type_union_generate_functions: call to ic_decl_func_get_return failed");
             goto ERROR;
         }
-        if (!ic_type_ref_set_symbol(type_ref, type_str, type_str_len)) {
-            puts("ic_analyse_decl_type_union_generate_functions: call to ic_type_ref_set_symbol failed");
+        if (!ic_type_ref_set_type_decl(type_ref, tdecl)) {
+            puts("ic_analyse_decl_type_union_generate_functions: call to ic_type_ref_set_type_decl failed");
             goto ERROR;
         }
 
         if (!ic_decl_func_args_add(constructor_decl, field)) {
             puts("ic_analyse_decl_type_union_generate_functions: call to ic_decl_func_args_add failed");
+            goto ERROR;
+        }
+
+        /* copy over type_params */
+        if (!ic_type_param_pvector_deep_copy_embedded(&(tdecl_union->type_params), &(constructor_decl->type_params))) {
+            puts("ic_analyse_decl_type_union_generate_functions: call to ic_type_params_pvector_deep_copy_embedded failed");
             goto ERROR;
         }
 
@@ -931,16 +932,16 @@ unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func 
         return 0;
     }
 
+    /* skip analysis if this function is a non-instantiated generic */
+    if (! ic_decl_func_is_instantiated(fdecl)) {
+        return 1;
+    }
+
     /* name of this func, useful for error printing */
     this_func = ic_decl_func_sig_call(fdecl);
     if (!this_func) {
         puts("ic_analyse_decl_func: for this_type: call to ic_decl_func_sig_call failed");
         return 0;
-    }
-
-    /* skip analysis if this function is a non-instantiated generic */
-    if (! ic_decl_func_is_instantiated(fdecl)) {
-        return 1;
     }
 
     /* TODO FIXME do we need to check that all generic parameters are used ??? */

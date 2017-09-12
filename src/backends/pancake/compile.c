@@ -2409,7 +2409,7 @@ unsigned int ic_backend_pancake_compile_expr_fcall(struct ic_backend_pancake_ins
 static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_generate *gen) {
     /* TODO FIXME START OF COPY */
     struct ic_decl_type *tdecl = 0;
-    struct ic_symbol *type_name_sym = 0;
+    char *type_name_param = 0;
     struct ic_decl_func *fdecl = 0;
     char *fdecl_sig_call = 0;
     unsigned int i_arg = 0;
@@ -2449,9 +2449,9 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
     }
 
     /* get type name */
-    type_name_sym = ic_decl_type_name(tdecl);
-    if (!type_name_sym) {
-        puts("ic_backend_pancake_generate_function_print_union: call to ic_decl_type_name failed");
+    type_name_param = ic_decl_type_str_param(tdecl);
+    if (!type_name_param) {
+        puts("ic_backend_pancake_generate_function_print_union: call to ic_decl_type_str_param failed");
         return 0;
     }
 
@@ -2563,7 +2563,7 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
         return 0;
     }
 
-    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, ic_symbol_contents(type_name_sym))) {
+    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, type_name_param)) {
         puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg1_set_char failed");
         return 0;
     }
@@ -2779,9 +2779,9 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
             return 0;
         }
 
-        type_name_sym = ic_decl_type_name(field_type);
-        if (!type_name_sym) {
-            puts("ic_backend_pancake_generate_function_print_union: call to ic_decl_type_name failed");
+        type_name_param = ic_decl_type_str_param(field_type);
+        if (!type_name_param) {
+            puts("ic_backend_pancake_generate_function_print_union: call to ic_decl_type_str_param failed");
             return 0;
         }
 
@@ -2851,8 +2851,8 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
             return 0;
         }
 
-        if (!ic_string_append_symbol(fcall_label_str, type_name_sym)) {
-            puts("ic_backend_pancake_generate_function_print_union: call to ic_string_append_symbol failed");
+        if (!ic_string_append_cstr(fcall_label_str, type_name_param)) {
+            puts("ic_backend_pancake_generate_function_print_union: call to ic_string_append_cstr failed");
             return 0;
         }
 
@@ -2984,7 +2984,7 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
 
 static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_generate *gen) {
     struct ic_decl_type *tdecl = 0;
-    struct ic_symbol *type_name_sym = 0;
+    char *type_name_param = 0;
     struct ic_decl_func *fdecl = 0;
     char *fdecl_sig_call = 0;
     unsigned int i_arg = 0;
@@ -3017,9 +3017,9 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
     }
 
     /* get type name */
-    type_name_sym = ic_decl_type_name(tdecl);
-    if (!type_name_sym) {
-        puts("ic_backend_pancake_generate_function_print_struct: call to ic_decl_type_name failed");
+    type_name_param = ic_decl_type_str_param(tdecl);
+    if (!type_name_param) {
+        puts("ic_backend_pancake_generate_function_print_struct: call to ic_decl_type_str_param failed");
         return 0;
     }
 
@@ -3092,7 +3092,7 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
         return 0;
     }
 
-    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, ic_symbol_contents(type_name_sym))) {
+    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, type_name_param)) {
         puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg1_set_char failed");
         return 0;
     }
@@ -3204,9 +3204,9 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
             return 0;
         }
 
-        type_name_sym = ic_decl_type_name(field_type);
-        if (!type_name_sym) {
-            puts("ic_backend_pancake_generate_function_print_struct: call to ic_decl_type_name failed");
+        type_name_param = ic_decl_type_str_param(field_type);
+        if (!type_name_param) {
+            puts("ic_backend_pancake_generate_function_print_struct: call to ic_decl_type_str_param failed");
             return 0;
         }
 
@@ -3276,8 +3276,8 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
             return 0;
         }
 
-        if (!ic_string_append_symbol(fcall_label_str, type_name_sym)) {
-            puts("ic_backend_pancake_generate_function_print_struct: call to ic_string_append_symbol failed");
+        if (!ic_string_append_cstr(fcall_label_str, type_name_param)) {
+            puts("ic_backend_pancake_generate_function_print_struct: call to ic_string_append_cstr failed");
             return 0;
         }
 

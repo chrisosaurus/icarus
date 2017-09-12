@@ -313,11 +313,20 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *
         /* cache str
          * do not need to free as this char* is stored on the tdecl
          *
-         * TODO FIXME need string with type params present
+         * need string with type params present
+         *
+         * if this is generic it will use _s
+         *  e.g. Maybe[_]
+         * if this is instantiated it will use type names
+         *  e.g. Maybe[Sint]
+         *
+         * TODO FIXME consider if this is 'right'
+         * maybe instead all kludge insertions should use the same path
+         * with that path making this decision
          */
-        str = ic_decl_type_str(tdecl);
+        str = ic_decl_type_str_param(tdecl);
         if (!str) {
-            puts("ic_kludge_add_tdecl: call to ic_decl_type_str failed");
+            puts("ic_kludge_add_tdecl: call to ic_decl_type_str_param failed");
             return 0;
         }
 

@@ -108,8 +108,7 @@ analysis failed
         foo[_](_,_)
     and failed to find either
 
-    I also tried to consider this as a constructor for the type:
-        foo[Sint]
+    I also tried to consider this as a constructor
     but after attempting to instantiate this type, I still found no function matching the call:
         foo[Sint](Sint,Sint)
 

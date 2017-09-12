@@ -143,6 +143,6 @@ struct ic_decl_func *ic_analyse_func_decl_instantiate_generic(struct ic_kludge *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_decl_type *ic_analyse_type_decl_instantiate_generic(struct ic_kludge *kludge, char *type_name, struct ic_pvector *type_refs);
+struct ic_decl_type *ic_analyse_type_decl_instantiate_generic(struct ic_kludge *kludge, char *type_name, struct ic_pvector *type_args);
 
 #endif /* ifndef ICARUS_ANALYSE_HELPERS_H */

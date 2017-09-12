@@ -1,6 +1,7 @@
 TODO:
 -----
 
+* 2c generated types are incorrect for generic instantiated types - should be some mangled version of Maybe[T] but is currently just Maybe
 * string/symbol should have equality testing methods that take sym/str/char
 * add automatic print/println implementations for user-defined types
 * refactor out locals handling in pancake/compile.c - should share logic when possible

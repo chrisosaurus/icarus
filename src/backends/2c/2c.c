@@ -483,6 +483,7 @@ static unsigned int ic_b2c_compile_generate_print(struct ic_kludge *kludge, FILE
     struct ic_decl_type *tdecl = 0;
     struct ic_decl_func *fdecl = 0;
     char *type_name_ch = 0;
+    char *type_name_param = 0;
     char *sig_mangled_full_char = 0;
 
     char *field_name_char = 0;
@@ -525,6 +526,12 @@ static unsigned int ic_b2c_compile_generate_print(struct ic_kludge *kludge, FILE
         return 0;
     }
 
+    type_name_param = ic_decl_type_str_param(tdecl);
+    if (!type_name_param) {
+        puts("ic_b2c_compile_generate: call to ic_decl_type_str_param failed");
+        return 0;
+    }
+
     fdecl = ic_generate_get_fdecl(gen);
     if (!fdecl) {
         puts("ic_b2c_compile_generate_print_struct: call to ic_generate_get_fdecl failed");
@@ -558,7 +565,7 @@ static unsigned int ic_b2c_compile_generate_print(struct ic_kludge *kludge, FILE
     print_arg_name_char = field_name_char;
 
     fprintf(f, "void %s(%s %s){\n", sig_mangled_full_char, type_name_ch, field_name_char);
-    fprintf(f, "  fputs(\"%s{\", stdout);\n", type_name_ch);
+    fprintf(f, "  fputs(\"%s{\", stdout);\n", type_name_param);
 
     /* dispatch for internals */
     switch (tdecl->tag) {
