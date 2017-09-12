@@ -40,14 +40,14 @@ struct ic_string *ic_string_new(char *source, unsigned int len);
  */
 struct ic_string *ic_string_new_empty(void);
 
-/* initialise an existing symbol from a char* and a length
+/* initialise an existing string from a char* and a length
  *
  * returns 1 on success
  * returns 0 on failure
  */
 unsigned int ic_string_init(struct ic_string *string, char *source, unsigned int len);
 
-/* initialise an existing symbol to empty
+/* initialise an existing string to empty
  *
  * returns 1 on success
  * returns 0 on failure

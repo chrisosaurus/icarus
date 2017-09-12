@@ -79,7 +79,7 @@ unsigned int ic_string_init(struct ic_string *str, char *source, unsigned int le
     return 1;
 }
 
-/* initialise an existing symbol to empty
+/* initialise an existing string to empty
  * returns 1 on success
  * returns 0 on failure
  */
