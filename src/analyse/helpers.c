@@ -2353,6 +2353,10 @@ struct ic_decl_type *ic_analyse_type_decl_instantiate_generic(struct ic_kludge *
     unsigned int i = 0;
     unsigned int len = 0;
 
+    struct ic_string *str = 0;
+    struct ic_type_ref *type_ref = 0;
+    struct ic_symbol *type_ref_name = 0;
+
     if (!kludge) {
         puts("ic_analyse_type_decl_instantiate_generic: kludge was null");
         return 0;
@@ -2380,33 +2384,139 @@ struct ic_decl_type *ic_analyse_type_decl_instantiate_generic(struct ic_kludge *
 
     /* TODO FIXME instantiate tdecl */
 
+    if (!ic_string_init_empty(str)) {
+        puts("ic_analyse_type_decl_instantiate_generic: call to ic_string_init_empty failed");
+        return 0;
+    }
+
     /* 1) generate signature of the form Maybe[Sint] */
-    /* TODO FIXME */
+    if (!ic_string_append_cstr(str, type_name)) {
+        puts("ic_analyse_type_decl_instantiate_generic: call to ic_string_append_cstr failed");
+        return 0;
+    }
+
+    if (!ic_string_append_char(str, "[", 1)) {
+        puts("ic_analyse_type_decl_instantiate_generic: call to ic_string_append_cstr failed");
+        return 0;
+    }
+
+    for (i=0; i<len; ++i) {
+
+        if (i>0) {
+            if (!ic_string_append_char(str, ",", 1)) {
+                puts("ic_analyse_type_decl_instantiate_generic: call to ic_string_append_cstr failed");
+                return 0;
+            }
+        }
+
+        type_ref = ic_pvector_get(type_refs, i);
+        if (!type_ref) {
+            puts("ic_analyse_type_decl_instantiate_generic: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        type_ref_name = ic_type_ref_get_type_name(type_ref);
+        if (!type_ref_name) {
+            puts("ic_analyse_type_decl_instantiate_generic: call to ic_type_ref_get_type_name failed");
+            return 0;
+        }
+
+        if (!ic_string_append_symbol(str, type_ref_name)) {
+            puts("ic_analyse_type_decl_instantiate_generic: call to ic_string_append_symbol failed");
+            return 0;
+        }
+    }
+
+    if (!ic_string_append_char(str, "]", 1)) {
+        puts("ic_analyse_type_decl_instantiate_generic: call to ic_string_append_cstr failed");
+        return 0;
+    }
+
 
     /* 2) check if this exists
      *    if it does, look it up, and return it
      */
-    /* TODO FIXME */
+    decl_type = ic_kludge_get_decl_type_from_string(kludge, str);
+    if (decl_type) {
+        /* found type, freedom! */
+
+        if (!ic_string_destroy(str, 1)) {
+            puts("ic_analyse_type_decl_instantiate_generic: call to ic_string_destroy failed");
+            return 0;
+        }
+
+        return decl_type;
+    }
 
     /* 3) generate signature of the form Maybe[_] */
-    /* TODO FIXME */
+
+    /* TODO FIXME this is a bit gross, string should provide a method for this */
+    if (!ic_string_set(str, 0, '\0')) {
+        puts("ic_analyse_type_decl_instantiate_generic: call to ic_string_set failed");
+        return 0;
+    }
+    str->used = 0;
+
+    if (!ic_string_append_cstr(str, type_name)) {
+        puts("ic_analyse_type_decl_instantiate_generic: call to ic_string_append_cstr failed");
+        return 0;
+    }
+
+    if (!ic_string_append_char(str, "[", 1)) {
+        puts("ic_analyse_type_decl_instantiate_generic: call to ic_string_append_cstr failed");
+        return 0;
+    }
+
+    for (i=0; i<len; ++i) {
+
+        if (i==0) {
+            if (!ic_string_append_char(str, "_", 1)) {
+                puts("ic_analyse_type_decl_instantiate_generic: call to ic_string_append_cstr failed");
+                return 0;
+            }
+        } else {
+            if (!ic_string_append_char(str, ",_", 2)) {
+                puts("ic_analyse_type_decl_instantiate_generic: call to ic_string_append_cstr failed");
+                return 0;
+            }
+        }
+    }
+
+    if (!ic_string_append_char(str, "]", 1)) {
+        puts("ic_analyse_type_decl_instantiate_generic: call to ic_string_append_cstr failed");
+        return 0;
+    }
 
     /* 4) check if this exists
      *    if it does not, fail, return
      */
-    /* TODO FIXME */
 
-    /* 5) instantiate found Maybe[_] with provided type Sint */
+    decl_type = ic_kludge_get_decl_type_from_string(kludge, str);
+    if (!decl_type) {
+        /* failed to find type, error! */
+        puts("ic_analyse_type_decl_instantiate_generic: failed to find generic version of type");
+        printf("ic_analyse_type_decl_instantiate_generic: failed to find generic type '%s'\n", ic_string_contents(str));
+
+        if (!ic_string_destroy(str, 1)) {
+            puts("ic_analyse_type_decl_instantiate_generic: call to ic_string_destroy failed");
+            return 0;
+        }
+
+        return 0;
+    }
+
+    /* 5) instantiate found Maybe[_] with provided types [Sint] */
     /* TODO FIXME */
 
     /* 6) trigger normal decl_type things (like kludge insertion, function creation, etc.) */
     /* TODO FIXME */
 
-    /* 7) return our new type */
-    /* TODO FIXME */
-
+    /* TODO FIXME remove when done */
     puts("ic_analyse_type_decl_instantiate_generic: unimplemented");
     return 0;
+
+    /* 7) return our new type */
+    return decl_type;
 }
 
 /* iterate through a type_ref list resolving each type_ref to a decl_type
