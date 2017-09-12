@@ -418,6 +418,21 @@ unsigned int ic_decl_func_is_instantiated(struct ic_decl_func *fdecl) {
     return fdecl->is_instantiated;
 }
 
+/* set is_instantiated to true (1)
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_func_mark_instantiated(struct ic_decl_func *fdecl) {
+    if (!fdecl) {
+        puts("ic_decl_func_mark_instantiated: fdecl was null");
+        return 0;
+    }
+
+    fdecl->is_instantiated = 1;
+    return 1;
+}
+
 /* add new type_param to decl_func
  *
  * returns 1 on success
@@ -1601,6 +1616,21 @@ unsigned int ic_decl_type_struct_is_instantiated(struct ic_decl_type_struct *tde
     return tdecl->is_instantiated;
 }
 
+/* set is_instantiated to true (1)
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_struct_mark_instantiated(struct ic_decl_type_struct *tdecl) {
+    if (!tdecl) {
+        puts("ic_decl_type_struct_mark_instantiated: tdecl was null");
+        return 0;
+    }
+
+    tdecl->is_instantiated = 1;
+    return 1;
+}
+
 /* get symbol of name for this type
  *
  * returns * on success
@@ -2595,6 +2625,21 @@ unsigned int ic_decl_type_union_is_instantiated(struct ic_decl_type_union *udecl
     return udecl->is_instantiated;
 }
 
+/* set is_instantiated to true (1)
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_union_mark_instantiated(struct ic_decl_type_union *udecl) {
+    if (!udecl) {
+        puts("ic_decl_type_union_mark_instantiated: udecl was null");
+        return 0;
+    }
+
+    udecl->is_instantiated = 1;
+    return 1;
+}
+
 /* get symbol of name for this type
  *
  * returns * on success
@@ -3261,6 +3306,33 @@ unsigned int ic_decl_type_is_instantiated(struct ic_decl_type *tdecl) {
 
         default:
             puts("ic_decl_type_is_instantiated: unknown tag");
+            return 0;
+            break;
+    }
+}
+
+/* set is_instantiated to true (1)
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_mark_instantiated(struct ic_decl_type *tdecl) {
+    if (!tdecl) {
+        puts("ic_decl_type_mark_instantiated: tdecl was null");
+        return 0;
+    }
+
+    switch (tdecl->tag) {
+        case ic_decl_type_tag_struct:
+            return ic_decl_type_struct_mark_instantiated(&(tdecl->u.tstruct));
+            break;
+
+        case ic_decl_type_tag_union:
+            return ic_decl_type_union_mark_instantiated(&(tdecl->u.tunion));
+            break;
+
+        default:
+            puts("ic_decl_type_mark_instantiated: unknown tag");
             return 0;
             break;
     }
@@ -4513,6 +4585,32 @@ unsigned int ic_decl_is_instantiated(struct ic_decl *decl) {
 
         default:
             puts("ic_decl_is_instantiated: unknown tag");
+            return 0;
+    }
+}
+
+/* set is_instantiated to true (1)
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_mark_instantiated(struct ic_decl *decl) {
+    if (!decl) {
+        puts("ic_decl_mark_instantiated: decl was null");
+        return 0;
+    }
+
+    switch (decl->tag) {
+        case ic_decl_tag_func:
+            return ic_decl_func_mark_instantiated(&(decl->u.fdecl));
+            break;
+
+        case ic_decl_tag_type:
+            return ic_decl_type_mark_instantiated(&(decl->u.tdecl));
+            break;
+
+        default:
+            puts("ic_decl_mark_instantiated: unknown tag");
             return 0;
     }
 }

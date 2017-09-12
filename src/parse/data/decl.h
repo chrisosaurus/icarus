@@ -132,6 +132,13 @@ unsigned int ic_decl_func_deep_copy_embedded(struct ic_decl_func *from, struct i
  */
 unsigned int ic_decl_func_is_instantiated(struct ic_decl_func *fdecl);
 
+/* set is_instantiated to true (1)
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_func_mark_instantiated(struct ic_decl_func *fdecl);
+
 /* add new type_param to decl_func
  *
  * returns 1 on success
@@ -429,6 +436,13 @@ unsigned int ic_decl_type_struct_deep_copy_embedded(struct ic_decl_type_struct *
  */
 unsigned int ic_decl_type_struct_is_instantiated(struct ic_decl_type_struct *tdecl);
 
+/* set is_instantiated to true (1)
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_struct_mark_instantiated(struct ic_decl_type_struct *tdecl);
+
 /* get symbol of name for this type
  *
  * returns * on success
@@ -700,6 +714,13 @@ unsigned int ic_decl_type_union_deep_copy_embedded(struct ic_decl_type_union *fr
  */
 unsigned int ic_decl_type_union_is_instantiated(struct ic_decl_type_union *udecl);
 
+/* set is_instantiated to true (1)
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_union_mark_instantiated(struct ic_decl_type_union *udecl);
+
 /* get symbol of name for this type
  *
  * returns * on success
@@ -879,6 +900,13 @@ unsigned int ic_decl_type_deep_copy_embedded(struct ic_decl_type *from, struct i
  * otherwise this will be false (0)
  */
 unsigned int ic_decl_type_is_instantiated(struct ic_decl_type *tdecl);
+
+/* set is_instantiated to true (1)
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_type_mark_instantiated(struct ic_decl_type *tdecl);
 
 /* mark this tdecl as being a builtin
  *
@@ -1177,6 +1205,13 @@ unsigned int ic_decl_deep_copy_embedded(struct ic_decl *from, struct ic_decl *to
  * otherwise this will be false (0)
  */
 unsigned int ic_decl_is_instantiated(struct ic_decl *decl);
+
+/* set is_instantiated to true (1)
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_decl_mark_instantiated(struct ic_decl *decl);
 
 /* returns pointer to ic_decl_func element
  * this function will only success if the decl is of type decl_func
