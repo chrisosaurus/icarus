@@ -577,6 +577,20 @@ unsigned int ic_type_ref_is_type_param(struct ic_type_ref *type) {
     return type->tag == ic_type_ref_param;
 }
 
+/* check if this type_ref refers to a concrete type
+ *
+ * returns 1 for yes
+ * returns 0 for no
+ */
+unsigned int ic_type_ref_is_resolved(struct ic_type_ref *type) {
+    if (!type) {
+        puts("ic_type_ref_is_resolved: type as null");
+        return 0;
+    }
+
+    return type->tag == ic_type_ref_resolved;
+}
+
 /* return the underlying decl_param
  *
  * if type_ref.tag is not param then this is an error

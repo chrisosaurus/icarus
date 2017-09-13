@@ -163,6 +163,13 @@ struct ic_type_param *ic_type_ref_get_type_param(struct ic_type_ref *type);
  */
 unsigned int ic_type_ref_is_type_param(struct ic_type_ref *type);
 
+/* check if this type_ref refers to a concrete type
+ *
+ * returns 1 for yes
+ * returns 0 for no
+ */
+unsigned int ic_type_ref_is_resolved(struct ic_type_ref *type);
+
 /* add a type_arg
  *
  * returns 1 on success
