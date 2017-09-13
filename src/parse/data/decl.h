@@ -549,6 +549,20 @@ struct ic_symbol *ic_decl_type_struct_name(struct ic_decl_type_struct *tdecl);
  */
 char *ic_decl_type_struct_str(struct ic_decl_type_struct *tdecl);
 
+/* generate a name for this polymorphic (generic) type
+ *
+ * if this type is not instantiated yet, then this will be of the form
+ *  Maybe[_]
+ * if this type is instantiated, then this will be of the form
+ *  Maybe[Sint]
+ *
+ * caller is responsible for free-ing returned *
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+char *ic_decl_type_struct_str_param(struct ic_decl_type_struct *tdecl);
+
 /* return a mangled representation of this function full signature
  *
  * the char* returned is a string stored within tdecl,
@@ -757,6 +771,20 @@ struct ic_symbol *ic_decl_type_union_name(struct ic_decl_type_union *tdecl);
  */
 char *ic_decl_type_union_str(struct ic_decl_type_union *tdecl);
 
+/* generate a name for this polymorphic (generic) type
+ *
+ * if this type is not instantiated yet, then this will be of the form
+ *  Maybe[_]
+ * if this type is instantiated, then this will be of the form
+ *  Maybe[Sint]
+ *
+ * caller is responsible for free-ing returned *
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+char *ic_decl_type_union_str_param(struct ic_decl_type_union *udecl);
+
 /* add new type_param to decl_union
  *
  * returns 1 on success
@@ -956,6 +984,20 @@ struct ic_symbol *ic_decl_type_name(struct ic_decl_type *tdecl);
  * returns 0 on failure
  */
 char *ic_decl_type_str(struct ic_decl_type *tdecl);
+
+/* generate a name for this polymorphic (generic) type
+ *
+ * if this type is not instantiated yet, then this will be of the form
+ *  Maybe[_]
+ * if this type is instantiated, then this will be of the form
+ *  Maybe[Sint]
+ *
+ * caller is responsible for free-ing returned *
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+char *ic_decl_type_str_param(struct ic_decl_type *tdecl);
 
 /* add new type_param to decl
  *

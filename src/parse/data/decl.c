@@ -1937,11 +1937,120 @@ struct ic_symbol *ic_decl_type_struct_name(struct ic_decl_type_struct *tdecl) {
  */
 char *ic_decl_type_struct_str(struct ic_decl_type_struct *tdecl) {
     if (!tdecl) {
-        puts("ic_decl_type_str: tdecl was null");
+        puts("ic_decl_type_struct_str: tdecl was null");
         return 0;
     }
 
     return ic_symbol_contents(&(tdecl->name));
+}
+
+/* generate a name for this polymorphic (generic) type
+ *
+ * if this type is not instantiated yet, then this will be of the form
+ *  Maybe[_]
+ * if this type is instantiated, then this will be of the form
+ *  Maybe[Sint]
+ *
+ * caller is responsible for free-ing returned *
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+char *ic_decl_type_struct_str_param(struct ic_decl_type_struct *tdecl) {
+    struct ic_string *str = 0;
+    char *ch = 0;
+
+    unsigned int i = 0;
+    unsigned int len = 0;
+
+    struct ic_type_param *type_param = 0;
+    struct ic_symbol *type_param_name = 0;
+
+    if (!tdecl) {
+        puts("ic_decl_type_struct_str_param: tdecl was null");
+        return 0;
+    }
+
+    /* TODO FIXME I have basically this exact same code in too many places
+     * we should be able to take a string (fname / tname) and a list of type_params
+     * and write a function to do this generically, returning the string* which the
+     * caller can then optionally store
+     */
+
+    str = ic_string_new_empty();
+    if (!str) {
+        puts("ic_decl_type_struct_str_param: call to ic_string_new_empty failed");
+        return 0;
+    }
+
+    /* append type name */
+    if (!ic_string_append_symbol(str, &(tdecl->name))) {
+        puts("ic_decl_type_struct_str_param: call to ic_string_append_symbol failed");
+        return 0;
+    }
+
+    /* append [ */
+    if (!ic_string_append_char(str, "[", 1)) {
+        puts("ic_decl_type_struct_str_param: call to ic_string_append_char failed");
+        return 0;
+    }
+
+    /* TODO FIMXE
+     *   iterate through params
+     *   if instantiated, then type name
+     *   otherwise, _
+     *   insert ,s to sep
+     */
+    len = ic_decl_type_struct_type_params_length(tdecl);
+
+    if (ic_decl_type_struct_is_instantiated(tdecl)) {
+        for (i=0; i<len; ++i) {
+            type_param = ic_decl_type_struct_type_params_get(tdecl, i);
+            if (!type_param) {
+                puts("ic_decl_type_struct_str_param: call to ic_decl_type_struct_type_params_get failed");
+                return 0;
+            }
+
+            type_param_name = ic_type_param_get_name(type_param);
+            if (!type_param_name) {
+                puts("ic_decl_type_struct_str_param: call to ic_type_param_get_name failed");
+                return 0;
+            }
+
+            if (!ic_string_append_symbol(str, type_param_name)) {
+                puts("ic_decl_type_struct_str_param: call to ic_string_append_symbol failed");
+                return 0;
+            }
+        }
+    } else {
+        for (i=0; i<len; ++i) {
+            if (i==0) {
+                if (!ic_string_append_char(str, "_", 1)) {
+                    puts("ic_decl_type_struct_str_param: call to ic_string_append_char failed");
+                    return 0;
+                }
+            } else {
+                if (!ic_string_append_char(str, ",_", 2)) {
+                    puts("ic_decl_type_struct_str_param: call to ic_string_append_char failed");
+                    return 0;
+                }
+            }
+        }
+    }
+
+    /* append ] */
+    if (!ic_string_append_char(str, "]", 1)) {
+        puts("ic_decl_type_struct_str_param: call to ic_string_append_char failed");
+        return 0;
+    }
+
+    ch = ic_string_contents_steal_and_destroy(str);
+    if (!ch) {
+        puts("ic_decl_type_struct_str_param: call to ic_string_contents_steal_and_destroy failed");
+        return 0;
+    }
+
+    return ch;
 }
 
 /* return a mangled representation of this function full signature
@@ -2812,6 +2921,115 @@ char *ic_decl_type_union_str(struct ic_decl_type_union *tdecl) {
     return ch;
 }
 
+/* generate a name for this polymorphic (generic) type
+ *
+ * if this type is not instantiated yet, then this will be of the form
+ *  Maybe[_]
+ * if this type is instantiated, then this will be of the form
+ *  Maybe[Sint]
+ *
+ * caller is responsible for free-ing returned *
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+char *ic_decl_type_union_str_param(struct ic_decl_type_union *udecl) {
+    struct ic_string *str = 0;
+    char *ch = 0;
+
+    unsigned int i = 0;
+    unsigned int len = 0;
+
+    struct ic_type_param *type_param = 0;
+    struct ic_symbol *type_param_name = 0;
+
+    if (!udecl) {
+        puts("ic_decl_type_union_str_param: udecl was null");
+        return 0;
+    }
+
+    /* TODO FIXME I have basically this exact same code in too many places
+     * we should be able to take a string (fname / tname) and a list of type_params
+     * and write a function to do this generically, returning the string* which the
+     * caller can then optionally store
+     */
+
+    str = ic_string_new_empty();
+    if (!str) {
+        puts("ic_decl_type_union_str_param: call to ic_string_new_empty failed");
+        return 0;
+    }
+
+    /* append type name */
+    if (!ic_string_append_symbol(str, &(udecl->name))) {
+        puts("ic_decl_type_union_str_param: call to ic_string_append_symbol failed");
+        return 0;
+    }
+
+    /* append [ */
+    if (!ic_string_append_char(str, "[", 1)) {
+        puts("ic_decl_type_union_str_param: call to ic_string_append_char failed");
+        return 0;
+    }
+
+    /* TODO FIMXE
+     *   iterate through params
+     *   if instantiated, then type name
+     *   otherwise, _
+     *   insert ,s to sep
+     */
+    len = ic_decl_type_union_type_params_length(udecl);
+
+    if (ic_decl_type_union_is_instantiated(udecl)) {
+        for (i=0; i<len; ++i) {
+            type_param = ic_decl_type_union_type_params_get(udecl, i);
+            if (!type_param) {
+                puts("ic_decl_type_union_str_param: call to ic_decl_type_union_type_params_get failed");
+                return 0;
+            }
+
+            type_param_name = ic_type_param_get_name(type_param);
+            if (!type_param_name) {
+                puts("ic_decl_type_union_str_param: call to ic_type_param_get_name failed");
+                return 0;
+            }
+
+            if (!ic_string_append_symbol(str, type_param_name)) {
+                puts("ic_decl_type_union_str_param: call to ic_string_append_symbol failed");
+                return 0;
+            }
+        }
+    } else {
+        for (i=0; i<len; ++i) {
+            if (i==0) {
+                if (!ic_string_append_char(str, "_", 1)) {
+                    puts("ic_decl_type_union_str_param: call to ic_string_append_char failed");
+                    return 0;
+                }
+            } else {
+                if (!ic_string_append_char(str, ",_", 2)) {
+                    puts("ic_decl_type_union_str_param: call to ic_string_append_char failed");
+                    return 0;
+                }
+            }
+        }
+    }
+
+    /* append ] */
+    if (!ic_string_append_char(str, "]", 1)) {
+        puts("ic_decl_type_union_str_param: call to ic_string_append_char failed");
+        return 0;
+    }
+
+    ch = ic_string_contents_steal_and_destroy(str);
+    if (!ch) {
+        puts("ic_decl_type_union_str_param: call to ic_string_contents_steal_and_destroy failed");
+        return 0;
+    }
+
+    return ch;
+}
+
 /* add new type_param to decl_union
  *
  * returns 1 on success
@@ -3525,6 +3743,51 @@ char *ic_decl_type_str(struct ic_decl_type *tdecl) {
 
         default:
             puts("ic_decl_type_str: unknown tag");
+            return 0;
+            break;
+    }
+}
+
+/* generate a name for this polymorphic (generic) type
+ *
+ * if this type is not instantiated yet, then this will be of the form
+ *  Maybe[_]
+ * if this type is instantiated, then this will be of the form
+ *  Maybe[Sint]
+ *
+ * caller is responsible for free-ing returned *
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+char *ic_decl_type_str_param(struct ic_decl_type *tdecl) {
+    char *ch = 0;
+    if (!tdecl) {
+        puts("ic_decl_type_str_param: tdecl was null");
+        return 0;
+    }
+
+    switch (tdecl->tag) {
+        case ic_decl_type_tag_struct:
+            ch = ic_decl_type_struct_str_param(&(tdecl->u.tstruct));
+            if (!ch) {
+                puts("ic_decl_type_str_param: call to ic_decl_type_struct_str_param failed");
+                return 0;
+            }
+            return ch;
+            break;
+
+        case ic_decl_type_tag_union:
+            ch = ic_decl_type_union_str_param(&(tdecl->u.tunion));
+            if (!ch) {
+                puts("ic_decl_type_str_param: call to ic_decl_type_union_str_param failed");
+                return 0;
+            }
+            return ch;
+            break;
+
+        default:
+            puts("ic_decl_type_str_param: unknown tag");
             return 0;
             break;
     }
