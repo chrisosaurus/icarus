@@ -53,6 +53,20 @@ struct ic_type_param *ic_type_param_deep_copy(struct ic_type_param *tparam);
  */
 unsigned int ic_type_param_deep_copy_embedded(struct ic_type_param *from, struct ic_type_param *to);
 
+/* perform a deep copy of a pvector of type_param(s)
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_pvector *ic_type_param_pvector_deep_copy(struct ic_pvector *tparams);
+
+/* perform a deep copy of a pvector of type_param(s) embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_type_param_pvector_deep_copy_embedded(struct ic_pvector *from, struct ic_pvector *to);
+
 /* get pointer to internal name
  *
  * returns * on success

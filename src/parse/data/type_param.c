@@ -134,6 +134,83 @@ unsigned int ic_type_param_deep_copy_embedded(struct ic_type_param *from, struct
     return 1;
 }
 
+/* perform a deep copy of a pvector of type_param(s)
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_pvector *ic_type_param_pvector_deep_copy(struct ic_pvector *tparams) {
+    struct ic_pvector *new = 0;
+
+    if (!tparams) {
+        puts("ic_type_param_pvector_deep_copy: tparams was null");
+        return 0;
+    }
+
+    new = calloc(1, sizeof(struct ic_pvector));
+    if (!new) {
+        puts("ic_type_param_pvector_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_type_param_pvector_deep_copy_embedded(tparams, new)) {
+        puts("ic_type_param_pvector_deep_copy: call to ic_type_param_pvector_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new;
+}
+
+/* perform a deep copy of a pvector of type_param(s) embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_type_param_pvector_deep_copy_embedded(struct ic_pvector *from, struct ic_pvector *to) {
+    unsigned int i = 0;
+    unsigned int len = 0;
+    struct ic_type_param *from_tparam = 0;
+    struct ic_type_param *to_tparam = 0;
+
+    if (!from) {
+        puts("ic_type_param_pvector_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_type_param_pvector_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    len = ic_pvector_length(from);
+
+    if (!ic_pvector_init(to, len)) {
+        puts("ic_type_param_pvector_deep_copy_embedded: call to ic_pvector_init failed");
+        return 0;
+    }
+
+    for (i=0; i<len; ++i ){
+        from_tparam = ic_pvector_get(from, i);
+        if (!from_tparam) {
+            puts("ic_type_param_pvector_deep_copy_embedded: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        to_tparam = ic_type_param_deep_copy(from_tparam);
+        if (!to_tparam) {
+            puts("ic_type_param_pvector_deep_copy_embedded: call to ic_type_param_deep_copy failed");
+            return 0;
+        }
+
+        if ((int)i != ic_pvector_append(to, to_tparam)) {
+            puts("ic_type_param_pvector_deep_copy_embedded: call to ic_pvector_append failed");
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
 /* get pointer to internal name
  *
  * returns * on success
