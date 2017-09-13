@@ -200,7 +200,7 @@ sub check_2c {
     my $cmd_1 = "cc ${cout} -o ${basename}";
     my $prog_1 = run_cmd_bool($cmd_1);
     if( not $prog_1 ){
-      if( 'fail-ccompiler' eq "$expected_progress" ){
+      if( 'fail-c-compiler' eq "$expected_progress" ){
         run_cmd_die("rm -rf $cout");
         run_cmd_die("rm -rf $basename");
         return; # success
@@ -208,7 +208,7 @@ sub check_2c {
       die "check_2c:
            when running command '$cmd_1'
            we received exit code '$prog_1'
-           this constitues a 'fail-ccompiler'
+           this constitues a 'fail-c-compiler'
            but our expected progress was '$expected_progress'"; # failure
     }
   }
