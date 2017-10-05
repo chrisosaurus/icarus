@@ -169,10 +169,7 @@ static unsigned int ic_analyse_decl_type_generate_print_functions(struct ic_klud
 
     struct ic_field *field = 0;
     struct ic_generate *generate = 0;
-    struct ic_symbol *type_sym = 0;
     struct ic_type_ref *type_ref = 0;
-    char *type_str = 0;
-    int type_str_len = 0;
 
     char *sig_call = 0;
 
@@ -186,27 +183,14 @@ static unsigned int ic_analyse_decl_type_generate_print_functions(struct ic_klud
         goto ERROR;
     }
 
-    type_sym = ic_decl_type_get_name(tdecl);
-    if (!type_sym) {
-        puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl_type_struct_get_name failed");
-        goto ERROR;
-    }
-
-    type_str = ic_symbol_contents(type_sym);
-    if (!type_str) {
-        puts("ic_analyse_decl_type_generate_print_functions: call to ic_symbol_contents failed");
-        goto ERROR;
-    }
-
-    type_str_len = ic_symbol_length(type_sym);
-    if (-1 == type_str_len) {
-        puts("ic_analyse_decl_type_generate_print_functions: call to ic_symbol_length failed");
-        goto ERROR;
-    }
-
-    type_ref = ic_type_ref_symbol_new(type_str, type_str_len);
+    type_ref = ic_type_ref_new();
     if (!type_ref) {
-        puts("ic_analyse_decl_type_generate_print_functions: call to ic_type_ref_symbol_new failed");
+        puts("ic_analyse_decl_type_generate_print_functions: call to ic_type_ref_new failed");
+        return 0;
+    }
+
+    if (!ic_type_ref_set_type_decl(type_ref, tdecl)) {
+        puts("ic_analyse_decl_type_generate_print_functions: call to ic_type_ref_set_type_decl failed");
         return 0;
     }
 
@@ -579,8 +563,9 @@ unsigned int ic_analyse_decl_type_struct_generate_functions(struct ic_kludge *kl
             puts("ic_analyse_decl_type_struct_generate_functions: call to ic_decl_func_get_return failed");
             goto ERROR;
         }
-        if (!ic_type_ref_set_symbol(type_ref, type_str, type_str_len)) {
-            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_type_ref_set_symbol failed");
+
+        if (!ic_type_ref_set_type_decl(type_ref, tdecl)) {
+            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_type_ref_set_type_decl failed");
             goto ERROR;
         }
 
