@@ -1,10 +1,24 @@
-type Foo
-    a::Sint
+type Nothing
+end
+
+union Maybe[T]
+    something::T
+    nothing::Nothing
+end
+
+fn foo(n::Maybe[Sint]) -> Maybe[Sint]
+    return n
+end
+
+type Bar
+    o::Maybe[Sint]
 end
 
 fn main()
-    let &f = Foo(4s)
-    println(f.a)
-    &f.a = 5s
-    println(f.a)
+    let m = Maybe[Sint](6s)
+    m = foo(m)
+    let b = Bar(m)
+
+    println(b)
 end
+
