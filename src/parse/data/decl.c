@@ -3514,6 +3514,70 @@ unsigned int ic_decl_type_deep_copy_embedded(struct ic_decl_type *from, struct i
     return 1;
 }
 
+/* return a new type_ref that refers to this type
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type_ref *ic_decl_type_make_type_ref(struct ic_decl_type *tdecl) {
+    struct ic_type_ref *type_ref = 0;
+
+    struct ic_decl_type_struct *tdecl_struct = 0;
+    struct ic_decl_type_union *tdecl_union = 0;
+
+    struct ic_pvector *from_pvector;
+
+    if (!tdecl) {
+        puts("ic_decl_type_make_type_ref: tdecl was null");
+        return 0;
+    }
+
+    type_ref = ic_type_ref_new();
+    if (!type_ref) {
+        puts("ic_decl_type_make_type_ref: call to ic_type_ref_new failed");
+        return 0;
+    }
+
+    if (!ic_type_ref_set_type_decl(type_ref, tdecl)) {
+        puts("ic_decl_type_make_type_ref: call to ic_type_ref_set_type_decl failed");
+        return 0;
+    }
+
+    switch (tdecl->tag) {
+        case ic_decl_type_tag_struct:
+            tdecl_struct = ic_decl_type_get_struct(tdecl);
+            if (!tdecl_struct) {
+                puts("ic_decl_type_make_type_ref: call to ic_decl_type_get_struct failed");
+                return 0;
+            }
+
+            from_pvector = &(tdecl_struct->type_params);
+            break;
+
+        case ic_decl_type_tag_union:
+            tdecl_union = ic_decl_type_get_union(tdecl);
+            if (!tdecl_union) {
+                puts("ic_decl_type_make_type_ref: call to ic_decl_type_get_union failed");
+                return 0;
+            }
+
+            from_pvector = &(tdecl_union->type_params);
+            break;
+
+        default:
+            puts("ic_decl_type_make_type_ref: impossible tag");
+            return 0;
+            break;
+    }
+
+    if (!ic_type_param_pvector_deep_copy_embedded(from_pvector, &(type_ref->type_args))) {
+        puts("ic_decl_type_make_type_ref: call to ic_type_param_pvector_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return type_ref;
+}
+
 /* get is_instantiated
  *
  * for a non-generic type this will be true (1)

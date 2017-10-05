@@ -921,6 +921,13 @@ struct ic_decl_type *ic_decl_type_deep_copy(struct ic_decl_type *tdecl);
  */
 unsigned int ic_decl_type_deep_copy_embedded(struct ic_decl_type *from, struct ic_decl_type *to);
 
+/* return a new type_ref that refers to this type
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_type_ref *ic_decl_type_make_type_ref(struct ic_decl_type *tdecl);
+
 /* get is_instantiated
  *
  * for a non-generic type this will be true (1)

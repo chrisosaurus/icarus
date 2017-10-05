@@ -183,14 +183,9 @@ static unsigned int ic_analyse_decl_type_generate_print_functions(struct ic_klud
         goto ERROR;
     }
 
-    type_ref = ic_type_ref_new();
+    type_ref = ic_decl_type_make_type_ref(tdecl);
     if (!type_ref) {
-        puts("ic_analyse_decl_type_generate_print_functions: call to ic_type_ref_new failed");
-        return 0;
-    }
-
-    if (!ic_type_ref_set_type_decl(type_ref, tdecl)) {
-        puts("ic_analyse_decl_type_generate_print_functions: call to ic_type_ref_set_type_decl failed");
+        puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl_type_make_type_ref failed");
         return 0;
     }
 
