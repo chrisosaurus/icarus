@@ -2407,7 +2407,6 @@ unsigned int ic_backend_pancake_compile_expr_fcall(struct ic_backend_pancake_ins
 }
 
 static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_generate *gen) {
-    /* TODO FIXME START OF COPY */
     struct ic_decl_type *tdecl = 0;
     char *type_name_param = 0;
     struct ic_decl_func *fdecl = 0;
@@ -3862,7 +3861,9 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                     return 0;
                 }
 
-                /* generate a string of the form "print(<TYPENAME>)" */
+                /* generate a string of the form "print(<TYPENAME>)"
+                 * this is the print function we call from within println
+                 */
                 /* TODO FIXME leaking this string! */
                 fcall_label_str = ic_string_new("print(", 6);
                 if (!fcall_label_str) {
