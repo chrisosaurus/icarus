@@ -265,12 +265,12 @@ which shows us
     label fizzer(Sint)1
     load str
     call_builtin length(String) 1
-    store _t3
-    load _t3
-    pushint 0
-    call_builtin equal(Uint,Sint) 2
     store _t2
     load _t2
+    pushint 0
+    call_builtin equal(Uint,Sint) 2
+    store _t3
+    load _t3
     jnif_label fizzer(Sint)2
     copyarg 0
     call_builtin println(Sint) 1
