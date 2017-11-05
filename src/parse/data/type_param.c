@@ -358,3 +358,59 @@ struct ic_type_param *ic_type_param_search(struct ic_pvector *type_params, char 
     /* could not find */
     return 0;
 }
+
+/* get mangled_name
+ * this is owned by the underlying decl_type
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_type_param_mangled_name(struct ic_type_param *tparam) {
+    struct ic_symbol *sym = 0;
+
+    if (!tparam) {
+        puts("ic_type_param_mangled_name: tparam was null");
+        return 0;
+    }
+
+    if (tparam->tdecl) {
+        sym = ic_decl_type_mangled_name(tparam->tdecl);
+        if (!sym) {
+            puts("ic_type_param_mangled_name: call to ic_decl_type_mangled_name failed");
+            return 0;
+        }
+
+    } else {
+        sym = &(tparam->name);
+    }
+
+    return sym;
+}
+
+/* get full_name
+ * this is owned by the underlying decl_type
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_type_param_full_name(struct ic_type_param *tparam) {
+    struct ic_symbol *sym = 0;
+
+    if (!tparam) {
+        puts("ic_type_param_full_name: tparam was null");
+        return 0;
+    }
+
+    if (tparam->tdecl) {
+        sym = ic_decl_type_full_name(tparam->tdecl);
+        if (!sym) {
+            puts("ic_type_param_full_name: call to ic_decl_type_full_name failed");
+            return 0;
+        }
+    } else {
+        sym = &(tparam->name);
+    }
+
+    return sym;
+}
+

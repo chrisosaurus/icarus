@@ -24,38 +24,38 @@ my $cases = [
     expected_c =>'
       #include "backends/2c/builtins.c"
       typedef struct Foo * Foo;
-      Foo i_Foo_a_Sint_String(Sint a, String b);
-      void i_print_a_Foo(Foo f);
-      void i_println_a_Foo(Foo f);
+      Foo Foo_a_Sint_String_b(Sint a, String b);
+      void print_a_Foo_b(Foo f);
+      void println_a_Foo_b(Foo f);
       /* main() -> Void */
-      Void i_main_a();
+      Void main_a_b();
       struct Foo {
         Sint a;
         String b;
       };
-      Foo i_Foo_a_Sint_String(Sint a, String b) {
+      Foo Foo_a_Sint_String_b(Sint a, String b) {
         Foo tmp = ic_alloc(sizeof(struct Foo));
         tmp->a = a;
         tmp->b = b;
         return tmp;
       }
-      void i_print_a_Foo(Foo f){
+      void print_a_Foo_b(Foo f){
         fputs("Foo{", stdout);
-        i_print_a_Sint(f->a);
+        print_a_Sint_b(f->a);
         fputs(", ", stdout);
-        i_print_a_String(f->b);
+        print_a_String_b(f->b);
         fputs("}", stdout);
       }
-      void i_println_a_Foo(Foo f){
-        i_print_a_Foo(f);
-        i_println_a();
+      void println_a_Foo_b(Foo f){
+        print_a_Foo_b(f);
+        println_a_b();
       }
       /* main() -> Void */
-      Void i_main_a(){
+      Void main_a_b(){
         Sint _l0 = ic_sint_new(6);
         String _l1 = ic_string_new("Hello", 5);
-        Foo f = i_Foo_a_Sint_String(_l0, _l1);
-        i_println_a_Foo(f);
+        Foo f = Foo_a_Sint_String_b(_l0, _l1);
+        println_a_Foo_b(f);
       }
       #include "backends/2c/entry.c"
     ',
@@ -81,12 +81,12 @@ my $cases = [
       #include "backends/2c/builtins.c"
       enum Foo_tag;
       typedef struct Foo * Foo;
-      Foo i_Foo_a_Sint(Sint a);
-      Foo i_Foo_a_String(String b);
-      void i_print_a_Foo(Foo f);
-      void i_println_a_Foo(Foo f);
+      Foo Foo_a_Sint_b(Sint a);
+      Foo Foo_a_String_b(String b);
+      void print_a_Foo_b(Foo f);
+      void println_a_Foo_b(Foo f);
       /* main() -> Void */
-      Void i_main_a();
+      Void main_a_b();
       enum Foo_tag {
         Foo_tag_Sint_a,
         Foo_tag_String_b,
@@ -98,44 +98,44 @@ my $cases = [
           String b;
         } u;
       };
-      Foo i_Foo_a_Sint(Sint a){
+      Foo Foo_a_Sint_b(Sint a){
         Foo tmp = ic_alloc(sizeof(struct Foo));
         tmp->_tag = Foo_tag_Sint_a;
         tmp->u.a = a;
         return tmp;
       }
-      Foo i_Foo_a_String(String b){
+      Foo Foo_a_String_b(String b){
         Foo tmp = ic_alloc(sizeof(struct Foo));
         tmp->_tag = Foo_tag_String_b;
         tmp->u.b = b;
         return tmp;
       }
-      void i_print_a_Foo(Foo f){
+      void print_a_Foo_b(Foo f){
         fputs("Foo{", stdout);
         switch (f->_tag) {
           case Foo_tag_Sint_a:
-            i_print_a_Sint(f->u.a);
+            print_a_Sint_b(f->u.a);
             break;
           case Foo_tag_String_b:
-            i_print_a_String(f->u.b);
+            print_a_String_b(f->u.b);
             break;
           default:
             panic("impossible tag on Foo");
         }
         fputs("}", stdout);
       }
-      void i_println_a_Foo(Foo f){
-        i_print_a_Foo(f);
-        i_println_a();
+      void println_a_Foo_b(Foo f){
+        print_a_Foo_b(f);
+        println_a_b();
       }
       /* main() -> Void */
-      Void i_main_a(){
+      Void main_a_b(){
         Sint _l0 = ic_sint_new(5);
-        Foo a = i_Foo_a_Sint(_l0);
-        i_println_a_Foo(a);
+        Foo a = Foo_a_Sint_b(_l0);
+        println_a_Foo_b(a);
         String _l1 = ic_string_new("Hello", 5);
-        Foo b = i_Foo_a_String(_l1);
-        i_println_a_Foo(b);
+        Foo b = Foo_a_String_b(_l1);
+        println_a_Foo_b(b);
       }
       #include "backends/2c/entry.c"
     ',

@@ -297,6 +297,7 @@ unsigned int ic_kludge_destroy(struct ic_kludge *kludge, unsigned int free_kludg
  * returns 0 on failure
  */
 unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *tdecl) {
+    struct ic_symbol *sym = 0;
     char *str = 0;
 
     if (!kludge) {
@@ -324,9 +325,24 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *
          * maybe instead all kludge insertions should use the same path
          * with that path making this decision
          */
-        str = ic_decl_type_str_param(tdecl);
+
+        if (ic_decl_type_is_instantiated(tdecl)) {
+            sym = ic_decl_type_full_name(tdecl);
+            if (!sym) {
+                puts("ic_kludge_add_tdecl: call to ic_decl_type_full_name failed");
+                return 0;
+            }
+        } else {
+            sym = ic_decl_type_generic_name(tdecl);
+            if (!sym) {
+                puts("ic_kludge_add_tdecl: call to ic_decl_type_generic_name failed");
+                return 0;
+            }
+        }
+
+        str = ic_symbol_contents(sym);
         if (!str) {
-            puts("ic_kludge_add_tdecl: call to ic_decl_type_str_param failed");
+            puts("ic_kludge_add_tdecl: call to ic_symbol_contents failed");
             return 0;
         }
 
@@ -347,9 +363,15 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *
         /* cache str
          * do not need to free as this char* is stored on the tdecl
          */
-        str = ic_decl_type_str(tdecl);
+        sym = ic_decl_type_full_name(tdecl);
+        if (!sym) {
+            puts("ic_kludge_add_tdecl: call to ic_decl_type_full_name failed");
+            return 0;
+        }
+
+        str = ic_symbol_contents(sym);
         if (!str) {
-            puts("ic_kludge_add_tdecl: call to ic_decl_type_str failed");
+            puts("ic_kludge_add_tdecl: call to ic_symbol_contents failed");
             return 0;
         }
 
@@ -383,6 +405,8 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *
  * returns 0 on failure
  */
 unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_decl_func *fdecl) {
+    struct ic_symbol *full_name = 0;
+    struct ic_symbol *sym = 0;
     char *str = 0;
     unsigned int fake_indent = 1;
 
@@ -397,9 +421,15 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_decl_func *
 
     /* if fdecl is type polymorphic and not instantiated */
     if (!ic_decl_func_is_instantiated(fdecl)) {
-        str = ic_decl_func_sig_param(fdecl);
+        sym = ic_decl_func_generic_name(fdecl);
+        if (!sym) {
+            puts("ic_kludge_add_fdecl: call to ic_decl_func_generic_name failed");
+            return 0;
+        }
+
+        str = ic_symbol_contents(sym);
         if (!str) {
-            puts("ic_kludge_add_fdecl: call to ic_decl_func_sig_param failed");
+            puts("ic_kludge_add_fdecl: call to ic_symbol_contents failed");
             return 0;
         }
 
@@ -422,9 +452,15 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_decl_func *
         /* cache str
          * do not need to free as this char* is stored on the fdecl
          */
-        str = ic_decl_func_sig_call(fdecl);
+        full_name = ic_decl_func_full_name(fdecl);
+        if (!full_name) {
+            puts("ic_kludge_add_fdecl: call to ic_decl_func_full_name failed");
+            return 0;
+        }
+
+        str = ic_symbol_contents(full_name);
         if (!str) {
-            puts("ic_kludge_add_fdecl: call to ic_decl_func_sig_call failed");
+            puts("ic_kludge_add_fdecl: call to ic_symbol_contents failed");
             return 0;
         }
 
@@ -820,7 +856,8 @@ struct ic_symbol *ic_kludge_get_operator_from_symbol(struct ic_kludge *kludge, s
  */
 unsigned int ic_kludge_generates_add(struct ic_kludge *kludge, struct ic_generate *gen) {
     struct ic_decl_func *fdecl = 0;
-    char *str = 0;
+    struct ic_symbol *full_name = 0;
+    char *full_name_ch = 0;
 
     if (!kludge) {
         puts("ic_kludge_generates_add: kludge was null");
@@ -837,22 +874,28 @@ unsigned int ic_kludge_generates_add(struct ic_kludge *kludge, struct ic_generat
     /* cache str
      * do not need to free as this char* is stored on the fdecl
      */
-    str = ic_decl_func_sig_call(fdecl);
-    if (!str) {
-        puts("ic_kludge_generates_add: call to ic_decl_func_sig_call failed");
+    full_name = ic_decl_func_full_name(fdecl);
+    if (!full_name) {
+        puts("ic_kludge_generates_add: call to ic_decl_func_full_name failed");
+        return 0;
+    }
+
+    full_name_ch = ic_symbol_contents(full_name);
+    if (!full_name_ch) {
+        puts("ic_kludge_generates_add: call to ic_symbol_contents failed");
         return 0;
     }
 
     /* check for exists first to aid diagnostics */
-    if (ic_dict_exists(&(kludge->dict_fsig), str)) {
-        printf("ic_kludge_generates_add: function signature '%s' already exists on this kludge\n", str);
+    if (ic_dict_exists(&(kludge->dict_fsig), full_name_ch)) {
+        printf("ic_kludge_generates_add: function signature '%s' already exists on this kludge\n", full_name_ch);
         return 0;
     }
 
     /* insert into dict fsig
      * returns 0 on failure
      */
-    if (!ic_dict_insert(&(kludge->dict_fsig), str, fdecl)) {
+    if (!ic_dict_insert(&(kludge->dict_fsig), full_name_ch, fdecl)) {
         puts("ic_kludge_generates_add: call to ic_dict_insert failed");
         return 0;
     }

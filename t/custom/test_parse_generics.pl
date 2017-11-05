@@ -26,7 +26,7 @@ union Bar[T]
     t::T
 end
 
-# print[T](Foo)
+# print[T](Foo[T])
 fn print[T](f::Foo[T]) -> Void
     print(f.t)
 end

@@ -10,7 +10,7 @@
 09 pass pass
 10 pass pass
 11 pass pass
-12 fail-c-compiler fail-output
+12 pass pass
 13 fail-compile fail-runtime
 14 fail-compile fail-runtime
 15 fail-compile fail-runtime

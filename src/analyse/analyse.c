@@ -171,7 +171,8 @@ static unsigned int ic_analyse_decl_type_generate_print_functions(struct ic_klud
     struct ic_generate *generate = 0;
     struct ic_type_ref *type_ref = 0;
 
-    char *sig_call = 0;
+    struct ic_symbol *full_name = 0;
+    char *full_name_ch = 0;
 
     if (!kludge) {
         puts("ic_analyse_decl_type_generate_print_functions: kludge was null");
@@ -221,16 +222,22 @@ static unsigned int ic_analyse_decl_type_generate_print_functions(struct ic_klud
             goto ERROR;
         }
 
-        sig_call = ic_decl_func_sig_call(print_decl);
-        if (!sig_call) {
-            puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl_func_sig_call failed");
+        full_name = ic_decl_func_full_name(print_decl);
+        if (!full_name) {
+            puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl_func_full_name failed");
+            goto ERROR;
+        }
+
+        full_name_ch = ic_symbol_contents(full_name);
+        if (!full_name_ch) {
+            puts("ic_analyse_decl_type_generate_print_functions: call to ic_symbol_contents failed");
             goto ERROR;
         }
 
         /* check if print already exists, if so do not generate */
-        if (ic_kludge_get_fdecl(kludge, sig_call)) {
+        if (ic_kludge_get_fdecl(kludge, full_name_ch)) {
             /* skip generation since it already exists
-             * printf("Skipping generation of function '%s' as was defined by the user\n", sig_call);
+             * printf("Skipping generation of function '%s' as was defined by the user\n", full_name_ch);
              */
         } else {
             generate = ic_generate_new(ic_generate_tag_print, print_decl, tdecl);
@@ -269,16 +276,22 @@ static unsigned int ic_analyse_decl_type_generate_print_functions(struct ic_klud
             goto ERROR;
         }
 
-        sig_call = ic_decl_func_sig_call(println_decl);
-        if (!sig_call) {
-            puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl_func_sig_call failed");
+        full_name = ic_decl_func_full_name(println_decl);
+        if (!full_name) {
+            puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl_func_full_name failed");
+            goto ERROR;
+        }
+
+        full_name_ch = ic_symbol_contents(full_name);
+        if (!full_name_ch) {
+            puts("ic_analyse_decl_type_generate_print_functions: call to ic_symbol_contents failed");
             goto ERROR;
         }
 
         /* check if print already exists, if so do not generate */
-        if (ic_kludge_get_fdecl(kludge, sig_call)) {
+        if (ic_kludge_get_fdecl(kludge, full_name_ch)) {
             /* skip generation since it already exists
-             * printf("Skipping generation of function '%s' as was defined by the user\n", sig_call);
+             * printf("Skipping generation of function '%s' as was defined by the user\n", full_name_ch);
              */
         } else {
             generate = ic_generate_new(ic_generate_tag_println, println_decl, tdecl);
@@ -378,7 +391,8 @@ unsigned int ic_analyse_decl_type_generate_functions(struct ic_kludge *kludge, s
  */
 unsigned int ic_analyse_decl_type_struct(struct ic_kludge *kludge, struct ic_decl_type_struct *tdecl_struct) {
     /* name of current type we are trying to declare */
-    char *this_type = 0;
+    struct ic_symbol *this_type = 0;
+    char *this_type_ch = 0;
 
     /* current offset into field */
     unsigned int i = 0;
@@ -401,14 +415,20 @@ unsigned int ic_analyse_decl_type_struct(struct ic_kludge *kludge, struct ic_dec
         return 0;
     }
 
-    this_type = ic_decl_type_struct_str(tdecl_struct);
+    this_type = ic_decl_type_struct_full_name(tdecl_struct);
     if (!this_type) {
-        puts("ic_analyse_decl_type_struct: for this_type: call to ic_decl_type_struct_str failed");
+        puts("ic_analyse_decl_type_struct: for this_type: call to ic_decl_type_struct_full_name failed");
+        return 0;
+    }
+
+    this_type_ch = ic_symbol_contents(this_type);
+    if (!this_type_ch) {
+        puts("ic_analyse_decl_type_struct: for this_type: call to ic_symbol_contents failed");
         return 0;
     }
 
     /* check fields */
-    if (!ic_analyse_field_list("type declaration", this_type, kludge, &(tdecl_struct->type_params), &(tdecl_struct->fields))) {
+    if (!ic_analyse_field_list("type declaration", this_type_ch, kludge, &(tdecl_struct->type_params), &(tdecl_struct->fields))) {
         puts("ic_analyse_decl_type_struct: call to ic_analyse_field_list for field validation failed");
         goto ERROR;
     }
@@ -627,7 +647,8 @@ ERROR:
  */
 unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl_type_union *tdecl_union) {
     /* name of current type we are trying to declare */
-    char *this_type = 0;
+    struct ic_symbol *this_type = 0;
+    char *this_type_ch = 0;
 
     /* current offset into field */
     unsigned int i = 0;
@@ -657,14 +678,19 @@ unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl
         return 0;
     }
 
-    this_type = ic_decl_type_union_str(tdecl_union);
+    this_type = ic_decl_type_union_full_name(tdecl_union);
     if (!this_type) {
-        puts("ic_analyse_decl_type_union: for this_type: call to ic_decl_type_union_str failed");
+        puts("ic_analyse_decl_type_union: for this_type: call to ic_decl_type_union_full_name failed");
         return 0;
     }
 
-    /* check fields */
-    if (!ic_analyse_field_list("type declaration", this_type, kludge, &(tdecl_union->type_params), &(tdecl_union->fields))) {
+    this_type_ch = ic_symbol_contents(this_type);
+    if (!this_type_ch) {
+        puts("ic_analyse_decl_type_union: for this_type: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    if (!ic_analyse_field_list("type declaration", this_type_ch, kludge, &(tdecl_union->type_params), &(tdecl_union->fields))) {
         puts("ic_analyse_decl_type_union: call to ic_analyse_field_list for field validation failed");
         goto ERROR;
     }
@@ -885,7 +911,8 @@ ERROR:
  */
 unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func *fdecl) {
     /* name of current func we are trying to declare */
-    char *this_func = 0;
+    struct ic_symbol *this_func = 0;
+    char *this_func_ch = 0;
     /* our scope */
     struct ic_scope *scope = 0;
 
@@ -918,16 +945,22 @@ unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func 
     }
 
     /* name of this func, useful for error printing */
-    this_func = ic_decl_func_sig_call(fdecl);
+    this_func = ic_decl_func_full_name(fdecl);
     if (!this_func) {
-        puts("ic_analyse_decl_func: for this_type: call to ic_decl_func_sig_call failed");
+        puts("ic_analyse_decl_func: for this_type: call to ic_decl_func_full_name failed");
+        return 0;
+    }
+
+    this_func_ch = ic_symbol_contents(this_func);
+    if (!this_func_ch) {
+        puts("ic_analyse_decl_func: for this_type: call to ic_symbol_contents failed");
         return 0;
     }
 
     /* TODO FIXME do we need to check that all generic parameters are used ??? */
 
     /* check arg list */
-    if (!ic_analyse_field_list("func declaration", this_func, kludge, &(fdecl->type_params), &(fdecl->args))) {
+    if (!ic_analyse_field_list("func declaration", this_func_ch, kludge, &(fdecl->type_params), &(fdecl->args))) {
         puts("ic_analyse_decl_func: call to ic_analyse_field_list for validating argument list failed");
         goto ERROR;
     }
@@ -1003,7 +1036,7 @@ unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func 
     }
 
     /* check body */
-    if (!ic_analyse_body("func declaration", this_func, kludge, &(fdecl->body), fdecl)) {
+    if (!ic_analyse_body("func declaration", this_func_ch, kludge, &(fdecl->body), fdecl)) {
         puts("ic_analyse_decl_func: call to ic_analyse_body for validating body failed");
         goto ERROR;
     }

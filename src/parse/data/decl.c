@@ -11,6 +11,7 @@
 #include "decl.h"
 #include "field.h"
 #include "stmt.h"
+#include "name_helpers.h"
 
 /* allocate and initialise a new decl_func
  *
@@ -76,24 +77,6 @@ unsigned int ic_decl_func_init(struct ic_decl_func *fdecl, char *name, unsigned 
         return 0;
     }
 
-    /* initialise empty string fdecl->sig_call */
-    if (!ic_string_init_empty(&(fdecl->sig_call))) {
-        puts("ic_decl_func_init: call to ic_string_init_empty for sig_call failed");
-        return 0;
-    }
-
-    /* initialise empty string fdecl->sig_full */
-    if (!ic_string_init_empty(&(fdecl->sig_full))) {
-        puts("ic_decl_func_init: call to ic_string_init_empty for sig_full failed");
-        return 0;
-    }
-
-    /* initialise empty string fdecl->sig_mangled */
-    if (!ic_string_init_empty(&(fdecl->sig_mangled))) {
-        puts("ic_decl_func_init: call to ic_string_init_empty for sig_mangled failed");
-        return 0;
-    }
-
     /* initialise return type to uknown */
     if (!ic_type_ref_init(&(fdecl->ret_type))) {
         puts("ic_decl_func_init: call to ic_type_ref_init for ret_type failed");
@@ -101,13 +84,17 @@ unsigned int ic_decl_func_init(struct ic_decl_func *fdecl, char *name, unsigned 
     }
 
     fdecl->builtin = 0;
-    fdecl->sig_param = 0;
 
     /* make sure to init tbody */
     fdecl->tbody = 0;
 
     /* we haven't seen any generic params yet, so we are non-generic */
     fdecl->is_instantiated = 1;
+
+    fdecl->mangled_name = 0;
+    fdecl->full_name = 0;
+    fdecl->full_signature = 0;
+    fdecl->generic_name = 0;
 
     /* initialise our empty body */
     if (!ic_body_init(&(fdecl->body))) {
@@ -140,36 +127,32 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
         return 0;
     }
 
-    /* free symbol contents but do not free symbol itself
-     * since it is an element on fdecl
-     */
-    if (!ic_symbol_destroy(&(fdecl->name), 0)) {
-        puts("ic_decl_func_destroy: for name call to ic_symbol_destroy failed");
-        return 0;
+    if (fdecl->mangled_name) {
+        if (!ic_symbol_destroy(fdecl->mangled_name, 1)) {
+            puts("ic_decl_func_destroy: call to ic_symbol_destroy failed");
+            return 0;
+        }
     }
 
-    /* free sig_call contents but do not free string itself
-     * since it is an element on fdecl
-     */
-    if (!ic_string_destroy(&(fdecl->sig_call), 0)) {
-        puts("ic_decl_func_destroy: for sig_call call to ic_string_destroy failed");
-        return 0;
+    if (fdecl->full_name) {
+        if (!ic_symbol_destroy(fdecl->full_name, 1)) {
+            puts("ic_decl_func_destroy: call to ic_symbol_destroy failed");
+            return 0;
+        }
     }
 
-    /* free sig_full contents but do not free string itself
-     * since it is an element on fdecl
-     */
-    if (!ic_string_destroy(&(fdecl->sig_full), 0)) {
-        puts("ic_decl_func_destroy: for sig_full call to ic_string_destroy failed");
-        return 0;
+    if (fdecl->full_signature) {
+        if (!ic_symbol_destroy(fdecl->full_signature, 1)) {
+            puts("ic_decl_func_destroy: call to ic_symbol_destroy failed");
+            return 0;
+        }
     }
 
-    /* free sig_mangled contents but do not free string itself
-     * since it is an element on fdecl
-     */
-    if (!ic_string_destroy(&(fdecl->sig_mangled), 0)) {
-        puts("ic_decl_func_destroy: for sig_full call to ic_string_mangled failed");
-        return 0;
+    if (fdecl->generic_name) {
+        if (!ic_symbol_destroy(fdecl->generic_name, 1)) {
+            puts("ic_decl_func_destroy: for tbody call to ic_symbol_destroy failed");
+            return 0;
+        }
     }
 
     len = ic_pvector_length(&(fdecl->type_params));
@@ -184,7 +167,7 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
          * free_tparam set to 1
          */
         if (!ic_type_param_destroy(tparam, 1)) {
-            puts("ic_decl_func_destroy: call to ii_type_param_destroy failed");
+            puts("ic_decl_func_destroy: call to ic_type_param_destroy failed");
             return 0;
         }
     }
@@ -243,13 +226,6 @@ unsigned int ic_decl_func_destroy(struct ic_decl_func *fdecl, unsigned int free_
        */
         if (!ic_transform_body_destroy(fdecl->tbody, 1)) {
             puts("ic_decl_func_destroy: for tbody call to ic_transform_body_destroy failed");
-            return 0;
-        }
-    }
-
-    if (fdecl->sig_param) {
-        if (!ic_string_destroy(fdecl->sig_param, 1)) {
-            puts("ic_decl_func_destroy: for tbody call to ic_string_destroy failed");
             return 0;
         }
     }
@@ -378,27 +354,13 @@ unsigned int ic_decl_func_deep_copy_embedded(struct ic_decl_func *from, struct i
      * as we use this deep copy *before* we instantiate generics
      */
 
-    /* initialise empty string fdecl->sig_call */
-    if (!ic_string_init_empty(&(to->sig_call))) {
-        puts("ic_decl_func_deep_copy_embedded: call to ic_string_init_empty for sig_call failed");
-        return 0;
-    }
-
-    /* initialise empty string fdecl->sig_full */
-    if (!ic_string_init_empty(&(to->sig_full))) {
-        puts("ic_decl_func_deep_copy_embedded: call to ic_string_init_empty for sig_full failed");
-        return 0;
-    }
-
-    /* initialise empty string fdecl->sig_mangled */
-    if (!ic_string_init_empty(&(to->sig_mangled))) {
-        puts("ic_decl_func_deep_copy_embedded: call to ic_string_init_empty for sig_mangled failed");
-        return 0;
-    }
-
-    to->sig_param = 0;
 
     to->builtin = from->builtin;
+
+    to->mangled_name = 0;
+    to->full_name = 0;
+    to->full_signature = 0;
+    to->generic_name = 0;
 
     return 1;
 }
@@ -637,7 +599,7 @@ unsigned int ic_decl_func_isbuiltin(struct ic_decl_func *fdecl) {
  * this will print a reproduction of the function from the ast
  */
 void ic_decl_func_print(FILE *fd, struct ic_decl_func *fdecl, unsigned int *indent_level) {
-    char *fstr = 0;
+    struct ic_symbol *sym = 0;
 
     if (!fdecl) {
         puts("ic_decl_func_print: fdecl was null");
@@ -649,16 +611,15 @@ void ic_decl_func_print(FILE *fd, struct ic_decl_func *fdecl, unsigned int *inde
         return;
     }
 
-    fstr = ic_decl_func_sig_call(fdecl);
-    /* guarantee generation of function string */
-    if (!fstr) {
-        puts("ic_decl_func_print_header: call to ic_decl_func_sig_call failed");
+    sym = ic_decl_func_full_name(fdecl);
+    if (!sym) {
+        puts("ic_decl_func_print_header: call to ic_decl_func_full_name failed");
         return;
     }
 
     ic_parse_print_indent(fd, *indent_level);
     /* print comment and then function decl string */
-    fprintf(fd, "# %s\n", fstr);
+    fprintf(fd, "# %s\n", ic_symbol_contents(sym));
 
     ic_parse_print_indent(fd, *indent_level);
     ic_decl_func_print_header(fd, fdecl, indent_level);
@@ -752,411 +713,149 @@ void ic_decl_func_print_body(FILE *fd, struct ic_decl_func *fdecl, unsigned int 
     fputs("end\n", fd);
 }
 
-/* return a string representation of this function signature
+/* return a string representation of this function's call signature
  *
  * for a function signature
- *      fn foo(a::Sint, b::Sint) -> Sint
+ *      fn foo(a::Int,b::Int) -> Int
  *
  * this function will return
- *      foo(Sint,Sint)
+ *      foo(Int,Int)
  *
- * for a function signature (non-instantiated generic)
- *      fn bar[A,B](a::A, b::B) -> A
- *
- * this function will return
- *      bar[A,B](A,B)
- *
-  * for a function signature (instantiated generic)
+ * for a function signature (instantiated generic)
  *      fn bar[A::Foo,B::bar](a::A, b::B) -> A
  *
  * this function will return
  *      bar[Foo,Bar](Foo,Bar)
  *
- * the char* returned is a string stored within fdecl,
+ * the returned symbol is owned by fdecl,
  * this means the caller must not free or mutate this string
  *
- * returns char* on success
+ * returns * on success
  * returns 0 on failure
  */
-char *ic_decl_func_sig_call(struct ic_decl_func *fdecl) {
-    /* offset into args pvector */
-    unsigned int i = 0;
-    /* cached len */
-    unsigned int len = 0;
-    /* cache of string */
-    struct ic_string *fstr = 0;
-    /* each field we consider in args */
-    struct ic_field *field = 0;
-    /* each type param we consider in type_params */
-    struct ic_type_param *tparam = 0;
-    /* temporary symbol for current field type */
-    struct ic_symbol *cur_type = 0;
-    /* permission str */
-    char *perm_str = 0;
-
+struct ic_symbol *ic_decl_func_full_name(struct ic_decl_func *fdecl) {
     if (!fdecl) {
-        puts("ic_decl_func_sig_call: fdecl was null");
+        puts("ic_decl_func_full_name: fdecl was null");
         return 0;
     }
 
-    /* cache string pointer */
-    fstr = &(fdecl->sig_call);
-
-    /* if a non-zero length fecl->string is found then return it */
-    if (ic_string_length(fstr)) {
-        return ic_string_contents(fstr);
+    if (fdecl->full_name) {
+        return fdecl->full_name;
     }
 
-    /* fdecl->name */
-    if (!ic_string_append_symbol(fstr, &(fdecl->name))) {
-        puts("ic_decl_func_sig_call: name: call to ic_string_append_symbol failed");
+    fdecl->full_name = ic_parse_helper_full_name(&(fdecl->name), &(fdecl->type_params), 0, &(fdecl->args));
+    if (!fdecl->full_name) {
+        puts("ic_decl_func_full_name: call to ic_parse_helper_full_name failed");
         return 0;
     }
 
-    /* check if we have any type params to do... */
-    len = ic_decl_func_type_params_length(fdecl);
-    /* iterate through, only print [] if type_params was non zero */
-    if (len > 0) {
-        /* opening [ bracket */
-        if (!ic_string_append_char(fstr, "[", 1)) {
-            puts("ic_decl_func_sig_call: opening brace: call to ic_string_append_char failed");
-            return 0;
-        }
-
-        for (i = 0; i < len; ++i) {
-            /* insert a comma if we are not the first argument */
-            if (i > 0) {
-                if (!ic_string_append_char(fstr, ",", 1)) {
-                    puts("ic_decl_func_sig_call: arg: call to ic_string_append_char failed");
-                    return 0;
-                }
-            }
-
-            tparam = ic_decl_func_type_params_get(fdecl, i);
-            if (!tparam) {
-                puts("ic_decl_func_sig_call: call to ic_decl_func_type_params_get failed");
-                return 0;
-            }
-
-            /* if we already have a tdecl, use that instead */
-            if (tparam->tdecl) {
-                if (!ic_string_append_symbol(fstr, ic_decl_type_get_name(tparam->tdecl))) {
-                    puts("ic_decl_func_sig_call: arg: call to ic_string_append_symbol failed");
-                    return 0;
-                }
-            } else {
-                /* otherwise this is non-instantiated so use tparam name */
-                if (!ic_string_append_symbol(fstr, &(tparam->name))) {
-                    puts("ic_decl_func_sig_call: arg: call to ic_string_append_symbol failed");
-                    return 0;
-                }
-            }
-
-        }
-
-        /* closing ] bracket */
-        if (!ic_string_append_char(fstr, "]", 1)) {
-            puts("ic_decl_func_sig_call: opening brace: call to ic_string_append_char failed");
-            return 0;
-        }
-    }
-
-    /* opening bracket */
-    if (!ic_string_append_char(fstr, "(", 1)) {
-        puts("ic_decl_func_sig_call: opening brace: call to ic_string_append_char failed");
-        return 0;
-    }
-
-    /* note that we do not check for length as a length of 0 is valid */
-    len = ic_pvector_length(&(fdecl->args));
-
-    /* iterate through args appending the type name to our string representation
-     */
-    for (i = 0; i < len; ++i) {
-        /* insert a comma if we are not the first argument */
-        if (i > 0) {
-            if (!ic_string_append_char(fstr, ",", 1)) {
-                puts("ic_decl_func_sig_call: arg: call to ic_string_append_char failed");
-                return 0;
-            }
-        }
-
-        /* capture our field */
-        field = ic_pvector_get(&(fdecl->args), i);
-        if (!field) {
-            puts("ic_decl_func_sig_call: arg: call to ic_pvector_get failed");
-            return 0;
-        }
-
-        /* add any permissions
-         * only need to show if not default
-         */
-        if (!ic_parse_perm_is_default(field->permissions)) {
-            perm_str = ic_parse_perm_str(field->permissions);
-
-            if (!perm_str) {
-                puts("ic_decl_func_sig_call: arg: call to ic_parse_perm_str failed");
-                return 0;
-            }
-
-            if (!ic_string_append_cstr(fstr, perm_str)) {
-                puts("ic_decl_func_sig_call: arg: call to ic_string_append_cstr failed");
-                return 0;
-            }
-        }
-
-        /* add type */
-        cur_type = ic_type_ref_get_symbol(field->type);
-        if (!cur_type) {
-            puts("ic_decl_func_sig_call: arg: call to ic_type_get_symbol failed");
-            return 0;
-        }
-
-        if (!ic_string_append_symbol(fstr, cur_type)) {
-            puts("ic_decl_func_sig_call: arg: call to ic_string_append_symbol failed");
-            return 0;
-        }
-    }
-
-    /* final bracket */
-    if (!ic_string_append_char(fstr, ")", 1)) {
-        puts("ic_decl_func_sig_call: closing brace: call to ic_string_append_char failed");
-        return 0;
-    }
-
-    /* we rely on the fdecl storing the string */
-    return ic_string_contents(fstr);
+    return fdecl->full_name;
 }
 
-/* return a full string representation of this function signature
+
+/* return a mangled representation of this function full signature
  *
  * for a function signature
- *      fn foo(a::Sint, b::Sint) -> Sint
+ *      fn foo(a::Int,b::Int) -> Int
  *
  * this function will return
- *      foo(Sint,Sint) -> Sint
+ *      foo_a_Int_Int_b
  *
- * the char* returned is a string stored within fdecl,
+ * the returned symbol is owned by this fdecl,
  * this means the caller must not free or mutate this string
  *
- * returns char* on success
+ * returns * on success
  * returns 0 on failure
  */
-char *ic_decl_func_sig_full(struct ic_decl_func *fdecl) {
-    /* offset into args pvector */
-    unsigned int i = 0;
-    /* cached len */
-    unsigned int len = 0;
-    /* cache of string */
-    struct ic_string *fstr = 0;
-    /* each field we consider in args */
-    struct ic_field *field = 0;
-    /* temporary symbol for current field type */
-    struct ic_symbol *cur_type = 0;
-    /* permission str */
-    char *perm_str = 0;
+struct ic_symbol *ic_decl_func_mangled_name(struct ic_decl_func *fdecl) {
+    if (!fdecl) {
+        puts("ic_decl_func_mangled_name: fdecl was null");
+        return 0;
+    }
+
+    if (fdecl->mangled_name) {
+        return fdecl->mangled_name;
+    }
+
+    fdecl->mangled_name = ic_parse_helper_mangled_name(&(fdecl->name), &(fdecl->type_params), 0, &(fdecl->args));
+    if (!fdecl->mangled_name) {
+        puts("ic_decl_func_mangled_name: call to ic_parse_helper_mangled_name failed");
+        return 0;
+    }
+
+    return fdecl->mangled_name;
+}
+
+/* return a string representation of this function full signature
+ *
+ * for a function signature
+ *      fn foo(a::Int,b::Int) -> Int
+ *
+ * this function will return
+ *      foo(Int,Int) -> Int
+ *
+ * the returned symbol is owned by this fdecl
+ * this means the caller must not free or mutate this string
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_decl_func_full_signature(struct ic_decl_func *fdecl) {
+    struct ic_symbol *sym = 0;
+    struct ic_string *str = 0;
 
     if (!fdecl) {
-        puts("ic_decl_func_sig_full: fdecl was null");
+        puts("ic_decl_func_full_signature: fdecl was null");
         return 0;
     }
 
-    /* cache string pointer */
-    fstr = &(fdecl->sig_full);
-
-    /* if a non-zero length fecl->string is found then return it */
-    if (ic_string_length(fstr)) {
-        return ic_string_contents(fstr);
+    if (fdecl->full_signature) {
+        return fdecl->full_signature;
     }
 
-    /* note that we do not check for length as a length of 0 is valid */
-    len = ic_pvector_length(&(fdecl->args));
-
-    /* fdecl->name */
-    if (!ic_string_append_symbol(fstr, &(fdecl->name))) {
-        puts("ic_decl_func_sig_full: name: call to ic_string_append_symbol failed");
+    /* otherwise we have to build one */
+    sym = ic_decl_func_full_name(fdecl);
+    if (!sym) {
+        puts("ic_decl_func_full_signature: call to ic_decl_func_full_name failed");
         return 0;
     }
 
-    /* opening bracket */
-    if (!ic_string_append_char(fstr, "(", 1)) {
-        puts("ic_decl_func_sig_full: opening brace: call to ic_string_append_char failed");
+    fdecl->full_signature = ic_symbol_deep_copy(sym);
+    if (!fdecl->full_signature) {
+        puts("ic_decl_func_full_signature: call to ic_symbol_deep_copy failed");
         return 0;
     }
 
-    /* iterate through args appending the type name to our string representation
-     */
-    for (i = 0; i < len; ++i) {
-        /* insert a comma if we are not the first argument */
-        if (i > 0) {
-            if (!ic_string_append_char(fstr, ",", 1)) {
-                puts("ic_decl_func_sig_full: arg: call to ic_string_append_char failed");
-                return 0;
-            }
-        }
+    sym = 0;
 
-        /* capture our field */
-        field = ic_pvector_get(&(fdecl->args), i);
-        if (!field) {
-            puts("ic_decl_func_sig_full: arg: call to ic_pvector_get failed");
-            return 0;
-        }
-
-        /* add any permissions
-         * only need to show if not default
-         */
-        if (!ic_parse_perm_is_default(field->permissions)) {
-            perm_str = ic_parse_perm_str(field->permissions);
-
-            if (!perm_str) {
-                puts("ic_decl_func_sig_full: arg: call to ic_parse_perm_str failed");
-                return 0;
-            }
-
-            if (!ic_string_append_cstr(fstr, perm_str)) {
-                puts("ic_decl_func_sig_full: arg: call to ic_string_append_cstr failed");
-                return 0;
-            }
-        }
-
-        /* add type */
-        cur_type = ic_type_ref_get_symbol(field->type);
-        if (!cur_type) {
-            puts("ic_decl_func_sig_full: arg: call to ic_type_get_symbol failed");
-            return 0;
-        }
-
-        if (!ic_string_append_symbol(fstr, cur_type)) {
-            puts("ic_decl_func_sig_full: arg: call to ic_string_append_symbol failed");
-            return 0;
-        }
-    }
+    str = &(fdecl->full_signature->internal);
 
     /* final bracket and return arrow */
-    if (!ic_string_append_char(fstr, ") -> ", 5)) {
-        puts("ic_decl_func_sig_full: closing brace and return arrow: call to ic_string_append_char failed");
+    if (!ic_string_append_char(str, " -> ", 4)) {
+        puts("ic_decl_func_full_signature: closing brace and return arrow: call to ic_string_append_char failed");
         return 0;
     }
 
     /* print return type if we have one */
     if (fdecl->ret_type.tag == ic_type_ref_unknown) {
-        if (!ic_string_append_char(fstr, "Void", 4)) {
-            puts("ic_decl_func_sig_full: return type (void): call to ic_string_append_char failed");
+        if (!ic_string_append_char(str, "Void", 4)) {
+            puts("ic_decl_func_full_signature: return type (void): call to ic_string_append_char failed");
             return 0;
         }
     } else {
-        cur_type = ic_type_ref_get_type_name(&(fdecl->ret_type));
-        if (!cur_type) {
-            puts("ic_decl_func_sig_full: return type (nonvoid): call to ic_type_ref_get_type_name failed");
+        sym = ic_type_ref_full_name(&(fdecl->ret_type));
+        if (!sym) {
+            puts("ic_decl_func_full_signature: return type (nonvoid): call to ic_type_ref_full_name failed");
             return 0;
         }
 
-        if (!ic_string_append_symbol(fstr, cur_type)) {
-            puts("ic_decl_func_sig_full: return type (nonvoid): call to ic_string_append_symbl failed");
-            return 0;
-        }
-    }
-
-    /* we rely on the fdecl storing the string */
-    return ic_string_contents(fstr);
-}
-
-/* return a mangled string representation of this function signature
- *
- * for a function signature
- *      fn foo(a::Sint, b::Sint) -> Sint
- *
- * this function will return
- *      i_foo_a_Sint_Sint
- *
- * the char* returned is a string stored within fdecl,
- * this means the caller must not free or mutate this string
- *
- * returns char* on success
- * returns 0 on failure
- */
-char *ic_decl_func_sig_mangled(struct ic_decl_func *fdecl) {
-    /* offset into args pvector */
-    unsigned int i = 0;
-    /* cached len */
-    unsigned int len = 0;
-    /* cache of string */
-    struct ic_string *fstr = 0;
-    /* each field we consider in args */
-    struct ic_field *field = 0;
-    /* temporary symbol for current field type */
-    struct ic_symbol *cur_type = 0;
-
-    if (!fdecl) {
-        puts("ic_decl_func_sig_mangled: fdecl was null");
-        return 0;
-    }
-
-    /* cache string pointer */
-    fstr = &(fdecl->sig_mangled);
-
-    /* if a non-zero length fecl->string is found then return it */
-    if (ic_string_length(fstr)) {
-        return ic_string_contents(fstr);
-    }
-
-    /* note that we do not check for length as a length of 0 is valid */
-    len = ic_pvector_length(&(fdecl->args));
-
-    /* `i_` prefix */
-    if (!ic_string_append_char(fstr, "i_", 2)) {
-        puts("ic_decl_func_sig_mangled: i_ prefix: call to ic_string_append_char failed");
-        return 0;
-    }
-
-    /* fdecl->name */
-    if (!ic_string_append_symbol(fstr, &(fdecl->name))) {
-        puts("ic_decl_func_sig_mangled: name: call to ic_string_append_symbol failed");
-        return 0;
-    }
-
-    /* `_a` */
-    if (!ic_string_append_char(fstr, "_a", 2)) {
-        puts("ic_decl_func_sig_mangled: _a suffix: call to ic_string_append_char failed");
-        return 0;
-    }
-
-    /* iterate through args appending the type name to our string representation
-     */
-    for (i = 0; i < len; ++i) {
-        /* insert an `_` before each type */
-        if (!ic_string_append_char(fstr, "_", 1)) {
-            puts("ic_decl_func_sig_mangled: arg: call to ic_string_append_char failed");
-            return 0;
-        }
-
-        /* capture our field */
-        field = ic_pvector_get(&(fdecl->args), i);
-        if (!field) {
-            puts("ic_decl_func_sig_mangled: arg: call to ic_pvector_get failed");
-            return 0;
-        }
-
-        /* FIXME TODO name mangling will have to include permission info
-         * see ic_decl_func_sig_full
-         */
-
-        /* get argument type */
-        cur_type = ic_type_ref_get_symbol(field->type);
-        if (!cur_type) {
-            puts("ic_decl_func_sig_mangled: arg: call to ic_type_get_symbol failed");
-            return 0;
-        }
-
-        /* append argument type */
-        if (!ic_string_append_symbol(fstr, cur_type)) {
-            puts("ic_decl_func_sig_mangled: arg: call to ic_string_append_symbol failed");
+        if (!ic_string_append_symbol(str, sym)) {
+            puts("ic_decl_func_full_signature: return type (nonvoid): call to ic_string_append_symbl failed");
             return 0;
         }
     }
 
-    /* we rely on the fdecl storing the string */
-    return ic_string_contents(fstr);
+    return fdecl->full_signature;
 }
 
 /* return a masked representation of this function's call signature
@@ -1171,95 +870,23 @@ char *ic_decl_func_sig_mangled(struct ic_decl_func *fdecl) {
  * returns char* on success
  * returns 0 on failure
  */
-char *ic_decl_func_sig_param(struct ic_decl_func *fdecl) {
-    struct ic_string *str = 0;
-    char *ch = 0;
-    unsigned int len = 0;
-    unsigned int i = 0;
-
+struct ic_symbol *ic_decl_func_generic_name(struct ic_decl_func *fdecl) {
     if (!fdecl) {
-        puts("ic_decl_func_sig_param: fdecl was null");
+        puts("ic_decl_func_generic_name: fdecl was null");
         return 0;
     }
 
-    if (fdecl->sig_param) {
-        ch = ic_string_contents(fdecl->sig_param);
-        if (!ch) {
-            puts("ic_decl_func_sig_param: call to ic_string_contents failed");
-            return 0;
-        }
-        return ch;
+    if (fdecl->generic_name) {
+        return fdecl->generic_name;
     }
 
-    str = ic_string_new_empty();
-    if (!str) {
-        puts("ic_decl_func_sig_param: call to ic_string_new_empty failed");
+    fdecl->generic_name = ic_parse_helper_generic_name(&(fdecl->name), &(fdecl->type_params), &(fdecl->args));
+    if (!fdecl->generic_name) {
+        puts("ic_decl_func_generic_name: call to ic_parse_helper_generic_name failed");
         return 0;
     }
 
-    if (!ic_string_append_symbol(str, &(fdecl->name))) {
-        puts("ic_decl_func_sig_param: call to ic_string_append_symbol failed");
-        return 0;
-    }
-
-    len = ic_decl_func_type_params_length(fdecl);
-    if (len) {
-        if (!ic_string_append_char(str, "[", 1)) {
-            puts("ic_decl_func_sig_param: call to ic_string_append_char failed");
-            return 0;
-        }
-
-        for (i = 0; i < len; ++i) {
-            if (i == 0) {
-                if (!ic_string_append_char(str, "_", 1)) {
-                    puts("ic_decl_func_sig_param: call to ic_string_append_char failed");
-                    return 0;
-                }
-            } else {
-                if (!ic_string_append_char(str, ",_", 2)) {
-                    puts("ic_decl_func_sig_param: call to ic_string_append_char failed");
-                    return 0;
-                }
-            }
-        }
-
-        if (!ic_string_append_char(str, "]", 1)) {
-            puts("ic_decl_func_sig_param: call to ic_string_append_char failed");
-            return 0;
-        }
-    }
-
-    if (!ic_string_append_char(str, "(", 1)) {
-        puts("ic_decl_func_sig_param: call to ic_string_append_char failed");
-        return 0;
-    }
-    len = ic_decl_func_args_length(fdecl);
-    for (i = 0; i < len; ++i) {
-        if (i == 0) {
-            if (!ic_string_append_char(str, "_", 1)) {
-                puts("ic_decl_func_sig_param: call to ic_string_append_char failed");
-                return 0;
-            }
-        } else {
-            if (!ic_string_append_char(str, ",_", 2)) {
-                puts("ic_decl_func_sig_param: call to ic_string_append_char failed");
-                return 0;
-            }
-        }
-    }
-    if (!ic_string_append_char(str, ")", 1)) {
-        puts("ic_decl_func_sig_param: call to ic_string_append_char failed");
-        return 0;
-    }
-
-    fdecl->sig_param = str;
-    ch = ic_string_contents(fdecl->sig_param);
-    if (!ch) {
-        puts("ic_decl_func_sig_param: call to ic_string_contents failed");
-        return 0;
-    }
-
-    return ch;
+    return fdecl->generic_name;
 }
 
 /* check if this function returns void
@@ -1366,12 +993,9 @@ unsigned int ic_decl_type_struct_init(struct ic_decl_type_struct *tdecl, char *n
         return 0;
     }
 
-    /* init sig mangled full */
-    if (!ic_string_init_empty(&(tdecl->sig_mangled_full))) {
-        puts("ic_decl_type_struct_init: call to ic_string_init_empty for field_dict failed");
-        return 0;
-    }
-
+    tdecl->mangled_name = 0;
+    tdecl->full_name = 0;
+    tdecl->generic_name = 0;
     tdecl->isvoid = 0;
     tdecl->isbool = 0;
     tdecl->isstring = 0;
@@ -1467,10 +1091,25 @@ unsigned int ic_decl_type_struct_destroy(struct ic_decl_type_struct *tdecl, unsi
         return 0;
     }
 
-    /* destroy sig mangled full */
-    if (!ic_string_destroy(&(tdecl->sig_mangled_full), 0)) {
-        puts("ic_decl_type_struct_destroy: call to ic_string_destroy failed");
-        return 0;
+    if (tdecl->mangled_name) {
+        if (!ic_symbol_destroy(tdecl->mangled_name, 1)) {
+            puts("ic_decl_type_struct_destroy: call to ic_symbol_destroy failed");
+            return 0;
+        }
+    }
+
+    if (tdecl->full_name) {
+        if (!ic_symbol_destroy(tdecl->full_name, 1)) {
+            puts("ic_decl_type_struct_destroy: call to ic_symbol_destroy failed");
+            return 0;
+        }
+    }
+
+    if (tdecl->generic_name) {
+        if (!ic_symbol_destroy(tdecl->generic_name, 1)) {
+            puts("ic_decl_type_struct_destroy: call to ic_symbol_destroy failed");
+            return 0;
+        }
     }
 
     /* only free if caller asked */
@@ -1546,10 +1185,11 @@ unsigned int ic_decl_type_struct_deep_copy_embedded(struct ic_decl_type_struct *
     to->isvoid = from->isvoid;
     to->isstring = from->isstring;
 
-    if (!ic_string_deep_copy_embedded(&(from->sig_mangled_full), &(to->sig_mangled_full))) {
-        puts("ic_decl_type_struct_deep_copy_embedded: call to ic_string_deep_copy_embedded failed");
-        return 0;
-    }
+    /* do not copy over names
+     * they can be regenerated if need be
+     */
+    to->mangled_name = 0;
+    to->generic_name = 0;
 
     /* don't try copy dict */
     if (!ic_dict_init(&(to->field_dict))) {
@@ -1930,286 +1570,6 @@ struct ic_symbol *ic_decl_type_struct_name(struct ic_decl_type_struct *tdecl) {
     return &(tdecl->name);
 }
 
-/* get the char * contents of the name
- *
- * returns char * on success
- * returns 0 on failure
- */
-char *ic_decl_type_struct_str(struct ic_decl_type_struct *tdecl) {
-    if (!tdecl) {
-        puts("ic_decl_type_struct_str: tdecl was null");
-        return 0;
-    }
-
-    return ic_symbol_contents(&(tdecl->name));
-}
-
-/* generate a name for this polymorphic (generic) type
- *
- * if this type is not instantiated yet, then this will be of the form
- *  Maybe[_]
- * if this type is instantiated, then this will be of the form
- *  Maybe[Sint]
- *
- * caller is responsible for free-ing returned *
- *
- * returns * on success
- * returns 0 on failure
- */
-char *ic_decl_type_struct_str_param(struct ic_decl_type_struct *tdecl) {
-    struct ic_string *str = 0;
-    char *ch = 0;
-
-    unsigned int i = 0;
-    unsigned int len = 0;
-
-    struct ic_type_param *type_param = 0;
-    struct ic_symbol *type_param_name = 0;
-
-    if (!tdecl) {
-        puts("ic_decl_type_struct_str_param: tdecl was null");
-        return 0;
-    }
-
-    /* TODO FIXME I have basically this exact same code in too many places
-     * we should be able to take a string (fname / tname) and a list of type_params
-     * and write a function to do this generically, returning the string* which the
-     * caller can then optionally store
-     */
-
-    str = ic_string_new_empty();
-    if (!str) {
-        puts("ic_decl_type_struct_str_param: call to ic_string_new_empty failed");
-        return 0;
-    }
-
-    /* append type name */
-    if (!ic_string_append_symbol(str, &(tdecl->name))) {
-        puts("ic_decl_type_struct_str_param: call to ic_string_append_symbol failed");
-        return 0;
-    }
-
-    /* TODO FIMXE
-     *   iterate through params
-     *   if instantiated, then type name
-     *   otherwise, _
-     *   insert ,s to sep
-     */
-    len = ic_decl_type_struct_type_params_length(tdecl);
-
-    if (len) {
-        /* append [ */
-        if (!ic_string_append_char(str, "[", 1)) {
-            puts("ic_decl_type_struct_str_param: call to ic_string_append_char failed");
-            return 0;
-        }
-    }
-
-    if (ic_decl_type_struct_is_instantiated(tdecl)) {
-        for (i=0; i<len; ++i) {
-            type_param = ic_decl_type_struct_type_params_get(tdecl, i);
-            if (!type_param) {
-                puts("ic_decl_type_struct_str_param: call to ic_decl_type_struct_type_params_get failed");
-                return 0;
-            }
-
-            type_param_name = ic_type_param_get_name(type_param);
-            if (!type_param_name) {
-                puts("ic_decl_type_struct_str_param: call to ic_type_param_get_name failed");
-                return 0;
-            }
-
-            if (!ic_string_append_symbol(str, type_param_name)) {
-                puts("ic_decl_type_struct_str_param: call to ic_string_append_symbol failed");
-                return 0;
-            }
-        }
-    } else {
-        for (i=0; i<len; ++i) {
-            if (i==0) {
-                if (!ic_string_append_char(str, "_", 1)) {
-                    puts("ic_decl_type_struct_str_param: call to ic_string_append_char failed");
-                    return 0;
-                }
-            } else {
-                if (!ic_string_append_char(str, ",_", 2)) {
-                    puts("ic_decl_type_struct_str_param: call to ic_string_append_char failed");
-                    return 0;
-                }
-            }
-        }
-    }
-
-    if (len) {
-        /* append ] */
-        if (!ic_string_append_char(str, "]", 1)) {
-            puts("ic_decl_type_struct_str_param: call to ic_string_append_char failed");
-            return 0;
-        }
-    }
-
-    ch = ic_string_contents_steal_and_destroy(str);
-    if (!ch) {
-        puts("ic_decl_type_struct_str_param: call to ic_string_contents_steal_and_destroy failed");
-        return 0;
-    }
-
-    return ch;
-}
-
-/* return a mangled representation of this function full signature
- *
- * the char* returned is a string stored within tdecl,
- * this means the caller must not free or mutate this string
- *
- * for the type
- *  type Foo
- *    i::Sint
- *    u::Uint
- *    b::Bar
- *  end
- *
- * this should generate the function
- *
- *  struct Foo * ic_Foo_a_Sint_Uint_Bar(Sint *i, Uint *u, Bar *b);
- *
- * returns char* on success
- * returns 0 on failure
- */
-char *ic_decl_type_struct_sig_mangled_full(struct ic_decl_type_struct *tdecl) {
-    struct ic_string *sig_str = 0;
-
-    unsigned int n_fields = 0;
-    unsigned int i_field = 0;
-    struct ic_field *field = 0;
-    struct ic_symbol *field_name_sym = 0;
-    struct ic_symbol *field_type_sym = 0;
-
-    struct ic_string *generated_fargs;
-
-    char *ch = 0;
-
-    if (!tdecl) {
-        puts("ic_decl_type_struct_sig_mangled_full: tdecl was null");
-        return 0;
-    }
-
-    /* cache str pointer */
-    sig_str = &(tdecl->sig_mangled_full);
-
-    if (ic_string_length(sig_str) == 0) {
-        /* string was empty, generate */
-
-        /* return type */
-        if (!ic_string_append_symbol(sig_str, &(tdecl->name))) {
-            puts("ic_decl_type_struct_sig_mangled_full: call to ic_string_append_char failed");
-            return 0;
-        }
-
-        /* function name */
-        if (!ic_string_append_char(sig_str, " i_", 3)) {
-            puts("ic_decl_type_struct_sig_mangled_full: call to ic_string_append_char failed");
-            return 0;
-        }
-
-        if (!ic_string_append_symbol(sig_str, &(tdecl->name))) {
-            puts("ic_decl_type_struct_sig_mangled_full: call to ic_string_append_symbol failed");
-            return 0;
-        }
-
-        if (!ic_string_append_char(sig_str, "_a", 2)) {
-            puts("ic_decl_type_struct_sig_mangled_full: call to ic_string_append_char failed");
-            return 0;
-        }
-
-        /* arguments */
-
-        generated_fargs = ic_string_new_empty();
-        if (!generated_fargs) {
-            puts("ic_decl_type_struct_sig_mangled_full: call to ic_string_new_empty failed");
-            return 0;
-        }
-
-        n_fields = ic_decl_type_struct_field_length(tdecl);
-
-        for (i_field = 0; i_field < n_fields; ++i_field) {
-            if (i_field > 0) {
-                if (!ic_string_append_char(generated_fargs, ", ", 2)) {
-                    puts("ic_decl_type_struct_sig_mangled_full: call to ic_string_append_char failed");
-                    return 0;
-                }
-            }
-
-            if (!ic_string_append_char(sig_str, "_", 1)) {
-                puts("ic_decl_type_struct_sig_mangled_full: call to ic_string_append_char failed");
-                return 0;
-            }
-
-            field = ic_decl_type_struct_field_get(tdecl, i_field);
-            if (!field) {
-                puts("ic_decl_type_struct_sig_mangled_full: call to ic_decl_type_struct_field_get failed");
-                return 0;
-            }
-
-            field_name_sym = &(field->name);
-
-            field_type_sym = ic_type_ref_get_symbol(field->type);
-            if (!field_type_sym) {
-                puts("ic_decl_type_struct_sig_mangled_full: call to ic_type_ref_get_symbol failed");
-                return 0;
-            }
-
-            if (!ic_string_append_symbol(sig_str, field_type_sym)) {
-                puts("ic_decl_type_struct_sig_mangled_full: call to ic_string_append_symbol failed");
-                return 0;
-            }
-
-            if (!ic_string_append_symbol(generated_fargs, field_type_sym)) {
-                puts("ic_decl_type_struct_sig_mangled_full: call to ic_string_append_symbol failed");
-                return 0;
-            }
-
-            if (!ic_string_append_char(generated_fargs, " ", 1)) {
-                puts("ic_decl_type_struct_sig_mangled_full: call to ic_string_append_char failed");
-                return 0;
-            }
-
-            if (!ic_string_append_symbol(generated_fargs, field_name_sym)) {
-                puts("ic_decl_type_struct_sig_mangled_full: call to ic_string_append_symbol failed");
-                return 0;
-            }
-        }
-
-        if (!ic_string_append_char(sig_str, "(", 1)) {
-            puts("ic_decl_type_struct_sig_mangled_full: call to ic_string_append_char failed");
-            return 0;
-        }
-
-        if (!ic_string_append(sig_str, generated_fargs)) {
-            puts("ic_decl_type_struct_sig_mangled_full: call to ic_string_append failed");
-            return 0;
-        }
-
-        if (!ic_string_append_char(sig_str, ")", 1)) {
-            puts("ic_decl_type_struct_sig_mangled_full: call to ic_string_append_char failed");
-            return 0;
-        }
-
-        if (!ic_string_destroy(generated_fargs, 1)) {
-            puts("ic_decl_type_struct_sig_mangled_full: call to ic_string_destroy failed");
-            return 0;
-        }
-    }
-
-    ch = ic_string_contents(sig_str);
-    if (!ch) {
-        puts("ic_decl_type_struct_sig_mangled_full: failed to get string contents");
-        return 0;
-    }
-
-    return ch;
-}
-
 /* add new type_param to decl_struct
  *
  * returns 1 on success
@@ -2438,6 +1798,90 @@ unsigned int ic_decl_type_struct_equal(struct ic_decl_type_struct *a, struct ic_
     return a == b;
 }
 
+/* return mangled_name of this type
+ * this symbol remains owned by this struct
+ *
+ * generated by ic_parse_helper_mangled_name
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_decl_type_struct_mangled_name(struct ic_decl_type_struct *tstruct) {
+    if (!tstruct) {
+        puts("ic_decl_type_struct_mangled_name: tstruct was null");
+        return 0;
+    }
+
+    if (tstruct->mangled_name) {
+        return tstruct->mangled_name;
+    }
+
+    tstruct->mangled_name = ic_parse_helper_mangled_name(&(tstruct->name), &(tstruct->type_params), 0, 0);
+    if (!tstruct->mangled_name) {
+        puts("ic_decl_type_struct_mangled_name: call to ic_parse_helper_mangled_name failed");
+        return 0;
+    }
+
+    return tstruct->mangled_name;
+}
+
+/* return full_name of this type
+ * this symbol remains owned by this struct
+ *
+ * generated by ic_parse_helper_full_name
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_decl_type_struct_full_name(struct ic_decl_type_struct *tstruct) {
+    if (!tstruct) {
+        puts("ic_decl_type_struct_full_name: tstruct was null");
+        return 0;
+    }
+
+    if (tstruct->full_name) {
+        return tstruct->full_name;
+    }
+
+    tstruct->full_name = ic_parse_helper_full_name(&(tstruct->name), &(tstruct->type_params), 0, 0);
+    if (!tstruct->full_name) {
+        puts("ic_decl_type_struct_full_name: call to ic_parse_helper_full_name failed");
+        return 0;
+    }
+
+    return tstruct->full_name;
+}
+
+/* return a masked representation of this type
+ *
+ * string representation of type decl with param masking
+ * e.g. Foo[A,B] becomes Foo[_,_]
+ *
+ * can be generated without arg analyis
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_decl_type_struct_generic_name(struct ic_decl_type_struct *tstruct) {
+    if (!tstruct) {
+        puts("ic_decl_type_struct_generic_name: tstruct was null");
+        return 0;
+    }
+
+    if (tstruct->generic_name) {
+        return tstruct->generic_name;
+    }
+
+    tstruct->generic_name = ic_parse_helper_generic_name(&(tstruct->name), &(tstruct->type_params), 0);
+    if (!tstruct->generic_name) {
+        puts("ic_decl_type_struct_generic_name: call to ic_parse_helper_generic_name failed");
+        return 0;
+    }
+
+    return tstruct->generic_name;
+}
+
+
 /* allocate and return a new decl_union
  * only needs name and len
  * will also allocate an empty pvector for fields
@@ -2518,6 +1962,10 @@ unsigned int ic_decl_type_union_init(struct ic_decl_type_union *udecl, char *nam
         puts("ic_decl_type_union_init: call to ic_dict_init for field_dict failed");
         return 0;
     }
+
+    udecl->mangled_name = 0;
+    udecl->full_name = 0;
+    udecl->generic_name = 0;
 
     /* we haven't seen any generic params yet, so we are non-generic */
     udecl->is_instantiated = 1;
@@ -2608,6 +2056,27 @@ unsigned int ic_decl_type_union_destroy(struct ic_decl_type_union *udecl, unsign
         return 0;
     }
 
+    if (udecl->mangled_name) {
+        if (!ic_symbol_destroy(udecl->mangled_name, 1)) {
+            puts("ic_decl_type_union_destroy: call to ic_symbol_destroy failed");
+            return 0;
+        }
+    }
+
+    if (udecl->full_name) {
+        if (!ic_symbol_destroy(udecl->full_name, 1)) {
+            puts("ic_decl_type_union_destroy: call to ic_symbol_destroy failed");
+            return 0;
+        }
+    }
+
+    if (udecl->generic_name) {
+        if (!ic_symbol_destroy(udecl->generic_name, 1)) {
+            puts("ic_decl_type_union_destroy: call to ic_symbol_destroy failed");
+            return 0;
+        }
+    }
+
     if (free_udecl) {
         free(udecl);
     }
@@ -2673,6 +2142,13 @@ unsigned int ic_decl_type_union_deep_copy_embedded(struct ic_decl_type_union *fr
     }
 
     to->is_instantiated = from->is_instantiated;
+
+    /* do not copy over names
+     * they can be regenerated if need be
+     */
+    to->mangled_name = 0;
+    to->full_name = 0;
+    to->generic_name = 0;
 
     /* don't try copy dict */
     if (!ic_dict_init(&(to->field_dict))) {
@@ -2901,146 +2377,6 @@ struct ic_symbol *ic_decl_type_union_name(struct ic_decl_type_union *tdecl) {
     }
 
     return &(tdecl->name);
-}
-
-/* get the char * contents of the name
- *
- * returns char * on success
- * returns 0 on failure
- */
-char *ic_decl_type_union_str(struct ic_decl_type_union *tdecl) {
-    char *ch = 0;
-
-    if (!tdecl) {
-        puts("ic_decl_type_union_str: tdecl was null");
-        return 0;
-    }
-
-    ch = ic_symbol_contents(&(tdecl->name));
-    if (!ch) {
-        puts("ic_decl_type_union_str: call to ic_symbol_contents failed");
-        return 0;
-    }
-
-    return ch;
-}
-
-/* generate a name for this polymorphic (generic) type
- *
- * if this type is not instantiated yet, then this will be of the form
- *  Maybe[_]
- * if this type is instantiated, then this will be of the form
- *  Maybe[Sint]
- *
- * caller is responsible for free-ing returned *
- *
- * returns * on success
- * returns 0 on failure
- */
-char *ic_decl_type_union_str_param(struct ic_decl_type_union *udecl) {
-    struct ic_string *str = 0;
-    char *ch = 0;
-
-    unsigned int i = 0;
-    unsigned int len = 0;
-
-    struct ic_type_param *type_param = 0;
-    char *type_decl_name = 0;
-
-    if (!udecl) {
-        puts("ic_decl_type_union_str_param: udecl was null");
-        return 0;
-    }
-
-    /* TODO FIXME I have basically this exact same code in too many places
-     * we should be able to take a string (fname / tname) and a list of type_params
-     * and write a function to do this generically, returning the string* which the
-     * caller can then optionally store
-     */
-
-    str = ic_string_new_empty();
-    if (!str) {
-        puts("ic_decl_type_union_str_param: call to ic_string_new_empty failed");
-        return 0;
-    }
-
-    /* append type name */
-    if (!ic_string_append_symbol(str, &(udecl->name))) {
-        puts("ic_decl_type_union_str_param: call to ic_string_append_symbol failed");
-        return 0;
-    }
-
-    /* TODO FIMXE
-     *   iterate through params
-     *   if instantiated, then type name
-     *   otherwise, _
-     *   insert ,s to sep
-     */
-    len = ic_decl_type_union_type_params_length(udecl);
-
-    if (len) {
-        /* append [ */
-        if (!ic_string_append_char(str, "[", 1)) {
-            puts("ic_decl_type_union_str_param: call to ic_string_append_char failed");
-            return 0;
-        }
-    }
-
-    if (ic_decl_type_union_is_instantiated(udecl)) {
-        for (i=0; i<len; ++i) {
-            type_param = ic_decl_type_union_type_params_get(udecl, i);
-            if (!type_param) {
-                puts("ic_decl_type_union_str_param: call to ic_decl_type_union_type_params_get failed");
-                return 0;
-            }
-
-            if (!type_param->tdecl) {
-                puts("ic_decl_type_union_str_param: type_param->tdecl was null");
-                return 0;
-            }
-
-            type_decl_name = ic_decl_type_str_param(type_param->tdecl);
-            if (!type_decl_name) {
-                puts("ic_decl_type_union_str_param: call to ic_type_param_get_name failed");
-                return 0;
-            }
-
-            if (!ic_string_append_cstr(str, type_decl_name)) {
-                puts("ic_decl_type_union_str_param: call to ic_string_append_symbol failed");
-                return 0;
-            }
-        }
-    } else {
-        for (i=0; i<len; ++i) {
-            if (i==0) {
-                if (!ic_string_append_char(str, "_", 1)) {
-                    puts("ic_decl_type_union_str_param: call to ic_string_append_char failed");
-                    return 0;
-                }
-            } else {
-                if (!ic_string_append_char(str, ",_", 2)) {
-                    puts("ic_decl_type_union_str_param: call to ic_string_append_char failed");
-                    return 0;
-                }
-            }
-        }
-    }
-
-    if (len) {
-        /* append ] */
-        if (!ic_string_append_char(str, "]", 1)) {
-            puts("ic_decl_type_union_str_param: call to ic_string_append_char failed");
-            return 0;
-        }
-    }
-
-    ch = ic_string_contents_steal_and_destroy(str);
-    if (!ch) {
-        puts("ic_decl_type_union_str_param: call to ic_string_contents_steal_and_destroy failed");
-        return 0;
-    }
-
-    return ch;
 }
 
 /* add new type_param to decl_union
@@ -3272,6 +2608,89 @@ unsigned int ic_decl_type_union_equal(struct ic_decl_type_union *a, struct ic_de
     }
 
     return a == b;
+}
+
+/* return mangled_name of this type
+ * this symbol remains owned by this struct
+ *
+ * generated by ic_parse_helper_mangled_name
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_decl_type_union_mangled_name(struct ic_decl_type_union *tunion) {
+    if (!tunion) {
+        puts("ic_decl_type_union_mangled_name: tunion was null");
+        return 0;
+    }
+
+    if (tunion->mangled_name) {
+        return tunion->mangled_name;
+    }
+
+    tunion->mangled_name = ic_parse_helper_mangled_name(&(tunion->name), &(tunion->type_params), 0, 0);
+    if (!tunion->mangled_name) {
+        puts("ic_decl_type_union_mangled_name: call to ic_parse_helper_mangled_name failed");
+        return 0;
+    }
+
+    return tunion->mangled_name;
+}
+
+/* return full_name of this type
+ * this symbol remains owned by this union
+ *
+ * generated by ic_parse_helper_full_name
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_decl_type_union_full_name(struct ic_decl_type_union *tunion) {
+    if (!tunion) {
+        puts("ic_decl_type_union_full_name: tunion was null");
+        return 0;
+    }
+
+    if (tunion->full_name) {
+        return tunion->full_name;
+    }
+
+    tunion->full_name = ic_parse_helper_full_name(&(tunion->name), &(tunion->type_params), 0, 0);
+    if (!tunion->full_name) {
+        puts("ic_decl_type_union_full_name: call to ic_parse_helper_full_name failed");
+        return 0;
+    }
+
+    return tunion->full_name;
+}
+
+/* return a masked representation of this type
+ *
+ * string representation of type decl with param masking
+ * e.g. Foo[A,B] becomes Foo[_,_]
+ *
+ * can be generated without arg analyis
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_decl_type_union_generic_name(struct ic_decl_type_union *tunion) {
+    if (!tunion) {
+        puts("ic_decl_type_union_generic_name: tunion was null");
+        return 0;
+    }
+
+    if (tunion->generic_name) {
+        return tunion->generic_name;
+    }
+
+    tunion->generic_name = ic_parse_helper_generic_name(&(tunion->name), &(tunion->type_params), 0);
+    if (!tunion->generic_name) {
+        puts("ic_decl_type_union_generic_name: call to ic_parse_helper_generic_name failed");
+        return 0;
+    }
+
+    return tunion->generic_name;
 }
 
 /* allocate and initialise a new ic_decl_type as a struct
@@ -3787,89 +3206,6 @@ struct ic_symbol *ic_decl_type_name(struct ic_decl_type *tdecl) {
     }
 }
 
-/* get the char * contents of the name
- *
- * returns char * on success
- * returns 0 on failure
- */
-char *ic_decl_type_str(struct ic_decl_type *tdecl) {
-    char *ch = 0;
-    if (!tdecl) {
-        puts("ic_decl_type_str: tdecl was null");
-        return 0;
-    }
-
-    switch (tdecl->tag) {
-        case ic_decl_type_tag_struct:
-            ch = ic_decl_type_struct_str(&(tdecl->u.tstruct));
-            if (!ch) {
-                puts("ic_decl_type_str: call to ic_decl_type_struct_str failed");
-                return 0;
-            }
-            return ch;
-            break;
-
-        case ic_decl_type_tag_union:
-            ch = ic_decl_type_union_str(&(tdecl->u.tunion));
-            if (!ch) {
-                puts("ic_decl_type_str: call to ic_decl_type_union_str failed");
-                return 0;
-            }
-            return ch;
-            break;
-
-        default:
-            puts("ic_decl_type_str: unknown tag");
-            return 0;
-            break;
-    }
-}
-
-/* generate a name for this polymorphic (generic) type
- *
- * if this type is not instantiated yet, then this will be of the form
- *  Maybe[_]
- * if this type is instantiated, then this will be of the form
- *  Maybe[Sint]
- *
- * caller is responsible for free-ing returned *
- *
- * returns * on success
- * returns 0 on failure
- */
-char *ic_decl_type_str_param(struct ic_decl_type *tdecl) {
-    char *ch = 0;
-    if (!tdecl) {
-        puts("ic_decl_type_str_param: tdecl was null");
-        return 0;
-    }
-
-    switch (tdecl->tag) {
-        case ic_decl_type_tag_struct:
-            ch = ic_decl_type_struct_str_param(&(tdecl->u.tstruct));
-            if (!ch) {
-                puts("ic_decl_type_str_param: call to ic_decl_type_struct_str_param failed");
-                return 0;
-            }
-            return ch;
-            break;
-
-        case ic_decl_type_tag_union:
-            ch = ic_decl_type_union_str_param(&(tdecl->u.tunion));
-            if (!ch) {
-                puts("ic_decl_type_str_param: call to ic_decl_type_union_str_param failed");
-                return 0;
-            }
-            return ch;
-            break;
-
-        default:
-            puts("ic_decl_type_str_param: unknown tag");
-            return 0;
-            break;
-    }
-}
-
 /* add new type_param to decl
  *
  * returns 1 on success
@@ -4207,40 +3543,6 @@ unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char *field
     }
 }
 
-/* the full signature for the constructor of this type
- *
- * returns * on success
- * returns 0 on failure
- */
-char *ic_decl_type_sig_mangled_full(struct ic_decl_type *tdecl) {
-    char *ch = 0;
-    if (!tdecl) {
-        puts("ic_decl_type_sig_mangled_full: tdecl was null");
-        return 0;
-    }
-
-    switch (tdecl->tag) {
-        case ic_decl_type_tag_struct:
-            ch = ic_decl_type_struct_sig_mangled_full(&(tdecl->u.tstruct));
-            if (!ch) {
-                puts("ic_decl_type_sig_mangled_full: call to ic_decl_type_struct_sig_mangled_full failed");
-                return 0;
-            }
-            return ch;
-            break;
-
-        case ic_decl_type_tag_union:
-            puts("ic_decl_type_sig_mangled_full: union not yet supported");
-            return 0;
-            break;
-
-        default:
-            puts("ic_decl_type_sig_mangled_full: unknown tag");
-            return 0;
-            break;
-    }
-}
-
 /* test if bool
  *
  * returns 1 if bool
@@ -4505,6 +3807,135 @@ void ic_decl_type_print_debug(FILE *fd, struct ic_decl_type *tdecl) {
             break;
     }
 }
+
+/* return mangled_name of this type
+ * this symbol remains owned by this struct
+ *
+ * generated by ic_parse_helper_mangled_name
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_decl_type_mangled_name(struct ic_decl_type *tdecl) {
+    struct ic_symbol *sym = 0;
+
+    if (!tdecl) {
+        puts("ic_decl_type_mangled_name: tdecl was null");
+        return 0;
+    }
+
+    switch (tdecl->tag) {
+        case ic_decl_type_tag_struct:
+            sym = ic_decl_type_struct_mangled_name(&(tdecl->u.tstruct));
+            if (!sym) {
+                puts("ic_decl_type_mangled_name: call to ic_decl_type_struct_mangled_name failed");
+                return 0;
+            }
+            break;
+
+        case ic_decl_type_tag_union:
+            sym = ic_decl_type_union_mangled_name(&(tdecl->u.tunion));
+            if (!sym) {
+                puts("ic_decl_type_mangled_name: call to ic_decl_type_union_mangled_name failed");
+                return 0;
+            }
+            break;
+
+        default:
+            puts("ic_decl_type_mangled_name: unknown tag");
+            return 0;
+            break;
+    }
+
+    return sym;
+}
+
+/* return full_name of this type
+ * this symbol remains owned by this struct
+ *
+ * generated by ic_parse_helper_full_name
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_decl_type_full_name(struct ic_decl_type *tdecl) {
+    struct ic_symbol *sym = 0;
+
+    if (!tdecl) {
+        puts("ic_decl_type_full_name: tdecl was null");
+        return 0;
+    }
+
+    switch (tdecl->tag) {
+        case ic_decl_type_tag_struct:
+            sym = ic_decl_type_struct_full_name(&(tdecl->u.tstruct));
+            if (!sym) {
+                puts("ic_decl_type_full_name: call to ic_decl_type_struct_full_name failed");
+                return 0;
+            }
+            break;
+
+        case ic_decl_type_tag_union:
+            sym = ic_decl_type_union_full_name(&(tdecl->u.tunion));
+            if (!sym) {
+                puts("ic_decl_type_full_name: call to ic_decl_type_union_full_name failed");
+                return 0;
+            }
+            break;
+
+        default:
+            puts("ic_decl_type_full_name: unknown tag");
+            return 0;
+            break;
+    }
+
+    return sym;
+}
+
+/* return a masked representation of this type
+ *
+ * string representation of type decl with param masking
+ * e.g. Foo[A,B] becomes Foo[_,_]
+ *
+ * can be generated without arg analyis
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_decl_type_generic_name(struct ic_decl_type *tdecl) {
+    struct ic_symbol *sym = 0;
+
+    if (!tdecl) {
+        puts("ic_decl_type_generic_name: tdecl was null");
+        return 0;
+    }
+
+    switch (tdecl->tag) {
+        case ic_decl_type_tag_struct:
+            sym = ic_decl_type_struct_generic_name(&(tdecl->u.tstruct));
+            if (!sym) {
+                puts("ic_decl_type_generic_name: call to ic_decl_type_struct_generic_name failed");
+                return 0;
+            }
+            break;
+
+        case ic_decl_type_tag_union:
+            sym = ic_decl_type_union_generic_name(&(tdecl->u.tunion));
+            if (!sym) {
+                puts("ic_decl_type_generic_name: call to ic_decl_type_union_generic_name failed");
+                return 0;
+            }
+            break;
+
+        default:
+            puts("ic_decl_type_generic_name: unknown tag");
+            return 0;
+            break;
+    }
+
+    return sym;
+}
+
 
 /* allocate and return a new decl_op
  *

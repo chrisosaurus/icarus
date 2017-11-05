@@ -113,4 +113,20 @@ void ic_type_param_print(FILE *fd, struct ic_type_param *tparam);
  */
 struct ic_type_param *ic_type_param_search(struct ic_pvector *type_params, char *tname);
 
+/* get mangled_name
+ * this is owned by the underlying decl_type
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_type_param_mangled_name(struct ic_type_param *tparam);
+
+/* get full_name
+ * this is owned by the underlying decl_type
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_type_param_full_name(struct ic_type_param *tparam);
+
 #endif

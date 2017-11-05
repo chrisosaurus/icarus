@@ -235,10 +235,8 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
      * this is the position of the first argument
      */
     unsigned int fdecl_stack_offset = 0;
-    /* char * to sig_call for current fdecl
-     * used for bytecode
-     */
-    char *fdecl_sig_call = 0;
+    struct ic_symbol *fdecl_full_name = 0;
+    char *fdecl_full_name_ch = 0;
     /* tbody of current fdecl */
     struct ic_transform_body *fdecl_tbody = 0;
     /* offset we created fdecl at */
@@ -300,19 +298,25 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
      * end
      */
 
-    fdecl_sig_call = ic_decl_func_sig_call(fdecl);
-    if (!fdecl_sig_call) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_decl_func_sig_call failed");
+    fdecl_full_name = ic_decl_func_full_name(fdecl);
+    if (!fdecl_full_name) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_decl_func_full_name failed");
+        return 0;
+    }
+
+    fdecl_full_name_ch = ic_symbol_contents(fdecl_full_name);
+    if (!fdecl_full_name_ch) {
+        puts("ic_backend_pancake_compile_fdecl: call to ic_symbol_contents failed");
         return 0;
     }
 
     /* skip builtin function */
     if (ic_decl_func_isbuiltin(fdecl)) {
-        // printf("warning: ic_backend_pancake_compile_fdecl: skipping builtin fdecl '%s'\n", fdecl_sig_call);
+        // printf("warning: ic_backend_pancake_compile_fdecl: skipping builtin fdecl '%s'\n", fdecl_full_name_ch);
         return 1;
     }
 
-    labeller = ic_labeller_new(fdecl_sig_call);
+    labeller = ic_labeller_new(fdecl_full_name_ch);
     if (!labeller) {
         puts("ic_backend_pancake_compile_fdecl: call to ic_labeller_new failed");
         return 0;
@@ -322,7 +326,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
     fdecl_instructions_offset = ic_backend_pancake_instructions_length(instructions);
 
     /* register function at offset */
-    if (!ic_backend_pancake_instructions_register_label(instructions, fdecl_sig_call, fdecl_instructions_offset)) {
+    if (!ic_backend_pancake_instructions_register_label(instructions, fdecl_full_name_ch, fdecl_instructions_offset)) {
         puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_register_label failed");
         return 0;
     }
@@ -333,7 +337,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
         puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
         return 0;
     }
-    if (!ic_backend_pancake_bytecode_arg1_set_char(bc_dummy_fdecl, fdecl_sig_call)) {
+    if (!ic_backend_pancake_bytecode_arg1_set_char(bc_dummy_fdecl, fdecl_full_name_ch)) {
         puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_bytecode_arg1_set_char failed");
         return 0;
     }
@@ -2260,8 +2264,8 @@ unsigned int ic_backend_pancake_compile_expr_fcall(struct ic_backend_pancake_ins
     unsigned int i = 0;
     /* current fcall arg */
     struct ic_symbol *fcall_arg = 0;
-    /* function to call */
-    char *fdecl_sig_call = 0;
+    struct ic_symbol *fdecl_full_name = 0;
+    char *fdecl_full_name_ch = 0;
     /* instruction */
     struct ic_backend_pancake_bytecode *instruction = 0;
 
@@ -2370,9 +2374,15 @@ unsigned int ic_backend_pancake_compile_expr_fcall(struct ic_backend_pancake_ins
     /* insert call instruction to fcall */
     fcall = tfcall->fcall;
     decl_func = fcall->fdecl;
-    fdecl_sig_call = ic_decl_func_sig_call(decl_func);
-    if (!fdecl_sig_call) {
-        puts("ic_backend_pancake_compile_expr_fcall: call to ic_decl_func_sig_call failed");
+    fdecl_full_name = ic_decl_func_full_name(decl_func);
+    if (!fdecl_full_name) {
+        puts("ic_backend_pancake_compile_expr_fcall: call to ic_decl_func_full_name failed");
+        return 0;
+    }
+
+    fdecl_full_name_ch = ic_symbol_contents(fdecl_full_name);
+    if (!fdecl_full_name_ch) {
+        puts("ic_backend_pancake_compile_expr_fcall: call to ic_symbol_contents failed");
         return 0;
     }
 
@@ -2386,7 +2396,7 @@ unsigned int ic_backend_pancake_compile_expr_fcall(struct ic_backend_pancake_ins
         puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_instructions_add failed");
         return 0;
     }
-    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_sig_call)) {
+    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_full_name_ch)) {
         puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
         return 0;
     }
@@ -2408,9 +2418,11 @@ unsigned int ic_backend_pancake_compile_expr_fcall(struct ic_backend_pancake_ins
 
 static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_generate *gen) {
     struct ic_decl_type *tdecl = 0;
-    char *type_name_param = 0;
+    struct ic_symbol *type_full_name = 0;
+    char *type_full_name_ch = 0;
     struct ic_decl_func *fdecl = 0;
-    char *fdecl_sig_call = 0;
+    struct ic_symbol *fdecl_full_name = 0;
+    char *fdecl_full_name_ch = 0;
     unsigned int i_arg = 0;
     unsigned int n_args = 0;
     struct ic_field *field = 0;
@@ -2448,9 +2460,15 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
     }
 
     /* get type name */
-    type_name_param = ic_decl_type_str_param(tdecl);
-    if (!type_name_param) {
-        puts("ic_backend_pancake_generate_function_print_union: call to ic_decl_type_str_param failed");
+    type_full_name = ic_decl_type_full_name(tdecl);
+    if (!type_full_name) {
+        puts("ic_backend_pancake_generate_function_print_union: call to ic_decl_type_full_name failed");
+        return 0;
+    }
+
+    type_full_name_ch = ic_symbol_contents(type_full_name);
+    if (!type_full_name_ch) {
+        puts("ic_backend_pancake_generate_function_print_union: call to ic_symbol_contents failed");
         return 0;
     }
 
@@ -2460,13 +2478,19 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
         return 0;
     }
 
-    fdecl_sig_call = ic_decl_func_sig_call(fdecl);
-    if (!fdecl_sig_call) {
-        puts("ic_backend_pancake_generate_function_print_union: call to ic_decl_func_sig_call failed");
+    fdecl_full_name = ic_decl_func_full_name(fdecl);
+    if (!fdecl_full_name) {
+        puts("ic_backend_pancake_generate_function_print_union: call to ic_decl_func_full_name failed");
         return 0;
     }
 
-    labeller = ic_labeller_new(fdecl_sig_call);
+    fdecl_full_name_ch = ic_symbol_contents(fdecl_full_name);
+    if (!fdecl_full_name_ch) {
+        puts("ic_backend_pancake_generate_function_print_union: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    labeller = ic_labeller_new(fdecl_full_name_ch);
     if (!labeller) {
         puts("ic_backend_pancake_generate_function_print_union: call to ic_labeller_new failed");
         return 0;
@@ -2538,7 +2562,7 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
     instructions_offset = ic_backend_pancake_instructions_length(instructions);
 
     /* register function at offset */
-    if (!ic_backend_pancake_instructions_register_label(instructions, fdecl_sig_call, instructions_offset)) {
+    if (!ic_backend_pancake_instructions_register_label(instructions, fdecl_full_name_ch, instructions_offset)) {
         puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_instructions_register_label failed for print");
         return 0;
     }
@@ -2550,7 +2574,7 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
         return 0;
     }
 
-    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_sig_call)) {
+    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_full_name_ch)) {
         puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg1_set_char failed");
         return 0;
     }
@@ -2562,7 +2586,7 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
         return 0;
     }
 
-    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, type_name_param)) {
+    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, type_full_name_ch)) {
         puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg1_set_char failed");
         return 0;
     }
@@ -2778,9 +2802,15 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
             return 0;
         }
 
-        type_name_param = ic_decl_type_str_param(field_type);
-        if (!type_name_param) {
-            puts("ic_backend_pancake_generate_function_print_union: call to ic_decl_type_str_param failed");
+        type_full_name = ic_decl_type_full_name(field_type);
+        if (!type_full_name) {
+            puts("ic_backend_pancake_generate_function_print_union: call to ic_decl_type_full_name failed");
+            return 0;
+        }
+
+        type_full_name_ch = ic_symbol_contents(type_full_name);
+        if (!type_full_name_ch) {
+            puts("ic_backend_pancake_generate_function_print_union: call to ic_symbol_contents failed");
             return 0;
         }
 
@@ -2850,7 +2880,7 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
             return 0;
         }
 
-        if (!ic_string_append_cstr(fcall_label_str, type_name_param)) {
+        if (!ic_string_append_cstr(fcall_label_str, type_full_name_ch)) {
             puts("ic_backend_pancake_generate_function_print_union: call to ic_string_append_cstr failed");
             return 0;
         }
@@ -2983,9 +3013,11 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
 
 static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_generate *gen) {
     struct ic_decl_type *tdecl = 0;
-    char *type_name_param = 0;
+    struct ic_symbol *type_full_name = 0;
+    char *type_full_name_ch = 0;
     struct ic_decl_func *fdecl = 0;
-    char *fdecl_sig_call = 0;
+    struct ic_symbol *fdecl_full_name = 0;
+    char *fdecl_full_name_ch = 0;
     unsigned int i_arg = 0;
     unsigned int n_args = 0;
     struct ic_field *field = 0;
@@ -3016,9 +3048,15 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
     }
 
     /* get type name */
-    type_name_param = ic_decl_type_str_param(tdecl);
-    if (!type_name_param) {
-        puts("ic_backend_pancake_generate_function_print_struct: call to ic_decl_type_str_param failed");
+    type_full_name = ic_decl_type_full_name(tdecl);
+    if (!type_full_name) {
+        puts("ic_backend_pancake_generate_function_print_struct: call to ic_decl_type_full_name failed");
+        return 0;
+    }
+
+    type_full_name_ch = ic_symbol_contents(type_full_name);
+    if (!type_full_name_ch) {
+        puts("ic_backend_pancake_generate_function_print_struct: call to ic_symbol_contents failed");
         return 0;
     }
 
@@ -3028,9 +3066,15 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
         return 0;
     }
 
-    fdecl_sig_call = ic_decl_func_sig_call(fdecl);
-    if (!fdecl_sig_call) {
-        puts("ic_backend_pancake_generate_function_print_struct: call to ic_decl_func_sig_call failed");
+    fdecl_full_name = ic_decl_func_full_name(fdecl);
+    if (!fdecl_full_name) {
+        puts("ic_backend_pancake_generate_function_print_struct: call to ic_decl_func_full_name failed");
+        return 0;
+    }
+
+    fdecl_full_name_ch = ic_symbol_contents(fdecl_full_name);
+    if (!fdecl_full_name_ch) {
+        puts("ic_backend_pancake_generate_function_print_struct: call to ic_symbol_contents failed");
         return 0;
     }
 
@@ -3067,7 +3111,7 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
     instructions_offset = ic_backend_pancake_instructions_length(instructions);
 
     /* register function at offset */
-    if (!ic_backend_pancake_instructions_register_label(instructions, fdecl_sig_call, instructions_offset)) {
+    if (!ic_backend_pancake_instructions_register_label(instructions, fdecl_full_name_ch, instructions_offset)) {
         puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_instructions_register_label failed for print");
         return 0;
     }
@@ -3079,7 +3123,7 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
         return 0;
     }
 
-    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_sig_call)) {
+    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_full_name_ch)) {
         puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg1_set_char failed");
         return 0;
     }
@@ -3091,7 +3135,7 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
         return 0;
     }
 
-    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, type_name_param)) {
+    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, type_full_name_ch)) {
         puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg1_set_char failed");
         return 0;
     }
@@ -3203,9 +3247,15 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
             return 0;
         }
 
-        type_name_param = ic_decl_type_str_param(field_type);
-        if (!type_name_param) {
-            puts("ic_backend_pancake_generate_function_print_struct: call to ic_decl_type_str_param failed");
+        type_full_name = ic_decl_type_full_name(field_type);
+        if (!type_full_name) {
+            puts("ic_backend_pancake_generate_function_print_struct: call to ic_decl_type_full_name failed");
+            return 0;
+        }
+
+        type_full_name_ch = ic_symbol_contents(type_full_name);
+        if (!type_full_name_ch) {
+            puts("ic_backend_pancake_generate_function_print_struct: call to ic_symbol_contents failed");
             return 0;
         }
 
@@ -3275,7 +3325,7 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
             return 0;
         }
 
-        if (!ic_string_append_cstr(fcall_label_str, type_name_param)) {
+        if (!ic_string_append_cstr(fcall_label_str, type_full_name_ch)) {
             puts("ic_backend_pancake_generate_function_print_struct: call to ic_string_append_cstr failed");
             return 0;
         }
@@ -3398,10 +3448,8 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
     struct ic_generate *gen = 0;
     struct ic_decl_func *fdecl = 0;
     struct ic_decl_type *tdecl = 0;
-    /* char * to sig_call for current fdecl
-     * used for bytecode
-     */
-    char *fdecl_sig_call = 0;
+    struct ic_symbol *fdecl_full_name = 0;
+    char *fdecl_full_name_ch = 0;
     struct ic_backend_pancake_bytecode *instruction = 0;
     struct ic_symbol *type_name_sym = 0;
     struct ic_string *fcall_label_str = 0;
@@ -3497,9 +3545,9 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
         }
 
         /* get type name */
-        type_name_sym = ic_decl_type_name(tdecl);
+        type_name_sym = ic_decl_type_full_name(tdecl);
         if (!type_name_sym) {
-            puts("ic_backend_pancake_generate_functions: call to ic_decl_type_name failed");
+            puts("ic_backend_pancake_generate_functions: call to ic_decl_type_full_name failed");
             return 0;
         }
 
@@ -3509,9 +3557,15 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
             return 0;
         }
 
-        fdecl_sig_call = ic_decl_func_sig_call(fdecl);
-        if (!fdecl_sig_call) {
-            puts("ic_backend_pancake_generate_functions: call to ic_decl_func_sig_call failed");
+        fdecl_full_name = ic_decl_func_full_name(fdecl);
+        if (!fdecl_full_name) {
+            puts("ic_backend_pancake_generate_functions: call to ic_decl_func_full_name failed");
+            return 0;
+        }
+
+        fdecl_full_name_ch = ic_symbol_contents(fdecl_full_name);
+        if (!fdecl_full_name_ch) {
+            puts("ic_backend_pancake_generate_functions: call to ic_symbol_contents failed");
             return 0;
         }
 
@@ -3541,7 +3595,7 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                 instructions_offset = ic_backend_pancake_instructions_length(instructions);
 
                 /* register function at offset */
-                if (!ic_backend_pancake_instructions_register_label(instructions, fdecl_sig_call, instructions_offset)) {
+                if (!ic_backend_pancake_instructions_register_label(instructions, fdecl_full_name_ch, instructions_offset)) {
                     puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_register_label failed for cons_struct");
                     return 0;
                 }
@@ -3552,7 +3606,7 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                     puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
                     return 0;
                 }
-                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_sig_call)) {
+                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_full_name_ch)) {
                     puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_char failed");
                     return 0;
                 }
@@ -3674,7 +3728,7 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                 instructions_offset = ic_backend_pancake_instructions_length(instructions);
 
                 /* register function at offset */
-                if (!ic_backend_pancake_instructions_register_label(instructions, fdecl_sig_call, instructions_offset)) {
+                if (!ic_backend_pancake_instructions_register_label(instructions, fdecl_full_name_ch, instructions_offset)) {
                     puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_register_label failed for cons_union");
                     return 0;
                 }
@@ -3685,7 +3739,7 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                     puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
                     return 0;
                 }
-                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_sig_call)) {
+                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_full_name_ch)) {
                     puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_char failed");
                     return 0;
                 }
@@ -3833,7 +3887,7 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                 instructions_offset = ic_backend_pancake_instructions_length(instructions);
 
                 /* register function at offset */
-                if (!ic_backend_pancake_instructions_register_label(instructions, fdecl_sig_call, instructions_offset)) {
+                if (!ic_backend_pancake_instructions_register_label(instructions, fdecl_full_name_ch, instructions_offset)) {
                     puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_register_label failed for println");
                     return 0;
                 }
@@ -3844,7 +3898,7 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                     puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
                     return 0;
                 }
-                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_sig_call)) {
+                if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_full_name_ch)) {
                     puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_char failed");
                     return 0;
                 }

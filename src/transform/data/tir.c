@@ -471,7 +471,8 @@ unsigned int ic_transform_ir_let_destroy(struct ic_transform_ir_let *let, unsign
  */
 unsigned int ic_transform_ir_let_print(FILE *fd, struct ic_transform_ir_let *let, unsigned int *indent) {
     unsigned int fake_indent = 0;
-    char *type_name = 0;
+    struct ic_symbol *type_full_name = 0;
+    char *type_full_name_ch = 0;
 
     if (!let) {
         puts("ic_transform_ir_let_print: let was null");
@@ -491,13 +492,19 @@ unsigned int ic_transform_ir_let_print(FILE *fd, struct ic_transform_ir_let *let
     ic_symbol_print(fd, let->name);
 
     /* type name */
-    type_name = ic_decl_type_str(let->type);
-    if (!type_name) {
-        puts("ic_transform_ir_let_expr_print: call to ic_decl_type_str failed");
+    type_full_name = ic_decl_type_full_name(let->type);
+    if (!type_full_name) {
+        puts("ic_transform_ir_let_expr_print: call to ic_decl_type_full_name failed");
         return 0;
     }
 
-    fprintf(fd, "::%s = ", type_name);
+    type_full_name_ch = ic_symbol_contents(type_full_name);
+    if (!type_full_name_ch) {
+        puts("ic_transform_ir_let_expr_print: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    fprintf(fd, "::%s = ", type_full_name_ch);
 
     /* expr */
     if (!ic_transform_ir_expr_print(fd, let->expr, &fake_indent)) {

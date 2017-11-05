@@ -96,8 +96,8 @@ unsigned int ic_b2c_compile_expr(struct ic_kludge *input_kludge, struct ic_trans
 unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic_transform_ir_expr_fcall *fcall, FILE *out) {
     /* function decl */
     struct ic_decl_func *fdecl = 0;
-    /* mangled function signature, suitable for output */
-    char *fdecl_sig_mangled = 0;
+    struct ic_symbol *fdecl_mangled_name = 0;
+    char *fdecl_mangled_name_ch = 0;
     /* offset into fcall args pvector */
     unsigned int i = 0;
     /* length of fcall args pvector */
@@ -127,14 +127,20 @@ unsigned int ic_b2c_compile_expr_fcall(struct ic_kludge *input_kludge, struct ic
     }
 
     /* find function name to call */
-    fdecl_sig_mangled = ic_decl_func_sig_mangled(fdecl);
-    if (!fdecl_sig_mangled) {
-        puts("ic_b2c_compile_expr_fcall: call to ic_decl_func_sig_mangled failed");
+    fdecl_mangled_name = ic_decl_func_mangled_name(fdecl);
+    if (!fdecl_mangled_name) {
+        puts("ic_b2c_compile_expr_fcall: call to ic_decl_func_mangled_name failed");
+        return 0;
+    }
+
+    fdecl_mangled_name_ch = ic_symbol_contents(fdecl_mangled_name);
+    if (!fdecl_mangled_name_ch) {
+        puts("ic_b2c_compile_expr_fcall: call to ic_symbol_contents failed");
         return 0;
     }
 
     /* omit function name */
-    fputs(fdecl_sig_mangled, out);
+    fputs(fdecl_mangled_name_ch, out);
 
     /* omit opening ( */
     fputs("(", out);

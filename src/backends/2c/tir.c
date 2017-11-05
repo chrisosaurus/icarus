@@ -193,9 +193,9 @@ unsigned int ic_b2c_compile_stmt_let(struct ic_kludge *input_kludge, struct ic_t
 
     let_type = let->type;
 
-    let_sym = ic_decl_type_name(let_type);
+    let_sym = ic_decl_type_mangled_name(let_type);
     if (!let_sym) {
-        puts("ic_b2c_compile_stmt_let: call to ic_decl_type_name failed");
+        puts("ic_b2c_compile_stmt_let: call to ic_decl_type_mangled_name failed");
         return 0;
     }
 
@@ -373,7 +373,8 @@ unsigned int ic_b2c_compile_stmt_match(struct ic_kludge *input_kludge, struct ic
     unsigned int len = 0;
     unsigned int i = 0;
     struct ic_transform_ir_match_case *tcase = 0;
-    char *type_name_ch = 0;
+    struct ic_symbol *type_mangled_name = 0;
+    char *type_mangled_name_ch = 0;
     char *field_name_ch = 0;
     struct ic_symbol *field_type_sym = 0;
     char *field_type_ch = 0;
@@ -412,9 +413,15 @@ unsigned int ic_b2c_compile_stmt_match(struct ic_kludge *input_kludge, struct ic
      * }
      */
 
-    type_name_ch = ic_decl_type_str(match->tdecl);
-    if (!type_name_ch) {
-        puts("ic_b2c_compile_stmt_match: call to ic_decl_type_str failed");
+    type_mangled_name = ic_decl_type_mangled_name(match->tdecl);
+    if (!type_mangled_name) {
+        puts("ic_b2c_compile_stmt_match: call to ic_decl_type_mangled_name failed");
+        return 0;
+    }
+
+    type_mangled_name_ch = ic_symbol_contents(type_mangled_name);
+    if (!type_mangled_name_ch) {
+        puts("ic_b2c_compile_stmt_match: call to ic_symbol_contents failed");
         return 0;
     }
 
@@ -442,7 +449,7 @@ unsigned int ic_b2c_compile_stmt_match(struct ic_kludge *input_kludge, struct ic
         field_type_ch = ic_symbol_contents(field_type_sym);
 
         /* insert case */
-        fprintf(out, "    case %s_tag_%s_%s:\n", type_name_ch, field_type_ch, field_name_ch);
+        fprintf(out, "    case %s_tag_%s_%s:\n", type_mangled_name_ch, field_type_ch, field_name_ch);
         fputs("      {\n", out);
 
         /* insert var to unpack */
@@ -468,7 +475,7 @@ unsigned int ic_b2c_compile_stmt_match(struct ic_kludge *input_kludge, struct ic
         fputs("      }\n", out);
     } else {
         /* otherwise insert our own default */
-        fprintf(out, "    panic(\"unknown case for _tag on type '%s\");\n", type_name_ch);
+        fprintf(out, "    panic(\"unknown case for _tag on type '%s\");\n", type_mangled_name_ch);
     }
     fputs("      break;\n", out);
 

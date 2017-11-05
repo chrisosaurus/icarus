@@ -1,6 +1,6 @@
 
 int main(void) {
-    i_main_a();
+    main_a_b();
 
     return 0;
 }

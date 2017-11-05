@@ -52,38 +52,38 @@ void panic(char *ch) {
     value->tag = ic_backend_pancake_value_type_##type;        \
     value->u.type = result;
 
-unsigned int i_print_string(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_print_sint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_print_uint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_print_bool(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_println(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_println_string(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_println_sint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_println_uint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_println_bool(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_plus_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_plus_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_minus_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_minus_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_multiply_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_multiply_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_lessthan_equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_lessthan_equal_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_greaterthan_equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_greaterthan_equal_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_lessthan_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_lessthan_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_greaterthan_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_greaterthan_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_to_str_bool(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_length_string(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_equal_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_equal_sint_uint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_equal_uint_sint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_concat_string_string(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_modulo_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
-unsigned int i_assert_bool(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int print_string(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int print_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int print_uint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int print_bool(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int println(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int println_string(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int println_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int println_uint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int println_bool(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int plus_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int plus_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int minus_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int minus_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int multiply_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int multiply_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int lessthan_equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int lessthan_equal_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int greaterthan_equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int greaterthan_equal_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int lessthan_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int lessthan_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int greaterthan_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int greaterthan_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int to_str_bool(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int length_string(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int equal_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int equal_sint_uint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int equal_uint_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int concat_string_string(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int modulo_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int assert_bool(struct ic_backend_pancake_value_stack *value_stack);
 
 #define ic_backend_pancake_builtins_table_len 32
 
@@ -92,38 +92,38 @@ struct ic_backend_pancake_builtins_table_type {
     char *str;
     unsigned int (*func)(struct ic_backend_pancake_value_stack *value_stack);
 } ic_backend_pancake_builtins_table[ic_backend_pancake_builtins_table_len] = {
-    {"print(String)", i_print_string},
-    {"print(Uint)", i_print_uint},
-    {"print(Sint)", i_print_sint},
-    {"print(Bool)", i_print_bool},
-    {"println()", i_println},
-    {"println(String)", i_println_string},
-    {"println(Uint)", i_println_uint},
-    {"println(Sint)", i_println_sint},
-    {"println(Bool)", i_println_bool},
-    {"plus(Uint,Uint)", i_plus_uint_uint},
-    {"plus(Sint,Sint)", i_plus_sint_sint},
-    {"minus(Uint,Uint)", i_minus_uint_uint},
-    {"minus(Sint,Sint)", i_minus_sint_sint},
-    {"multiply(Uint,Uint)", i_multiply_uint_uint},
-    {"multiply(Sint,Sint)", i_multiply_sint_sint},
-    {"lessthan(Uint,Uint)", i_lessthan_uint_uint},
-    {"lessthan(Sint,Sint)", i_lessthan_sint_sint},
-    {"greaterthan(Uint,Uint)", i_greaterthan_uint_uint},
-    {"greaterthan(Sint,Sint)", i_greaterthan_sint_sint},
-    {"lessthan_equal(Uint,Uint)", i_lessthan_equal_uint_uint},
-    {"lessthan_equal(Sint,Sint)", i_lessthan_equal_sint_sint},
-    {"greaterthan_equal(Uint,Uint)", i_greaterthan_equal_uint_uint},
-    {"greaterthan_equal(Sint,Sint)", i_greaterthan_equal_sint_sint},
-    {"to_str(Bool)", i_to_str_bool},
-    {"length(String)", i_length_string},
-    {"equal(Sint,Sint)", i_equal_sint_sint},
-    {"equal(Uint,Uint)", i_equal_uint_uint},
-    {"equal(Uint,Sint)", i_equal_uint_sint},
-    {"equal(Sint,Uint)", i_equal_sint_uint},
-    {"concat(String,String)", i_concat_string_string},
-    {"modulo(Sint,Sint)", i_modulo_sint_sint},
-    {"assert(Bool)", i_assert_bool},
+    {"print(String)", print_string},
+    {"print(Uint)", print_uint},
+    {"print(Sint)", print_sint},
+    {"print(Bool)", print_bool},
+    {"println()", println},
+    {"println(String)", println_string},
+    {"println(Uint)", println_uint},
+    {"println(Sint)", println_sint},
+    {"println(Bool)", println_bool},
+    {"plus(Uint,Uint)", plus_uint_uint},
+    {"plus(Sint,Sint)", plus_sint_sint},
+    {"minus(Uint,Uint)", minus_uint_uint},
+    {"minus(Sint,Sint)", minus_sint_sint},
+    {"multiply(Uint,Uint)", multiply_uint_uint},
+    {"multiply(Sint,Sint)", multiply_sint_sint},
+    {"lessthan(Uint,Uint)", lessthan_uint_uint},
+    {"lessthan(Sint,Sint)", lessthan_sint_sint},
+    {"greaterthan(Uint,Uint)", greaterthan_uint_uint},
+    {"greaterthan(Sint,Sint)", greaterthan_sint_sint},
+    {"lessthan_equal(Uint,Uint)", lessthan_equal_uint_uint},
+    {"lessthan_equal(Sint,Sint)", lessthan_equal_sint_sint},
+    {"greaterthan_equal(Uint,Uint)", greaterthan_equal_uint_uint},
+    {"greaterthan_equal(Sint,Sint)", greaterthan_equal_sint_sint},
+    {"to_str(Bool)", to_str_bool},
+    {"length(String)", length_string},
+    {"equal(Sint,Sint)", equal_sint_sint},
+    {"equal(Uint,Uint)", equal_uint_uint},
+    {"equal(Uint,Sint)", equal_uint_sint},
+    {"equal(Sint,Uint)", equal_sint_uint},
+    {"concat(String,String)", concat_string_string},
+    {"modulo(Sint,Sint)", modulo_sint_sint},
+    {"assert(Bool)", assert_bool},
 };
 
 /* alloc size bytes
@@ -193,7 +193,7 @@ ic_backend_function_sig ic_backend_pancake_builtins_table_get(char *str) {
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int i_print_string(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int print_string(struct ic_backend_pancake_value_stack *value_stack) {
     char *str = 0;
     INIT();
 
@@ -210,7 +210,7 @@ unsigned int i_print_string(struct ic_backend_pancake_value_stack *value_stack) 
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int i_print_uint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int print_uint(struct ic_backend_pancake_value_stack *value_stack) {
     unsigned int uint = 0;
     INIT();
 
@@ -227,7 +227,7 @@ unsigned int i_print_uint(struct ic_backend_pancake_value_stack *value_stack) {
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int i_print_sint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int print_sint(struct ic_backend_pancake_value_stack *value_stack) {
     int sint = 0;
     INIT();
 
@@ -244,7 +244,7 @@ unsigned int i_print_sint(struct ic_backend_pancake_value_stack *value_stack) {
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int i_print_bool(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int print_bool(struct ic_backend_pancake_value_stack *value_stack) {
     bool boolean = 0;
     INIT();
 
@@ -264,7 +264,7 @@ unsigned int i_print_bool(struct ic_backend_pancake_value_stack *value_stack) {
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int i_println(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int println(struct ic_backend_pancake_value_stack *value_stack) {
     /* ignores argument, only needed to match interface */
     puts("");
     return 1;
@@ -277,8 +277,8 @@ unsigned int i_println(struct ic_backend_pancake_value_stack *value_stack) {
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int i_println_string(struct ic_backend_pancake_value_stack *value_stack) {
-    if (!i_print_string(value_stack)) {
+unsigned int println_string(struct ic_backend_pancake_value_stack *value_stack) {
+    if (!print_string(value_stack)) {
         return 0;
     }
     puts("");
@@ -292,8 +292,8 @@ unsigned int i_println_string(struct ic_backend_pancake_value_stack *value_stack
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int i_println_uint(struct ic_backend_pancake_value_stack *value_stack) {
-    if (!i_print_uint(value_stack)) {
+unsigned int println_uint(struct ic_backend_pancake_value_stack *value_stack) {
+    if (!print_uint(value_stack)) {
         return 0;
     }
     puts("");
@@ -307,8 +307,8 @@ unsigned int i_println_uint(struct ic_backend_pancake_value_stack *value_stack) 
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int i_println_sint(struct ic_backend_pancake_value_stack *value_stack) {
-    if (!i_print_sint(value_stack)) {
+unsigned int println_sint(struct ic_backend_pancake_value_stack *value_stack) {
+    if (!print_sint(value_stack)) {
         return 0;
     }
     puts("");
@@ -322,8 +322,8 @@ unsigned int i_println_sint(struct ic_backend_pancake_value_stack *value_stack) 
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int i_println_bool(struct ic_backend_pancake_value_stack *value_stack) {
-    if (!i_print_bool(value_stack)) {
+unsigned int println_bool(struct ic_backend_pancake_value_stack *value_stack) {
+    if (!print_bool(value_stack)) {
         return 0;
     }
     puts("");
@@ -338,7 +338,7 @@ unsigned int i_println_bool(struct ic_backend_pancake_value_stack *value_stack) 
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int i_plus_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int plus_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
     unsigned int uint_one = 0;
     unsigned int uint_two = 0;
     unsigned int answer = 0;
@@ -362,7 +362,7 @@ unsigned int i_plus_uint_uint(struct ic_backend_pancake_value_stack *value_stack
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int i_plus_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int plus_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
     int sint_one = 0;
     int sint_two = 0;
     int answer = 0;
@@ -386,7 +386,7 @@ unsigned int i_plus_sint_sint(struct ic_backend_pancake_value_stack *value_stack
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int i_minus_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int minus_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
     unsigned int uint_one = 0;
     unsigned int uint_two = 0;
     unsigned int answer = 0;
@@ -415,7 +415,7 @@ unsigned int i_minus_uint_uint(struct ic_backend_pancake_value_stack *value_stac
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int i_minus_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int minus_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
     int sint_one = 0;
     int sint_two = 0;
     int answer = 0;
@@ -439,7 +439,7 @@ unsigned int i_minus_sint_sint(struct ic_backend_pancake_value_stack *value_stac
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int i_multiply_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int multiply_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
     unsigned int uint_one = 0;
     unsigned int uint_two = 0;
     unsigned int answer = 0;
@@ -463,7 +463,7 @@ unsigned int i_multiply_uint_uint(struct ic_backend_pancake_value_stack *value_s
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int i_multiply_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int multiply_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
     int sint_one = 0;
     int sint_two = 0;
     int answer = 0;
@@ -479,7 +479,7 @@ unsigned int i_multiply_sint_sint(struct ic_backend_pancake_value_stack *value_s
     return 1;
 }
 
-unsigned int i_lessthan_equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int lessthan_equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
     unsigned int uint_one = 0;
     unsigned int uint_two = 0;
     int answer = 0;
@@ -494,7 +494,7 @@ unsigned int i_lessthan_equal_uint_uint(struct ic_backend_pancake_value_stack *v
     return 1;
 }
 
-unsigned int i_lessthan_equal_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int lessthan_equal_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
     int sint_one = 0;
     int sint_two = 0;
     int answer = 0;
@@ -509,7 +509,7 @@ unsigned int i_lessthan_equal_sint_sint(struct ic_backend_pancake_value_stack *v
     return 1;
 }
 
-unsigned int i_greaterthan_equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int greaterthan_equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
     unsigned int uint_one = 0;
     unsigned int uint_two = 0;
     int answer = 0;
@@ -524,7 +524,7 @@ unsigned int i_greaterthan_equal_uint_uint(struct ic_backend_pancake_value_stack
     return 1;
 }
 
-unsigned int i_greaterthan_equal_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int greaterthan_equal_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
     int sint_one = 0;
     int sint_two = 0;
     int answer = 0;
@@ -539,7 +539,7 @@ unsigned int i_greaterthan_equal_sint_sint(struct ic_backend_pancake_value_stack
     return 1;
 }
 
-unsigned int i_lessthan_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int lessthan_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
     unsigned int uint_one = 0;
     unsigned int uint_two = 0;
     int answer = 0;
@@ -554,7 +554,7 @@ unsigned int i_lessthan_uint_uint(struct ic_backend_pancake_value_stack *value_s
     return 1;
 }
 
-unsigned int i_lessthan_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int lessthan_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
     int sint_one = 0;
     int sint_two = 0;
     int answer = 0;
@@ -569,7 +569,7 @@ unsigned int i_lessthan_sint_sint(struct ic_backend_pancake_value_stack *value_s
     return 1;
 }
 
-unsigned int i_greaterthan_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int greaterthan_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
     unsigned int uint_one = 0;
     unsigned int uint_two = 0;
     int answer = 0;
@@ -584,7 +584,7 @@ unsigned int i_greaterthan_uint_uint(struct ic_backend_pancake_value_stack *valu
     return 1;
 }
 
-unsigned int i_greaterthan_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int greaterthan_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
     int sint_one = 0;
     int sint_two = 0;
     int answer = 0;
@@ -599,7 +599,7 @@ unsigned int i_greaterthan_sint_sint(struct ic_backend_pancake_value_stack *valu
     return 1;
 }
 
-unsigned int i_to_str_bool(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int to_str_bool(struct ic_backend_pancake_value_stack *value_stack) {
     unsigned int boolean = 0;
     char *answer = 0;
     INIT();
@@ -616,7 +616,7 @@ unsigned int i_to_str_bool(struct ic_backend_pancake_value_stack *value_stack) {
     return 1;
 }
 
-unsigned int i_length_string(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int length_string(struct ic_backend_pancake_value_stack *value_stack) {
     char *str = 0;
     unsigned int answer = 0;
     INIT();
@@ -628,7 +628,7 @@ unsigned int i_length_string(struct ic_backend_pancake_value_stack *value_stack)
     return 1;
 }
 
-unsigned int i_equal_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int equal_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
     int sint_one = 0;
     int sint_two = 0;
     bool answer = 0;
@@ -643,7 +643,7 @@ unsigned int i_equal_sint_sint(struct ic_backend_pancake_value_stack *value_stac
     return 1;
 }
 
-unsigned int i_equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack) {
     int uint_one = 0;
     int uint_two = 0;
     bool answer = 0;
@@ -658,7 +658,7 @@ unsigned int i_equal_uint_uint(struct ic_backend_pancake_value_stack *value_stac
     return 1;
 }
 
-unsigned int i_equal_sint_uint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int equal_sint_uint(struct ic_backend_pancake_value_stack *value_stack) {
     unsigned int uint = 0;
     int sint = 0;
     int answer = 0;
@@ -683,7 +683,7 @@ unsigned int i_equal_sint_uint(struct ic_backend_pancake_value_stack *value_stac
     return 1;
 }
 
-unsigned int i_equal_uint_sint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int equal_uint_sint(struct ic_backend_pancake_value_stack *value_stack) {
     int sint = 0;
     unsigned int uint = 0;
     int answer = 0;
@@ -708,7 +708,7 @@ unsigned int i_equal_uint_sint(struct ic_backend_pancake_value_stack *value_stac
     return 1;
 }
 
-unsigned int i_concat_string_string(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int concat_string_string(struct ic_backend_pancake_value_stack *value_stack) {
     char *str1 = 0;
     char *str2 = 0;
     char *answer = 0;
@@ -731,7 +731,7 @@ unsigned int i_concat_string_string(struct ic_backend_pancake_value_stack *value
     return 1;
 }
 
-unsigned int i_modulo_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int modulo_sint_sint(struct ic_backend_pancake_value_stack *value_stack) {
     int sint_one = 0;
     int sint_two = 0;
     int answer = 0;
@@ -746,7 +746,7 @@ unsigned int i_modulo_sint_sint(struct ic_backend_pancake_value_stack *value_sta
     return 1;
 }
 
-unsigned int i_assert_bool(struct ic_backend_pancake_value_stack *value_stack) {
+unsigned int assert_bool(struct ic_backend_pancake_value_stack *value_stack) {
     bool boolean = 0;
     INIT();
 

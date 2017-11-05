@@ -25,10 +25,8 @@ so therefore the mangled name must include something to set it apart
 Proposed solution
 -----------------
 
-1) prefix an `i_`, i for Icarus - this prevents icarus clashing with host language
 
-
-2) attach `_a`, a for Arguments
+1) attach `_a`, a for Arguments
 
   this prevents the following from clashing
 
@@ -36,7 +34,7 @@ Proposed solution
   fn bar_String(a::String)
 
 
-3) follow with a list of argument types, each type is prefixed by '_'
+2) follow with a list of argument types, each type is prefixed by '_'
 
   this prevents the following from clashing
 
@@ -46,16 +44,16 @@ Proposed solution
 
 full proposal:
 
-  i_[fname]_a[_[ArgType]*]
+  [fname]_a[_[ArgType]*]
 
 
 some examples
 
 
-  fn main() => i_main_a
-  fn bar(a::String, b::String) => i_bar_a_String_String
-  fn bar_String(a::Sring) => i_bar_String_a_String_String
-  fn bar_a_String(a::String) => i_bar_a_String_a_String_String
+  fn main() => main_a_b
+  fn bar(a::String, b::String) => bar_a_String_String
+  fn bar_String(a::Sring) => bar_String_a_String_String
+  fn bar_a_String(a::String) => bar_a_String_a_String_String
 
 
 Problems:
@@ -64,15 +62,15 @@ the above solution is naive, but serves as a 'good enough' starting point
 
 the following 2 names will currently clash
 
-  fn bar(a::String, b::String) => i_bar_a_String_String
-  fn bar(a::String_String) => i_bar_a_String_String
+  fn bar(a::String, b::String) => bar_a_String_String
+  fn bar(a::String_String) => bar_a_String_String
 
 something as simple as adding a prefix to each type is insufficient.
 
 the following will also currently clash
 
-  fn bar_a(a::String) => i_bar_a_a_String
-  fn bar(a::a_String) => i_bar_a_a_String
+  fn bar_a(a::String) => bar_a_a_String
+  fn bar(a::a_String) => bar_a_a_String
 
 Note that the proposed solution also emits any mention of permissions,
 we will most likely want to overload on permissions so mangling will need

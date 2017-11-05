@@ -135,13 +135,19 @@ unsigned int ic_b2c_compile_generates_pre(struct ic_kludge *kludge, FILE *f) {
     struct ic_decl_type *tdecl = 0;
     struct ic_decl_func *fdecl = 0;
 
-    char *sig_mangled_full_char = 0;
+    struct ic_symbol *mangled_name = 0;
+    char *mangled_name_ch = 0;
 
     struct ic_field *field = 0;
     char *field_name_char = 0;
     struct ic_symbol *field_type_sym = 0;
     char *field_type_char = 0;
-    char *type_name = 0;
+
+    struct ic_symbol *mangled_type_name = 0;
+    char *mangled_type_name_ch = 0;
+
+    unsigned int i = 0;
+    unsigned int len = 0;
 
     if (!kludge) {
         puts("ic_b2c_compile_generates_pre: kludge was null");
@@ -176,20 +182,81 @@ unsigned int ic_b2c_compile_generates_pre(struct ic_kludge *kludge, FILE *f) {
 
         switch (gen->tag) {
             case ic_generate_tag_cons_struct:
-                sig_mangled_full_char = ic_decl_type_sig_mangled_full(tdecl);
-                if (!sig_mangled_full_char) {
-                    puts("ic_b2c_compile_generates_pre: call to ic_decl_type_sig_mangled_full failed");
+                mangled_name = ic_decl_type_mangled_name(tdecl);
+                if (!mangled_name) {
+                    puts("ic_b2c_compile_generates_pre: call to ic_decl_type_mangled_name failed");
                     return 0;
                 }
 
-                fprintf(f, "%s;\n", sig_mangled_full_char);
+                mangled_name_ch = ic_symbol_contents(mangled_name);
+                if (!mangled_name_ch) {
+                    puts("ic_b2c_compile_generates_pre: call to ic_symbol_contents failed");
+                    return 0;
+                }
+
+                /* return type mangled */
+                fprintf(f, "%s ", mangled_name_ch);
+
+                mangled_name = ic_decl_func_mangled_name(fdecl);
+                if (!mangled_name) {
+                    puts("ic_b2c_compile_generates_pre: call to ic_decl_func_mangled_name failed");
+                    return 0;
+                }
+
+                mangled_name_ch = ic_symbol_contents(mangled_name);
+                if (!mangled_name_ch) {
+                    puts("ic_b2c_compile_generates_pre: call to ic_symbol_contents failed");
+                    return 0;
+                }
+
+                /* function name mangled */
+                fprintf(f, "%s(", mangled_name_ch);
+
+                /* arguments */
+                len = ic_decl_type_field_length(tdecl);
+                for (i=0; i<len; ++i) {
+                    if (i > 0) {
+                        fputs(", ", f);
+                    }
+
+                    field = ic_decl_type_field_get(tdecl, i);
+                    if (!field) {
+                        puts("ic_b2c_compile_generates_pre: call to ic_decl_type_field_get failed");
+                        return 0;
+                    }
+
+                    mangled_name = ic_type_ref_mangled_name(field->type);
+                    if (!mangled_name) {
+                        puts("ic_b2c_compile_generates_pre: call to ic_type_ref_mangled_name failed");
+                        return 0;
+                    }
+
+                    mangled_name_ch = ic_symbol_contents(mangled_name);
+                    if (!mangled_name_ch) {
+                        puts("ic_b2c_compile_generates_pre: call to ic_symbol_contents failed");
+                        return 0;
+                    }
+
+                    /* field type and name */
+                    fprintf(f, "%s %s", mangled_name_ch, ic_symbol_contents(&(field->name)));
+                }
+
+                /* close it all off */
+                fprintf(f, ");\n");
+
                 break;
 
             case ic_generate_tag_cons_union:
                 /* we hit this once per field */
-                sig_mangled_full_char = ic_decl_func_sig_mangled(fdecl);
-                if (!sig_mangled_full_char) {
-                    puts("ic_b2c_compile_generates_pre: call to ic_decl_func_sig_mangled failed");
+                mangled_name = ic_decl_func_mangled_name(fdecl);
+                if (!mangled_name) {
+                    puts("ic_b2c_compile_generates_pre: call to ic_decl_func_mangled_name failed");
+                    return 0;
+                }
+
+                mangled_name_ch = ic_symbol_contents(mangled_name);
+                if (!mangled_name_ch) {
+                    puts("ic_b2c_compile_generates_pre: call to ic_symbol_contents failed");
                     return 0;
                 }
 
@@ -217,9 +284,15 @@ unsigned int ic_b2c_compile_generates_pre(struct ic_kludge *kludge, FILE *f) {
                     return 0;
                 }
 
-                type_name = ic_decl_type_str(tdecl);
-                if (!type_name) {
-                    puts("ic_b2c_compile_generates_pre: call to ic_decl_type_str failed");
+                mangled_type_name = ic_decl_type_mangled_name(tdecl);
+                if (!mangled_type_name) {
+                    puts("ic_b2c_compile_generates_pre: call to ic_decl_type_mangled_name failed");
+                    return 0;
+                }
+
+                mangled_type_name_ch = ic_symbol_contents(mangled_type_name);
+                if (!mangled_type_name_ch) {
+                    puts("ic_b2c_compile_generates_pre: call to ic_symbol_contents failed");
                     return 0;
                 }
 
@@ -230,18 +303,24 @@ unsigned int ic_b2c_compile_generates_pre(struct ic_kludge *kludge, FILE *f) {
                  *
                  * ->
                  *
-                 * Foo i_Foo_a_String(String b);
+                 * Foo Foo_a_String(String b);
                  */
 
-                fprintf(f, "%s %s(%s %s);\n", type_name, sig_mangled_full_char, field_type_char, field_name_char);
+                fprintf(f, "%s %s(%s %s);\n", mangled_type_name_ch, mangled_name_ch, field_type_char, field_name_char);
 
                 break;
 
             case ic_generate_tag_print:
             case ic_generate_tag_println:
-                sig_mangled_full_char = ic_decl_func_sig_mangled(fdecl);
-                if (!sig_mangled_full_char) {
-                    puts("ic_b2c_compile_generates_pre: call to ic_decl_func_sig_mangled failed");
+                mangled_name = ic_decl_func_mangled_name(fdecl);
+                if (!mangled_name) {
+                    puts("ic_b2c_compile_generates_pre: call to ic_decl_func_mangled_name failed");
+                    return 0;
+                }
+
+                mangled_name_ch = ic_symbol_contents(mangled_name);
+                if (!mangled_name_ch) {
+                    puts("ic_b2c_compile_generates_pre: call to ic_symbol_contents failed");
                     return 0;
                 }
 
@@ -257,9 +336,9 @@ unsigned int ic_b2c_compile_generates_pre(struct ic_kludge *kludge, FILE *f) {
                     return 0;
                 }
 
-                field_type_sym = ic_type_ref_get_symbol(field->type);
+                field_type_sym = ic_type_ref_mangled_name(field->type);
                 if (!field_type_sym) {
-                    puts("ic_b2c_compile_generates_pre: call to ic_type_ref_get_symbol failed");
+                    puts("ic_b2c_compile_generates_pre: call to ic_type_ref_mangled_name failed");
                     return 0;
                 }
 
@@ -269,7 +348,7 @@ unsigned int ic_b2c_compile_generates_pre(struct ic_kludge *kludge, FILE *f) {
                     return 0;
                 }
 
-                fprintf(f, "void %s(%s %s);\n", sig_mangled_full_char, field_type_char, field_name_char);
+                fprintf(f, "void %s(%s %s);\n", mangled_name_ch, field_type_char, field_name_char);
 
                 break;
 
@@ -318,9 +397,9 @@ static unsigned int ic_b2c_compile_generate_print_struct(struct ic_kludge *kludg
      *
      * void print_a_Foo_i(Foo f){
      *  puts("Foo{");
-     *  i_print_a_Sint(f->a);
+     *  print_a_Sint_b(f->a);
      *  puts(", ");
-     *  i_print_a_String(f->b);
+     *  print_a_String_b(f->b);
      *  puts("}");
      * }
      */
@@ -362,7 +441,7 @@ static unsigned int ic_b2c_compile_generate_print_struct(struct ic_kludge *kludg
             return 0;
         }
 
-        fprintf(f, "  i_print_a_%s(%s->%s);\n", field_type_char, print_arg_name_char, field_name_char);
+        fprintf(f, "  print_a_%s_b(%s->%s);\n", field_type_char, print_arg_name_char, field_name_char);
     }
 
     return 1;
@@ -377,7 +456,9 @@ static unsigned int ic_b2c_compile_generate_print_union(struct ic_kludge *kludge
     char *field_name_char = 0;
     struct ic_symbol *field_type_sym = 0;
     char *field_type_char = 0;
-    char *type_name_ch = 0;
+
+    struct ic_symbol *mangled_type_name = 0;
+    char *mangled_type_name_ch = 0;
 
     if (!kludge) {
         puts("ic_b2c_compile_generate_print_union: kludge was null");
@@ -405,9 +486,15 @@ static unsigned int ic_b2c_compile_generate_print_union(struct ic_kludge *kludge
         return 0;
     }
 
-    type_name_ch = ic_decl_type_str(tdecl);
-    if (!type_name_ch) {
-        puts("ic_b2c_compile_generate: call to ic_decl_type_str failed");
+    mangled_type_name = ic_decl_type_mangled_name(tdecl);
+    if (!mangled_type_name) {
+        puts("ic_b2c_compile_generate: call to ic_decl_type_mangled_name failed");
+        return 0;
+    }
+
+    mangled_type_name_ch = ic_symbol_contents(mangled_type_name);
+    if (!mangled_type_name_ch) {
+        puts("ic_b2c_compile_generate: call to ic_symbol_contents failed");
         return 0;
     }
 
@@ -418,19 +505,19 @@ static unsigned int ic_b2c_compile_generate_print_union(struct ic_kludge *kludge
      *
      * ->
      *
-     * void i_print_a_Foo(Foo f){
-     *   i_print_a_String("Foo{");
+     * void print_a_Foo_b(Foo f){
+     *   print_a_String_b("Foo{");
      *   switch (f->_tag) {
      *     case Foo_tag_Sint_a:
-     *       i_print_a_Sint(a->u.a);
+     *       print_a_Sint_b(a->u.a);
      *       break;
      *     case Foo_tag_String_b:
-     *       i_print_a_Sint(a->u.b);
+     *       print_a_Sint_b(a->u.b);
      *       break;
      *     default:
-     *       panic("impossibel tag on Foo);
+     *       panic("impossible tag on Foo);
      *   }
-     *   i_print_a_String("}");
+     *   print_a_String_b("}");
      * }
      */
 
@@ -463,14 +550,14 @@ static unsigned int ic_b2c_compile_generate_print_union(struct ic_kludge *kludge
             return 0;
         }
 
-        fprintf(f, "    case %s_tag_%s_%s:\n", type_name_ch, field_type_char, field_name_char);
-        fprintf(f, "      i_print_a_%s(%s->u.%s);\n", field_type_char, print_arg_name_char, field_name_char);
+        fprintf(f, "    case %s_tag_%s_%s:\n", mangled_type_name_ch, field_type_char, field_name_char);
+        fprintf(f, "      print_a_%s_b(%s->u.%s);\n", field_type_char, print_arg_name_char, field_name_char);
         fprintf(f, "      break;\n");
     }
 
     /* default */
     fputs("    default:\n", f);
-    fprintf(f, "      panic(\"impossible tag on %s\");\n", type_name_ch);
+    fprintf(f, "      panic(\"impossible tag on %s\");\n", mangled_type_name_ch);
 
     /* close switch */
     fputs("  }\n", f);
@@ -482,9 +569,15 @@ static unsigned int ic_b2c_compile_generate_print_union(struct ic_kludge *kludge
 static unsigned int ic_b2c_compile_generate_print(struct ic_kludge *kludge, FILE *f, struct ic_generate *gen) {
     struct ic_decl_type *tdecl = 0;
     struct ic_decl_func *fdecl = 0;
-    char *type_name_ch = 0;
-    char *type_name_param = 0;
-    char *sig_mangled_full_char = 0;
+
+    struct ic_symbol *type_mangled_name = 0;
+    char *type_mangled_name_ch = 0;
+
+    struct ic_symbol *type_full_name = 0;
+    char *type_full_name_ch = 0;
+
+    struct ic_symbol *mangled_name = 0;
+    char *mangled_name_ch = 0;
 
     char *field_name_char = 0;
     char *print_arg_name_char = 0;
@@ -520,15 +613,27 @@ static unsigned int ic_b2c_compile_generate_print(struct ic_kludge *kludge, FILE
         return 0;
     }
 
-    type_name_ch = ic_decl_type_str(tdecl);
-    if (!type_name_ch) {
-        puts("ic_b2c_compile_generate: call to ic_decl_type_str failed");
+    type_mangled_name = ic_decl_type_mangled_name(tdecl);
+    if (!type_mangled_name) {
+        puts("ic_b2c_compile_generate: call to ic_decl_type_mangled_name failed");
         return 0;
     }
 
-    type_name_param = ic_decl_type_str_param(tdecl);
-    if (!type_name_param) {
-        puts("ic_b2c_compile_generate: call to ic_decl_type_str_param failed");
+    type_mangled_name_ch = ic_symbol_contents(type_mangled_name);
+    if (!type_mangled_name_ch) {
+        puts("ic_b2c_compile_generate: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    type_full_name = ic_decl_type_full_name(tdecl);
+    if (!type_full_name) {
+        puts("ic_b2c_compile_generate: call to ic_decl_type_full_name failed");
+        return 0;
+    }
+
+    type_full_name_ch = ic_symbol_contents(type_full_name);
+    if (!type_full_name_ch) {
+        puts("ic_b2c_compile_generate: call to ic_symbol_contents failed");
         return 0;
     }
 
@@ -538,9 +643,15 @@ static unsigned int ic_b2c_compile_generate_print(struct ic_kludge *kludge, FILE
         return 0;
     }
 
-    sig_mangled_full_char = ic_decl_func_sig_mangled(fdecl);
-    if (!sig_mangled_full_char) {
+    mangled_name = ic_decl_func_mangled_name(fdecl);
+    if (!mangled_name) {
         puts("ic_b2c_compile_generate_print_struct: call to ic_decl_func_sig_mangled failed");
+        return 0;
+    }
+
+    mangled_name_ch = ic_symbol_contents(mangled_name);
+    if (!mangled_name_ch) {
+        puts("ic_b2c_compile_generates_print_struct: call to ic_symbol_contents failed");
         return 0;
     }
 
@@ -564,8 +675,8 @@ static unsigned int ic_b2c_compile_generate_print(struct ic_kludge *kludge, FILE
 
     print_arg_name_char = field_name_char;
 
-    fprintf(f, "void %s(%s %s){\n", sig_mangled_full_char, type_name_ch, field_name_char);
-    fprintf(f, "  fputs(\"%s{\", stdout);\n", type_name_param);
+    fprintf(f, "void %s(%s %s){\n", mangled_name_ch, type_mangled_name_ch, field_name_char);
+    fprintf(f, "  fputs(\"%s{\", stdout);\n", type_full_name_ch);
 
     /* dispatch for internals */
     switch (tdecl->tag) {
@@ -601,9 +712,12 @@ unsigned int ic_b2c_compile_generates(struct ic_kludge *kludge, FILE *f) {
     struct ic_generate *gen = 0;
     struct ic_decl_type *tdecl = 0;
     struct ic_decl_func *fdecl = 0;
-    char *type_name_ch = 0;
 
-    char *sig_mangled_full_char = 0;
+    struct ic_symbol *mangled_type_name = 0;
+    char *mangled_type_name_ch = 0;
+
+    struct ic_symbol *mangled_name = 0;
+    char *mangled_name_ch = 0;
 
     unsigned int n_fields = 0;
     unsigned int i_field = 0;
@@ -644,28 +758,84 @@ unsigned int ic_b2c_compile_generates(struct ic_kludge *kludge, FILE *f) {
             return 0;
         }
 
-        type_name_ch = ic_decl_type_str(tdecl);
-        if (!type_name_ch) {
-            puts("ic_b2c_compile_generate: call to ic_decl_type_str failed");
+        mangled_type_name = ic_decl_type_mangled_name(tdecl);
+        if (!mangled_type_name) {
+            puts("ic_b2c_compile_generate: call to ic_decl_type_mangled_name failed");
+            return 0;
+        }
+
+        mangled_type_name_ch = ic_symbol_contents(mangled_type_name);
+        if (!mangled_type_name_ch) {
+            puts("ic_b2c_compile_generate: call to ic_symbol_contents failed");
             return 0;
         }
 
         switch (gen->tag) {
             case ic_generate_tag_cons_struct:
-                /* FIXME TODO this should instead use the fdecl inside gen
-                 * rather than using tdecl's sig mangled full
-                 */
-
-                sig_mangled_full_char = ic_decl_type_sig_mangled_full(tdecl);
-                if (!sig_mangled_full_char) {
-                    puts("ic_b2c_compile_generate: call to ic_decl_type_sig_mangled_full failed");
+                mangled_name = ic_decl_type_mangled_name(tdecl);
+                if (!mangled_name) {
+                    puts("ic_b2c_compile_generates_pre: call to ic_decl_type_mangled_name failed");
                     return 0;
                 }
 
-                fprintf(f, "%s {\n", sig_mangled_full_char);
+                mangled_name_ch = ic_symbol_contents(mangled_name);
+                if (!mangled_name_ch) {
+                    puts("ic_b2c_compile_generates_pre: call to ic_symbol_contents failed");
+                    return 0;
+                }
+
+                /* return type mangled */
+                fprintf(f, "%s ", mangled_name_ch);
+
+                mangled_name = ic_decl_func_mangled_name(fdecl);
+                if (!mangled_name) {
+                    puts("ic_b2c_compile_generates_pre: call to ic_decl_func_mangled_name failed");
+                    return 0;
+                }
+
+                mangled_name_ch = ic_symbol_contents(mangled_name);
+                if (!mangled_name_ch) {
+                    puts("ic_b2c_compile_generates_pre: call to ic_symbol_contents failed");
+                    return 0;
+                }
+
+                /* function name mangled */
+                fprintf(f, "%s(", mangled_name_ch);
+
+                /* arguments */
+                n_fields = ic_decl_type_field_length(tdecl);
+                for (i_field=0; i_field<n_fields; ++i_field) {
+                    if (i_field > 0) {
+                        fputs(", ", f);
+                    }
+
+                    field = ic_decl_type_field_get(tdecl, i_field);
+                    if (!field) {
+                        puts("ic_b2c_compile_generates_pre: call to ic_decl_type_field_get failed");
+                        return 0;
+                    }
+
+                    mangled_name = ic_type_ref_mangled_name(field->type);
+                    if (!mangled_name) {
+                        puts("ic_b2c_compile_generates_pre: call to ic_type_ref_mangled_name failed");
+                        return 0;
+                    }
+
+                    mangled_name_ch = ic_symbol_contents(mangled_name);
+                    if (!mangled_name_ch) {
+                        puts("ic_b2c_compile_generates_pre: call to ic_symbol_contents failed");
+                        return 0;
+                    }
+
+                    /* field type and name */
+                    fprintf(f, "%s %s", mangled_name_ch, ic_symbol_contents(&(field->name)));
+                }
+
+                /* and open our function body up */
+                fprintf(f, ") {\n");
 
                 /* checked alloc*/
-                fprintf(f, "  %s tmp = ic_alloc(sizeof(struct %s));\n", type_name_ch, type_name_ch);
+                fprintf(f, "  %s tmp = ic_alloc(sizeof(struct %s));\n", mangled_type_name_ch, mangled_type_name_ch);
 
                 /* assign each argument to field of same name */
                 n_fields = ic_decl_type_field_length(tdecl);
@@ -694,9 +864,15 @@ unsigned int ic_b2c_compile_generates(struct ic_kludge *kludge, FILE *f) {
             case ic_generate_tag_cons_union:
 
                 /* we hit this once per field */
-                sig_mangled_full_char = ic_decl_func_sig_mangled(fdecl);
-                if (!sig_mangled_full_char) {
-                    puts("ic_b2c_compile_generates: call to ic_decl_func_sig_mangled failed");
+                mangled_name = ic_decl_func_mangled_name(fdecl);
+                if (!mangled_name) {
+                    puts("ic_b2c_compile_generates: call to ic_decl_func_mangled_name failed");
+                    return 0;
+                }
+
+                mangled_name_ch = ic_symbol_contents(mangled_name);
+                if (!mangled_name_ch) {
+                    puts("ic_b2c_compile_generates: call to ic_symbol_contents failed");
                     return 0;
                 }
 
@@ -724,9 +900,15 @@ unsigned int ic_b2c_compile_generates(struct ic_kludge *kludge, FILE *f) {
                     return 0;
                 }
 
-                type_name_ch = ic_decl_type_str(tdecl);
-                if (!type_name_ch) {
-                    puts("ic_b2c_compile_generates: call to ic_decl_type_str failed");
+                mangled_type_name = ic_decl_type_mangled_name(tdecl);
+                if (!mangled_type_name) {
+                    puts("ic_b2c_compile_generates: call to ic_decl_type_mangled_name failed");
+                    return 0;
+                }
+
+                mangled_type_name_ch = ic_symbol_contents(mangled_type_name);
+                if (!mangled_type_name_ch) {
+                    puts("ic_b2c_compile_generates: call to ic_symbol_contents failed");
                     return 0;
                 }
 
@@ -737,16 +919,16 @@ unsigned int ic_b2c_compile_generates(struct ic_kludge *kludge, FILE *f) {
                  *
                  * ->
                  *
-                 * Foo i_Foo_a_String(String b);
+                 * Foo Foo_a_String(String b);
                  */
 
-                fprintf(f, "%s %s(%s %s){\n", type_name_ch, sig_mangled_full_char, field_type_char, field_name_char);
+                fprintf(f, "%s %s(%s %s){\n", mangled_type_name_ch, mangled_name_ch, field_type_char, field_name_char);
 
                 /* checked alloc*/
-                fprintf(f, "  %s tmp = ic_alloc(sizeof(struct %s));\n", type_name_ch, type_name_ch);
+                fprintf(f, "  %s tmp = ic_alloc(sizeof(struct %s));\n", mangled_type_name_ch, mangled_type_name_ch);
 
                 /* assign correct tag */
-                fprintf(f, "  tmp->_tag = %s_tag_%s_%s;\n", type_name_ch, field_type_char, field_name_char);
+                fprintf(f, "  tmp->_tag = %s_tag_%s_%s;\n", mangled_type_name_ch, field_type_char, field_name_char);
 
                 /* assign correct field */
                 fprintf(f, "  tmp->u.%s = %s;\n", field_name_char, field_name_char);
@@ -771,9 +953,15 @@ unsigned int ic_b2c_compile_generates(struct ic_kludge *kludge, FILE *f) {
                     return 0;
                 }
 
-                sig_mangled_full_char = ic_decl_func_sig_mangled(fdecl);
-                if (!sig_mangled_full_char) {
-                    puts("ic_b2c_compile_generate: call to ic_decl_func_sig_mangled failed");
+                mangled_name = ic_decl_func_mangled_name(fdecl);
+                if (!mangled_name) {
+                    puts("ic_b2c_compile_generate: call to ic_decl_func_mangled_name failed");
+                    return 0;
+                }
+
+                mangled_name_ch = ic_symbol_contents(mangled_name);
+                if (!mangled_name_ch) {
+                    puts("ic_b2c_compile_generates: call to ic_symbol_contents failed");
                     return 0;
                 }
 
@@ -802,14 +990,14 @@ unsigned int ic_b2c_compile_generates(struct ic_kludge *kludge, FILE *f) {
                  * ->
                  *
                  * void println_a_Foo_i(Foo f){
-                 *   i_print_a_Foo(f);
-                 *   i_println_a();
+                 *   print_a_Foo_b(f);
+                 *   println_a_b();
                  * }
                  */
 
-                fprintf(f, "void %s(%s %s){\n", sig_mangled_full_char, type_name_ch, field_name_char);
-                fprintf(f, "  i_print_a_%s(%s);\n", type_name_ch, field_name_char);
-                fputs("  i_println_a();\n}\n", f);
+                fprintf(f, "void %s(%s %s){\n", mangled_name_ch, mangled_type_name_ch, field_name_char);
+                fprintf(f, "  print_a_%s_b(%s);\n", mangled_type_name_ch, field_name_char);
+                fputs("  println_a_b();\n}\n", f);
                 break;
 
             default:
@@ -823,7 +1011,9 @@ unsigned int ic_b2c_compile_generates(struct ic_kludge *kludge, FILE *f) {
 }
 
 unsigned int ic_b2c_compile_type_struct_header(struct ic_kludge *kludge, struct ic_decl_type_struct *tdecl_struct, FILE *f) {
-    char *type_name = 0;
+    struct ic_symbol *mangled_type_name = 0;
+    char *mangled_type_name_ch = 0;
+
     if (!kludge) {
         puts("ic_b2c_compile_type_struct_header: kludge was null");
         return 0;
@@ -839,14 +1029,20 @@ unsigned int ic_b2c_compile_type_struct_header(struct ic_kludge *kludge, struct 
         return 0;
     }
 
-    type_name = ic_decl_type_struct_str(tdecl_struct);
-    if (!type_name) {
-        puts("ic_b2c_compile_type_struct_header: call to ic_decl_type_struct_str failed");
+    mangled_type_name = ic_decl_type_struct_mangled_name(tdecl_struct);
+    if (!mangled_type_name) {
+        puts("ic_b2c_compile_type_struct_header: call to ic_decl_type_struct_mangled_name failed");
+        return 0;
+    }
+
+    mangled_type_name_ch = ic_symbol_contents(mangled_type_name);
+    if (!mangled_type_name_ch) {
+        puts("ic_b2c_compile_type_struct_header: call to ic_symbol_contents failed");
         return 0;
     }
 
     /* generate */
-    fprintf(f, "typedef struct %s * %s;\n", type_name, type_name);
+    fprintf(f, "typedef struct %s * %s;\n", mangled_type_name_ch, mangled_type_name_ch);
 
     return 1;
 }
@@ -857,7 +1053,9 @@ unsigned int ic_b2c_compile_type_struct(struct ic_kludge *kludge, struct ic_decl
     unsigned int i = 0;
     char *field_type = 0;
     char *field_name = 0;
-    char *type_name = 0;
+
+    struct ic_symbol *mangled_type_name = 0;
+    char *mangled_type_name_ch = 0;
 
     if (!kludge) {
         puts("ic_b2c_compile_type_struct: kludge was null");
@@ -874,14 +1072,20 @@ unsigned int ic_b2c_compile_type_struct(struct ic_kludge *kludge, struct ic_decl
         return 0;
     }
 
-    type_name = ic_decl_type_struct_str(tdecl_struct);
-    if (!type_name) {
-        puts("ic_b2c_compile_type_struct: call to ic_decl_type_struct_str failed");
+    mangled_type_name = ic_decl_type_struct_mangled_name(tdecl_struct);
+    if (!mangled_type_name) {
+        puts("ic_b2c_compile_type_struct: call to ic_decl_type_struct_mangled_name failed");
+        return 0;
+    }
+
+    mangled_type_name_ch = ic_symbol_contents(mangled_type_name);
+    if (!mangled_type_name_ch) {
+        puts("ic_b2c_compile_type_struct: call to ic_symbol_contents failed");
         return 0;
     }
 
     /* generate */
-    fprintf(f, "struct %s {\n", type_name);
+    fprintf(f, "struct %s {\n", mangled_type_name_ch);
 
     n_fields = ic_decl_type_struct_field_length(tdecl_struct);
 
@@ -905,7 +1109,8 @@ unsigned int ic_b2c_compile_type_struct(struct ic_kludge *kludge, struct ic_decl
 }
 
 unsigned int ic_b2c_compile_type_union_header(struct ic_kludge *kludge, struct ic_decl_type_union *tdecl_union, FILE *f) {
-    char *type_name = 0;
+    struct ic_symbol *mangled_type_name = 0;
+    char *mangled_type_name_ch = 0;
 
     if (!kludge) {
         puts("ic_b2c_compile_type_union_header: kludge was null");
@@ -922,23 +1127,30 @@ unsigned int ic_b2c_compile_type_union_header(struct ic_kludge *kludge, struct i
         return 0;
     }
 
-    type_name = ic_decl_type_union_str(tdecl_union);
-    if (!type_name) {
-        puts("ic_b2c_compile_type_union_header: call to ic_decl_type_union_str failed");
+    mangled_type_name = ic_decl_type_union_mangled_name(tdecl_union);
+    if (!mangled_type_name) {
+        puts("ic_b2c_compile_type_union_header: call to ic_decl_type_union_mangled_name failed");
+        return 0;
+    }
+
+    mangled_type_name_ch = ic_symbol_contents(mangled_type_name);
+    if (!mangled_type_name_ch) {
+        puts("ic_b2c_compile_type_union_header: call to ic_symbol_contents failed");
         return 0;
     }
 
     /* generate enum header */
-    fprintf(f, "enum %s_tag;\n", type_name);
+    fprintf(f, "enum %s_tag;\n", mangled_type_name_ch);
 
     /* generate type header */
-    fprintf(f, "typedef struct %s * %s;\n", type_name, type_name);
+    fprintf(f, "typedef struct %s * %s;\n", mangled_type_name_ch, mangled_type_name_ch);
 
     return 1;
 }
 
 unsigned int ic_b2c_compile_type_union(struct ic_kludge *kludge, struct ic_decl_type_union *tdecl_union, FILE *f) {
-    char *type_name = 0;
+    struct ic_symbol *mangled_type_name = 0;
+    char *mangled_type_name_ch = 0;
     unsigned int i = 0;
     unsigned int n_fields = 0;
     struct ic_field *field = 0;
@@ -960,9 +1172,15 @@ unsigned int ic_b2c_compile_type_union(struct ic_kludge *kludge, struct ic_decl_
         return 0;
     }
 
-    type_name = ic_decl_type_union_str(tdecl_union);
-    if (!type_name) {
-        puts("ic_b2c_compile_type_union: call to ic_decl_type_union_str failed");
+    mangled_type_name = ic_decl_type_union_mangled_name(tdecl_union);
+    if (!mangled_type_name) {
+        puts("ic_b2c_compile_type_union: call to ic_decl_type_union_mangled_name failed");
+        return 0;
+    }
+
+    mangled_type_name_ch = ic_symbol_contents(mangled_type_name);
+    if (!mangled_type_name_ch) {
+        puts("ic_b2c_compile_type_union: call to ic_symbol_contents failed");
         return 0;
     }
 
@@ -989,7 +1207,7 @@ unsigned int ic_b2c_compile_type_union(struct ic_kludge *kludge, struct ic_decl_
      */
 
     /* generate enum */
-    fprintf(f, "enum %s_tag {\n", type_name);
+    fprintf(f, "enum %s_tag {\n", mangled_type_name_ch);
 
     n_fields = ic_decl_type_union_field_length(tdecl_union);
 
@@ -1004,16 +1222,16 @@ unsigned int ic_b2c_compile_type_union(struct ic_kludge *kludge, struct ic_decl_
         field_type = ic_symbol_contents(ic_type_ref_get_symbol(field->type));
 
         /* generate tag */
-        fprintf(f, "  %s_tag_%s_%s,\n", type_name, field_type, field_name);
+        fprintf(f, "  %s_tag_%s_%s,\n", mangled_type_name_ch, field_type, field_name);
     }
 
     fputs("};\n", f);
 
     /* generate type */
-    fprintf(f, "struct %s {\n", type_name);
+    fprintf(f, "struct %s {\n", mangled_type_name_ch);
 
     /* insert tag */
-    fprintf(f, "  enum %s_tag _tag;\n", type_name);
+    fprintf(f, "  enum %s_tag _tag;\n", mangled_type_name_ch);
 
     /* start union */
     fputs("  union {\n", f);
@@ -1255,9 +1473,14 @@ unsigned int ic_b2c_compile_type_body(struct ic_kludge *kludge, struct ic_decl_t
 
 /* generate function header */
 unsigned int ic_b2c_compile_function_header(struct ic_kludge *kludge, struct ic_decl_func *fdecl, FILE *f) {
-    char *func_sig_mangled = 0;
-    char *func_sig_full = 0;
-    char *func_return_type_str = 0;
+    struct ic_symbol *func_mangled_name = 0;
+    char *func_mangled_name_ch = 0;
+
+    struct ic_symbol *func_full_signature = 0;
+    char *func_full_signature_ch = 0;
+
+    struct ic_symbol *func_mangled_return_type = 0;
+    char *func_mangled_return_type_ch = 0;
 
     unsigned int i = 0;
     unsigned int len = 0;
@@ -1280,29 +1503,49 @@ unsigned int ic_b2c_compile_function_header(struct ic_kludge *kludge, struct ic_
         return 0;
     }
 
-    func_sig_mangled = ic_decl_func_sig_mangled(fdecl);
-    if (!func_sig_mangled) {
-        puts("ic_b2c_compile_function_headers: call to ic_string_contents failed for sig_mangled");
+    /* full signature for comment */
+    func_full_signature = ic_decl_func_full_signature(fdecl);
+    if (!func_full_signature) {
+        puts("ic_b2c_compile_function_headers: call to ic_decl_func_full_signature failed");
         return 0;
     }
 
-    func_sig_full = ic_decl_func_sig_full(fdecl);
-    if (!func_sig_full) {
-        puts("ic_b2c_compile_function_headers: call to ic_decl_func_sig_full failed");
+    func_full_signature_ch = ic_symbol_contents(func_full_signature);
+    if (!func_full_signature_ch) {
+        puts("ic_b2c_compile_function_headers: call to ic_symbol_contents failed");
         return 0;
     }
 
     /* print comment */
-    fprintf(f, "/* %s */\n", func_sig_full);
+    fprintf(f, "/* %s */\n", func_full_signature_ch);
 
-    /* FIXME need to convert to c type */
-    func_return_type_str = ic_type_ref_get_type_name_ch(&(fdecl->ret_type));
-    if (!func_return_type_str) {
-        puts("ic_b2c_compile_function_headers: call to ic_type_ref_get_type_name failed for return type");
+    func_mangled_return_type = ic_type_ref_mangled_name(&(fdecl->ret_type));
+    if (!func_mangled_return_type) {
+        puts("ic_b2c_compile_function_headers: call to ic_type_ref_mangled_name failed for return type");
         return 0;
     }
 
-    fprintf(f, "%s %s(", func_return_type_str, func_sig_mangled);
+    func_mangled_return_type_ch = ic_symbol_contents(func_mangled_return_type);
+    if (!func_mangled_return_type_ch) {
+        puts("ic_b2c_compile_function_headers: call to ic_symbol_contents failed for return type");
+        return 0;
+    }
+
+    /* mangled name */
+    func_mangled_name = ic_decl_func_mangled_name(fdecl);
+    if (!func_mangled_name) {
+        puts("ic_b2c_compile_function_headers: call to ic_decl_func_mangled_name failed");
+        return 0;
+    }
+
+    func_mangled_name_ch = ic_symbol_contents(func_mangled_name);
+    if (!func_mangled_name_ch) {
+        puts("ic_b2c_compile_function_headers: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+
+    fprintf(f, "%s %s(", func_mangled_return_type_ch, func_mangled_name_ch);
 
     /* output arguments */
     len = ic_pvector_length(&(fdecl->args));
@@ -1407,7 +1650,6 @@ unsigned int ic_b2c_compile_functions(struct ic_kludge *kludge, FILE *f) {
     struct ic_decl_func *func = 0;
     unsigned int n_funcs = 0;
     unsigned int i = 0;
-    char *func_sig_call = 0;
 
     if (!kludge) {
         puts("ic_b2c_compile_functions: kludge was null");
@@ -1437,12 +1679,6 @@ unsigned int ic_b2c_compile_functions(struct ic_kludge *kludge, FILE *f) {
         /* do not compile is non-instantiated generic */
         if (!ic_decl_func_is_instantiated(func)) {
             continue;
-        }
-
-        func_sig_call = ic_decl_func_sig_call(func);
-        if (!func_sig_call) {
-            puts("ic_b2c_compile_functions: call to ic_decl_func_sig_call failed");
-            return 0;
         }
 
         if (!ic_b2c_compile_function_header(kludge, func, f)) {

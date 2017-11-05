@@ -1928,11 +1928,11 @@ struct ic_string *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope
     /* type of current argument */
     struct ic_decl_type *expr_type = 0;
     /* current arg type's name */
-    struct ic_symbol *type_name = 0;
+    struct ic_symbol *type_full_name = 0;
     /* type ref for generic function */
     struct ic_type_ref *type_ref = 0;
     /* symbol within a type-ref for generic function */
-    struct ic_symbol *type_ref_sym = 0;
+    struct ic_symbol *type_ref_full_name = 0;
     /* current arg's permissions */
     unsigned int arg_perms = 0;
     /* permission string for arg */
@@ -1995,14 +1995,14 @@ struct ic_string *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope
                 goto ERROR;
             }
 
-            type_ref_sym = ic_type_ref_get_type_name(type_ref);
-            if (!type_ref_sym) {
-                puts("ic_analyse_fcall_str: call to ic_type_ref_get_type_name failed");
+            type_ref_full_name = ic_type_ref_full_name(type_ref);
+            if (!type_ref_full_name) {
+                puts("ic_analyse_fcall_str: call to ic_type_ref_full_name failed");
                 goto ERROR;
             }
 
             /* append our type ref */
-            if (!ic_string_append_symbol(str, type_ref_sym)) {
+            if (!ic_string_append_symbol(str, type_ref_full_name)) {
                 puts("ic_analyse_fcall_str: call to ic_string_append_symbol faild");
                 goto ERROR;
             }
@@ -2068,14 +2068,14 @@ struct ic_string *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope
         }
 
         /* current arg's type's name */
-        type_name = ic_decl_type_name(expr_type);
-        if (!type_name) {
-            printf("ic_analyse_fcall_str: call to ic_type_name failed for argument '%d'\n", i);
+        type_full_name = ic_decl_type_full_name(expr_type);
+        if (!type_full_name) {
+            printf("ic_analyse_fcall_str: call to ic_type_full_name failed for argument '%d'\n", i);
             goto ERROR;
         }
 
         /* append our argument type */
-        if (!ic_string_append_symbol(str, type_name)) {
+        if (!ic_string_append_symbol(str, type_full_name)) {
             printf("ic_analyse_fcall_str: call to ic_string_append_symbol for 'arg' '%d' failed\n", i);
             goto ERROR;
         }

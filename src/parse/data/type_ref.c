@@ -4,6 +4,7 @@
 #include "decl.h"
 #include "type_param.h"
 #include "type_ref.h"
+#include "name_helpers.h"
 
 /* allocate and intialise a new type
  * this will set type.type to unknown
@@ -49,6 +50,9 @@ unsigned int ic_type_ref_init(struct ic_type_ref *type) {
         puts("ic_type_ref_init: call to ic_pvector_init failed");
         return 0;
     }
+
+    type->mangled_name = 0;
+    type->full_name = 0;
 
     return 1;
 }
@@ -177,6 +181,20 @@ unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_typ
             break;
     }
 
+    if (type->mangled_name) {
+        if (!ic_symbol_destroy(type->mangled_name, 1)) {
+            puts("ic_type_ref_destroy: call to ic_symbol_destroy failed");
+            return 0;
+        }
+    }
+
+    if (type->full_name) {
+        if (!ic_symbol_destroy(type->full_name, 1)) {
+            puts("ic_type_ref_destroy: call to ic_symbol_destroy failed");
+            return 0;
+        }
+    }
+
     /* if asked nicely */
     if (free_type) {
         free(type);
@@ -234,6 +252,9 @@ unsigned int ic_type_ref_deep_copy_embedded(struct ic_type_ref *from, struct ic_
     }
 
     to->tag = from->tag;
+
+    to->mangled_name = 0;
+    to->full_name = 0;
 
     switch (to->tag) {
         case ic_type_ref_unknown:
@@ -840,3 +861,116 @@ void ic_type_ref_print(FILE *fd, struct ic_type_ref *type) {
 
     return;
 }
+
+/* get mangled_name
+ * this is owned by the underlying decl_type
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_type_ref_mangled_name(struct ic_type_ref *tref) {
+    struct ic_symbol *sym = 0;
+
+    if (!tref) {
+        puts("ic_type_ref_mangled_name: tref was null");
+        return 0;
+    }
+
+    switch (tref->tag) {
+        case ic_type_ref_unknown:
+            puts("ic_type_ref_mangled_name: tag ic_type_ref_unknown not supported");
+            return 0;
+            break;
+
+        case ic_type_ref_symbol:
+            if (tref->mangled_name) {
+                return tref->mangled_name;
+            }
+
+            sym = ic_parse_helper_mangled_name(&(tref->u.sym), 0, &(tref->type_args), 0);
+            if (!sym) {
+                puts("ic_type_ref_mangled_name: call to ic_parse_helper_mangled_name failed");
+                return 0;
+            }
+
+            tref->mangled_name = sym;
+            break;
+
+        case ic_type_ref_param:
+            puts("ic_type_ref_mangled_name: tag ic_type_ref_param not supported");
+            return 0;
+            break;
+
+        case ic_type_ref_resolved:
+            sym = ic_decl_type_mangled_name(tref->u.tdecl);
+            if (!sym) {
+                puts("ic_type_ref_mangled_name: call to ic_decl_type_mangled_name failed");
+                return 0;
+            }
+            break;
+
+        default:
+            puts("ic_type_ref_mangled_name: unknown tag");
+            return 0;
+            break;
+    }
+
+    return sym;
+}
+
+/* get full_name
+ * this is owned by the underlying decl_type
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol *ic_type_ref_full_name(struct ic_type_ref *tref) {
+    struct ic_symbol *sym = 0;
+
+    if (!tref) {
+        puts("ic_type_ref_full_name: tref was null");
+        return 0;
+    }
+
+    switch (tref->tag) {
+        case ic_type_ref_unknown:
+            puts("ic_type_ref_full_name: tag ic_type_ref_unknown not supported");
+            return 0;
+            break;
+
+        case ic_type_ref_symbol:
+            if (tref->full_name) {
+                return tref->full_name;
+            }
+
+            sym = ic_parse_helper_full_name(&(tref->u.sym), 0, &(tref->type_args), 0);
+            if (!sym) {
+                puts("ic_type_ref_full_name: call to ic_parse_helper_full_name failed");
+                return 0;
+            }
+
+            tref->full_name = sym;
+            break;
+
+        case ic_type_ref_param:
+            puts("ic_type_ref_full_name: tag ic_type_ref_param not supported");
+            return 0;
+            break;
+
+        case ic_type_ref_resolved:
+            sym = ic_decl_type_full_name(tref->u.tdecl);
+            if (!sym) {
+                puts("ic_type_ref_full_name: call to ic_decl_type_full_name failed");
+                return 0;
+            }
+            break;
+
+        default:
+            puts("ic_type_ref_full_name: unknown tag");
+            return 0;
+            break;
+    }
+
+    return sym;
+}
+
