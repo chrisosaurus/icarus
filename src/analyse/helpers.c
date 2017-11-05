@@ -2632,7 +2632,9 @@ unsigned int ic_analyse_type_ref_list(struct ic_kludge *kludge, struct ic_pvecto
          */
         tdecl = ic_kludge_get_decl_type_from_typeref(kludge, tref);
         if (!tdecl) {
-            puts("ic_anlyse_type_ref_list: call to ic_kludge_get_decl_type_from_typeref failed");
+            fputs("ic_anlyse_type_ref_list: call to ic_kludge_get_decl_type_from_typeref failed for typeref: ", stdout);
+            ic_type_ref_print(stdout, tref);
+            puts("");
             return 0;
         }
     }

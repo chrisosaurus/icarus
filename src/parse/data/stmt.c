@@ -1387,7 +1387,7 @@ void ic_stmt_match_print(FILE *fd, struct ic_stmt_match *match, unsigned int *in
  * returns pointers on success
  * returns 0 on failure
  */
-struct ic_stmt_case *ic_stmt_case_new(char *id_ch, unsigned int id_len, char *type_ch, unsigned int type_len, struct ic_body *body) {
+struct ic_stmt_case *ic_stmt_case_new(char *id_ch, unsigned int id_len, struct ic_type_ref *type_ref, struct ic_body *body) {
     struct ic_stmt_case *scase = 0;
 
     if (!id_ch) {
@@ -1400,13 +1400,8 @@ struct ic_stmt_case *ic_stmt_case_new(char *id_ch, unsigned int id_len, char *ty
         return 0;
     }
 
-    if (!type_ch) {
-        puts("ic_stmt_case_new: type_ch was null");
-        return 0;
-    }
-
-    if (!type_len) {
-        puts("ic_stmt_case_new: type_len was 0");
+    if (!type_ref) {
+        puts("ic_stmt_case_new: type_ref was null");
         return 0;
     }
 
@@ -1423,7 +1418,7 @@ struct ic_stmt_case *ic_stmt_case_new(char *id_ch, unsigned int id_len, char *ty
     }
 
     /* init */
-    if (!ic_stmt_case_init(scase, id_ch, id_len, type_ch, type_len, body)) {
+    if (!ic_stmt_case_init(scase, id_ch, id_len, type_ref, body)) {
         puts("ic_stmt_case_new: call to ic_stmt_case_init failed");
         free(scase);
         return 0;
@@ -1437,8 +1432,7 @@ struct ic_stmt_case *ic_stmt_case_new(char *id_ch, unsigned int id_len, char *ty
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_stmt_case_init(struct ic_stmt_case *scase, char *id_ch, unsigned int id_len, char *type_ch, unsigned int type_len, struct ic_body *body) {
-    struct ic_type_ref *type_ref = 0;
+unsigned int ic_stmt_case_init(struct ic_stmt_case *scase, char *id_ch, unsigned int id_len, struct ic_type_ref *type_ref, struct ic_body *body) {
 
     if (!scase) {
         puts("ic_stmt_case_init: scase was null");
@@ -1455,13 +1449,8 @@ unsigned int ic_stmt_case_init(struct ic_stmt_case *scase, char *id_ch, unsigned
         return 0;
     }
 
-    if (!type_ch) {
-        puts("ic_stmt_case_init: type_ch was null");
-        return 0;
-    }
-
-    if (!type_len) {
-        puts("ic_stmt_case_init: type_len was 0");
+    if (!type_ref) {
+        puts("ic_stmt_case_init: type_ref was null");
         return 0;
     }
 
@@ -1471,12 +1460,6 @@ unsigned int ic_stmt_case_init(struct ic_stmt_case *scase, char *id_ch, unsigned
     }
 
     scase->body = body;
-
-    type_ref = ic_type_ref_symbol_new(type_ch, type_len);
-    if (!type_ref) {
-        puts("ic_stmt_case_init: call to ic_type_ref_symbol_new failed");
-        return 0;
-    }
 
     if (!ic_field_init(&(scase->field), id_ch, id_len, type_ref, ic_parse_perm_default())) {
         puts("ic_stmt_case_init: call to ic_field_init failed");

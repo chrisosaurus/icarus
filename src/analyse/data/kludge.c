@@ -662,15 +662,16 @@ struct ic_decl_type *ic_kludge_get_decl_type_from_typeref(struct ic_kludge *klud
             break;
 
         case ic_type_ref_symbol:
-            type_sym = ic_type_ref_get_symbol(type_ref);
+            type_sym = ic_type_ref_full_name(type_ref);
             if (!type_sym) {
-                puts("ic_kludge_get_decl_type_from_typeref: call to ic_type_ref_get_symbol failed");
+                puts("ic_kludge_get_decl_type_from_typeref: call to ic_type_ref_full_name failed");
                 return 0;
             }
 
             tdecl = ic_kludge_get_decl_type_from_symbol(kludge, type_sym);
             if (!tdecl) {
                 /* remain silent as we want to be able to check for the non-existance of types */
+                /* TODO FIXME failure here this may require instantiation */
                 return 0;
             }
 

@@ -217,8 +217,7 @@ static struct ic_stmt_case *ic_parse_stmt_match_case(struct ic_token_list *token
     struct ic_stmt_case *scase = 0;
     char *id_ch = 0;
     unsigned int id_len = 0;
-    char *type_ch = 0;
-    unsigned int type_len = 0;
+    struct ic_type_ref *type_ref = 0;
 
     if (!token_list) {
         puts("ic_parse_stmt_match_case: token_list was null");
@@ -250,18 +249,14 @@ static struct ic_stmt_case *ic_parse_stmt_match_case(struct ic_token_list *token
         return 0;
     }
 
-    token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
-    if (!token) {
-        puts("ic_parse_stmt_match_catch: failed to find `Type token");
+    /* TODO FIXME this type can be more than an identifier
+     * e.g. case something::Maybe[Vector[T]]
+     */
+    type_ref = ic_parse_type_ref(token_list);
+    if (!type_ref) {
+        puts("ic_parse_stmt_let: call to ic_parse_type_ref failed");
         return 0;
     }
-
-    type_ch = ic_token_get_string(token);
-    if (!type_ch) {
-        puts("ic_parse_stmt_match_catch: call to ic_token_get_string failed");
-        return 0;
-    }
-    type_len = ic_token_get_string_length(token);
 
     body = ic_parse_body(token_list, 0);
     if (!body) {
@@ -269,7 +264,7 @@ static struct ic_stmt_case *ic_parse_stmt_match_case(struct ic_token_list *token
         return 0;
     }
 
-    scase = ic_stmt_case_new(id_ch, id_len, type_ch, type_len, body);
+    scase = ic_stmt_case_new(id_ch, id_len, type_ref, body);
     if (!scase) {
         puts("ic_parse_stmt_match_case: call to ic_stmt_case_new failed");
         return 0;

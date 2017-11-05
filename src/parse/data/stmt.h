@@ -487,14 +487,15 @@ struct ic_stmt_case {
  * returns pointers on success
  * returns 0 on failure
  */
-struct ic_stmt_case *ic_stmt_case_new(char *id_ch, unsigned int id_len, char *type_ch, unsigned int type_len, struct ic_body *body);
+struct ic_stmt_case *ic_stmt_case_new(char *id_ch, unsigned int id_len, struct ic_type_ref *type_ref, struct ic_body *body);
 
 /* initialise an existing new ic_stmt_case
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_stmt_case_init(struct ic_stmt_case *scase, char *id_ch, unsigned int id_len, char *type_ch, unsigned int type_len, struct ic_body *body);
+unsigned int ic_stmt_case_init(struct ic_stmt_case *scase, char *id_ch, unsigned int id_len, struct ic_type_ref *type_ref, struct ic_body *body);
+
 /* destroy case
  *
  * only frees stmt_case if `free_case` is truthy

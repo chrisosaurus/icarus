@@ -79,6 +79,62 @@ my $cases = [
     ",
     failure => 0,
   },
+  {
+    input => '
+      type Nothing
+      end
+
+      union Maybe[T]
+          something::T
+          nothing::Nothing
+      end
+
+      fn maybe_id[T](t::Maybe[T]) -> Maybe[T]
+        return t
+      end
+
+      fn flatten[T](m::Maybe[Maybe[T]]) -> Maybe[T]
+        match m
+          case something::Maybe[T]
+            return someting
+          case nothing::Nothing
+            return Maybe[T](nothing)
+          end
+        end
+      end
+
+      fn boxup[T](t::T) -> Maybe[T]
+        return Maybe[T](t)
+      end
+
+      fn main()
+        let m = Maybe[Maybe[Sint]]( Maybe[Sint](6s) )
+        println(m)
+
+        let n = flatten n
+        println(n)
+
+        match n
+          case something::Sint
+            print("My case contained: ")
+            println(something)
+          case nothing::Nothing
+            println("My case contained: Notihing")
+          end
+        end
+
+        let o = boxup[String]("Hello Maybe world")
+        println(o)
+      end
+      ',
+    expected => '
+      Maybe[Maybe[Sint]]{6}
+      Maybe[Sint]{6}
+      Maybe[String]{"Hello Maybe world"}
+      My case contained 6s
+    ',
+    failure => 1,
+  }
 ];
 
 # whitespace sensitivity sucks
@@ -144,6 +200,10 @@ sub run_2c {
   `rm a.out`;
 
   if( $output_2c ne $expected ){
+      if( $expect_failure == 1 ){
+        # failed as expected, okay
+        return;
+      }
       say "2c output was not as expected";
       say "=======\nExpected:\n$expected";
       say "=======\nGot:\n$output_2c";
@@ -174,6 +234,10 @@ sub run_pancake {
   my $exit_status = $?;
 
   if( $output_pancake ne $expected ){
+      if( $expect_failure == 1 ){
+        # failed as expected, okay
+        return;
+      }
       say "Pancake output was not as expected";
       say "=======\nExpected:\n$expected";
       say "=======\nGot:\n$output_pancake";

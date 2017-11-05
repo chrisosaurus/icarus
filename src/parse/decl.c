@@ -824,6 +824,13 @@ struct ic_decl *ic_parse_decl_func_header(struct ic_token_list *token_list) {
             return 0;
         }
 
+        /* parse type params if you find them here */
+        if (!ic_parse_decl_optional_type_params(token_list, &(fdecl->is_instantiated), &(fdecl->type_params))) {
+            puts("ic_parse_decl_func_header: call to ic_parse_decl_optional_type_params failed");
+            free(decl);
+            return 0;
+        }
+
         /* add to our fdecl */
         if (!ic_type_ref_set_symbol(ret_type_ref, ic_token_get_string(token), ic_token_get_string_length(token))) {
             puts("ic_parse_decl_func_header: call to ic_type_ref_set_symbol failed");
