@@ -889,9 +889,35 @@ unsigned int ic_expr_constant_deep_copy_embedded(struct ic_expr_constant *from, 
         return 0;
     }
 
-    puts("ic_expr_constant_deep_copy_embedded: unimplemented");
-    return 0;
+    to->tag = from->tag;
 
+    switch (to->tag) {
+        case ic_expr_constant_type_unsigned_integer:
+            to->u.unsigned_integer = from->u.unsigned_integer;
+            break;
+
+        case ic_expr_constant_type_signed_integer:
+            to->u.signed_integer = from->u.signed_integer;
+            break;
+
+        case ic_expr_constant_type_string:
+            if (!ic_string_deep_copy_embedded(&(from->u.string), &(to->u.string))) {
+                puts("ic_expr_constant_deep_copy_embedded: call to ic_string_deep_copy_embedded failed");
+                return 0;
+            }
+            break;
+
+        case ic_expr_constant_type_boolean:
+            to->u.boolean = from->u.boolean;
+            break;
+
+        default:
+            puts("ic_expr_constant_deep_copy_embedded: impossible tag");
+            return 0;
+            break;
+    }
+
+    return 1;
 }
 
 /* return pointer to unsigned integer within,
