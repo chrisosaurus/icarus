@@ -606,8 +606,26 @@ unsigned int ic_stmt_assign_deep_copy_embedded(struct ic_stmt_assign *from, stru
         return 0;
     }
 
-    puts("ic_stmt_assign_deep_copy_embedded: unimplemented");
-    return 0;
+    to->left = 0;
+    to->right = 0;
+
+    if (from->left) {
+        to->left = ic_expr_deep_copy(from->left);
+        if (!to->left) {
+            puts("ic_stmt_assign_deep_copy_embedded: call to ic_expr_deep_copy failed");
+            return 0;
+        }
+    }
+
+    if (from->right) {
+        to->right = ic_expr_deep_copy(from->right);
+        if (!to->right) {
+            puts("ic_stmt_assign_deep_copy_embedded: call to ic_expr_deep_copy failed");
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
 /* get the left ic_expr * contained within
