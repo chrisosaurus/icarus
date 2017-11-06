@@ -1334,8 +1334,30 @@ unsigned int ic_expr_operator_deep_copy_embedded(struct ic_expr_operator *from, 
         return 0;
     }
 
-    puts("ic_expr_operator_deep_copy_embedded: unimplemented");
-    return 0;
+    to->tag = from->tag;
+
+    to->first = 0;
+    if (from->first) {
+        to->first = ic_expr_deep_copy(from->first);
+        if (!to->first) {
+            puts("ic_expr_operator_deep_copy_embedded: call to ic_expr_deep_copy failed");
+            return 0;
+        }
+    }
+
+    to->second = 0;
+    if (from->second) {
+        to->second = ic_expr_deep_copy(from->second);
+        if (!to->second) {
+            puts("ic_expr_operator_deep_copy_embedded: call to ic_expr_deep_copy failed");
+            return 0;
+        }
+    }
+
+    /* can share as non-owned pointer */
+    to->fcall = from->fcall;
+
+    return 1;
 }
 
 /* print this operator */
