@@ -117,6 +117,20 @@ unsigned int ic_stmt_let_init(struct ic_stmt_let *let, char *id_src, unsigned in
  */
 unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let);
 
+/* perform a deep copy of let
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_stmt_let *ic_stmt_let_deep_copy(struct ic_stmt_let *let);
+
+/* perform a deep copy of let embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_let_deep_copy_embedded(struct ic_stmt_let *from, struct ic_stmt_let *to);
+
 /* set declared type on this let
  *
  * this is an error if the type has already been set
@@ -181,6 +195,20 @@ unsigned int ic_stmt_assign_init(struct ic_stmt_assign *assign, struct ic_expr *
  */
 unsigned int ic_stmt_assign_destroy(struct ic_stmt_assign *assign, unsigned int free_assign);
 
+/* perform a deep copy of assign
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_stmt_assign *ic_stmt_assign_deep_copy(struct ic_stmt_assign *assign);
+
+/* perform a deep copy of assign embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_assign_deep_copy_embedded(struct ic_stmt_assign *from, struct ic_stmt_assign *to);
+
 /* get the left ic_expr * contained within
  *
  * returns pointer on success
@@ -234,6 +262,20 @@ unsigned int ic_stmt_begin_init(struct ic_stmt_begin *begin);
  */
 unsigned int ic_stmt_begin_destroy(struct ic_stmt_begin *begin, unsigned int free_begin);
 
+/* perform a deep copy of begin
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_stmt_begin *ic_stmt_begin_deep_copy(struct ic_stmt_begin *begin);
+
+/* perform a deep copy of begin embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_begin_deep_copy_embedded(struct ic_stmt_begin *from, struct ic_stmt_begin *to);
+
 /* print this begin */
 void ic_stmt_begin_print(FILE *fd, struct ic_stmt_begin *begin, unsigned int *indent_level);
 
@@ -274,6 +316,20 @@ unsigned int ic_stmt_if_init(struct ic_stmt_if *sif);
  * returns 0 on failure
  */
 unsigned int ic_stmt_if_destroy(struct ic_stmt_if *sif, unsigned int free_if);
+
+/* perform a deep copy of if
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_stmt_if *ic_stmt_if_deep_copy(struct ic_stmt_if *sif);
+
+/* perform a deep copy of if embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_if_deep_copy_embedded(struct ic_stmt_if *from, struct ic_stmt_if *to);
 
 /* returns pointer on success
  * returns 0 on failure
@@ -449,6 +505,20 @@ unsigned int ic_stmt_match_init(struct ic_stmt_match *match);
  */
 unsigned int ic_stmt_match_destroy(struct ic_stmt_match *match, unsigned int free_match);
 
+/* perform a deep copy of match
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_stmt_match *ic_stmt_match_deep_copy(struct ic_stmt_match *match);
+
+/* perform a deep copy of match embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_match_deep_copy_embedded(struct ic_stmt_match *from, struct ic_stmt_match *to);
+
 /* returns pointer on success
  * returns 0 on failure
  */
@@ -504,6 +574,21 @@ unsigned int ic_stmt_case_init(struct ic_stmt_case *scase, char *id_ch, unsigned
  * returns 0 on failure
  */
 unsigned int ic_stmt_case_destroy(struct ic_stmt_case *scase, unsigned int free_case);
+
+/* perform a deep copy of case
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_stmt_case *ic_stmt_case_deep_copy(struct ic_stmt_case *scase);
+
+/* perform a deep copy of case embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_case_deep_copy_embedded(struct ic_stmt_case *from, struct ic_stmt_case *to);
+
 
 /* returns pointer on success
  * returns 0 on failure

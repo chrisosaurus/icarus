@@ -280,6 +280,53 @@ unsigned int ic_stmt_let_destroy(struct ic_stmt_let *let, unsigned int free_let)
     return 1;
 }
 
+/* perform a deep copy of let
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_stmt_let *ic_stmt_let_deep_copy(struct ic_stmt_let *let) {
+    struct ic_stmt_let *new_let = 0;
+
+    if (!let) {
+        puts("ic_stmt_let_deep_copy: let was null");
+        return 0;
+    }
+
+    new_let = calloc(1, sizeof(struct ic_stmt_let));
+    if (!new_let) {
+        puts("ic_stmt_let_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_stmt_let_deep_copy_embedded(let, new_let)) {
+        puts("ic_stmt_ret_deep_copy: call to ic_stmt_let_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_let;
+}
+
+/* perform a deep copy of let embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_let_deep_copy_embedded(struct ic_stmt_let *from, struct ic_stmt_let *to) {
+    if (!from) {
+        puts("ic_stmt_let_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_stmt_let_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    puts("ic_stmt_let_deep_copy_embedded: unimplemented");
+    return 0;
+}
+
 /* set declared type on this let
  *
  * this is an error if the type has already been set
@@ -490,6 +537,53 @@ unsigned int ic_stmt_assign_destroy(struct ic_stmt_assign *assign, unsigned int 
     return 1;
 }
 
+/* perform a deep copy of assign
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_stmt_assign *ic_stmt_assign_deep_copy(struct ic_stmt_assign *assign) {
+    struct ic_stmt_assign *new_assign = 0;
+
+    if (!assign) {
+        puts("ic_stmt_assign_deep_copy: assign was null");
+        return 0;
+    }
+
+    new_assign = calloc(1, sizeof(struct ic_stmt_assign));
+    if (!new_assign) {
+        puts("ic_stmt_assign_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_stmt_assign_deep_copy_embedded(assign, new_assign)) {
+        puts("ic_stmt_ret_deep_copy: call to ic_stmt_assign_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_assign;
+}
+
+/* perform a deep copy of assign embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_assign_deep_copy_embedded(struct ic_stmt_assign *from, struct ic_stmt_assign *to) {
+    if (!from) {
+        puts("ic_stmt_assign_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_stmt_assign_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    puts("ic_stmt_assign_deep_copy_embedded: unimplemented");
+    return 0;
+}
+
 /* get the left ic_expr * contained within
  *
  * returns pointer on success
@@ -616,6 +710,53 @@ unsigned int ic_stmt_begin_destroy(struct ic_stmt_begin *begin, unsigned int fre
     return 1;
 }
 
+/* perform a deep copy of begin
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_stmt_begin *ic_stmt_begin_deep_copy(struct ic_stmt_begin *begin) {
+    struct ic_stmt_begin *new_begin = 0;
+
+    if (!begin) {
+        puts("ic_stmt_begin_deep_copy: begin was null");
+        return 0;
+    }
+
+    new_begin = calloc(1, sizeof(struct ic_stmt_begin));
+    if (!new_begin) {
+        puts("ic_stmt_begin_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_stmt_begin_deep_copy_embedded(begin, new_begin)) {
+        puts("ic_stmt_ret_deep_copy: call to ic_stmt_begin_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_begin;
+}
+
+/* perform a deep copy of begin embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_begin_deep_copy_embedded(struct ic_stmt_begin *from, struct ic_stmt_begin *to) {
+    if (!from) {
+        puts("ic_stmt_begin_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_stmt_begin_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    puts("ic_stmt_begin_deep_copy_embedded: unimplemented");
+    return 0;
+}
+
 /* print this begin */
 void ic_stmt_begin_print(FILE *fd, struct ic_stmt_begin *begin, unsigned int *indent_level) {
     if (!begin) {
@@ -726,6 +867,53 @@ unsigned int ic_stmt_if_destroy(struct ic_stmt_if *sif, unsigned int free_if) {
     }
 
     return 1;
+}
+
+/* perform a deep copy of if
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_stmt_if *ic_stmt_if_deep_copy(struct ic_stmt_if *sif) {
+    struct ic_stmt_if *new_if = 0;
+
+    if (!sif) {
+        puts("ic_stmt_if_deep_copy: sif was null");
+        return 0;
+    }
+
+    new_if = calloc(1, sizeof(struct ic_stmt_if));
+    if (!new_if) {
+        puts("ic_stmt_if_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_stmt_if_deep_copy_embedded(sif, new_if)) {
+        puts("ic_stmt_if_deep_copy: call to ic_stmt_if_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_if;
+}
+
+/* perform a deep copy of if embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_if_deep_copy_embedded(struct ic_stmt_if *from, struct ic_stmt_if *to) {
+    if (!from) {
+        puts("ic_stmt_if_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_stmt_if_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    puts("ic_stmt_if_deep_copy_embedded: unimplemented");
+    return 0;
 }
 
 /* returns pointer on success
@@ -1240,6 +1428,53 @@ unsigned int ic_stmt_match_destroy(struct ic_stmt_match *match, unsigned int fre
     return 1;
 }
 
+/* perform a deep copy of match
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_stmt_match *ic_stmt_match_deep_copy(struct ic_stmt_match *match) {
+    struct ic_stmt_match *new_match = 0;
+
+    if (!match) {
+        puts("ic_stmt_match_deep_copy: ret was null");
+        return 0;
+    }
+
+    new_match = calloc(1, sizeof(struct ic_stmt_match));
+    if (!new_match) {
+        puts("ic_stmt_match_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_stmt_match_deep_copy_embedded(match, new_match)) {
+        puts("ic_stmt_match_deep_copy: call to ic_stmt_match_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_match;
+}
+
+/* perform a deep copy of match embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_match_deep_copy_embedded(struct ic_stmt_match *from, struct ic_stmt_match *to) {
+    if (!from) {
+        puts("ic_stmt_match_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_stmt_match_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    puts("ic_stmt_match_deep_copy_embedded: unimplemented");
+    return 0;
+}
+
 /* returns pointer on success
  * returns 0 on failure
  */
@@ -1501,6 +1736,54 @@ unsigned int ic_stmt_case_destroy(struct ic_stmt_case *scase, unsigned int free_
 
     return 1;
 }
+
+/* perform a deep copy of case
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_stmt_case *ic_stmt_case_deep_copy(struct ic_stmt_case *scase) {
+    struct ic_stmt_case *new_case = 0;
+
+    if (!scase) {
+        puts("ic_stmt_case_deep_copy: case was null");
+        return 0;
+    }
+
+    new_case = calloc(1, sizeof(struct ic_stmt_case));
+    if (!new_case) {
+        puts("ic_stmt_case_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_stmt_case_deep_copy_embedded(scase, new_case)) {
+        puts("ic_stmt_ret_deep_copy: call to ic_stmt_case_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_case;
+}
+
+/* perform a deep copy of case embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_stmt_case_deep_copy_embedded(struct ic_stmt_case *from, struct ic_stmt_case *to) {
+    if (!from) {
+        puts("ic_stmt_case_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_stmt_case_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    puts("ic_stmt_case_deep_copy_embedded: unimplemented");
+    return 0;
+}
+
 
 /* returns pointer on success
  * returns 0 on failure
@@ -1782,18 +2065,24 @@ unsigned int ic_stmt_deep_copy_embedded(struct ic_stmt *from, struct ic_stmt *to
             break;
 
         case ic_stmt_type_let:
-            puts("ic_stmt_deep_copy_embedded: let: unimplemented");
-            return 0;
+            if (!ic_stmt_let_deep_copy_embedded(&(from->u.let), &(to->u.let))) {
+                puts("ic_stmt_deep_copy_embedded: ret: call to ic_stmt_let_deep_copy_embedded failed");
+                return 0;
+            }
             break;
 
         case ic_stmt_type_begin:
-            puts("ic_stmt_deep_copy_embedded: begin: unimplemented");
-            return 0;
+            if (!ic_stmt_begin_deep_copy_embedded(&(from->u.begin), &(to->u.begin))) {
+                puts("ic_stmt_deep_copy_embedded: ret: call to ic_stmt_begin_deep_copy_embedded failed");
+                return 0;
+            }
             break;
 
         case ic_stmt_type_if:
-            puts("ic_stmt_deep_copy_embedded: if: unimplemented");
-            return 0;
+            if (!ic_stmt_if_deep_copy_embedded(&(from->u.sif), &(to->u.sif))) {
+                puts("ic_stmt_deep_copy_embedded: ret: call to ic_stmt_if_deep_copy_embedded failed");
+                return 0;
+            }
             break;
 
         case ic_stmt_type_for:
@@ -1807,8 +2096,10 @@ unsigned int ic_stmt_deep_copy_embedded(struct ic_stmt *from, struct ic_stmt *to
             break;
 
         case ic_stmt_type_match:
-            puts("ic_stmt_deep_copy_embedded: match: unimplemented");
-            return 0;
+            if (!ic_stmt_match_deep_copy_embedded(&(from->u.match), &(to->u.match))) {
+                puts("ic_stmt_deep_copy_embedded: ret: call to ic_stmt_match_deep_copy_embedded failed");
+                return 0;
+            }
             break;
 
         case ic_stmt_type_expr:
@@ -1820,8 +2111,10 @@ unsigned int ic_stmt_deep_copy_embedded(struct ic_stmt *from, struct ic_stmt *to
             break;
 
         case ic_stmt_type_assign:
-            puts("ic_stmt_deep_copy_embedded: assign: unimplemented");
-            return 0;
+            if (!ic_stmt_assign_deep_copy_embedded(&(from->u.assign), &(to->u.assign))) {
+                puts("ic_stmt_deep_copy_embedded: ret: call to ic_stmt_assign_deep_copy_embedded failed");
+                return 0;
+            }
             break;
 
         default:
