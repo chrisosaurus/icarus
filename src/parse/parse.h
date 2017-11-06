@@ -24,6 +24,8 @@ void ic_parse_print_indent(FILE *fd, unsigned int levels);
 
 /**** parse/type_ref.c ****/
 
+unsigned int ic_parse_type_ref_embedded(struct ic_type_ref *type_ref, struct ic_token_list *token_list);
+
 struct ic_type_ref *ic_parse_type_ref(struct ic_token_list *token_list);
 
 /**** parse/field.c ****/

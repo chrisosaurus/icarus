@@ -541,6 +541,12 @@ unsigned int ic_parse_decl_optional_type_params(struct ic_token_list *token_list
         return 0;
     }
 
+    if (0 != ic_pvector_length(type_params)) {
+        puts("ic_parse_decl_optional_type_params: passing in type_params vector has non-zero length");
+        printf("ic_parse_decl_optional_type_params: passing in type_params vector has non-zero length of '%u'\n", ic_pvector_length(type_params));
+        return 0;
+    }
+
     token = ic_token_list_peek_important(token_list);
     if (!token) {
         puts("ic_parse_decl_optional_type_params: call to ic_token_list_peek_important failed");
@@ -818,23 +824,8 @@ struct ic_decl *ic_parse_decl_func_header(struct ic_token_list *token_list) {
         /* we found a type arrow and have skipped over it
          * parse return type
          */
-        token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
-        if (!token) {
-            puts("ic_parse_decl_func_header: call to ic_token_list_next failed when looking for return type after arrow");
-            return 0;
-        }
-
-        /* parse type params if you find them here */
-        if (!ic_parse_decl_optional_type_params(token_list, &(fdecl->is_instantiated), &(fdecl->type_params))) {
-            puts("ic_parse_decl_func_header: call to ic_parse_decl_optional_type_params failed");
-            free(decl);
-            return 0;
-        }
-
-        /* add to our fdecl */
-        if (!ic_type_ref_set_symbol(ret_type_ref, ic_token_get_string(token), ic_token_get_string_length(token))) {
-            puts("ic_parse_decl_func_header: call to ic_type_ref_set_symbol failed");
-            free(decl);
+        if (!ic_parse_type_ref_embedded(ret_type_ref, token_list)) {
+            puts("ic_parse_decl_func_header: call to ic_parse_type_ref_embedded failed when looking for return type after arrow");
             return 0;
         }
     }
