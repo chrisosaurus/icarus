@@ -323,8 +323,34 @@ unsigned int ic_stmt_let_deep_copy_embedded(struct ic_stmt_let *from, struct ic_
         return 0;
     }
 
-    puts("ic_stmt_let_deep_copy_embedded: unimplemented");
-    return 0;
+    to->permissions = from->permissions;
+
+    if (!ic_symbol_deep_copy_embedded(&(from->identifier), &(to->identifier))) {
+        puts("ic_stmt_let_deep_copy_embedded: call to ic_symbol_deep_copy_embedded failed");
+        return 0;
+    }
+
+    to->tref = 0;
+    if (from->tref) {
+        to->tref = ic_type_ref_deep_copy(from->tref);
+        if (!to->tref) {
+            puts("ic_stmt_let_deep_copy_embedded: call to ic_type_ref_deep_copy_embedded failed");
+            return 0;
+        }
+    }
+
+    to->init = 0;
+    if (from->init) {
+        to->init = ic_expr_deep_copy(from->init);
+        if (!to->init) {
+            puts("ic_stmt_let_deep_copy_embedded: call to ic_expr_deep_copy_embedded failed");
+            return 0;
+        }
+    }
+
+    to->assigned_to = from->assigned_to;
+
+    return 1;
 }
 
 /* set declared type on this let
