@@ -1539,6 +1539,11 @@ struct ic_stmt_match *ic_stmt_match_deep_copy(struct ic_stmt_match *match) {
  * returns 0 on failure
  */
 unsigned int ic_stmt_match_deep_copy_embedded(struct ic_stmt_match *from, struct ic_stmt_match *to) {
+    unsigned int i = 0;
+    unsigned int len = 0;
+    struct ic_stmt_case *scase = 0;
+    struct ic_stmt_case *new_scase = 0;
+
     if (!from) {
         puts("ic_stmt_match_deep_copy_embedded: from was null");
         return 0;
@@ -1549,8 +1554,45 @@ unsigned int ic_stmt_match_deep_copy_embedded(struct ic_stmt_match *from, struct
         return 0;
     }
 
-    puts("ic_stmt_match_deep_copy_embedded: unimplemented");
-    return 0;
+    to->expr = 0;
+    if (from->expr) {
+        to->expr = ic_expr_deep_copy(from->expr);
+        if (!to->expr) {
+            puts("ic_stmt_match_deep_copy_embedded: call to ic_expr_deep_copy failed");
+            return 0;
+        }
+    }
+
+    len = ic_pvector_length(&(from->cases));
+    for (i=0; i<len; ++i) {
+        scase = ic_pvector_get(&(from->cases), i);
+        if (!scase) {
+            puts("ic_stmt_match_deep_copy_embedded: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        new_scase = ic_stmt_case_deep_copy(scase);
+        if (!new_scase) {
+            puts("ic_stmt_match_deep_copy_embedded: call to ic_stmt_case_deep_copy failed");
+            return 0;
+        }
+
+        if (-1 == ic_pvector_append(&(to->cases), new_scase)) {
+            puts("ic_stmt_match_deep_copy_embedded: call to ic_pvector_appedn failed");
+            return 0;
+        }
+    }
+
+    to->else_body = 0;
+    if (from->else_body) {
+        to->else_body = ic_body_deep_copy(from->else_body);
+        if (!to->else_body) {
+            puts("ic_stmt_match_deep_copy_embedded: call to ic_body_deep_copy failed");
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
 /* returns pointer on success
