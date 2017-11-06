@@ -20,16 +20,35 @@
  */
 unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_pvector *type_params, struct ic_pvector *fields);
 
-/* resolve a type_refs to type_decls
+/* resolve a sym and type_args pair to a decl_type
+ *
+ * will trigger generic instantiation if needed
+ *
+ * type_params is optional
  *
  * if type_ref to a type_param then this link is used
  * if type_ref of a symbol, then it will be looked up in type_params
  * if both fail, it is an error
  *
- * returns 1 on success
+ * returns * on success
  * returns 0 on failure
  */
-unsigned int ic_resolve_type_ref(char *unit, char *unit_name, struct ic_pvector *type_params, struct ic_type_ref *type_ref);
+struct ic_decl_type * ic_analyse_resolve_type(struct ic_kludge *kludge, char *unit, char *unit_name, struct ic_pvector *type_params, struct ic_symbol *sym, struct ic_pvector *type_args);
+
+/* resolve a type_ref to a decl_type
+ *
+ * will trigger generic instantiation if needed
+ *
+ * type_params is optional
+ *
+ * if type_ref to a type_param then this link is used
+ * if type_ref of a symbol, then it will be looked up in type_params
+ * if both fail, it is an error
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_decl_type * ic_analyse_resolve_type_ref(struct ic_kludge *kludge, char *unit, char *unit_name, struct ic_pvector *type_params, struct ic_type_ref *type_ref);
 
 /* iterate through the field list resolving any type_refs to type_decls
  *
@@ -40,7 +59,7 @@ unsigned int ic_resolve_type_ref(char *unit, char *unit_name, struct ic_pvector 
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_resolve_field_list(char *unit, char *unit_name, struct ic_pvector *type_params, struct ic_pvector *fields);
+unsigned int ic_resolve_field_list(struct ic_kludge *kludge, char *unit, char *unit_name, struct ic_pvector *type_params, struct ic_pvector *fields);
 
 /* iterate through a type_ref list resolving each type_ref to a decl_type
  *
@@ -109,6 +128,8 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
  *     id[_](_)
  * please see ic_analyse_fcall_str_generic
  *
+ * TODO FIXME kill with fire, ic_parse_helper_full_name is the new replacement
+ *
  * returns ic_string * on success
  * returns 0 on failure
  */
@@ -122,6 +143,8 @@ struct ic_string *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope
  * we will generate
  *     id[_](_)
  *
+ * TODO FIXME kill with fire, ic_parse_helper_generic_name is the new replacement
+ *
  * returns ic_string * on success
  * returns 0 on failure
  */
@@ -129,6 +152,7 @@ struct ic_string *ic_analyse_fcall_str_generic(struct ic_kludge *kludge, struct 
 
 /* trigger instantiation of this generic function decl to a concrete function decl
  *
+ * will do nothing if fdecl is already instantiated
  * creates new fdecl, inserts into kludge, returns * to new fdecl
  *
  * returns * on success
@@ -138,11 +162,12 @@ struct ic_decl_func *ic_analyse_func_decl_instantiate_generic(struct ic_kludge *
 
 /* trigger instantiation of this generic type decl to a concrete type decl
  *
+ * will do nothing if tdecl is already instantiated
  * creates new tdecl, inserts into kludge, returns * to new tdecl
  *
  * returns * on success
  * returns 0 on failure
  */
-struct ic_decl_type *ic_analyse_type_decl_instantiate_generic(struct ic_kludge *kludge, char *type_name, struct ic_pvector *type_args);
+struct ic_decl_type *ic_analyse_type_decl_instantiate_generic(struct ic_kludge *kludge, struct ic_decl_type *tdecl, struct ic_pvector *type_args);
 
 #endif /* ifndef ICARUS_ANALYSE_HELPERS_H */

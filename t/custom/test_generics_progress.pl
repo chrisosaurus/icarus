@@ -111,15 +111,15 @@ my $cases = [
         let m = Maybe[Maybe[Sint]]( Maybe[Sint](6s) )
         println(m)
 
-        let n = flatten n
+        let n = flatten[Sint](m)
         println(n)
 
         match n
           case something::Sint
-            print("My case contained: ")
+            print("My Maybe contained: ")
             println(something)
           case nothing::Nothing
-            println("My case contained: Notihing")
+            println("My Maybe contained: Nothing")
           end
         end
 
@@ -130,8 +130,8 @@ my $cases = [
     expected => '
       Maybe[Maybe[Sint]]{6}
       Maybe[Sint]{6}
+      My Maybe contained: 6s
       Maybe[String]{"Hello Maybe world"}
-      My case contained 6s
     ',
     failure => 1,
   }

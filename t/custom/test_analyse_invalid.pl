@@ -100,7 +100,14 @@ analysis failed
 
 'fn main() foo[Sint](6s, 7s) end'
 =>
-"ic_analyse_infer_fcall: error finding function declaration for function call:
+"ic_analyse_resolve_type: unable to resolve type
+
+    I tried to lookup both:
+        foo[Sint]
+        foo[_]
+    and failed to find either
+
+ic_analyse_infer_fcall: error finding function declaration for function call:
         foo[Sint](6s, 7s)
 
     I tried to lookup both:

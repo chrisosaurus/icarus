@@ -394,7 +394,7 @@ struct ic_symbol *ic_type_ref_get_symbol(struct ic_type_ref *type) {
     switch (type->tag) {
         case ic_type_ref_unknown:
             /* error, nothing to return */
-            puts("ic_type_ref_get_symbol: type was of type unknown");
+            puts("ic_type_ref_get_symbol: type_ref was of type unknown");
             return 0;
             break;
 
@@ -499,12 +499,12 @@ struct ic_decl_type *ic_type_ref_get_type_decl(struct ic_type_ref *type) {
     switch (type->tag) {
         case ic_type_ref_unknown:
             /* error, nothing to return */
-            puts("ic_type_ref_get_type_decl: type was of type unknown");
+            puts("ic_type_ref_get_type_decl: type_ref was of type unknown");
             return 0;
             break;
 
         case ic_type_ref_symbol:
-            puts("ic_type_ref_get_type_decl: type was of type symbol");
+            puts("ic_type_ref_get_type_decl: type was_ref of type symbol");
             return 0;
             break;
 
@@ -630,12 +630,12 @@ struct ic_type_param *ic_type_ref_get_type_param(struct ic_type_ref *type) {
     switch (type->tag) {
         case ic_type_ref_unknown:
             /* error, nothing to return */
-            puts("ic_type_ref_get_type_param: type was of type unknown");
+            puts("ic_type_ref_get_type_param: type_ref was of type unknown");
             return 0;
             break;
 
         case ic_type_ref_symbol:
-            puts("ic_type_ref_get_type_param: type was of type symbol");
+            puts("ic_type_ref_get_type_param: type_ref was of type symbol");
             return 0;
             break;
 
@@ -645,7 +645,7 @@ struct ic_type_param *ic_type_ref_get_type_param(struct ic_type_ref *type) {
             break;
 
         case ic_type_ref_resolved:
-            puts("ic_type_ref_get_type_param: type was of type resolve");
+            puts("ic_type_ref_get_type_param: type_ref was of type resolve");
             return 0;
             break;
 

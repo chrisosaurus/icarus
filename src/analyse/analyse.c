@@ -400,9 +400,6 @@ unsigned int ic_analyse_decl_type_struct(struct ic_kludge *kludge, struct ic_dec
     unsigned int len = 0;
     /* current field */
     struct ic_field *field = 0;
-
-    struct ic_symbol *type_sym = 0;
-    char *type_str = 0;
     struct ic_decl_type *field_type = 0;
 
     if (!kludge) {
@@ -433,11 +430,18 @@ unsigned int ic_analyse_decl_type_struct(struct ic_kludge *kludge, struct ic_dec
         goto ERROR;
     }
 
+    /* if this type is instantiated then
+     * 1) fill in field_dict along the way if this is instantiated
+     */
+
+    if (!ic_decl_type_struct_is_instantiated(tdecl_struct)) {
+        /* stop here */
+        return 1;
+    }
+
     /* fill in field_dict
      * FIXME this is iterating through fields twice as we already iterate
      *       through once in ic_analyse_field_list
-     * FIXME likewise it is also fetching type from string twice
-     *       once here, and once in ic_analyse_field_list
      */
     len = ic_pvector_length(&(tdecl_struct->fields));
     for (i = 0; i < len; ++i) {
@@ -447,45 +451,13 @@ unsigned int ic_analyse_decl_type_struct(struct ic_kludge *kludge, struct ic_dec
             goto ERROR;
         }
 
-        /* if field type is a type param then we cannot proceed with work here
-         * until it is instantiated
-         */
-        if (ic_type_ref_is_type_param(field->type)) {
-            continue;
-        }
-
-        /* what we are really doing here is:
-         *
-         *  a) convert type to string representation
-         *  b) checking that this is not a self-recursive type
-         *  c) check that this field's type exists
-         *
-         *  FIXME check / consider this
-         *  FIXME duplicated code from analyse_field_list
-         *  FIXME do we allow co-recursive types
-         *  FIXME what about N-level-recursive types?
-         *        Foo includes Bar, Bar includes Baz, Bac includes Foo.
-         */
-        type_sym = ic_type_ref_get_symbol(field->type);
-        if (!type_sym) {
-            puts("ic_analyse_decl_type_struct: call to ic_type_ref_get_symbol_failed");
-            goto ERROR;
-        }
-
-        type_str = ic_symbol_contents(type_sym);
-        if (!type_str) {
-            puts("ic_analyse_decl_type_struct: call to ic_symbol_contents failed");
-            goto ERROR;
-        }
-
-        /* check that this field's type exists */
-        field_type = ic_kludge_get_decl_type(kludge, type_str);
+        field_type = ic_analyse_resolve_type_ref(kludge, "type declaration", this_type_ch, 0, field->type);
         if (!field_type) {
-            puts("ic_analyse_decl_type_struct: call to ic_kludge_get_type failed");
+            puts("ic_analyse_decl_type_struct: call to ic_analyse_resolve_type_ref failed");
             goto ERROR;
         }
 
-        /* insert this type into field_dict */
+        /* insert this type into field_dict only for concrete type */
         if (!ic_decl_type_struct_add_field_type(tdecl_struct, ic_symbol_contents(&(field->name)), field_type)) {
             puts("ic_analyse_decl_type_struct: call to ic_decl_type_struct_add_field_type failed");
             goto ERROR;
@@ -657,9 +629,9 @@ unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl
     /* current field */
     struct ic_field *field = 0;
 
-    struct ic_symbol *type_sym = 0;
-    char *type_str = 0;
     struct ic_decl_type *field_type = 0;
+    struct ic_symbol *field_type_full_name = 0;
+    char *field_type_full_name_ch = 0;
 
     /* this is the only part that is different between type_union and
      * type_struct.
@@ -695,18 +667,22 @@ unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl
         goto ERROR;
     }
 
+    /* if this type is instantiated then
+     * 1) check that all field types are unique
+     * 2) fill in field_dict along the way if this is instantiated
+     */
+
+    if (!ic_decl_type_union_is_instantiated(tdecl_union)) {
+        /* stop here */
+        return 1;
+    }
+
     set = ic_set_new();
     if (!set) {
         puts("ic_analyse_decl_type_union: call to ic_set_new failed");
         goto ERROR;
     }
 
-    /* check all field types are unique and (for concrete types) fill in field_dict
-     * FIXME this is iterating through fields twice as we already iterate
-     *       through once in ic_analyse_field_list
-     * FIXME likewise it is also fetching type from string twice
-     *       once here, and once in ic_analyse_field_list
-     */
     len = ic_pvector_length(&(tdecl_union->fields));
     for (i = 0; i < len; ++i) {
         field = ic_pvector_get(&(tdecl_union->fields), i);
@@ -715,56 +691,38 @@ unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl
             goto ERROR;
         }
 
-        /* what we are really doing here is:
-         *
-         *  a) convert type to string representation
-         *  b) checking that this is not a self-recursive type
-         *  c) check that this field's type exists
-         *  d) check that all field's types are unique
-         *
-         *  FIXME check / consider this
-         *  FIXME duplicated code from analyse_field_list
-         *  FIXME do we allow co-recursive types
-         *  FIXME what about N-level-recursive types?
-         *        Foo includes Bar, Bar includes Baz, Bac includes Foo.
-         */
-        type_sym = ic_type_ref_get_symbol(field->type);
-        if (!type_sym) {
-            puts("ic_analyse_decl_type_union: call to ic_type_ref_get_symbol_failed");
+        field_type = ic_analyse_resolve_type_ref(kludge, "type declaration", this_type_ch, 0, field->type);
+        if (!field_type) {
+            puts("ic_analyse_decl_type_union: call to ic_analyse_resolve_type_ref failed");
             goto ERROR;
         }
 
-        type_str = ic_symbol_contents(type_sym);
-        if (!type_str) {
+        /* insert this type into field_dict only for concrete type */
+        if (!ic_decl_type_union_add_field_type(tdecl_union, ic_symbol_contents(&(field->name)), field_type)) {
+            puts("ic_analyse_decl_type_union: call to ic_decl_type_struct_add_field_type failed");
+            goto ERROR;
+        }
+
+        field_type_full_name = ic_decl_type_full_name(field_type);
+        if (!field_type_full_name) {
+            puts("ic_analyse_decl_type_union: call to ic_decl_type_full_name failed");
+            goto ERROR;
+        }
+
+        field_type_full_name_ch = ic_symbol_contents(field_type_full_name);
+        if (!field_type_full_name_ch) {
             puts("ic_analyse_decl_type_union: call to ic_symbol_contents failed");
             goto ERROR;
         }
 
-        if (ic_set_exists(set, type_str)) {
-            printf("ic_analyse_decl_type_union: field with type '%s' already existed on this union\n", type_str);
+        if (ic_set_exists(set, field_type_full_name_ch)) {
+            printf("ic_analyse_decl_type_union: field with type '%s' already existed on this union\n", field_type_full_name_ch);
             goto ERROR;
         }
 
-        if (!ic_set_insert(set, type_str)) {
+        if (!ic_set_insert(set, field_type_full_name_ch)) {
             puts("ic_analyse_decl_type_union: call to ic_set_insert failed");
             goto ERROR;
-        }
-
-        /* if this field is not generic then we need to check that the field's
-         * type exists
-         */
-        if (ic_type_ref_is_resolved(field->type)) {
-            field_type = ic_kludge_get_decl_type(kludge, type_str);
-            if (!field_type) {
-                puts("ic_analyse_decl_type_union: call to ic_kludge_get_type failed");
-                goto ERROR;
-            }
-
-            /* insert this type into field_dict only for concrete type */
-            if (!ic_decl_type_union_add_field_type(tdecl_union, ic_symbol_contents(&(field->name)), field_type)) {
-                puts("ic_analyse_decl_type_union: call to ic_decl_type_struct_add_field_type failed");
-                goto ERROR;
-            }
         }
     }
 
