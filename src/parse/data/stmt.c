@@ -964,8 +964,34 @@ unsigned int ic_stmt_if_deep_copy_embedded(struct ic_stmt_if *from, struct ic_st
         return 0;
     }
 
-    puts("ic_stmt_if_deep_copy_embedded: unimplemented");
-    return 0;
+    to->expr = 0;
+    if (from->expr) {
+        to->expr = ic_expr_deep_copy(from->expr);
+        if (!to->expr) {
+            puts("ic_stmt_if_deep_copy_embedded: call to ic_expr_deep_copy failed");
+            return 0;
+        }
+    }
+
+    to->then_body = 0;
+    if (from->then_body) {
+        to->then_body = ic_body_deep_copy(from->then_body);
+        if (!to->then_body) {
+            puts("ic_stmt_if_deep_copy_embedded: call to ic_body_deep_copy failed");
+            return 0;
+        }
+    }
+
+    to->else_body = 0;
+    if (from->else_body) {
+        to->else_body = ic_body_deep_copy(from->else_body);
+        if (!to->else_body) {
+            puts("ic_stmt_if_deep_copy_embedded: call to ic_body_deep_copy failed");
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
 /* returns pointer on success
