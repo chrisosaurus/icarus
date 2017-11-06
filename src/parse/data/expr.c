@@ -189,6 +189,15 @@ struct ic_expr_func_call *ic_expr_func_call_deep_copy(struct ic_expr_func_call *
  * returns 0 on failure
  */
 unsigned int ic_expr_func_call_deep_copy_embedded(struct ic_expr_func_call *from, struct ic_expr_func_call *to) {
+    unsigned int i = 0;
+    unsigned int len = 0;
+
+    struct ic_type_ref *type_ref = 0;
+    struct ic_type_ref *new_type_ref = 0;
+
+    struct ic_expr *expr = 0;
+    struct ic_expr *new_expr = 0;
+
     if (!from) {
         puts("ic_expr_func_call_deep_copy_embedded: from was null");
         return 0;
@@ -199,9 +208,65 @@ unsigned int ic_expr_func_call_deep_copy_embedded(struct ic_expr_func_call *from
         return 0;
     }
 
-    puts("ic_expr_func_call_deep_copy_embedded: unimplemented");
-    return 0;
+    to->fname = 0;
+    if (from->fname) {
+        to->fname = ic_expr_deep_copy(from->fname);
+        if (!to->fname) {
+            puts("ic_expr_func_call_deep_copy_embedded: call to ic_expr_deep_copy failed");
+            return 0;
+        }
+    }
 
+    /* deep copy type_refs */
+    len = ic_pvector_length(&(from->type_refs));
+    for (i=0; i<len; ++i) {
+        type_ref = ic_pvector_get(&(from->type_refs), i);
+        if (!type_ref) {
+            puts("ic_expr_func_call_deep_copy_embedded: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        new_type_ref = ic_type_ref_deep_copy(type_ref);
+        if (!new_type_ref) {
+            puts("ic_expr_func_call_deep_copy_embedded: call to ic_expr_deep_copy failed");
+            return 0;
+        }
+
+        if (-1 == ic_pvector_append(&(to->type_refs), new_type_ref)) {
+            puts("ic_expr_func_call_deep_copy_embedded: call to ic_pvector_append failed");
+            return 0;
+        }
+    }
+
+    /* deep copy args */
+    len = ic_pvector_length(&(from->args));
+    for (i=0; i<len; ++i) {
+        expr = ic_pvector_get(&(from->args), i);
+        if (!expr) {
+            puts("ic_expr_func_call_deep_copy_embedded: call to ic_pvector_get failed");
+            return 0;
+        }
+
+        new_expr = ic_expr_deep_copy(expr);
+        if (!new_expr) {
+            puts("ic_expr_func_call_deep_copy_embedded: call to ic_expr_deep_copy failed");
+            return 0;
+        }
+
+        if (-1 == ic_pvector_append(&(to->args), new_expr)) {
+            puts("ic_expr_func_call_deep_copy_embedded: call to ic_pvector_append failed");
+            return 0;
+        }
+    }
+
+    /* do not copy over string caches */
+    to->string = 0;
+    to->sig_param = 0;
+
+    /* can safely copy over non-owned fdecl pointer */
+    to->fdecl = from->fdecl;
+
+    return 1;
 }
 
 /* set fdecl on fcall
