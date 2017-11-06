@@ -156,6 +156,54 @@ unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned
     return 1;
 }
 
+/* perform a deep copy of func_call
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_expr_func_call *ic_expr_func_call_deep_copy(struct ic_expr_func_call *func_call) {
+    struct ic_expr_func_call *new_func_call = 0;
+
+    if (!func_call) {
+        puts("ic_expr_func_call_deep_copy: func_call was null");
+        return 0;
+    }
+
+    new_func_call = calloc(1, sizeof(struct ic_expr_func_call));
+    if (!new_func_call) {
+        puts("ic_expr_func_call_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_expr_func_call_deep_copy_embedded(func_call, new_func_call)) {
+        puts("ic_expr_func_call_deep_copy: call to ic_expr_func_call_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_func_call;
+}
+
+/* perform a deep copy of func_call embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_func_call_deep_copy_embedded(struct ic_expr_func_call *from, struct ic_expr_func_call *to) {
+    if (!from) {
+        puts("ic_expr_func_call_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_expr_func_call_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    puts("ic_expr_func_call_deep_copy_embedded: unimplemented");
+    return 0;
+
+}
+
 /* set fdecl on fcall
  * must not already be set
  *
@@ -798,6 +846,54 @@ unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, unsigne
     return 1;
 }
 
+/* perform a deep copy of constant
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_expr_constant *ic_expr_constant_deep_copy(struct ic_expr_constant *constant) {
+    struct ic_expr_constant *new_cons = 0;
+
+    if (!constant) {
+        puts("ic_expr_constant_deep_copy: constant was null");
+        return 0;
+    }
+
+    new_cons = calloc(1, sizeof(struct ic_expr_constant));
+    if (!new_cons) {
+        puts("ic_expr_constant_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_expr_constant_deep_copy_embedded(constant, new_cons)) {
+        puts("ic_expr_constant_deep_copy: call to ic_expr_constant_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_cons;
+}
+
+/* perform a deep copy of constant embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_constant_deep_copy_embedded(struct ic_expr_constant *from, struct ic_expr_constant *to) {
+    if (!from) {
+        puts("ic_expr_constant_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_expr_constant_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    puts("ic_expr_constant_deep_copy_embedded: unimplemented");
+    return 0;
+
+}
+
 /* return pointer to unsigned integer within,
  * will only succeed if constant is of the correct type
  *
@@ -1169,6 +1265,53 @@ unsigned int ic_expr_operator_destroy(struct ic_expr_operator *op, unsigned int 
     return 1;
 }
 
+/* perform a deep copy of operator
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_expr_operator *ic_expr_operator_deep_copy(struct ic_expr_operator *operator) {
+    struct ic_expr_operator *new_op = 0;
+
+    if (!operator) {
+        puts("ic_expr_operator_deep_copy: operator was null");
+        return 0;
+    }
+
+    new_op = calloc(1, sizeof(struct ic_expr_operator));
+    if (!new_op) {
+        puts("ic_expr_operator_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_expr_operator_deep_copy_embedded(operator, new_op)) {
+        puts("ic_expr_operator_deep_copy: call to ic_expr_operator_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_op;
+}
+
+/* perform a deep copy of operator embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_operator_deep_copy_embedded(struct ic_expr_operator *from, struct ic_expr_operator *to) {
+    if (!from) {
+        puts("ic_expr_operator_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_expr_operator_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    puts("ic_expr_operator_deep_copy_embedded: unimplemented");
+    return 0;
+}
+
 /* print this operator */
 void ic_expr_operator_print(FILE *fd, struct ic_expr_operator *op, unsigned int *indent_level) {
     /* fake indent we pass into sub expr */
@@ -1325,6 +1468,53 @@ unsigned int ic_expr_faccess_destroy(struct ic_expr_faccess *faccess, unsigned i
     }
 
     return 1;
+}
+
+/* perform a deep copy of faccess
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_expr_faccess *ic_expr_faccess_deep_copy(struct ic_expr_faccess *faccess) {
+    struct ic_expr_faccess *new_faccess = 0;
+
+    if (!faccess) {
+        puts("ic_expr_faccess_deep_copy: faccess was null");
+        return 0;
+    }
+
+    new_faccess = calloc(1, sizeof(struct ic_expr_faccess));
+    if (!new_faccess) {
+        puts("ic_expr_faccess_deep_copy: call to calloc failed");
+        return 0;
+    }
+
+    if (!ic_expr_faccess_deep_copy_embedded(faccess, new_faccess)) {
+        puts("ic_expr_faccess_deep_copy: call to ic_expr_faccess_deep_copy_embedded failed");
+        return 0;
+    }
+
+    return new_faccess;
+}
+
+/* perform a deep copy of faccess embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_faccess_deep_copy_embedded(struct ic_expr_faccess *from, struct ic_expr_faccess *to) {
+    if (!from) {
+        puts("ic_expr_faccess_deep_copy_embedded: from was null");
+        return 0;
+    }
+
+    if (!to) {
+        puts("ic_expr_faccess_deep_copy_embedded: to was null");
+        return 0;
+    }
+
+    puts("ic_expr_faccess_deep_copy_embedded: unimplemented");
+    return 0;
 }
 
 /* print this fieldaccess */
@@ -1540,8 +1730,10 @@ unsigned int ic_expr_deep_copy_embedded(struct ic_expr *from, struct ic_expr *to
     /* dispatch on type */
     switch (from->tag) {
         case ic_expr_type_func_call:
-            puts("ic_expr_deep_copy_embedded: func_call: unimplemented");
-            return 0;
+            if (!ic_expr_func_call_deep_copy_embedded(&(from->u.fcall), &(to->u.fcall))) {
+                puts("ic_expr_deep_copy_embedded: identifier: call to ic_expr_func-call_deep_copy_embedded failed");
+                return 0;
+            }
             break;
 
         case ic_expr_type_identifier:
@@ -1552,18 +1744,24 @@ unsigned int ic_expr_deep_copy_embedded(struct ic_expr *from, struct ic_expr *to
             break;
 
         case ic_expr_type_constant:
-            puts("ic_expr_deep_copy_embedded: constant: unimplemented");
-            return 0;
+            if (!ic_expr_constant_deep_copy_embedded(&(from->u.cons), &(to->u.cons))) {
+                puts("ic_expr_deep_copy_embedded: identifier: call to ic_expr_constant_deep_copy_embedded failed");
+                return 0;
+            }
             break;
 
         case ic_expr_type_operator:
-            puts("ic_expr_deep_copy_embedded: operator: unimplemented");
-            return 0;
+            if (!ic_expr_operator_deep_copy_embedded(&(from->u.op), &(to->u.op))) {
+                puts("ic_expr_deep_copy_embedded: identifier: call to ic_expr_operator_deep_copy_embedded failed");
+                return 0;
+            }
             break;
 
         case ic_expr_type_field_access:
-            puts("ic_expr_deep_copy_embedded: field_access: unimplemented");
-            return 0;
+            if (!ic_expr_faccess_deep_copy_embedded(&(from->u.faccess), &(to->u.faccess))) {
+                puts("ic_expr_deep_copy_embedded: identifier: call to ic_expr_faccess_deep_copy_embedded failed");
+                return 0;
+            }
             break;
 
         default:

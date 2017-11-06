@@ -68,6 +68,21 @@ unsigned int ic_expr_func_call_init(struct ic_expr_func_call *fcall, struct ic_e
  */
 unsigned int ic_expr_func_call_destroy(struct ic_expr_func_call *fcall, unsigned int free_fcall);
 
+/* perform a deep copy of func_call
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_expr_func_call *ic_expr_func_call_deep_copy(struct ic_expr_func_call *func_call);
+
+/* perform a deep copy of func_call embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_func_call_deep_copy_embedded(struct ic_expr_func_call *from, struct ic_expr_func_call *to);
+
+
 /* set fdecl on fcall
  * must not already be set
  *
@@ -250,6 +265,20 @@ unsigned int ic_expr_constant_init(struct ic_expr_constant *constant, enum ic_ex
  */
 unsigned int ic_expr_constant_destroy(struct ic_expr_constant *constant, unsigned int free_const);
 
+/* perform a deep copy of constant
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_expr_constant *ic_expr_constant_deep_copy(struct ic_expr_constant *constant);
+
+/* perform a deep copy of constant embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_constant_deep_copy_embedded(struct ic_expr_constant *from, struct ic_expr_constant *to);
+
 /* return pointer to unsigned integer within,
  * will only succeed if constant is of the correct type
  *
@@ -357,6 +386,21 @@ unsigned int ic_expr_operator_init(struct ic_expr_operator *operator, enum ic_ex
  */
 unsigned int ic_expr_operator_destroy(struct ic_expr_operator *op, unsigned int free_op);
 
+/* perform a deep copy of operator
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_expr_operator *ic_expr_operator_deep_copy(struct ic_expr_operator *operator);
+
+/* perform a deep copy of operator embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_operator_deep_copy_embedded(struct ic_expr_operator *from, struct ic_expr_operator *to);
+
+
 /* print this operator */
 void ic_expr_operator_print(FILE *fd, struct ic_expr_operator *op, unsigned int *indent_level);
 
@@ -396,6 +440,21 @@ unsigned int ic_expr_faccess_init(struct ic_expr_faccess *faccess, struct ic_exp
  * returns 0 on failure
  */
 unsigned int ic_expr_faccess_destroy(struct ic_expr_faccess *faccess, unsigned int free_faccess);
+
+/* perform a deep copy of faccess
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_expr_faccess *ic_expr_faccess_deep_copy(struct ic_expr_faccess *faccess);
+
+/* perform a deep copy of faccess embedded within an object
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int ic_expr_faccess_deep_copy_embedded(struct ic_expr_faccess *from, struct ic_expr_faccess *to);
+
 
 /* print this fieldaccess */
 void ic_expr_faccess_print(FILE *fd, struct ic_expr_faccess *faccess, unsigned int *indent_level);
