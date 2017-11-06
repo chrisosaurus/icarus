@@ -797,8 +797,16 @@ unsigned int ic_stmt_begin_deep_copy_embedded(struct ic_stmt_begin *from, struct
         return 0;
     }
 
-    puts("ic_stmt_begin_deep_copy_embedded: unimplemented");
-    return 0;
+    to->body = 0;
+    if (from->body) {
+        to->body = ic_body_deep_copy(from->body);
+        if (!to->body) {
+            puts("ic_stmt_begin_deep_copy_embedded: call to ic_body_deep_copy failed");
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
 /* print this begin */
