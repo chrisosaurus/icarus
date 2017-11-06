@@ -1539,8 +1539,25 @@ unsigned int ic_expr_faccess_deep_copy_embedded(struct ic_expr_faccess *from, st
         return 0;
     }
 
-    puts("ic_expr_faccess_deep_copy_embedded: unimplemented");
-    return 0;
+    to->left = 0;
+    if (from->left) {
+        to->left = ic_expr_deep_copy(from->left);
+        if (!to->left) {
+            puts("ic_expr_faccess_deep_copy_embedded: call to ic_expr_deep_copy failed");
+            return 0;
+        }
+    }
+
+    to->right = 0;
+    if (from->right) {
+        to->right = ic_expr_deep_copy(from->right);
+        if (!to->right) {
+            puts("ic_expr_faccess_deep_copy_embedded: call to ic_expr_deep_copy failed");
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
 /* print this fieldaccess */
