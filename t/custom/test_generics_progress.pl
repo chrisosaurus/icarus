@@ -192,16 +192,17 @@ my $cases = [
       fn main()
           let t = Maybe[List[Sint]](Nothing())
           let t1 = List[Sint](3s, t)
-          let t2 = List[Sint](2s, t1)
-          let t3 = List[Sint](1s, t2)
+          let t2 = Maybe[List[Sint]](t1)
+          let t3 = List[Sint](2s, t2)
+          let t4 = Maybe[List[Sint]](t3)
+          let t5 = List[Sint](1s, t4)
 
-          println(t3)
+          println(t5)
       end
     ',
     expected => '
-      List[Sint]{1, Maybe[List[Sint]]{List[Sint]{2, Maybe[List[Sint]{List[Sint]{3, Maybe[List[Sint]]{Nothing()}}}}}}
+      List[Sint]{1, Maybe[List[Sint]]{List[Sint]{2, Maybe[List[Sint]]{List[Sint]{3, Maybe[List[Sint]]{Nothing{}}}}}}}
     ',
-    failure => 1,
   },
 ];
 

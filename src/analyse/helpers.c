@@ -2549,7 +2549,9 @@ struct ic_decl_func *ic_analyse_func_decl_instantiate_generic(struct ic_kludge *
         return 0;
     }
 
-    /* 6) store in kludge */
+    /* 6) store in kludge
+     * we have to store in kludge BEFORE performing analysis incase our analysis depends on finding this type
+     */
     if (!ic_kludge_add_fdecl(kludge, new_fdecl)) {
         puts("ic_analyse_func_decl_instantiate_generic: call to ic_kludge_add_fdecl failed");
         return 0;
@@ -2660,15 +2662,17 @@ struct ic_decl_type *ic_analyse_type_decl_instantiate_generic(struct ic_kludge *
         return 0;
     }
 
-    /* 4) perform analysis on copy (generating functions, populating field_dict, etc.) */
-    if (!ic_analyse_decl_type(kludge, new_decl_type)) {
-        puts("ic_analyse_type_decl_instantiate_generic: call to ic_analyse_decl_type failed");
+    /* 4) store in kludge
+     * we have to store in kludge BEFORE performing analysis incase our analysis depends on finding this type
+     */
+    if (!ic_kludge_add_tdecl(kludge, new_decl_type)) {
+        puts("ic_analyse_type_decl_instantiate_generic: call to ic_kludge_add_tdecl failed");
         return 0;
     }
 
-    /* 5) store in kludge */
-    if (!ic_kludge_add_tdecl(kludge, new_decl_type)) {
-        puts("ic_analyse_type_decl_instantiate_generic: call to ic_kludge_add_tdecl failed");
+    /* 5) perform analysis on copy (generating functions, populating field_dict, etc.) */
+    if (!ic_analyse_decl_type(kludge, new_decl_type)) {
+        puts("ic_analyse_type_decl_instantiate_generic: call to ic_analyse_decl_type failed");
         return 0;
     }
 
