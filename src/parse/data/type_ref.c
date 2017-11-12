@@ -52,7 +52,6 @@ unsigned int ic_type_ref_init(struct ic_type_ref *type) {
     }
 
     type->mangled_name = 0;
-    type->full_name = 0;
 
     return 1;
 }
@@ -188,13 +187,6 @@ unsigned int ic_type_ref_destroy(struct ic_type_ref *type, unsigned int free_typ
         }
     }
 
-    if (type->full_name) {
-        if (!ic_symbol_destroy(type->full_name, 1)) {
-            puts("ic_type_ref_destroy: call to ic_symbol_destroy failed");
-            return 0;
-        }
-    }
-
     /* if asked nicely */
     if (free_type) {
         free(type);
@@ -254,7 +246,6 @@ unsigned int ic_type_ref_deep_copy_embedded(struct ic_type_ref *from, struct ic_
     to->tag = from->tag;
 
     to->mangled_name = 0;
-    to->full_name = 0;
 
     switch (to->tag) {
         case ic_type_ref_unknown:
@@ -957,10 +948,6 @@ struct ic_symbol *ic_type_ref_full_name(struct ic_type_ref *tref) {
         return 0;
     }
 
-    if (tref->full_name) {
-        return tref->full_name;
-    }
-
     switch (tref->tag) {
         case ic_type_ref_unknown:
             puts("ic_type_ref_full_name: tag ic_type_ref_unknown not supported");
@@ -981,7 +968,6 @@ struct ic_symbol *ic_type_ref_full_name(struct ic_type_ref *tref) {
               puts("ic_type_ref_full_name: call to ic_type_param_full_name failed");
               return 0;
             }
-            tref->full_name = sym;
             break;
 
         case ic_type_ref_resolved:
@@ -990,7 +976,6 @@ struct ic_symbol *ic_type_ref_full_name(struct ic_type_ref *tref) {
                 puts("ic_type_ref_full_name: call to ic_decl_type_full_name failed");
                 return 0;
             }
-            tref->full_name = sym;
             break;
 
         default:
