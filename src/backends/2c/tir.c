@@ -376,8 +376,8 @@ unsigned int ic_b2c_compile_stmt_match(struct ic_kludge *input_kludge, struct ic
     struct ic_symbol *type_mangled_name = 0;
     char *type_mangled_name_ch = 0;
     char *field_name_ch = 0;
-    struct ic_symbol *field_type_sym = 0;
-    char *field_type_ch = 0;
+    struct ic_symbol *field_mangled_type_sym = 0;
+    char *field_mangled_type_ch = 0;
 
     if (!input_kludge) {
         puts("ic_b2c_compile_stmt_match: input_kludge was null");
@@ -440,20 +440,20 @@ unsigned int ic_b2c_compile_stmt_match(struct ic_kludge *input_kludge, struct ic
 
         field_name_ch = ic_symbol_contents(&(tcase->field->name));
 
-        field_type_sym = ic_type_ref_get_symbol(tcase->field->type);
-        if (!field_type_sym) {
-            puts("ic_b2c_compile_stmt_match: call to ic_type_ref_get_symbol failed");
+        field_mangled_type_sym = ic_type_ref_mangled_name(tcase->field->type);
+        if (!field_mangled_type_sym) {
+            puts("ic_b2c_compile_stmt_match: call to ic_type_ref_mangled_name failed");
             return 0;
         }
 
-        field_type_ch = ic_symbol_contents(field_type_sym);
+        field_mangled_type_ch = ic_symbol_contents(field_mangled_type_sym);
 
         /* insert case */
-        fprintf(out, "    case %s_tag_%s_%s:\n", type_mangled_name_ch, field_type_ch, field_name_ch);
+        fprintf(out, "    case %s_tag_%s_%s:\n", type_mangled_name_ch, field_mangled_type_ch, field_name_ch);
         fputs("      {\n", out);
 
         /* insert var to unpack */
-        fprintf(out, "      %s %s = %s->u.%s;\n", field_type_ch, field_name_ch, sym_char, field_name_ch);
+        fprintf(out, "      %s %s = %s->u.%s;\n", field_mangled_type_ch, field_name_ch, sym_char, field_name_ch);
 
         if (!ic_b2c_compile_body(input_kludge, tcase->tbody, out)) {
             puts("ic_b2c_compile_stmt_match: call to ic_b2c_compile_body failed for case body");

@@ -167,12 +167,12 @@ my $cases = [
       end
       ',
     expected => '
-      Maybe[Maybe[Sint]]{6}
+      Maybe[Sint]{4}
+      Maybe[Maybe[Sint]]{Maybe[Sint]{6}}
       Maybe[Sint]{6}
-      My Maybe contained: 6s
-      Maybe[String]{"Hello Maybe world"}
+      My Maybe contained: 6
+      Maybe[String]{Hello Maybe world}
     ',
-    failure => 1,
   },
   {
     input => '
