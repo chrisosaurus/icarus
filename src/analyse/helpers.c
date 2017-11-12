@@ -1356,7 +1356,7 @@ struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_
         }
 
         type_refs = &(fcall->type_refs);
-        type = ic_analyse_resolve_type(kludge, "ic_analyse_infer_fcall", "maybe these messages are not so helpful", 0, fname, type_refs);
+        type = ic_analyse_resolve_type(kludge, "ic_analyse_infer_fcall", "maybe these messages are not so helpful", &(containing_fdecl->type_params), fname, type_refs);
 
         /* 2) if no tdecl, error */
         if (!type) {
@@ -2753,7 +2753,7 @@ unsigned int ic_resolve_type_ref_list(struct ic_kludge *kludge, struct ic_pvecto
         }
 
         /* 3) finally try resolve via kludge */
-        tdecl = ic_analyse_resolve_type_ref(kludge, "ic_resolve_type_ref_list", "this message isn't super helpful", 0, tref);
+        tdecl = ic_analyse_resolve_type_ref(kludge, "ic_resolve_type_ref_list", "this message isn't super helpful", type_params, tref);
         if (!tdecl) {
             fputs("ic_anlyse_type_ref_list: call to ic_analyse_resolve_type_ref failed for typeref: ", stdout);
             ic_type_ref_print(stdout, tref);
