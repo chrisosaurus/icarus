@@ -18,7 +18,6 @@ type Foo
     b::String
 end
 
-# maybe_add_one(Bool,Sint)
 fn maybe_add_one(b::Bool, i::Sint) -> Sint
     if b
         return i + 1s
@@ -27,7 +26,6 @@ fn maybe_add_one(b::Bool, i::Sint) -> Sint
     end
 end
 
-# main()
 fn main() -> Void
     let f::Foo = Foo(maybe_add_one(True, 1s), "hello")
     println(f)

@@ -152,9 +152,13 @@ unsigned int ic_analyse_decl_type(struct ic_kludge *kludge, struct ic_decl_type 
      * an appropriate default constructor for this type
      */
     if (!ic_decl_type_isbuiltin(tdecl)) {
-        if (!ic_analyse_decl_type_generate_functions(kludge, tdecl)) {
-            puts("ic_analyse_decl_type: call to ic_analyse_decl_type_generate_functions failed");
-            return 0;
+
+        /* TODO FIXME should we both calling generation on non-instantiated types? */
+        if (ic_decl_type_is_instantiated(tdecl)) {
+            if (!ic_analyse_decl_type_generate_functions(kludge, tdecl)) {
+                puts("ic_analyse_decl_type: call to ic_analyse_decl_type_generate_functions failed");
+                return 0;
+            }
         }
     }
 
@@ -390,7 +394,9 @@ unsigned int ic_analyse_decl_type_generate_functions(struct ic_kludge *kludge, s
  * returns 0 on failure
  */
 unsigned int ic_analyse_decl_type_struct(struct ic_kludge *kludge, struct ic_decl_type_struct *tdecl_struct) {
-    /* name of current type we are trying to declare */
+    /* name of current type we are trying to declare
+     * only used for debug output
+     */
     struct ic_symbol *this_type = 0;
     char *this_type_ch = 0;
 
@@ -412,9 +418,9 @@ unsigned int ic_analyse_decl_type_struct(struct ic_kludge *kludge, struct ic_dec
         return 0;
     }
 
-    this_type = ic_decl_type_struct_full_name(tdecl_struct);
+    this_type = ic_decl_type_struct_generic_name(tdecl_struct);
     if (!this_type) {
-        puts("ic_analyse_decl_type_struct: for this_type: call to ic_decl_type_struct_full_name failed");
+        puts("ic_analyse_decl_type_struct: for this_type: call to ic_decl_type_struct_generic_name failed");
         return 0;
     }
 
@@ -424,12 +430,6 @@ unsigned int ic_analyse_decl_type_struct(struct ic_kludge *kludge, struct ic_dec
         return 0;
     }
 
-    /* check fields */
-    if (!ic_analyse_field_list("type declaration", this_type_ch, kludge, &(tdecl_struct->type_params), &(tdecl_struct->fields))) {
-        puts("ic_analyse_decl_type_struct: call to ic_analyse_field_list for field validation failed");
-        goto ERROR;
-    }
-
     /* if this type is instantiated then
      * 1) fill in field_dict along the way if this is instantiated
      */
@@ -437,6 +437,12 @@ unsigned int ic_analyse_decl_type_struct(struct ic_kludge *kludge, struct ic_dec
     if (!ic_decl_type_struct_is_instantiated(tdecl_struct)) {
         /* stop here */
         return 1;
+    }
+
+    /* check fields */
+    if (!ic_analyse_field_list("type declaration", this_type_ch, kludge, &(tdecl_struct->type_params), &(tdecl_struct->fields))) {
+        puts("ic_analyse_decl_type_struct: call to ic_analyse_field_list for field validation failed");
+        goto ERROR;
     }
 
     /* fill in field_dict
@@ -577,6 +583,12 @@ unsigned int ic_analyse_decl_type_struct_generate_functions(struct ic_kludge *kl
             }
         }
 
+        /* copy over type_params */
+        if (!ic_type_param_pvector_deep_copy_embedded(&(tdecl_struct->type_params), &(constructor_decl->type_params))) {
+            puts("ic_analyse_decl_type_struct_generate_functions: call to ic_type_params_pvector_deep_copy_embedded failed");
+            goto ERROR;
+        }
+
         /* for each constructor we need
          * check if already exists (user defined)
          * if not, then add a generate to make it hapen
@@ -618,7 +630,9 @@ ERROR:
  * returns 0 on failure
  */
 unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl_type_union *tdecl_union) {
-    /* name of current type we are trying to declare */
+    /* name of current type we are trying to declare
+     * used only for debug output
+     */
     struct ic_symbol *this_type = 0;
     char *this_type_ch = 0;
 
@@ -650,9 +664,9 @@ unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl
         return 0;
     }
 
-    this_type = ic_decl_type_union_full_name(tdecl_union);
+    this_type = ic_decl_type_union_generic_name(tdecl_union);
     if (!this_type) {
-        puts("ic_analyse_decl_type_union: for this_type: call to ic_decl_type_union_full_name failed");
+        puts("ic_analyse_decl_type_union: for this_type: call to ic_decl_type_union_generic_name failed");
         return 0;
     }
 
@@ -660,11 +674,6 @@ unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl
     if (!this_type_ch) {
         puts("ic_analyse_decl_type_union: for this_type: call to ic_symbol_contents failed");
         return 0;
-    }
-
-    if (!ic_analyse_field_list("type declaration", this_type_ch, kludge, &(tdecl_union->type_params), &(tdecl_union->fields))) {
-        puts("ic_analyse_decl_type_union: call to ic_analyse_field_list for field validation failed");
-        goto ERROR;
     }
 
     /* if this type is instantiated then
@@ -675,6 +684,11 @@ unsigned int ic_analyse_decl_type_union(struct ic_kludge *kludge, struct ic_decl
     if (!ic_decl_type_union_is_instantiated(tdecl_union)) {
         /* stop here */
         return 1;
+    }
+
+    if (!ic_analyse_field_list("type declaration", this_type_ch, kludge, &(tdecl_union->type_params), &(tdecl_union->fields))) {
+        puts("ic_analyse_decl_type_union: call to ic_analyse_field_list for field validation failed");
+        goto ERROR;
     }
 
     set = ic_set_new();
@@ -903,15 +917,20 @@ unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func 
     }
 
     /* name of this func, useful for error printing */
-    this_func = ic_decl_func_full_name(fdecl);
+    this_func = ic_decl_func_generic_name(fdecl);
     if (!this_func) {
-        puts("ic_analyse_decl_func: for this_type: call to ic_decl_func_full_name failed");
+        puts("ic_analyse_decl_func: for this_type: call to ic_decl_func_generic_name failed");
         return 0;
     }
 
     this_func_ch = ic_symbol_contents(this_func);
     if (!this_func_ch) {
         puts("ic_analyse_decl_func: for this_type: call to ic_symbol_contents failed");
+        return 0;
+    }
+
+    if (!ic_analyse_resolve_type_ref(kludge, "analyse_decl_func", this_func_ch, &(fdecl->type_params), &(fdecl->ret_type))) {
+        puts("ic_analyse_decl_func: for this_type: call to ic_analyse_resolve_type_ref failed");
         return 0;
     }
 
@@ -923,17 +942,17 @@ unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func 
         goto ERROR;
     }
 
+    if (fdecl->body.scope) {
+        puts("ic_analyse_decl_func: scope was already set on body");
+        goto ERROR;
+    }
+
     /* new scope with no parent
      * FIXME this scope is currently leaked
      */
     scope = ic_scope_new(0);
     if (!scope) {
         puts("ic_analyse_decl_func: call to ic_scope_new failed");
-        goto ERROR;
-    }
-
-    if (fdecl->body.scope) {
-        puts("ic_analyse_decl_func: scope was already set on body");
         goto ERROR;
     }
 

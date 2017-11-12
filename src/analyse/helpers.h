@@ -9,7 +9,7 @@
 
 /* iterate through the field list checking:
  *  a) all field's names are unique within this list
- *  b) all field's types exist in this kludge
+ *  b) all field's types can be resolved
  *
  * `unit` and `unit_name` are used for error printing
  * it is always printed as '%s for %s error goes here'
@@ -62,11 +62,15 @@ struct ic_decl_type * ic_analyse_resolve_type_ref(struct ic_kludge *kludge, char
 unsigned int ic_resolve_field_list(struct ic_kludge *kludge, char *unit, char *unit_name, struct ic_pvector *type_params, struct ic_pvector *fields);
 
 /* iterate through a type_ref list resolving each type_ref to a decl_type
+ * will favour a binding within type_param list if one can be found
+ * otherwise will use kludge
+ *
+ * type_params is optional
  *
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ic_analyse_type_ref_list(struct ic_kludge *kludge, struct ic_pvector *type_refs);
+unsigned int ic_resolve_type_ref_list(struct ic_kludge *kludge, struct ic_pvector *type_params, struct ic_pvector *type_refs);
 
 /* perform analysis on body
  * this will iterate through each statement and perform analysis
@@ -96,18 +100,18 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
  * returns ic_type * on success
  * returns 0 on failure
  */
-struct ic_decl_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr);
+struct ic_decl_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_decl_func *fdecl, struct ic_scope *scope, struct ic_expr *expr);
 
 struct ic_decl_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct ic_expr_constant *cons);
 
-struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall);
+struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_decl_func *fdecl, struct ic_scope *scope, struct ic_expr_func_call *fcall);
 
 /* perform analyse of let statement in the provided body
  *
  * returns 1 for success
  * returns 0 on failure
  */
-unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_stmt_let *let);
+unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_decl_func *fdecl, struct ic_body *body, struct ic_stmt_let *let);
 
 /* create a function signature string from a function call
  *
@@ -133,7 +137,7 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
  * returns ic_string * on success
  * returns 0 on failure
  */
-struct ic_string *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall);
+struct ic_string *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_decl_func *fdecl, struct ic_scope *scope, struct ic_expr_func_call *fcall);
 
 /* create a generic function signature string from a function call
  *

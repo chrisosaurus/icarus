@@ -18,7 +18,6 @@ union Foo
     b::String
 end
 
-# main()
 fn main() -> Void
     let f = Foo("Hello")
     match f

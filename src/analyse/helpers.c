@@ -4,7 +4,7 @@
 
 #include "../data/set.h"
 #include "../parse/data/stmt.h"
-#include "../parse/data/name_helpers.h"
+#include "../parse/name_helpers.h"
 #include "../parse/permissions.h"
 #include "data/slot.h"
 #include "helpers.h"
@@ -75,7 +75,7 @@ static unsigned int ic_analyse_mark_assigned(struct ic_scope *scope, struct ic_e
 
 /* iterate through the field list checking:
  *  a) all field's names are unique within this list
- *  b) all field's types exist in this kludge
+ *  b) all field's types can be resolved
  *
  * `unit` and `unit_name` are used for error printing
  * it is always printed as '%s for %s error goes here'
@@ -94,16 +94,10 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
     struct ic_field *field = 0;
     /* current name from field */
     char *name = 0;
-    /* current type from field */
-    struct ic_symbol *type = 0;
-    /* current type from field as string */
-    char *type_str = 0;
     /* set of all field names used */
     struct ic_set *set = 0;
     /* for each field this captures the type we resolve it to */
     struct ic_decl_type *field_type = 0;
-    /* type param we found when looking up generic argument */
-    struct ic_type_param *type_param = 0;
 
     if (!unit) {
         puts("ic_analyse_field_list: unit was null");
@@ -169,89 +163,19 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
          *
          *  FIXME check / consider this
          */
-        type = ic_type_ref_get_symbol(field->type);
-        if (!type) {
-            printf("ic_analyse_field_list: call to ic_type_ref_get_symbol failed for field '%s' in '%s' for '%s'\n",
+        field_type = ic_analyse_resolve_type_ref(kludge, unit, unit_name, type_params, field->type);
+        if (!field_type) {
+            printf("ic_analyse_field_list: call to ic_analyse_resolve_type_ref failed for field '%s' in '%s' for '%s'\n",
                    name,
                    unit,
                    unit_name);
             goto ERROR;
         }
 
-        type_str = ic_symbol_contents(type);
-        if (!type_str) {
-            printf("ic_analyse_field_list: call to ic_symbol_contents failed for field '%s' in '%s' for '%s'\n",
-                   name,
-                   unit,
-                   unit_name);
+        /* check this is not the void type */
+        if (ic_decl_type_isvoid(field_type)) {
+            puts("ic_analyse_field_list: void type used in field list");
             goto ERROR;
-        }
-
-        /* check that this field's type exists */
-        /* if we have type_params then check there first */
-        if (type_params && (type_param = ic_type_param_search(type_params, type_str))) {
-            /* found
-             *
-             * if the found type_param is set (resolved),
-             * then we also want to also set our type_ref
-             * else (not resolved), we should leave it as we will
-             *      later on instantiate this * AFTER performing a deep copy
-             *      (which would invalidate any type_param *)
-             */
-
-            if (ic_type_param_check_set(type_param)) {
-                field_type = ic_type_param_get(type_param);
-                if (!field_type) {
-                    puts("ic_analyse_field_list: call to ic_type_param_get failed");
-                    goto ERROR;
-                }
-
-                if (!ic_type_ref_set_type_decl(field->type, field_type)) {
-                    printf("ic_analyse_field_list: trying to store param for '%s' on field '%s' during '%s' for '%s' failed\n",
-                           type_str,
-                           name,
-                           unit,
-                           unit_name);
-                    goto ERROR;
-                }
-            }
-
-        } else {
-            /* otherwise check in kludge */
-            field_type = ic_kludge_get_decl_type(kludge, type_str);
-            if (!field_type) {
-                printf("ic_analyse_field_list: type '%s' mentioned in '%s' for '%s' does not exist within this kludge\n",
-                       type_str,
-                       unit,
-                       unit_name);
-                goto ERROR;
-            }
-
-            /* check this is not the void type */
-            if (ic_decl_type_isvoid(field_type)) {
-                puts("ic_analyse_field_list: void type used in field list");
-                goto ERROR;
-            }
-
-            /* only store if type_ref is not already resolved
-             * this happens for generic instantiated functions which have already
-             * been analysed
-             *
-             * this double-handling might be a problem
-             */
-            if (field->type->tag != ic_type_ref_resolved) {
-                /* store that type decl on the field (to save lookup costs again later)
-                 * if field->type is already a tdecl this will blow up
-                 */
-                if (!ic_type_ref_set_type_decl(field->type, field_type)) {
-                    printf("ic_analyse_field_list: trying to store tdecl for '%s' on field '%s' during '%s' for '%s' failed\n",
-                           type_str,
-                           name,
-                           unit,
-                           unit_name);
-                    goto ERROR;
-                }
-            }
         }
     }
 
@@ -334,6 +258,16 @@ struct ic_decl_type * ic_analyse_resolve_type(struct ic_kludge *kludge, char *un
         return 0;
     }
 
+    /* ensure type_args is resolved
+     * TODO FIXME not sure if this is the best place to do this
+     * TODO FIXME this doesn't seem sufficient
+     * ideally the 'source' of these type_args would instantiate them appropriately
+     */
+    if (!ic_resolve_type_ref_list(kludge, type_params, type_args)) {
+        puts("ic_analyse_resolve_type: call to ic_resolve_type_ref_list failed");
+        return 0;
+    }
+
     /* attempts to find as type_param */
     if (type_params) {
         type_param = ic_type_param_search(type_params, sym_ch);
@@ -342,7 +276,7 @@ struct ic_decl_type * ic_analyse_resolve_type(struct ic_kludge *kludge, char *un
 
             /* check type param is already resolved */
             if (!ic_type_param_check_set(type_param)) {
-                puts("ic_analyse_resolve_type: type_param was not set, internal error");
+                printf("ic_analyse_resolve_type: type_param was not set for type_param '%s', internal error\n", sym_ch);
                 return 0;
             }
 
@@ -426,6 +360,46 @@ struct ic_decl_type * ic_analyse_resolve_type(struct ic_kludge *kludge, char *un
         /* error */
         return 0;
     }
+
+    /* TODO FIXME MAJOR PROBLEM: these type_args haven't been "resolved" wrt to our type_params
+     * so a Maybe[T] still has T rather than the correct through binding to Sint
+     *
+     * this seems like a larger more general problem
+     */
+/* TODO FIXME REMOVE
+ * this code here shows:
+ *
+and our first arg in type_args is...: T
+but our first type param is...: T::String
+ic_analyse_resolve_type: unable to resolve type
+
+    I tried to lookup both:
+        T
+        T
+    and failed to find either
+
+ic_analyse_resolve_type_ref: call to ic_analyse_resolve_type failed
+ic_analyse_type_decl_instantiate_generic: call to ic_analyse_resolve_type_ref failed
+ic_analyse_resolve_type: call to ic_analyse_type_decl_instantiate_generic failed
+
+    I found the generic type:
+        Maybe[_]
+    and tried to instantiate it as:
+        Maybe[T]
+    but failed
+
+    TODO FIXME I have ic_analyse_type_ref_list(kludge, type_refs)
+               but I think I really want ic_resolve_type_ref_list(kludge, type_params, type_refs)
+
+ */
+//if (ic_pvector_length(type_args)) {
+//fputs("and our first arg in type_args is...: ", stdout);
+//ic_type_ref_print(stdout, ic_pvector_get(type_args, 0));
+//puts("");
+//fputs("but our first type param is...: ", stdout);
+//ic_type_param_print(stdout, ic_pvector_get(type_params, 0));
+//puts("");
+//}
 
     /* instantiate */
     decl_type = ic_analyse_type_decl_instantiate_generic(kludge, decl_type, type_args);
@@ -610,6 +584,11 @@ struct ic_decl_type * ic_analyse_resolve_type_ref(struct ic_kludge *kludge, char
             break;
     }
 
+    if (!ic_resolve_type_ref_list(kludge, type_params, &(type_ref->type_args))) {
+        puts("ic_analyse_resolve_type_ref: call to ic_resolve_type_ref_list failed");
+        return 0;
+    }
+
     return decl_type;
 }
 
@@ -739,7 +718,6 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
     unsigned int i_case = 0;
     /* number of cases */
     unsigned int n_cases = 0;
-    struct ic_symbol *ret_type_sym = 0;
 
     unsigned int fake_indent = 1;
 
@@ -804,24 +782,16 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                 }
 
                 /* type actually returned */
-                type = ic_analyse_infer(kludge, body->scope, expr);
+                type = ic_analyse_infer(kludge, fdecl, body->scope, expr);
                 if (!type) {
                     /* Void is a concrete type so type being null is an error */
                     puts("ic_analyse_body: failed to infer returned type");
                     goto ERROR;
                 }
 
-                ret_type_sym = ic_type_ref_get_type_name(&(fdecl->ret_type));
-                if (!ret_type_sym) {
-                    puts("ic_analyse_body: call to ic_type_ref_get_type_name failed");
-                    goto ERROR;
-                }
-
-                other_type = ic_kludge_get_decl_type_from_symbol(kludge, ret_type_sym);
+                other_type = ic_analyse_resolve_type_ref(kludge, "unit", "this unit name isnt very helpful", &(fdecl->type_params), &(fdecl->ret_type));
                 if (!other_type) {
-                    puts("ic_analyse_body: call to ic_kludge_get_decl_from_symbol failed");
-                    printf("ic_analyse_body: call to ic_kludge_get_decl_from_symbol failed for symbol '%s'\n", ic_symbol_contents(ret_type_sym));
-                    printf("ic_analyse_body: for function: ");
+                    puts("ic_analyse_body: call to ic_analyse_resolve_type-ref failed");
                     ic_decl_func_print_header(stdout, fdecl, &fake_indent);
                     goto ERROR;
                 }
@@ -843,7 +813,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                  * check that this let isn't masking an existing slot in scope
                  * create a new slot for this let and insert it into the current scope
                  */
-                if (!ic_analyse_let(unit, unit_name, kludge, body, ic_stmt_get_let(stmt))) {
+                if (!ic_analyse_let(unit, unit_name, kludge, fdecl, body, ic_stmt_get_let(stmt))) {
                     puts("ic_analyse_body: call to ic_analyse_let failed");
                     goto ERROR;
                 }
@@ -910,7 +880,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                 }
 
                 /* check expr and get type */
-                type = ic_analyse_infer(kludge, body->scope, expr);
+                type = ic_analyse_infer(kludge, fdecl, body->scope, expr);
                 if (!type) {
                     puts("ic_analyse_body: if: failed to infer type of condition expr");
                     goto ERROR;
@@ -1016,7 +986,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                 }
 
                 /* get type of left */
-                type = ic_analyse_infer(kludge, body->scope, expr);
+                type = ic_analyse_infer(kludge, fdecl, body->scope, expr);
                 if (!type) {
                     puts("ic_analyse_body: assign: call to ic_analyse_infer failed");
                     goto ERROR;
@@ -1036,7 +1006,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                 }
 
                 /* get type of right */
-                other_type = ic_analyse_infer(kludge, body->scope, expr);
+                other_type = ic_analyse_infer(kludge, fdecl, body->scope, expr);
                 if (!other_type) {
                     puts("ic_analyse_body: assign: call to ic_analyse_infer failed");
                     goto ERROR;
@@ -1064,7 +1034,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                     goto ERROR;
                 }
 
-                type = ic_analyse_infer(kludge, body->scope, expr);
+                type = ic_analyse_infer(kludge, fdecl, body->scope, expr);
                 if (!type) {
                     puts("ic_analyse_body: expr: call to ic_analyse_infer failed");
                     goto ERROR;
@@ -1093,7 +1063,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                     goto ERROR;
                 }
 
-                type = ic_analyse_infer(kludge, body->scope, expr);
+                type = ic_analyse_infer(kludge, fdecl, body->scope, expr);
                 if (!type) {
                     puts("ic_analyse_body: match: call to ic_analyse_infer failed");
                     goto ERROR;
@@ -1259,7 +1229,7 @@ ERROR:
     return 0;
 }
 
-struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall) {
+struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_decl_func *containing_fdecl, struct ic_scope *scope, struct ic_expr_func_call *fcall) {
     /* our resulting type */
     struct ic_decl_type *type = 0;
 
@@ -1268,7 +1238,7 @@ struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_
     char *ch = 0;
     struct ic_string *str = 0;
     struct ic_string *str_generic = 0;
-    struct ic_decl_func *fdecl = 0;
+    struct ic_decl_func *fcall_fdecl = 0;
 
     unsigned int fake_indent_level = 0;
 
@@ -1276,6 +1246,11 @@ struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_
 
     if (!kludge) {
         puts("ic_analyse_infer_fcall: kludge was null");
+        return 0;
+    }
+
+    if (!containing_fdecl) {
+        puts("ic_analyse_infer_fcall: fdecl was null");
         return 0;
     }
 
@@ -1323,28 +1298,28 @@ struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_
 
     /* if fcall already has an fdecl set */
     if (ic_expr_func_call_has_fdecl(fcall)) {
-        fdecl = ic_expr_func_call_get_fdecl(fcall);
-        if (!fdecl) {
+        fcall_fdecl = ic_expr_func_call_get_fdecl(fcall);
+        if (!fcall_fdecl) {
             puts("ic_analyse_infer_fcall: call to ic_expr_func_call_get_fdecl failed");
             return 0;
         }
         /* if fcall has generic arguments */
     } else if (ic_expr_func_call_type_refs_length(fcall) > 0) {
         /* first resolve all provided type args */
-        if (!ic_analyse_type_ref_list(kludge, &(fcall->type_refs))) {
-            puts("ic_analyse_infer_fcall: call to ic_analyse_type_ref_list failed");
+        if (!ic_resolve_type_ref_list(kludge, &(containing_fdecl->type_params), &(fcall->type_refs))) {
+            puts("ic_analyse_infer_fcall: call to ic_resolve_type_ref_list failed");
             return 0;
         }
 
         /* otherwise work out the fdecl */
-        str = ic_analyse_fcall_str(kludge, scope, fcall);
+        str = ic_analyse_fcall_str(kludge, containing_fdecl, scope, fcall);
         if (!str) {
             puts("ic_analyse_infer_fcall: call to ic_analyse_fcall_str failed");
             return 0;
         }
 
-        fdecl = ic_kludge_get_fdecl_from_string(kludge, str);
-        if (fdecl) {
+        fcall_fdecl = ic_kludge_get_fdecl_from_string(kludge, str);
+        if (fcall_fdecl) {
             goto INFER_FCALL_FOUND;
         }
 
@@ -1357,8 +1332,8 @@ struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_
             return 0;
         }
 
-        fdecl = ic_kludge_get_fdecl_from_string(kludge, str_generic);
-        if (fdecl) {
+        fcall_fdecl = ic_kludge_get_fdecl_from_string(kludge, str_generic);
+        if (fcall_fdecl) {
             goto INFER_FCALL_FOUND_GENERIC;
         }
 
@@ -1391,8 +1366,8 @@ struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_
 
         /* 3) try concrete (str) lookup again */
         /* now that our type has been instantiated we try again */
-        fdecl = ic_kludge_get_fdecl_from_string(kludge, str);
-        if (fdecl) {
+        fcall_fdecl = ic_kludge_get_fdecl_from_string(kludge, str);
+        if (fcall_fdecl) {
             goto INFER_FCALL_FOUND;
         }
 
@@ -1417,8 +1392,8 @@ INFER_FCALL_NOT_FOUND:
 
 INFER_FCALL_FOUND_GENERIC:
 
-        fdecl = ic_analyse_func_decl_instantiate_generic(kludge, fdecl, fcall);
-        if (!fdecl) {
+        fcall_fdecl = ic_analyse_func_decl_instantiate_generic(kludge, fcall_fdecl, fcall);
+        if (!fcall_fdecl) {
             puts("ic_analyse_infer_fcall: call to ic_analyse_func_decl_instantiate_generic failed");
             printf("ic_analyse_infer_fcall: failed to instantiate for generic call '%s'\n", ic_string_contents(str_generic));
             return 0;
@@ -1427,20 +1402,20 @@ INFER_FCALL_FOUND_GENERIC:
 INFER_FCALL_FOUND:
 
         /* record this found fdecl on the fcall */
-        if (!ic_expr_func_call_set_fdecl(fcall, fdecl)) {
+        if (!ic_expr_func_call_set_fdecl(fcall, fcall_fdecl)) {
             puts("ic_analyse_infer_fcall: call to ic_expr_func_call_set_fdecl failed");
             return 0;
         }
     } else {
         /* otherwise work out the fdecl */
-        str = ic_analyse_fcall_str(kludge, scope, fcall);
+        str = ic_analyse_fcall_str(kludge, containing_fdecl, scope, fcall);
         if (!str) {
             puts("ic_analyse_infer_fcall: call to ic_analyse_fcall_str failed");
             return 0;
         }
 
-        fdecl = ic_kludge_get_fdecl_from_string(kludge, str);
-        if (!fdecl) {
+        fcall_fdecl = ic_kludge_get_fdecl_from_string(kludge, str);
+        if (!fcall_fdecl) {
             /* return type not found
              * need helpful error message
              */
@@ -1454,7 +1429,7 @@ INFER_FCALL_FOUND:
         }
 
         /* record this found fdecl on the fcall */
-        if (!ic_expr_func_call_set_fdecl(fcall, fdecl)) {
+        if (!ic_expr_func_call_set_fdecl(fcall, fcall_fdecl)) {
             puts("ic_analyse_infer_fcall: call to ic_expr_func_call_set_fdecl failed");
             return 0;
         }
@@ -1465,7 +1440,7 @@ INFER_FCALL_FOUND:
     /* now we have to get the return type for this func */
 
     /* get return type from this function we found */
-    type = ic_kludge_get_decl_type_from_typeref(kludge, &(fdecl->ret_type));
+    type = ic_kludge_get_decl_type_from_typeref(kludge, &(fcall_fdecl->ret_type));
     if (!type) {
         printf("ic_analyse_infer_fcall: could not find return type '%s'\n", ch);
         return 0;
@@ -1474,7 +1449,7 @@ INFER_FCALL_FOUND:
     return type;
 }
 
-static struct ic_decl_type *ic_analyse_infer_faccess(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_faccess *faccess) {
+static struct ic_decl_type *ic_analyse_infer_faccess(struct ic_kludge *kludge, struct ic_decl_func *fdecl, struct ic_scope *scope, struct ic_expr_faccess *faccess) {
     /* our resulting type */
     struct ic_decl_type *type = 0;
     /* temporary */
@@ -1496,7 +1471,7 @@ static struct ic_decl_type *ic_analyse_infer_faccess(struct ic_kludge *kludge, s
     }
 
     /* take the left and evaluate to a type */
-    type = ic_analyse_infer(kludge, scope, faccess->left);
+    type = ic_analyse_infer(kludge, fdecl, scope, faccess->left);
     if (!type) {
         puts("ic_analyse_infer_faccess: ic_analyse_infer failed");
         return 0;
@@ -1675,7 +1650,7 @@ struct ic_decl_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct 
     return 0;
 }
 
-static struct ic_decl_type *ic_analyse_infer_operator(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_operator *op) {
+static struct ic_decl_type *ic_analyse_infer_operator(struct ic_kludge *kludge, struct ic_decl_func *fdecl, struct ic_scope *scope, struct ic_expr_operator *op) {
     /* our resulting type */
     struct ic_decl_type *type = 0;
 
@@ -1689,6 +1664,11 @@ static struct ic_decl_type *ic_analyse_infer_operator(struct ic_kludge *kludge, 
 
     if (!kludge) {
         puts("ic_analyse_infer_operator: kludge was null");
+        return 0;
+    }
+
+    if (!fdecl) {
+        puts("ic_analyse_infer_operator: fdecl was null");
         return 0;
     }
 
@@ -1773,7 +1753,7 @@ static struct ic_decl_type *ic_analyse_infer_operator(struct ic_kludge *kludge, 
         }
     }
 
-    type = ic_analyse_infer_fcall(kludge, scope, op->fcall);
+    type = ic_analyse_infer_fcall(kludge, fdecl, scope, op->fcall);
     if (!type) {
         puts("ic_analyse_infer_operator: call to ic_analyse_infer_fcall failed for second");
         return 0;
@@ -1799,7 +1779,7 @@ static struct ic_decl_type *ic_analyse_infer_operator(struct ic_kludge *kludge, 
  * returns ic_type * on success
  * returns 0 on failure
  */
-struct ic_decl_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr *expr) {
+struct ic_decl_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_decl_func *fdecl, struct ic_scope *scope, struct ic_expr *expr) {
     /* our resulting type */
     struct ic_decl_type *type = 0;
 
@@ -1812,6 +1792,11 @@ struct ic_decl_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope 
 
     if (!kludge) {
         puts("ic_analyse_infer: kludge was null");
+        return 0;
+    }
+
+    if (!fdecl) {
+        puts("ic_analyse_infer: fdecl was null");
         return 0;
     }
 
@@ -1860,7 +1845,7 @@ struct ic_decl_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope 
                 return 0;
             }
 
-            type = ic_analyse_infer_fcall(kludge, scope, fcall);
+            type = ic_analyse_infer_fcall(kludge, fdecl, scope, fcall);
             if (!type) {
                 puts("ic_analyse_infer: call to ic_analyse_infer_fcall failed");
                 return 0;
@@ -1920,7 +1905,7 @@ struct ic_decl_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope 
                 return 0;
             }
 
-            type = ic_analyse_infer_operator(kludge, scope, op);
+            type = ic_analyse_infer_operator(kludge, fdecl, scope, op);
             if (!type) {
                 puts("ic_analyse_infer: call to ic_analyse_infer_operator failed");
                 return 0;
@@ -1937,7 +1922,7 @@ struct ic_decl_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope 
                 return 0;
             }
 
-            type = ic_analyse_infer_faccess(kludge, scope, faccess);
+            type = ic_analyse_infer_faccess(kludge, fdecl, scope, faccess);
             if (!type) {
                 puts("ic_analyse_infer: call to ic_analyse_infer_faccess failed");
                 return 0;
@@ -1961,7 +1946,7 @@ struct ic_decl_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_scope 
  * returns 1 for success
  * returns 0 on failure
  */
-unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_body *body, struct ic_stmt_let *let) {
+unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludge, struct ic_decl_func *fdecl, struct ic_body *body, struct ic_stmt_let *let) {
     struct ic_slot *slot = 0;
     struct ic_decl_type *type = 0;
 
@@ -1982,6 +1967,11 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
 
     if (!kludge) {
         puts("ic_analyse_let: kludge was null");
+        return 0;
+    }
+
+    if (!fdecl) {
+        puts("ic_analyse_let: fdecl was null");
         return 0;
     }
 
@@ -2038,7 +2028,7 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
         return 0;
     }
 
-    init_type = ic_analyse_infer(kludge, body->scope, init_expr);
+    init_type = ic_analyse_infer(kludge, fdecl, body->scope, init_expr);
     if (!init_type) {
         puts("ic_analyse_let: call to ic_analyse_infer on init_expr failed");
         return 0;
@@ -2133,7 +2123,7 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
  * returns ic_string * on success
  * returns 0 on failure
  */
-struct ic_string *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope *scope, struct ic_expr_func_call *fcall) {
+struct ic_string *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_decl_func *fdecl, struct ic_scope *scope, struct ic_expr_func_call *fcall) {
     /* resulting string, stored as fcall->string */
     struct ic_string *str = 0;
     /* offset into args pvector */
@@ -2157,6 +2147,11 @@ struct ic_string *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope
 
     if (!kludge) {
         puts("ic_analyse_fcall_str: kludge was null");
+        return 0;
+    }
+
+    if (!fdecl) {
+        puts("ic_analyse_fcall_str: fdecl was null");
         return 0;
     }
 
@@ -2278,7 +2273,7 @@ struct ic_string *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_scope
         }
 
         /* current arg's type */
-        expr_type = ic_analyse_infer(kludge, scope, expr);
+        expr_type = ic_analyse_infer(kludge, fdecl, scope, expr);
         if (!expr_type) {
             printf("ic_analyse_fcall_str: call to ic_analyse_infer failed for argument '%d'\n", i);
             goto ERROR;
@@ -2682,15 +2677,23 @@ struct ic_decl_type *ic_analyse_type_decl_instantiate_generic(struct ic_kludge *
 }
 
 /* iterate through a type_ref list resolving each type_ref to a decl_type
+ * will favour a binding within type_param list if one can be found
+ * otherwise will use kludge
+ *
+ * type_params is optional
  *
  * returns 1 on success
  * returns 0 on error
  */
-unsigned int ic_analyse_type_ref_list(struct ic_kludge *kludge, struct ic_pvector *type_refs) {
+unsigned int ic_resolve_type_ref_list(struct ic_kludge *kludge, struct ic_pvector *type_params, struct ic_pvector *type_refs) {
     unsigned int i = 0;
     unsigned int len = 0;
     struct ic_type_ref *tref = 0;
+    struct ic_symbol *tref_sym = 0;
+    char *tref_ch = 0;
     struct ic_decl_type *tdecl = 0;
+
+    struct ic_type_param *type_param = 0;
 
     if (!kludge) {
         puts("ic_anlyse_type_ref_list: kludge was null");
@@ -2702,12 +2705,6 @@ unsigned int ic_analyse_type_ref_list(struct ic_kludge *kludge, struct ic_pvecto
         return 0;
     }
 
-    /* FIXME TODO below we use kludge_get_decl_type
-     * this will resolve every type_ref globally, rather than locally
-     * this prevents our type_ref from referencing a local type_param
-     * this will need to be fixed
-     */
-
     len = ic_pvector_length(type_refs);
     for (i=0; i<len; ++i) {
         tref = ic_pvector_get(type_refs, i);
@@ -2716,10 +2713,47 @@ unsigned int ic_analyse_type_ref_list(struct ic_kludge *kludge, struct ic_pvecto
             return 0;
         }
 
-        /* get tdecl
-         * this will set tdecl on tref
-         */
-        tdecl = ic_analyse_resolve_type_ref(kludge, "ic_analyse_type_ref_list", "this message isn't super helpful", 0, tref);
+        /* 1_ first check if already resolved */
+        if (ic_type_ref_is_resolved(tref)) {
+            /* nothing more to do for this tref */
+            continue;
+        }
+
+        /* TODO FIXME should we also stop early if it is already tparam */
+
+        tref_sym = ic_type_ref_get_symbol(tref);
+        if (!tref_sym) {
+            puts("ic_resolve_type_ref_list: call to ic_type_ref_get_symbol failed");
+            return 0;
+        }
+
+        tref_ch = ic_symbol_contents(tref_sym);
+        if (!tref_ch) {
+            puts("ic_resolve_type_ref_list: call to ic_symbol_contents failed");
+            return 0;
+        }
+
+
+        /* 2) otherwise, try lookup within type_params (if provided) */
+        if (type_params && (type_param = ic_type_param_search(type_params, tref_ch))) {
+            /* check the type_param we get back is set */
+            if (!ic_type_param_check_set(type_param)) {
+                puts("ic_resolve_type_ref_list: found param was not yet set");
+                return 0;
+            }
+
+            /* set type param on our tref */
+            if (!ic_type_ref_set_type_param(tref, type_param)) {
+                puts("ic_resolve_type_ref_list: call to ic_type_ref_set_type_decl failed");
+                return 0;
+            }
+
+            /* nothing more to do for this tref */
+            continue;
+        }
+
+        /* 3) finally try resolve via kludge */
+        tdecl = ic_analyse_resolve_type_ref(kludge, "ic_resolve_type_ref_list", "this message isn't super helpful", 0, tref);
         if (!tdecl) {
             fputs("ic_anlyse_type_ref_list: call to ic_analyse_resolve_type_ref failed for typeref: ", stdout);
             ic_type_ref_print(stdout, tref);

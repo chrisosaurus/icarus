@@ -4,6 +4,7 @@
 
 #include "../../data/pvector.h"
 #include "../../parse/data/decl.h"
+#include "../../parse/name_helpers.h"
 #include "kludge.h"
 
 /* populate the kludge from the provided ast
@@ -449,12 +450,10 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_decl_func *
             return 0;
         }
     } else {
-        /* cache str
-         * do not need to free as this char* is stored on the fdecl
-         */
-        full_name = ic_decl_func_full_name(fdecl);
+        /* returned symbol is OURS to own and free */
+        full_name = ic_parse_helper_initial_name(&(fdecl->name), 0, &(fdecl->args));
         if (!full_name) {
-            puts("ic_kludge_add_fdecl: call to ic_decl_func_full_name failed");
+            puts("ic_kludge_add_fdecl: call to ic_parse_helper_initial_name failed");
             return 0;
         }
 
@@ -477,6 +476,12 @@ unsigned int ic_kludge_add_fdecl(struct ic_kludge *kludge, struct ic_decl_func *
          */
         if (!ic_dict_insert(&(kludge->dict_fsig), str, fdecl)) {
             puts("ic_kludge_add_fdecl: call to ic_dict_insert failed");
+            return 0;
+        }
+
+        /* free full_name (ic_dict_insert performs a strncpy) */
+        if (!ic_symbol_destroy(full_name, 1)) {
+            puts("ic_kludge_add_fdecl: call to ic_symbol_destroy failed");
             return 0;
         }
     }
@@ -662,11 +667,12 @@ struct ic_decl_type *ic_kludge_get_decl_type_from_typeref(struct ic_kludge *klud
             break;
 
         case ic_type_ref_symbol:
-            type_sym = ic_type_ref_full_name(type_ref);
-            if (!type_sym) {
-                puts("ic_kludge_get_decl_type_from_typeref: call to ic_type_ref_full_name failed");
+            if (ic_pvector_length(&(type_ref->type_args)) > 0) {
+                puts("ic_kludge_get_decl_type_from_typeref: type_ref->type_args > 0 for symbol, no idea what to do...");
                 return 0;
             }
+
+            type_sym = &(type_ref->u.sym);
 
             tdecl = ic_kludge_get_decl_type_from_symbol(kludge, type_sym);
             if (!tdecl) {

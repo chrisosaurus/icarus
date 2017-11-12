@@ -8,10 +8,10 @@
 #include "../../transform/data/tbody.h"
 #include "../parse.h"
 #include "../permissions.h"
+#include "../name_helpers.h"
 #include "decl.h"
 #include "field.h"
 #include "stmt.h"
-#include "name_helpers.h"
 
 /* allocate and initialise a new decl_func
  *
@@ -599,8 +599,6 @@ unsigned int ic_decl_func_isbuiltin(struct ic_decl_func *fdecl) {
  * this will print a reproduction of the function from the ast
  */
 void ic_decl_func_print(FILE *fd, struct ic_decl_func *fdecl, unsigned int *indent_level) {
-    struct ic_symbol *sym = 0;
-
     if (!fdecl) {
         puts("ic_decl_func_print: fdecl was null");
         return;
@@ -610,16 +608,6 @@ void ic_decl_func_print(FILE *fd, struct ic_decl_func *fdecl, unsigned int *inde
         puts("ic_decl_func_print: indent_level was null");
         return;
     }
-
-    sym = ic_decl_func_full_name(fdecl);
-    if (!sym) {
-        puts("ic_decl_func_print_header: call to ic_decl_func_full_name failed");
-        return;
-    }
-
-    ic_parse_print_indent(fd, *indent_level);
-    /* print comment and then function decl string */
-    fprintf(fd, "# %s\n", ic_symbol_contents(sym));
 
     ic_parse_print_indent(fd, *indent_level);
     ic_decl_func_print_header(fd, fdecl, indent_level);

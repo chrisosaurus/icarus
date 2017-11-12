@@ -13,7 +13,6 @@ my $expected = <<EOF;
 
 parser output:
 ----------------
-# id[T](T)
 fn id[T](t::T) -> T
     return t
 end
@@ -26,12 +25,10 @@ union Bar[T]
     t::T
 end
 
-# print[T](Foo[T])
 fn print[T](f::Foo[T]) -> Void
     print(f.t)
 end
 
-# main()
 fn main() -> Void
     let f = Foo[Sint](6s)
     let f2::Foo[Sint] = f

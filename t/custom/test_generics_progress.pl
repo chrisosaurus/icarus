@@ -81,6 +81,41 @@ my $cases = [
   },
   {
     input => '
+      type Box[T]
+        contents::T
+      end
+
+      fn unpack[T](t::Box[T]) -> T
+        return t.contents
+      end
+
+      fn main()
+        let b1 = Box[Sint](7s)
+        println(b1)
+
+        let b2 = Box[Box[Sint]](b1)
+        println(b2)
+
+        let b3 = Box[Box[Box[Sint]]](b2)
+        println(b3)
+
+        let bb2 = unpack[Box[Box[Sint]]](b3)
+        println(bb2)
+
+        let bb1 = unpack[Box[Sint]](b2)
+        println(bb1)
+      end
+    ',
+    expected => '
+      Box[Sint]{7}
+      Box[Box[Sint]]{Box[Sint]{7}}
+      Box[Box[Box[Sint]]]{Box[Box[Sint]]{Box[Sint]{7}}}
+      Box[Box[Sint]]{Box[Sint]{7}}
+      Box[Sint]{7}
+    ',
+  },
+  {
+    input => '
       type Nothing
       end
 
@@ -96,7 +131,7 @@ my $cases = [
       fn flatten[T](m::Maybe[Maybe[T]]) -> Maybe[T]
         match m
           case something::Maybe[T]
-            return someting
+            return something
           case nothing::Nothing
             return Maybe[T](nothing)
           end
@@ -108,6 +143,10 @@ my $cases = [
       end
 
       fn main()
+        let a = Maybe[Sint](4s)
+        let b = maybe_id[Sint](a)
+        println(b)
+
         let m = Maybe[Maybe[Sint]]( Maybe[Sint](6s) )
         println(m)
 
@@ -134,7 +173,36 @@ my $cases = [
       Maybe[String]{"Hello Maybe world"}
     ',
     failure => 1,
-  }
+  },
+  {
+    input => '
+      type Nothing
+      end
+
+      union Maybe[T]
+          something::T
+          nothing::Nothing
+      end
+
+      type List[T]
+          item::T
+          next::Maybe[List[T]]
+      end
+
+      fn main()
+          let t = Maybe[List[Sint]](Nothing())
+          let t1 = List[Sint](3s, t)
+          let t2 = List[Sint](2s, t1)
+          let t3 = List[Sint](1s, t2)
+
+          println(t3)
+      end
+    ',
+    expected => '
+      List[Sint]{1, Maybe[List[Sint]]{List[Sint]{2, Maybe[List[Sint]{List[Sint]{3, Maybe[List[Sint]]{Nothing()}}}}}}
+    ',
+    failure => 1,
+  },
 ];
 
 # whitespace sensitivity sucks

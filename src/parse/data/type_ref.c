@@ -4,7 +4,7 @@
 #include "decl.h"
 #include "type_param.h"
 #include "type_ref.h"
-#include "name_helpers.h"
+#include "../name_helpers.h"
 
 /* allocate and intialise a new type
  * this will set type.type to unknown
@@ -609,7 +609,28 @@ unsigned int ic_type_ref_is_resolved(struct ic_type_ref *type) {
         return 0;
     }
 
-    return type->tag == ic_type_ref_resolved;
+    switch (type->tag) {
+        case ic_type_ref_unknown:
+            return 0;
+            break;
+
+        case ic_type_ref_symbol:
+            return 0;
+            break;
+
+        case ic_type_ref_param:
+            return ic_type_param_check_set(type->u.tparam);
+            break;
+
+        case ic_type_ref_resolved:
+            return 1;
+            break;
+
+        default:
+            puts("ic_type_ref_is_resolved: impossible tag");
+            return 0;
+            break;
+    }
 }
 
 /* return the underlying decl_param
@@ -883,6 +904,10 @@ struct ic_symbol *ic_type_ref_mangled_name(struct ic_type_ref *tref) {
             break;
 
         case ic_type_ref_symbol:
+            /* TODO FIXME consider raising error when not param or resolved
+             * as the 'name' here isn't our final name
+             */
+
             if (tref->mangled_name) {
                 return tref->mangled_name;
             }
@@ -932,6 +957,10 @@ struct ic_symbol *ic_type_ref_full_name(struct ic_type_ref *tref) {
         return 0;
     }
 
+    if (tref->full_name) {
+        return tref->full_name;
+    }
+
     switch (tref->tag) {
         case ic_type_ref_unknown:
             puts("ic_type_ref_full_name: tag ic_type_ref_unknown not supported");
@@ -939,22 +968,20 @@ struct ic_symbol *ic_type_ref_full_name(struct ic_type_ref *tref) {
             break;
 
         case ic_type_ref_symbol:
-            if (tref->full_name) {
-                return tref->full_name;
-            }
-
-            sym = ic_parse_helper_full_name(&(tref->u.sym), 0, &(tref->type_args), 0);
-            if (!sym) {
-                puts("ic_type_ref_full_name: call to ic_parse_helper_full_name failed");
-                return 0;
-            }
-
-            tref->full_name = sym;
+            /* it is an error if we are not yet resolved
+             * since our 'name' here is not our final name
+             */
+            printf("ic_type_ref_full_name: tag was ic_type_ref_symbol with name '%s'\n", ic_symbol_contents(&(tref->u.sym)));
+            return 0;
             break;
 
         case ic_type_ref_param:
-            puts("ic_type_ref_full_name: tag ic_type_ref_param not supported");
-            return 0;
+            sym = ic_type_param_full_name(tref->u.tparam);
+            if (!sym) {
+              puts("ic_type_ref_full_name: call to ic_type_param_full_name failed");
+              return 0;
+            }
+            tref->full_name = sym;
             break;
 
         case ic_type_ref_resolved:
@@ -963,6 +990,7 @@ struct ic_symbol *ic_type_ref_full_name(struct ic_type_ref *tref) {
                 puts("ic_type_ref_full_name: call to ic_decl_type_full_name failed");
                 return 0;
             }
+            tref->full_name = sym;
             break;
 
         default:

@@ -401,14 +401,19 @@ struct ic_symbol *ic_type_param_full_name(struct ic_type_param *tparam) {
         return 0;
     }
 
-    if (tparam->tdecl) {
-        sym = ic_decl_type_full_name(tparam->tdecl);
-        if (!sym) {
-            puts("ic_type_param_full_name: call to ic_decl_type_full_name failed");
-            return 0;
-        }
-    } else {
-        sym = &(tparam->name);
+    if (!tparam->tdecl) {
+        /* if tparam->tdecl is not set
+         * then this is an error as we do not yet know our full name
+         * e.g. we are not yet instantiated
+         */
+        printf("ic_type_param_full_name: tparam->tdecl was not set for tparam '%s'\n", ic_symbol_contents(&(tparam->name)));
+        return 0;
+    }
+
+    sym = ic_decl_type_full_name(tparam->tdecl);
+    if (!sym) {
+        puts("ic_type_param_full_name: call to ic_decl_type_full_name failed");
+        return 0;
     }
 
     return sym;

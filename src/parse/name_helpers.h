@@ -1,8 +1,8 @@
 #ifndef ICARUS_PARSE_NAME_HELPERS_H
 #define ICARUS_PARSE_NAME_HELPERS_H
 
-#include "../../data/pvector.h"
-#include "../../data/symbol.h"
+#include "../data/pvector.h"
+#include "../data/symbol.h"
 
 /*
  * generate a fully mangled name for an instantiated thing
@@ -10,7 +10,7 @@
  * name is mandatory
  * type_params, type_args, and args are optional
  * only one of type_params OR type_args may be provided
- * returns symbol is owned by caller
+ * returned symbol is owned by caller
  *
  * fn foo[Sint,Maybe[Uint]](m::Maybe[Vector[Sint]], b::Uint)
  *
@@ -32,7 +32,7 @@ struct ic_symbol * ic_parse_helper_mangled_name(struct ic_symbol *name, struct i
  * name is mandatory
  * type_params,type_args, and args are optional
  * only one of type_params OR type_args may be provided
- * returns symbol is owned by caller
+ * returned symbol is owned by caller
  *
  * fn println(Sint) ... end
  * =>
@@ -57,7 +57,7 @@ struct ic_symbol * ic_parse_helper_full_name(struct ic_symbol *name, struct ic_p
  *
  * name is mandatory
  * type_slots and args are optional
- * returns symbol is owned by caller
+ * returned symbol is owned by caller
  *
  * note that type_slots is just a pvector, the contents are not inspected
  * so it may contain either type_params or type_refs (for type_args)
@@ -82,5 +82,23 @@ struct ic_symbol * ic_parse_helper_full_name(struct ic_symbol *name, struct ic_p
  * returns 0 on failure
  */
 struct ic_symbol * ic_parse_helper_generic_name(struct ic_symbol *name, struct ic_pvector *type_slots, struct ic_pvector *args);
+
+/* for a fully non-generic thing, build a guess at a fully instantiated name
+ *
+ * this does not require analysis and will only look for symbols
+ * this is only used by kludge to generate a name for an fdecl *before* analysis is performed
+ *
+ * name is mandatory
+ * type_args, and args are optional
+ * returned symbol is owned by caller
+ *
+ * fn foo(a::Sint,b::Maybe[Sint]) -> Bar ... end
+ * =>
+ * println(Sint,Maybe[Sint])
+ *
+ * returns * on success
+ * returns 0 on failure
+ */
+struct ic_symbol * ic_parse_helper_initial_name(struct ic_symbol *name, struct ic_pvector *type_args, struct ic_pvector *args);
 
 #endif
