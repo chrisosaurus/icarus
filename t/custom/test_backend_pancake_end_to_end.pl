@@ -171,12 +171,12 @@ my $cases = [
       label print(Bar)
       pushstr "Bar"
       call_builtin print(String) 1
-      pushstr "{"
+      pushstr "("
       call_builtin print(String) 1
       copyarg 0
       load_offset_str 0
       call_builtin print(String) 1
-      pushstr "}"
+      pushstr ")"
       call_builtin print(String) 1
       clean_stack
       return_void
@@ -201,7 +201,7 @@ my $cases = [
       label print(Foo)
       pushstr "Foo"
       call_builtin print(String) 1
-      pushstr "{"
+      pushstr "("
       call_builtin print(String) 1
       copyarg 0
       load_offset_sint 0
@@ -214,7 +214,7 @@ my $cases = [
       call_builtin print(String) 1
       load_offset_str 2
       call_builtin print(String) 1
-      pushstr "}"
+      pushstr ")"
       call_builtin print(String) 1
       clean_stack
       return_void
@@ -237,7 +237,7 @@ my $cases = [
       call println(Foo) 1
       clean_stack
       return_void
-      Foo{4, Bar{Hello}, World}
+      Foo(4, Bar(Hello), World)
     ',
   },
   # testing copyarg ordering
@@ -330,12 +330,12 @@ my $cases = [
       label print(Bar)
       pushstr "Bar"
       call_builtin print(String) 1
-      pushstr "{"
+      pushstr "("
       call_builtin print(String) 1
       copyarg 0
       load_offset_sint 0
       call_builtin print(Sint) 1
-      pushstr "}"
+      pushstr ")"
       call_builtin print(String) 1
       clean_stack
       return_void
@@ -378,7 +378,7 @@ my $cases = [
       label print(Foo)
       pushstr "Foo"
       call_builtin print(String) 1
-      pushstr "{"
+      pushstr "("
       call_builtin print(String) 1
       copyarg 0
       load_offset_uint 0
@@ -407,7 +407,7 @@ my $cases = [
       call print(Bar) 1
       jmp_label print(Foo)3
       label print(Foo)3
-      pushstr "}"
+      pushstr ")"
       call_builtin print(String) 1
       clean_stack
       return_void
@@ -425,7 +425,7 @@ my $cases = [
       call println(Foo) 1
       clean_stack
       return_void
-      Foo{6}
+      Foo(6)
     ',
   },
 ];

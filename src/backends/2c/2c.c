@@ -397,11 +397,11 @@ static unsigned int ic_b2c_compile_generate_print_struct(struct ic_kludge *kludg
      * ->
      *
      * void print_a_Foo_i(Foo f){
-     *  puts("Foo{");
+     *  puts("Foo(");
      *  print_a_Sint_b(f->a);
      *  puts(", ");
      *  print_a_String_b(f->b);
-     *  puts("}");
+     *  puts(")");
      * }
      */
 
@@ -507,7 +507,7 @@ static unsigned int ic_b2c_compile_generate_print_union(struct ic_kludge *kludge
      * ->
      *
      * void print_a_Foo_b(Foo f){
-     *   print_a_String_b("Foo{");
+     *   print_a_String_b("Foo(");
      *   switch (f->_tag) {
      *     case Foo_tag_Sint_a:
      *       print_a_Sint_b(a->u.a);
@@ -518,7 +518,7 @@ static unsigned int ic_b2c_compile_generate_print_union(struct ic_kludge *kludge
      *     default:
      *       panic("impossible tag on Foo);
      *   }
-     *   print_a_String_b("}");
+     *   print_a_String_b(")");
      * }
      */
 
@@ -677,7 +677,7 @@ static unsigned int ic_b2c_compile_generate_print(struct ic_kludge *kludge, FILE
     print_arg_name_char = field_name_char;
 
     fprintf(f, "void %s(%s %s){\n", mangled_name_ch, type_mangled_name_ch, field_name_char);
-    fprintf(f, "  fputs(\"%s{\", stdout);\n", type_full_name_ch);
+    fprintf(f, "  fputs(\"%s(\", stdout);\n", type_full_name_ch);
 
     /* dispatch for internals */
     switch (tdecl->tag) {
@@ -702,7 +702,7 @@ static unsigned int ic_b2c_compile_generate_print(struct ic_kludge *kludge, FILE
     }
 
     /* close off */
-    fputs("  fputs(\"}\", stdout);\n}\n", f);
+    fputs("  fputs(\")\", stdout);\n}\n", f);
 
     return 1;
 }

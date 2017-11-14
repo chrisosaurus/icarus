@@ -200,8 +200,8 @@ my $cases = [
       end
     ',
     expected =>'
-      Foo{5}
-      Foo{Hello}
+      Foo(5)
+      Foo(Hello)
     ',
   },
 ];

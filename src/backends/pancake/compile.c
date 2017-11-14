@@ -2513,7 +2513,7 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
      * label print(Foo)
      * pushstr "Foo
      * call_builtin print(String) 1
-     * pushstr "{"
+     * pushstr "("
      * call_builtin print(String) 1
      *
      * copyarg 0
@@ -2551,7 +2551,7 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
      * jmp_label print(Foo)_3
      *
      * label print(Foo)3
-     * pushstr "}"
+     * pushstr ")"
      * call_builtin print(String) 1
      *
      * clean_stack
@@ -2608,14 +2608,14 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
         return 0;
     }
 
-    /* pushstr "{" */
+    /* pushstr "(" */
     instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
     if (!instruction) {
         puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_instructions_add failed");
         return 0;
     }
 
-    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, "{")) {
+    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, "(")) {
         puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg1_set_char failed");
         return 0;
     }
@@ -2951,14 +2951,14 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
         return 0;
     }
 
-    /* pushstr "}" */
+    /* pushstr ")" */
     instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
     if (!instruction) {
         puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_instructions_add failed");
         return 0;
     }
 
-    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, "}")) {
+    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, ")")) {
         puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg1_set_char failed");
         return 0;
     }
@@ -3089,7 +3089,7 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
      * label print(Foo)
      * pushstr "Foo"
      * call_builtin print(String) 1
-     * pushstr "{"
+     * pushstr "("
      * call_builtin print(String) 1
      * copyarg 0
      * load_offset 0
@@ -3098,7 +3098,7 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
      * call_builtin print(String) 1
      * load_offset 2
      * call print(Bar) 1
-     * pushstr "}"
+     * pushstr ")"
      * call_builtin print(String) 1
      * clean_stack
      * return_void
@@ -3157,14 +3157,14 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
         return 0;
     }
 
-    /* pushstr "{" */
+    /* pushstr "(" */
     instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
     if (!instruction) {
         puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_instructions_add failed");
         return 0;
     }
 
-    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, "{")) {
+    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, "(")) {
         puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg1_set_char failed");
         return 0;
     }
@@ -3348,14 +3348,14 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
         }
     }
 
-    /* pushstr "}" */
+    /* pushstr ")" */
     instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
     if (!instruction) {
         puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_instructions_add failed");
         return 0;
     }
 
-    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, "}")) {
+    if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, ")")) {
         puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg1_set_char failed");
         return 0;
     }

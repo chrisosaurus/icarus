@@ -216,7 +216,7 @@ my $cases = [
       end
     ',
     expected => '
-      Foo{4, Bar{Hello}, World}
+      Foo(4, Bar(Hello), World)
     ',
   },
 ];

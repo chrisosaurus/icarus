@@ -34,7 +34,7 @@ my $cases = [
       end
     ',
     expected => '
-      Foo{2, Hello, Bar{1}, 3}
+      Foo(2, Hello, Bar(1), 3)
       Hello world
     '
   },
@@ -59,7 +59,7 @@ my $cases = [
       end
     ',
     expected => '
-      Baz{Bar{Foo{4}}}
+      Baz(Bar(Foo(4)))
       4
     ',
   },
@@ -84,8 +84,8 @@ my $cases = [
         end
     ',
     expected => '
-      Foo{6}
-      Foo{Bar{4}}
+      Foo(6)
+      Foo(Bar(4))
     ',
   },
   {
@@ -126,7 +126,7 @@ my $cases = [
       end
     ',
     expected => '
-      Shape{Rectangle{Point{14, 10}, Point{20, 24}}}
+      Shape(Rectangle(Point(14, 10), Point(20, 24)))
     ',
   },
   {
@@ -161,8 +161,8 @@ my $cases = [
       end
     ',
     expected => '
-      Foo{Bar{4}}
-      Bar{4}
+      Foo(Bar(4))
+      Bar(4)
       4
     ',
   },
@@ -203,7 +203,7 @@ my $cases = [
       end
     ',
     expected => '
-      Cons{Cons{Cons{4}}}
+      Cons(Cons(Cons(4)))
     ',
   },
   {

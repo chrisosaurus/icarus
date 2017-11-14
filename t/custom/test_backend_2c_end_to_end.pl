@@ -40,11 +40,11 @@ my $cases = [
         return tmp;
       }
       void print_a_Foo_b(Foo f){
-        fputs("Foo{", stdout);
+        fputs("Foo(", stdout);
         print_a_Sint_b(f->a);
         fputs(", ", stdout);
         print_a_String_b(f->b);
-        fputs("}", stdout);
+        fputs(")", stdout);
       }
       void println_a_Foo_b(Foo f){
         print_a_Foo_b(f);
@@ -60,7 +60,7 @@ my $cases = [
       #include "backends/2c/entry.c"
     ',
     expected_output => '
-      Foo{6, Hello}
+      Foo(6, Hello)
       '
   },
   {
@@ -111,7 +111,7 @@ my $cases = [
         return tmp;
       }
       void print_a_Foo_b(Foo f){
-        fputs("Foo{", stdout);
+        fputs("Foo(", stdout);
         switch (f->_tag) {
           case Foo_tag_Sint_a:
             print_a_Sint_b(f->u.a);
@@ -122,7 +122,7 @@ my $cases = [
           default:
             panic("impossible tag on Foo");
         }
-        fputs("}", stdout);
+        fputs(")", stdout);
       }
       void println_a_Foo_b(Foo f){
         print_a_Foo_b(f);
@@ -140,8 +140,8 @@ my $cases = [
       #include "backends/2c/entry.c"
     ',
     expected_output =>'
-      Foo{5}
-      Foo{Hello}
+      Foo(5)
+      Foo(Hello)
     ',
   },
 ];

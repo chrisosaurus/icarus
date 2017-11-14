@@ -74,7 +74,7 @@ my $cases = [
       end
     ',
     expected => "
-      Maybe[Sint]{6}
+      Maybe[Sint](6)
       Found a Sint: 6
     ",
     failure => 0,
@@ -107,11 +107,11 @@ my $cases = [
       end
     ',
     expected => '
-      Box[Sint]{7}
-      Box[Box[Sint]]{Box[Sint]{7}}
-      Box[Box[Box[Sint]]]{Box[Box[Sint]]{Box[Sint]{7}}}
-      Box[Box[Sint]]{Box[Sint]{7}}
-      Box[Sint]{7}
+      Box[Sint](7)
+      Box[Box[Sint]](Box[Sint](7))
+      Box[Box[Box[Sint]]](Box[Box[Sint]](Box[Sint](7)))
+      Box[Box[Sint]](Box[Sint](7))
+      Box[Sint](7)
     ',
   },
   {
@@ -167,11 +167,11 @@ my $cases = [
       end
       ',
     expected => '
-      Maybe[Sint]{4}
-      Maybe[Maybe[Sint]]{Maybe[Sint]{6}}
-      Maybe[Sint]{6}
+      Maybe[Sint](4)
+      Maybe[Maybe[Sint]](Maybe[Sint](6))
+      Maybe[Sint](6)
       My Maybe contained: 6
-      Maybe[String]{Hello Maybe world}
+      Maybe[String](Hello Maybe world)
     ',
   },
   {
@@ -201,7 +201,7 @@ my $cases = [
       end
     ',
     expected => '
-      List[Sint]{1, Maybe[List[Sint]]{List[Sint]{2, Maybe[List[Sint]]{List[Sint]{3, Maybe[List[Sint]]{Nothing{}}}}}}}
+      List[Sint](1, Maybe[List[Sint]](List[Sint](2, Maybe[List[Sint]](List[Sint](3, Maybe[List[Sint]](Nothing()))))))
     ',
   },
 ];
