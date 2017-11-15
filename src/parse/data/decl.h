@@ -290,12 +290,12 @@ struct ic_symbol *ic_decl_func_full_signature(struct ic_decl_func *fdecl);
  */
 struct ic_symbol *ic_decl_func_generic_name(struct ic_decl_func *fdecl);
 
-/* check if this function returns void
+/* check if this function returns Unit
  *
  * returns boolean on success
  * returns 0 on failure
  */
-unsigned int ic_decl_func_is_void(struct ic_decl_func *fdecl);
+unsigned int ic_decl_func_is_unit(struct ic_decl_func *fdecl);
 
 /* a func declaration is a symbol and then a collection of fields
  *  type Foo
@@ -350,10 +350,10 @@ struct ic_decl_type_struct {
      * maybe move up to decl_type level
      */
 
-    /* 1 if this is the void type
-     * 0 if this is not the void type
+    /* 1 if this is the unit type
+     * 0 if this is not the unit type
      */
-    unsigned int isvoid;
+    unsigned int isunit;
 
     /* 1 if this is the bool type
      * 0 if this is not the bool type
@@ -444,12 +444,12 @@ unsigned int ic_decl_type_struct_mark_instantiated(struct ic_decl_type_struct *t
  */
 struct ic_symbol *ic_decl_type_struct_get_name(struct ic_decl_type_struct *tdecl);
 
-/* mark the supplied decl as the void type
+/* mark the supplied decl as the unit type
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_struct_mark_void(struct ic_decl_type_struct *tdecl);
+unsigned int ic_decl_type_struct_mark_unit(struct ic_decl_type_struct *tdecl);
 
 /* mark the supplied decl as the bool type
  *
@@ -514,12 +514,12 @@ unsigned int ic_decl_type_struct_isuint(struct ic_decl_type_struct *tdecl);
  */
 unsigned int ic_decl_type_struct_issint(struct ic_decl_type_struct *tdecl);
 
-/* test if void
+/* test if unit
  *
- * returns 1 if void
+ * returns 1 if unit
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_struct_isvoid(struct ic_decl_type_struct *tdecl);
+unsigned int ic_decl_type_struct_isunit(struct ic_decl_type_struct *tdecl);
 
 /* print the decl_type to provided fd */
 void ic_decl_type_struct_print(FILE *fd, struct ic_decl_type_struct *tdecl, unsigned int *indent_level);
@@ -1089,12 +1089,12 @@ unsigned int ic_decl_type_isuint(struct ic_decl_type *tdecl);
  */
 unsigned int ic_decl_type_issint(struct ic_decl_type *tdecl);
 
-/* test if void
+/* test if unit
  *
- * returns 1 if void
+ * returns 1 if unit
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_isvoid(struct ic_decl_type *tdecl);
+unsigned int ic_decl_type_isunit(struct ic_decl_type *tdecl);
 
 /* compare types for equality
  *

@@ -71,6 +71,7 @@ technical debt:
 * add pvector/parray destructor helper which takes a function * and iterates through it's contents passing to function
 * add shims to allow ic_pvector_destroy to be called on each type
 * any usage of `ic_symbol_contents(&` inline (without checking return value) should be killed with fire
+* current naive Unit type implementation causes needless churn - e.g. push and pops in pancake
 
 considerations:
 ---------------

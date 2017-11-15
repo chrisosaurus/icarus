@@ -6,4 +6,5 @@ fn main()
     println(id[Sint](1s))
     println(id[Uint](2u))
     println(id[String]("Hello"))
+    println(id[Unit](Unit()))
 end

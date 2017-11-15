@@ -73,15 +73,6 @@ ic_analyse: call to ic_analyse_decl_func failed
 analysis failed
 ",
 
-'fn foo(v::Void) end'
-=>
-'ic_analyse_field_list: void type used in field list
-ic_analyse_decl_func: call to ic_analyse_field_list for validating argument list failed
-ic_analyse_decl_func: error
-ic_analyse: call to ic_analyse_decl_func failed
-analysis failed
-',
-
 'fn foo() let a::Sint = 5s a = "hello" end'
 =>
 'ic_analyse_body: assign: assignment between invalid types

@@ -27,8 +27,8 @@ my $cases = [
       Foo Foo_a_Sint_String_b(Sint a, String b);
       void print_a_Foo_b(Foo f);
       void println_a_Foo_b(Foo f);
-      /* main() -> Void */
-      Void main_a_b();
+      /* main() -> Unit */
+      Unit main_a_b();
       struct Foo {
         Sint a;
         String b;
@@ -50,8 +50,8 @@ my $cases = [
         print_a_Foo_b(f);
         println_a_b();
       }
-      /* main() -> Void */
-      Void main_a_b(){
+      /* main() -> Unit */
+      Unit main_a_b(){
         Sint _l0 = ic_sint_new(6);
         String _l1 = ic_string_new("Hello", 5);
         Foo f = Foo_a_Sint_String_b(_l0, _l1);
@@ -85,8 +85,8 @@ my $cases = [
       Foo Foo_a_String_b(String b);
       void print_a_Foo_b(Foo f);
       void println_a_Foo_b(Foo f);
-      /* main() -> Void */
-      Void main_a_b();
+      /* main() -> Unit */
+      Unit main_a_b();
       enum Foo_tag {
         Foo_tag_Sint_a,
         Foo_tag_String_b,
@@ -128,8 +128,8 @@ my $cases = [
         print_a_Foo_b(f);
         println_a_b();
       }
-      /* main() -> Void */
-      Void main_a_b(){
+      /* main() -> Unit */
+      Unit main_a_b(){
         Sint _l0 = ic_sint_new(5);
         Foo a = Foo_a_Sint_b(_l0);
         println_a_Foo_b(a);

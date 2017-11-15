@@ -453,7 +453,9 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
             return 0;
         }
 
-        if (!strcmp("pushuint", op)) {
+        if (!strcmp("pop", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_pop);
+        } else if (!strcmp("pushuint", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_pushuint);
         } else if (!strcmp("pushint", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_pushint);
@@ -461,6 +463,8 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
             instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
         } else if (!strcmp("pushbool", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_pushbool);
+        } else if (!strcmp("pushunit", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_pushunit);
         } else if (!strcmp("call_builtin", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_call_builtin);
         } else if (!strcmp("exit", op)) {
@@ -477,8 +481,8 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
             instruction = ic_backend_pancake_instructions_add(instructions, icp_call);
         } else if (!strcmp("return_value", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_return_value);
-        } else if (!strcmp("return_void", op)) {
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_return_void);
+        } else if (!strcmp("return_unit", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_return_unit);
         } else if (!strcmp("copyarg", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_copyarg);
         } else if (!strcmp("store", op)) {
@@ -505,6 +509,8 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
             instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_sint);
         } else if (!strcmp("load_offset_ref", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_ref);
+        } else if (!strcmp("load_offset_unit", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_unit);
         } else if (!strcmp("panic", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_panic);
         } else {
@@ -681,9 +687,10 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
             case icp_save:
             case icp_restore:
             case icp_clean_stack:
-            case icp_return_void:
+            case icp_return_unit:
             case icp_return_value:
             case icp_exit:
+            case icp_pushunit:
                 /* nothing more to do */
                 break;
 
@@ -713,11 +720,13 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                 }
                 break;
 
+            case icp_pop:
             case icp_load_offset_bool:
             case icp_load_offset_str:
             case icp_load_offset_uint:
             case icp_load_offset_sint:
             case icp_load_offset_ref:
+            case icp_load_offset_unit:
                 /* consume uint */
                 ret = fscanf(file, "%u", &uint_arg1);
                 if (ret == EOF || ret == 0) {

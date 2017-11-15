@@ -38,34 +38,69 @@ void *ic_alloc(size_t size) {
 /* pre-declarations
  * types should be opaque
  */
-typedef void Void;
+typedef char Unit;
 typedef uint8_t Bool;
 typedef int32_t Sint;
 typedef uint32_t Uint;
 typedef struct String *String;
 
+Unit ic_unit_new();
 Bool ic_bool_new(uint8_t boolean);
 Sint ic_sint_new(int32_t integer);
 Uint ic_uint_new(uint32_t integer);
 String ic_string_new(char *str, unsigned int len);
 
+Unit ic_unit_new(void) {
+    return 0;
+}
+
+Unit Unit_a_b(void) {
+  return ic_unit_new();
+}
+
 /* builtin fn println() */
-void println_a_b(void) {
+Unit println_a_b(void) {
     puts("");
+    return 0;
+}
+
+/* builtin fn print(a::Unit) */
+Unit print_a_Unit_b(Unit a) {
+    fputs("Unit()", stdout);
+    return 0;
+}
+
+/* builtin fn println(a::Unit) */
+Unit println_a_Unit_b(Unit a) {
+    print_a_Unit_b(a);
+    println_a_b();
+    return 0;
+}
+
+/* builtin fn equal(a::Unit, b::Unit) -> Bool */
+Bool equal_a_Unit_Unit_b(Unit a, Unit b) {
+    return ic_bool_new(1);
+}
+
+/* builtin fn to_str(a::Unit) -> String */
+String to_str_a_Unit_b(Unit a) {
+    return ic_string_new("()", 4);
 }
 
 /* builtin fn print(a::Bool) */
-void print_a_Bool_b(Bool b) {
+Unit print_a_Bool_b(Bool b) {
     if (b) {
         fputs("True", stdout);
     } else {
         fputs("False", stdout);
     }
+    return 0;
 }
 /* builtin fn println(a::Bool) */
-void println_a_Bool_b(Bool b) {
+Unit println_a_Bool_b(Bool b) {
     print_a_Bool_b(b);
     println_a_b();
+    return 0;
 }
 Bool ic_bool_new(uint8_t boolean) {
     Bool b = boolean;
@@ -129,11 +164,12 @@ String to_str_a_Bool_b(Bool a) {
         return ic_string_new("False", 6);
     }
 }
-/* builtin fn assert(a::Bool) -> Void */
-Void assert_a_Bool_b(Bool a) {
+/* builtin fn assert(a::Bool) -> Unit */
+Unit assert_a_Bool_b(Bool a) {
     if (!a) {
         panic("assertion failed");
     }
+    return 0;
 }
 
 Sint ic_sint_new(int32_t integer) {
@@ -141,13 +177,15 @@ Sint ic_sint_new(int32_t integer) {
     return i;
 }
 /* builtin fn print(a::Sint) */
-void print_a_Sint_b(Sint i) {
+Unit print_a_Sint_b(Sint i) {
     printf("%" PRId32, i);
+    return 0;
 }
 /* builtin fn println(a::Sint) */
-void println_a_Sint_b(Sint i) {
+Unit println_a_Sint_b(Sint i) {
     print_a_Sint_b(i);
     println_a_b();
+    return 0;
 }
 /* builtin fn equal(a::Sint, b::Sint) -> Bool */
 Bool equal_a_Sint_Sint_b(Sint a, Sint b) {
@@ -218,13 +256,15 @@ Uint ic_uint_new(uint32_t integer) {
     return i;
 }
 /* builtin fn print(a::Sint) */
-void print_a_Uint_b(Uint i) {
+Unit print_a_Uint_b(Uint i) {
     printf("%" PRId32, i);
+    return 0;
 }
 /* builtin fn println(a::Sint) */
-void println_a_Uint_b(Uint i) {
+Unit println_a_Uint_b(Uint i) {
     print_a_Uint_b(i);
     println_a_b();
+    return 0;
 }
 /* builtin fn equal(a::Sint, b::Sint) -> Bool */
 Bool equal_a_Uint_Uint_b(Uint a, Uint b) {
@@ -305,13 +345,15 @@ String ic_string_new(char *str, unsigned int len) {
     return s;
 }
 /* builtin fn print(a::String) */
-void print_a_String_b(String s) {
+Unit print_a_String_b(String s) {
     printf("%s", s->str);
+    return 0;
 }
 /* builtin fn println(a::String) */
-void println_a_String_b(String s) {
+Unit println_a_String_b(String s) {
     print_a_String_b(s);
     println_a_b();
+    return 0;
 }
 /* builtin fn equal(a::String, b::String) -> Bool */
 Bool equal_a_String_String_b(String a, String b) {

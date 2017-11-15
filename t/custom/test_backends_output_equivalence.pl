@@ -338,6 +338,26 @@ my $cases = [
       hello world
     ',
   },
+  {
+    input => '
+      type BoxedUnit
+        u::Unit
+      end
+      fn unBox(b::BoxedUnit) -> Unit
+        return b.u
+      end
+      fn main()
+        let b = BoxedUnit(Unit())
+        let u = unBox(b)
+        println(b)
+        println(u)
+      end
+    ',
+    expected => '
+      BoxedUnit(Unit())
+      Unit()
+    ',
+  }
 ];
 
 # whitespace sensitivity sucks

@@ -21,7 +21,7 @@ fn maybe_add_one(b::Bool, i::Sint) -> Sint
         return i
     end
 end
-fn main() -> Void
+fn main() -> Unit
     let _l0::Bool = True
     let _l1::Sint = 1s
     let _t0::Sint = maybe_add_one(_l0, _l1)

@@ -94,7 +94,7 @@ my $cases = [
           return concat(concat("Hello there ", name), ", very nice to meet you")
       end
 
-      fn main() -> Void
+      fn main() -> Unit
           println(get_str("Jennifer"))
       end
       ',

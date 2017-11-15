@@ -166,10 +166,10 @@ struct ic_decl *ic_parse_decl_type_struct_header(struct ic_token_list *token_lis
     }
 
     /* if this is a 'special' type, then mark it so */
-    if (!strncmp(token_str, "Void", 4)) {
-        /* if this is the void type then mark it as so */
-        if (!ic_decl_type_struct_mark_void(tdecl_struct)) {
-            puts("ic_parse_decl_type_struct_header: call to ic_decl_type_struct_mark_void failed");
+    if (!strncmp(token_str, "Unit", 4)) {
+        /* if this is the Unit type then mark it as so */
+        if (!ic_decl_type_struct_mark_unit(tdecl_struct)) {
+            puts("ic_parse_decl_type_struct_header: call to ic_decl_type_struct_mark_unit failed");
             goto ERROR;
         }
     } else if (!strncmp(token_str, "Bool", 4)) {
@@ -790,7 +790,7 @@ struct ic_decl *ic_parse_decl_func_header(struct ic_token_list *token_list) {
      *
      * if we do, consume it, and then parse return type
      *
-     * if we do not, then there is no return type and we set this function as Void
+     * if we do not, then there is no return type and we set this function as Unit
      * then begin parsing the body
      */
     token = ic_token_list_peek_important(token_list);
@@ -807,9 +807,9 @@ struct ic_decl *ic_parse_decl_func_header(struct ic_token_list *token_list) {
      *  builtin foo(a::Sint)
      */
     if ((!token) || (token->id != IC_ARROW)) {
-        /* add Void type to our fdecl */
-        if (!ic_type_ref_set_symbol(ret_type_ref, "Void", 4)) {
-            puts("ic_parse_decl_func_header: call to ic_type_ref_set_symbol failed for 'Void'");
+        /* add Unit type to our fdecl */
+        if (!ic_type_ref_set_symbol(ret_type_ref, "Unit", 4)) {
+            puts("ic_parse_decl_func_header: call to ic_type_ref_set_symbol failed for 'Unit'");
             free(decl);
             return 0;
         }
@@ -847,7 +847,7 @@ struct ic_decl *ic_parse_decl_func_body(struct ic_token_list *token_list, struct
      *      body...
      * end
      *
-     * # default to void return type
+     * # default to Unit return type
      * fn name(args...)
      *      body...
      * end

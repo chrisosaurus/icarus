@@ -1,6 +1,11 @@
 builtin fn println()
 
-builtin type Void
+builtin type Unit
+builtin fn Unit() -> Unit
+builtin fn print(a::Unit)
+builtin fn println(a::Unit)
+builtin fn equal(a::Unit, b::Unit) -> Bool
+builtin fn to_str(a::Unit) -> String
 
 builtin type Bool
 builtin fn print(a::Bool)
@@ -10,7 +15,7 @@ builtin fn not(a::Bool) -> Bool
 builtin fn and(a::Bool, b::Bool) -> Bool
 builtin fn or(a::Bool, b::Bool) -> Bool
 builtin fn to_str(a::Bool) -> String
-builtin fn assert(a::Bool) -> Void
+builtin fn assert(a::Bool) -> Unit
 
 builtin type Sint
 builtin fn print(a::Sint)

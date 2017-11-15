@@ -26,7 +26,7 @@ fn maybe_add_one(b::Bool, i::Sint) -> Sint
     end
 end
 
-fn main() -> Void
+fn main() -> Unit
     let f::Foo = Foo(maybe_add_one(True, 1s), "hello")
     println(f)
     let x = 6s

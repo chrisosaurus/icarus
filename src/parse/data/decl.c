@@ -669,7 +669,7 @@ void ic_decl_func_print_header(FILE *fd, struct ic_decl_func *fdecl, unsigned in
 
     /* print return type if we have one */
     if (fdecl->ret_type.tag == ic_type_ref_unknown) {
-        fputs("Void\n", fd);
+        fputs("Unit\n", fd);
     } else {
         ic_type_ref_print(fd, &(fdecl->ret_type));
         /* trailing \n */
@@ -877,16 +877,16 @@ struct ic_symbol *ic_decl_func_generic_name(struct ic_decl_func *fdecl) {
     return fdecl->generic_name;
 }
 
-/* check if this function returns void
+/* check if this function returns Unit
  *
  * returns boolean on success
  * returns 0 on failure
  */
-unsigned int ic_decl_func_is_void(struct ic_decl_func *fdecl) {
+unsigned int ic_decl_func_is_unit(struct ic_decl_func *fdecl) {
     char *ret_ch = 0;
 
     if (!fdecl) {
-        puts("ic_decl_func_is_void: fdecl was null");
+        puts("ic_decl_func_is_unit: fdecl was null");
         return 0;
     }
 
@@ -897,11 +897,11 @@ unsigned int ic_decl_func_is_void(struct ic_decl_func *fdecl) {
 
     ret_ch = ic_type_ref_get_type_name_ch(&(fdecl->ret_type));
     if (!ret_ch) {
-        puts("ic_decl_func_is_void: call to ic_type_ref_get_type_name_ch failed");
+        puts("ic_decl_func_is_unit: call to ic_type_ref_get_type_name_ch failed");
         return 0;
     }
 
-    if (!strncmp("Void", ret_ch, 5)) {
+    if (!strncmp("Unit", ret_ch, 5)) {
         return 1;
     }
 
@@ -984,7 +984,7 @@ unsigned int ic_decl_type_struct_init(struct ic_decl_type_struct *tdecl, char *n
     tdecl->mangled_name = 0;
     tdecl->full_name = 0;
     tdecl->generic_name = 0;
-    tdecl->isvoid = 0;
+    tdecl->isunit = 0;
     tdecl->isbool = 0;
     tdecl->isstring = 0;
     tdecl->isuint = 0;
@@ -1170,7 +1170,7 @@ unsigned int ic_decl_type_struct_deep_copy_embedded(struct ic_decl_type_struct *
     to->issint = from->issint;
     to->isuint = from->isuint;
     to->isbool = from->isbool;
-    to->isvoid = from->isvoid;
+    to->isunit = from->isunit;
     to->isstring = from->isstring;
 
     /* do not copy over names
@@ -1273,18 +1273,18 @@ struct ic_symbol *ic_decl_type_struct_get_name(struct ic_decl_type_struct *tdecl
     return &(tdecl->name);
 }
 
-/* mark supplied tdecl as being the void type
+/* mark supplied tdecl as being the unit type
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_struct_mark_void(struct ic_decl_type_struct *tdecl) {
+unsigned int ic_decl_type_struct_mark_unit(struct ic_decl_type_struct *tdecl) {
     if (!tdecl) {
-        puts("ic_decl_type_struct_mark_void: tdecl was null");
+        puts("ic_decl_type_struct_mark_unit: tdecl was null");
         return 0;
     }
 
-    tdecl->isvoid = 1;
+    tdecl->isunit = 1;
 
     return 1;
 }
@@ -1438,13 +1438,13 @@ unsigned int ic_decl_type_struct_issint(struct ic_decl_type_struct *tdecl) {
  * returns 1 if void
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_struct_isvoid(struct ic_decl_type_struct *tdecl) {
+unsigned int ic_decl_type_struct_isunit(struct ic_decl_type_struct *tdecl) {
     if (!tdecl) {
-        puts("ic_decl_type_struct_isvoid: tdecl was null");
+        puts("ic_decl_type_struct_isunit: tdecl was null");
         return 0;
     }
 
-    return tdecl->isvoid == 1;
+    return tdecl->isunit == 1;
 }
 
 /* print the decl_type to stdout */
@@ -3648,24 +3648,24 @@ unsigned int ic_decl_type_issint(struct ic_decl_type *tdecl) {
  * returns 1 if void
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_isvoid(struct ic_decl_type *tdecl) {
+unsigned int ic_decl_type_isunit(struct ic_decl_type *tdecl) {
     if (!tdecl) {
-        puts("ic_decl_type_isvoid: tdecl was null");
+        puts("ic_decl_type_isunit: tdecl was null");
         return 0;
     }
 
     switch (tdecl->tag) {
         case ic_decl_type_tag_struct:
-            return ic_decl_type_struct_isvoid(&(tdecl->u.tstruct));
+            return ic_decl_type_struct_isunit(&(tdecl->u.tstruct));
             break;
 
         case ic_decl_type_tag_union:
-            /* a union is not void */
+            /* a union is not unit */
             return 0;
             break;
 
         default:
-            puts("ic_decl_type_isvoid: unknown tag");
+            puts("ic_decl_type_isunit: unknown tag");
             return 0;
             break;
     }

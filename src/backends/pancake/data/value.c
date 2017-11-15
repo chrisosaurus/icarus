@@ -55,6 +55,10 @@ unsigned int ic_backend_pancake_value_copy(struct ic_backend_pancake_value *valu
             value_to->u.ref = value_from->u.ref;
             break;
 
+        case ic_backend_pancake_value_type_unit:
+            value_to->u.unit = value_from->u.unit;
+            break;
+
         default:
             puts("ic_backend_pancake_value_copy: impossible value_from->tag");
             return 0;
@@ -93,6 +97,10 @@ unsigned int ic_backend_pancake_value_print(FILE *fd, struct ic_backend_pancake_
 
         case ic_backend_pancake_value_type_ref:
             fprintf(fd, "ref: %p\n", value->u.ref);
+            break;
+
+        case ic_backend_pancake_value_type_unit:
+            fprintf(fd, "unit: ()\n");
             break;
 
         default:

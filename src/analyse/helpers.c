@@ -159,7 +159,7 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
          *  a) convert type to string representation
          *  b) checking that this is not a self-recursive type
          *  c) check that this field's type exists
-         *  d) check this is not the void type
+         *  d) check this is not the unit type
          *
          *  FIXME check / consider this
          */
@@ -169,12 +169,6 @@ unsigned int ic_analyse_field_list(char *unit, char *unit_name, struct ic_kludge
                    name,
                    unit,
                    unit_name);
-            goto ERROR;
-        }
-
-        /* check this is not the void type */
-        if (ic_decl_type_isvoid(field_type)) {
-            puts("ic_analyse_field_list: void type used in field list");
             goto ERROR;
         }
     }
@@ -784,7 +778,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                 /* type actually returned */
                 type = ic_analyse_infer(kludge, fdecl, body->scope, expr);
                 if (!type) {
-                    /* Void is a concrete type so type being null is an error */
+                    /* Unit is a concrete type so type being null is an error */
                     puts("ic_analyse_body: failed to infer returned type");
                     goto ERROR;
                 }
@@ -798,7 +792,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
 
                 /* compare to declared return type */
                 if (!ic_decl_type_equal(type, other_type)) {
-                    /* Void is a concrete type so type being null is an error */
+                    /* Unit is a concrete type so type being null is an error */
                     puts("ic_analyse_body: ret: returned type did not match declared");
                     goto ERROR;
                 }
@@ -886,11 +880,11 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                     goto ERROR;
                 }
 
-                /* check if this expression is void
-                 * as a void has no boolean interpretation
+                /* check if this expression is Unit
+                 * as a Unit has no boolean interpretation
                  */
-                if (ic_decl_type_isvoid(type)) {
-                    puts("ic_analyse_body: if: void expression used as if condition");
+                if (ic_decl_type_isunit(type)) {
+                    puts("ic_analyse_body: if: unit expression used as if condition");
                     ic_decl_type_print_debug(stdout, type);
                     goto ERROR;
                 }
@@ -992,12 +986,6 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                     goto ERROR;
                 }
 
-                /* if either type is void then this is an error */
-                if (ic_decl_type_isvoid(type)) {
-                    puts("ic_analyse_body: assign: attempt to assign to void variable");
-                    goto ERROR;
-                }
-
                 /* right expr */
                 expr = ic_stmt_assign_get_right(assign);
                 if (!expr) {
@@ -1009,12 +997,6 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                 other_type = ic_analyse_infer(kludge, fdecl, body->scope, expr);
                 if (!other_type) {
                     puts("ic_analyse_body: assign: call to ic_analyse_infer failed");
-                    goto ERROR;
-                }
-
-                /* if either type is void then this is an error */
-                if (ic_decl_type_isvoid(other_type)) {
-                    puts("ic_analyse_body: assign: attempt to assign void value");
                     goto ERROR;
                 }
 
@@ -1040,12 +1022,12 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                     goto ERROR;
                 }
 
-                /* check if type is non-void so we can warn */
-                if (!ic_decl_type_isvoid(type)) {
-                    /* warn about non-void in void context
+                /* check if type is non-unit so we can warn */
+                if (!ic_decl_type_isunit(type)) {
+                    /* warn about non-unit in unit context
                      * FIXME make this more useful
                      */
-                    puts("Warning: usage of non-void expression in void context");
+                    puts("Warning: usage of non-unit expression in unit context");
                 }
 
                 break;

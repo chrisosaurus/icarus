@@ -14,7 +14,7 @@ end
 union Bar[T::Uint]
     t::Uint
 end
-fn main() -> Void
+fn main() -> Unit
     let _l0::Sint = 6s
     let f::Foo[Sint] = Foo(_l0)
     let f2::Foo[Sint] = f

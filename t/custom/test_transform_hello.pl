@@ -25,7 +25,7 @@ fn get_greeting(name::String) -> String
     let _t1::String = concat(_t0, _l1)
     return _t1
 end
-fn main() -> Void
+fn main() -> Unit
     let _l0::String = "Jennifer"
     let _t0::String = get_greeting(_l0)
     println(_t0)

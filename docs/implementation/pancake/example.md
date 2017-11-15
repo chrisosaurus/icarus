@@ -23,12 +23,12 @@ the same program in TIR:
       return _l1
     end
 
-    fn say_hi() -> Void
+    fn say_hi() -> Unit
       let _t1 = get_str()
       println(_t1)
     end
 
-    fn main() -> Void
+    fn main() -> Unit
       say_hi()
     end
 

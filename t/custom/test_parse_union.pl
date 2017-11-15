@@ -18,7 +18,7 @@ union Foo
     b::String
 end
 
-fn main() -> Void
+fn main() -> Unit
     let f = Foo("Hello")
     match f
         case a::Sint

@@ -9,6 +9,8 @@
  * interface, so there is no use in warning on unused-param
  */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
+/* some functions pop unnecessary values for the side effects (e.g. the Unit functions) */
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 
 void panic(char *ch);
 void panic(char *ch) {
@@ -33,7 +35,7 @@ void panic(char *ch) {
         return 0;                                                  \
     }                                                              \
     if (value->tag != ic_backend_pancake_value_type_##type) {      \
-        fputs("value was not of expected type\n, found:", stdout); \
+        fputs("read: value was not of expected type\n, found:", stdout); \
         ic_backend_pancake_value_print(stdout, value);             \
         return 0;                                                  \
     }                                                              \
@@ -43,24 +45,47 @@ void panic(char *ch) {
     }                                                              \
     name = value->u.type;
 
-#define RESULT(result, type)                                  \
-    value = ic_backend_pancake_value_stack_push(value_stack); \
-    if (!value) {                                             \
-        puts("stack_push failed");                            \
-        return 0;                                             \
-    }                                                         \
-    value->tag = ic_backend_pancake_value_type_##type;        \
+#define RESULT(result, type)                                       \
+    value = ic_backend_pancake_value_stack_push(value_stack);      \
+    if (!value) {                                                  \
+        puts("stack_push failed");                                 \
+        return 0;                                                  \
+    }                                                              \
+    value->tag = ic_backend_pancake_value_type_##type;             \
     value->u.type = result;
 
+#define UNIT_RESULT()                                              \
+    RESULT(0, unit);
+
+#define CONSUME_UNIT()                                             \
+    value = ic_backend_pancake_value_stack_peek(value_stack);      \
+    if (!value) {                                                  \
+        puts("stack_peek failed");                                 \
+        return 0;                                                  \
+    }                                                              \
+    if (value->tag != ic_backend_pancake_value_type_unit) {        \
+        fputs("consume_unit: value was not of expected type\n, found:", stdout); \
+        ic_backend_pancake_value_print(stdout, value);             \
+        return 0;                                                  \
+    }                                                              \
+    if (!ic_backend_pancake_value_stack_pop(value_stack)) {        \
+        puts("stack_pop failed");                                  \
+        return 0;                                                  \
+    }
+
+
+unsigned int Unit(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int print_string(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int print_sint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int print_uint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int print_bool(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int print_unit(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int println(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int println_string(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int println_sint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int println_uint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int println_bool(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int println_unit(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int plus_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int plus_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int minus_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
@@ -76,31 +101,36 @@ unsigned int lessthan_sint_sint(struct ic_backend_pancake_value_stack *value_sta
 unsigned int greaterthan_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int greaterthan_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int to_str_bool(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int to_str_unit(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int length_string(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int equal_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int equal_uint_uint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int equal_sint_uint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int equal_uint_sint(struct ic_backend_pancake_value_stack *value_stack);
+unsigned int equal_unit_unit(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int concat_string_string(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int modulo_sint_sint(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int assert_bool(struct ic_backend_pancake_value_stack *value_stack);
 
-#define ic_backend_pancake_builtins_table_len 32
+#define ic_backend_pancake_builtins_table_len 37
 
 /* table mapping user-land names to internal names */
 struct ic_backend_pancake_builtins_table_type {
     char *str;
     unsigned int (*func)(struct ic_backend_pancake_value_stack *value_stack);
 } ic_backend_pancake_builtins_table[ic_backend_pancake_builtins_table_len] = {
+    {"Unit()", Unit},
     {"print(String)", print_string},
     {"print(Uint)", print_uint},
     {"print(Sint)", print_sint},
     {"print(Bool)", print_bool},
+    {"print(Unit)", print_unit},
     {"println()", println},
     {"println(String)", println_string},
     {"println(Uint)", println_uint},
     {"println(Sint)", println_sint},
     {"println(Bool)", println_bool},
+    {"println(Unit)", println_unit},
     {"plus(Uint,Uint)", plus_uint_uint},
     {"plus(Sint,Sint)", plus_sint_sint},
     {"minus(Uint,Uint)", minus_uint_uint},
@@ -116,11 +146,13 @@ struct ic_backend_pancake_builtins_table_type {
     {"greaterthan_equal(Uint,Uint)", greaterthan_equal_uint_uint},
     {"greaterthan_equal(Sint,Sint)", greaterthan_equal_sint_sint},
     {"to_str(Bool)", to_str_bool},
+    {"to_str(Unit)", to_str_unit},
     {"length(String)", length_string},
     {"equal(Sint,Sint)", equal_sint_sint},
     {"equal(Uint,Uint)", equal_uint_uint},
     {"equal(Uint,Sint)", equal_uint_sint},
     {"equal(Sint,Uint)", equal_sint_uint},
+    {"equal(Unit,Unit)", equal_unit_unit},
     {"concat(String,String)", concat_string_string},
     {"modulo(Sint,Sint)", modulo_sint_sint},
     {"assert(Bool)", assert_bool},
@@ -186,6 +218,17 @@ ic_backend_function_sig ic_backend_pancake_builtins_table_get(char *str) {
     return ret;
 }
 
+/* Push a new Unit onto the stack
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int Unit(struct ic_backend_pancake_value_stack *value_stack) {
+    INIT();
+    UNIT_RESULT();
+    return 1;
+}
+
 /* print a string
  *
  * pops string from value_stack
@@ -200,6 +243,8 @@ unsigned int print_string(struct ic_backend_pancake_value_stack *value_stack) {
     READ(str, string);
 
     fputs(str, stdout);
+
+    UNIT_RESULT();
     return 1;
 }
 
@@ -217,6 +262,8 @@ unsigned int print_uint(struct ic_backend_pancake_value_stack *value_stack) {
     READ(uint, uint);
 
     printf("%u", uint);
+
+    UNIT_RESULT();
     return 1;
 }
 
@@ -234,6 +281,8 @@ unsigned int print_sint(struct ic_backend_pancake_value_stack *value_stack) {
     READ(sint, sint);
 
     printf("%d", sint);
+
+    UNIT_RESULT();
     return 1;
 }
 
@@ -255,6 +304,27 @@ unsigned int print_bool(struct ic_backend_pancake_value_stack *value_stack) {
     } else {
         fputs("False", stdout);
     }
+
+    UNIT_RESULT();
+    return 1;
+}
+
+/* print a unit
+ *
+ * pops unit from value_stack
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int print_unit(struct ic_backend_pancake_value_stack *value_stack) {
+    char unit = 0;
+    INIT();
+
+    READ(unit, unit);
+
+    fputs("Unit()", stdout);
+
+    UNIT_RESULT();
     return 1;
 }
 
@@ -266,7 +336,11 @@ unsigned int print_bool(struct ic_backend_pancake_value_stack *value_stack) {
  */
 unsigned int println(struct ic_backend_pancake_value_stack *value_stack) {
     /* ignores argument, only needed to match interface */
+    INIT();
+
     puts("");
+
+    UNIT_RESULT();
     return 1;
 }
 
@@ -278,10 +352,15 @@ unsigned int println(struct ic_backend_pancake_value_stack *value_stack) {
  * returns 0 on failure
  */
 unsigned int println_string(struct ic_backend_pancake_value_stack *value_stack) {
+    INIT();
+
     if (!print_string(value_stack)) {
         return 0;
     }
+    CONSUME_UNIT();
     puts("");
+
+    UNIT_RESULT();
     return 1;
 }
 
@@ -293,10 +372,15 @@ unsigned int println_string(struct ic_backend_pancake_value_stack *value_stack) 
  * returns 0 on failure
  */
 unsigned int println_uint(struct ic_backend_pancake_value_stack *value_stack) {
+    INIT();
+
     if (!print_uint(value_stack)) {
         return 0;
     }
+    CONSUME_UNIT();
     puts("");
+
+    UNIT_RESULT();
     return 1;
 }
 
@@ -308,10 +392,15 @@ unsigned int println_uint(struct ic_backend_pancake_value_stack *value_stack) {
  * returns 0 on failure
  */
 unsigned int println_sint(struct ic_backend_pancake_value_stack *value_stack) {
+    INIT();
+
     if (!print_sint(value_stack)) {
         return 0;
     }
+    CONSUME_UNIT();
     puts("");
+
+    UNIT_RESULT();
     return 1;
 }
 
@@ -323,10 +412,35 @@ unsigned int println_sint(struct ic_backend_pancake_value_stack *value_stack) {
  * returns 0 on failure
  */
 unsigned int println_bool(struct ic_backend_pancake_value_stack *value_stack) {
+    INIT();
+
     if (!print_bool(value_stack)) {
         return 0;
     }
+    CONSUME_UNIT();
     puts("");
+
+    UNIT_RESULT();
+    return 1;
+}
+
+/* print a unit followed by a \n
+ *
+ * pops unit from value_stack
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int println_unit(struct ic_backend_pancake_value_stack *value_stack) {
+    INIT();
+
+    if (!print_unit(value_stack)) {
+        return 0;
+    }
+    CONSUME_UNIT();
+    puts("");
+
+    UNIT_RESULT();
     return 1;
 }
 
@@ -616,6 +730,19 @@ unsigned int to_str_bool(struct ic_backend_pancake_value_stack *value_stack) {
     return 1;
 }
 
+unsigned int to_str_unit(struct ic_backend_pancake_value_stack *value_stack) {
+    char unit = 0;
+    char *answer = 0;
+    INIT();
+
+    READ(unit, unit);
+
+    answer = "";
+
+    RESULT(answer, string);
+    return 1;
+}
+
 unsigned int length_string(struct ic_backend_pancake_value_stack *value_stack) {
     char *str = 0;
     unsigned int answer = 0;
@@ -708,6 +835,21 @@ unsigned int equal_uint_sint(struct ic_backend_pancake_value_stack *value_stack)
     return 1;
 }
 
+unsigned int equal_unit_unit(struct ic_backend_pancake_value_stack *value_stack) {
+    char unit1 = 0;
+    char unit2 = 0;
+    int answer = 0;
+    INIT();
+
+    READ(unit1, unit);
+    READ(unit2, unit);
+
+    answer = 1;
+
+    RESULT(answer, boolean);
+    return 1;
+}
+
 unsigned int concat_string_string(struct ic_backend_pancake_value_stack *value_stack) {
     char *str1 = 0;
     char *str2 = 0;
@@ -754,5 +896,7 @@ unsigned int assert_bool(struct ic_backend_pancake_value_stack *value_stack) {
     if (!boolean) {
         panic("assertion failed");
     }
+
+    UNIT_RESULT();
     return 1;
 }

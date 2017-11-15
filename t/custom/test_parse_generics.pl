@@ -25,11 +25,11 @@ union Bar[T]
     t::T
 end
 
-fn print[T](f::Foo[T]) -> Void
+fn print[T](f::Foo[T]) -> Unit
     print(f.t)
 end
 
-fn main() -> Void
+fn main() -> Unit
     let f = Foo[Sint](6s)
     let f2::Foo[Sint] = f
     println(id[Sint](10s))

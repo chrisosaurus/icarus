@@ -140,7 +140,7 @@ which will show us the transformed IR version of this:
         let _t0::Bool = equal(rem, _l0)
         return _t0
     end
-    fn fizzer(num::Sint) -> Void
+    fn fizzer(num::Sint) -> Unit
         let str::String = ""
         let _l0::Sint = 3s
         let _t0::Bool = is_div(num, _l0)
@@ -163,7 +163,7 @@ which will show us the transformed IR version of this:
             println(str)
         end
     end
-    fn fizzbuzz(from::Sint, to::Sint) -> Void
+    fn fizzbuzz(from::Sint, to::Sint) -> Unit
         let _t0::Bool = lessthan(from, to)
         if _t0
             fizzer(from)
@@ -172,7 +172,7 @@ which will show us the transformed IR version of this:
             fizzbuzz(from, to)
         end
     end
-    fn main() -> Void
+    fn main() -> Unit
         let _l0::Sint = 1s
         let _l1::Sint = 20s
         fizzbuzz(_l0, _l1)
@@ -280,7 +280,7 @@ which shows us
     call_builtin println(String) 1
     label fizzer(Sint)3
     clean_stack
-    return_void
+    return_unit
     label fizzbuzz(Sint,Sint)
     copyarg 0
     store from
@@ -301,13 +301,13 @@ which shows us
     call fizzbuzz(Sint,Sint) 2
     label fizzbuzz(Sint,Sint)0
     clean_stack
-    return_void
+    return_unit
     label main()
     pushint 1
     pushint 20
     call fizzbuzz(Sint,Sint) 2
     clean_stack
-    return_void
+    return_unit
     ==========================
 
     Pancake interpreter output

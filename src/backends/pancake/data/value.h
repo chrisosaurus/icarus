@@ -7,6 +7,7 @@ enum ic_backend_pancake_value_type {
     ic_backend_pancake_value_type_sint,
     ic_backend_pancake_value_type_string,
     ic_backend_pancake_value_type_ref,
+    ic_backend_pancake_value_type_unit,
 };
 
 union ic_backend_pancake_value_cell {
@@ -15,6 +16,7 @@ union ic_backend_pancake_value_cell {
     int sint;
     char *string;
     void *ref;
+    char unit; /* only needed for READ and RESULT macro usage */
 };
 
 struct ic_backend_pancake_value {

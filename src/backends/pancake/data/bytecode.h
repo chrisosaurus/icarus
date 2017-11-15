@@ -22,6 +22,8 @@ enum ic_backend_pancake_bytecode_type {
     icp_pushint,
     /* push_str string */
     icp_pushstr,
+    /* push_unit */
+    icp_pushunit,
     /* copyarg argn::uint
      * copyarg at offset argn onto stack
      * Note: arguments to functions are pushed in order
@@ -47,8 +49,8 @@ enum ic_backend_pancake_bytecode_type {
     icp_pop,
     /* return_value */
     icp_return_value,
-    /* return_void */
-    icp_return_void,
+    /* return_unit, pushes a unit onto stack and then returns */
+    icp_return_unit,
     /* jmp addr::uint */
     icp_jmp,
     /* jif addr::uint */
@@ -125,6 +127,11 @@ enum ic_backend_pancake_bytecode_type {
      * load value at offset `slot` within object and push onto stack as ref
      */
     icp_load_offset_ref,
+    /* load_offset_unit slot::uint
+     * let object = peek()
+     * load value at offset `slot` within object and push onto stack as unit
+     */
+    icp_load_offset_unit,
 };
 
 enum ic_backend_pancake_bytecode_arg_type {

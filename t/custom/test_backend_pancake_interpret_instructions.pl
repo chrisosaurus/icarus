@@ -48,6 +48,7 @@ my $cases = [
     input => '
       pushuint 17
       call_builtin println(Uint) 1
+      pop 1
       exit
       ',
     expected => '
@@ -136,12 +137,13 @@ my $cases = [
         pushuint 2
         pushuint 3
         call baz() 3
+        pop 1
         exit
         label baz()
         pushuint 4
         pushuint 5
         clean_stack
-        return_void
+        return_unit
     ',
     expected => '
       pancake value_stack after execution finished:
@@ -154,6 +156,7 @@ my $cases = [
     input => '
       label entry
       call main() 0
+      pop 1
       exit
       label foo()
       pushuint 5
@@ -164,8 +167,9 @@ my $cases = [
       label main()
       call foo() 0
       call_builtin println(Uint) 1
+      pop 1
       clean_stack
-      return_void
+      return_unit
       ',
     expected => '
       5
@@ -179,6 +183,7 @@ my $cases = [
     input => '
       pushstr "hello world"
       call_builtin println(String) 1
+      pop 1
       exit
       ',
     expected => '
@@ -192,17 +197,21 @@ my $cases = [
     input => '
       label entry
       call foo() 0
+      pop 1
       exit
       label foo()
       pushint 5
       pushint 3
       store foo
       call_builtin println(Sint) 1
+      pop 1
       load foo
       call_builtin println(Sint) 1
+      pop 1
       load foo
       call_builtin println(Sint) 1
-      return_void
+      pop 1
+      return_unit
       ',
     expected => '
       5
@@ -217,45 +226,56 @@ my $cases = [
     input => '
       label entry
       call foo() 0
+      pop 1
       exit
       label foo()
       pushbool 0
       pushbool 1
       call_builtin println(Bool) 1
+      pop 1
       call_builtin println(Bool) 1
+      pop 1
       pushuint 5
       pushuint 6
       call_builtin greaterthan_equal(Uint,Uint) 2
       call_builtin println(Bool) 1
+      pop 1
       pushuint 5
       pushuint 6
       call_builtin greaterthan(Uint,Uint) 2
       call_builtin println(Bool) 1
+      pop 1
       pushuint 5
       pushuint 6
       call_builtin lessthan_equal(Uint,Uint) 2
       call_builtin println(Bool) 1
+      pop 1
       pushuint 5
       pushuint 6
       call_builtin lessthan(Uint,Uint) 2
       call_builtin println(Bool) 1
+      pop 1
       pushint 5
       pushint 6
       call_builtin greaterthan_equal(Sint,Sint) 2
       call_builtin println(Bool) 1
+      pop 1
       pushint 5
       pushint 6
       call_builtin greaterthan(Sint,Sint) 2
       call_builtin println(Bool) 1
+      pop 1
       pushint 5
       pushint 6
       call_builtin lessthan_equal(Sint,Sint) 2
       call_builtin println(Bool) 1
+      pop 1
       pushint 5
       pushint 6
       call_builtin lessthan(Sint,Sint) 2
       call_builtin println(Bool) 1
-      return_void
+      pop 1
+      return_unit
       ',
     # 1
     # 0

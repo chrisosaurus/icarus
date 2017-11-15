@@ -221,7 +221,7 @@ static unsigned int ic_analyse_decl_type_generate_print_functions(struct ic_klud
             puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl-func_get_return failed");
             goto ERROR;
         }
-        if (!ic_type_ref_set_symbol(type_ref, "Void", 4)) {
+        if (!ic_type_ref_set_symbol(type_ref, "Unit", 4)) {
             puts("ic_analyse_decl_type_generate_print_functions: call to ic_type_ref_set_symbol failed");
             goto ERROR;
         }
@@ -275,7 +275,7 @@ static unsigned int ic_analyse_decl_type_generate_print_functions(struct ic_klud
             puts("ic_analyse_decl_type_generate_print_functions: call to ic_decl-func_get_return failed");
             goto ERROR;
         }
-        if (!ic_type_ref_set_symbol(type_ref, "Void", 4)) {
+        if (!ic_type_ref_set_symbol(type_ref, "Unit", 4)) {
             puts("ic_analyse_decl_type_generate_print_functions: call to ic_type_ref_set_symbol failed");
             goto ERROR;
         }

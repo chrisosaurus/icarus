@@ -143,6 +143,13 @@ unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_panca
             return 1;
             break;
 
+        /* push_unit */
+        case icp_pushunit:
+            fputs("pushunit", fd);
+
+            return 1;
+            break;
+
         /* copyarg argn::uint */
         case icp_copyarg:
             uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
@@ -227,9 +234,9 @@ unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_panca
             return 1;
             break;
 
-        /* return_void */
-        case icp_return_void:
-            fputs("return_void", fd);
+        /* return_unit */
+        case icp_return_unit:
+            fputs("return_unit", fd);
             return 1;
             break;
 
@@ -397,8 +404,14 @@ unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_panca
             fprintf(fd, "load_offset_ref %u", uint);
             return 1;
 
+        case icp_load_offset_unit:
+            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            fprintf(fd, "load_offset_unit %u", uint);
+            return 1;
+
         default:
             puts("ic_backend_pancake_bytecode_print: impossible case");
+            printf("unknown bytecode->tag: '%d'\n", bytecode->tag);
             return 0;
             break;
     }
@@ -834,6 +847,8 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_uint(struct ic_backend_pancake
         case icp_load_offset_sint:
         /* load_offset_ref slot::uint */
         case icp_load_offset_ref:
+        /* load_offset_unit slot::uint */
+        case icp_load_offset_unit:
             break;
 
         default:

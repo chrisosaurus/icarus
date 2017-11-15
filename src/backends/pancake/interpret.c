@@ -157,6 +157,18 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 break;
 
+            /* push_unit */
+            case icp_pushunit:
+                value = ic_backend_pancake_value_stack_push(value_stack);
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_push failed");
+                    return 0;
+                }
+
+                value->tag = ic_backend_pancake_value_type_unit;
+
+                break;
+
             /* jmp addr::uint */
             case icp_jmp:
                 uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
@@ -184,6 +196,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 if (value->tag != ic_backend_pancake_value_type_boolean) {
                     puts("ic_backend_pancake_interpret: value->tag was not of type boolean");
+                    printf("got tag: '%d\n", value->tag);
                     return 0;
                 }
 
@@ -221,6 +234,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 if (value->tag != ic_backend_pancake_value_type_boolean) {
                     puts("ic_backend_pancake_interpret: value->tag was not of type boolean");
+                    printf("got tag: '%d\n", value->tag);
                     return 0;
                 }
 
@@ -289,6 +303,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 if (value->tag != ic_backend_pancake_value_type_boolean) {
                     puts("ic_backend_pancake_interpret: value->tag was not of type boolean");
+                    printf("got tag: '%d\n", value->tag);
                     return 0;
                 }
 
@@ -349,6 +364,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 if (value->tag != ic_backend_pancake_value_type_boolean) {
                     puts("ic_backend_pancake_interpret: value->tag was not of type boolean");
+                    printf("got tag: '%d\n", value->tag);
                     return 0;
                 }
 
@@ -471,11 +487,20 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 break;
 
+            /* return_unit */
+            case icp_return_unit:
+                /* push a unit value on, then use return_value code below */
+                value = ic_backend_pancake_value_stack_push(value_stack);
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_push failed");
+                    return 0;
+                }
+
+                value->tag = ic_backend_pancake_value_type_unit;
+
             /* return_value */
             case icp_return_value:
-            /* return_void */
-            case icp_return_void:
-                /* no difference in behavior between return_value and return-void */
+                /* no other difference in behavior between return_value and return_unit */
                 call_frame = ic_backend_pancake_call_frame_stack_peek(call_frame_stack);
                 if (!call_frame) {
                     puts("ic_backend_pancake_interpret: call to ic_backend_pancake_call_frame_stack_peek failed");
@@ -846,6 +871,10 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                         ref_slot->ref = value->u.ref;
                         break;
 
+                    case ic_backend_pancake_value_type_unit:
+                        /* nothing to do */
+                        break;
+
                     default:
                         puts("ic_backend_pancake_interpret: impossible value->tag");
                         return 0;
@@ -878,6 +907,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 if (value->tag != ic_backend_pancake_value_type_ref) {
                     puts("ic_backend_pancake_interpret: value->tag was not of type ref");
+                    printf("got tag: '%d\n", value->tag);
                     return 0;
                 }
 
@@ -915,6 +945,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 if (value->tag != ic_backend_pancake_value_type_ref) {
                     puts("ic_backend_pancake_interpret: value->tag was not of type ref");
+                    printf("got tag: '%d\n", value->tag);
                     return 0;
                 }
 
@@ -952,6 +983,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 if (value->tag != ic_backend_pancake_value_type_ref) {
                     puts("ic_backend_pancake_interpret: value->tag was not of type ref");
+                    printf("got tag: '%d\n", value->tag);
                     return 0;
                 }
 
@@ -989,6 +1021,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 if (value->tag != ic_backend_pancake_value_type_ref) {
                     puts("ic_backend_pancake_interpret: value->tag was not of type ref");
+                    printf("got tag: '%d\n", value->tag);
                     return 0;
                 }
 
@@ -1026,6 +1059,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 if (value->tag != ic_backend_pancake_value_type_ref) {
                     puts("ic_backend_pancake_interpret: value->tag was not of type ref");
+                    printf("got tag: '%d\n", value->tag);
                     return 0;
                 }
 
@@ -1038,6 +1072,40 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 /* success */
                 break;
+
+            /* load_offset_unit slot::uint
+             * let object = peek()
+             * load value at offset `slot` within object and push onto stack as unit
+             */
+            case icp_load_offset_unit:
+                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+
+                /* get value DO NOT POP */
+                value = ic_backend_pancake_value_stack_peek(value_stack);
+
+                if (!value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_peek failed");
+                    return 0;
+                }
+
+                /* create new value from top of value stack to store */
+                to_value = ic_backend_pancake_value_stack_push(value_stack);
+                if (!to_value) {
+                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_push failed for icp_load");
+                    return 0;
+                }
+
+                if (value->tag != ic_backend_pancake_value_type_ref) {
+                    puts("ic_backend_pancake_interpret: value->tag was not of type ref");
+                    printf("got tag: '%d\n", value->tag);
+                    return 0;
+                }
+
+                to_value->tag = ic_backend_pancake_value_type_unit;
+
+                /* success */
+                break;
+
 
             default:
                 puts("ic_backend_pancake_interpret: unknown bytecode instructions");
