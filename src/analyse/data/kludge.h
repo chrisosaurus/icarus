@@ -135,13 +135,6 @@ struct ic_decl_type *ic_kludge_get_decl_type_from_symbol(struct ic_kludge *kludg
  */
 struct ic_decl_type *ic_kludge_get_decl_type_from_string(struct ic_kludge *kludge, struct ic_string *type);
 
-/* retrieve ic_decl_type by type_ref
- *
- * returns * on success
- * returns 0 on failure
- */
-struct ic_decl_type *ic_kludge_get_decl_type_from_typeref(struct ic_kludge *kludge, struct ic_type_ref *type_ref);
-
 /* retrieve ic_decl_func by string
  *
  * returns * on success

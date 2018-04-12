@@ -1440,7 +1440,7 @@ INFER_FCALL_FOUND:
     /* now we have to get the return type for this func */
 
     /* get return type from this function we found */
-    type = ic_kludge_get_decl_type_from_typeref(kludge, &(fcall_fdecl->ret_type));
+    type = ic_analyse_resolve_type_ref(kludge, "ic_analyse_infer_fcall", "kill me", &(containing_fdecl->type_params), &(fcall_fdecl->ret_type));
     if (!type) {
         printf("ic_analyse_infer_fcall: could not find return type '%s'\n", ch);
         return 0;
@@ -2053,7 +2053,7 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
             /* resolve symbol to tdecl
              * this will set let->tref for us
              */
-            type = ic_kludge_get_decl_type_from_typeref(kludge, let->tref);
+            type = ic_analyse_resolve_type_ref(kludge, "ic_analyse_let", ic_symbol_contents(&(let->identifier)), &(fdecl->type_params), let->tref);
             if (!type) {
                 puts("ic_analyse_let: failed to find type from typeref");
                 printf("failed to find declared type '%s'\n", ic_symbol_contents(ic_type_ref_get_symbol(let->tref)));

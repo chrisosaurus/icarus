@@ -31,7 +31,7 @@ end
 
 fn main() -> Void
     let f = Foo[Sint](6s)
-    let f2 = f
+    let f2::Foo[Sint] = f
     println(id[Sint](10s))
     println(id[String]("Hello"))
     println(id[Foo[Sint]](Foo[Sint](1s)))

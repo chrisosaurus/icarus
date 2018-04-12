@@ -987,7 +987,7 @@ unsigned int ic_analyse_decl_func(struct ic_kludge *kludge, struct ic_decl_func 
         }
 
         /* get arg type */
-        arg_type = ic_kludge_get_decl_type_from_typeref(kludge, arg->type);
+        arg_type = ic_analyse_resolve_type_ref(kludge, "ic_analyse_decl_func", "kill me", &(fdecl->type_params), arg->type);
         if (!arg_type) {
             puts("ic_analyse_decl_func: call to ic_kludge_get_decl_type_from_typeref failed");
             goto ERROR;
