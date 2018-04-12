@@ -144,6 +144,10 @@ test_custom: $(OBJ) icarus
 	t/custom/test_transform_simple.pl
 
 	@echo -e "\n"
+	@echo running test_transform_generics.pl
+	t/custom/test_transform_generics.pl
+
+	@echo -e "\n"
 	@echo running test_backend_pancake_end_to_end.pl
 	t/custom/test_backend_pancake_end_to_end.pl
 

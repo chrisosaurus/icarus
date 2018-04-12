@@ -16,9 +16,9 @@ end
 
 fn main()
     let f = Foo[Sint](6s)
-    let f2::Foo[Sint] = f
-    println(id(10s))
-    println(id("Hello"))
-    println(id(Foo(1s)))
-    println(id(Bar(1u)))
+    let f2 = f
+    println(id[Sint](10s))
+    println(id[String]("Hello"))
+    println(id[Foo[Sint]](Foo[Sint](1s)))
+    println(id[Bar[Uint]](Bar[Uint](1u)))
 end
