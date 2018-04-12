@@ -220,6 +220,11 @@ unsigned int ic_transform_print(FILE *fd, struct ic_kludge *kludge) {
             continue;
         }
 
+        /* skip uninstantiated generics */
+        if (!ic_decl_type_is_instantiated(tdecl)) {
+            continue;
+        }
+
         /* print tdecl */
         ic_decl_type_print(fd, tdecl, &fake_indent);
     }
@@ -236,6 +241,11 @@ unsigned int ic_transform_print(FILE *fd, struct ic_kludge *kludge) {
 
         /* skip printing of builtins */
         if (ic_decl_func_isbuiltin(fdecl)) {
+            continue;
+        }
+
+        /* skip uninstantiated generics */
+        if (!ic_decl_func_is_instantiated(fdecl)) {
             continue;
         }
 
