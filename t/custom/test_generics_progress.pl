@@ -204,6 +204,21 @@ my $cases = [
       List[Sint](1, Maybe[List[Sint]](List[Sint](2, Maybe[List[Sint]](List[Sint](3, Maybe[List[Sint]](Nothing()))))))
     ',
   },
+  {
+    input =>'
+      type Box[T]
+        t::T
+      end
+
+      fn main()
+        let a::Box[Sint] = Box[Sint](6s)
+        println(a.t)
+      end
+    ',
+    expected => '
+      6
+    ',
+  }
 ];
 
 # whitespace sensitivity sucks
