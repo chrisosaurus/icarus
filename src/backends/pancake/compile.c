@@ -133,8 +133,6 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
     struct ic_backend_pancake_bytecode *bc_entry_label = 0;
     /* bytecode instruction used for entry call to main */
     struct ic_backend_pancake_bytecode *bc_entry_call = 0;
-    /* bytecode instruction used for entry pop after main */
-    struct ic_backend_pancake_bytecode *bc_entry_pop = 0;
     /* bytecode instruction used for entry exit */
     struct ic_backend_pancake_bytecode *bc_entry_exit = 0;
 
@@ -188,17 +186,6 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
         return 0;
     }
 
-    /* insert pop 1 to cleanup from main() */
-    bc_entry_pop = ic_backend_pancake_instructions_add(instructions, icp_pop);
-    if (!bc_entry_pop) {
-        puts("ic_backend_pancake_compile_fdecl: call to ic_backend_pancake_instructions_add failed");
-        return 0;
-    }
-    if (!ic_backend_pancake_bytecode_arg1_set_uint(bc_entry_pop, 1)) {
-        puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
-        return 0;
-    }
-
     /* insert exit */
     bc_entry_exit = ic_backend_pancake_instructions_add(instructions, icp_exit);
     if (!bc_entry_exit) {
@@ -207,7 +194,7 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
     }
 
     /* sanity check our length */
-    if (4 != ic_backend_pancake_instructions_length(instructions)) {
+    if (3 != ic_backend_pancake_instructions_length(instructions)) {
         puts("ic_backend_pancake_compile: instructions length was not 4, something went wrong");
         return 0;
     }
@@ -1176,8 +1163,8 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
      *  fcall(args...)
      *    push all args onto stack (using dict)
      *    call fcall
-     *    if non-void:
-     *      pop 1 - throw away return value, give warning
+     *    if non-unit:
+     *      error, non-unit called in void context
      *  return name
      *    set return_register to name
      *    invoke exit process
@@ -1195,21 +1182,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
 
             if (!fcall_is_unit) {
                 puts("ic_backend_pancake_compile_stmt: function used in void context but was not Unit");
-                printf("non-void function called in void context\n");
-                return 0;
-            }
-
-            /* unit function call in void (statement) context
-             * need to pop unit
-             */
-            /* insert `pop` instruction */
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_pop);
-            if (!instruction) {
-                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_instructions_add failed");
-                return 0;
-            }
-            if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 1)) {
-                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_bytecode_arg1_set_uint");
+                printf("non-unit function called in void context\n");
                 return 0;
             }
 
@@ -1700,6 +1673,8 @@ unsigned int ic_backend_pancake_compile_body(struct ic_backend_pancake_instructi
 unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructions *instructions, struct ic_kludge *kludge, struct ic_scope *scope, struct ic_transform_ir_expr *texpr, struct ic_labeller *labeller) {
     struct ic_transform_ir_expr_fcall *tfcall = 0;
     unsigned int is_unit = 0;
+    /* instruction */
+    struct ic_backend_pancake_bytecode *instruction = 0;
 
     if (!instructions) {
         puts("ic_backend_pancake_compile_expr: instructions was null");
@@ -1762,6 +1737,22 @@ unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructi
             if (!ic_backend_pancake_compile_expr_fcall(instructions, kludge, scope, tfcall, &is_unit, labeller)) {
                 puts("ic_backend_pancake_compile_expr: let expr call to ic_backend_pancake_compile_expr_fcall failed");
                 return 0;
+            }
+
+            if (is_unit) {
+                /* unit function called in non-void context
+                 * need to add a pushunit to give a dummy value
+                 *
+                 *     fn foo() -> Unit ... end
+                 *     let a = foo()
+                 *     bar(foo())
+                 */
+                /* pushunit */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_pushunit);
+                if (!instruction) {
+                    puts("ic_backend_pancake_compile_expr: call to ic_backend_pancake_instructions_add failed");
+                    return 0;
+                }
             }
 
             return 1;
@@ -2636,18 +2627,6 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
         return 0;
     }
 
-    /* pop 1 */
-    instruction = ic_backend_pancake_instructions_add(instructions, icp_pop);
-    if (!instruction) {
-        puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_instructions_add failed");
-        return 0;
-    }
-
-    if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 1)) {
-        puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
-        return 0;
-    }
-
     /* pushstr "(" */
     instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
     if (!instruction) {
@@ -2674,18 +2653,6 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
 
     if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 1)) {
         puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
-        return 0;
-    }
-
-    /* pop 1 */
-    instruction = ic_backend_pancake_instructions_add(instructions, icp_pop);
-    if (!instruction) {
-        puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_instructions_add failed");
-        return 0;
-    }
-
-    if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 1)) {
-        puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
         return 0;
     }
 
@@ -2961,18 +2928,6 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
             return 0;
         }
 
-        /* pop 1 */
-        instruction = ic_backend_pancake_instructions_add(instructions, icp_pop);
-        if (!instruction) {
-            puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_instructions_add failed");
-            return 0;
-        }
-
-        if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 1)) {
-            puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
-            return 0;
-        }
-
         label = ic_pvector_get(labels, n_args);
         if (!label) {
             puts("ic_backend_pancake_generate_function_print_union: call to ic_pvector_get failed");
@@ -3048,18 +3003,6 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
 
     if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 1)) {
         puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
-        return 0;
-    }
-
-    /* pop 1 */
-    instruction = ic_backend_pancake_instructions_add(instructions, icp_pop);
-    if (!instruction) {
-        puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_instructions_add failed");
-        return 0;
-    }
-
-    if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 1)) {
-        puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
         return 0;
     }
 
@@ -3240,18 +3183,6 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
         return 0;
     }
 
-    /* pop 1 */
-    instruction = ic_backend_pancake_instructions_add(instructions, icp_pop);
-    if (!instruction) {
-        puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_instructions_add failed");
-        return 0;
-    }
-
-    if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 1)) {
-        puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
-        return 0;
-    }
-
     /* pushstr "(" */
     instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
     if (!instruction) {
@@ -3278,18 +3209,6 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
 
     if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 1)) {
         puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
-        return 0;
-    }
-
-    /* pop 1 */
-    instruction = ic_backend_pancake_instructions_add(instructions, icp_pop);
-    if (!instruction) {
-        puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_instructions_add failed");
-        return 0;
-    }
-
-    if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 1)) {
-        puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
         return 0;
     }
 
@@ -3337,18 +3256,6 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
 
             if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 1)) {
                 puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
-                return 0;
-            }
-
-            /* pop 1 */
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_pop);
-            if (!instruction) {
-                puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_instructions_add failed");
-                return 0;
-            }
-
-            if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 1)) {
-                puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
                 return 0;
             }
         }
@@ -3472,18 +3379,6 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
             puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
             return 0;
         }
-
-        /* pop 1 */
-        instruction = ic_backend_pancake_instructions_add(instructions, icp_pop);
-        if (!instruction) {
-            puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_instructions_add failed");
-            return 0;
-        }
-
-        if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 1)) {
-            puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
-            return 0;
-        }
     }
 
     /* pushstr ")" */
@@ -3512,18 +3407,6 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
 
     if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 1)) {
         puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
-        return 0;
-    }
-
-    /* pop 1 */
-    instruction = ic_backend_pancake_instructions_add(instructions, icp_pop);
-    if (!instruction) {
-        puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_instructions_add failed");
-        return 0;
-    }
-
-    if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 1)) {
-        puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
         return 0;
     }
 
@@ -4105,18 +3988,6 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                     return 0;
                 }
 
-                /* pop 1 */
-                instruction = ic_backend_pancake_instructions_add(instructions, icp_pop);
-                if (!instruction) {
-                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
-                    return 0;
-                }
-
-                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 1)) {
-                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
-                    return 0;
-                }
-
                 /* call_builtin println() 0 */
                 instruction = ic_backend_pancake_instructions_add(instructions, icp_call_builtin);
                 if (!instruction) {
@@ -4132,18 +4003,6 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                 /* set number of args we call with */
                 if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 0)) {
                     puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
-                    return 0;
-                }
-
-                /* pop 1 */
-                instruction = ic_backend_pancake_instructions_add(instructions, icp_pop);
-                if (!instruction) {
-                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
-                    return 0;
-                }
-
-                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 1)) {
-                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
                     return 0;
                 }
 

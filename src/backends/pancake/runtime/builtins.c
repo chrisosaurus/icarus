@@ -54,8 +54,14 @@ void panic(char *ch) {
     value->tag = ic_backend_pancake_value_type_##type;             \
     value->u.type = result;
 
-#define UNIT_RESULT()                                              \
-    RESULT(0, unit);
+/* TODO FIXME we probably never want to actually do this */
+#define PUSH_UNIT()                                                \
+    value = ic_backend_pancake_value_stack_push(value_stack);      \
+    if (!value) {                                                  \
+        puts("stack_push failed");                                 \
+        return 0;                                                  \
+    }                                                              \
+    value->tag = ic_backend_pancake_value_type_unit;
 
 #define CONSUME_UNIT()                                             \
     value = ic_backend_pancake_value_stack_peek(value_stack);      \
@@ -64,15 +70,10 @@ void panic(char *ch) {
         return 0;                                                  \
     }                                                              \
     if (value->tag != ic_backend_pancake_value_type_unit) {        \
-        fputs("consume_unit: value was not of expected type\n, found:", stdout); \
+        fputs("consume_unit: value was not of expected type 'unit'\n, found:", stdout); \
         ic_backend_pancake_value_print(stdout, value);             \
         return 0;                                                  \
     }                                                              \
-    if (!ic_backend_pancake_value_stack_pop(value_stack)) {        \
-        puts("stack_pop failed");                                  \
-        return 0;                                                  \
-    }
-
 
 unsigned int Unit(struct ic_backend_pancake_value_stack *value_stack);
 unsigned int print_string(struct ic_backend_pancake_value_stack *value_stack);
@@ -225,7 +226,10 @@ ic_backend_function_sig ic_backend_pancake_builtins_table_get(char *str) {
  */
 unsigned int Unit(struct ic_backend_pancake_value_stack *value_stack) {
     INIT();
-    UNIT_RESULT();
+
+    /* TODO FIXME we probably never want to actually do this */
+    PUSH_UNIT();
+
     return 1;
 }
 
@@ -244,7 +248,6 @@ unsigned int print_string(struct ic_backend_pancake_value_stack *value_stack) {
 
     fputs(str, stdout);
 
-    UNIT_RESULT();
     return 1;
 }
 
@@ -263,7 +266,6 @@ unsigned int print_uint(struct ic_backend_pancake_value_stack *value_stack) {
 
     printf("%u", uint);
 
-    UNIT_RESULT();
     return 1;
 }
 
@@ -282,7 +284,6 @@ unsigned int print_sint(struct ic_backend_pancake_value_stack *value_stack) {
 
     printf("%d", sint);
 
-    UNIT_RESULT();
     return 1;
 }
 
@@ -305,7 +306,6 @@ unsigned int print_bool(struct ic_backend_pancake_value_stack *value_stack) {
         fputs("False", stdout);
     }
 
-    UNIT_RESULT();
     return 1;
 }
 
@@ -317,14 +317,12 @@ unsigned int print_bool(struct ic_backend_pancake_value_stack *value_stack) {
  * returns 0 on failure
  */
 unsigned int print_unit(struct ic_backend_pancake_value_stack *value_stack) {
-    char unit = 0;
     INIT();
 
-    READ(unit, unit);
+    CONSUME_UNIT();
 
     fputs("Unit()", stdout);
 
-    UNIT_RESULT();
     return 1;
 }
 
@@ -336,11 +334,8 @@ unsigned int print_unit(struct ic_backend_pancake_value_stack *value_stack) {
  */
 unsigned int println(struct ic_backend_pancake_value_stack *value_stack) {
     /* ignores argument, only needed to match interface */
-    INIT();
-
     puts("");
 
-    UNIT_RESULT();
     return 1;
 }
 
@@ -352,15 +347,11 @@ unsigned int println(struct ic_backend_pancake_value_stack *value_stack) {
  * returns 0 on failure
  */
 unsigned int println_string(struct ic_backend_pancake_value_stack *value_stack) {
-    INIT();
-
     if (!print_string(value_stack)) {
         return 0;
     }
-    CONSUME_UNIT();
     puts("");
 
-    UNIT_RESULT();
     return 1;
 }
 
@@ -372,15 +363,11 @@ unsigned int println_string(struct ic_backend_pancake_value_stack *value_stack) 
  * returns 0 on failure
  */
 unsigned int println_uint(struct ic_backend_pancake_value_stack *value_stack) {
-    INIT();
-
     if (!print_uint(value_stack)) {
         return 0;
     }
-    CONSUME_UNIT();
     puts("");
 
-    UNIT_RESULT();
     return 1;
 }
 
@@ -392,15 +379,11 @@ unsigned int println_uint(struct ic_backend_pancake_value_stack *value_stack) {
  * returns 0 on failure
  */
 unsigned int println_sint(struct ic_backend_pancake_value_stack *value_stack) {
-    INIT();
-
     if (!print_sint(value_stack)) {
         return 0;
     }
-    CONSUME_UNIT();
     puts("");
 
-    UNIT_RESULT();
     return 1;
 }
 
@@ -412,15 +395,11 @@ unsigned int println_sint(struct ic_backend_pancake_value_stack *value_stack) {
  * returns 0 on failure
  */
 unsigned int println_bool(struct ic_backend_pancake_value_stack *value_stack) {
-    INIT();
-
     if (!print_bool(value_stack)) {
         return 0;
     }
-    CONSUME_UNIT();
     puts("");
 
-    UNIT_RESULT();
     return 1;
 }
 
@@ -432,15 +411,11 @@ unsigned int println_bool(struct ic_backend_pancake_value_stack *value_stack) {
  * returns 0 on failure
  */
 unsigned int println_unit(struct ic_backend_pancake_value_stack *value_stack) {
-    INIT();
-
     if (!print_unit(value_stack)) {
         return 0;
     }
-    CONSUME_UNIT();
     puts("");
 
-    UNIT_RESULT();
     return 1;
 }
 
@@ -731,11 +706,8 @@ unsigned int to_str_bool(struct ic_backend_pancake_value_stack *value_stack) {
 }
 
 unsigned int to_str_unit(struct ic_backend_pancake_value_stack *value_stack) {
-    char unit = 0;
     char *answer = 0;
     INIT();
-
-    READ(unit, unit);
 
     answer = "";
 
@@ -836,13 +808,11 @@ unsigned int equal_uint_sint(struct ic_backend_pancake_value_stack *value_stack)
 }
 
 unsigned int equal_unit_unit(struct ic_backend_pancake_value_stack *value_stack) {
-    char unit1 = 0;
-    char unit2 = 0;
     int answer = 0;
     INIT();
 
-    READ(unit1, unit);
-    READ(unit2, unit);
+    CONSUME_UNIT();
+    CONSUME_UNIT();
 
     answer = 1;
 
@@ -897,6 +867,5 @@ unsigned int assert_bool(struct ic_backend_pancake_value_stack *value_stack) {
         panic("assertion failed");
     }
 
-    UNIT_RESULT();
     return 1;
 }

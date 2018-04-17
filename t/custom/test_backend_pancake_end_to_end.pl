@@ -18,12 +18,10 @@ my $cases = [
     expected => '
       label entry
       call main() 0
-      pop 1
       exit
       label main()
       pushstr "Hello world"
       call_builtin println(String) 1
-      pop 1
       clean_stack
       return_unit
       Hello world
@@ -53,7 +51,6 @@ my $cases = [
     expected => '
       label entry
       call main() 0
-      pop 1
       exit
       label bar(Sint)
       pushint 7
@@ -97,13 +94,11 @@ my $cases = [
       store _t0
       load _t0
       call_builtin println(Sint) 1
-      pop 1
       pushint 7
       call baz(Sint) 1
       store _t1
       load _t1
       call_builtin println(Sint) 1
-      pop 1
       clean_stack
       return_unit
       18
@@ -124,22 +119,18 @@ my $cases = [
     expected => '
       label entry
       call main() 0
-      pop 1
       exit
       label main()
       pushbool 1
       call_builtin println(Bool) 1
-      pop 1
       pushbool 0
       call_builtin println(Bool) 1
-      pop 1
       pushint 6
       pushint 15
       call_builtin lessthan(Sint,Sint) 2
       store _t0
       load _t0
       call_builtin println(Bool) 1
-      pop 1
       clean_stack
       return_unit
       True
@@ -168,7 +159,6 @@ my $cases = [
     expected => '
       label entry
       call main() 0
-      pop 1
       exit
       label Bar(String)
       alloc 1
@@ -181,25 +171,19 @@ my $cases = [
       label print(Bar)
       pushstr "Bar"
       call_builtin print(String) 1
-      pop 1
       pushstr "("
       call_builtin print(String) 1
-      pop 1
       copyarg 0
       load_offset_str 0
       call_builtin print(String) 1
-      pop 1
       pushstr ")"
       call_builtin print(String) 1
-      pop 1
       clean_stack
       return_unit
       label println(Bar)
       copyarg 0
       call print(Bar) 1
-      pop 1
       call_builtin println() 0
-      pop 1
       clean_stack
       return_unit
       label Foo(Sint,Bar,String)
@@ -217,37 +201,27 @@ my $cases = [
       label print(Foo)
       pushstr "Foo"
       call_builtin print(String) 1
-      pop 1
       pushstr "("
       call_builtin print(String) 1
-      pop 1
       copyarg 0
       load_offset_sint 0
       call_builtin print(Sint) 1
-      pop 1
       pushstr ", "
       call_builtin print(String) 1
-      pop 1
       load_offset_ref 1
       call print(Bar) 1
-      pop 1
       pushstr ", "
       call_builtin print(String) 1
-      pop 1
       load_offset_str 2
       call_builtin print(String) 1
-      pop 1
       pushstr ")"
       call_builtin print(String) 1
-      pop 1
       clean_stack
       return_unit
       label println(Foo)
       copyarg 0
       call print(Foo) 1
-      pop 1
       call_builtin println() 0
-      pop 1
       clean_stack
       return_unit
       label main()
@@ -261,7 +235,6 @@ my $cases = [
       store f
       load f
       call println(Foo) 1
-      pop 1
       clean_stack
       return_unit
       Foo(4, Bar(Hello), World)
@@ -287,33 +260,24 @@ my $cases = [
     expected => '
       label entry
       call main() 0
-      pop 1
       exit
       label foo(Sint,String,String,Sint)
       copyarg 0
       call_builtin println(Sint) 1
-      pop 1
       copyarg 1
       call_builtin println(String) 1
-      pop 1
       copyarg 2
       call_builtin println(String) 1
-      pop 1
       copyarg 3
       call_builtin println(Sint) 1
-      pop 1
       copyarg 3
       call_builtin println(Sint) 1
-      pop 1
       copyarg 2
       call_builtin println(String) 1
-      pop 1
       copyarg 1
       call_builtin println(String) 1
-      pop 1
       copyarg 0
       call_builtin println(Sint) 1
-      pop 1
       clean_stack
       return_unit
       label main()
@@ -322,7 +286,6 @@ my $cases = [
       pushstr "world"
       pushint 2
       call foo(Sint,String,String,Sint) 4
-      pop 1
       clean_stack
       return_unit
       1
@@ -355,7 +318,6 @@ my $cases = [
     expected => '
       label entry
       call main() 0
-      pop 1
       exit
       label Bar(Sint)
       alloc 1
@@ -368,25 +330,19 @@ my $cases = [
       label print(Bar)
       pushstr "Bar"
       call_builtin print(String) 1
-      pop 1
       pushstr "("
       call_builtin print(String) 1
-      pop 1
       copyarg 0
       load_offset_sint 0
       call_builtin print(Sint) 1
-      pop 1
       pushstr ")"
       call_builtin print(String) 1
-      pop 1
       clean_stack
       return_unit
       label println(Bar)
       copyarg 0
       call print(Bar) 1
-      pop 1
       call_builtin println() 0
-      pop 1
       clean_stack
       return_unit
       label Foo(Sint)
@@ -422,10 +378,8 @@ my $cases = [
       label print(Foo)
       pushstr "Foo"
       call_builtin print(String) 1
-      pop 1
       pushstr "("
       call_builtin print(String) 1
-      pop 1
       copyarg 0
       load_offset_uint 0
       pushuint 0
@@ -443,30 +397,24 @@ my $cases = [
       label print(Foo)0
       load_offset_sint 1
       call_builtin print(Sint) 1
-      pop 1
       jmp_label print(Foo)3
       label print(Foo)1
       load_offset_str 1
       call_builtin print(String) 1
-      pop 1
       jmp_label print(Foo)3
       label print(Foo)2
       load_offset_ref 1
       call print(Bar) 1
-      pop 1
       jmp_label print(Foo)3
       label print(Foo)3
       pushstr ")"
       call_builtin print(String) 1
-      pop 1
       clean_stack
       return_unit
       label println(Foo)
       copyarg 0
       call print(Foo) 1
-      pop 1
       call_builtin println() 0
-      pop 1
       clean_stack
       return_unit
       label main()
@@ -475,7 +423,6 @@ my $cases = [
       store f
       load f
       call println(Foo) 1
-      pop 1
       clean_stack
       return_unit
       Foo(6)

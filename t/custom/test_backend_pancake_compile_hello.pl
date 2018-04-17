@@ -20,18 +20,15 @@ EOF
 my $expected = <<EOF;
 label entry
 call main() 0
-pop 1
 exit
 label foo(String)
 copyarg 0
 call_builtin println(String) 1
-pop 1
 clean_stack
 return_unit
 label main()
 pushstr "Hello world"
 call foo(String) 1
-pop 1
 clean_stack
 return_unit
 EOF

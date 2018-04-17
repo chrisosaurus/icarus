@@ -489,18 +489,9 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
             /* return_unit */
             case icp_return_unit:
-                /* push a unit value on, then use return_value code below */
-                value = ic_backend_pancake_value_stack_push(value_stack);
-                if (!value) {
-                    puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_push failed");
-                    return 0;
-                }
-
-                value->tag = ic_backend_pancake_value_type_unit;
-
+                /* no difference in behavior between return_value and return_unit */
             /* return_value */
             case icp_return_value:
-                /* no other difference in behavior between return_value and return_unit */
                 call_frame = ic_backend_pancake_call_frame_stack_peek(call_frame_stack);
                 if (!call_frame) {
                     puts("ic_backend_pancake_interpret: call to ic_backend_pancake_call_frame_stack_peek failed");

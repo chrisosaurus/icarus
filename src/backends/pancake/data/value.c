@@ -56,7 +56,6 @@ unsigned int ic_backend_pancake_value_copy(struct ic_backend_pancake_value *valu
             break;
 
         case ic_backend_pancake_value_type_unit:
-            value_to->u.unit = value_from->u.unit;
             break;
 
         default:

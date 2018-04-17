@@ -16,7 +16,6 @@ union ic_backend_pancake_value_cell {
     int sint;
     char *string;
     void *ref;
-    char unit; /* only needed for READ and RESULT macro usage */
 };
 
 struct ic_backend_pancake_value {
