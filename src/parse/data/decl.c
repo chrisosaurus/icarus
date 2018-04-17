@@ -826,8 +826,8 @@ struct ic_symbol *ic_decl_func_full_signature(struct ic_decl_func *fdecl) {
 
     /* print return type if we have one */
     if (fdecl->ret_type.tag == ic_type_ref_unknown) {
-        if (!ic_string_append_char(str, "Void", 4)) {
-            puts("ic_decl_func_full_signature: return type (void): call to ic_string_append_char failed");
+        if (!ic_string_append_char(str, "Unit", 4)) {
+            puts("ic_decl_func_full_signature: return type (unit): call to ic_string_append_char failed");
             return 0;
         }
     } else {
