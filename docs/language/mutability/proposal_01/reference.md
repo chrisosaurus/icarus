@@ -25,42 +25,42 @@ Local variables are mutable and they can be reassigned new values
 
 this allocated an integer value `5` and created a mutable variable `a` referencing this
 
-      +-var-----+
-      | a       |
+      +-var-------+
+      | a         |
       | ::Signed  |
-      | mutable |
-      +---------+
+      | mutable   |
+      +-----------+
            \
             \
              \
               \
                \
                 v
-               +-value---+
-               |  5      |
+               +-value-----+
+               |  5        |
                |  ::Signed |
-               +---------+
+               +-----------+
 
 
 we can rebind the variable to new values
 
     a = 14
 
-      +-var-----+
-      | a       |
+      +-var-------+
+      | a         |
       | ::Signed  |
-      | mutable |
-      +---------+
+      | mutable   |
+      +-----------+
            \
             \
              \
               \
                \
                 v
-               +-value---+
-               |  14     |
+               +-value-----+
+               |  14       |
                |  ::Signed |
-               +---------+
+               +-----------+
 
 
 
@@ -74,21 +74,21 @@ we can then create aliases
 
 we now have
 
-      +-var-----+     +-var-----+
-      | a       |     | b       |
-      | ::Signed  |     | ::Signed  |
-      | mutable |     | mutable |
-      +---------+     +---------+
+      +-var-------+   +-var-------+
+      | a         |   | b         |
+      | ::Signed  |   | ::Signed  |
+      | mutable   |   | mutable   |
+      +-----------+   +-----------+
            \           |
             \          |
              \         |
               \        |
                \       |
                 v      v
-               +-value---+
-               |  5      |
+               +-value-----+
+               |  5        |
                |  ::Signed |
-               +---------+
+               +-----------+
 
 however any use of `=` creates a new value
 
@@ -96,21 +96,21 @@ however any use of `=` creates a new value
 
 yields:
 
-      +-var-----+     +-var-----+
-      | a       |     | b       |
-      | ::Signed  |     | ::Signed  |
-      | mutable |     | mutable |
-      +---------+     +---------+
+      +-var-------+   +-var-------+
+      | a         |   | b         |
+      | ::Signed  |   | ::Signed  |
+      | mutable   |   | mutable   |
+      +-----------+   +-----------+
           |               |
           |               |
           |               |
           |               |
           |               |
           v               v
-     +-value---+        +-value---+
-     |  5      |        |  8      |
-     |  ::Signed |        |  ::Signed |
-     +---------+        +---------+
+     +-value-----+      +-value-----+
+     |  5        |      |  8        |
+     |  ::Signed |      |  ::Signed |
+     +-----------+      +-----------+
 
 
 
@@ -211,26 +211,26 @@ If inside our function baz we mutate through m
 
 we then get this view of the world
 
-      +-var-----+
-      | m       |
+      +-var-------+
+      | m         |
       | ::Signed  |
-      | mutable |
-      +---------+
+      | mutable   |
+      +-----------+
            |
            V
-      +-var-----+       +-var-----+
-      | a       |       | i       |
+      +-var-------+       +-var-------+
+      | a         |       | i         |
       | ::Signed  |       | ::Signed  |
-      | mutable |       |immutable|
-      +---------+       +---------+
+      | mutable   |       |immutable  |
+      +-----------+       +-----------+
            |                 |
            |                 |
            |                 |
            v                 v
-      +-value---+       +-value---+
-      |  123    |       |  15     |
+      +-value-----+       +-value-----+
+      |  123      |       |  15       |
       |  ::Signed |       |  ::Signed |
-      +---------+       +---------+
+      +-----------+       +-----------+
 
 More complex example
 --------------------
@@ -268,10 +268,10 @@ we now have
               \             /
                \           /
                 v         v
-                +-value---+      +-value---+
-                |  a ----------->|  1      |
+                +-value---+      +-value-----+
+                |  a ----------->|  1        |
                 |  ::Foo  |      |  ::Signed |
-                +---------+      +---------+
+                +---------+      +-----------+
 
 we can then assign across functional boundary using the `&` operator
 
@@ -297,10 +297,10 @@ we now have
               \             /
                \           /
                 v         v
-                +-value---+      +-value---+
-                |  a ----------->|  5      |
+                +-value---+      +-value-----+
+                |  a ----------->|  5        |
                 |  ::Foo  |      |  ::Signed |
-                +---------+      +---------+
+                +---------+      +-----------+
 
 if we create a new Foo
 
@@ -315,17 +315,17 @@ we would now have
       +---------+         +---------+
            |                  |
            v                  v
-      +-var-----+         +-value---+      +-value---+
-      | f       |         |  a ----------->|  5      |
+      +-var-----+         +-value---+      +-value-----+
+      | f       |         |  a ----------->|  5        |
       | ::Foo   |         |  ::Foo  |      |  ::Signed |
-      | mutable |         +---------+      +---------+
+      | mutable |         +---------+      +-----------+
       +---------+
           |
           v
-      +-value---+      +-value---+
-      |  a ----------->|  14     |
+      +-value---+      +-value-----+
+      |  a ----------->|  14       |
       |  ::Foo  |      |  ::Signed |
-      +---------+      +---------+
+      +---------+      +-----------+
 
 
 Further considerations

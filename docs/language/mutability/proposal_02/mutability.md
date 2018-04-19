@@ -24,7 +24,7 @@ we now have a single value `5` with two reference to it
 
     +-var-------+    +-var-------+
     | a         |    | b         |
-    | ::Signed    |    | ::Signed    |
+    | ::Signed  |    | ::Signed  |
     | mutable   |    | immutable |
     +-----------+    +-----------+
        \              /
@@ -33,10 +33,10 @@ we now have a single value `5` with two reference to it
           \        /
            \      /
             v    v
-        +-value---+
-        | 5       |
+        +-value-----+
+        | 5         |
         | ::Signed  |
-        +---------+
+        +-----------+
 
 
 we can make further immutable reference to this type
@@ -46,7 +46,7 @@ we can make further immutable reference to this type
 
     +-var-------+    +-var-------+
     | a         |    | b         |
-    | ::Signed    |    | ::Signed    |
+    | ::Signed  |    | ::Signed  |
     | mutable   |    | immutable |
     +-----------+    +-----------+
        \              /
@@ -55,16 +55,16 @@ we can make further immutable reference to this type
           \        /
            \      /
             v    v
-        +-value---+ <--------------------+-var-------+
-        | 5       |                      | c         |
-        | ::Signed  |                      | ::Signed    |
-        +---------+                      | immutable |
-            ^                            +-----------+
+        +-value-----+ <--------------------+-var-------+
+        | 5         |                      | c         |
+        | ::Signed  |                      | ::Signed  |
+        +-----------+                      | immutable |
+            ^                              +-----------+
             |
             |
         +-var-------+
         | d         |
-        | ::Signed    |
+        | ::Signed  |
         | immutable |
         +-----------+
 
@@ -75,7 +75,7 @@ we can then mutate the value `5` and it will be visible through all the referenc
 
     +-var-------+    +-var-------+
     | a         |    | a         |
-    | ::Signed    |    | ::Signed    |
+    | ::Signed  |    | ::Signed  |
     | mutable   |    | immutable |
     +-----------+    +-----------+
        \              /
@@ -84,16 +84,16 @@ we can then mutate the value `5` and it will be visible through all the referenc
           \        /
            \      /
             v    v
-        +-value---+ <--------------------+-var-------+
-        | 142     |                      | c         |
-        | ::Signed  |                      | ::Signed    |
-        +---------+                      | immutable |
-            ^                            +-----------+
+        +-value-----+ <--------------------+-var-------+
+        | 142       |                      | c         |
+        | ::Signed  |                      | ::Signed  |
+        +-----------+                      | immutable |
+            ^                              +-----------+
             |
             |
         +-var-------+
         | d         |
-        | ::Signed    |
+        | ::Signed  |
         | immutable |
         +-----------+
 
@@ -113,7 +113,7 @@ instead we must perform a copy
 
     +-var-------+    +-var-------+
     | a         |    | a         |
-    | ::Signed    |    | ::Signed    |
+    | ::Signed  |    | ::Signed  |
     | mutable   |    | immutable |
     +-----------+    +-----------+
        \              /
@@ -122,16 +122,16 @@ instead we must perform a copy
           \        /
            \      /
             v    v
-        +-value---+ <--------------------+-var-------+
-        | 142     |                      | c         |
-        | ::Signed  |                      | ::Signed    |
-        +---------+                      | immutable |
-            ^                            +-----------+
+        +-value-----+ <--------------------+-var-------+
+        | 142       |                      | c         |
+        | ::Signed  |                      | ::Signed  |
+        +-----------+                      | immutable |
+            ^                              +-----------+
             |
             |
         +-var-------+
         | d         |
-        | ::Signed    |
+        | ::Signed  |
         | immutable |
         +-----------+
 
@@ -139,16 +139,16 @@ instead we must perform a copy
 
         +-var-------+
         | g         |
-        | ::Signed    |
+        | ::Signed  |
         | mutable   |
         +-----------+
             |
             |
             v
-          +-value---+
-          | 142     |
+          +-value-----+
+          | 142       |
           | ::Signed  |
-          +---------+
+          +-----------+
 
 
 notice that we now have 2 different 'graphs', each still respecting the rule of 'only 1 mutable reference'
@@ -227,16 +227,16 @@ the above rewritten with a box type is now:
 we now end up with
 
 
-    +-var---------+                         +-var---------+
-    | mine        |                         | n           |
-    | ::Box[&Signed]|                         | ::Node      |
-    | immutable   |                         | mutable     |
-    +-------------+                         +-------------+
+    +-var------------+                      +-var---------+
+    | mine           |                      | n           |
+    | ::Box[&Signed] |                      | ::Node      |
+    | immutable      |                      | mutable     |
+    +----------------+                      +-------------+
              \                                |
               \                               |
                v                              v
                 +-Box-------+         +-Node--------+
-                | ::&Signed   |         |             |
+                | ::&Signed |         |             |
                 | mutable   |<--------| immutable   |
                 +-----------+         +-------------+
                     |
@@ -244,10 +244,10 @@ we now end up with
                     |
                     |
                     v
-                 +-value---+
-                 | 5       |
+                 +-value-----+
+                 | 5         |
                  | ::Signed  |
-                 +---------+
+                 +-----------+
 
 
 this is interesting as, if you could all the references:
@@ -262,16 +262,16 @@ in order for this to be useful we must allow mutation *through* an immutable ref
 
 which then gives us
 
-    +-var---------+                         +-var---------+
-    | mine        |                         | n           |
-    | ::Box[&Signed]|                         | ::Node      |
-    | immutable   |                         | mutable     |
-    +-------------+                         +-------------+
+    +-var------------+                     +-var---------+
+    | mine           |                     | n           |
+    | ::Box[&Signed] |                     | ::Node      |
+    | immutable      |                     | mutable     |
+    +----------------+                     +-------------+
              \                                |
               \                               |
                v                              v
                 +-Box-------+         +-Node--------+
-                | ::&Signed   |         |             |
+                | ::&Signed |         |             |
                 | mutable   |<--------| immutable   |
                 +-----------+         +-------------+
                     |
@@ -279,9 +279,9 @@ which then gives us
                     |
                     |
                     v
-                 +-value---+
-                 | 5       |
+                 +-value-----+
+                 | 5         |
                  | ::Signed  |
-                 +---------+
+                 +-----------+
 
 
