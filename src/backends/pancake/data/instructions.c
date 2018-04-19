@@ -455,16 +455,16 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
 
         if (!strcmp("pop", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_pop);
-        } else if (!strcmp("pushuint", op)) {
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_pushuint);
-        } else if (!strcmp("pushint", op)) {
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_pushint);
-        } else if (!strcmp("pushstr", op)) {
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
-        } else if (!strcmp("pushbool", op)) {
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_pushbool);
-        } else if (!strcmp("pushunit", op)) {
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_pushunit);
+        } else if (!strcmp("push_unsigned", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_push_unsigned);
+        } else if (!strcmp("push_signed", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_push_signed);
+        } else if (!strcmp("push_str", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_push_str);
+        } else if (!strcmp("push_bool", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_push_bool);
+        } else if (!strcmp("push_unit", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_push_unit);
         } else if (!strcmp("call_builtin", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_call_builtin);
         } else if (!strcmp("exit", op)) {
@@ -537,11 +537,11 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                 }
                 break;
 
-            case icp_pushuint:
+            case icp_push_unsigned:
                 /* consume uint */
                 ret = fscanf(file, "%u", &uint_arg1);
                 if (ret == EOF || ret == 0) {
-                    puts("ic_backend_pancake_instructions_load: read failed for pushuint");
+                    puts("ic_backend_pancake_instructions_load: read failed for push_unsigned");
                     return 0;
                 }
                 if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, uint_arg1)) {
@@ -550,11 +550,11 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                 }
                 break;
 
-            case icp_pushint:
+            case icp_push_signed:
                 /* consume uint */
                 ret = fscanf(file, "%d", &sint_arg1);
                 if (ret == EOF || ret == 0) {
-                    puts("ic_backend_pancake_instructions_load: read failed for pushint");
+                    puts("ic_backend_pancake_instructions_load: read failed for push_signed");
                     return 0;
                 }
                 if (!ic_backend_pancake_bytecode_arg1_set_sint(instruction, sint_arg1)) {
@@ -563,11 +563,11 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                 }
                 break;
 
-            case icp_pushbool:
+            case icp_push_bool:
                 /* consume bool */
                 ret = fscanf(file, "%u", &uint_arg1);
                 if (ret == EOF || ret == 0) {
-                    puts("ic_backend_pancake_instructions_load: read failed for pushuint");
+                    puts("ic_backend_pancake_instructions_load: read failed for push_unsigned");
                     return 0;
                 }
                 if (!ic_backend_pancake_bytecode_arg1_set_bool(instruction, uint_arg1)) {
@@ -601,12 +601,12 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
 
                 break;
 
-            case icp_pushstr:
+            case icp_push_str:
             case icp_panic:
                 /* consume str */
                 ret = fscanf(file, " \"%[^\"]\"", str_arg1);
                 if (ret == EOF || ret == 0) {
-                    puts("ic_backend_pancake_instructions_load: read failed for pushstr/panic");
+                    puts("ic_backend_pancake_instructions_load: read failed for push_str/panic");
                     return 0;
                 }
 
@@ -690,7 +690,7 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
             case icp_return_unit:
             case icp_return_value:
             case icp_exit:
-            case icp_pushunit:
+            case icp_push_unit:
                 /* nothing more to do */
                 break;
 

@@ -50,7 +50,7 @@ the bytecode:
       3 call get_str    # say_hi
       4 call println
       5 return
-      6 pushstr lit_1   # get_str
+      6 push_str lit_1   # get_str
       7 return
 
 

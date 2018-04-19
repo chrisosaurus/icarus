@@ -27,7 +27,7 @@ call_builtin println(String) 1
 clean_stack
 return_unit
 label main()
-pushstr "Hello world"
+push_str "Hello world"
 call foo(String) 1
 clean_stack
 return_unit

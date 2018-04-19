@@ -20,7 +20,7 @@ my $cases = [
       call main() 0
       exit
       label main()
-      pushstr "Hello world"
+      push_str "Hello world"
       call_builtin println(String) 1
       clean_stack
       return_unit
@@ -53,7 +53,7 @@ my $cases = [
       call main() 0
       exit
       label bar(Signed)
-      pushint 7
+      push_signed 7
       copyarg 0
       call_builtin plus(Signed,Signed) 2
       store _t0
@@ -64,7 +64,7 @@ my $cases = [
       return_value
       label foo(Signed)
       copyarg 0
-      pushint 4
+      push_signed 4
       call_builtin plus(Signed,Signed) 2
       store _t0
       load _t0
@@ -77,7 +77,7 @@ my $cases = [
       return_value
       label baz(Signed)
       copyarg 0
-      pushint 3
+      push_signed 3
       call_builtin plus(Signed,Signed) 2
       store b
       load b
@@ -89,12 +89,12 @@ my $cases = [
       restore
       return_value
       label main()
-      pushint 7
+      push_signed 7
       call foo(Signed) 1
       store _t0
       load _t0
       call_builtin println(Signed) 1
-      pushint 7
+      push_signed 7
       call baz(Signed) 1
       store _t1
       load _t1
@@ -121,12 +121,12 @@ my $cases = [
       call main() 0
       exit
       label main()
-      pushbool 1
+      push_bool 1
       call_builtin println(Bool) 1
-      pushbool 0
+      push_bool 0
       call_builtin println(Bool) 1
-      pushint 6
-      pushint 15
+      push_signed 6
+      push_signed 15
       call_builtin lessthan(Signed,Signed) 2
       store _t0
       load _t0
@@ -169,14 +169,14 @@ my $cases = [
       restore
       return_value
       label print(Bar)
-      pushstr "Bar"
+      push_str "Bar"
       call_builtin print(String) 1
-      pushstr "("
+      push_str "("
       call_builtin print(String) 1
       copyarg 0
       load_offset_str 0
       call_builtin print(String) 1
-      pushstr ")"
+      push_str ")"
       call_builtin print(String) 1
       clean_stack
       return_unit
@@ -199,22 +199,22 @@ my $cases = [
       restore
       return_value
       label print(Foo)
-      pushstr "Foo"
+      push_str "Foo"
       call_builtin print(String) 1
-      pushstr "("
+      push_str "("
       call_builtin print(String) 1
       copyarg 0
       load_offset_sint 0
       call_builtin print(Signed) 1
-      pushstr ", "
+      push_str ", "
       call_builtin print(String) 1
       load_offset_ref 1
       call print(Bar) 1
-      pushstr ", "
+      push_str ", "
       call_builtin print(String) 1
       load_offset_str 2
       call_builtin print(String) 1
-      pushstr ")"
+      push_str ")"
       call_builtin print(String) 1
       clean_stack
       return_unit
@@ -225,12 +225,12 @@ my $cases = [
       clean_stack
       return_unit
       label main()
-      pushstr "Hello"
+      push_str "Hello"
       call Bar(String) 1
       store b
-      pushint 4
+      push_signed 4
       load b
-      pushstr "World"
+      push_str "World"
       call Foo(Signed,Bar,String) 3
       store f
       load f
@@ -281,10 +281,10 @@ my $cases = [
       clean_stack
       return_unit
       label main()
-      pushint 1
-      pushstr "Hello"
-      pushstr "world"
-      pushint 2
+      push_signed 1
+      push_str "Hello"
+      push_str "world"
+      push_signed 2
       call foo(Signed,String,String,Signed) 4
       clean_stack
       return_unit
@@ -328,14 +328,14 @@ my $cases = [
       restore
       return_value
       label print(Bar)
-      pushstr "Bar"
+      push_str "Bar"
       call_builtin print(String) 1
-      pushstr "("
+      push_str "("
       call_builtin print(String) 1
       copyarg 0
       load_offset_sint 0
       call_builtin print(Signed) 1
-      pushstr ")"
+      push_str ")"
       call_builtin print(String) 1
       clean_stack
       return_unit
@@ -347,7 +347,7 @@ my $cases = [
       return_unit
       label Foo(Signed)
       alloc 2
-      pushuint 0
+      push_unsigned 0
       store_offset 0
       copyarg 0
       store_offset 1
@@ -357,7 +357,7 @@ my $cases = [
       return_value
       label Foo(String)
       alloc 2
-      pushuint 1
+      push_unsigned 1
       store_offset 0
       copyarg 0
       store_offset 1
@@ -367,7 +367,7 @@ my $cases = [
       return_value
       label Foo(Bar)
       alloc 2
-      pushuint 2
+      push_unsigned 2
       store_offset 0
       copyarg 0
       store_offset 1
@@ -376,21 +376,21 @@ my $cases = [
       restore
       return_value
       label print(Foo)
-      pushstr "Foo"
+      push_str "Foo"
       call_builtin print(String) 1
-      pushstr "("
+      push_str "("
       call_builtin print(String) 1
       copyarg 0
       load_offset_uint 0
-      pushuint 0
+      push_unsigned 0
       call_builtin equal(Unsigned,Unsigned) 2
       jif_label print(Foo)0
       load_offset_uint 0
-      pushuint 1
+      push_unsigned 1
       call_builtin equal(Unsigned,Unsigned) 2
       jif_label print(Foo)1
       load_offset_uint 0
-      pushuint 2
+      push_unsigned 2
       call_builtin equal(Unsigned,Unsigned) 2
       jif_label print(Foo)2
       panic "impossible tag"
@@ -407,7 +407,7 @@ my $cases = [
       call print(Bar) 1
       jmp_label print(Foo)3
       label print(Foo)3
-      pushstr ")"
+      push_str ")"
       call_builtin print(String) 1
       clean_stack
       return_unit
@@ -418,7 +418,7 @@ my $cases = [
       clean_stack
       return_unit
       label main()
-      pushint 6
+      push_signed 6
       call Foo(Signed) 1
       store f
       load f

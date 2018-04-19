@@ -230,7 +230,7 @@ which shows us
     call_builtin modulo(Signed,Signed) 2
     store rem
     load rem
-    pushint 0
+    push_signed 0
     call_builtin equal(Signed,Signed) 2
     store _t0
     load _t0
@@ -239,27 +239,27 @@ which shows us
     restore
     return_value
     label fizzer(Signed)
-    pushstr ""
+    push_str ""
     store str
     copyarg 0
-    pushint 3
+    push_signed 3
     call is_div(Signed,Signed) 2
     store _t0
     load _t0
     jnif_label fizzer(Signed)0
     load str
-    pushstr "Fizz"
+    push_str "Fizz"
     call_builtin concat(String,String) 2
     store str
     label fizzer(Signed)0
     copyarg 0
-    pushint 5
+    push_signed 5
     call is_div(Signed,Signed) 2
     store _t1
     load _t1
     jnif_label fizzer(Signed)1
     load str
-    pushstr "Buzz"
+    push_str "Buzz"
     call_builtin concat(String,String) 2
     store str
     label fizzer(Signed)1
@@ -267,7 +267,7 @@ which shows us
     call_builtin length(String) 1
     store _t2
     load _t2
-    pushint 0
+    push_signed 0
     call_builtin equal(Unsigned,Signed) 2
     store _t3
     load _t3
@@ -293,7 +293,7 @@ which shows us
     load from
     call fizzer(Signed) 1
     load from
-    pushint 1
+    push_signed 1
     call_builtin plus(Signed,Signed) 2
     store from
     load from
@@ -303,8 +303,8 @@ which shows us
     clean_stack
     return_unit
     label main()
-    pushint 1
-    pushint 20
+    push_signed 1
+    push_signed 20
     call fizzbuzz(Signed,Signed) 2
     clean_stack
     return_unit

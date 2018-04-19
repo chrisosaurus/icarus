@@ -638,12 +638,12 @@ static unsigned int ic_backend_pancake_compile_stmt_match(struct ic_backend_panc
      * ...
      * <copy f onto stack>
      * load_offset_uint 0
-     * pushuint 0
+     * push_unsigned 0
      * call_builtin equal(Unsigned,Unsigned) 2
      * jif_label main()0
      *
      * load_offset_uint 0
-     * pushuint 1
+     * push_unsigned 1
      * call_builtin equal(Unsigned,Unsigned) 2
      * jif_label main()1
      *
@@ -754,8 +754,8 @@ static unsigned int ic_backend_pancake_compile_stmt_match(struct ic_backend_panc
             return 0;
         }
 
-        /* pushuint <field_offset> */
-        instruction = ic_backend_pancake_instructions_add(instructions, icp_pushuint);
+        /* push_unsigned <field_offset> */
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_push_unsigned);
         if (!instruction) {
             puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
             return 0;
@@ -1434,7 +1434,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
 
             /* label foo(Signed)
              * copyarg a
-             * pushint 5
+             * push_signed 5
              * call_builtin lessthan(Signed, Signed) 2
              * jnif foo(Signed)_1
              * body1...
@@ -1741,14 +1741,14 @@ unsigned int ic_backend_pancake_compile_expr(struct ic_backend_pancake_instructi
 
             if (is_unit) {
                 /* unit function called in non-void context
-                 * need to add a pushunit to give a dummy value
+                 * need to add a push_unit to give a dummy value
                  *
                  *     fn foo() -> Unit ... end
                  *     let a = foo()
                  *     bar(foo())
                  */
-                /* pushunit */
-                instruction = ic_backend_pancake_instructions_add(instructions, icp_pushunit);
+                /* push_unit */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_push_unit);
                 if (!instruction) {
                     puts("ic_backend_pancake_compile_expr: call to ic_backend_pancake_instructions_add failed");
                     return 0;
@@ -1941,15 +1941,15 @@ unsigned int ic_backend_pancake_compile_push_constant(struct ic_backend_pancake_
     }
 
     /* push appropriate literal
-     * pushbool bool
-     * pushuint uint
-     * pushint  int
-     * pushstr  str
+     * push_bool bool
+     * push_unsigned uint
+     * push_signed  int
+     * push_str  str
      */
 
     switch (constant->tag) {
         case ic_expr_constant_type_unsigned_integer:
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_pushuint);
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_push_unsigned);
             if (!instruction) {
                 puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_instructions_add failed");
                 return 0;
@@ -1962,7 +1962,7 @@ unsigned int ic_backend_pancake_compile_push_constant(struct ic_backend_pancake_
             break;
 
         case ic_expr_constant_type_signed_integer:
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_pushint);
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_push_signed);
             if (!instruction) {
                 puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_instructions_add failed");
                 return 0;
@@ -1975,7 +1975,7 @@ unsigned int ic_backend_pancake_compile_push_constant(struct ic_backend_pancake_
             break;
 
         case ic_expr_constant_type_string:
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_push_str);
             if (!instruction) {
                 puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_instructions_add failed");
                 return 0;
@@ -1993,7 +1993,7 @@ unsigned int ic_backend_pancake_compile_push_constant(struct ic_backend_pancake_
             break;
 
         case ic_expr_constant_type_boolean:
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_pushbool);
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_push_bool);
             if (!instruction) {
                 puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_instructions_add failed");
                 return 0;
@@ -2530,25 +2530,25 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
      * ->
      *
      * label print(Foo)
-     * pushstr "Foo
+     * push_str "Foo
      * call_builtin print(String) 1
-     * pushstr "("
+     * push_str "("
      * call_builtin print(String) 1
      *
      * copyarg 0
      *
      * load_offset_uint 0
-     * pushuint 0
+     * push_unsigned 0
      * call_builtin equal(Unsigned,Unsigned) 2
      * jnif_label "print(Foo)0
      *
      * load_offset_uint 0
-     * pushuint 1
+     * push_unsigned 1
      * call_builtin equal(Unsigned,Unsigned) 2
      * jnif_label "print(Foo)1
      *
      * load_offset_uint 0
-     * pushuint 2
+     * push_unsigned 2
      * call_builtin equal(Unsigned,Unsigned) 2
      * jnif_label "print(Foo)2
      *
@@ -2570,7 +2570,7 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
      * jmp_label print(Foo)_3
      *
      * label print(Foo)3
-     * pushstr ")"
+     * push_str ")"
      * call_builtin print(String) 1
      *
      * clean_stack
@@ -2598,8 +2598,8 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
         return 0;
     }
 
-    /* pushstr "<typename>" */
-    instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
+    /* push_str "<typename>" */
+    instruction = ic_backend_pancake_instructions_add(instructions, icp_push_str);
     if (!instruction) {
         puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_instructions_add failed");
         return 0;
@@ -2627,8 +2627,8 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
         return 0;
     }
 
-    /* pushstr "(" */
-    instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
+    /* push_str "(" */
+    instruction = ic_backend_pancake_instructions_add(instructions, icp_push_str);
     if (!instruction) {
         puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_instructions_add failed");
         return 0;
@@ -2688,8 +2688,8 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
             return 0;
         }
 
-        /* pushuint <i_arg> */
-        instruction = ic_backend_pancake_instructions_add(instructions, icp_pushuint);
+        /* push_unsigned <i_arg> */
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_push_unsigned);
         if (!instruction) {
             puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_instructions_add failed");
             return 0;
@@ -2977,8 +2977,8 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
         return 0;
     }
 
-    /* pushstr ")" */
-    instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
+    /* push_str ")" */
+    instruction = ic_backend_pancake_instructions_add(instructions, icp_push_str);
     if (!instruction) {
         puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_instructions_add failed");
         return 0;
@@ -3113,9 +3113,9 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
      * ->
      *
      * label print(Foo)
-     * pushstr "Foo"
+     * push_str "Foo"
      * call_builtin print(String) 1
-     * pushstr "("
+     * push_str "("
      * call_builtin print(String) 1
      * copyarg 0
      * load_offset 0
@@ -3124,7 +3124,7 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
      * call_builtin print(String) 1
      * load_offset 2
      * call print(Bar) 1
-     * pushstr ")"
+     * push_str ")"
      * call_builtin print(String) 1
      * clean_stack
      * return_unit
@@ -3154,8 +3154,8 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
         return 0;
     }
 
-    /* pushstr "<typename>" */
-    instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
+    /* push_str "<typename>" */
+    instruction = ic_backend_pancake_instructions_add(instructions, icp_push_str);
     if (!instruction) {
         puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_instructions_add failed");
         return 0;
@@ -3183,8 +3183,8 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
         return 0;
     }
 
-    /* pushstr "(" */
-    instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
+    /* push_str "(" */
+    instruction = ic_backend_pancake_instructions_add(instructions, icp_push_str);
     if (!instruction) {
         puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_instructions_add failed");
         return 0;
@@ -3230,8 +3230,8 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
     for (i_arg = 0; i_arg < n_args; ++i_arg) {
         /* insert ", " between args */
         if (i_arg > 0) {
-            /* pushstr ", " */
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
+            /* push_str ", " */
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_push_str);
             if (!instruction) {
                 puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_instructions_add failed");
                 return 0;
@@ -3381,8 +3381,8 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
         }
     }
 
-    /* pushstr ")" */
-    instruction = ic_backend_pancake_instructions_add(instructions, icp_pushstr);
+    /* push_str ")" */
+    instruction = ic_backend_pancake_instructions_add(instructions, icp_push_str);
     if (!instruction) {
         puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_instructions_add failed");
         return 0;
@@ -3552,13 +3552,13 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
      *
      * then this will (ignoring permissions) generate roughly
      *
-     *   pushint 1
-     *   pushint 4
-     *   pushstr "hello"
+     *   push_signed 1
+     *   push_signed 4
+     *   push_str "hello"
      *   call Foo(Signed,Signed,String) 3
      *   load_offset 0
      *   call_builtin println(Signed) 1
-     *   pushint 4
+     *   push_signed 4
      *   store_offset 0
      */
 
@@ -3733,7 +3733,7 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                  *
                  * label Foo(Signed)
                  * alloc 2
-                 * pushuint 0
+                 * push_unsigned 0
                  * store_offset 0
                  * copyarg 0
                  * store_offset 1
@@ -3747,7 +3747,7 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                  *
                  * label Foo(String)
                  * alloc 1
-                 * pushuint 1
+                 * push_unsigned 1
                  * store_offset 0
                  * copyarg 0
                  * store_offset 1
@@ -3807,7 +3807,7 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                     puts("ic_backend_pancake_generate_functions: call to ic_generate_get_union_field failed for cons_union");
                     return 0;
                 }
-                /* pushuint */
+                /* push_unsigned */
                 field_name_ch = ic_symbol_contents(&(field->name));
                 if (!field_name_ch) {
                     puts("ic_backend_pancake_generate_functions: call to ic_symbol_contents failed for cons_union");
@@ -3815,8 +3815,8 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                 }
                 i_arg = ic_decl_type_get_field_offset(tdecl, field_name_ch);
 
-                /* pushuint <field offset> */
-                instruction = ic_backend_pancake_instructions_add(instructions, icp_pushuint);
+                /* push_unsigned <field offset> */
+                instruction = ic_backend_pancake_instructions_add(instructions, icp_push_unsigned);
                 if (!instruction) {
                     puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
                     return 0;

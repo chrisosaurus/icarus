@@ -96,7 +96,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 break;
 
             /* push_bool bool */
-            case icp_pushbool:
+            case icp_push_bool:
                 boolean = ic_backend_pancake_bytecode_arg1_get_bool(instruction);
 
                 value = ic_backend_pancake_value_stack_push(value_stack);
@@ -111,7 +111,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 break;
 
             /* push_uint uint */
-            case icp_pushuint:
+            case icp_push_unsigned:
                 uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
                 value = ic_backend_pancake_value_stack_push(value_stack);
                 if (!value) {
@@ -125,7 +125,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 break;
 
             /* push_int int */
-            case icp_pushint:
+            case icp_push_signed:
                 sint = ic_backend_pancake_bytecode_arg1_get_sint(instruction);
                 value = ic_backend_pancake_value_stack_push(value_stack);
                 if (!value) {
@@ -139,7 +139,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 break;
 
             /* push_str string */
-            case icp_pushstr:
+            case icp_push_str:
                 str = ic_backend_pancake_bytecode_arg1_get_char(instruction);
                 if (!str) {
                     puts("ic_backend_pancake_interpret: call to ic_backend_pancake_bytecode_arg1_get_char failed");
@@ -158,7 +158,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 break;
 
             /* push_unit */
-            case icp_pushunit:
+            case icp_push_unit:
                 value = ic_backend_pancake_value_stack_push(value_stack);
                 if (!value) {
                     puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_push failed");

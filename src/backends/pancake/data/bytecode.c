@@ -105,47 +105,47 @@ unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_panca
             break;
 
         /* push_bool bool */
-        case icp_pushbool:
+        case icp_push_bool:
             boolean = ic_backend_pancake_bytecode_arg1_get_bool(bytecode);
 
-            fprintf(fd, "pushbool %" PRId8, boolean);
+            fprintf(fd, "push_bool %" PRId8, boolean);
 
             return 1;
             break;
 
         /* push_uint uint */
-        case icp_pushuint:
+        case icp_push_unsigned:
             uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
 
-            fprintf(fd, "pushuint %" PRId32, uint);
+            fprintf(fd, "push_unsigned %" PRId32, uint);
 
             return 1;
             break;
 
         /* push_int int */
-        case icp_pushint:
+        case icp_push_signed:
             sint = ic_backend_pancake_bytecode_arg1_get_sint(bytecode);
 
-            fprintf(fd, "pushint %" PRId32, sint);
+            fprintf(fd, "push_signed %" PRId32, sint);
 
             return 1;
             break;
 
         /* push_str string */
-        case icp_pushstr:
+        case icp_push_str:
             ch = ic_backend_pancake_bytecode_arg1_get_char(bytecode);
             if (!ch) {
                 puts("ic_backend_pancake_bytecode_print: call to ic_backend_pancake_bytecode_arg1_get_char failed");
                 return 0;
             }
-            fprintf(fd, "pushstr \"%s\"", ch);
+            fprintf(fd, "push_str \"%s\"", ch);
 
             return 1;
             break;
 
         /* push_unit */
-        case icp_pushunit:
-            fputs("pushunit", fd);
+        case icp_push_unit:
+            fputs("push_unit", fd);
 
             return 1;
             break;
@@ -522,7 +522,7 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_char(struct ic_backend_pancake
         /* fdecl_label fdecl_sig_call */
         case icp_label:
         /* push_str string */
-        case icp_pushstr:
+        case icp_push_str:
         /* call fname::string argn::uint */
         case icp_call:
         /* tailcall_void fname::string argn::uint */
@@ -637,7 +637,7 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_bool(struct ic_backend_pancake
     /* only allow arg to be set where it is correct */
     switch (bytecode->tag) {
         /* push_bool bool */
-        case icp_pushbool:
+        case icp_push_bool:
             break;
 
         default:
@@ -728,7 +728,7 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_sint(struct ic_backend_pancake
     /* only allow arg to be set where it is correct */
     switch (bytecode->tag) {
         /* push_int int */
-        case icp_pushint:
+        case icp_push_signed:
             break;
 
         default:
@@ -822,7 +822,7 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_uint(struct ic_backend_pancake
     /* only allow arg to be set where it is correct */
     switch (bytecode->tag) {
         /* push_uint uint */
-        case icp_pushuint:
+        case icp_push_unsigned:
         /* copyarg argn::uint */
         case icp_copyarg:
         /* pop n::uint */

@@ -15,15 +15,15 @@ enum ic_backend_pancake_bytecode_type {
     /* fdecl_label fdecl_sig_call */
     icp_label,
     /* push_bool bool */
-    icp_pushbool,
+    icp_push_bool,
     /* push_uint uint */
-    icp_pushuint,
+    icp_push_unsigned,
     /* push_int int */
-    icp_pushint,
+    icp_push_signed,
     /* push_str string */
-    icp_pushstr,
+    icp_push_str,
     /* push_unit */
-    icp_pushunit,
+    icp_push_unit,
     /* copyarg argn::uint
      * copyarg at offset argn onto stack
      * Note: arguments to functions are pushed in order

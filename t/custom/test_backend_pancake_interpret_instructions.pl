@@ -11,9 +11,9 @@ die "Could not find '$path'\n" unless -e $path;
 my $cases = [
   {
     input => '
-      pushuint 176
-      pushuint 7
-      pushuint 27
+      push_unsigned 176
+      push_unsigned 7
+      push_unsigned 27
       exit
       ',
     expected => '
@@ -28,10 +28,10 @@ my $cases = [
   {
     input => '
       label dummy
-      pushuint 4
-      pushuint 3
-      pushuint 6
-      pushuint 7
+      push_unsigned 4
+      push_unsigned 3
+      push_unsigned 6
+      push_unsigned 7
       call_builtin plus(Unsigned,Unsigned) 2
       call_builtin plus(Unsigned,Unsigned) 2
       exit
@@ -46,7 +46,7 @@ my $cases = [
   },
   {
     input => '
-      pushuint 17
+      push_unsigned 17
       call_builtin println(Unsigned) 1
       exit
       ',
@@ -59,8 +59,8 @@ my $cases = [
   },
   {
     input => '
-      pushint 3
-      pushint 5
+      push_signed 3
+      push_signed 5
       call_builtin minus(Signed,Signed) 2
       exit
       ',
@@ -73,8 +73,8 @@ my $cases = [
   },
   {
     input => '
-      pushuint 3
-      pushuint 5
+      push_unsigned 3
+      push_unsigned 5
       call_builtin minus(Unsigned,Unsigned) 2
       exit
       ',
@@ -87,7 +87,7 @@ my $cases = [
   },
   {
     input => '
-      pushuint 3
+      push_unsigned 3
       save
       exit
       ',
@@ -99,8 +99,8 @@ my $cases = [
   },
   {
     input => '
-      pushuint 3
-      pushuint 5
+      push_unsigned 3
+      push_unsigned 5
       exit
       ',
     expected =>'
@@ -113,9 +113,9 @@ my $cases = [
   },
   {
     input => '
-      pushuint 3
+      push_unsigned 3
       save
-      pushuint 5
+      push_unsigned 5
       restore
       exit
       ',
@@ -131,15 +131,15 @@ my $cases = [
   {
     input => '
         label entry
-        pushstr "Not an arg"
-        pushuint 1
-        pushuint 2
-        pushuint 3
+        push_str "Not an arg"
+        push_unsigned 1
+        push_unsigned 2
+        push_unsigned 3
         call baz() 3
         exit
         label baz()
-        pushuint 4
-        pushuint 5
+        push_unsigned 4
+        push_unsigned 5
         clean_stack
         return_unit
     ',
@@ -156,7 +156,7 @@ my $cases = [
       call main() 0
       exit
       label foo()
-      pushuint 5
+      push_unsigned 5
       save
       clean_stack
       restore
@@ -177,7 +177,7 @@ my $cases = [
 
   {
     input => '
-      pushstr "hello world"
+      push_str "hello world"
       call_builtin println(String) 1
       exit
       ',
@@ -194,8 +194,8 @@ my $cases = [
       call foo() 0
       exit
       label foo()
-      pushint 5
-      pushint 3
+      push_signed 5
+      push_signed 3
       store foo
       call_builtin println(Signed) 1
       load foo
@@ -219,40 +219,40 @@ my $cases = [
       call foo() 0
       exit
       label foo()
-      pushbool 0
-      pushbool 1
+      push_bool 0
+      push_bool 1
       call_builtin println(Bool) 1
       call_builtin println(Bool) 1
-      pushuint 5
-      pushuint 6
+      push_unsigned 5
+      push_unsigned 6
       call_builtin greaterthan_equal(Unsigned,Unsigned) 2
       call_builtin println(Bool) 1
-      pushuint 5
-      pushuint 6
+      push_unsigned 5
+      push_unsigned 6
       call_builtin greaterthan(Unsigned,Unsigned) 2
       call_builtin println(Bool) 1
-      pushuint 5
-      pushuint 6
+      push_unsigned 5
+      push_unsigned 6
       call_builtin lessthan_equal(Unsigned,Unsigned) 2
       call_builtin println(Bool) 1
-      pushuint 5
-      pushuint 6
+      push_unsigned 5
+      push_unsigned 6
       call_builtin lessthan(Unsigned,Unsigned) 2
       call_builtin println(Bool) 1
-      pushint 5
-      pushint 6
+      push_signed 5
+      push_signed 6
       call_builtin greaterthan_equal(Signed,Signed) 2
       call_builtin println(Bool) 1
-      pushint 5
-      pushint 6
+      push_signed 5
+      push_signed 6
       call_builtin greaterthan(Signed,Signed) 2
       call_builtin println(Bool) 1
-      pushint 5
-      pushint 6
+      push_signed 5
+      push_signed 6
       call_builtin lessthan_equal(Signed,Signed) 2
       call_builtin println(Bool) 1
-      pushint 5
-      pushint 6
+      push_signed 5
+      push_signed 6
       call_builtin lessthan(Signed,Signed) 2
       call_builtin println(Bool) 1
       return_unit
