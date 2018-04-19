@@ -16,7 +16,7 @@ enum ic_backend_pancake_bytecode_type {
     icp_label,
     /* push_bool bool */
     icp_push_bool,
-    /* push_uint uint */
+    /* push_unsigned uint */
     icp_push_unsigned,
     /* push_int int */
     icp_push_signed,
@@ -112,16 +112,16 @@ enum ic_backend_pancake_bytecode_type {
      * load value at offset `slot` within object and push onto stack as str
      */
     icp_load_offset_str,
-    /* load_offset_uint slot::uint
+    /* load_offset_unsigned slot::uint
      * let object = peek()
      * load value at offset `slot` within object and push onto stack as uint
      */
-    icp_load_offset_uint,
-    /* load_offset_sint slot::uint
+    icp_load_offset_unsigned,
+    /* load_offset_signed slot::uint
      * let object = peek()
      * load value at offset `slot` within object and push onto stack as sint
      */
-    icp_load_offset_sint,
+    icp_load_offset_signed,
     /* load_offset_ref slot::uint
      * let object = peek()
      * load value at offset `slot` within object and push onto stack as ref
@@ -138,8 +138,8 @@ enum ic_backend_pancake_bytecode_arg_type {
     ic_backend_pancake_bytecode_arg_type_void,
     ic_backend_pancake_bytecode_arg_type_char,
     ic_backend_pancake_bytecode_arg_type_bool,
-    ic_backend_pancake_bytecode_arg_type_sint,
-    ic_backend_pancake_bytecode_arg_type_uint,
+    ic_backend_pancake_bytecode_arg_type_signed,
+    ic_backend_pancake_bytecode_arg_type_unsigned,
 };
 
 struct ic_backend_pancake_bytecode_arg {
@@ -282,14 +282,14 @@ uint8_t ic_backend_pancake_bytecode_arg2_get_bool(struct ic_backend_pancake_byte
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_bytecode_arg1_set_sint(struct ic_backend_pancake_bytecode *bytecode, int32_t arg1);
+unsigned int ic_backend_pancake_bytecode_arg1_set_signed(struct ic_backend_pancake_bytecode *bytecode, int32_t arg1);
 
 /* set arg2 as sint on bytecode
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_bytecode_arg2_set_sint(struct ic_backend_pancake_bytecode *bytecode, int32_t arg2);
+unsigned int ic_backend_pancake_bytecode_arg2_set_signed(struct ic_backend_pancake_bytecode *bytecode, int32_t arg2);
 
 /* get arg1 as sint from bytecode
  *
@@ -298,7 +298,7 @@ unsigned int ic_backend_pancake_bytecode_arg2_set_sint(struct ic_backend_pancake
  * returns sintsuccess
  * returns 0 on failure
  */
-int32_t ic_backend_pancake_bytecode_arg1_get_sint(struct ic_backend_pancake_bytecode *bytecode);
+int32_t ic_backend_pancake_bytecode_arg1_get_signed(struct ic_backend_pancake_bytecode *bytecode);
 
 /* get arg2 as sint from bytecode
  *
@@ -307,21 +307,21 @@ int32_t ic_backend_pancake_bytecode_arg1_get_sint(struct ic_backend_pancake_byte
  * returns sintsuccess
  * returns 0 on failure
  */
-int32_t ic_backend_pancake_bytecode_arg2_get_sint(struct ic_backend_pancake_bytecode *bytecode);
+int32_t ic_backend_pancake_bytecode_arg2_get_signed(struct ic_backend_pancake_bytecode *bytecode);
 
 /* set arg1 as uint on bytecode
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_bytecode_arg1_set_uint(struct ic_backend_pancake_bytecode *bytecode, uint32_t arg1);
+unsigned int ic_backend_pancake_bytecode_arg1_set_unsigned(struct ic_backend_pancake_bytecode *bytecode, uint32_t arg1);
 
 /* set arg2 as uint on bytecode
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_bytecode_arg2_set_uint(struct ic_backend_pancake_bytecode *bytecode, uint32_t arg2);
+unsigned int ic_backend_pancake_bytecode_arg2_set_unsigned(struct ic_backend_pancake_bytecode *bytecode, uint32_t arg2);
 
 /* get arg1 as uint from bytecode
  *
@@ -330,7 +330,7 @@ unsigned int ic_backend_pancake_bytecode_arg2_set_uint(struct ic_backend_pancake
  * returns uint on success
  * returns 0 on failure
  */
-uint32_t ic_backend_pancake_bytecode_arg1_get_uint(struct ic_backend_pancake_bytecode *bytecode);
+uint32_t ic_backend_pancake_bytecode_arg1_get_unsigned(struct ic_backend_pancake_bytecode *bytecode);
 
 /* get arg2 as uint from bytecode
  *
@@ -339,6 +339,6 @@ uint32_t ic_backend_pancake_bytecode_arg1_get_uint(struct ic_backend_pancake_byt
  * returns uint on success
  * returns 0 on failure
  */
-uint32_t ic_backend_pancake_bytecode_arg2_get_uint(struct ic_backend_pancake_bytecode *bytecode);
+uint32_t ic_backend_pancake_bytecode_arg2_get_unsigned(struct ic_backend_pancake_bytecode *bytecode);
 
 #endif /* IC_BACKEND_PANCAKE_BYTECODE_H */

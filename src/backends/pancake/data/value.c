@@ -39,12 +39,12 @@ unsigned int ic_backend_pancake_value_copy(struct ic_backend_pancake_value *valu
             value_to->u.boolean = value_from->u.boolean;
             break;
 
-        case ic_backend_pancake_value_type_uint:
-            value_to->u.uint = value_from->u.uint;
+        case ic_backend_pancake_value_type_unsigned_integer:
+            value_to->u.unsigned_integer = value_from->u.unsigned_integer;
             break;
 
-        case ic_backend_pancake_value_type_sint:
-            value_to->u.sint = value_from->u.sint;
+        case ic_backend_pancake_value_type_signed_integer:
+            value_to->u.signed_integer = value_from->u.signed_integer;
             break;
 
         case ic_backend_pancake_value_type_string:
@@ -82,12 +82,12 @@ unsigned int ic_backend_pancake_value_print(FILE *fd, struct ic_backend_pancake_
             fprintf(fd, "bool: %u\n", value->u.boolean);
             break;
 
-        case ic_backend_pancake_value_type_uint:
-            fprintf(fd, "uint: %u\n", value->u.uint);
+        case ic_backend_pancake_value_type_unsigned_integer:
+            fprintf(fd, "unsigned_integer: %u\n", value->u.unsigned_integer);
             break;
 
-        case ic_backend_pancake_value_type_sint:
-            fprintf(fd, "sint: %d\n", value->u.sint);
+        case ic_backend_pancake_value_type_signed_integer:
+            fprintf(fd, "signed_integer: %d\n", value->u.signed_integer);
             break;
 
         case ic_backend_pancake_value_type_string:

@@ -3,8 +3,8 @@
 
 enum ic_backend_pancake_value_type {
     ic_backend_pancake_value_type_boolean,
-    ic_backend_pancake_value_type_uint,
-    ic_backend_pancake_value_type_sint,
+    ic_backend_pancake_value_type_unsigned_integer,
+    ic_backend_pancake_value_type_signed_integer,
     ic_backend_pancake_value_type_string,
     ic_backend_pancake_value_type_ref,
     ic_backend_pancake_value_type_unit,
@@ -12,8 +12,8 @@ enum ic_backend_pancake_value_type {
 
 union ic_backend_pancake_value_cell {
     unsigned int boolean;
-    unsigned int uint;
-    int sint;
+    unsigned int unsigned_integer;
+    int signed_integer;
     char *string;
     void *ref;
 };

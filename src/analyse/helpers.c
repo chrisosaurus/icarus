@@ -890,7 +890,7 @@ unsigned int ic_analyse_body(char *unit, char *unit_name, struct ic_kludge *klud
                 }
 
                 /* this expression must be of type bool */
-                if (!ic_decl_type_isbool(type)) {
+                if (!ic_decl_type_is_bool(type)) {
                     puts("ic_analyse_body: if: expression was not of type bool");
                     ic_decl_type_print_debug(stdout, type);
                     goto ERROR;

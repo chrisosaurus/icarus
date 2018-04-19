@@ -455,7 +455,7 @@ static struct ic_expr *ic_parse_expr_constant_boolean(struct ic_token_list *toke
         return 0;
     }
 
-    if (!ic_token_isboolean(token)) {
+    if (!ic_token_is_boolean(token)) {
         puts("ic_parse_expr_constant_boolean: next token was not a boolean");
         return 0;
     }
@@ -562,7 +562,7 @@ static struct ic_expr *ic_parse_expr_single_token(struct ic_token_list *token_li
         return expr;
     }
 
-    if (ic_token_isboolean(token)) {
+    if (ic_token_is_boolean(token)) {
         expr = ic_parse_expr_constant_boolean(token_list);
         if (!expr) {
             puts("ic_parse_expr_single_token: call to ic_parse_expr_constant_boolean failed");

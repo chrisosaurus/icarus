@@ -200,7 +200,7 @@ unsigned int ic_token_isoperator(struct ic_token *token);
  * returns 1 if it is a boolean
  * returns 0 if not
  */
-unsigned int ic_token_isboolean(struct ic_token *token);
+unsigned int ic_token_is_boolean(struct ic_token *token);
 
 /* check if token is a permission
  *

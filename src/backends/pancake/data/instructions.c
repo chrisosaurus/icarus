@@ -503,10 +503,10 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
             instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_bool);
         } else if (!strcmp("load_offset_str", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_str);
-        } else if (!strcmp("load_offset_uint", op)) {
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_uint);
-        } else if (!strcmp("load_offset_sint", op)) {
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_sint);
+        } else if (!strcmp("load_offset_unsigned", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_unsigned);
+        } else if (!strcmp("load_offset_signed", op)) {
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_signed);
         } else if (!strcmp("load_offset_ref", op)) {
             instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_ref);
         } else if (!strcmp("load_offset_unit", op)) {
@@ -531,8 +531,8 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                     puts("ic_backend_pancake_instructions_load: read failed for copyarg");
                     return 0;
                 }
-                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, uint_arg1)) {
-                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_uint failed");
+                if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, uint_arg1)) {
+                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_unsigned failed");
                     return 0;
                 }
                 break;
@@ -544,8 +544,8 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                     puts("ic_backend_pancake_instructions_load: read failed for push_unsigned");
                     return 0;
                 }
-                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, uint_arg1)) {
-                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_uint failed");
+                if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, uint_arg1)) {
+                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_unsigned failed");
                     return 0;
                 }
                 break;
@@ -557,8 +557,8 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                     puts("ic_backend_pancake_instructions_load: read failed for push_signed");
                     return 0;
                 }
-                if (!ic_backend_pancake_bytecode_arg1_set_sint(instruction, sint_arg1)) {
-                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_sint failed");
+                if (!ic_backend_pancake_bytecode_arg1_set_signed(instruction, sint_arg1)) {
+                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_signed failed");
                     return 0;
                 }
                 break;
@@ -571,7 +571,7 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                     return 0;
                 }
                 if (!ic_backend_pancake_bytecode_arg1_set_bool(instruction, uint_arg1)) {
-                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_uint failed");
+                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_unsigned failed");
                     return 0;
                 }
                 break;
@@ -677,8 +677,8 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                     return 0;
                 }
 
-                if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, uint_arg2)) {
-                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg2_set_uint failed");
+                if (!ic_backend_pancake_bytecode_arg2_set_unsigned(instruction, uint_arg2)) {
+                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg2_set_unsigned failed");
                     return 0;
                 }
 
@@ -701,8 +701,8 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                     puts("ic_backend_pancake_instructions_load: read failed for alloc");
                     return 0;
                 }
-                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, uint_arg1)) {
-                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_uint failed");
+                if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, uint_arg1)) {
+                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_unsigned failed");
                     return 0;
                 }
                 break;
@@ -714,8 +714,8 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                     puts("ic_backend_pancake_instructions_load: read failed for store_offset");
                     return 0;
                 }
-                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, uint_arg1)) {
-                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_uint failed");
+                if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, uint_arg1)) {
+                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_unsigned failed");
                     return 0;
                 }
                 break;
@@ -723,8 +723,8 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
             case icp_pop:
             case icp_load_offset_bool:
             case icp_load_offset_str:
-            case icp_load_offset_uint:
-            case icp_load_offset_sint:
+            case icp_load_offset_unsigned:
+            case icp_load_offset_signed:
             case icp_load_offset_ref:
             case icp_load_offset_unit:
                 /* consume uint */
@@ -733,8 +733,8 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_instructions_load(FIL
                     puts("ic_backend_pancake_instructions_load: read failed for load_offset_*");
                     return 0;
                 }
-                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, uint_arg1)) {
-                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_uint failed");
+                if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, uint_arg1)) {
+                    puts("ic_backend_pancake_instructions_load: call to backend_pancake_bytecode_arg1_set_unsigned failed");
                     return 0;
                 }
                 break;

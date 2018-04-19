@@ -358,22 +358,22 @@ struct ic_decl_type_struct {
     /* 1 if this is the bool type
      * 0 if this is not the bool type
      */
-    unsigned int isbool;
+    unsigned int is_bool;
 
     /* 1 if this is the string type
      * 0 if this is not the string type
      */
-    unsigned int isstring;
+    unsigned int is_string;
 
     /* 1 if this is the uint type
      * 0 if this is not the uint type
      */
-    unsigned int isuint;
+    unsigned int is_unsigned_integer;
 
     /* 1 if this is the sint type
      * 0 if this is not the sint type
      */
-    unsigned int issint;
+    unsigned int is_signed_integer;
 };
 
 /* allocate and return a new decl_type
@@ -470,14 +470,14 @@ unsigned int ic_decl_type_struct_mark_string(struct ic_decl_type_struct *tdecl);
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_struct_mark_uint(struct ic_decl_type_struct *tdecl);
+unsigned int ic_decl_type_struct_mark_unsigned(struct ic_decl_type_struct *tdecl);
 
 /* mark the supplied decl as the sint type
  *
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_struct_mark_sint(struct ic_decl_type_struct *tdecl);
+unsigned int ic_decl_type_struct_mark_signed(struct ic_decl_type_struct *tdecl);
 
 /* add a new field to types list of fields
  *
@@ -491,28 +491,28 @@ unsigned int ic_decl_type_struct_add_field(struct ic_decl_type_struct *tdecl, st
  * returns 1 if bool
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_struct_isbool(struct ic_decl_type_struct *tdecl);
+unsigned int ic_decl_type_struct_is_bool(struct ic_decl_type_struct *tdecl);
 
 /* test if string
  *
  * returns 1 if string
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_struct_isstring(struct ic_decl_type_struct *tdecl);
+unsigned int ic_decl_type_struct_is_string(struct ic_decl_type_struct *tdecl);
 
 /* test if uint
  *
  * returns 1 if uint
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_struct_isuint(struct ic_decl_type_struct *tdecl);
+unsigned int ic_decl_type_struct_is_unsigned_integer(struct ic_decl_type_struct *tdecl);
 
 /* test if sint
  *
  * returns 1 if sint
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_struct_issint(struct ic_decl_type_struct *tdecl);
+unsigned int ic_decl_type_struct_is_signed_integer(struct ic_decl_type_struct *tdecl);
 
 /* test if unit
  *
@@ -1066,28 +1066,28 @@ unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char *field
  * returns 1 if bool
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_isbool(struct ic_decl_type *tdecl);
+unsigned int ic_decl_type_is_bool(struct ic_decl_type *tdecl);
 
 /* test if string
  *
  * returns 1 if string
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_isstring(struct ic_decl_type *tdecl);
+unsigned int ic_decl_type_is_string(struct ic_decl_type *tdecl);
 
 /* test if uint
  *
  * returns 1 if bool
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_isuint(struct ic_decl_type *tdecl);
+unsigned int ic_decl_type_is_unsigned_integer(struct ic_decl_type *tdecl);
 
 /* test if sint
  *
  * returns 1 if bool
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_issint(struct ic_decl_type *tdecl);
+unsigned int ic_decl_type_is_signed_integer(struct ic_decl_type *tdecl);
 
 /* test if unit
  *

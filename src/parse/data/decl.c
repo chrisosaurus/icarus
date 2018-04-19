@@ -985,10 +985,10 @@ unsigned int ic_decl_type_struct_init(struct ic_decl_type_struct *tdecl, char *n
     tdecl->full_name = 0;
     tdecl->generic_name = 0;
     tdecl->isunit = 0;
-    tdecl->isbool = 0;
-    tdecl->isstring = 0;
-    tdecl->isuint = 0;
-    tdecl->issint = 0;
+    tdecl->is_bool = 0;
+    tdecl->is_string = 0;
+    tdecl->is_unsigned_integer = 0;
+    tdecl->is_signed_integer = 0;
 
     /* we haven't seen any generic params yet, so we are non-generic */
     tdecl->is_instantiated = 1;
@@ -1167,11 +1167,11 @@ unsigned int ic_decl_type_struct_deep_copy_embedded(struct ic_decl_type_struct *
     }
 
     to->is_instantiated = from->is_instantiated;
-    to->issint = from->issint;
-    to->isuint = from->isuint;
-    to->isbool = from->isbool;
+    to->is_signed_integer = from->is_signed_integer;
+    to->is_unsigned_integer = from->is_unsigned_integer;
+    to->is_bool = from->is_bool;
     to->isunit = from->isunit;
-    to->isstring = from->isstring;
+    to->is_string = from->is_string;
 
     /* do not copy over names
      * they can be regenerated if need be
@@ -1300,7 +1300,7 @@ unsigned int ic_decl_type_struct_mark_bool(struct ic_decl_type_struct *tdecl) {
         return 0;
     }
 
-    tdecl->isbool = 1;
+    tdecl->is_bool = 1;
 
     return 1;
 }
@@ -1316,7 +1316,7 @@ unsigned int ic_decl_type_struct_mark_string(struct ic_decl_type_struct *tdecl) 
         return 0;
     }
 
-    tdecl->isstring = 1;
+    tdecl->is_string = 1;
 
     return 1;
 }
@@ -1326,13 +1326,13 @@ unsigned int ic_decl_type_struct_mark_string(struct ic_decl_type_struct *tdecl) 
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_struct_mark_uint(struct ic_decl_type_struct *tdecl) {
+unsigned int ic_decl_type_struct_mark_unsigned(struct ic_decl_type_struct *tdecl) {
     if (!tdecl) {
-        puts("ic_decl_type_struct_mark_uint: tdecl was null");
+        puts("ic_decl_type_struct_mark_unsigned: tdecl was null");
         return 0;
     }
 
-    tdecl->isuint = 1;
+    tdecl->is_unsigned_integer = 1;
 
     return 1;
 }
@@ -1342,13 +1342,13 @@ unsigned int ic_decl_type_struct_mark_uint(struct ic_decl_type_struct *tdecl) {
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_decl_type_struct_mark_sint(struct ic_decl_type_struct *tdecl) {
+unsigned int ic_decl_type_struct_mark_signed(struct ic_decl_type_struct *tdecl) {
     if (!tdecl) {
-        puts("ic_decl_type_struct_mark_sint: tdecl was null");
+        puts("ic_decl_type_struct_mark_signed: tdecl was null");
         return 0;
     }
 
-    tdecl->issint = 1;
+    tdecl->is_signed_integer = 1;
 
     return 1;
 }
@@ -1382,13 +1382,13 @@ unsigned int ic_decl_type_struct_add_field(struct ic_decl_type_struct *tdecl, st
  * returns 1 if bool
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_struct_isbool(struct ic_decl_type_struct *tdecl) {
+unsigned int ic_decl_type_struct_is_bool(struct ic_decl_type_struct *tdecl) {
     if (!tdecl) {
-        puts("ic_decl_type_struct_isbool: tdecl was null");
+        puts("ic_decl_type_struct_is_bool: tdecl was null");
         return 0;
     }
 
-    return tdecl->isbool == 1;
+    return tdecl->is_bool == 1;
 }
 
 /* test if string
@@ -1396,13 +1396,13 @@ unsigned int ic_decl_type_struct_isbool(struct ic_decl_type_struct *tdecl) {
  * returns 1 if string
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_struct_isstring(struct ic_decl_type_struct *tdecl) {
+unsigned int ic_decl_type_struct_is_string(struct ic_decl_type_struct *tdecl) {
     if (!tdecl) {
-        puts("ic_decl_type_struct_isstring: tdecl was null");
+        puts("ic_decl_type_struct_is_string: tdecl was null");
         return 0;
     }
 
-    return tdecl->isstring == 1;
+    return tdecl->is_string == 1;
 }
 
 /* test if uint
@@ -1410,13 +1410,13 @@ unsigned int ic_decl_type_struct_isstring(struct ic_decl_type_struct *tdecl) {
  * returns 1 if uint
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_struct_isuint(struct ic_decl_type_struct *tdecl) {
+unsigned int ic_decl_type_struct_is_unsigned_integer(struct ic_decl_type_struct *tdecl) {
     if (!tdecl) {
-        puts("ic_decl_type_struct_isuint: tdecl was null");
+        puts("ic_decl_type_struct_is_unsigned_integer: tdecl was null");
         return 0;
     }
 
-    return tdecl->isuint == 1;
+    return tdecl->is_unsigned_integer == 1;
 }
 
 /* test if sint
@@ -1424,13 +1424,13 @@ unsigned int ic_decl_type_struct_isuint(struct ic_decl_type_struct *tdecl) {
  * returns 1 if sint
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_struct_issint(struct ic_decl_type_struct *tdecl) {
+unsigned int ic_decl_type_struct_is_signed_integer(struct ic_decl_type_struct *tdecl) {
     if (!tdecl) {
-        puts("ic_decl_type_struct_issint: tdecl was null");
+        puts("ic_decl_type_struct_is_signed_integer: tdecl was null");
         return 0;
     }
 
-    return tdecl->issint == 1;
+    return tdecl->is_signed_integer == 1;
 }
 
 /* test if void
@@ -3536,15 +3536,15 @@ unsigned int ic_decl_type_add_field_type(struct ic_decl_type *tdecl, char *field
  * returns 1 if bool
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_isbool(struct ic_decl_type *tdecl) {
+unsigned int ic_decl_type_is_bool(struct ic_decl_type *tdecl) {
     if (!tdecl) {
-        puts("ic_decl_type_isbool: tdecl was null");
+        puts("ic_decl_type_is_bool: tdecl was null");
         return 0;
     }
 
     switch (tdecl->tag) {
         case ic_decl_type_tag_struct:
-            return ic_decl_type_struct_isbool(&(tdecl->u.tstruct));
+            return ic_decl_type_struct_is_bool(&(tdecl->u.tstruct));
             break;
 
         case ic_decl_type_tag_union:
@@ -3553,7 +3553,7 @@ unsigned int ic_decl_type_isbool(struct ic_decl_type *tdecl) {
             break;
 
         default:
-            puts("ic_decl_type_isbool: unknown tag");
+            puts("ic_decl_type_is_bool: unknown tag");
             return 0;
             break;
     }
@@ -3564,15 +3564,15 @@ unsigned int ic_decl_type_isbool(struct ic_decl_type *tdecl) {
  * returns 1 if string
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_isstring(struct ic_decl_type *tdecl) {
+unsigned int ic_decl_type_is_string(struct ic_decl_type *tdecl) {
     if (!tdecl) {
-        puts("ic_decl_type_isstring: tdecl was null");
+        puts("ic_decl_type_is_string: tdecl was null");
         return 0;
     }
 
     switch (tdecl->tag) {
         case ic_decl_type_tag_struct:
-            return ic_decl_type_struct_isstring(&(tdecl->u.tstruct));
+            return ic_decl_type_struct_is_string(&(tdecl->u.tstruct));
             break;
 
         case ic_decl_type_tag_union:
@@ -3581,7 +3581,7 @@ unsigned int ic_decl_type_isstring(struct ic_decl_type *tdecl) {
             break;
 
         default:
-            puts("ic_decl_type_isstring: unknown tag");
+            puts("ic_decl_type_is_string: unknown tag");
             return 0;
             break;
     }
@@ -3592,15 +3592,15 @@ unsigned int ic_decl_type_isstring(struct ic_decl_type *tdecl) {
  * returns 1 if uint
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_isuint(struct ic_decl_type *tdecl) {
+unsigned int ic_decl_type_is_unsigned_integer(struct ic_decl_type *tdecl) {
     if (!tdecl) {
-        puts("ic_decl_type_isuint: tdecl was null");
+        puts("ic_decl_type_is_unsigned_integer: tdecl was null");
         return 0;
     }
 
     switch (tdecl->tag) {
         case ic_decl_type_tag_struct:
-            return ic_decl_type_struct_isuint(&(tdecl->u.tstruct));
+            return ic_decl_type_struct_is_unsigned_integer(&(tdecl->u.tstruct));
             break;
 
         case ic_decl_type_tag_union:
@@ -3609,7 +3609,7 @@ unsigned int ic_decl_type_isuint(struct ic_decl_type *tdecl) {
             break;
 
         default:
-            puts("ic_decl_type_isuint: unknown tag");
+            puts("ic_decl_type_is_unsigned_integer: unknown tag");
             return 0;
             break;
     }
@@ -3620,15 +3620,15 @@ unsigned int ic_decl_type_isuint(struct ic_decl_type *tdecl) {
  * returns 1 if sint
  * returns 0 otherwise
  */
-unsigned int ic_decl_type_issint(struct ic_decl_type *tdecl) {
+unsigned int ic_decl_type_is_signed_integer(struct ic_decl_type *tdecl) {
     if (!tdecl) {
-        puts("ic_decl_type_issint: tdecl was null");
+        puts("ic_decl_type_is_signed_integer: tdecl was null");
         return 0;
     }
 
     switch (tdecl->tag) {
         case ic_decl_type_tag_struct:
-            return ic_decl_type_struct_issint(&(tdecl->u.tstruct));
+            return ic_decl_type_struct_is_signed_integer(&(tdecl->u.tstruct));
             break;
 
         case ic_decl_type_tag_union:
@@ -3637,7 +3637,7 @@ unsigned int ic_decl_type_issint(struct ic_decl_type *tdecl) {
             break;
 
         default:
-            puts("ic_decl_type_issint: unknown tag");
+            puts("ic_decl_type_is_signed_integer: unknown tag");
             return 0;
             break;
     }

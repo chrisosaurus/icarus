@@ -181,8 +181,8 @@ struct ic_backend_pancake_instructions *ic_backend_pancake_compile(struct ic_klu
         puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_arg1_set_char failed for entry_jump");
         return 0;
     }
-    if (!ic_backend_pancake_bytecode_arg2_set_uint(bc_entry_call, 0)) {
-        puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_arg2_set_uint failed for entry_jump");
+    if (!ic_backend_pancake_bytecode_arg2_set_unsigned(bc_entry_call, 0)) {
+        puts("ic_backend_pancake_compile: call to ic_backend_pancake_bytecode_arg2_set_unsigned failed for entry_jump");
         return 0;
     }
 
@@ -416,8 +416,8 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
                 puts("ic_backend_pancake_compile_local_push: call to ic_backend_pancake_instructions_add failed");
                 return 0;
             }
-            if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, i)) {
-                puts("ic_backend_pancake_compile_local_push: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+            if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, i)) {
+                puts("ic_backend_pancake_compile_local_push: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed for entry_jump");
                 return 0;
             }
 
@@ -428,7 +428,7 @@ unsigned int ic_backend_pancake_compile_fdecl(struct ic_backend_pancake_instruct
                 return 0;
             }
             if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, local_name_ch)) {
-                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed for entry_jump");
                 return 0;
             }
 
@@ -637,12 +637,12 @@ static unsigned int ic_backend_pancake_compile_stmt_match(struct ic_backend_panc
      * label main()
      * ...
      * <copy f onto stack>
-     * load_offset_uint 0
+     * load_offset_unsigned 0
      * push_unsigned 0
      * call_builtin equal(Unsigned,Unsigned) 2
      * jif_label main()0
      *
-     * load_offset_uint 0
+     * load_offset_unsigned 0
      * push_unsigned 1
      * call_builtin equal(Unsigned,Unsigned) 2
      * jif_label main()1
@@ -651,7 +651,7 @@ static unsigned int ic_backend_pancake_compile_stmt_match(struct ic_backend_panc
      *
      * label main()0
      * <copy f onto stack>
-     * load_offset_sint 1
+     * load_offset_signed 1
      * call_builtin print(Signed) 1
      * jmp_label main()2
      *
@@ -697,8 +697,8 @@ static unsigned int ic_backend_pancake_compile_stmt_match(struct ic_backend_panc
                 puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
                 return 0;
             }
-            if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, local->u.offset)) {
-                puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+            if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, local->u.offset)) {
+                puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed for entry_jump");
                 return 0;
             }
 
@@ -723,7 +723,7 @@ static unsigned int ic_backend_pancake_compile_stmt_match(struct ic_backend_panc
     }
 
     /* for each case
-     * load_offset_uint 0
+     * load_offset_unsigned 0
      * check if eq to i_arg
      * if so jump
      */
@@ -742,15 +742,15 @@ static unsigned int ic_backend_pancake_compile_stmt_match(struct ic_backend_panc
             return 0;
         }
 
-        /* load_offset_uint 0 */
-        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_uint);
+        /* load_offset_unsigned 0 */
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_unsigned);
         if (!instruction) {
             puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
             return 0;
         }
 
-        if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 0)) {
-            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+        if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, 0)) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed");
             return 0;
         }
 
@@ -764,8 +764,8 @@ static unsigned int ic_backend_pancake_compile_stmt_match(struct ic_backend_panc
         field = tcase->field;
         field_offset = ic_decl_type_get_field_offset(tdecl, ic_symbol_contents(&(field->name)));
 
-        if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, field_offset)) {
-            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+        if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, field_offset)) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed");
             return 0;
         }
 
@@ -781,8 +781,8 @@ static unsigned int ic_backend_pancake_compile_stmt_match(struct ic_backend_panc
             return 0;
         }
 
-        if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 2)) {
-            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
+        if (!ic_backend_pancake_bytecode_arg2_set_unsigned(instruction, 2)) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg2_set_unsigned failed");
             return 0;
         }
 
@@ -930,36 +930,36 @@ static unsigned int ic_backend_pancake_compile_stmt_match(struct ic_backend_panc
             return 0;
         }
 
-        if (ic_decl_type_isbool(field_type)) {
+        if (ic_decl_type_is_bool(field_type)) {
             /* load_offset_bool <i_arg> */
             instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_bool);
             if (!instruction) {
                 puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
                 return 0;
             }
-        } else if (ic_decl_type_isstring(field_type)) {
+        } else if (ic_decl_type_is_string(field_type)) {
             /* load_offset_str <i_arg> */
             instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_str);
             if (!instruction) {
                 puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
                 return 0;
             }
-        } else if (ic_decl_type_isuint(field_type)) {
-            /* load_offset_uint <i_arg> */
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_uint);
+        } else if (ic_decl_type_is_unsigned_integer(field_type)) {
+            /* load_offset_unsigned <i_arg> */
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_unsigned);
             if (!instruction) {
                 puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
                 return 0;
             }
-        } else if (ic_decl_type_issint(field_type)) {
-            /* load_offset_sint <i_arg> */
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_sint);
+        } else if (ic_decl_type_is_signed_integer(field_type)) {
+            /* load_offset_signed <i_arg> */
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_signed);
             if (!instruction) {
                 puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
                 return 0;
             }
         } else if (ic_decl_type_isunit(field_type)) {
-            /* load_offset_sint <i_arg> */
+            /* load_offset_signed <i_arg> */
             instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_unit);
             if (!instruction) {
                 puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
@@ -974,8 +974,8 @@ static unsigned int ic_backend_pancake_compile_stmt_match(struct ic_backend_panc
             }
         }
 
-        if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 1)) {
-            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+        if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, 1)) {
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed");
             return 0;
         }
 
@@ -1002,7 +1002,7 @@ static unsigned int ic_backend_pancake_compile_stmt_match(struct ic_backend_panc
             return 0;
         }
         if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, name_ch)) {
-            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+            puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed for entry_jump");
             return 0;
         }
 
@@ -1238,7 +1238,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
                     return 0;
                 }
                 if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, name_ch)) {
-                    puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                    puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed for entry_jump");
                     return 0;
                 }
 
@@ -1337,7 +1337,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
                 return 0;
             }
             if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, name_ch)) {
-                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                puts("ic_backend_pancake_compile_stmt: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed for entry_jump");
                 return 0;
             }
 
@@ -1877,8 +1877,8 @@ unsigned int ic_backend_pancake_compile_local_push(struct ic_backend_pancake_ins
                 puts("ic_backend_pancake_compile_local_push: call to ic_backend_pancake_instructions_add failed");
                 return 0;
             }
-            if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, local->u.offset)) {
-                puts("ic_backend_pancake_compile_local_push: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+            if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, local->u.offset)) {
+                puts("ic_backend_pancake_compile_local_push: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed for entry_jump");
                 return 0;
             }
 
@@ -1954,8 +1954,8 @@ unsigned int ic_backend_pancake_compile_push_constant(struct ic_backend_pancake_
                 puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_instructions_add failed");
                 return 0;
             }
-            if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, constant->u.unsigned_integer)) {
-                puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+            if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, constant->u.unsigned_integer)) {
+                puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed");
                 return 0;
             }
 
@@ -1967,8 +1967,8 @@ unsigned int ic_backend_pancake_compile_push_constant(struct ic_backend_pancake_
                 puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_instructions_add failed");
                 return 0;
             }
-            if (!ic_backend_pancake_bytecode_arg1_set_sint(instruction, constant->u.signed_integer)) {
-                puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_bytecode_arg1_set_sint failed");
+            if (!ic_backend_pancake_bytecode_arg1_set_signed(instruction, constant->u.signed_integer)) {
+                puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_bytecode_arg1_set_signed failed");
                 return 0;
             }
 
@@ -1986,7 +1986,7 @@ unsigned int ic_backend_pancake_compile_push_constant(struct ic_backend_pancake_
                 return 0;
             }
             if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, str_value)) {
-                puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+                puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed");
                 return 0;
             }
 
@@ -1999,7 +1999,7 @@ unsigned int ic_backend_pancake_compile_push_constant(struct ic_backend_pancake_
                 return 0;
             }
             if (!ic_backend_pancake_bytecode_arg1_set_bool(instruction, constant->u.boolean)) {
-                puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+                puts("ic_backend_pancake_compile_push_constant: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed");
                 return 0;
             }
 
@@ -2187,8 +2187,8 @@ unsigned int ic_backend_pancake_compile_expr_faccess(struct ic_backend_pancake_i
                 puts("ic_backend_pancake_compile_expr_faccess: call to ic_backend_pancake_instructions_add failed");
                 return 0;
             }
-            if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, field_local->u.offset)) {
-                puts("ic_backend_pancake_compile_expr_faccess: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+            if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, field_local->u.offset)) {
+                puts("ic_backend_pancake_compile_expr_faccess: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed for entry_jump");
                 return 0;
             }
 
@@ -2247,14 +2247,14 @@ unsigned int ic_backend_pancake_compile_expr_faccess(struct ic_backend_pancake_i
     /* insert `load_offset offset` instruction */
     if (ic_decl_type_isunit(faccess_overall_type)) {
         instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_unit);
-    } else if (ic_decl_type_isbool(faccess_overall_type)) {
+    } else if (ic_decl_type_is_bool(faccess_overall_type)) {
         instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_bool);
-    } else if (ic_decl_type_isstring(faccess_overall_type)) {
+    } else if (ic_decl_type_is_string(faccess_overall_type)) {
         instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_str);
-    } else if (ic_decl_type_isuint(faccess_overall_type)) {
-        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_uint);
-    } else if (ic_decl_type_issint(faccess_overall_type)) {
-        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_sint);
+    } else if (ic_decl_type_is_unsigned_integer(faccess_overall_type)) {
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_unsigned);
+    } else if (ic_decl_type_is_signed_integer(faccess_overall_type)) {
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_signed);
     } else {
         instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_ref);
     }
@@ -2263,8 +2263,8 @@ unsigned int ic_backend_pancake_compile_expr_faccess(struct ic_backend_pancake_i
         puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_instructions_add failed");
         return 0;
     }
-    if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, field_offset)) {
-        puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+    if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, field_offset)) {
+        puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed");
         return 0;
     }
 
@@ -2362,8 +2362,8 @@ unsigned int ic_backend_pancake_compile_expr_fcall(struct ic_backend_pancake_ins
                     puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_instructions_add failed");
                     return 0;
                 }
-                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, arg_local->u.offset)) {
-                    puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, arg_local->u.offset)) {
+                    puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed for entry_jump");
                     return 0;
                 }
 
@@ -2416,12 +2416,12 @@ unsigned int ic_backend_pancake_compile_expr_fcall(struct ic_backend_pancake_ins
         return 0;
     }
     if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, fdecl_full_name_ch)) {
-        puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+        puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed for entry_jump");
         return 0;
     }
     /* set number of args we call with */
-    if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, len)) {
-        puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+    if (!ic_backend_pancake_bytecode_arg2_set_unsigned(instruction, len)) {
+        puts("ic_backend_pancake_compile_expr_fcall: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed for entry_jump");
         return 0;
     }
 
@@ -2537,17 +2537,17 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
      *
      * copyarg 0
      *
-     * load_offset_uint 0
+     * load_offset_unsigned 0
      * push_unsigned 0
      * call_builtin equal(Unsigned,Unsigned) 2
      * jnif_label "print(Foo)0
      *
-     * load_offset_uint 0
+     * load_offset_unsigned 0
      * push_unsigned 1
      * call_builtin equal(Unsigned,Unsigned) 2
      * jnif_label "print(Foo)1
      *
-     * load_offset_uint 0
+     * load_offset_unsigned 0
      * push_unsigned 2
      * call_builtin equal(Unsigned,Unsigned) 2
      * jnif_label "print(Foo)2
@@ -2555,7 +2555,7 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
      * icp_panic "impossible tag"
      *
      * label print(Foo)0
-     * load_offset_sint 1
+     * load_offset_signed 1
      * call_builtin print(Signed) 1
      * jmp_label print(Foo)_3
      *
@@ -2622,8 +2622,8 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
         return 0;
     }
 
-    if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 1)) {
-        puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
+    if (!ic_backend_pancake_bytecode_arg2_set_unsigned(instruction, 1)) {
+        puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg2_set_unsigned failed");
         return 0;
     }
 
@@ -2651,8 +2651,8 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
         return 0;
     }
 
-    if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 1)) {
-        puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
+    if (!ic_backend_pancake_bytecode_arg2_set_unsigned(instruction, 1)) {
+        puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg2_set_unsigned failed");
         return 0;
     }
 
@@ -2663,28 +2663,28 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
         return 0;
     }
 
-    if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 0)) {
-        puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+    if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, 0)) {
+        puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed");
         return 0;
     }
 
     /* for each arg
-     * load_offset_uint 0
+     * load_offset_unsigned 0
      * check if eq to i_arg
      * if so jump
      */
     n_args = ic_decl_type_field_length(tdecl);
 
     for (i_arg = 0; i_arg < n_args; ++i_arg) {
-        /* load_offset_uint 0 */
-        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_uint);
+        /* load_offset_unsigned 0 */
+        instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_unsigned);
         if (!instruction) {
             puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_instructions_add failed");
             return 0;
         }
 
-        if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 0)) {
-            puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+        if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, 0)) {
+            puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed");
             return 0;
         }
 
@@ -2695,8 +2695,8 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
             return 0;
         }
 
-        if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, i_arg)) {
-            puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+        if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, i_arg)) {
+            puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed");
             return 0;
         }
 
@@ -2712,8 +2712,8 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
             return 0;
         }
 
-        if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 2)) {
-            puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
+        if (!ic_backend_pancake_bytecode_arg2_set_unsigned(instruction, 2)) {
+            puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg2_set_unsigned failed");
             return 0;
         }
 
@@ -2833,30 +2833,30 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
             return 0;
         }
 
-        if (ic_decl_type_isbool(field_type)) {
+        if (ic_decl_type_is_bool(field_type)) {
             /* load_offset_bool <i_arg> */
             instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_bool);
             if (!instruction) {
                 puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_instructions_add failed");
                 return 0;
             }
-        } else if (ic_decl_type_isstring(field_type)) {
+        } else if (ic_decl_type_is_string(field_type)) {
             /* load_offset_str <i_arg> */
             instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_str);
             if (!instruction) {
                 puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_instructions_add failed");
                 return 0;
             }
-        } else if (ic_decl_type_isuint(field_type)) {
-            /* load_offset_uint <i_arg> */
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_uint);
+        } else if (ic_decl_type_is_unsigned_integer(field_type)) {
+            /* load_offset_unsigned <i_arg> */
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_unsigned);
             if (!instruction) {
                 puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_instructions_add failed");
                 return 0;
             }
-        } else if (ic_decl_type_issint(field_type)) {
-            /* load_offset_sint <i_arg> */
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_sint);
+        } else if (ic_decl_type_is_signed_integer(field_type)) {
+            /* load_offset_signed <i_arg> */
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_signed);
             if (!instruction) {
                 puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_instructions_add failed");
                 return 0;
@@ -2877,8 +2877,8 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
             }
         }
 
-        if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 1)) {
-            puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+        if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, 1)) {
+            puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed");
             return 0;
         }
 
@@ -2923,8 +2923,8 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
             return 0;
         }
 
-        if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 1)) {
-            puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+        if (!ic_backend_pancake_bytecode_arg2_set_unsigned(instruction, 1)) {
+            puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed");
             return 0;
         }
 
@@ -3001,8 +3001,8 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
         return 0;
     }
 
-    if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 1)) {
-        puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
+    if (!ic_backend_pancake_bytecode_arg2_set_unsigned(instruction, 1)) {
+        puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg2_set_unsigned failed");
         return 0;
     }
 
@@ -3178,8 +3178,8 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
         return 0;
     }
 
-    if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 1)) {
-        puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
+    if (!ic_backend_pancake_bytecode_arg2_set_unsigned(instruction, 1)) {
+        puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg2_set_unsigned failed");
         return 0;
     }
 
@@ -3207,8 +3207,8 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
         return 0;
     }
 
-    if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 1)) {
-        puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
+    if (!ic_backend_pancake_bytecode_arg2_set_unsigned(instruction, 1)) {
+        puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg2_set_unsigned failed");
         return 0;
     }
 
@@ -3219,8 +3219,8 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
         return 0;
     }
 
-    if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 0)) {
-        puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+    if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, 0)) {
+        puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed");
         return 0;
     }
 
@@ -3254,8 +3254,8 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
                 return 0;
             }
 
-            if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 1)) {
-                puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
+            if (!ic_backend_pancake_bytecode_arg2_set_unsigned(instruction, 1)) {
+                puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg2_set_unsigned failed");
                 return 0;
             }
         }
@@ -3285,30 +3285,30 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
             return 0;
         }
 
-        if (ic_decl_type_isbool(field_type)) {
+        if (ic_decl_type_is_bool(field_type)) {
             /* load_offset_bool <i_arg> */
             instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_bool);
             if (!instruction) {
                 puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_instructions_add failed");
                 return 0;
             }
-        } else if (ic_decl_type_isstring(field_type)) {
+        } else if (ic_decl_type_is_string(field_type)) {
             /* load_offset_str <i_arg> */
             instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_str);
             if (!instruction) {
                 puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_instructions_add failed");
                 return 0;
             }
-        } else if (ic_decl_type_isuint(field_type)) {
-            /* load_offset_uint <i_arg> */
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_uint);
+        } else if (ic_decl_type_is_unsigned_integer(field_type)) {
+            /* load_offset_unsigned <i_arg> */
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_unsigned);
             if (!instruction) {
                 puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_instructions_add failed");
                 return 0;
             }
-        } else if (ic_decl_type_issint(field_type)) {
-            /* load_offset_sint <i_arg> */
-            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_sint);
+        } else if (ic_decl_type_is_signed_integer(field_type)) {
+            /* load_offset_signed <i_arg> */
+            instruction = ic_backend_pancake_instructions_add(instructions, icp_load_offset_signed);
             if (!instruction) {
                 puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_instructions_add failed");
                 return 0;
@@ -3329,8 +3329,8 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
             }
         }
 
-        if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, i_arg)) {
-            puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+        if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, i_arg)) {
+            puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed");
             return 0;
         }
 
@@ -3375,8 +3375,8 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
             return 0;
         }
 
-        if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 1)) {
-            puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg1_set_uint failed");
+        if (!ic_backend_pancake_bytecode_arg2_set_unsigned(instruction, 1)) {
+            puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed");
             return 0;
         }
     }
@@ -3405,8 +3405,8 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
         return 0;
     }
 
-    if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 1)) {
-        puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
+    if (!ic_backend_pancake_bytecode_arg2_set_unsigned(instruction, 1)) {
+        puts("ic_backend_pancake_generate_function_print_struct: call to ic_backend_pancake_bytecode_arg2_set_unsigned failed");
         return 0;
     }
 
@@ -3659,8 +3659,8 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                     puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
                     return 0;
                 }
-                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, alloc_size)) {
-                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for cons_struct");
+                if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, alloc_size)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed for cons_struct");
                     return 0;
                 }
 
@@ -3673,8 +3673,8 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                         puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
                         return 0;
                     }
-                    if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, i_arg)) {
-                        puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for cons_struct");
+                    if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, i_arg)) {
+                        puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed for cons_struct");
                         return 0;
                     }
 
@@ -3684,8 +3684,8 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                         puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
                         return 0;
                     }
-                    if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, i_arg)) {
-                        puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for cons_struct");
+                    if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, i_arg)) {
+                        puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed for cons_struct");
                         return 0;
                     }
                 }
@@ -3796,8 +3796,8 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                     puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
                     return 0;
                 }
-                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, alloc_size)) {
-                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for cons_union");
+                if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, alloc_size)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed for cons_union");
                     return 0;
                 }
 
@@ -3821,8 +3821,8 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                     puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
                     return 0;
                 }
-                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, i_arg)) {
-                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for cons_union");
+                if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, i_arg)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed for cons_union");
                     return 0;
                 }
 
@@ -3832,8 +3832,8 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                     puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
                     return 0;
                 }
-                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 0)) {
-                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for cons_union");
+                if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, 0)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed for cons_union");
                     return 0;
                 }
 
@@ -3844,8 +3844,8 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                     puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
                     return 0;
                 }
-                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 0)) {
-                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for cons_union");
+                if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, 0)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed for cons_union");
                     return 0;
                 }
 
@@ -3856,8 +3856,8 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                     puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
                     return 0;
                 }
-                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 1)) {
-                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for cons_union");
+                if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, 1)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed for cons_union");
                     return 0;
                 }
 
@@ -3943,8 +3943,8 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                     puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_instructions_add failed");
                     return 0;
                 }
-                if (!ic_backend_pancake_bytecode_arg1_set_uint(instruction, 0)) {
-                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_uint failed for entry_jump");
+                if (!ic_backend_pancake_bytecode_arg1_set_unsigned(instruction, 0)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg1_set_unsigned failed for entry_jump");
                     return 0;
                 }
 
@@ -3983,8 +3983,8 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                 }
 
                 /* set number of args we call with */
-                if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 1)) {
-                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
+                if (!ic_backend_pancake_bytecode_arg2_set_unsigned(instruction, 1)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg2_set_unsigned failed");
                     return 0;
                 }
 
@@ -4001,8 +4001,8 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                 }
 
                 /* set number of args we call with */
-                if (!ic_backend_pancake_bytecode_arg2_set_uint(instruction, 0)) {
-                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg2_set_uint failed");
+                if (!ic_backend_pancake_bytecode_arg2_set_unsigned(instruction, 0)) {
+                    puts("ic_backend_pancake_generate_functions: call to ic_backend_pancake_bytecode_arg2_set_unsigned failed");
                     return 0;
                 }
 

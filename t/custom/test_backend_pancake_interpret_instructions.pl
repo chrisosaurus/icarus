@@ -19,9 +19,9 @@ my $cases = [
     expected => '
       pancake value_stack after execution finished:
       ----------------
-      uint: 27
-      uint: 7
-      uint: 176
+      unsigned_integer: 27
+      unsigned_integer: 7
+      unsigned_integer: 176
       ----------------
       '
   },
@@ -39,8 +39,8 @@ my $cases = [
     expected => '
       pancake value_stack after execution finished:
       ----------------
-      uint: 16
-      uint: 4
+      unsigned_integer: 16
+      unsigned_integer: 4
       ----------------
       '
   },
@@ -67,7 +67,7 @@ my $cases = [
     expected => '
       pancake value_stack after execution finished:
       ----------------
-      sint: -2
+      signed_integer: -2
       ----------------
       '
   },
@@ -81,7 +81,7 @@ my $cases = [
     expected => '
       pancake value_stack after execution finished:
       ----------------
-      uint: 0
+      unsigned_integer: 0
       ----------------
       '
   },
@@ -106,8 +106,8 @@ my $cases = [
     expected =>'
       pancake value_stack after execution finished:
       ----------------
-      uint: 5
-      uint: 3
+      unsigned_integer: 5
+      unsigned_integer: 3
       ----------------
       ',
   },
@@ -122,8 +122,8 @@ my $cases = [
     expected =>'
       pancake value_stack after execution finished:
       ----------------
-      uint: 3
-      uint: 5
+      unsigned_integer: 3
+      unsigned_integer: 5
       ----------------
       ',
   },

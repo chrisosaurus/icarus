@@ -21,8 +21,8 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
     /* values inside our instructions we may want to unpack */
     char *str = 0;
-    int sint = 0;
-    unsigned int uint = 0;
+    int signed_integer = 0;
+    unsigned int unsigned_integer = 0;
     bool boolean = false;
     void *ref = 0;
     union ic_backend_pancake_value_cell *ref_array = 0;
@@ -110,31 +110,31 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 break;
 
-            /* push_uint uint */
+            /* push_unsigned unsigned_integer */
             case icp_push_unsigned:
-                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+                unsigned_integer = ic_backend_pancake_bytecode_arg1_get_unsigned(instruction);
                 value = ic_backend_pancake_value_stack_push(value_stack);
                 if (!value) {
                     puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_push failed");
                     return 0;
                 }
 
-                value->tag = ic_backend_pancake_value_type_uint;
-                value->u.uint = uint;
+                value->tag = ic_backend_pancake_value_type_unsigned_integer;
+                value->u.unsigned_integer = unsigned_integer;
 
                 break;
 
             /* push_int int */
             case icp_push_signed:
-                sint = ic_backend_pancake_bytecode_arg1_get_sint(instruction);
+                signed_integer = ic_backend_pancake_bytecode_arg1_get_signed(instruction);
                 value = ic_backend_pancake_value_stack_push(value_stack);
                 if (!value) {
                     puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_push failed");
                     return 0;
                 }
 
-                value->tag = ic_backend_pancake_value_type_sint;
-                value->u.sint = sint;
+                value->tag = ic_backend_pancake_value_type_signed_integer;
+                value->u.signed_integer = signed_integer;
 
                 break;
 
@@ -169,10 +169,10 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 break;
 
-            /* jmp addr::uint */
+            /* jmp addr::unsigned_integer */
             case icp_jmp:
-                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
-                if (!ic_backend_pancake_instructions_set_offset(instructions, uint)) {
+                unsigned_integer = ic_backend_pancake_bytecode_arg1_get_unsigned(instruction);
+                if (!ic_backend_pancake_instructions_set_offset(instructions, unsigned_integer)) {
                     puts("ic_backend_pancake_interpret: call to ic_backend_pancake_instructions_set_offset failed");
                     return 0;
                 }
@@ -182,9 +182,9 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 break;
 
-            /* jif addr::uint */
+            /* jif addr::unsigned_integer */
             case icp_jif:
-                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+                unsigned_integer = ic_backend_pancake_bytecode_arg1_get_unsigned(instruction);
 
                 /* get value */
                 value = ic_backend_pancake_value_stack_peek(value_stack);
@@ -209,7 +209,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 }
 
                 if (boolean) {
-                    if (!ic_backend_pancake_instructions_set_offset(instructions, uint)) {
+                    if (!ic_backend_pancake_instructions_set_offset(instructions, unsigned_integer)) {
                         puts("ic_backend_pancake_interpret: call to ic_backend_pancake_instructions_set_offset failed");
                         return 0;
                     }
@@ -220,9 +220,9 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 break;
 
-            /* jnif addr::uint */
+            /* jnif addr::unsigned_integer */
             case icp_jnif:
-                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+                unsigned_integer = ic_backend_pancake_bytecode_arg1_get_unsigned(instruction);
 
                 /* get value */
                 value = ic_backend_pancake_value_stack_peek(value_stack);
@@ -247,7 +247,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 }
 
                 if (!boolean) {
-                    if (!ic_backend_pancake_instructions_set_offset(instructions, uint)) {
+                    if (!ic_backend_pancake_instructions_set_offset(instructions, unsigned_integer)) {
                         puts("ic_backend_pancake_interpret: call to ic_backend_pancake_instructions_set_offset failed");
                         return 0;
                     }
@@ -409,11 +409,11 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 continue;
                 break;
 
-            /* pop n::uint */
+            /* pop n::unsigned_integer */
             case icp_pop:
-                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
-                /* pop uint items from the value_stack */
-                for (; uint > 0; --uint) {
+                unsigned_integer = ic_backend_pancake_bytecode_arg1_get_unsigned(instruction);
+                /* pop unsigned_integer items from the value_stack */
+                for (; unsigned_integer > 0; --unsigned_integer) {
                     if (!ic_backend_pancake_value_stack_pop(value_stack)) {
                         puts("ic_backend_pancake_interpret: call to ic_backend_pancake_value_stack_pop failed");
                         return 0;
@@ -421,7 +421,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 }
                 break;
 
-            /* call fname::string argn::uint */
+            /* call fname::string argn::unsigned_integer */
             case icp_call:
                 /* fdecl sig call */
                 str = ic_backend_pancake_bytecode_arg1_get_char(instruction);
@@ -431,7 +431,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 }
 
                 /* n args */
-                uint = ic_backend_pancake_bytecode_arg2_get_uint(instruction);
+                unsigned_integer = ic_backend_pancake_bytecode_arg2_get_unsigned(instruction);
 
                 /* get current offset
                  * NB: fine to return to this value
@@ -451,11 +451,11 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 /* set appropriate call_frame values */
                 call_frame->return_offset = cur_offset;
-                call_frame->arg_count = uint;
+                call_frame->arg_count = unsigned_integer;
                 call_frame->call_start_offset = new_offset;
-                call_frame->arg_start = value_stack_offset - uint;
+                call_frame->arg_start = value_stack_offset - unsigned_integer;
 
-                /* FIXME TODO ignoring uint */
+                /* FIXME TODO ignoring unsigned_integer */
 
                 /* FIXME TODO ignoring arg cleanup details */
 
@@ -514,7 +514,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 break;
 
-            /* copyarg argn::uint
+            /* copyarg argn::unsigned_integer
              * copyarg at offset argn onto stack
              * Note: arguments to functions are pushed in order
              *       a function call pushes the arguments, and then records the stack
@@ -537,12 +537,12 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 value_stack_offset = call_frame->arg_start;
 
                 /* our arg numbers */
-                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+                unsigned_integer = ic_backend_pancake_bytecode_arg1_get_unsigned(instruction);
 
                 /* the offset of our arg into the value_stack
                  * need to go one further back due to value_stack offset vs length
                  */
-                value_stack_offset += uint;
+                value_stack_offset += unsigned_integer;
 
                 /* value to copy onto head of stack */
                 value = ic_backend_pancake_value_stack_get_offset(value_stack, value_stack_offset);
@@ -562,7 +562,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 break;
 
-            /* call_builtin fname::string argn::uint */
+            /* call_builtin fname::string argn::unsigned_integer */
             case icp_call_builtin:
                 /* fdecl sig call */
                 str = ic_backend_pancake_bytecode_arg1_get_char(instruction);
@@ -573,7 +573,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 cur_offset = ic_backend_pancake_instructions_get_offset(instructions);
 
-                /* FIXME TODO ignoring uint */
+                /* FIXME TODO ignoring unsigned_integer */
 
                 /* FIXME TODO should we create a call_frame frame ? */
 
@@ -758,19 +758,19 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 break;
 
-            /* tailcall_void fname::string argn::uint */
+            /* tailcall_void fname::string argn::unsigned_integer */
             case icp_tailcall_void:
                 puts("ic_backend_pancake_interpret: unimplemented bytecode instruction: icp_tailcall_void");
                 return 0;
                 break;
 
-            /* tailcall_value fname::string argn::uint */
+            /* tailcall_value fname::string argn::unsigned_integer */
             case icp_tailcall_value:
                 puts("ic_backend_pancake_interpret: unimplemented bytecode instruction: icp_tailcall_value");
                 return 0;
                 break;
 
-            /* alloc slots::uint
+            /* alloc slots::unsigned_integer
              * allocate a new object with this many slots
              *
              * an object may have zero slots
@@ -780,14 +780,14 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
              * this is likely 32 or 64 bits
              */
             case icp_alloc:
-                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+                unsigned_integer = ic_backend_pancake_bytecode_arg1_get_unsigned(instruction);
 
-                /* uint from user is specified as 'number of slots'
+                /* unsigned_integer from user is specified as 'number of slots'
                  * convert to units of sizeof(union ic_backend_pancake_value_cell)
                  */
-                uint = uint * sizeof(union ic_backend_pancake_value_cell);
+                unsigned_integer = unsigned_integer * sizeof(union ic_backend_pancake_value_cell);
 
-                ref = ic_alloc(uint);
+                ref = ic_alloc(unsigned_integer);
 
                 value = ic_backend_pancake_value_stack_push(value_stack);
                 if (!value) {
@@ -800,13 +800,13 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 break;
 
-            /* store_offset slot::uint
+            /* store_offset slot::unsigned_integer
              * let value = pop()
              * let object = peek()
              * store value at offset `slot` within object
              */
             case icp_store_offset:
-                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+                unsigned_integer = ic_backend_pancake_bytecode_arg1_get_unsigned(instruction);
 
                 /* get value */
                 value = ic_backend_pancake_value_stack_peek(value_stack);
@@ -838,7 +838,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 /* move to offset within ref */
                 ref = value2->u.ref;
                 ref_array = ref;
-                ref_slot = &(ref_array[uint]);
+                ref_slot = &(ref_array[unsigned_integer]);
 
                 /* perform write */
                 switch (value->tag) {
@@ -846,12 +846,12 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                         ref_slot->boolean = value->u.boolean;
                         break;
 
-                    case ic_backend_pancake_value_type_uint:
-                        ref_slot->uint = value->u.uint;
+                    case ic_backend_pancake_value_type_unsigned_integer:
+                        ref_slot->unsigned_integer = value->u.unsigned_integer;
                         break;
 
-                    case ic_backend_pancake_value_type_sint:
-                        ref_slot->sint = value->u.sint;
+                    case ic_backend_pancake_value_type_signed_integer:
+                        ref_slot->signed_integer = value->u.signed_integer;
                         break;
 
                     case ic_backend_pancake_value_type_string:
@@ -874,12 +874,12 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 break;
 
-            /* load_offset_bool slot::uint
+            /* load_offset_bool slot::unsigned_integer
              * let object = peek()
              * load value at offset `slot` within object and push onto stack as bool
              */
             case icp_load_offset_bool:
-                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+                unsigned_integer = ic_backend_pancake_bytecode_arg1_get_unsigned(instruction);
 
                 /* get value DO NOT POP */
                 value = ic_backend_pancake_value_stack_peek(value_stack);
@@ -904,7 +904,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 ref = value->u.ref;
                 ref_array = ref;
-                ref_slot = &(ref_array[uint]);
+                ref_slot = &(ref_array[unsigned_integer]);
 
                 to_value->tag = ic_backend_pancake_value_type_boolean;
                 to_value->u.boolean = ref_slot->boolean;
@@ -912,12 +912,12 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 /* success */
                 break;
 
-            /* load_offset_str slot::uint
+            /* load_offset_str slot::unsigned_integer
              * let object = peek()
              * load value at offset `slot` within object and push onto stack as str
              */
             case icp_load_offset_str:
-                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+                unsigned_integer = ic_backend_pancake_bytecode_arg1_get_unsigned(instruction);
 
                 /* get value DO NOT POP */
                 value = ic_backend_pancake_value_stack_peek(value_stack);
@@ -942,7 +942,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 ref = value->u.ref;
                 ref_array = ref;
-                ref_slot = &(ref_array[uint]);
+                ref_slot = &(ref_array[unsigned_integer]);
 
                 to_value->tag = ic_backend_pancake_value_type_string;
                 to_value->u.string = ref_slot->string;
@@ -950,12 +950,12 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 /* success */
                 break;
 
-            /* load_offset_uint slot::uint
+            /* load_offset_unsigned slot::unsigned_integer
              * let object = peek()
-             * load value at offset `slot` within object and push onto stack as uint
+             * load value at offset `slot` within object and push onto stack as unsigned_integer
              */
-            case icp_load_offset_uint:
-                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+            case icp_load_offset_unsigned:
+                unsigned_integer = ic_backend_pancake_bytecode_arg1_get_unsigned(instruction);
 
                 /* get value DO NOT POP */
                 value = ic_backend_pancake_value_stack_peek(value_stack);
@@ -980,20 +980,20 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 ref = value->u.ref;
                 ref_array = ref;
-                ref_slot = &(ref_array[uint]);
+                ref_slot = &(ref_array[unsigned_integer]);
 
-                to_value->tag = ic_backend_pancake_value_type_uint;
-                to_value->u.uint = ref_slot->uint;
+                to_value->tag = ic_backend_pancake_value_type_unsigned_integer;
+                to_value->u.unsigned_integer = ref_slot->unsigned_integer;
 
                 /* success */
                 break;
 
-            /* load_offset_sint slot::uint
+            /* load_offset_signed slot::unsigned_integer
              * let object = peek()
-             * load value at offset `slot` within object and push onto stack as sint
+             * load value at offset `slot` within object and push onto stack as signed_integer
              */
-            case icp_load_offset_sint:
-                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+            case icp_load_offset_signed:
+                unsigned_integer = ic_backend_pancake_bytecode_arg1_get_unsigned(instruction);
 
                 /* get value DO NOT POP */
                 value = ic_backend_pancake_value_stack_peek(value_stack);
@@ -1018,20 +1018,20 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 ref = value->u.ref;
                 ref_array = ref;
-                ref_slot = &(ref_array[uint]);
+                ref_slot = &(ref_array[unsigned_integer]);
 
-                to_value->tag = ic_backend_pancake_value_type_sint;
-                to_value->u.sint = ref_slot->sint;
+                to_value->tag = ic_backend_pancake_value_type_signed_integer;
+                to_value->u.signed_integer = ref_slot->signed_integer;
 
                 /* sucess */
                 break;
 
-            /* load_offset_ref slot::uint
+            /* load_offset_ref slot::unsigned_integer
              * let object = peek()
              * load value at offset `slot` within object and push onto stack as ref
              */
             case icp_load_offset_ref:
-                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+                unsigned_integer = ic_backend_pancake_bytecode_arg1_get_unsigned(instruction);
 
                 /* get value DO NOT POP */
                 value = ic_backend_pancake_value_stack_peek(value_stack);
@@ -1056,7 +1056,7 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
 
                 ref = value->u.ref;
                 ref_array = ref;
-                ref_slot = &(ref_array[uint]);
+                ref_slot = &(ref_array[unsigned_integer]);
 
                 to_value->tag = ic_backend_pancake_value_type_ref;
                 to_value->u.ref = ref_slot->ref;
@@ -1064,12 +1064,12 @@ unsigned int ic_backend_pancake_interpret(struct ic_backend_pancake_runtime_data
                 /* success */
                 break;
 
-            /* load_offset_unit slot::uint
+            /* load_offset_unit slot::unsigned_integer
              * let object = peek()
              * load value at offset `slot` within object and push onto stack as unit
              */
             case icp_load_offset_unit:
-                uint = ic_backend_pancake_bytecode_arg1_get_uint(instruction);
+                unsigned_integer = ic_backend_pancake_bytecode_arg1_get_unsigned(instruction);
 
                 /* get value DO NOT POP */
                 value = ic_backend_pancake_value_stack_peek(value_stack);

@@ -518,9 +518,9 @@ unsigned int ic_token_isoperator(struct ic_token *token) {
  * returns 1 if it is a boolean
  * returns 0 if not
  */
-unsigned int ic_token_isboolean(struct ic_token *token) {
+unsigned int ic_token_is_boolean(struct ic_token *token) {
     if (!token) {
-        puts("ic_token_isboolean: token was null");
+        puts("ic_token_is_boolean: token was null");
         return 0;
     }
 

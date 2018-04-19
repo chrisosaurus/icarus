@@ -204,7 +204,7 @@ my $cases = [
       push_str "("
       call_builtin print(String) 1
       copyarg 0
-      load_offset_sint 0
+      load_offset_signed 0
       call_builtin print(Signed) 1
       push_str ", "
       call_builtin print(String) 1
@@ -333,7 +333,7 @@ my $cases = [
       push_str "("
       call_builtin print(String) 1
       copyarg 0
-      load_offset_sint 0
+      load_offset_signed 0
       call_builtin print(Signed) 1
       push_str ")"
       call_builtin print(String) 1
@@ -381,21 +381,21 @@ my $cases = [
       push_str "("
       call_builtin print(String) 1
       copyarg 0
-      load_offset_uint 0
+      load_offset_unsigned 0
       push_unsigned 0
       call_builtin equal(Unsigned,Unsigned) 2
       jif_label print(Foo)0
-      load_offset_uint 0
+      load_offset_unsigned 0
       push_unsigned 1
       call_builtin equal(Unsigned,Unsigned) 2
       jif_label print(Foo)1
-      load_offset_uint 0
+      load_offset_unsigned 0
       push_unsigned 2
       call_builtin equal(Unsigned,Unsigned) 2
       jif_label print(Foo)2
       panic "impossible tag"
       label print(Foo)0
-      load_offset_sint 1
+      load_offset_signed 1
       call_builtin print(Signed) 1
       jmp_label print(Foo)3
       label print(Foo)1

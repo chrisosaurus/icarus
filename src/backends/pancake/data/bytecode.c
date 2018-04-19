@@ -113,9 +113,9 @@ unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_panca
             return 1;
             break;
 
-        /* push_uint uint */
+        /* push_unsigned uint */
         case icp_push_unsigned:
-            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            uint = ic_backend_pancake_bytecode_arg1_get_unsigned(bytecode);
 
             fprintf(fd, "push_unsigned %" PRId32, uint);
 
@@ -124,7 +124,7 @@ unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_panca
 
         /* push_int int */
         case icp_push_signed:
-            sint = ic_backend_pancake_bytecode_arg1_get_sint(bytecode);
+            sint = ic_backend_pancake_bytecode_arg1_get_signed(bytecode);
 
             fprintf(fd, "push_signed %" PRId32, sint);
 
@@ -152,7 +152,7 @@ unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_panca
 
         /* copyarg argn::uint */
         case icp_copyarg:
-            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            uint = ic_backend_pancake_bytecode_arg1_get_unsigned(bytecode);
 
             fprintf(fd, "copyarg %" PRId32, uint);
 
@@ -167,7 +167,7 @@ unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_panca
                 return 0;
             }
 
-            uint = ic_backend_pancake_bytecode_arg2_get_uint(bytecode);
+            uint = ic_backend_pancake_bytecode_arg2_get_unsigned(bytecode);
 
             fprintf(fd, "call %s %" PRId32, ch, uint);
 
@@ -182,7 +182,7 @@ unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_panca
                 return 0;
             }
 
-            uint = ic_backend_pancake_bytecode_arg2_get_uint(bytecode);
+            uint = ic_backend_pancake_bytecode_arg2_get_unsigned(bytecode);
 
             fprintf(fd, "tailcall_void %s %" PRId32, ch, uint);
 
@@ -197,7 +197,7 @@ unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_panca
                 return 0;
             }
 
-            uint = ic_backend_pancake_bytecode_arg2_get_uint(bytecode);
+            uint = ic_backend_pancake_bytecode_arg2_get_unsigned(bytecode);
 
             fprintf(fd, "tailcall_value %s %" PRId32, ch, uint);
 
@@ -212,7 +212,7 @@ unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_panca
                 return 0;
             }
 
-            uint = ic_backend_pancake_bytecode_arg2_get_uint(bytecode);
+            uint = ic_backend_pancake_bytecode_arg2_get_unsigned(bytecode);
 
             fprintf(fd, "call_builtin %s %" PRId32, ch, uint);
 
@@ -221,7 +221,7 @@ unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_panca
 
         /* pop n */
         case icp_pop:
-            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            uint = ic_backend_pancake_bytecode_arg1_get_unsigned(bytecode);
 
             fprintf(fd, "pop %" PRId32, uint);
 
@@ -242,7 +242,7 @@ unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_panca
 
         /* jmp addr::uint */
         case icp_jmp:
-            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            uint = ic_backend_pancake_bytecode_arg1_get_unsigned(bytecode);
 
             fprintf(fd, "jmp %" PRId32, uint);
 
@@ -251,7 +251,7 @@ unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_panca
 
         /* jif addr */
         case icp_jif:
-            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            uint = ic_backend_pancake_bytecode_arg1_get_unsigned(bytecode);
 
             fprintf(fd, "jif %" PRId32, uint);
 
@@ -260,7 +260,7 @@ unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_panca
 
         /* jnif addr */
         case icp_jnif:
-            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            uint = ic_backend_pancake_bytecode_arg1_get_unsigned(bytecode);
 
             fprintf(fd, "jnif %" PRId32, uint);
 
@@ -367,45 +367,45 @@ unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_panca
             break;
 
         case icp_alloc:
-            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            uint = ic_backend_pancake_bytecode_arg1_get_unsigned(bytecode);
             fprintf(fd, "alloc %u", uint);
             return 1;
             break;
 
         case icp_store_offset:
-            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            uint = ic_backend_pancake_bytecode_arg1_get_unsigned(bytecode);
             fprintf(fd, "store_offset %u", uint);
             return 1;
             break;
 
         case icp_load_offset_bool:
-            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            uint = ic_backend_pancake_bytecode_arg1_get_unsigned(bytecode);
             fprintf(fd, "load_offset_bool %u", uint);
             return 1;
             break;
 
         case icp_load_offset_str:
-            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            uint = ic_backend_pancake_bytecode_arg1_get_unsigned(bytecode);
             fprintf(fd, "load_offset_str %u", uint);
             return 1;
 
-        case icp_load_offset_uint:
-            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
-            fprintf(fd, "load_offset_uint %u", uint);
+        case icp_load_offset_unsigned:
+            uint = ic_backend_pancake_bytecode_arg1_get_unsigned(bytecode);
+            fprintf(fd, "load_offset_unsigned %u", uint);
             return 1;
 
-        case icp_load_offset_sint:
-            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
-            fprintf(fd, "load_offset_sint %u", uint);
+        case icp_load_offset_signed:
+            uint = ic_backend_pancake_bytecode_arg1_get_unsigned(bytecode);
+            fprintf(fd, "load_offset_signed %u", uint);
             return 1;
 
         case icp_load_offset_ref:
-            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            uint = ic_backend_pancake_bytecode_arg1_get_unsigned(bytecode);
             fprintf(fd, "load_offset_ref %u", uint);
             return 1;
 
         case icp_load_offset_unit:
-            uint = ic_backend_pancake_bytecode_arg1_get_uint(bytecode);
+            uint = ic_backend_pancake_bytecode_arg1_get_unsigned(bytecode);
             fprintf(fd, "load_offset_unit %u", uint);
             return 1;
 
@@ -451,7 +451,7 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_void(struct ic_backend_pancake
  */
 unsigned int ic_backend_pancake_bytecode_arg2_set_void(struct ic_backend_pancake_bytecode *bytecode, void *arg2) {
     if (!bytecode) {
-        puts("ic_backend_pancake_bytecode_arg2_set_uint: bytecode was null");
+        puts("ic_backend_pancake_bytecode_arg2_set_unsigned: bytecode was null");
         return 0;
     }
 
@@ -720,9 +720,9 @@ uint8_t ic_backend_pancake_bytecode_arg2_get_bool(struct ic_backend_pancake_byte
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_bytecode_arg1_set_sint(struct ic_backend_pancake_bytecode *bytecode, int32_t arg1) {
+unsigned int ic_backend_pancake_bytecode_arg1_set_signed(struct ic_backend_pancake_bytecode *bytecode, int32_t arg1) {
     if (!bytecode) {
-        puts("ic_backend_pancake_bytecode_arg1_set_sint: bytecode was null");
+        puts("ic_backend_pancake_bytecode_arg1_set_signed: bytecode was null");
         return 0;
     }
     /* only allow arg to be set where it is correct */
@@ -732,12 +732,12 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_sint(struct ic_backend_pancake
             break;
 
         default:
-            puts("ic_backend_pancake_bytecode_arg1_set_sint: invalid sint arg set on bytecode that doesn't support");
+            puts("ic_backend_pancake_bytecode_arg1_set_signed: invalid sint arg set on bytecode that doesn't support");
             return 0;
             break;
     }
 
-    bytecode->arg1.tag = ic_backend_pancake_bytecode_arg_type_sint;
+    bytecode->arg1.tag = ic_backend_pancake_bytecode_arg_type_signed;
     bytecode->arg1.u.sint = arg1;
 
     return 1;
@@ -748,20 +748,20 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_sint(struct ic_backend_pancake
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_bytecode_arg2_set_sint(struct ic_backend_pancake_bytecode *bytecode, int32_t arg2) {
+unsigned int ic_backend_pancake_bytecode_arg2_set_signed(struct ic_backend_pancake_bytecode *bytecode, int32_t arg2) {
     if (!bytecode) {
-        puts("ic_backend_pancake_bytecode_arg2_set_sint: bytecode was null");
+        puts("ic_backend_pancake_bytecode_arg2_set_signed: bytecode was null");
         return 0;
     }
     /* only allow arg to be set where it is correct */
     switch (bytecode->tag) {
         default:
-            puts("ic_backend_pancake_bytecode_arg2_set_sint: invalid sint arg set on bytecode that doesn't support");
+            puts("ic_backend_pancake_bytecode_arg2_set_signed: invalid sint arg set on bytecode that doesn't support");
             return 0;
             break;
     }
 
-    bytecode->arg2.tag = ic_backend_pancake_bytecode_arg_type_sint;
+    bytecode->arg2.tag = ic_backend_pancake_bytecode_arg_type_signed;
     bytecode->arg2.u.sint = arg2;
 
     return 1;
@@ -774,14 +774,14 @@ unsigned int ic_backend_pancake_bytecode_arg2_set_sint(struct ic_backend_pancake
  * returns sintsuccess
  * returns 0 on failure
  */
-int32_t ic_backend_pancake_bytecode_arg1_get_sint(struct ic_backend_pancake_bytecode *bytecode) {
+int32_t ic_backend_pancake_bytecode_arg1_get_signed(struct ic_backend_pancake_bytecode *bytecode) {
     if (!bytecode) {
-        puts("ic_backend_pancake_bytecode_arg1_get_sint: bytecode was null");
+        puts("ic_backend_pancake_bytecode_arg1_get_signed: bytecode was null");
         return 0;
     }
 
-    if (bytecode->arg1.tag != ic_backend_pancake_bytecode_arg_type_sint) {
-        puts("ic_backend_pancake_bytecode_arg1_get_sint: bytecode arg2 was not sint");
+    if (bytecode->arg1.tag != ic_backend_pancake_bytecode_arg_type_signed) {
+        puts("ic_backend_pancake_bytecode_arg1_get_signed: bytecode arg2 was not sint");
         return 0;
     }
 
@@ -795,14 +795,14 @@ int32_t ic_backend_pancake_bytecode_arg1_get_sint(struct ic_backend_pancake_byte
  * returns sintsuccess
  * returns 0 on failure
  */
-int32_t ic_backend_pancake_bytecode_arg2_get_sint(struct ic_backend_pancake_bytecode *bytecode) {
+int32_t ic_backend_pancake_bytecode_arg2_get_signed(struct ic_backend_pancake_bytecode *bytecode) {
     if (!bytecode) {
-        puts("ic_backend_pancake_bytecode_arg2_get_sint: bytecode was null");
+        puts("ic_backend_pancake_bytecode_arg2_get_signed: bytecode was null");
         return 0;
     }
 
-    if (bytecode->arg2.tag != ic_backend_pancake_bytecode_arg_type_sint) {
-        puts("ic_backend_pancake_bytecode_arg1_get_sint: bytecode arg2 was not sint");
+    if (bytecode->arg2.tag != ic_backend_pancake_bytecode_arg_type_signed) {
+        puts("ic_backend_pancake_bytecode_arg1_get_signed: bytecode arg2 was not sint");
         return 0;
     }
 
@@ -814,14 +814,14 @@ int32_t ic_backend_pancake_bytecode_arg2_get_sint(struct ic_backend_pancake_byte
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_bytecode_arg1_set_uint(struct ic_backend_pancake_bytecode *bytecode, uint32_t arg1) {
+unsigned int ic_backend_pancake_bytecode_arg1_set_unsigned(struct ic_backend_pancake_bytecode *bytecode, uint32_t arg1) {
     if (!bytecode) {
-        puts("ic_backend_pancake_bytecode_arg1_set_uint: bytecode was null");
+        puts("ic_backend_pancake_bytecode_arg1_set_unsigned: bytecode was null");
         return 0;
     }
     /* only allow arg to be set where it is correct */
     switch (bytecode->tag) {
-        /* push_uint uint */
+        /* push_unsigned uint */
         case icp_push_unsigned:
         /* copyarg argn::uint */
         case icp_copyarg:
@@ -841,10 +841,10 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_uint(struct ic_backend_pancake
         case icp_load_offset_bool:
         /* load_offset_str slot::uint */
         case icp_load_offset_str:
-        /* load_offset_uint slot::uint */
-        case icp_load_offset_uint:
-        /* load_offset_sint slot::uint */
-        case icp_load_offset_sint:
+        /* load_offset_unsigned slot::uint */
+        case icp_load_offset_unsigned:
+        /* load_offset_signed slot::uint */
+        case icp_load_offset_signed:
         /* load_offset_ref slot::uint */
         case icp_load_offset_ref:
         /* load_offset_unit slot::uint */
@@ -852,12 +852,12 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_uint(struct ic_backend_pancake
             break;
 
         default:
-            puts("ic_backend_pancake_bytecode_arg1_set_uint: invalid uint arg set on bytecode that doesn't support");
+            puts("ic_backend_pancake_bytecode_arg1_set_unsigned: invalid uint arg set on bytecode that doesn't support");
             return 0;
             break;
     }
 
-    bytecode->arg1.tag = ic_backend_pancake_bytecode_arg_type_uint;
+    bytecode->arg1.tag = ic_backend_pancake_bytecode_arg_type_unsigned;
     bytecode->arg1.u.uint = arg1;
 
     return 1;
@@ -868,9 +868,9 @@ unsigned int ic_backend_pancake_bytecode_arg1_set_uint(struct ic_backend_pancake
  * returns 1 on success
  * returns 0 on failure
  */
-unsigned int ic_backend_pancake_bytecode_arg2_set_uint(struct ic_backend_pancake_bytecode *bytecode, uint32_t arg2) {
+unsigned int ic_backend_pancake_bytecode_arg2_set_unsigned(struct ic_backend_pancake_bytecode *bytecode, uint32_t arg2) {
     if (!bytecode) {
-        puts("ic_backend_pancake_bytecode_arg2_set_uint: bytecode was null");
+        puts("ic_backend_pancake_bytecode_arg2_set_unsigned: bytecode was null");
         return 0;
     }
 
@@ -887,12 +887,12 @@ unsigned int ic_backend_pancake_bytecode_arg2_set_uint(struct ic_backend_pancake
             break;
 
         default:
-            puts("ic_backend_pancake_bytecode_arg2_set_uint: invalid uint arg set on bytecode that doesn't support");
+            puts("ic_backend_pancake_bytecode_arg2_set_unsigned: invalid uint arg set on bytecode that doesn't support");
             return 0;
             break;
     }
 
-    bytecode->arg2.tag = ic_backend_pancake_bytecode_arg_type_uint;
+    bytecode->arg2.tag = ic_backend_pancake_bytecode_arg_type_unsigned;
     bytecode->arg2.u.uint = arg2;
 
     return 1;
@@ -905,14 +905,14 @@ unsigned int ic_backend_pancake_bytecode_arg2_set_uint(struct ic_backend_pancake
  * returns uint on success
  * returns 0 on failure
  */
-uint32_t ic_backend_pancake_bytecode_arg1_get_uint(struct ic_backend_pancake_bytecode *bytecode) {
+uint32_t ic_backend_pancake_bytecode_arg1_get_unsigned(struct ic_backend_pancake_bytecode *bytecode) {
     if (!bytecode) {
-        puts("ic_backend_pancake_bytecode_arg1_get_uint: bytecode was null");
+        puts("ic_backend_pancake_bytecode_arg1_get_unsigned: bytecode was null");
         return 0;
     }
 
-    if (bytecode->arg1.tag != ic_backend_pancake_bytecode_arg_type_uint) {
-        puts("ic_backend_pancake_bytecode_arg1_get_uint: bytecode arg1 was not uint");
+    if (bytecode->arg1.tag != ic_backend_pancake_bytecode_arg_type_unsigned) {
+        puts("ic_backend_pancake_bytecode_arg1_get_unsigned: bytecode arg1 was not uint");
         return 0;
     }
 
@@ -926,14 +926,14 @@ uint32_t ic_backend_pancake_bytecode_arg1_get_uint(struct ic_backend_pancake_byt
  * returns uint on success
  * returns 0 on failure
  */
-uint32_t ic_backend_pancake_bytecode_arg2_get_uint(struct ic_backend_pancake_bytecode *bytecode) {
+uint32_t ic_backend_pancake_bytecode_arg2_get_unsigned(struct ic_backend_pancake_bytecode *bytecode) {
     if (!bytecode) {
-        puts("ic_backend_pancake_bytecode_arg2_get_uint: bytecode was null");
+        puts("ic_backend_pancake_bytecode_arg2_get_unsigned: bytecode was null");
         return 0;
     }
 
-    if (bytecode->arg2.tag != ic_backend_pancake_bytecode_arg_type_uint) {
-        puts("ic_backend_pancake_bytecode_arg2_get_uint: bytecode arg2 was not uint");
+    if (bytecode->arg2.tag != ic_backend_pancake_bytecode_arg_type_unsigned) {
+        puts("ic_backend_pancake_bytecode_arg2_get_unsigned: bytecode arg2 was not uint");
         return 0;
     }
 

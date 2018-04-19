@@ -1077,7 +1077,7 @@ static unsigned int ic_transform_stmt_if(struct ic_kludge *kludge, struct ic_dec
             return 0;
         }
 
-        if (!ic_decl_type_isbool(expr_id_type)) {
+        if (!ic_decl_type_is_bool(expr_id_type)) {
             puts("ic_transform_stmt_if: error: identifier was not of type Bool");
             printf("  identifier: '%s'\n", ic_symbol_contents(cond_sym));
             return 0;

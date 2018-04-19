@@ -186,14 +186,14 @@ struct ic_decl *ic_parse_decl_type_struct_header(struct ic_token_list *token_lis
         }
     } else if (!strncmp(token_str, "Unsigned", 8)) {
         /* if this is the bool type then mark it as so */
-        if (!ic_decl_type_struct_mark_uint(tdecl_struct)) {
-            puts("ic_parse_decl_type_struct_header: call to ic_decl_type_struct_mark_uint failed");
+        if (!ic_decl_type_struct_mark_unsigned(tdecl_struct)) {
+            puts("ic_parse_decl_type_struct_header: call to ic_decl_type_struct_mark_unsigned failed");
             goto ERROR;
         }
     } else if (!strncmp(token_str, "Signed", 6)) {
         /* if this is the bool type then mark it as so */
-        if (!ic_decl_type_struct_mark_sint(tdecl_struct)) {
-            puts("ic_parse_decl_type_struct_header: call to ic_decl_type_struct_mark_sint failed");
+        if (!ic_decl_type_struct_mark_signed(tdecl_struct)) {
+            puts("ic_parse_decl_type_struct_header: call to ic_decl_type_struct_mark_signed failed");
             goto ERROR;
         }
     }
