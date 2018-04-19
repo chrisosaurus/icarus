@@ -1,5 +1,5 @@
 union Foo
-  a::Sint
+  a::Signed
   b::String
 end
 
@@ -7,7 +7,7 @@ fn main()
   let f = Foo("Hello")
 
   match f
-    case a::Sint
+    case a::Signed
       println(a)
     case b::String
       println(b)

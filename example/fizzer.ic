@@ -1,9 +1,9 @@
-fn is_div(a::Sint, b::Sint) -> Bool
+fn is_div(a::Signed, b::Signed) -> Bool
     let rem = a % b
     return rem == 0s
 end
 
-fn fizzer(num::Sint)
+fn fizzer(num::Signed)
     let str = ""
 
     if is_div(num, 3s)
@@ -21,7 +21,7 @@ fn fizzer(num::Sint)
     end
 end
 
-fn fizzbuzz(from::Sint, to::Sint)
+fn fizzbuzz(from::Signed, to::Signed)
   if from < to
     fizzer(from)
     from = from + 1s

@@ -30,7 +30,7 @@ ic_analyse: call to ic_analyse_decl_func failed
 analysis failed
 ",
 
-'fn main() let a::Sint = foo() end
+'fn main() let a::Signed = foo() end
 fn foo() -> String end'
 =>
 "ic_analyse_let: let init type did not match declared type
@@ -53,7 +53,7 @@ ic_analyse: call to ic_analyse_decl_func failed
 analysis failed
 ",
 
-'fn foo() -> Sint return "hello" end'
+'fn foo() -> Signed return "hello" end'
 =>
 "ic_analyse_body: ret: returned type did not match declared
 ic_analyse_body: unimplemented in error case
@@ -73,7 +73,7 @@ ic_analyse: call to ic_analyse_decl_func failed
 analysis failed
 ",
 
-'fn foo() let a::Sint = 5s a = "hello" end'
+'fn foo() let a::Signed = 5s a = "hello" end'
 =>
 'ic_analyse_body: assign: assignment between invalid types
 ic_analyse_body: unimplemented in error case
@@ -83,32 +83,32 @@ ic_analyse: call to ic_analyse_decl_func failed
 analysis failed
 ',
 
-'fn foo() let a::Sint = 5s a = 6s end'
+'fn foo() let a::Signed = 5s a = 6s end'
 =>
 'ic_analyse: failed to find a main function
 analysis failed
 ',
 
-'fn main() foo[Sint](6s, 7s) end'
+'fn main() foo[Signed](6s, 7s) end'
 =>
 "ic_analyse_resolve_type: unable to resolve type
 
     I tried to lookup both:
-        foo[Sint]
+        foo[Signed]
         foo[_]
     and failed to find either
 
 ic_analyse_infer_fcall: error finding function declaration for function call:
-        foo[Sint](6s, 7s)
+        foo[Signed](6s, 7s)
 
     I tried to lookup both:
-        foo[Sint](Sint,Sint)
+        foo[Signed](Signed,Signed)
         foo[_](_,_)
     and failed to find either
 
     I also tried to consider this as a constructor
     but after attempting to instantiate this type, I still found no function matching the call:
-        foo[Sint](Sint,Sint)
+        foo[Signed](Signed,Signed)
 
 ic_analyse_infer: call to ic_analyse_infer_fcall failed
 ic_analyse_body: expr: call to ic_analyse_infer failed

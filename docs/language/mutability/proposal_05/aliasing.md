@@ -20,7 +20,7 @@ this is fine as once heapsort returns there is still only 1 reference to our arr
 Safe aliasing
 ===============
 
-    fn safe(&x::Sint, y::Sint)
+    fn safe(&x::Signed, y::Signed)
         print(y)
         &x += 1
         print(y)
@@ -47,7 +47,7 @@ Explicit 'unsafe' aliasing
 
 if however you purposefully want to allow a mutation through x to be seen through y
 
-    fn unsafe(&x::Sint, $y::Sint)
+    fn unsafe(&x::Signed, $y::Signed)
         print(y)
         &x += 1
         print(y)

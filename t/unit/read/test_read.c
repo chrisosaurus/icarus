@@ -4,14 +4,14 @@
 
 #include "../../../src/read/read.h"
 
-static char *expected = "# user defined type with 2 fields, a Sint and a String\n\
+static char *expected = "# user defined type with 2 fields, a Signed and a String\n\
 type Foo\n\
-    a::Sint\n\
+    a::Signed\n\
     b::String\n\
 end\n\
 \n\
 # simple function to test return values and branching\n\
-fn maybe_add_one(b::Bool, i::Sint) -> Sint\n\
+fn maybe_add_one(b::Bool, i::Signed) -> Signed\n\
     if b\n\
         return i+1s\n\
     else\n\

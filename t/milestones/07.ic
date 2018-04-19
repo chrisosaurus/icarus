@@ -1,8 +1,8 @@
 type Foo
-  i::Sint
+  i::Signed
 end
 
-fn unpack(f::Foo) -> Sint
+fn unpack(f::Foo) -> Signed
  return f.i
 end
 

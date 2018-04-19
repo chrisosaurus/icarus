@@ -12,15 +12,15 @@
  * only one of type_params OR type_args may be provided
  * returned symbol is owned by caller
  *
- * fn foo[Sint,Maybe[Uint]](m::Maybe[Vector[Sint]], b::Uint)
+ * fn foo[Signed,Maybe[Unsigned]](m::Maybe[Vector[Signed]], b::Unsigned)
  *
  * =>
  *
- * foo_t_Sint_Maybe_t_Uint_u_u_a_Maybe_t_Vector_t_Sint_u_u_Uint_b
- * foo [ Sint Maybe [ Uint ] ] ( Maybe [ Vector [ Sint ] ],Uint )
+ * foo_t_Signed_Maybe_t_Unsigned_u_u_a_Maybe_t_Vector_t_Signed_u_u_Unsigned_b
+ * foo [ Signed Maybe [ Unsigned ] ] ( Maybe [ Vector [ Signed ] ],Unsigned )
  *
  *
- * so this function returns "foo_t_Sint_Maybe_t_Uint_u_u_a_Maybe_t_Vector_t_Sint_u_u_Uint_b" as a symbol
+ * so this function returns "foo_t_Signed_Maybe_t_Unsigned_u_u_a_Maybe_t_Vector_t_Signed_u_u_Unsigned_b" as a symbol
  *
  * returns * on success
  * returns 0 on failure
@@ -34,19 +34,19 @@ struct ic_symbol * ic_parse_helper_mangled_name(struct ic_symbol *name, struct i
  * only one of type_params OR type_args may be provided
  * returned symbol is owned by caller
  *
- * fn println(Sint) ... end
+ * fn println(Signed) ... end
  * =>
- * println(Sint)
+ * println(Signed)
  *
  * fn id[T](t::T) -> T ... end
- * instantiated for Sint
+ * instantiated for Signed
  * =>
- * id[Sint](Sint)
+ * id[Signed](Signed)
  *
  * union Maybe[T] ... end
- * instantiated for Sint
+ * instantiated for Signed
  * =>
- * Maybe[Sint]
+ * Maybe[Signed]
  *
  * returns * on success
  * returns 0 on failure
@@ -72,9 +72,9 @@ struct ic_symbol * ic_parse_helper_full_name(struct ic_symbol *name, struct ic_p
  *
  * union Maybe[T] ... end
  * =>
- * Maybe[Sint]
+ * Maybe[Signed]
  *
- * fn foo[Sint,Maybe[Uint]](m::Maybe[Vector[Sint]], b::Uint)
+ * fn foo[Signed,Maybe[Unsigned]](m::Maybe[Vector[Signed]], b::Unsigned)
  * =>
  * foo[_,_](_,_)
  *
@@ -92,9 +92,9 @@ struct ic_symbol * ic_parse_helper_generic_name(struct ic_symbol *name, struct i
  * type_args, and args are optional
  * returned symbol is owned by caller
  *
- * fn foo(a::Sint,b::Maybe[Sint]) -> Bar ... end
+ * fn foo(a::Signed,b::Maybe[Signed]) -> Bar ... end
  * =>
- * println(Sint,Maybe[Sint])
+ * println(Signed,Maybe[Signed])
  *
  * returns * on success
  * returns 0 on failure

@@ -1,4 +1,4 @@
-fn max(a::Uint, b::Uint) -> Uint
+fn max(a::Unsigned, b::Unsigned) -> Unsigned
     if a < b
         return b
     else
@@ -6,7 +6,7 @@ fn max(a::Uint, b::Uint) -> Uint
     end
 end
 
-fn min(a::Uint, b::Uint) -> Uint
+fn min(a::Unsigned, b::Unsigned) -> Unsigned
     if a > b
         return b
     else
@@ -15,16 +15,16 @@ fn min(a::Uint, b::Uint) -> Uint
 end
 
 type Point
-    x::Uint
-    y::Uint
+    x::Unsigned
+    y::Unsigned
 end
 
 type Square
     topleft::Point
-    width::Uint
+    width::Unsigned
 end
 
-fn area(s::Square) -> Uint
+fn area(s::Square) -> Unsigned
     return s.width * s.width
 end
 
@@ -33,7 +33,7 @@ type Rectangle
     bottomright::Point
 end
 
-fn area(r::Rectangle) -> Uint
+fn area(r::Rectangle) -> Unsigned
     let dy = max(r.topleft.y, r.bottomright.y) - min(r.topleft.y, r.bottomright.y)
     let dx = max(r.topleft.x, r.bottomright.x) - min(r.topleft.x, r.bottomright.x)
     return dy * dx
@@ -41,10 +41,10 @@ end
 
 type Circle
     center::Point
-    radius::Uint
+    radius::Unsigned
 end
 
-fn area(c::Circle) -> Uint
+fn area(c::Circle) -> Unsigned
     let not_quite_pi = 3u
     return not_quite_pi * c.radius * c.radius
 end
@@ -55,7 +55,7 @@ union Shape
     rectangle::Rectangle
 end
 
-fn area(s::Shape) -> Uint
+fn area(s::Shape) -> Unsigned
     match s
         case circle::Circle
             return area(circle)

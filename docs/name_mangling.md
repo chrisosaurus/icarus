@@ -9,7 +9,7 @@ One obvious reason is to allow function overloading when the destination languag
 (e.g. C) doesn't support it
 
   fn print(s::String)
-  fn print(i::Sint)
+  fn print(i::Signed)
 
 so therefore the mangled name must include information about the argument types
 

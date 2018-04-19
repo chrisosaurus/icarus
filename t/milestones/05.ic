@@ -1,11 +1,11 @@
-fn add_one(i::Sint) -> Sint
-  let x::Sint = 0s
+fn add_one(i::Signed) -> Signed
+  let x::Signed = 0s
   x = 1s + i
   return x
 end
 
 fn main()
-  let x::Sint = add_one(5s)
+  let x::Signed = add_one(5s)
   println(x)
 end
 

@@ -12,14 +12,14 @@ my $cases = [
   {
     input => '
       type Bar
-        a::Sint
+        a::Signed
       end
 
       type Foo
-        a::Sint
+        a::Signed
         b::String
         c::Bar
-        d::Sint
+        d::Signed
       end
 
       fn work()
@@ -41,7 +41,7 @@ my $cases = [
   {
     input => '
       type Foo
-        a::Sint
+        a::Signed
       end
 
       type Bar
@@ -66,11 +66,11 @@ my $cases = [
   {
     input => '
         type Bar
-            a::Sint
+            a::Signed
         end
 
         union Foo
-            a::Sint
+            a::Signed
             b::String
             c::Bar
         end
@@ -91,13 +91,13 @@ my $cases = [
   {
     input => '
       type Point
-          x::Uint
-          y::Uint
+          x::Unsigned
+          y::Unsigned
       end
 
       type Square
           topleft::Point
-          width::Uint
+          width::Unsigned
       end
 
       type Rectangle
@@ -107,7 +107,7 @@ my $cases = [
 
       type Circle
           center::Point
-          radius::Uint
+          radius::Unsigned
       end
 
       union Shape
@@ -132,13 +132,13 @@ my $cases = [
   {
     input => '
       union Foo
-        a::Sint
+        a::Signed
         b::String
         c::Bar
       end
 
       type Bar
-        b::Sint
+        b::Signed
       end
 
       fn main()
@@ -169,7 +169,7 @@ my $cases = [
   {
     input => '
       type Foo
-          i::Sint
+          i::Signed
       end
 
       type Bar
@@ -193,7 +193,7 @@ my $cases = [
   {
     input => '
       union Cons
-        u::Uint
+        u::Unsigned
         cons::Cons
       end
 
@@ -216,11 +216,11 @@ my $cases = [
           succ::Succ
       end
 
-      fn value(_::Zero) -> Uint
+      fn value(_::Zero) -> Unsigned
           return 0u
       end
 
-      fn value(s::Succ) -> Uint
+      fn value(s::Succ) -> Unsigned
           match s
               case zero::Zero
                   return 1u + 0u

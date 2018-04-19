@@ -184,13 +184,13 @@ struct ic_decl *ic_parse_decl_type_struct_header(struct ic_token_list *token_lis
             puts("ic_parse_decl_type_struct_header: call to ic_decl_type_struct_mark_string failed");
             goto ERROR;
         }
-    } else if (!strncmp(token_str, "Uint", 4)) {
+    } else if (!strncmp(token_str, "Unsigned", 8)) {
         /* if this is the bool type then mark it as so */
         if (!ic_decl_type_struct_mark_uint(tdecl_struct)) {
             puts("ic_parse_decl_type_struct_header: call to ic_decl_type_struct_mark_uint failed");
             goto ERROR;
         }
-    } else if (!strncmp(token_str, "Sint", 4)) {
+    } else if (!strncmp(token_str, "Signed", 6)) {
         /* if this is the bool type then mark it as so */
         if (!ic_decl_type_struct_mark_sint(tdecl_struct)) {
             puts("ic_parse_decl_type_struct_header: call to ic_decl_type_struct_mark_sint failed");
@@ -804,7 +804,7 @@ struct ic_decl *ic_parse_decl_func_header(struct ic_token_list *token_list) {
 
     /* note token being null *is* allowed
      * as this could mean we have the following as the last decl. in our file
-     *  builtin foo(a::Sint)
+     *  builtin foo(a::Signed)
      */
     if ((!token) || (token->id != IC_ARROW)) {
         /* add Unit type to our fdecl */

@@ -3,7 +3,7 @@
 
 type Foo[T]
     a::T
-    b::Sint
+    b::Signed
 
     fn Foo[T](t::T) -> Foo[T]
         return Foo(t 10)

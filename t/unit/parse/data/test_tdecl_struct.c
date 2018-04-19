@@ -23,7 +23,7 @@ int main(void) {
     assert(0 == ic_decl_type_field_length(tdecl));
 
     /* add some fields */
-    type_ref1 = ic_type_ref_symbol_new("Sint", 4);
+    type_ref1 = ic_type_ref_symbol_new("Signed", 6);
     assert(type_ref1);
     field = ic_field_new("a", 1, type_ref1, ic_parse_perm_default());
     assert(field);
@@ -42,7 +42,7 @@ int main(void) {
     assert(0 == ic_decl_type_get_field_offset(tdecl, "a"));
     assert(1 == ic_decl_type_get_field_offset(tdecl, "b"));
 
-    printf("Should see:\ntype Foo\n    a::Sint\n    b::String\nend\n");
+    printf("Should see:\ntype Foo\n    a::Signed\n    b::String\nend\n");
 
     /* output type */
     puts("Output:");

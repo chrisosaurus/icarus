@@ -1,11 +1,11 @@
 type Point
-    x::Uint
-    y::Uint
+    x::Unsigned
+    y::Unsigned
 end
 
 type Square
     topleft::Point
-    width::Uint
+    width::Unsigned
 end
 
 type Rectangle
@@ -15,7 +15,7 @@ end
 
 type Circle
     center::Point
-    radius::Uint
+    radius::Unsigned
 end
 
 union Shape

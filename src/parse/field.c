@@ -25,7 +25,7 @@ struct ic_field *ic_parse_field(struct ic_token_list *token_list) {
     permissions = ic_parse_permissions(token_list);
 
     /* capture field name
-     * a::Sint
+     * a::Signed
      * `a` is the name
      */
     token = ic_token_list_expect_important(token_list, IC_IDENTIFIER);
@@ -49,8 +49,8 @@ struct ic_field *ic_parse_field(struct ic_token_list *token_list) {
     }
 
     /* capture field type
-     * a::Sint
-     * `Sint` is the type
+     * a::Signed
+     * `Signed` is the type
      */
     type = ic_parse_type_ref(token_list);
     if (!type) {

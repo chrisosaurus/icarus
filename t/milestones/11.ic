@@ -7,13 +7,13 @@ union Maybe[T]
 end
 
 fn main()
-    let m = Maybe[Sint](6s)
+    let m = Maybe[Signed](6s)
 
     println(m)
 
     match m
-        case something::Sint
-            print("Found a Sint: ")
+        case something::Signed
+            print("Found a Signed: ")
             println(something)
         case nothing::Nothing
             println("Nothing to see here")

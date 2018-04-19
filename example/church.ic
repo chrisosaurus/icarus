@@ -7,11 +7,11 @@ union Succ
     succ::Succ
 end
 
-fn value(_::Zero) -> Uint
+fn value(_::Zero) -> Unsigned
     return 0u
 end
 
-fn value(s::Succ) -> Uint
+fn value(s::Succ) -> Unsigned
     match s
         case zero::Zero
             return 1u + 0u

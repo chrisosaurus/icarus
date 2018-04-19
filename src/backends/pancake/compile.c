@@ -617,14 +617,14 @@ static unsigned int ic_backend_pancake_compile_stmt_match(struct ic_backend_panc
     tdecl = tmatch->tdecl;
 
     /* union Foo
-     *  a::Sint
+     *  a::Signed
      *  b::String
      * end
      *
      * fn main()
      *   let f = Foo(...)
      *   match f
-     *     case a::Sint
+     *     case a::Signed
      *       println(a)
      *     case b::String
      *       println(b)
@@ -639,12 +639,12 @@ static unsigned int ic_backend_pancake_compile_stmt_match(struct ic_backend_panc
      * <copy f onto stack>
      * load_offset_uint 0
      * pushuint 0
-     * call_builtin equal(Uint,Uint) 2
+     * call_builtin equal(Unsigned,Unsigned) 2
      * jif_label main()0
      *
      * load_offset_uint 0
      * pushuint 1
-     * call_builtin equal(Uint,Uint) 2
+     * call_builtin equal(Unsigned,Unsigned) 2
      * jif_label main()1
      *
      * panic "Impossible tag"
@@ -652,7 +652,7 @@ static unsigned int ic_backend_pancake_compile_stmt_match(struct ic_backend_panc
      * label main()0
      * <copy f onto stack>
      * load_offset_sint 1
-     * call_builtin print(Sint) 1
+     * call_builtin print(Signed) 1
      * jmp_label main()2
      *
      * label main()1
@@ -769,14 +769,14 @@ static unsigned int ic_backend_pancake_compile_stmt_match(struct ic_backend_panc
             return 0;
         }
 
-        /* call_builtin equal(Uint, Uint) 2 */
+        /* call_builtin equal(Unsigned, Unsigned) 2 */
         instruction = ic_backend_pancake_instructions_add(instructions, icp_call_builtin);
         if (!instruction) {
             puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_instructions_add failed");
             return 0;
         }
 
-        if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, "equal(Uint,Uint)")) {
+        if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, "equal(Unsigned,Unsigned)")) {
             puts("ic_backend_pancake_compile_stmt_match: call to ic_backend_pancake_bytecode_arg1_set_char failed");
             return 0;
         }
@@ -1405,7 +1405,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
              */
 
             /* NB: we must ensure labels are globally unique
-             * we can use the func call signature, e.g. foo(Sint,Sint)
+             * we can use the func call signature, e.g. foo(Signed,Signed)
              * and then append _N where N is a number unique within this
              * fdecl
              *
@@ -1413,7 +1413,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
              *
              */
 
-            /* fn foo(a Sint) -> Sint
+            /* fn foo(a Signed) -> Signed
              *  if a < 5
              *    body1...
              *  else
@@ -1422,7 +1422,7 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
              * end
              */
 
-            /* fn foo(a Sint) -> Sint
+            /* fn foo(a Signed) -> Signed
              *  let cond::Bool = a < 5
              *  if cond
              *    body1...
@@ -1432,16 +1432,16 @@ unsigned int ic_backend_pancake_compile_stmt(struct ic_backend_pancake_instructi
              * end
              */
 
-            /* label foo(Sint)
+            /* label foo(Signed)
              * copyarg a
              * pushint 5
-             * call_builtin lessthan(Sint, Sint) 2
-             * jnif foo(Sint)_1
+             * call_builtin lessthan(Signed, Signed) 2
+             * jnif foo(Signed)_1
              * body1...
-             * jmp foo(Sint)_2
-             * label foo(Sint)_1
+             * jmp foo(Signed)_2
+             * label foo(Signed)_1
              * body2...
-             * label foo(Sint)_2
+             * label foo(Signed)_2
              */
 
             /* generate label for else branch */
@@ -2522,7 +2522,7 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
     }
 
     /* union Foo
-     *  a::Sint
+     *  a::Signed
      *  b::String
      *  c::Bar
      * end
@@ -2539,24 +2539,24 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
      *
      * load_offset_uint 0
      * pushuint 0
-     * call_builtin equal(Uint,Uint) 2
+     * call_builtin equal(Unsigned,Unsigned) 2
      * jnif_label "print(Foo)0
      *
      * load_offset_uint 0
      * pushuint 1
-     * call_builtin equal(Uint,Uint) 2
+     * call_builtin equal(Unsigned,Unsigned) 2
      * jnif_label "print(Foo)1
      *
      * load_offset_uint 0
      * pushuint 2
-     * call_builtin equal(Uint,Uint) 2
+     * call_builtin equal(Unsigned,Unsigned) 2
      * jnif_label "print(Foo)2
      *
      * icp_panic "impossible tag"
      *
      * label print(Foo)0
      * load_offset_sint 1
-     * call_builtin print(Sint) 1
+     * call_builtin print(Signed) 1
      * jmp_label print(Foo)_3
      *
      * label print(Foo)1
@@ -2700,14 +2700,14 @@ static unsigned int ic_backend_pancake_generate_function_print_union(struct ic_b
             return 0;
         }
 
-        /* call_builtin equal(Uint, Uint) 2 */
+        /* call_builtin equal(Unsigned, Unsigned) 2 */
         instruction = ic_backend_pancake_instructions_add(instructions, icp_call_builtin);
         if (!instruction) {
             puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_instructions_add failed");
             return 0;
         }
 
-        if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, "equal(Uint,Uint)")) {
+        if (!ic_backend_pancake_bytecode_arg1_set_char(instruction, "equal(Unsigned,Unsigned)")) {
             puts("ic_backend_pancake_generate_function_print_union: call to ic_backend_pancake_bytecode_arg1_set_char failed");
             return 0;
         }
@@ -3105,7 +3105,7 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
     }
 
     /* type Foo
-     *  a::Sint
+     *  a::Signed
      *  b::String
      *  c::Bar
      * end
@@ -3119,7 +3119,7 @@ static unsigned int ic_backend_pancake_generate_function_print_struct(struct ic_
      * call_builtin print(String) 1
      * copyarg 0
      * load_offset 0
-     * call_builtin print(Sint) 1
+     * call_builtin print(Signed) 1
      * load_offset 1
      * call_builtin print(String) 1
      * load_offset 2
@@ -3524,14 +3524,14 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
      * example:
      *
      *   type Foo
-     *    a::Sint
-     *    b::Sint
+     *    a::Signed
+     *    b::Signed
      *    s::String
      *   end
      *
      * should generate
      *
-     *   label Foo(Sint,Sint,String)
+     *   label Foo(Signed,Signed,String)
      *   alloc 3 // allocate a 3 cell object
      *   copyarg 0
      *   store_offset 0
@@ -3555,9 +3555,9 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
      *   pushint 1
      *   pushint 4
      *   pushstr "hello"
-     *   call Foo(Sint,Sint,String) 3
+     *   call Foo(Signed,Signed,String) 3
      *   load_offset 0
-     *   call_builtin println(Sint) 1
+     *   call_builtin println(Signed) 1
      *   pushint 4
      *   store_offset 0
      */
@@ -3606,13 +3606,13 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
             case ic_generate_tag_cons_struct:
 
                 /* type Foo
-                 *  a::Sint
+                 *  a::Signed
                  *  b::String
                  * end
                  *
                  * ->
                  *
-                 * label Foo(Sint, String)
+                 * label Foo(Signed, String)
                  * alloc 2
                  * copyarg 0
                  * store_offset 0
@@ -3723,7 +3723,7 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
 
             case ic_generate_tag_cons_union:
                 /* union Foo
-                 *  a::Sint
+                 *  a::Signed
                  *  b::String
                  * end
                  *
@@ -3731,7 +3731,7 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                  * first member
                  * ->
                  *
-                 * label Foo(Sint)
+                 * label Foo(Signed)
                  * alloc 2
                  * pushuint 0
                  * store_offset 0
@@ -3902,7 +3902,7 @@ unsigned int ic_backend_pancake_generate_functions(struct ic_backend_pancake_ins
                 /* println is nice and easy:
                  *
                  * type Foo
-                 *   a::Sint
+                 *   a::Signed
                  *   b::String
                  * end
                  *

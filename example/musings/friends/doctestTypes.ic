@@ -2,8 +2,8 @@
 
 # v1 - doctest has little meaning
 # example: [2, 3] -> [(22, 222), (33, 333)]
-fn makeSpecialTuples(list::[Sint]) -> [(Sint, Sint)]
-    let &out::[(Sint, Sint)]
+fn makeSpecialTuples(list::[Signed]) -> [(Signed, Signed)]
+    let &out::[(Signed, Signed)]
     for item in list
         &out.append((item * 11, item * 111))
     end
@@ -24,7 +24,7 @@ end
 
 
 # v3 - a list comprehension version of v1
-fn makeSpecialTuples(list::[Sint]) -> [(Sint, Sint)]
+fn makeSpecialTuples(list::[Signed]) -> [(Signed, Signed)]
     return [ (item * 11, item * 111) for item in list ]
 end
 

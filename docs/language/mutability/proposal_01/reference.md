@@ -27,7 +27,7 @@ this allocated an integer value `5` and created a mutable variable `a` referenci
 
       +-var-----+
       | a       |
-      | ::Sint  |
+      | ::Signed  |
       | mutable |
       +---------+
            \
@@ -38,7 +38,7 @@ this allocated an integer value `5` and created a mutable variable `a` referenci
                 v
                +-value---+
                |  5      |
-               |  ::Sint |
+               |  ::Signed |
                +---------+
 
 
@@ -48,7 +48,7 @@ we can rebind the variable to new values
 
       +-var-----+
       | a       |
-      | ::Sint  |
+      | ::Signed  |
       | mutable |
       +---------+
            \
@@ -59,7 +59,7 @@ we can rebind the variable to new values
                 v
                +-value---+
                |  14     |
-               |  ::Sint |
+               |  ::Signed |
                +---------+
 
 
@@ -76,7 +76,7 @@ we now have
 
       +-var-----+     +-var-----+
       | a       |     | b       |
-      | ::Sint  |     | ::Sint  |
+      | ::Signed  |     | ::Signed  |
       | mutable |     | mutable |
       +---------+     +---------+
            \           |
@@ -87,7 +87,7 @@ we now have
                 v      v
                +-value---+
                |  5      |
-               |  ::Sint |
+               |  ::Signed |
                +---------+
 
 however any use of `=` creates a new value
@@ -98,7 +98,7 @@ yields:
 
       +-var-----+     +-var-----+
       | a       |     | b       |
-      | ::Sint  |     | ::Sint  |
+      | ::Signed  |     | ::Signed  |
       | mutable |     | mutable |
       +---------+     +---------+
           |               |
@@ -109,7 +109,7 @@ yields:
           v               v
      +-value---+        +-value---+
      |  5      |        |  8      |
-     |  ::Sint |        |  ::Sint |
+     |  ::Signed |        |  ::Signed |
      +---------+        +---------+
 
 
@@ -117,12 +117,12 @@ yields:
 function arguments
 ==================
 
-Sintro
+Signedro
 -----------
 
 Arguments passed to function by default pass an immutable reference
 
-    function foo(a::Sint) ...
+    function foo(a::Signed) ...
 
     ....
 
@@ -136,7 +136,7 @@ any attempts to upgrade a to a mutable reference will also result in a compile t
 
 A function can also ask for a mutable refernece
 
-    function bar(&a::Sint) ...
+    function bar(&a::Signed) ...
 
 this function is now free to mutate a,
 this function can also pass on this reference to another function as either a mutable or immutable reference,
@@ -169,7 +169,7 @@ Let's look at an example of how this looks:
     let a = 15
     baz(&a a)
 
-    function baz(&m::Sint i::Sint) ...
+    function baz(&m::Signed i::Signed) ...
 
 
 The view of the world during the function call to baz:
@@ -205,7 +205,7 @@ If inside our function baz we mutate through m
     let a = 15
     baz(&a a)
 
-    function baz(&m::Sint i::Sint)
+    function baz(&m::Signed i::Signed)
         &m = 123
     end
 
@@ -213,14 +213,14 @@ we then get this view of the world
 
       +-var-----+
       | m       |
-      | ::Sint  |
+      | ::Signed  |
       | mutable |
       +---------+
            |
            V
       +-var-----+       +-var-----+
       | a       |       | i       |
-      | ::Sint  |       | ::Sint  |
+      | ::Signed  |       | ::Signed  |
       | mutable |       |immutable|
       +---------+       +---------+
            |                 |
@@ -229,7 +229,7 @@ we then get this view of the world
            v                 v
       +-value---+       +-value---+
       |  123    |       |  15     |
-      |  ::Sint |       |  ::Sint |
+      |  ::Signed |       |  ::Signed |
       +---------+       +---------+
 
 More complex example
@@ -240,7 +240,7 @@ Within a function body any assignment across `functional boundaries` has to use 
 Here we consider how this works when we involve instances of types containing fields:
 
     type Foo
-        a::Sint
+        a::Signed
     end
 
     fn bar(&x::Foo y::Foo) ...
@@ -270,7 +270,7 @@ we now have
                 v         v
                 +-value---+      +-value---+
                 |  a ----------->|  1      |
-                |  ::Foo  |      |  ::Sint |
+                |  ::Foo  |      |  ::Signed |
                 +---------+      +---------+
 
 we can then assign across functional boundary using the `&` operator
@@ -299,7 +299,7 @@ we now have
                 v         v
                 +-value---+      +-value---+
                 |  a ----------->|  5      |
-                |  ::Foo  |      |  ::Sint |
+                |  ::Foo  |      |  ::Signed |
                 +---------+      +---------+
 
 if we create a new Foo
@@ -317,14 +317,14 @@ we would now have
            v                  v
       +-var-----+         +-value---+      +-value---+
       | f       |         |  a ----------->|  5      |
-      | ::Foo   |         |  ::Foo  |      |  ::Sint |
+      | ::Foo   |         |  ::Foo  |      |  ::Signed |
       | mutable |         +---------+      +---------+
       +---------+
           |
           v
       +-value---+      +-value---+
       |  a ----------->|  14     |
-      |  ::Foo  |      |  ::Sint |
+      |  ::Foo  |      |  ::Signed |
       +---------+      +---------+
 
 

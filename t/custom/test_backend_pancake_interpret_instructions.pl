@@ -32,8 +32,8 @@ my $cases = [
       pushuint 3
       pushuint 6
       pushuint 7
-      call_builtin plus(Uint,Uint) 2
-      call_builtin plus(Uint,Uint) 2
+      call_builtin plus(Unsigned,Unsigned) 2
+      call_builtin plus(Unsigned,Unsigned) 2
       exit
       ',
     expected => '
@@ -47,7 +47,7 @@ my $cases = [
   {
     input => '
       pushuint 17
-      call_builtin println(Uint) 1
+      call_builtin println(Unsigned) 1
       exit
       ',
     expected => '
@@ -61,7 +61,7 @@ my $cases = [
     input => '
       pushint 3
       pushint 5
-      call_builtin minus(Sint,Sint) 2
+      call_builtin minus(Signed,Signed) 2
       exit
       ',
     expected => '
@@ -75,7 +75,7 @@ my $cases = [
     input => '
       pushuint 3
       pushuint 5
-      call_builtin minus(Uint,Uint) 2
+      call_builtin minus(Unsigned,Unsigned) 2
       exit
       ',
     expected => '
@@ -163,7 +163,7 @@ my $cases = [
       return_value
       label main()
       call foo() 0
-      call_builtin println(Uint) 1
+      call_builtin println(Unsigned) 1
       clean_stack
       return_unit
       ',
@@ -197,11 +197,11 @@ my $cases = [
       pushint 5
       pushint 3
       store foo
-      call_builtin println(Sint) 1
+      call_builtin println(Signed) 1
       load foo
-      call_builtin println(Sint) 1
+      call_builtin println(Signed) 1
       load foo
-      call_builtin println(Sint) 1
+      call_builtin println(Signed) 1
       return_unit
       ',
     expected => '
@@ -225,35 +225,35 @@ my $cases = [
       call_builtin println(Bool) 1
       pushuint 5
       pushuint 6
-      call_builtin greaterthan_equal(Uint,Uint) 2
+      call_builtin greaterthan_equal(Unsigned,Unsigned) 2
       call_builtin println(Bool) 1
       pushuint 5
       pushuint 6
-      call_builtin greaterthan(Uint,Uint) 2
+      call_builtin greaterthan(Unsigned,Unsigned) 2
       call_builtin println(Bool) 1
       pushuint 5
       pushuint 6
-      call_builtin lessthan_equal(Uint,Uint) 2
+      call_builtin lessthan_equal(Unsigned,Unsigned) 2
       call_builtin println(Bool) 1
       pushuint 5
       pushuint 6
-      call_builtin lessthan(Uint,Uint) 2
+      call_builtin lessthan(Unsigned,Unsigned) 2
       call_builtin println(Bool) 1
       pushint 5
       pushint 6
-      call_builtin greaterthan_equal(Sint,Sint) 2
+      call_builtin greaterthan_equal(Signed,Signed) 2
       call_builtin println(Bool) 1
       pushint 5
       pushint 6
-      call_builtin greaterthan(Sint,Sint) 2
+      call_builtin greaterthan(Signed,Signed) 2
       call_builtin println(Bool) 1
       pushint 5
       pushint 6
-      call_builtin lessthan_equal(Sint,Sint) 2
+      call_builtin lessthan_equal(Signed,Signed) 2
       call_builtin println(Bool) 1
       pushint 5
       pushint 6
-      call_builtin lessthan(Sint,Sint) 2
+      call_builtin lessthan(Signed,Signed) 2
       call_builtin println(Bool) 1
       return_unit
       ',

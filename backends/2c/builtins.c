@@ -40,14 +40,14 @@ void *ic_alloc(size_t size) {
  */
 typedef char Unit;
 typedef uint8_t Bool;
-typedef int32_t Sint;
-typedef uint32_t Uint;
+typedef int32_t Signed;
+typedef uint32_t Unsigned;
 typedef struct String *String;
 
 Unit ic_unit_new();
 Bool ic_bool_new(uint8_t boolean);
-Sint ic_sint_new(int32_t integer);
-Uint ic_uint_new(uint32_t integer);
+Signed ic_signed_new(int32_t integer);
+Unsigned ic_unsigned_new(uint32_t integer);
 String ic_string_new(char *str, unsigned int len);
 
 Unit ic_unit_new(void) {
@@ -84,7 +84,7 @@ Bool equal_a_Unit_Unit_b(Unit a, Unit b) {
 
 /* builtin fn to_str(a::Unit) -> String */
 String to_str_a_Unit_b(Unit a) {
-    return ic_string_new("()", 4);
+    return ic_string_new("()", 2);
 }
 
 /* builtin fn print(a::Bool) */
@@ -172,23 +172,23 @@ Unit assert_a_Bool_b(Bool a) {
     return 0;
 }
 
-Sint ic_sint_new(int32_t integer) {
-    Sint i = integer;
+Signed ic_signed_new(int32_t integer) {
+    Signed i = integer;
     return i;
 }
-/* builtin fn print(a::Sint) */
-Unit print_a_Sint_b(Sint i) {
+/* builtin fn print(a::Signed) */
+Unit print_a_Signed_b(Signed i) {
     printf("%" PRId32, i);
     return 0;
 }
-/* builtin fn println(a::Sint) */
-Unit println_a_Sint_b(Sint i) {
-    print_a_Sint_b(i);
+/* builtin fn println(a::Signed) */
+Unit println_a_Signed_b(Signed i) {
+    print_a_Signed_b(i);
     println_a_b();
     return 0;
 }
-/* builtin fn equal(a::Sint, b::Sint) -> Bool */
-Bool equal_a_Sint_Sint_b(Sint a, Sint b) {
+/* builtin fn equal(a::Signed, b::Signed) -> Bool */
+Bool equal_a_Signed_Signed_b(Signed a, Signed b) {
     if (a == b) {
         /* return truthy boolean */
         return ic_bool_new(1);
@@ -196,78 +196,78 @@ Bool equal_a_Sint_Sint_b(Sint a, Sint b) {
     /* return falsey boolean */
     return ic_bool_new(0);
 }
-/* builtin fn plus(a::Sint, b::Sint) -> Sint */
-Sint plus_a_Sint_Sint_b(Sint a, Sint b) {
-    Sint i = 0;
-    i = ic_sint_new(a + b);
+/* builtin fn plus(a::Signed, b::Signed) -> Signed */
+Signed plus_a_Signed_Signed_b(Signed a, Signed b) {
+    Signed i = 0;
+    i = ic_signed_new(a + b);
     return i;
 }
-/* builtin fn minus(a::Sint, b::Sint) -> Sint */
-Sint minus_a_Sint_Sint_b(Sint a, Sint b) {
-    Sint i = 0;
-    i = ic_sint_new(a - b);
+/* builtin fn minus(a::Signed, b::Signed) -> Signed */
+Signed minus_a_Signed_Signed_b(Signed a, Signed b) {
+    Signed i = 0;
+    i = ic_signed_new(a - b);
     return i;
 }
-/* builtin fn multiply(a::Sint, b::Sint) -> Sint */
-Sint multiply_a_Sint_Sint_b(Sint a, Sint b) {
-    Sint i = 0;
-    i = ic_sint_new(a * b);
+/* builtin fn multiply(a::Signed, b::Signed) -> Signed */
+Signed multiply_a_Signed_Signed_b(Signed a, Signed b) {
+    Signed i = 0;
+    i = ic_signed_new(a * b);
     return i;
 }
-/* builtin fn divide(a::Sint, b::Sint) -> Sint */
-Sint divide_a_Sint_Sint_b(Sint a, Sint b) {
-    Sint i = 0;
-    i = ic_sint_new(a / b);
+/* builtin fn divide(a::Signed, b::Signed) -> Signed */
+Signed divide_a_Signed_Signed_b(Signed a, Signed b) {
+    Signed i = 0;
+    i = ic_signed_new(a / b);
     return i;
 }
-/* builtin fn modulo(a::Sint, b::Sint) -> Sint */
-Sint modulo_a_Sint_Sint_b(Sint a, Sint b) {
-    Sint i = 0;
-    i = ic_sint_new(a % b);
+/* builtin fn modulo(a::Signed, b::Signed) -> Signed */
+Signed modulo_a_Signed_Signed_b(Signed a, Signed b) {
+    Signed i = 0;
+    i = ic_signed_new(a % b);
     return i;
 }
-/* builtin fn lessthan(a::Sint, b::Sint) -> Bool */
-Bool lessthan_a_Sint_Sint_b(Sint a, Sint b) {
+/* builtin fn lessthan(a::Signed, b::Signed) -> Bool */
+Bool lessthan_a_Signed_Signed_b(Signed a, Signed b) {
     Bool r = 0;
     r = ic_bool_new(a < b);
     return r;
 }
-/* builtin fn greaterthan(a::Sint, b::Sint) -> Bool */
-Bool greaterthan_a_Sint_Sint_b(Sint a, Sint b) {
+/* builtin fn greaterthan(a::Signed, b::Signed) -> Bool */
+Bool greaterthan_a_Signed_Signed_b(Signed a, Signed b) {
     Bool r = 0;
     r = ic_bool_new(a > b);
     return r;
 }
-/* builtin fn lessthan_equal(a::Sint, b::Sint) -> Bool */
-Bool lessthan_equal_a_Sint_Sint_b(Sint a, Sint b) {
+/* builtin fn lessthan_equal(a::Signed, b::Signed) -> Bool */
+Bool lessthan_equal_a_Signed_Signed_b(Signed a, Signed b) {
     Bool r = 0;
     r = ic_bool_new(a <= b);
     return r;
 }
-/* builtin fn greaterthan_equal(a::Sint, b::Sint) -> Bool */
-Bool greaterthan_equal_a_Sint_Sint_b(Sint a, Sint b) {
+/* builtin fn greaterthan_equal(a::Signed, b::Signed) -> Bool */
+Bool greaterthan_equal_a_Signed_Signed_b(Signed a, Signed b) {
     Bool r = 0;
     r = ic_bool_new(a >= b);
     return r;
 }
 
-Uint ic_uint_new(uint32_t integer) {
-    Uint i = integer;
+Unsigned ic_unsigned_new(uint32_t integer) {
+    Unsigned i = integer;
     return i;
 }
-/* builtin fn print(a::Sint) */
-Unit print_a_Uint_b(Uint i) {
+/* builtin fn print(a::Signed) */
+Unit print_a_Unsigned_b(Unsigned i) {
     printf("%" PRId32, i);
     return 0;
 }
-/* builtin fn println(a::Sint) */
-Unit println_a_Uint_b(Uint i) {
-    print_a_Uint_b(i);
+/* builtin fn println(a::Signed) */
+Unit println_a_Unsigned_b(Unsigned i) {
+    print_a_Unsigned_b(i);
     println_a_b();
     return 0;
 }
-/* builtin fn equal(a::Sint, b::Sint) -> Bool */
-Bool equal_a_Uint_Uint_b(Uint a, Uint b) {
+/* builtin fn equal(a::Signed, b::Signed) -> Bool */
+Bool equal_a_Unsigned_Unsigned_b(Unsigned a, Unsigned b) {
     if (a == b) {
         /* return truthy boolean */
         return ic_bool_new(1);
@@ -275,56 +275,56 @@ Bool equal_a_Uint_Uint_b(Uint a, Uint b) {
     /* return falsey boolean */
     return ic_bool_new(0);
 }
-/* builtin fn plus(a::Sint, b::Sint) -> Sint */
-Uint plus_a_Uint_Uint_b(Uint a, Uint b) {
-    Uint i = 0;
-    i = ic_uint_new(a + b);
+/* builtin fn plus(a::Signed, b::Signed) -> Signed */
+Unsigned plus_a_Unsigned_Unsigned_b(Unsigned a, Unsigned b) {
+    Unsigned i = 0;
+    i = ic_unsigned_new(a + b);
     return i;
 }
-/* builtin fn minus(a::Sint, b::Sint) -> Sint */
-Uint minus_a_Uint_Uint_b(Uint a, Uint b) {
-    Uint i = 0;
-    i = ic_uint_new(a - b);
+/* builtin fn minus(a::Signed, b::Signed) -> Signed */
+Unsigned minus_a_Unsigned_Unsigned_b(Unsigned a, Unsigned b) {
+    Unsigned i = 0;
+    i = ic_unsigned_new(a - b);
     return i;
 }
-/* builtin fn multiply(a::Sint, b::Sint) -> Sint */
-Uint multiply_a_Uint_Uint_b(Uint a, Uint b) {
-    Uint i = 0;
-    i = ic_uint_new(a * b);
+/* builtin fn multiply(a::Signed, b::Signed) -> Signed */
+Unsigned multiply_a_Unsigned_Unsigned_b(Unsigned a, Unsigned b) {
+    Unsigned i = 0;
+    i = ic_unsigned_new(a * b);
     return i;
 }
-/* builtin fn divide(a::Sint, b::Sint) -> Sint */
-Uint divide_a_Uint_Uint_b(Uint a, Uint b) {
-    Uint i = 0;
-    i = ic_uint_new(a / b);
+/* builtin fn divide(a::Signed, b::Signed) -> Signed */
+Unsigned divide_a_Unsigned_Unsigned_b(Unsigned a, Unsigned b) {
+    Unsigned i = 0;
+    i = ic_unsigned_new(a / b);
     return i;
 }
-/* builtin fn modulo(a::Sint, b::Sint) -> Sint */
-Uint modulo_a_Uint_Uint_b(Uint a, Uint b) {
-    Uint i = 0;
-    i = ic_uint_new(a % b);
+/* builtin fn modulo(a::Signed, b::Signed) -> Signed */
+Unsigned modulo_a_Unsigned_Unsigned_b(Unsigned a, Unsigned b) {
+    Unsigned i = 0;
+    i = ic_unsigned_new(a % b);
     return i;
 }
-/* builtin fn lessthan(a::Uint, b::Uint) -> Bool */
-Bool lessthan_a_Uint_Uint_b(Uint a, Uint b) {
+/* builtin fn lessthan(a::Unsigned, b::Unsigned) -> Bool */
+Bool lessthan_a_Unsigned_Unsigned_b(Unsigned a, Unsigned b) {
     Bool r = 0;
     r = ic_bool_new(a < b);
     return r;
 }
-/* builtin fn greaterthan(a::Uint, b::Uint) -> Bool */
-Bool greaterthan_a_Uint_Uint_b(Uint a, Uint b) {
+/* builtin fn greaterthan(a::Unsigned, b::Unsigned) -> Bool */
+Bool greaterthan_a_Unsigned_Unsigned_b(Unsigned a, Unsigned b) {
     Bool r = 0;
     r = ic_bool_new(a > b);
     return r;
 }
-/* builtin fn lessthan_equal(a::Uint, b::Uint) -> Bool */
-Bool lessthan_equal_a_Uint_Uint_b(Uint a, Uint b) {
+/* builtin fn lessthan_equal(a::Unsigned, b::Unsigned) -> Bool */
+Bool lessthan_equal_a_Unsigned_Unsigned_b(Unsigned a, Unsigned b) {
     Bool r = 0;
     r = ic_bool_new(a <= b);
     return r;
 }
-/* builtin fn greaterthan_equal(a::Uint, b::Uint) -> Bool */
-Bool greaterthan_equal_a_Uint_Uint_b(Uint a, Uint b) {
+/* builtin fn greaterthan_equal(a::Unsigned, b::Unsigned) -> Bool */
+Bool greaterthan_equal_a_Unsigned_Unsigned_b(Unsigned a, Unsigned b) {
     Bool r = 0;
     r = ic_bool_new(a >= b);
     return r;
@@ -374,14 +374,14 @@ String concat_a_String_String_b(String a, String b) {
     strncpy(&(s->str[a->len]), b->str, b->len);
     return s;
 }
-/* builtin fn length(a::String) -> Uint */
-Uint length_a_String_b(String a) {
+/* builtin fn length(a::String) -> Unsigned */
+Unsigned length_a_String_b(String a) {
     return a->len;
 }
 
-/* builtin fn equal(a::Sint, b::Uint) -> Bool */
-Bool equal_a_Sint_Uint_b(Sint a, Uint b) {
-    Sint tmp = 0;
+/* builtin fn equal(a::Signed, b::Unsigned) -> Bool */
+Bool equal_a_Signed_Unsigned_b(Signed a, Unsigned b) {
+    Signed tmp = 0;
     if (b < 0) {
         return 0;
     }
@@ -391,9 +391,9 @@ Bool equal_a_Sint_Uint_b(Sint a, Uint b) {
     }
     return 0;
 }
-/* builtin fn equal(a::Uint, b::Sint) -> Bool */
-Bool equal_a_Uint_Sint_b(Uint a, Sint b) {
-    Sint tmp = 0;
+/* builtin fn equal(a::Unsigned, b::Signed) -> Bool */
+Bool equal_a_Unsigned_Signed_b(Unsigned a, Signed b) {
+    Signed tmp = 0;
     if (a < 0) {
         return 0;
     }

@@ -10,7 +10,7 @@ union Nat
     succ::Succ
 end
 
-fn value(n::Nat) -> Uint
+fn value(n::Nat) -> Unsigned
     match n
         case zero::Zero
             return 0u

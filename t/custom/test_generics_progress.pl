@@ -39,7 +39,7 @@ my $cases = [
       end
 
       fn main()
-          println(id[Sint](10s))
+          println(id[Signed](10s))
       end
     ',
     expected => "
@@ -59,13 +59,13 @@ my $cases = [
       end
 
       fn main()
-          let m = Maybe[Sint](6s)
+          let m = Maybe[Signed](6s)
 
           println(m)
 
           match m
-              case something::Sint
-                  print("Found a Sint: ")
+              case something::Signed
+                  print("Found a Signed: ")
                   println(something)
               case nothing::Nothing
                   println("Nothing to see here")
@@ -74,8 +74,8 @@ my $cases = [
       end
     ',
     expected => "
-      Maybe[Sint](6)
-      Found a Sint: 6
+      Maybe[Signed](6)
+      Found a Signed: 6
     ",
     failure => 0,
   },
@@ -90,28 +90,28 @@ my $cases = [
       end
 
       fn main()
-        let b1 = Box[Sint](7s)
+        let b1 = Box[Signed](7s)
         println(b1)
 
-        let b2 = Box[Box[Sint]](b1)
+        let b2 = Box[Box[Signed]](b1)
         println(b2)
 
-        let b3 = Box[Box[Box[Sint]]](b2)
+        let b3 = Box[Box[Box[Signed]]](b2)
         println(b3)
 
-        let bb2 = unpack[Box[Box[Sint]]](b3)
+        let bb2 = unpack[Box[Box[Signed]]](b3)
         println(bb2)
 
-        let bb1 = unpack[Box[Sint]](b2)
+        let bb1 = unpack[Box[Signed]](b2)
         println(bb1)
       end
     ',
     expected => '
-      Box[Sint](7)
-      Box[Box[Sint]](Box[Sint](7))
-      Box[Box[Box[Sint]]](Box[Box[Sint]](Box[Sint](7)))
-      Box[Box[Sint]](Box[Sint](7))
-      Box[Sint](7)
+      Box[Signed](7)
+      Box[Box[Signed]](Box[Signed](7))
+      Box[Box[Box[Signed]]](Box[Box[Signed]](Box[Signed](7)))
+      Box[Box[Signed]](Box[Signed](7))
+      Box[Signed](7)
     ',
   },
   {
@@ -143,18 +143,18 @@ my $cases = [
       end
 
       fn main()
-        let a = Maybe[Sint](4s)
-        let b = maybe_id[Sint](a)
+        let a = Maybe[Signed](4s)
+        let b = maybe_id[Signed](a)
         println(b)
 
-        let m = Maybe[Maybe[Sint]]( Maybe[Sint](6s) )
+        let m = Maybe[Maybe[Signed]]( Maybe[Signed](6s) )
         println(m)
 
-        let n = flatten[Sint](m)
+        let n = flatten[Signed](m)
         println(n)
 
         match n
-          case something::Sint
+          case something::Signed
             print("My Maybe contained: ")
             println(something)
           case nothing::Nothing
@@ -167,9 +167,9 @@ my $cases = [
       end
       ',
     expected => '
-      Maybe[Sint](4)
-      Maybe[Maybe[Sint]](Maybe[Sint](6))
-      Maybe[Sint](6)
+      Maybe[Signed](4)
+      Maybe[Maybe[Signed]](Maybe[Signed](6))
+      Maybe[Signed](6)
       My Maybe contained: 6
       Maybe[String](Hello Maybe world)
     ',
@@ -190,18 +190,18 @@ my $cases = [
       end
 
       fn main()
-          let t = Maybe[List[Sint]](Nothing())
-          let t1 = List[Sint](3s, t)
-          let t2 = Maybe[List[Sint]](t1)
-          let t3 = List[Sint](2s, t2)
-          let t4 = Maybe[List[Sint]](t3)
-          let t5 = List[Sint](1s, t4)
+          let t = Maybe[List[Signed]](Nothing())
+          let t1 = List[Signed](3s, t)
+          let t2 = Maybe[List[Signed]](t1)
+          let t3 = List[Signed](2s, t2)
+          let t4 = Maybe[List[Signed]](t3)
+          let t5 = List[Signed](1s, t4)
 
           println(t5)
       end
     ',
     expected => '
-      List[Sint](1, Maybe[List[Sint]](List[Sint](2, Maybe[List[Sint]](List[Sint](3, Maybe[List[Sint]](Nothing()))))))
+      List[Signed](1, Maybe[List[Signed]](List[Signed](2, Maybe[List[Signed]](List[Signed](3, Maybe[List[Signed]](Nothing()))))))
     ',
   },
   {
@@ -211,7 +211,7 @@ my $cases = [
       end
 
       fn main()
-        let a::Box[Sint] = Box[Sint](6s)
+        let a::Box[Signed] = Box[Signed](6s)
         println(a.t)
       end
     ',

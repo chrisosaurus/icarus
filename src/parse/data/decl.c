@@ -849,7 +849,7 @@ struct ic_symbol *ic_decl_func_full_signature(struct ic_decl_func *fdecl) {
 /* return a masked representation of this function's call signature
  *
  * string representation of function decl with param and arg masking
- * e.g. Foo[A,B](a::A, b::B, i::Sint) becomes Foo[_,_](_,_,_)
+ * e.g. Foo[A,B](a::A, b::B, i::Signed) becomes Foo[_,_](_,_,_)
  *
  * Must match ic_analyse_fcall_str_generic
  *

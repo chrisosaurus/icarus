@@ -12,7 +12,7 @@ my $cases = [
   {
     input => '
       type Foo
-        a::Sint
+        a::Signed
         b::String
       end
 
@@ -24,16 +24,16 @@ my $cases = [
     expected_c =>'
       #include "backends/2c/builtins.c"
       typedef struct Foo * Foo;
-      Foo Foo_a_Sint_String_b(Sint a, String b);
+      Foo Foo_a_Signed_String_b(Signed a, String b);
       void print_a_Foo_b(Foo f);
       void println_a_Foo_b(Foo f);
       /* main() -> Unit */
       Unit main_a_b();
       struct Foo {
-        Sint a;
+        Signed a;
         String b;
       };
-      Foo Foo_a_Sint_String_b(Sint a, String b) {
+      Foo Foo_a_Signed_String_b(Signed a, String b) {
         Foo tmp = ic_alloc(sizeof(struct Foo));
         tmp->a = a;
         tmp->b = b;
@@ -41,7 +41,7 @@ my $cases = [
       }
       void print_a_Foo_b(Foo f){
         fputs("Foo(", stdout);
-        print_a_Sint_b(f->a);
+        print_a_Signed_b(f->a);
         fputs(", ", stdout);
         print_a_String_b(f->b);
         fputs(")", stdout);
@@ -52,9 +52,9 @@ my $cases = [
       }
       /* main() -> Unit */
       Unit main_a_b(){
-        Sint _l0 = ic_sint_new(6);
+        Signed _l0 = ic_signed_new(6);
         String _l1 = ic_string_new("Hello", 5);
-        Foo f = Foo_a_Sint_String_b(_l0, _l1);
+        Foo f = Foo_a_Signed_String_b(_l0, _l1);
         println_a_Foo_b(f);
       }
       #include "backends/2c/entry.c"
@@ -66,7 +66,7 @@ my $cases = [
   {
     input =>'
       union Foo
-          a::Sint
+          a::Signed
           b::String
       end
 
@@ -81,26 +81,26 @@ my $cases = [
       #include "backends/2c/builtins.c"
       enum Foo_tag;
       typedef struct Foo * Foo;
-      Foo Foo_a_Sint_b(Sint a);
+      Foo Foo_a_Signed_b(Signed a);
       Foo Foo_a_String_b(String b);
       void print_a_Foo_b(Foo f);
       void println_a_Foo_b(Foo f);
       /* main() -> Unit */
       Unit main_a_b();
       enum Foo_tag {
-        Foo_tag_Sint_a,
+        Foo_tag_Signed_a,
         Foo_tag_String_b,
       };
       struct Foo {
         enum Foo_tag _tag;
         union {
-          Sint a;
+          Signed a;
           String b;
         } u;
       };
-      Foo Foo_a_Sint_b(Sint a){
+      Foo Foo_a_Signed_b(Signed a){
         Foo tmp = ic_alloc(sizeof(struct Foo));
-        tmp->_tag = Foo_tag_Sint_a;
+        tmp->_tag = Foo_tag_Signed_a;
         tmp->u.a = a;
         return tmp;
       }
@@ -113,8 +113,8 @@ my $cases = [
       void print_a_Foo_b(Foo f){
         fputs("Foo(", stdout);
         switch (f->_tag) {
-          case Foo_tag_Sint_a:
-            print_a_Sint_b(f->u.a);
+          case Foo_tag_Signed_a:
+            print_a_Signed_b(f->u.a);
             break;
           case Foo_tag_String_b:
             print_a_String_b(f->u.b);
@@ -130,8 +130,8 @@ my $cases = [
       }
       /* main() -> Unit */
       Unit main_a_b(){
-        Sint _l0 = ic_sint_new(5);
-        Foo a = Foo_a_Sint_b(_l0);
+        Signed _l0 = ic_signed_new(5);
+        Foo a = Foo_a_Signed_b(_l0);
         println_a_Foo_b(a);
         String _l1 = ic_string_new("Hello", 5);
         Foo b = Foo_a_String_b(_l1);

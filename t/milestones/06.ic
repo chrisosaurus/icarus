@@ -1,5 +1,5 @@
 type Foo
-  i::Sint
+  i::Signed
 end
 
 fn main()

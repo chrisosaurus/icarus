@@ -6,12 +6,12 @@ I've sometimes referred to this as 'typing backpressure'.
 Example
 --------------
 
-    fn foo() -> Uint
+    fn foo() -> Unsigned
       let a = 14
       return a
     end
 
-    fn bar() -> Sint
+    fn bar() -> Signed
       let b = 15
       return b
     end
@@ -19,7 +19,7 @@ Example
 what is the type of `a`?
 what is the type of `b`?
 
-Currently the literal will default to some int type, currently Sint.
+Currently the literal will default to some int type, currently Signed.
 So `bar` will type, but currently `foo` is a type error.
 This is non-ideal.
 
@@ -30,27 +30,27 @@ Obvious cases
 
 ### direct return
 
-    fn foo() -> Uint
+    fn foo() -> Unsigned
       return 14
     end
 
-here we can immediately see that `14` should be typed as `Uint`.
+here we can immediately see that `14` should be typed as `Unsigned`.
 
 
 ### indirection return - one layer
 
-    fn foo() -> Uint
+    fn foo() -> Unsigned
       let a = 14
       return a
     end
 
 The hard part here is that the typing of `a` cannot be determined until it is
-seen that it is returned later on, and therefore must be typed as `Uint`.
+seen that it is returned later on, and therefore must be typed as `Unsigned`.
 
 
 ### indirect return - many layers
 
-    fn foo() -> Uint
+    fn foo() -> Unsigned
       let a = 14
       let b = 15 + a
       let c = a + b
@@ -64,18 +64,18 @@ Here the typing for `a` and `b` must be inferred through `c` via the final
 ### type construction
 
     type Bar
-      a::Uint
+      a::Unsigned
     end
 
     fn main()
       let b = Bar(15)
     end
 
-likewise here, in the constructor call to `Bar(Uint)` we need to type `15`
-as `Uint` to match the call.
+likewise here, in the constructor call to `Bar(Unsigned)` we need to type `15`
+as `Unsigned` to match the call.
 
 This is a little bit odd, as currently Icarus dispatches function calls on type.
 
-so `Bar(15)` will currently map to `Bar_Sint(15)` which is non-ideal.
+so `Bar(15)` will currently map to `Bar_Signed(15)` which is non-ideal.
 
 

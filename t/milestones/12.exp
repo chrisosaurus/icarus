@@ -1,2 +1,2 @@
-Maybe[Sint](6)
-Maybe[Uint](8)
+Maybe[Signed](6)
+Maybe[Unsigned](8)

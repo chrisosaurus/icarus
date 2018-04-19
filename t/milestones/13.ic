@@ -6,16 +6,16 @@ union Maybe[T]
     nothing::Nothing
 end
 
-fn foo(n::Maybe[Sint]) -> Maybe[Sint]
+fn foo(n::Maybe[Signed]) -> Maybe[Signed]
     return n
 end
 
 type Bar
-    o::Maybe[Sint]
+    o::Maybe[Signed]
 end
 
 fn main()
-    let m = Maybe[Sint](6s)
+    let m = Maybe[Signed](6s)
     m = foo(m)
     let b = Bar(m)
 

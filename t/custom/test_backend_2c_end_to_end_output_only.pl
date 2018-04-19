@@ -22,15 +22,15 @@ my $cases = [
 
   {
     input => '
-      fn bar(a::Sint) -> Sint
+      fn bar(a::Signed) -> Signed
         return 7s + a
       end
 
-      fn foo(a::Sint) -> Sint
+      fn foo(a::Signed) -> Signed
         return bar(a + 4s)
       end
 
-      fn baz(a::Sint) -> Sint
+      fn baz(a::Signed) -> Signed
         let b = a + 3s
         return bar(b)
       end
@@ -104,12 +104,12 @@ my $cases = [
   },
   {
     input => '
-      fn is_div(a::Sint, b::Sint) -> Bool
+      fn is_div(a::Signed, b::Signed) -> Bool
           let rem = a % b
           return rem == 0s
       end
 
-      fn fizzer(num::Sint)
+      fn fizzer(num::Signed)
           let str = ""
 
           if is_div(num, 3s)
@@ -127,7 +127,7 @@ my $cases = [
           end
       end
 
-      fn fizzbuzz(from::Sint, to::Sint)
+      fn fizzbuzz(from::Signed, to::Signed)
         if from < to
           fizzer(from)
           from = plus(from, 1s)
@@ -166,7 +166,7 @@ my $cases = [
   {
     input => '
       type Foo
-        i::Sint
+        i::Signed
         b::Bar
       end
 
@@ -188,7 +188,7 @@ my $cases = [
   {
     input =>'
       union Foo
-          a::Sint
+          a::Signed
           b::String
       end
 

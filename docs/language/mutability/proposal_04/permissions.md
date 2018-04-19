@@ -122,15 +122,15 @@ Decay
 
 By default variables decay to immut
 
-    fn bar(x::Sint)
+    fn bar(x::Signed)
         print(x)
     end
 
-    fn baz(&x::Sint)
+    fn baz(&x::Signed)
         print(x)
     end
 
-    fn foo(&x::Sint)
+    fn foo(&x::Signed)
         bar(x)
         baz(&x)
     end
@@ -157,7 +157,7 @@ here the `let @x` is needless, as we never store `x` or give it away for storing
 this should be an error or at the very least a warning.
 
 
-    fn foo(@x::Sint)
+    fn foo(@x::Signed)
         print(x)
     end
 
@@ -170,7 +170,7 @@ Aliasing
 
 We do allow aliasing, as long as the alias never violates the permissions
 
-    fn foo(@x::Sint)
+    fn foo(@x::Signed)
         let &y = x
         &y = 14
     end
@@ -296,7 +296,7 @@ of type and permission
 example using ListMut
 
     fn main()
-        let &list = ListMut[Sint]
+        let &list = ListMut[Signed]
 
         # populate list
         for i in [1..100]
@@ -311,13 +311,13 @@ example using ListMut
 
     end
 
-    fn print_list(list::ListMut[Sint])
+    fn print_list(list::ListMut[Signed])
         for i in list
             print(i)
         end
     end
 
-    fn add_one_to_each(&list::ListMut[Sint])
+    fn add_one_to_each(&list::ListMut[Signed])
         for &i in &list
             &i += 1
         end
@@ -353,7 +353,7 @@ If you are only reading from variables then I think your code should be 'sigil l
 below `print_list` only reads and prints.
 
     fn main()
-        let list = ListMut[Sint]
+        let list = ListMut[Signed]
 
         # populate list
         for i in [1..100]
@@ -365,7 +365,7 @@ below `print_list` only reads and prints.
 
     end
 
-    fn print_list(list::ListMut[Sint])
+    fn print_list(list::ListMut[Signed])
         for i in list
             print(i)
         end

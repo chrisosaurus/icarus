@@ -14,11 +14,11 @@ my $expected = <<EOF;
 parser output:
 ----------------
 type Foo
-    a::Sint
+    a::Signed
     b::String
 end
 
-fn maybe_add_one(b::Bool, i::Sint) -> Sint
+fn maybe_add_one(b::Bool, i::Signed) -> Signed
     if b
         return i + 1s
     else

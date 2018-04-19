@@ -7,7 +7,7 @@ fn main()
 end
 
 type Foo
-    a::Sint
+    a::Signed
     b::Bar
 end
 

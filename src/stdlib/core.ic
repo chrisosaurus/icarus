@@ -17,38 +17,38 @@ builtin fn or(a::Bool, b::Bool) -> Bool
 builtin fn to_str(a::Bool) -> String
 builtin fn assert(a::Bool) -> Unit
 
-builtin type Sint
-builtin fn print(a::Sint)
-builtin fn println(a::Sint)
-builtin fn equal(a::Sint, b::Sint) -> Bool
-builtin fn plus(a::Sint, b::Sint) -> Sint
-builtin fn minus(a::Sint, b::Sint) -> Sint
-builtin fn multiply(a::Sint, b::Sint) -> Sint
-builtin fn divide(a::Sint, b::Sint) -> Sint
-builtin fn modulo(a::Sint, b::Sint) -> Sint
-builtin fn lessthan_equal(a::Sint, b::Sint) -> Bool
-builtin fn greaterthan_equal(a::Sint, b::Sint) -> Bool
-builtin fn greaterthan(a::Sint, b::Sint) -> Bool
-builtin fn lessthan(a::Sint, b::Sint) -> Bool
+builtin type Signed
+builtin fn print(a::Signed)
+builtin fn println(a::Signed)
+builtin fn equal(a::Signed, b::Signed) -> Bool
+builtin fn plus(a::Signed, b::Signed) -> Signed
+builtin fn minus(a::Signed, b::Signed) -> Signed
+builtin fn multiply(a::Signed, b::Signed) -> Signed
+builtin fn divide(a::Signed, b::Signed) -> Signed
+builtin fn modulo(a::Signed, b::Signed) -> Signed
+builtin fn lessthan_equal(a::Signed, b::Signed) -> Bool
+builtin fn greaterthan_equal(a::Signed, b::Signed) -> Bool
+builtin fn greaterthan(a::Signed, b::Signed) -> Bool
+builtin fn lessthan(a::Signed, b::Signed) -> Bool
 
-builtin type Uint
-builtin fn print(a::Uint)
-builtin fn println(a::Uint)
-builtin fn equal(a::Uint, b::Uint) -> Bool
-builtin fn plus(a::Uint, b::Uint) -> Uint
-builtin fn minus(a::Uint, b::Uint) -> Uint
-builtin fn multiply(a::Uint, b::Uint) -> Uint
-builtin fn divide(a::Uint, b::Uint) -> Uint
-builtin fn modulo(a::Uint, b::Uint) -> Uint
-builtin fn lessthan_equal(a::Uint, b::Uint) -> Bool
-builtin fn greaterthan_equal(a::Uint, b::Uint) -> Bool
-builtin fn greaterthan(a::Uint, b::Uint) -> Bool
-builtin fn lessthan(a::Uint, b::Uint) -> Bool
+builtin type Unsigned
+builtin fn print(a::Unsigned)
+builtin fn println(a::Unsigned)
+builtin fn equal(a::Unsigned, b::Unsigned) -> Bool
+builtin fn plus(a::Unsigned, b::Unsigned) -> Unsigned
+builtin fn minus(a::Unsigned, b::Unsigned) -> Unsigned
+builtin fn multiply(a::Unsigned, b::Unsigned) -> Unsigned
+builtin fn divide(a::Unsigned, b::Unsigned) -> Unsigned
+builtin fn modulo(a::Unsigned, b::Unsigned) -> Unsigned
+builtin fn lessthan_equal(a::Unsigned, b::Unsigned) -> Bool
+builtin fn greaterthan_equal(a::Unsigned, b::Unsigned) -> Bool
+builtin fn greaterthan(a::Unsigned, b::Unsigned) -> Bool
+builtin fn lessthan(a::Unsigned, b::Unsigned) -> Bool
 
 # FIXME TODO these may be less needed once we have
 # fixed the outstanding 'bug' around literal behavior
-builtin fn equal(a::Uint, b::Sint) -> Bool
-builtin fn equal(a::Sint, b::Uint) -> Bool
+builtin fn equal(a::Unsigned, b::Signed) -> Bool
+builtin fn equal(a::Signed, b::Unsigned) -> Bool
 
 builtin type String
 builtin fn print(a::String)
@@ -60,7 +60,7 @@ builtin fn concat(a::String, b::String) -> String
 # here we use `concat` as the primitive and `plus` as the alias
 # as `concat` is more descriptive
 # fn plus(a::String, b::String) -> String return concat(a, b) end
-builtin fn length(a::String) -> Uint
+builtin fn length(a::String) -> Unsigned
 
 builtin op + plus
 builtin op - minus

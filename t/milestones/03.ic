@@ -1,5 +1,5 @@
 fn main()
-  let x::Sint = 5s
+  let x::Signed = 5s
   if x > 4s
     println("5 is bigger than 4")
   end

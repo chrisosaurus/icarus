@@ -17,7 +17,7 @@ consideration:
 e.g.
 
     type Node
-        &i::Sint
+        &i::Signed
     end
 
     let &mine = 5

@@ -9,13 +9,13 @@ my $output = `$path`;
 my $exit_status = $?;
 my $expected = <<EOF;
 type Foo
-    a::Sint
+    a::Signed
     b::String
 end
-fn maybe_add_one(b::Bool, i::Sint) -> Sint
+fn maybe_add_one(b::Bool, i::Signed) -> Signed
     if b
-        let _l0::Sint = 1s
-        let _t0::Sint = plus(i, _l0)
+        let _l0::Signed = 1s
+        let _t0::Signed = plus(i, _l0)
         return _t0
     else
         return i
@@ -23,13 +23,13 @@ fn maybe_add_one(b::Bool, i::Sint) -> Sint
 end
 fn main() -> Unit
     let _l0::Bool = True
-    let _l1::Sint = 1s
-    let _t0::Sint = maybe_add_one(_l0, _l1)
+    let _l1::Signed = 1s
+    let _t0::Signed = maybe_add_one(_l0, _l1)
     let _l2::String = "hello"
     let f::Foo = Foo(_t0, _l2)
     println(f)
-    let x::Sint = 6s
-    let _l3::Sint = 14s
+    let x::Signed = 6s
+    let _l3::Signed = 14s
     let _t1::Bool = greaterthan(x, _l3)
     if _t1
         let _l4::String = "x > 14"

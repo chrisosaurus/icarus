@@ -1,11 +1,11 @@
-# user defined type with 2 fields, a Sint and a String
+# user defined type with 2 fields, a Signed and a String
 type Foo
-    a::Sint
+    a::Signed
     b::String
 end
 
 # simple function to test return values and branching
-fn maybe_add_one(b::Bool, i::Sint) -> Sint
+fn maybe_add_one(b::Bool, i::Signed) -> Signed
     if b
         return i+1s
     else

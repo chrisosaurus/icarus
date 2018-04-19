@@ -30,12 +30,12 @@ fn print[T](f::Foo[T]) -> Unit
 end
 
 fn main() -> Unit
-    let f = Foo[Sint](6s)
-    let f2::Foo[Sint] = f
-    println(id[Sint](10s))
+    let f = Foo[Signed](6s)
+    let f2::Foo[Signed] = f
+    println(id[Signed](10s))
     println(id[String]("Hello"))
-    println(id[Foo[Sint]](Foo[Sint](1s)))
-    println(id[Bar[Uint]](Bar[Uint](1u)))
+    println(id[Foo[Signed]](Foo[Signed](1s)))
+    println(id[Bar[Unsigned]](Bar[Unsigned](1u)))
 end
 ----------------
 

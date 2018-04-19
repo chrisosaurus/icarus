@@ -28,7 +28,7 @@ int main(void) {
     assert(0 == ic_decl_func_type_params_length(fdecl));
 
     /* add some fields */
-    type_ref1 = ic_type_ref_symbol_new("Sint", 4);
+    type_ref1 = ic_type_ref_symbol_new("Signed", 6);
     assert(type_ref1);
     field = ic_field_new("a", 1, type_ref1, ic_parse_perm_default());
     assert(field);
@@ -57,7 +57,7 @@ int main(void) {
     assert(2 == fdecl->type_params.used);
     assert(2 == ic_decl_func_type_params_length(fdecl));
 
-    printf("Should see:\n# Foo[A,B](Sint,String)\nfn Foo[A, B](a::Sint, b::String) -> Unit\nend\n");
+    printf("Should see:\n# Foo[A,B](Signed,String)\nfn Foo[A, B](a::Signed, b::String) -> Unit\nend\n");
 
     /* output type */
     puts("Output:");

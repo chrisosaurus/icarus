@@ -1,9 +1,9 @@
 
-fn is_div(a::Sint, b::Sint) -> Bool
+fn is_div(a::Signed, b::Signed) -> Bool
     return (a % b) == 0s
 end
 
-fn fizzbuzz(from::Sint, to::Sint)
+fn fizzbuzz(from::Signed, to::Signed)
     for num in range(from, to)
         let &arr::Vector[String]
 

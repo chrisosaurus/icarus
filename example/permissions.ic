@@ -1,24 +1,24 @@
 
-fn foo(a::Sint)
+fn foo(a::Signed)
 end
 
-fn foo($a::Sint)
+fn foo($a::Signed)
 end
 
-fn foo(%a::Sint)
+fn foo(%a::Signed)
 end
 
-fn foo(&a::Sint)
+fn foo(&a::Signed)
 end
 
-fn foo(@a::Sint)
+fn foo(@a::Signed)
 end
 
-fn foo(*a::Sint)
+fn foo(*a::Signed)
 end
 
 fn main()
-    let @a::Sint = 5s
+    let @a::Signed = 5s
     foo(@a)
     foo(&a)
     foo(%a)

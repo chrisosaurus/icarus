@@ -15,7 +15,7 @@ type LinkedList[T]
     head :: Node[T]
 end
 
-fn getNth[T](l::LinkedList[T], nth::Sint) -> Maybe[T]
+fn getNth[T](l::LinkedList[T], nth::Signed) -> Maybe[T]
     let n::Node[T] = l.head
 
     # [1..nth) means from 1 (inclusive) to nth (exclusive)

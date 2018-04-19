@@ -117,16 +117,16 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
  *
  * this function must be compatible with the one produced
  * by `ic_decl_func_sig_call`
- *      foo(Sint,Sint)
+ *      foo(Signed,Signed)
  *
  * and
- *      bar(&Sint,String)
+ *      bar(&Signed,String)
  *
  * for an fcall of the form
- *     id[Sint](6s)
+ *     id[Signed](6s)
  *
  * this will generate
- *     id[Sint](Sint)
+ *     id[Signed](Signed)
  *
  * in order to generate
  *     id[_](_)
@@ -142,7 +142,7 @@ struct ic_string *ic_analyse_fcall_str(struct ic_kludge *kludge, struct ic_decl_
 /* create a generic function signature string from a function call
  *
  * for an fcall of the form
- *     id[Sint](6s)
+ *     id[Signed](6s)
  *
  * we will generate
  *     id[_](_)

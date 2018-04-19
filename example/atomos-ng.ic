@@ -11,14 +11,14 @@ const N_GAS = 2u
 type Cell
     # a count of the number of each
     # gas in this cell
-    gas_counts :: Array[Uint N_GAS]
+    gas_counts :: Array[Unsigned N_GAS]
 end
 
-fn init( &cells :: Array[Cell, xd, yd, zd] ) -> Uint
+fn init( &cells :: Array[Cell, xd, yd, zd] ) -> Unsigned
     const xm, ym, zm = xd/2u, yd/2u, zd/2u
 
-    let quan :: Uint = 0u
-    let quan_tot :: Uint = 0u
+    let quan :: Unsigned = 0u
+    let quan_tot :: Unsigned = 0u
 
     for z in 0u..zd
         for y in 0u..yd

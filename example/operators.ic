@@ -1,7 +1,7 @@
 
 fn main()
-    let x::Sint = 5s
-    let y::Sint = 5s
+    let x::Signed = 5s
+    let y::Signed = 5s
 
     # the following currently fails to parse
     if x == 5s && y == 4s

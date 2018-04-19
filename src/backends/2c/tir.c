@@ -395,7 +395,7 @@ unsigned int ic_b2c_compile_stmt_match(struct ic_kludge *input_kludge, struct ic
     }
 
     /* match f
-     *  case a::Sint
+     *  case a::Signed
      *      ...
      *  case b::String
      *      ...
@@ -404,7 +404,7 @@ unsigned int ic_b2c_compile_stmt_match(struct ic_kludge *input_kludge, struct ic
      * ->
      *
      * switch (f->_tag) {
-     *   case Foo_tag_Sint_a:
+     *   case Foo_tag_Signed_a:
      *      ...
      *   case Foo_tag_String_b:
      *      ...

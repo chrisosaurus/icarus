@@ -1,5 +1,5 @@
-fn add_one(i::Sint)
-  let x::Sint = 0s
+fn add_one(i::Signed)
+  let x::Signed = 0s
   x = 1s + i
   println(i)
   println(x)

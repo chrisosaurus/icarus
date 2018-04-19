@@ -1,5 +1,5 @@
 union Bar
-  i::Sint
+  i::Signed
   s::String
 end
 

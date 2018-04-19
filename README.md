@@ -24,11 +24,11 @@ Example
 An example showing fizzbuzz and some elements of Icarus' permissions system,
 the below example will not yet run in Icarus
 
-    fn is_div(a::Sint, b::Sint) -> Bool
+    fn is_div(a::Signed, b::Signed) -> Bool
         return (a % b) == 0s
     end
 
-    fn fizzbuzz(from::Sint, to::Sint)
+    fn fizzbuzz(from::Signed, to::Signed)
         for num in range(from, to)
             let &arr::Vector[String]
 
@@ -91,12 +91,12 @@ The life of a simple icarus program
 
 if we input the following file (which can be found in `example/fizzer.ic`):
 
-    fn is_div(a::Sint, b::Sint) -> Bool
+    fn is_div(a::Signed, b::Signed) -> Bool
         let rem = a % b
         return rem == 0s
     end
 
-    fn fizzer(num::Sint)
+    fn fizzer(num::Signed)
         let str = ""
 
         if is_div(num, 3s)
@@ -114,7 +114,7 @@ if we input the following file (which can be found in `example/fizzer.ic`):
         end
     end
 
-    fn fizzbuzz(from::Sint, to::Sint)
+    fn fizzbuzz(from::Signed, to::Signed)
       if from < to
         fizzer(from)
         from = from + 1s
@@ -134,28 +134,28 @@ we can then compile to C this via:
 
 which will show us the transformed IR version of this:
 
-    fn is_div(a::Sint, b::Sint) -> Bool
-        let rem::Sint = modulo(a, b)
-        let _l0::Sint = 0s
+    fn is_div(a::Signed, b::Signed) -> Bool
+        let rem::Signed = modulo(a, b)
+        let _l0::Signed = 0s
         let _t0::Bool = equal(rem, _l0)
         return _t0
     end
-    fn fizzer(num::Sint) -> Unit
+    fn fizzer(num::Signed) -> Unit
         let str::String = ""
-        let _l0::Sint = 3s
+        let _l0::Signed = 3s
         let _t0::Bool = is_div(num, _l0)
         if _t0
             let _l1::String = "Fizz"
             str = concat(str, _l1)
         end
-        let _l2::Sint = 5s
+        let _l2::Signed = 5s
         let _t1::Bool = is_div(num, _l2)
         if _t1
             let _l3::String = "Buzz"
             str = concat(str, _l3)
         end
-        let _t3::Uint = length(str)
-        let _l4::Sint = 0s
+        let _t3::Unsigned = length(str)
+        let _l4::Signed = 0s
         let _t2::Bool = equal(_t3, _l4)
         if _t2
             println(num)
@@ -163,18 +163,18 @@ which will show us the transformed IR version of this:
             println(str)
         end
     end
-    fn fizzbuzz(from::Sint, to::Sint) -> Unit
+    fn fizzbuzz(from::Signed, to::Signed) -> Unit
         let _t0::Bool = lessthan(from, to)
         if _t0
             fizzer(from)
-            let _l0::Sint = 1s
+            let _l0::Signed = 1s
             from = plus(from, _l0)
             fizzbuzz(from, to)
         end
     end
     fn main() -> Unit
-        let _l0::Sint = 1s
-        let _l1::Sint = 20s
+        let _l0::Signed = 1s
+        let _l1::Signed = 20s
         fizzbuzz(_l0, _l1)
     end
 
@@ -224,88 +224,88 @@ which shows us
     label entry
     call main() 0
     exit
-    label is_div(Sint,Sint)
+    label is_div(Signed,Signed)
     copyarg 0
     copyarg 1
-    call_builtin modulo(Sint,Sint) 2
+    call_builtin modulo(Signed,Signed) 2
     store rem
     load rem
     pushint 0
-    call_builtin equal(Sint,Sint) 2
+    call_builtin equal(Signed,Signed) 2
     store _t0
     load _t0
     save
     clean_stack
     restore
     return_value
-    label fizzer(Sint)
+    label fizzer(Signed)
     pushstr ""
     store str
     copyarg 0
     pushint 3
-    call is_div(Sint,Sint) 2
+    call is_div(Signed,Signed) 2
     store _t0
     load _t0
-    jnif_label fizzer(Sint)0
+    jnif_label fizzer(Signed)0
     load str
     pushstr "Fizz"
     call_builtin concat(String,String) 2
     store str
-    label fizzer(Sint)0
+    label fizzer(Signed)0
     copyarg 0
     pushint 5
-    call is_div(Sint,Sint) 2
+    call is_div(Signed,Signed) 2
     store _t1
     load _t1
-    jnif_label fizzer(Sint)1
+    jnif_label fizzer(Signed)1
     load str
     pushstr "Buzz"
     call_builtin concat(String,String) 2
     store str
-    label fizzer(Sint)1
+    label fizzer(Signed)1
     load str
     call_builtin length(String) 1
     store _t2
     load _t2
     pushint 0
-    call_builtin equal(Uint,Sint) 2
+    call_builtin equal(Unsigned,Signed) 2
     store _t3
     load _t3
-    jnif_label fizzer(Sint)2
+    jnif_label fizzer(Signed)2
     copyarg 0
-    call_builtin println(Sint) 1
-    jmp_label fizzer(Sint)3
-    label fizzer(Sint)2
+    call_builtin println(Signed) 1
+    jmp_label fizzer(Signed)3
+    label fizzer(Signed)2
     load str
     call_builtin println(String) 1
-    label fizzer(Sint)3
+    label fizzer(Signed)3
     clean_stack
     return_unit
-    label fizzbuzz(Sint,Sint)
+    label fizzbuzz(Signed,Signed)
     copyarg 0
     store from
     load from
     copyarg 1
-    call_builtin lessthan(Sint,Sint) 2
+    call_builtin lessthan(Signed,Signed) 2
     store _t0
     load _t0
-    jnif_label fizzbuzz(Sint,Sint)0
+    jnif_label fizzbuzz(Signed,Signed)0
     load from
-    call fizzer(Sint) 1
+    call fizzer(Signed) 1
     load from
     pushint 1
-    call_builtin plus(Sint,Sint) 2
+    call_builtin plus(Signed,Signed) 2
     store from
     load from
     copyarg 1
-    call fizzbuzz(Sint,Sint) 2
-    label fizzbuzz(Sint,Sint)0
+    call fizzbuzz(Signed,Signed) 2
+    label fizzbuzz(Signed,Signed)0
     clean_stack
     return_unit
     label main()
     pushint 1
     pushint 20
-    call fizzbuzz(Sint,Sint) 2
+    call fizzbuzz(Signed,Signed) 2
     clean_stack
     return_unit
     ==========================
@@ -338,13 +338,13 @@ Example showing user-defined types
 The file `example/shapes.ic` contains a simple example showing types and unions
 
     type Point
-        x::Uint
-        y::Uint
+        x::Unsigned
+        y::Unsigned
     end
 
     type Square
         topleft::Point
-        width::Uint
+        width::Unsigned
     end
 
     type Rectangle
@@ -354,7 +354,7 @@ The file `example/shapes.ic` contains a simple example showing types and unions
 
     type Circle
         center::Point
-        radius::Uint
+        radius::Unsigned
     end
 
     union Shape

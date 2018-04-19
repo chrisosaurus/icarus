@@ -42,8 +42,8 @@ struct ic_type_ref {
     } u;
 
     /* vector of type_refs which are type arguments given to this type
-     * Maybe[Sint]
-     * have a type_ref for Sint set here
+     * Maybe[Signed]
+     * have a type_ref for Signed set here
      */
     struct ic_pvector type_args;
 

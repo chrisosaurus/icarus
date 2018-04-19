@@ -3,7 +3,7 @@
 # before allowing unboxing of Union types
 
 # defaults to Empty
-let m::Maybe[Sint]
+let m::Maybe[Signed]
 
 if ...
     m = 32s
@@ -14,14 +14,14 @@ if ...
 end
 
 match m
-    case Sint
+    case Signed
         print("Got number ", m.contents)
     case Empty
         print("Got nothing")
 end
 
 union Container
-    &i::Sint
+    &i::Signed
     s::String
     f::Foo
 end
@@ -31,8 +31,8 @@ fn bar(&c::Container)
     # compiler to enforce that *all* possible types are handled
     # compiler also enforces that any 'unwrapping' is safe
     match &c
-        case &i::Sint
-            # can only unwrap c.i as we know we must be an Sint
+        case &i::Signed
+            # can only unwrap c.i as we know we must be an Signed
             &i += 14s
         case s::String
             # can only unwrap c.s as we know we must be a String

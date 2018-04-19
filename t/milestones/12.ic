@@ -7,8 +7,8 @@ union Maybe[T]
 end
 
 fn main()
-    let m = Maybe[Sint](6s)
-    let n = Maybe[Uint](8u)
+    let m = Maybe[Signed](6s)
+    let n = Maybe[Unsigned](8u)
 
     println(m)
     println(n)

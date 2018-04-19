@@ -194,7 +194,7 @@ unsigned int ic_b2c_compile_expr_constant(struct ic_kludge *input_kludge, struct
         case ic_expr_constant_type_unsigned_integer:
             /* FIXME leaks memory from integer temporary */
 
-            fprintf(out, "ic_uint_new(%ld)", constant->u.unsigned_integer);
+            fprintf(out, "ic_unsigned_new(%ld)", constant->u.unsigned_integer);
 
             return 1;
 
@@ -203,7 +203,7 @@ unsigned int ic_b2c_compile_expr_constant(struct ic_kludge *input_kludge, struct
         case ic_expr_constant_type_signed_integer:
             /* FIXME leaks memory from integer temporary */
 
-            fprintf(out, "ic_sint_new(%ld)", constant->u.signed_integer);
+            fprintf(out, "ic_signed_new(%ld)", constant->u.signed_integer);
 
             return 1;
 

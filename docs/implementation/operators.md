@@ -9,7 +9,7 @@ some examples of operators and their matching functions
 
     True and False => and(Bool, Bool) -> Bool => and(True, False) => False
 
-    1 + 2 => plus(Sint, Sint) -> Sint => plus(1, 2) => 3
+    1 + 2 => plus(Signed, Signed) -> Signed => plus(1, 2) => 3
 
     a == b => equal[X, Y](X, Y) -> Bool => equal(a, b)
 
@@ -47,7 +47,7 @@ however the difference is that field access is syntactic:
 for example
 
     type Foo
-        i::Sint
+        i::Signed
     end
 
     fn bar() -> Foo ... end

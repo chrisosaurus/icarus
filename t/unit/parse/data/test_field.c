@@ -29,7 +29,7 @@ void basic(void) {
     assert(field->permissions == ic_parse_perm_default());
 
     /* test init */
-    type = ic_type_ref_symbol_new("Sint", 4);
+    type = ic_type_ref_symbol_new("Signed", 6);
     assert(type);
 
     assert(ic_field_init(&init_me, "hello", 5, type, 2));
@@ -38,9 +38,9 @@ void basic(void) {
                     ic_symbol_contents(&(init_me.name)),
                     5));
 
-    assert(!strncmp("Sint",
+    assert(!strncmp("Signed",
                     ic_symbol_contents(ic_type_ref_get_symbol(init_me.type)),
-                    4));
+                    6));
 
     /* NB: okay to use int here, as we only set so we can later on assert
      * that it hasn't silently changed under us

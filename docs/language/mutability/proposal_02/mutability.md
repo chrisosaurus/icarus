@@ -24,7 +24,7 @@ we now have a single value `5` with two reference to it
 
     +-var-------+    +-var-------+
     | a         |    | b         |
-    | ::Sint    |    | ::Sint    |
+    | ::Signed    |    | ::Signed    |
     | mutable   |    | immutable |
     +-----------+    +-----------+
        \              /
@@ -35,7 +35,7 @@ we now have a single value `5` with two reference to it
             v    v
         +-value---+
         | 5       |
-        | ::Sint  |
+        | ::Signed  |
         +---------+
 
 
@@ -46,7 +46,7 @@ we can make further immutable reference to this type
 
     +-var-------+    +-var-------+
     | a         |    | b         |
-    | ::Sint    |    | ::Sint    |
+    | ::Signed    |    | ::Signed    |
     | mutable   |    | immutable |
     +-----------+    +-----------+
        \              /
@@ -57,14 +57,14 @@ we can make further immutable reference to this type
             v    v
         +-value---+ <--------------------+-var-------+
         | 5       |                      | c         |
-        | ::Sint  |                      | ::Sint    |
+        | ::Signed  |                      | ::Signed    |
         +---------+                      | immutable |
             ^                            +-----------+
             |
             |
         +-var-------+
         | d         |
-        | ::Sint    |
+        | ::Signed    |
         | immutable |
         +-----------+
 
@@ -75,7 +75,7 @@ we can then mutate the value `5` and it will be visible through all the referenc
 
     +-var-------+    +-var-------+
     | a         |    | a         |
-    | ::Sint    |    | ::Sint    |
+    | ::Signed    |    | ::Signed    |
     | mutable   |    | immutable |
     +-----------+    +-----------+
        \              /
@@ -86,14 +86,14 @@ we can then mutate the value `5` and it will be visible through all the referenc
             v    v
         +-value---+ <--------------------+-var-------+
         | 142     |                      | c         |
-        | ::Sint  |                      | ::Sint    |
+        | ::Signed  |                      | ::Signed    |
         +---------+                      | immutable |
             ^                            +-----------+
             |
             |
         +-var-------+
         | d         |
-        | ::Sint    |
+        | ::Signed    |
         | immutable |
         +-----------+
 
@@ -113,7 +113,7 @@ instead we must perform a copy
 
     +-var-------+    +-var-------+
     | a         |    | a         |
-    | ::Sint    |    | ::Sint    |
+    | ::Signed    |    | ::Signed    |
     | mutable   |    | immutable |
     +-----------+    +-----------+
        \              /
@@ -124,14 +124,14 @@ instead we must perform a copy
             v    v
         +-value---+ <--------------------+-var-------+
         | 142     |                      | c         |
-        | ::Sint  |                      | ::Sint    |
+        | ::Signed  |                      | ::Signed    |
         +---------+                      | immutable |
             ^                            +-----------+
             |
             |
         +-var-------+
         | d         |
-        | ::Sint    |
+        | ::Signed    |
         | immutable |
         +-----------+
 
@@ -139,7 +139,7 @@ instead we must perform a copy
 
         +-var-------+
         | g         |
-        | ::Sint    |
+        | ::Signed    |
         | mutable   |
         +-----------+
             |
@@ -147,7 +147,7 @@ instead we must perform a copy
             v
           +-value---+
           | 142     |
-          | ::Sint  |
+          | ::Signed  |
           +---------+
 
 
@@ -159,7 +159,7 @@ functions
 
 the rules are not violated by functions taking mutable copies
 
-    fn foo(&bar::Sint)
+    fn foo(&bar::Signed)
         ...
     end
 
@@ -178,10 +178,10 @@ shot comings
 the principles so far are limited, they lack the power to express certain ideas around storage
 
     type Node
-        &i::Sint
+        &i::Signed
     end
 
-    fn insert(&n::Node, &a::Sint)
+    fn insert(&n::Node, &a::Signed)
         &n->i = a
     end
 
@@ -193,7 +193,7 @@ the line `&n->i = a` is illegal, as it is mutable to mutable
 
 this instead insert would have to be
 
-    fn insert(&n::Node, &a::Sint)
+    fn insert(&n::Node, &a::Signed)
         &n->i := a
     end
 
@@ -213,14 +213,14 @@ a Box type allows you to share mutable reference, the normal rules apply:
 the above rewritten with a box type is now:
 
     type Node
-        i::Box[&Sint]
+        i::Box[&Signed]
     end
 
-    fn insert(&n::Node, a::Box[&Sint])
+    fn insert(&n::Node, a::Box[&Signed])
         &n->i = a
     end
 
-    let &mine::Box[&Sint] = 5
+    let &mine::Box[&Signed] = 5
     let &n = Node()
     insert(&n, &mine)
 
@@ -229,14 +229,14 @@ we now end up with
 
     +-var---------+                         +-var---------+
     | mine        |                         | n           |
-    | ::Box[&Sint]|                         | ::Node      |
+    | ::Box[&Signed]|                         | ::Node      |
     | immutable   |                         | mutable     |
     +-------------+                         +-------------+
              \                                |
               \                               |
                v                              v
                 +-Box-------+         +-Node--------+
-                | ::&Sint   |         |             |
+                | ::&Signed   |         |             |
                 | mutable   |<--------| immutable   |
                 +-----------+         +-------------+
                     |
@@ -246,7 +246,7 @@ we now end up with
                     v
                  +-value---+
                  | 5       |
-                 | ::Sint  |
+                 | ::Signed  |
                  +---------+
 
 
@@ -264,14 +264,14 @@ which then gives us
 
     +-var---------+                         +-var---------+
     | mine        |                         | n           |
-    | ::Box[&Sint]|                         | ::Node      |
+    | ::Box[&Signed]|                         | ::Node      |
     | immutable   |                         | mutable     |
     +-------------+                         +-------------+
              \                                |
               \                               |
                v                              v
                 +-Box-------+         +-Node--------+
-                | ::&Sint   |         |             |
+                | ::&Signed   |         |             |
                 | mutable   |<--------| immutable   |
                 +-----------+         +-------------+
                     |
@@ -281,7 +281,7 @@ which then gives us
                     v
                  +-value---+
                  | 5       |
-                 | ::Sint  |
+                 | ::Signed  |
                  +---------+
 
 

@@ -5,15 +5,15 @@
 # a call to new is equiv. to a call to the default constructor
 
 type Foo
-    a::Sint
-    b::Sint
+    a::Signed
+    b::Signed
     c::String
 
     fn Foo(s::String) -> Foo
         return Foo(1s, 2s, s)
     end
 
-    fn Foo(i::Sint, s::String) -> Foo
+    fn Foo(i::Signed, s::String) -> Foo
         return Foo(i, 2s, s)
     end
 end

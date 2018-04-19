@@ -8,7 +8,7 @@ type Bar[T]
 end
 
 type Baz
-    &i::Sint
+    &i::Signed
     &s::String
 end
 

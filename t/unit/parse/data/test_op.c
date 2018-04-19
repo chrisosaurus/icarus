@@ -24,7 +24,7 @@ int main(void) {
     assert(ch);
     assert(0 == strcmp(ch, "barrr"));
 
-    printf("Should see:\ntype Foo\n    a::Sint\n    b::String\nend\n");
+    printf("Should see:\ntype Foo\n    a::Signed\n    b::String\nend\n");
 
     /* output type */
     puts("Output:");

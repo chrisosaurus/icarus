@@ -320,7 +320,7 @@ unsigned int ic_kludge_add_tdecl(struct ic_kludge *kludge, struct ic_decl_type *
          * if this is generic it will use _s
          *  e.g. Maybe[_]
          * if this is instantiated it will use type names
-         *  e.g. Maybe[Sint]
+         *  e.g. Maybe[Signed]
          *
          * TODO FIXME consider if this is 'right'
          * maybe instead all kludge insertions should use the same path

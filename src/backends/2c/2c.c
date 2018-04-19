@@ -297,7 +297,7 @@ unsigned int ic_b2c_compile_generates_pre(struct ic_kludge *kludge, FILE *f) {
                 }
 
                 /* union Foo
-                 *  a::Sint
+                 *  a::Signed
                  *  b::String <--
                  * end
                  *
@@ -390,7 +390,7 @@ static unsigned int ic_b2c_compile_generate_print_struct(struct ic_kludge *kludg
     }
 
     /* type Foo
-     *  a::Sint
+     *  a::Signed
      *  b::String
      * end
      *
@@ -398,7 +398,7 @@ static unsigned int ic_b2c_compile_generate_print_struct(struct ic_kludge *kludg
      *
      * void print_a_Foo_i(Foo f){
      *  puts("Foo(");
-     *  print_a_Sint_b(f->a);
+     *  print_a_Signed_b(f->a);
      *  puts(", ");
      *  print_a_String_b(f->b);
      *  puts(")");
@@ -500,7 +500,7 @@ static unsigned int ic_b2c_compile_generate_print_union(struct ic_kludge *kludge
     }
 
     /* union Foo
-     *  a::Sint
+     *  a::Signed
      *  b::String
      * end
      *
@@ -509,11 +509,11 @@ static unsigned int ic_b2c_compile_generate_print_union(struct ic_kludge *kludge
      * void print_a_Foo_b(Foo f){
      *   print_a_String_b("Foo(");
      *   switch (f->_tag) {
-     *     case Foo_tag_Sint_a:
-     *       print_a_Sint_b(a->u.a);
+     *     case Foo_tag_Signed_a:
+     *       print_a_Signed_b(a->u.a);
      *       break;
      *     case Foo_tag_String_b:
-     *       print_a_Sint_b(a->u.b);
+     *       print_a_Signed_b(a->u.b);
      *       break;
      *     default:
      *       panic("impossible tag on Foo);
@@ -914,7 +914,7 @@ unsigned int ic_b2c_compile_generates(struct ic_kludge *kludge, FILE *f) {
                 }
 
                 /* union Foo
-                 *  a::Sint
+                 *  a::Signed
                  *  b::String <--
                  * end
                  *
@@ -1200,21 +1200,21 @@ unsigned int ic_b2c_compile_type_union(struct ic_kludge *kludge, struct ic_decl_
     }
 
     /* union Foo
-     *  a::Sint
+     *  a::Signed
      *  b::String
      * end
      *
      * ->
      *
      * enum Foo_tag {
-     *  Foo_tag_Sint_a,
+     *  Foo_tag_Signed_a,
      *  Foo_tag_String_b,
      * };
      *
      * struct Foo {
      *  enum Foo_tag _tag;
      *  union {
-     *      Sint a;
+     *      Signed a;
      *      String b;
      *  };
      * };

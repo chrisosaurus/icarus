@@ -14,14 +14,14 @@ my $expected = <<EOF;
 parser output:
 ----------------
 union Foo
-    a::Sint
+    a::Signed
     b::String
 end
 
 fn main() -> Unit
     let f = Foo("Hello")
     match f
-        case a::Sint
+        case a::Signed
             println(a)
         case b::String
             println(b)

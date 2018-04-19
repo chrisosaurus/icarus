@@ -356,7 +356,7 @@ struct ic_decl_type * ic_analyse_resolve_type(struct ic_kludge *kludge, char *un
     }
 
     /* TODO FIXME MAJOR PROBLEM: these type_args haven't been "resolved" wrt to our type_params
-     * so a Maybe[T] still has T rather than the correct through binding to Sint
+     * so a Maybe[T] still has T rather than the correct through binding to Signed
      *
      * this seems like a larger more general problem
      */
@@ -1247,7 +1247,7 @@ struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_
     }
 
     /*
-     *  infer addone(1) -> addone(Sint)->Sint -> Sint
+     *  infer addone(1) -> addone(Signed)->Signed -> Signed
      *  expr->tag == func_call
      *  fc = expr->u.fcall
      *  fstr = str(fc)
@@ -1260,7 +1260,7 @@ struct ic_decl_type *ic_analyse_infer_fcall(struct ic_kludge *kludge, struct ic_
      */
 
     /*
-     *  infer Foo(1,"hello") -> Foo(Sint,String) -> Foo
+     *  infer Foo(1,"hello") -> Foo(Signed,String) -> Foo
      *  expr->tag == func_call
      *  fc = expr->u.fcall
      *  fstr = str(fc)
@@ -1562,7 +1562,7 @@ struct ic_decl_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct 
     switch (cons->tag) {
 
         /*
-         *  infer 1 -> Uint
+         *  infer 1 -> Unsigned
          *  expr->tag == constant
          *  cons = expr->u.cons
          *  cons->type == integer
@@ -1570,16 +1570,16 @@ struct ic_decl_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct 
          */
         case ic_expr_constant_type_unsigned_integer:
             /* FIXME decide on type case sensitivity */
-            type = ic_kludge_get_decl_type(kludge, "Uint");
+            type = ic_kludge_get_decl_type(kludge, "Unsigned");
             if (!type) {
-                puts("ic_analyse_infer_constant: Sint: call to ic_kludge_get_type failed");
+                puts("ic_analyse_infer_constant: Signed: call to ic_kludge_get_type failed");
                 return 0;
             }
             return type;
             break;
 
         /*
-         *  infer 1 -> Sint
+         *  infer 1 -> Signed
          *  expr->tag == constant
          *  cons = expr->u.cons
          *  cons->type == integer
@@ -1587,9 +1587,9 @@ struct ic_decl_type *ic_analyse_infer_constant(struct ic_kludge *kludge, struct 
          */
         case ic_expr_constant_type_signed_integer:
             /* FIXME decide on type case sensitivity */
-            type = ic_kludge_get_decl_type(kludge, "Sint");
+            type = ic_kludge_get_decl_type(kludge, "Signed");
             if (!type) {
-                puts("ic_analyse_infer_constant: Sint: call to ic_kludge_get_type failed");
+                puts("ic_analyse_infer_constant: Signed: call to ic_kludge_get_type failed");
                 return 0;
             }
             return type;
@@ -1753,10 +1753,10 @@ static struct ic_decl_type *ic_analyse_infer_operator(struct ic_kludge *kludge, 
  *  ic_type_ref * -> actual type inferred
  *
  * examples:
- *  infer 1 to Sint
+ *  infer 1 to Signed
  *  infer "hello" to String
- *  infer addone(1) which is a call to addone(Sint) -> Sint therefore Sint
- *  infer Foo(1,"hello") which is call to Foo(Sint,String) -> Foo therefore Foo
+ *  infer addone(1) which is a call to addone(Signed) -> Signed therefore Signed
+ *  infer Foo(1,"hello") which is call to Foo(Signed,String) -> Foo therefore Foo
  *
  * returns ic_type * on success
  * returns 0 on failure
@@ -1796,7 +1796,7 @@ struct ic_decl_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_decl_f
 
         case ic_expr_type_func_call:
             /*
-             *  infer addone(1) -> addone(Sint)->Sint -> Sint
+             *  infer addone(1) -> addone(Signed)->Signed -> Signed
              *  expr->tag == func_call
              *  fc = expr->u.fcall
              *  fstr = str(fc)
@@ -1809,7 +1809,7 @@ struct ic_decl_type *ic_analyse_infer(struct ic_kludge *kludge, struct ic_decl_f
              */
 
             /*
-             *  infer Foo(1,"hello") -> Foo(Sint,String) -> Foo
+             *  infer Foo(1,"hello") -> Foo(Signed,String) -> Foo
              *  expr->tag == func_call
              *  fc = expr->u.fcall
              *  fstr = str(fc)
@@ -2087,16 +2087,16 @@ unsigned int ic_analyse_let(char *unit, char *unit_name, struct ic_kludge *kludg
  *
  * this function must be compatible with the one produced
  * by `ic_decl_func_sig_call`
- *      foo(Sint,Sint)
+ *      foo(Signed,Signed)
  *
  * and
- *      bar(&Sint,String)
+ *      bar(&Signed,String)
  *
  * for an fcall of the form
- *     id[Sint](6s)
+ *     id[Signed](6s)
  *
  * this will generate
- *     id[Sint](Sint)
+ *     id[Signed](Signed)
  *
  * in order to generate
  *     id[_](_)
@@ -2305,7 +2305,7 @@ EXIT:
 /* create a generic function signature string from a function call
  *
  * for an fcall of the form
- *     id[Sint](6s)
+ *     id[Signed](6s)
  *
  * we will generate
  *     id[_](_)
@@ -2597,7 +2597,7 @@ struct ic_decl_type *ic_analyse_type_decl_instantiate_generic(struct ic_kludge *
      * currently this will instead just fail at insertion, which works for now
      */
 
-    /* instantiate found Maybe[_] with provided types [Sint] */
+    /* instantiate found Maybe[_] with provided types [Signed] */
 
     /* 1) deep copy */
     new_decl_type = ic_decl_type_deep_copy(tdecl);

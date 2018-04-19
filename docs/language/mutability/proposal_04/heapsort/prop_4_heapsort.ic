@@ -10,15 +10,15 @@
 # left child is 2i + 1
 # right child is 2i + 2
 
-fn lchild(i::Sint) -> Sint
+fn lchild(i::Signed) -> Signed
     return (2 * i) + 1
 end
 
-fn rchild(i::Sint) -> Sint
+fn rchild(i::Signed) -> Signed
     return (2 * i) + 1
 end
 
-fn parent(i::Sint) -> Sint
+fn parent(i::Signed) -> Signed
     # relying on integer truncation
     return (i - 1) / 2
 end
@@ -32,7 +32,7 @@ fn heapify[T](&arr::Array[T])
 fn
 
 # take a place in the array, and keep pushing it up until it cannot go up anymore
-fn pushup[T](&arr::Array[T], index::Sint)
+fn pushup[T](&arr::Array[T], index::Signed)
     if index <= 0
         return
     end
@@ -63,7 +63,7 @@ end
 # given an item in index
 # return the index it should be swapped with
 # or return current index if no swap is needed
-fn heapmax(arr::Array[T], index::Sint, until::Sint) -> Sint
+fn heapmax(arr::Array[T], index::Signed, until::Signed) -> Signed
     let lcindex = lchild(index)
     let rcindex = rchild(index)
 
@@ -94,7 +94,7 @@ fn heapmax(arr::Array[T], index::Sint, until::Sint) -> Sint
 end
 
 # take a place in the array, and keep pushing it down until it cannot go down anymore
-fn pushdown[T](&arr::Array[T], index::Sint, until::Sint)
+fn pushdown[T](&arr::Array[T], index::Signed, until::Signed)
     if index >= until
         return
     end

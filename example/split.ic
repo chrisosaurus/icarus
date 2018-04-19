@@ -1,9 +1,9 @@
-builtin fn index_of(str::String, c::Char) -> Maybe[Sint]
+builtin fn index_of(str::String, c::Char) -> Maybe[Signed]
 
 fn split(str::String, c::Char) -> [String]
     let idx = index_of(s, c)
     match idx
-        case something::Sint
+        case something::Signed
             let before = s[0s,   something]
             let after  = s[something, len(s)]
             return [before, after]
