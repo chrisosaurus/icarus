@@ -39,7 +39,7 @@
 /* factor we grow the number of slots by each resize */
 #define LH_SCALING_FACTOR 2
 
-/* default loading factor (percentage) we resize after
+/* default loading factor (percentage) we resize at
  *
  * 1 through to 100 (inclusive)
  *
@@ -423,7 +423,7 @@ unsigned int lh_nelems(const struct lh_table *table){
 }
 
 /* function to calculate load percentage
- * (table->n_elems * 10) / table->size
+ * (table->n_elems * 100) / table->size
  *
  * returns loading factor 0 -> 100 on success
  * returns 0 on failure
@@ -438,7 +438,7 @@ unsigned int lh_load(const struct lh_table *table){
 }
 
 /* set the load that we resize at
- * load is table->n_elems / table->size
+ * load is (table->n_elems * 100) / table->size
  *
  * this sets lh_table->threshold
  * this defaults to LH_DEFAULT_THRESHOLD in linear_hash.c
@@ -456,7 +456,7 @@ unsigned int lh_tune_threshold(struct lh_table *table, unsigned int threshold){
     }
 
     if( threshold < 1 || threshold > 100 ){
-        puts("lh_tune_threshold: threshold must be between 1 and 9 (inclusive)");
+        puts("lh_tune_threshold: threshold must be between 1 (1%%) and 100 (100%%) (inclusive)");
         return 0;
     }
 

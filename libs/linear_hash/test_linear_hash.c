@@ -1021,7 +1021,7 @@ void load_resize(void){
     assert( data_1 == *data );
 
     /* insert tests resize before inserting
-     * so from it's view at that time:
+     * so from its view at that time:
      * 0 * 100 / 4 = 0 % loading
      * no resize
      */
@@ -1068,7 +1068,7 @@ void load_resize(void){
     assert( 3 == lh_nelems(table) );
     /* however the load now will be
      * 3 * 100 / 4 = 75 %
-     * so this will trigger a resize (as 75 >= 60)
+     * so this will trigger a resize (as 75 >= 60, where 60 is default threshold)
      */
     assert( 75 == lh_load(table) );
 

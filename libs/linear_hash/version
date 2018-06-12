@@ -1,5 +1,5 @@
-commit 8e32d4800e613740577c6a68d766852a47d7463a
+commit c354e860307fe853c50efddd520123ea1c679c6a
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Thu Apr 13 11:58:27 2017 +1000
+Date:   Tue Jun 12 09:36:04 2018 +1000
 
-    Removing use of pragmas, declaring internal-only functions in new header.
+    Clarifying comments around load and threshold

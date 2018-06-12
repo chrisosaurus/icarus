@@ -52,8 +52,8 @@ struct lh_table {
     /* number of elements stored in hash */
     size_t n_elems;
     /* threshold percentage that triggers an automatic resize
-     * if (n_elems / table->size >= threshold) { resize }
      * 1 <= threshold >= 100
+     * if (((n_elems *100 ) / size) >= threshold) { resize }
      */
     unsigned int threshold;
     /* array of lh_entry(s) */
