@@ -195,7 +195,7 @@ void collision(void){
     assert( 9 == ls_nelems(set) );
     /* assert that our resize succeeded and we
      * are not full */
-    assert( 10 > ls_load(set) );
+    assert( 100 > ls_load(set) );
     assert( 9 < set->size );
 
 
@@ -388,7 +388,7 @@ void error_handling(void){
     puts("testing ls_tune_threshold");
     assert( 0 == ls_tune_threshold(0, 0) );
     assert( 0 == ls_tune_threshold(set, 0) );
-    assert( 0 == ls_tune_threshold(set, 11) );
+    assert( 0 == ls_tune_threshold(set, 101) );
 
     /* ls_destroy */
     assert( 0 == ls_destroy(0, 1) );
@@ -475,16 +475,16 @@ void load_resize(void){
     assert( ls_exists(set, key_1) );
 
     /* insert tests resize before inserting
-     * so from it's view at that time:
-     * 0 / 4 = 0 % loading
+     * so from its view at that time:
+     * 0 *100 / 4 = 0 % loading
      * no resize
      */
     assert( 4 == set->size );
     assert( 1 == ls_nelems(set) );
     /* however the load now will be
-     * 1 / 4 = 25 %
+     * 1 * 100 / 4 = 25 %
      */
-    assert( 2 == ls_load(set) );
+    assert( 25 == ls_load(set) );
 
 
     assert( ls_insert(set, key_2) );
@@ -500,9 +500,9 @@ void load_resize(void){
     assert( 4 == set->size );
     assert( 2 == ls_nelems(set) );
     /* however the load now will be
-     * 2 / 4 = 50 %
+     * 2 *100 / 4 = 50 %
      */
-    assert( 5 == ls_load(set) );
+    assert( 50 == ls_load(set) );
 
 
     assert( ls_insert(set, key_3) );
@@ -511,16 +511,16 @@ void load_resize(void){
 
     /* insert tests resize before inserting
      * so from it's view at that time:
-     * 2 / 4 = 50 % loading
+     * 2 *100 / 4 = 50 % loading
      * no resize
      */
     assert( 4 == set->size );
     assert( 3 == ls_nelems(set) );
     /* however the load now will be
-     * 3 / 4 = 70 %
-     * so this will trigger a resize (as 70 >= 60)
+     * 3 * 100 / 4 = 75 %
+     * so this will trigger a resize (as 75 >= 60, where 60 is default threshold)
      */
-    assert( 7 == ls_load(set) );
+    assert( 75 == ls_load(set) );
 
 
     assert( ls_insert(set, key_4) );
@@ -535,9 +535,9 @@ void load_resize(void){
     assert( 8 == set->size );
     assert( 4 == ls_nelems(set) );
     /* and after resizing the load now will be
-     * 4 / 8 = 50 %
+     * 4 * 100 / 8 = 50 %
      */
-    assert( 5 == ls_load(set) );
+    assert( 50 == ls_load(set) );
 
 
     assert( ls_destroy(set, 1) );
@@ -615,8 +615,8 @@ void threshold(void){
     assert( ls_resize(set, 4) );
 
     /* tune to only resize at 100% */
-    assert( ls_tune_threshold(set, 10) );
-    assert( 10 == set->threshold );
+    assert( ls_tune_threshold(set, 100) );
+    assert( 100 == set->threshold );
 
     /* insert 4 times checking there has been no resizing */
     assert( ls_insert(set, "a") );
@@ -639,7 +639,7 @@ void threshold(void){
     assert( ls_insert(set, "e") );
     assert( 5 == ls_nelems(set) );
     assert( 8 == set->size );
-    assert( 10 == set->threshold );
+    assert( 100 == set->threshold );
 
     assert( ls_destroy(set, 1) );
     puts("success!");

@@ -39,12 +39,13 @@
 /* factor we grow the number of slots by each resize */
 #define LS_SCALING_FACTOR 2
 
-/* default loading factor we resize after in base 10
- * 0 through to 10
+/* default loading factor (percentage) we resize at
  *
- * default is 6 so 60 %
+ * 1 through to 100 (inclusive)
+ *
+ * default is 60 so 60 %
  */
-#define LS_DEFALT_THRESHOLD 6
+#define LS_DEFALT_THRESHOLD 60
 
 /**********************************************
  **********************************************
@@ -327,7 +328,7 @@ unsigned int ls_nelems(const struct ls_set *set){
 }
 
 /* function to calculate load
- * (set->n_elems * 10) / set->size
+ * (set->n_elems * 100) / set->size
  *
  * returns loading factor 0 -> 10 on success
  * returns 0 on failure
@@ -338,20 +339,17 @@ unsigned int ls_load(const struct ls_set *set){
         return 0;
     }
 
-    /* here we multiply by 10 to avoid floating point
-     * as we only care about the most significant figure
-     */
-    return (set->n_elems * 10) / set->size;
+    return (set->n_elems * 100) / set->size;
 }
 
 /* set the load that we resize at
- * load is (set->n_elems * 10) / set->size
+ * load is (set->n_elems * 100) / set->size
  *
  * this sets ls_set->threshold
  * this defaults to LS_DEFALT_THRESHOLD in linear_set.c
- * this is set to 6 (meaning 60% full) by default
+ * this is set to 60 (meaning 60% full) by default
  *
- * this will accept any value between 1 (10%) to 10 (100%)
+ * this will accept any value between 1 (1%) to 100 (100%)
  *
  * returns 1 on success
  * returns 0 on failure
@@ -362,8 +360,8 @@ unsigned int ls_tune_threshold(struct ls_set *set, unsigned int threshold){
         return 0;
     }
 
-    if( threshold < 1 || threshold > 10 ){
-        puts("ls_tune_threshold: threshold must be between 1 and 9 (inclusive)");
+    if( threshold < 1 || threshold > 100 ){
+        puts("ls_tune_threshold: threshold must be between 1 (1%) and 100 (100%) (inclusive)");
         return 0;
     }
 

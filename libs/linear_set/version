@@ -1,5 +1,5 @@
-commit 04d5622b8d73eb1fa37fcd9dc8555a5bda37de53
+commit 9e104cfcdb5b71156a7bcaaf00d74dc8231c5763
 Author: Chris Hall <followingthepath@gmail.com>
-Date:   Thu Apr 13 12:09:12 2017 +1000
+Date:   Tue Jun 12 09:37:23 2018 +1000
 
-    Breaking internal-only interface into separate header
+    Making `threshold` percentage for more fine-grained tuning
