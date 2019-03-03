@@ -1,6 +1,6 @@
-# Icarus [![Build Status](https://travis-ci.org/mkfifo/icarus.svg?branch=master)](https://travis-ci.org/mkfifo/icarus) [![Coverage Status](https://coveralls.io/repos/mkfifo/icarus/badge.svg?branch=master)](https://coveralls.io/r/mkfifo/icarus?branch=master) <a href="https://scan.coverity.com/projects/4854"> <img alt="Coverity Scan Build Status" src="https://scan.coverity.com/projects/4854/badge.svg"/> </a>
+# Icarus [![Build Status](https://travis-ci.org/chrisosaurus/icarus.svg?branch=master)](https://travis-ci.org/chrisosaurus/icarus) [![Coverage Status](https://coveralls.io/repos/mkfifo/icarus/badge.svg?branch=master)](https://coveralls.io/r/mkfifo/icarus?branch=master) <a href="https://scan.coverity.com/projects/4854"> <img alt="Coverity Scan Build Status" src="https://scan.coverity.com/projects/4854/badge.svg"/> </a>
 
-<img src="https://github.com/mkfifo/icarus/blob/master/resources/logo.jpg" alt="Logo" align="right" />
+<img src="https://github.com/chrisosaurus/icarus/blob/master/resources/logo.jpg" alt="Logo" align="right" />
 
 Icarus is a programming language designed as an experiment to explore mutation and aliasing control
 
