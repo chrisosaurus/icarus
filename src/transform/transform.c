@@ -12,7 +12,9 @@
 #include "transform.h"
 
 /* FIXME TODO ic_transform_stmt_for scope unused as unimplemented */
+#if !defined(__has_warning) || __has_warning("-Wunused-parameter")
 #pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
 
 /* perform translation of all fdecls on kludge
  *

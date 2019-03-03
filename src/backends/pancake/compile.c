@@ -16,7 +16,9 @@
  * revisit why we pass this around and if it should be part of the
  * general interface
  */
+#if !defined(__has_warning) || __has_warning("-Wunused-parameter")
 #pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
 
 /* generate all needed functions
  *

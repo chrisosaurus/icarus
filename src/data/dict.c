@@ -5,7 +5,9 @@
 
 #define IC_DICT_DEFAULT_SIZE 32
 
+#if !defined(__has_warning) || __has_warning("-Wunused-parameter")
 #pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
 
 /* allocate and init a new ic_dict
  *

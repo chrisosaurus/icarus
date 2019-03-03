@@ -8,9 +8,13 @@
 /* all functions in here take the same single argument to match a single
  * interface, so there is no use in warning on unused-param
  */
+#if !defined(__has_warning) || __has_warning("-Wunused-parameter")
 #pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
 /* some functions pop unnecessary values for the side effects (e.g. the Unit functions) */
+#if !defined(__has_warning) || __has_warning("-Wunused-but-set-variable")
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#endif
 
 void panic(char *ch);
 void panic(char *ch) {
