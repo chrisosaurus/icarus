@@ -83,7 +83,7 @@ unsigned int ic_backend_pancake_bytecode_print(FILE *fd, struct ic_backend_panca
     char *ch = 0;
     uint32_t uint = 0;
     int32_t sint = 0;
-    bool boolean = 0;
+    uint8_t  boolean = 0;
 
     if (!bytecode) {
         puts("ic_backend_pancake_bytecode_print: bytecode was null");
