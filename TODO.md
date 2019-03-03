@@ -21,6 +21,7 @@ TODO:
 * the analysis system currently has no idea about permissions
 * remove ic_type, as builtin and user defined types now both use ic_decl_type
 * analyse needs to check for failing to return from a non-void function - need branch analysis (all branches result in return)
+* implicit return for Unit functions, currently generating C without returns
 * finish population of decl_type.field_dict
 * think through type_ref interface, and storing ic_type when found on fields/type_refs during ic_analyse_decl_type/ic_analyse_field_list
 * remove parse/expr.c next_token usage, see IC_PERIOD handling comments in parse/expr.c
