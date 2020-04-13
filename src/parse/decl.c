@@ -178,7 +178,7 @@ struct ic_decl *ic_parse_decl_type_struct_header(struct ic_token_list *token_lis
             puts("ic_parse_decl_type_struct_header: call to ic_decl_type_struct_mark_bool failed");
             goto ERROR;
         }
-    } else if (!strncmp(token_str, "String", 4)) {
+    } else if (!strncmp(token_str, "String", 6)) {
         /* if this is the bool type then mark it as so */
         if (!ic_decl_type_struct_mark_string(tdecl_struct)) {
             puts("ic_parse_decl_type_struct_header: call to ic_decl_type_struct_mark_string failed");
